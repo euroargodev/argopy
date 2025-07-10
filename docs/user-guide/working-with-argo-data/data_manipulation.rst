@@ -1,30 +1,27 @@
 Manipulating data
 =================
 
+.. currentmodule:: xarray
+
+Once you fetched Argo data, **argopy** comes with a handy :class:`xarray.Dataset` accessor ``argo`` to perform specific manipulation of the data. This means that if your dataset is named ``ds``, then you can use ``ds.argo`` to access more **argopy** functions. The full list is available in the API documentation page :ref:`Dataset.argo (xarray accessor)`.
+
+In this section, we present how **argopy** can help in manipulating Argo measurements and parameters.
+
 .. contents::
    :local:
 
-.. currentmodule:: xarray
-
-Once you fetched data, **argopy** comes with a handy :class:`xarray.Dataset` accessor ``argo`` to perform specific manipulation of the data. This means that if your dataset is named `ds`, then you can use `ds.argo` to access more **argopy** functions. The full list is available in the API documentation page :ref:`Dataset.argo (xarray accessor)`.
-
-Let's start with standard import:
-
-.. ipython:: python
-    :okwarning:
-
-    from argopy import DataFetcher
-
-Transformation
---------------
 
 Points vs profiles
-^^^^^^^^^^^^^^^^^^
+------------------
+
+.. currentmodule:: xarray
 
 By default, fetched data are returned as a 1D array collection of measurements:
 
 .. ipython:: python
     :okwarning:
+
+    from argopy import DataFetcher
 
     f = DataFetcher().region([-75,-55,30.,40.,0,100., '2011-01-01', '2011-01-15'])
     ds_points = f.data
@@ -47,7 +44,9 @@ You can simply reverse this transformation with the :meth:`Dataset.argo.profile2
     ds
 
 Pressure levels: Interpolation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+------------------------------
+
+.. currentmodule:: xarray
 
 Once your dataset is a collection of vertical **profiles**, you can interpolate variables on standard pressure levels using :meth:`Dataset.argo.interp_std_levels` with your levels as input:
 
@@ -63,7 +62,9 @@ Note on the linear interpolation process :
     - For each profile, shallowest data point is repeated to the surface to allow a 0 standard level while avoiding extrapolation.
 
 Pressure levels: Group-by bins
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+------------------------------
+
+.. currentmodule:: xarray
 
 If you prefer to avoid interpolation, you can opt for a pressure bins grouping reduction using :meth:`Dataset.argo.groupby_pressure_bins`. This method can be used to subsample and align an irregular dataset (pressure not being similar in all profiles) on a set of pressure bins. The output dataset could then be used to perform statistics along the N_PROF dimension because N_LEVELS will corresponds to similar pressure bins.
 
@@ -116,65 +117,13 @@ The ``select`` option can take many different values, see the full documentation
 
 
 Filters
-^^^^^^^
+-------
+
+.. currentmodule:: xarray
 
 If you fetched data with the ``expert`` mode, you may want to use *filters* to help you curate the data.
 
 - **QC flag filter**: :meth:`Dataset.argo.filter_qc`. This method allows you to filter measurements according to QC flag values. This filter modifies all variables of the dataset.
-- **Data mode filter**: :meth:`Dataset.argo.filter_data_mode`. This method allows you to filter variables according to their data mode. This filter modifies the <PARAM> and <PARAM_QC> variables of the dataset.
+- **Data mode filter**: :meth:`Dataset.argo.datamode.filter`. This method allows you to filter variables according to their data mode.
 - **OWC variables filter**: :meth:`Dataset.argo.filter_scalib_pres`. This method allows you to filter variables according to OWC salinity calibration software requirements. This filter modifies pressure, temperature and salinity related variables of the dataset.
-
-
-Complementary data
-------------------
-
-TEOS-10 variables
-^^^^^^^^^^^^^^^^^
-
-You can compute additional ocean variables from `TEOS-10 <http://teos-10.org/>`_. The default list of variables is: 'SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP' ('SOUND_SPEED', 'CNDC' are optional). `Simply raise an issue to add a new one <https://github.com/euroargodev/argopy/issues/new/choose>`_.
-
-This can be done using the :meth:`Dataset.argo.teos10` method and indicating the list of variables you want to compute:
-
-.. ipython:: python
-    :okwarning:
-
-    ds = DataFetcher().float(2901623).to_xarray()
-    ds.argo.teos10(['SA', 'CT', 'PV'])
-
-.. ipython:: python
-    :okwarning:
-
-    ds['SA']
-
-Data models
------------
-
-By default **argopy** will provide users with :class:`xarray.Dataset` or :class:`pandas.DataFrame`.
-
-For your own analysis, you may prefer to switch from one to the other. This is all built in **argopy**, with the :meth:`argopy.DataFetcher.to_dataframe` and :meth:`argopy.DataFetcher.to_xarray` methods.
-
-.. ipython:: python
-    :okwarning:
-
-    DataFetcher().profile(6902746, 34).to_dataframe()
-
-
-Note that internally, **argopy** also work with :class:`pyarrow.Table`.
-
-Saving data
-===========
-
-Once you have your Argo data as a :class:`xarray.Dataset`, you can simply use the awesome export possibilities of `xarray <http://xarray.pydata.org>`_ like :meth:`xarray.Dataset.to_netcdf` or :meth:`xarray.Dataset.to_zarr`.
-
-Note that we provide a dedicated method to export an Argo :class:`xarray.Dataset` to zarr that will handle data type casting and compression easily, the :meth:`Dataset.argo.to_zarr` method:
-
-.. code-block:: python
-    :caption: Dataset export to zarr
-
-    from argopy import DataFetcher
-    ds = DataFetcher(src='gdac').float(6903091).to_xarray()
-    # then:
-    ds.argo.to_zarr("6903091_prof.zarr")
-    # or:
-    ds.argo.to_zarr("s3://argopy/sample-data/6903091_prof.zarr")
 

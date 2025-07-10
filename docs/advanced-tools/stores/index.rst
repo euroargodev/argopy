@@ -56,7 +56,7 @@ In a nutshell
             from argopy import ArgoIndex
 
             idx = ArgoIndex(index_file="bgc-s")
-            idx.search_wmo(6903091)
+            idx.query.wmo(6903091)
             df = idx.to_dataframe()
             df
 

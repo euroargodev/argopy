@@ -74,7 +74,7 @@ def drop_variables_not_in_all_datasets(
 def fill_variables_not_in_all_datasets(
     ds_collection: List[xr.Dataset], concat_dim: str = "rows"
 ) -> List[xr.Dataset]:
-    """Add empty variables to dataset so that all the collection have the same :attr:`xarray.Dataset.data_vars` and :props:`xarray.Dataset.coords`
+    """Add empty variables to dataset so that all the collection have the same :attr:`xarray.Dataset.data_vars` and :attr:`xarray.Dataset.coords`
 
     This is to make sure that the collection of dataset can be concatenated
 
@@ -348,7 +348,6 @@ def filter_param_by_data_mode(
         return filter
     else:
         return ds.loc[dict(N_POINTS=filter)] if len(filter) > 0 else ds
-
 
 
 def split_data_mode(ds: xr.Dataset) -> xr.Dataset:

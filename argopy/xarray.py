@@ -22,7 +22,7 @@ try:
     with_dask = True
 except ModuleNotFoundError:
     with_dask = False
-    Delayed = lambda x: x
+    Delayed = lambda x: x  # noqa: E731
 
 
 from .utils import is_list_of_strings
@@ -53,43 +53,54 @@ class ArgoAccessor:
     .. code-block:: python
         :caption: Conformity
 
-        >>> ds.argo.cast_types()
+        ds.argo.cast_types()
 
     .. code-block:: python
         :caption: Transformation
 
-        >>> ds.argo.point2profile()
-        >>> ds.argo.profile2point()
-        >>> ds.argo.inter_std_levels(std_lev=[10., 500., 1000.])
-        >>> ds.argo.groupby_pressure_bins(bins=[0, 200., 500., 1000.])
+        ds.argo.point2profile()
+        ds.argo.profile2point()
+        ds.argo.inter_std_levels(std_lev=[10., 500., 1000.])
+        ds.argo.groupby_pressure_bins(bins=[0, 200., 500., 1000.])
 
     .. code-block:: python
         :caption: QC flags and methods
 
-        >>> ds.argo.filter_qc(QC_list=[1, 2], QC_fields='all')
-        >>> ds.argo.filter_scalib_pres(force='default')
-        >>> ds.argo.create_float_source("output_folder")
+        ds.argo.filter_qc(QC_list=[1, 2], QC_fields='all')
+        ds.argo.filter_scalib_pres(force='default')
+        ds.argo.create_float_source("output_folder")
 
     .. code-block:: python
         :caption: TEOS10
 
-        >>> ds.argo.teos10(vlist='PV')
+        ds.argo.teos10(vlist='PV')
 
     .. code-block:: python
         :caption: Extensions: Data Mode
 
-        >>> ds.argo.datamode.compute()
-        >>> ds.argo.datamode.merge()
-        >>> ds.argo.datamode.filter()
-        >>> ds.argo.datamode.filter(dm=['D'], params='all')
-        >>> ds.argo.datamode.split()
+        ds.argo.datamode.compute()
+        ds.argo.datamode.merge()
+        ds.argo.datamode.filter()
+        ds.argo.datamode.filter(dm=['D'], params='all')
+        ds.argo.datamode.split()
 
     .. code-block:: python
         :caption: Extensions: CANYON-MED
 
-        >>> ds.argo.canyon_med.fit()
-        >>> ds.argo.canyon_med.predict()
-        >>> ds.argo.canyon_med.predict('PO4')
+        ds.argo.canyon_med.fit()
+        ds.argo.canyon_med.predict()
+        ds.argo.canyon_med.predict('PO4')
+
+    .. code-block:: python
+        :caption: Extensions: Optical modeling
+
+        ds.argo.optic.Zeu()
+        ds.argo.optic.Zeu(inplace=True)
+        ds.argo.optic.Zeu(method='percentage')
+        ds.argo.optic.Zeu(method='KdPAR')
+
+        ds.argo.optic.Zpd()
+        ds.argo.optic.Zpd(inplace=True)
 
     """
 
@@ -290,8 +301,8 @@ class ArgoAccessor:
 
         Examples
         --------
-        >>> unique_float_profile_id = uid(690024,13,'A') # Encode
-        >>> wmo, cyc, drc = uid(unique_float_profile_id) # Decode
+        unique_float_profile_id = uid(690024,13,'A') # Encode
+        wmo, cyc, drc = uid(unique_float_profile_id) # Decode
 
         """
 
@@ -1559,11 +1570,11 @@ class ArgoAccessor:
 
         You can force the program to load raw PRES, PSAL and TEMP whatever PRES is adjusted or not:
 
-        >>> ds.argo.create_float_source(force='raw')
+        ds.argo.create_float_source(force='raw')
 
         or you can force the program to load adjusted variables: PRES_ADJUSTED, PSAL_ADJUSTED, TEMP_ADJUSTED
 
-        >>> ds.argo.create_float_source(force='adjusted')
+        ds.argo.create_float_source(force='adjusted')
 
         **Pre-processing details**:
 
@@ -1662,7 +1673,7 @@ class ArgoAccessor:
             # Return a Matlab dictionary with dataset data to be used by savemat:
             mdata = {}
             mdata["PROFILE_NO"] = (
-                this_dsp["PROFILE_NO"].astype("uint8").values.T[np.newaxis, :]
+                this_dsp["PROFILE_NO"].astype("uint16").values.T[np.newaxis, :]
             )  # 1-based index in Matlab
             mdata["DATES"] = this_dsp["DATES"].values.T[np.newaxis, :]
             mdata["LAT"] = this_dsp["LAT"].values.T[np.newaxis, :]
@@ -1986,11 +1997,127 @@ class ArgoAccessor:
             compressor = Blosc(cname="zstd", clevel=3, shuffle=2)
             encoding = {}
             for v in self._obj:
-              encoding.update({v: {"compressor": compressor}})
+                encoding.update({v: {"compressor": compressor}})
             kwargs.update({'encoding': encoding})
 
         # Convert to a zarr file using compression:
         return self._obj.to_zarr(*args, **kwargs)
+
+    def reduce_profile(self, func, params=[], **kwargs) -> xr.DataArray:
+        """Apply a vectorized function for unlabeled arrays for each Argo profiles
+
+        This method allows to execute a per profile diagnostic function very efficiently. Such a diagnostic function
+        takes vertical profiles as input and return a single value as output (see examples below).
+
+        Typical usage example would include computation of mixed layer depth or euphotic layer depth.
+
+        Parameters
+        ----------
+        func: callable
+            A function that takes one or more profile parameters as input, and return a single value as output.
+
+        params: [List, str]
+            Name, or list of names, of the dataset parameters expected by ``func``. All of these parameters
+            must have ``N_LEVELS`` as a dimension.
+
+        **kwargs: dict, optional
+            Keyword arguments to be passed to ``func``.
+
+        Returns
+        -------
+        :class:`xarray.DataArray`
+
+        Examples
+        --------
+        .. code-block:: python
+            :caption: Example 1
+
+            from argopy import ArgoFloat
+            dsp = ArgoFloat(6901864).open_dataset('Sprof')
+
+            def max_salinity_depth(pres, psal):
+                # A dummy function returning depth of the maximum salinity
+                idx = ~np.logical_or(np.isnan(pres), np.isnan(psal))
+                return pres[idx][np.argmax(psal[idx])]
+
+            # Apply reduce function on all profiles:
+            dsp.argo.reduce_profile(max_salinity_depth, params=['PRES', 'PSAL'])
+
+        .. code-block:: python
+            :caption: Example 2: with keyword arguments
+
+            from argopy import ArgoFloat
+            dsp = ArgoFloat(6901864).open_dataset('Sprof')
+
+            def max_salinity_depth(pres, psal, max_layer=1000.):
+                # A dummy function returning depth of the maximum salinity above max_layer:
+                idx = ~np.logical_or(np.isnan(pres), np.isnan(psal))
+                idx = np.logical_and(idx, pres<=max_layer)
+                if np.any(idx):
+                    return pres[idx][np.argmax(psal[idx])]
+                else:
+                    return np.NaN
+
+            # Apply reduce function on all profiles:
+            dsp.argo.reduce_profile(max_salinity_depth, params=['PRES', 'PSAL'], max_layer=700)
+
+        .. code-block:: python
+            :caption: Example 3: automatically parallelize func with Dask
+
+            from argopy import ArgoFloat
+            dsp = ArgoFloat(6901864).open_dataset('Sprof')
+
+            # Make sure we're working with dask arrays
+            dsp = dsp.chunk({'N_PROF': 10})
+
+            def max_salinity_depth(pres, psal):
+                # A dummy function returning depth of the maximum salinity
+                idx = ~np.logical_or(np.isnan(pres), np.isnan(psal))
+                return pres[idx][np.argmax(psal[idx])]
+
+            # Apply reduce function on all profiles:
+            da = dsp.argo.reduce_profile(max_salinity_depth, params=['PRES', 'PSAL'])  # Return a dask array
+            da.compute()
+        """
+        if self._type != "profile":
+            raise InvalidDatasetStructure(
+                "Method only available for a collection of profiles (with N_PROF dimension)"
+            )
+
+        # plist holds the list of dataset variable(s) required by the reducer with a N_PROF dimension:
+        # eg: ['PRES', 'TEMP']
+        plist = to_list(params)
+        for param in plist:
+            if param not in self._obj:
+                raise ValueError(f"Parameter {param} not in dataset")
+            if 'N_LEVELS' not in self._obj[param].dims:
+                raise ValueError(f"Parameter {param} must have the 'N_LEVELS' dimension")
+
+        # There should be one input core dimension 'N_LEVELS' for each argument of the reduce function
+        input_core_dims = [["N_LEVELS"] for _ in plist]
+
+        # Create the reduce function list of arguments:
+        ufunc_args = []
+        [ufunc_args.append(self._obj[param]) for param in plist]
+
+        # Create the xr.apply_ufunc list of keywords arguments:
+        ufunc_kwargs = dict(
+            kwargs=kwargs,  # Keywords arguments to be passed to the reduce function
+            input_core_dims=input_core_dims,
+
+            # dimensions allowed to change size. Must be set!
+            # must also appear in ``input_core_dims`` for at least one argument
+            exclude_dims=set(("N_LEVELS",)),
+
+            vectorize=True,  # loop over non-core dims
+            dask="parallelized",
+        )
+        reduced = xr.apply_ufunc(
+            func,
+            *ufunc_args,
+            **ufunc_kwargs,
+        )
+        return reduced
 
 
 def open_Argo_dataset(filename_or_obj):
@@ -2009,8 +2136,11 @@ class ArgoEngine(BackendEntrypoint):
 
     Examples
     --------
-    >>> import xarray as xr
-    >>> ds = xr.open_dataset("dac/aoml/1901393/1901393_prof.nc", engine='argo')
+    .. code-block:: python
+
+        import xarray as xr
+        ds = xr.open_dataset("dac/aoml/1901393/1901393_prof.nc", engine='argo')
+
     """
 
     description = "Open Argo netCDF files (.nc)"

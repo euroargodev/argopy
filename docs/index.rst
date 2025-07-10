@@ -13,14 +13,17 @@ for standard users as well as Argo experts.
 
     The argopy team will organise "training camps" in 2025:
 
-    - **in person** training (half a day) during the Euro-Argo User Meeting at Heraklion, Crete (Sept. 22-25th 2025)
+    1. **in person** training: Monday Sept. 22nd afternoon, `Thalassocosmos <https://cretaquarium.gr/>`_, HCMR, Heraklion, Crete, during the `Euro-Argo Science Meeting <https://www.euro-argo.eu/News-Meetings/News/News-archives/2025/8th-Euro-Argo-Science-Meeting>`_: `registration are now open here <https://forms.ifremer.fr/euroargo/8th-euro-argo-science-meeting-registration-form/>`_.
 
-    - **online** training, to be organised sometime this spring
+    2. **in person** training: Wednesday June 25th 10am, room 304, `JAMSTEC Headquarters <https://www.jamstec.go.jp/e/about/access/yokosuka.html>`_ `GOORC <https://www.jamstec.go.jp/goorc/e/>`_, Yokosuka, Japan. No registration required.
+
+    3. **in person** training: Wednesday June 18th 10am, room 425, `Tohoku University <https://www.gp.tohoku.ac.jp/pol/index-e.html>`_ `WPI-AIMEC <https://wpi-aimec.jp/en/>`_, Sendai, Japan. No registration required.
+
+    4. **online** training, to be organised sometime this fall: `register here <https://forms.gle/d8xPbrWu7aZcvMut9>`_
 
     The goal of these events is to train users with all the argopy features.
     Whether you're a standard, research or expert users, argopy has features for you !
 
-    `You can pre-register here <https://forms.gle/d8xPbrWu7aZcvMut9>`_
 
 Documentation
 -------------
@@ -40,7 +43,7 @@ Documentation
 
     install
     usage
-    Gallery of examples <gallery>
+    Gallery of examples and tutorials <gallery>
     What is Argo ? Why argopy ? <what_why>
     impact
 

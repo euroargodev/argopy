@@ -46,7 +46,7 @@ This class is currently used in the `monitoring framework of Argo APIs in here <
 
 Methodology
 -----------
-Our continuous integration pipeline works with Github Actions that operate on Microsoft Azure VMs. For each run, we use the `Eco-CI Energy Estimation tool <https://github.com/marketplace/actions/eco-ci-energy-estimation>`_  to monitor CPU usage. Based on the type of machine and their location, a model is used to predict the energy consumed. Then, an estimate at the machine location of the electric grid carbon impact is obtained from `Electricity Maps <https://app.electricitymaps.com>`_ and finaly a carbon footprint is obtained. This method is based on a `peer-reviewed research paper <https://www.green-coding.io/projects/cloud-energy>`_.
+Our continuous integration pipeline works with Github Actions that operate on Microsoft Azure VMs. For each run, we use the `Eco-CI Energy Estimation tool <https://github.com/marketplace/actions/eco-ci-energy-estimation>`_  to monitor CPU usage. Based on the type of machine and their location, a model is used to predict the energy consumed. Then, an estimate at the machine location of the electric grid carbon impact is obtained from `Electricity Maps <https://app.electricitymaps.com>`_ and finally a carbon footprint is obtained. This method is based on a `peer-reviewed research paper <https://www.green-coding.io/projects/cloud-energy>`_.
 
 In argopy we furthermore categorise each Github Actions run, in order to get an easier understanding of our software development and maintenance footprint. We do it along the categorisation principle shown in figure :numref:`carbon_footprint`. The carbon footprint for each category in then easily accessible with the :class:`argopy.utils.GreenCoding` class.
 

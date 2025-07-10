@@ -183,7 +183,6 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
         "ext.files": sorted(
             [
                 ("boto3", get_version),
-                ("h5netcdf", get_version),
                 ("numcodecs", get_version),
                 ("s3fs", get_version),
                 ("kerchunk", get_version),

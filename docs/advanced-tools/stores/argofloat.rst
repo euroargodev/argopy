@@ -43,7 +43,7 @@ If a specific host is not provided, :class:`ArgoFloat` will fetch float data fro
 
 
 Note that in order to include dataset from the auxiliary GDAC folder, you need to specify it with the ``aux`` argument at
-the instanciation of the class:
+the instantiation of the class:
 
 .. ipython:: python
     :okwarning:
@@ -76,6 +76,13 @@ So finally, you can open any of these dataset using their keyword:
 
 Note that you can open a dataset lazily, this is explained in the :ref:`lazy-argofloat` documentation page.
 
+.. note::
+    The :meth:`ArgoFloat.open_dataset` also support for direct file loading as a `netCDF4 Dataset object <https://unidata.github.io/netcdf4-python/#netCDF4.Dataset>`_. Just use the `netCDF4=True` option.
+
+    .. ipython:: python
+        :okwarning:
+
+        af.open_dataset('meta', netCDF4=True)
 
 Integration within **argopy**
 -----------------------------
@@ -88,10 +95,9 @@ The :class:`ArgoFloat` class is further used in **argopy** in the :class:`ArgoIn
     from argopy import ArgoIndex
 
     # Make a search on Argo index of profiles:
-    idx = ArgoIndex().search_lat_lon([-70, -55, 20, 30], nrows=100)
+    idx = ArgoIndex().query.lon_lat([-70, -55, 20, 30], nrows=100)
 
-    # Then iterate over floats matching the results:
-    for float in idx.iterfloats():
-        # 'float' is an ArgoFloat instance
-        ds = float.open_dataset('meta')
-        print(float.WMO, ds['LAUNCH_DATE'].data)
+    # Then iterate over ArgoFloat matching the results:
+    for a_float in idx.iterfloats():
+        ds = a_float.open_dataset('meta')
+        print(a_float.WMO, ds['LAUNCH_DATE'].data)

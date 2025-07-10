@@ -15,13 +15,6 @@ from .filesystems import has_distributed, distributed  # noqa: F401
 from .spec import ArgoStoreProto  # noqa: F401
 from .implementations.http_erddap import httpstore_erddap_auth  # noqa: F401
 
-from .index.implementations.index_pyarrow import (
-    indexstore as indexstore_pa,
-)  # noqa: F401
-from .index.implementations.index_pandas import (
-    indexstore as indexstore_pd,
-)  # noqa: F401
-
 
 __all__ = (
     # Classes:

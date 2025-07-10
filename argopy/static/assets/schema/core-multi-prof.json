@@ -1,0 +1,735 @@
+{
+  "dims": [
+    "N_PROF",
+    "N_PARAM",
+    "N_LEVELS",
+    "N_CALIB",
+    "N_HISTORY"
+  ],
+  "vars": {
+    "DATA_TYPE": {
+      "dims": [],
+      "attrs": {
+        "long_name": "Data type",
+        "conventions": "Argo reference table 1"
+      },
+      "dtype": "<U16"
+    },
+    "FORMAT_VERSION": {
+      "dims": [],
+      "attrs": {
+        "long_name": "File format version"
+      },
+      "dtype": "<U4"
+    },
+    "HANDBOOK_VERSION": {
+      "dims": [],
+      "attrs": {
+        "long_name": "Data handbook version"
+      },
+      "dtype": "<U4"
+    },
+    "REFERENCE_DATE_TIME": {
+      "dims": [],
+      "attrs": {
+        "long_name": "Date of reference for Julian days",
+        "conventions": "YYYYMMDDHHMISS"
+      },
+      "dtype": "datetime64[ns]"
+    },
+    "DATE_CREATION": {
+      "dims": [],
+      "attrs": {
+        "long_name": "Date of file creation",
+        "conventions": "YYYYMMDDHHMISS"
+      },
+      "dtype": "datetime64[ns]"
+    },
+    "DATE_UPDATE": {
+      "dims": [],
+      "attrs": {
+        "long_name": "Date of update of this file",
+        "conventions": "YYYYMMDDHHMISS"
+      },
+      "dtype": "datetime64[ns]"
+    },
+    "PLATFORM_NUMBER": {
+      "dims": [
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Float unique identifier",
+        "conventions": "WMO float identifier : A9IIIII"
+      },
+      "dtype": "int64"
+    },
+    "PROJECT_NAME": {
+      "dims": [
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Name of the project"
+      },
+      "dtype": "<U64"
+    },
+    "PI_NAME": {
+      "dims": [
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Name of the principal investigator"
+      },
+      "dtype": "<U64"
+    },
+    "STATION_PARAMETERS": {
+      "dims": [
+        "N_PROF",
+        "N_PARAM"
+      ],
+      "attrs": {
+        "long_name": "List of available parameters for the station",
+        "conventions": "Argo reference table 3"
+      },
+      "dtype": "<U16"
+    },
+    "CYCLE_NUMBER": {
+      "dims": [
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Float cycle number",
+        "conventions": "0...N, 0 : launch cycle (if exists), 1 : first complete cycle"
+      },
+      "dtype": "int64"
+    },
+    "DIRECTION": {
+      "dims": [
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Direction of the station profiles",
+        "conventions": "A: ascending profiles, D: descending profiles"
+      },
+      "dtype": "<U1"
+    },
+    "DATA_CENTRE": {
+      "dims": [
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Data centre in charge of float data processing",
+        "conventions": "Argo reference table 4"
+      },
+      "dtype": "<U2"
+    },
+    "DC_REFERENCE": {
+      "dims": [
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Station unique identifier in data centre",
+        "conventions": "Data centre convention"
+      },
+      "dtype": "<U32"
+    },
+    "DATA_STATE_INDICATOR": {
+      "dims": [
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Degree of processing the data have passed through",
+        "conventions": "Argo reference table 6"
+      },
+      "dtype": "<U4"
+    },
+    "DATA_MODE": {
+      "dims": [
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Delayed mode or real time data",
+        "conventions": "R : real time; D : delayed mode; A : real time with adjustment"
+      },
+      "dtype": "<U1"
+    },
+    "PLATFORM_TYPE": {
+      "dims": [
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Type of float",
+        "conventions": "Argo reference table 23"
+      },
+      "dtype": "<U32"
+    },
+    "FLOAT_SERIAL_NO": {
+      "dims": [
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Serial number of the float"
+      },
+      "dtype": "<U32"
+    },
+    "FIRMWARE_VERSION": {
+      "dims": [
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Instrument firmware version"
+      },
+      "dtype": "<U32"
+    },
+    "WMO_INST_TYPE": {
+      "dims": [
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Coded instrument type",
+        "conventions": "Argo reference table 8"
+      },
+      "dtype": "int64"
+    },
+    "JULD": {
+      "dims": [
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Julian day (UTC) of the station relative to REFERENCE_DATE_TIME",
+        "standard_name": "time",
+        "conventions": "Relative julian days with decimal part (as parts of day)",
+        "resolution": 0.0,
+        "axis": "T"
+      },
+      "dtype": "datetime64[ns]"
+    },
+    "JULD_QC": {
+      "dims": [
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Quality on date and time",
+        "conventions": "Argo reference table 2"
+      },
+      "dtype": "int64"
+    },
+    "JULD_LOCATION": {
+      "dims": [
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Julian day (UTC) of the location relative to REFERENCE_DATE_TIME",
+        "conventions": "Relative julian days with decimal part (as parts of day)",
+        "resolution": 0.0
+      },
+      "dtype": "datetime64[ns]"
+    },
+    "LATITUDE": {
+      "dims": [
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Latitude of the station, best estimate",
+        "standard_name": "latitude",
+        "units": "degree_north",
+        "valid_min": -90.0,
+        "valid_max": 90.0,
+        "axis": "Y"
+      },
+      "dtype": "float64"
+    },
+    "LONGITUDE": {
+      "dims": [
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Longitude of the station, best estimate",
+        "standard_name": "longitude",
+        "units": "degree_east",
+        "valid_min": -180.0,
+        "valid_max": 180.0,
+        "axis": "X"
+      },
+      "dtype": "float64"
+    },
+    "POSITION_QC": {
+      "dims": [
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Quality on position (latitude and longitude)",
+        "conventions": "Argo reference table 2"
+      },
+      "dtype": "int64"
+    },
+    "POSITIONING_SYSTEM": {
+      "dims": [
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Positioning system"
+      },
+      "dtype": "<U8"
+    },
+    "PROFILE_PRES_QC": {
+      "dims": [
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Global quality flag of PRES profile",
+        "conventions": "Argo reference table 2a"
+      },
+      "dtype": "<U3"
+    },
+    "PROFILE_TEMP_QC": {
+      "dims": [
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Global quality flag of TEMP profile",
+        "conventions": "Argo reference table 2a"
+      },
+      "dtype": "<U3"
+    },
+    "PROFILE_PSAL_QC": {
+      "dims": [
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Global quality flag of PSAL profile",
+        "conventions": "Argo reference table 2a"
+      },
+      "dtype": "<U3"
+    },
+    "VERTICAL_SAMPLING_SCHEME": {
+      "dims": [
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Vertical sampling scheme",
+        "conventions": "Argo reference table 16"
+      },
+      "dtype": "<U256"
+    },
+    "CONFIG_MISSION_NUMBER": {
+      "dims": [
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Unique number denoting the missions performed by the float",
+        "conventions": "1...N, 1 : first complete mission"
+      },
+      "dtype": "int64"
+    },
+    "PRES": {
+      "dims": [
+        "N_PROF",
+        "N_LEVELS"
+      ],
+      "attrs": {
+        "long_name": "Sea water pressure, equals 0 at sea-level",
+        "standard_name": "sea_water_pressure",
+        "units": "decibar",
+        "valid_min": 0.0,
+        "valid_max": 12000.0,
+        "C_format": "%7.1f",
+        "FORTRAN_format": "F7.1",
+        "resolution": 1.0,
+        "axis": "Z"
+      },
+      "dtype": "float32"
+    },
+    "PRES_QC": {
+      "dims": [
+        "N_PROF",
+        "N_LEVELS"
+      ],
+      "attrs": {
+        "long_name": "quality flag",
+        "conventions": "Argo reference table 2"
+      },
+      "dtype": "int64"
+    },
+    "PRES_ADJUSTED": {
+      "dims": [
+        "N_PROF",
+        "N_LEVELS"
+      ],
+      "attrs": {
+        "long_name": "Sea water pressure, equals 0 at sea-level",
+        "standard_name": "sea_water_pressure",
+        "units": "decibar",
+        "valid_min": 0.0,
+        "valid_max": 12000.0,
+        "C_format": "%7.1f",
+        "FORTRAN_format": "F7.1",
+        "resolution": 1.0,
+        "axis": "Z"
+      },
+      "dtype": "float32"
+    },
+    "PRES_ADJUSTED_QC": {
+      "dims": [
+        "N_PROF",
+        "N_LEVELS"
+      ],
+      "attrs": {
+        "long_name": "quality flag",
+        "conventions": "Argo reference table 2"
+      },
+      "dtype": "int64"
+    },
+    "PRES_ADJUSTED_ERROR": {
+      "dims": [
+        "N_PROF",
+        "N_LEVELS"
+      ],
+      "attrs": {
+        "long_name": "Contains the error on the adjusted values as determined by the delayed mode QC process",
+        "units": "decibar",
+        "C_format": "%7.1f",
+        "FORTRAN_format": "F7.1",
+        "resolution": 1.0
+      },
+      "dtype": "float32"
+    },
+    "TEMP": {
+      "dims": [
+        "N_PROF",
+        "N_LEVELS"
+      ],
+      "attrs": {
+        "long_name": "Sea temperature in-situ ITS-90 scale",
+        "standard_name": "sea_water_temperature",
+        "units": "degree_Celsius",
+        "valid_min": -2.5,
+        "valid_max": 40.0,
+        "C_format": "%9.3f",
+        "FORTRAN_format": "F9.3",
+        "resolution": 0.0010000000474974513
+      },
+      "dtype": "float32"
+    },
+    "TEMP_QC": {
+      "dims": [
+        "N_PROF",
+        "N_LEVELS"
+      ],
+      "attrs": {
+        "long_name": "quality flag",
+        "conventions": "Argo reference table 2"
+      },
+      "dtype": "int64"
+    },
+    "TEMP_ADJUSTED": {
+      "dims": [
+        "N_PROF",
+        "N_LEVELS"
+      ],
+      "attrs": {
+        "long_name": "Sea temperature in-situ ITS-90 scale",
+        "standard_name": "sea_water_temperature",
+        "units": "degree_Celsius",
+        "valid_min": -2.5,
+        "valid_max": 40.0,
+        "C_format": "%9.3f",
+        "FORTRAN_format": "F9.3",
+        "resolution": 0.0010000000474974513
+      },
+      "dtype": "float32"
+    },
+    "TEMP_ADJUSTED_QC": {
+      "dims": [
+        "N_PROF",
+        "N_LEVELS"
+      ],
+      "attrs": {
+        "long_name": "quality flag",
+        "conventions": "Argo reference table 2"
+      },
+      "dtype": "int64"
+    },
+    "TEMP_ADJUSTED_ERROR": {
+      "dims": [
+        "N_PROF",
+        "N_LEVELS"
+      ],
+      "attrs": {
+        "long_name": "Contains the error on the adjusted values as determined by the delayed mode QC process",
+        "units": "degree_Celsius",
+        "C_format": "%9.3f",
+        "FORTRAN_format": "F9.3",
+        "resolution": 0.0010000000474974513
+      },
+      "dtype": "float32"
+    },
+    "PSAL": {
+      "dims": [
+        "N_PROF",
+        "N_LEVELS"
+      ],
+      "attrs": {
+        "long_name": "Practical salinity",
+        "standard_name": "sea_water_salinity",
+        "units": "psu",
+        "valid_min": 2.0,
+        "valid_max": 41.0,
+        "C_format": "%9.3f",
+        "FORTRAN_format": "F9.3",
+        "resolution": 0.0010000000474974513
+      },
+      "dtype": "float32"
+    },
+    "PSAL_QC": {
+      "dims": [
+        "N_PROF",
+        "N_LEVELS"
+      ],
+      "attrs": {
+        "long_name": "quality flag",
+        "conventions": "Argo reference table 2"
+      },
+      "dtype": "int64"
+    },
+    "PSAL_ADJUSTED": {
+      "dims": [
+        "N_PROF",
+        "N_LEVELS"
+      ],
+      "attrs": {
+        "long_name": "Practical salinity",
+        "standard_name": "sea_water_salinity",
+        "units": "psu",
+        "valid_min": 2.0,
+        "valid_max": 41.0,
+        "C_format": "%9.3f",
+        "FORTRAN_format": "F9.3",
+        "resolution": 0.0010000000474974513
+      },
+      "dtype": "float32"
+    },
+    "PSAL_ADJUSTED_QC": {
+      "dims": [
+        "N_PROF",
+        "N_LEVELS"
+      ],
+      "attrs": {
+        "long_name": "quality flag",
+        "conventions": "Argo reference table 2"
+      },
+      "dtype": "int64"
+    },
+    "PSAL_ADJUSTED_ERROR": {
+      "dims": [
+        "N_PROF",
+        "N_LEVELS"
+      ],
+      "attrs": {
+        "long_name": "Contains the error on the adjusted values as determined by the delayed mode QC process",
+        "units": "psu",
+        "C_format": "%9.3f",
+        "FORTRAN_format": "F9.3",
+        "resolution": 0.0010000000474974513
+      },
+      "dtype": "float32"
+    },
+    "PARAMETER": {
+      "dims": [
+        "N_PROF",
+        "N_CALIB",
+        "N_PARAM"
+      ],
+      "attrs": {
+        "long_name": "List of parameters with calibration information",
+        "conventions": "Argo reference table 3"
+      },
+      "dtype": "<U16"
+    },
+    "SCIENTIFIC_CALIB_EQUATION": {
+      "dims": [
+        "N_PROF",
+        "N_CALIB",
+        "N_PARAM"
+      ],
+      "attrs": {
+        "long_name": "Calibration equation for this parameter"
+      },
+      "dtype": "<U256"
+    },
+    "SCIENTIFIC_CALIB_COEFFICIENT": {
+      "dims": [
+        "N_PROF",
+        "N_CALIB",
+        "N_PARAM"
+      ],
+      "attrs": {
+        "long_name": "Calibration coefficients for this equation"
+      },
+      "dtype": "<U256"
+    },
+    "SCIENTIFIC_CALIB_COMMENT": {
+      "dims": [
+        "N_PROF",
+        "N_CALIB",
+        "N_PARAM"
+      ],
+      "attrs": {
+        "long_name": "Comment applying to this parameter calibration"
+      },
+      "dtype": "<U256"
+    },
+    "SCIENTIFIC_CALIB_DATE": {
+      "dims": [
+        "N_PROF",
+        "N_CALIB",
+        "N_PARAM"
+      ],
+      "attrs": {
+        "long_name": "Date of calibration",
+        "conventions": "YYYYMMDDHHMISS"
+      },
+      "dtype": "datetime64[ns]"
+    },
+    "HISTORY_INSTITUTION": {
+      "dims": [
+        "N_HISTORY",
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Institution which performed action",
+        "conventions": "Argo reference table 4"
+      },
+      "dtype": "<U1"
+    },
+    "HISTORY_STEP": {
+      "dims": [
+        "N_HISTORY",
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Step in data processing",
+        "conventions": "Argo reference table 12"
+      },
+      "dtype": "<U1"
+    },
+    "HISTORY_SOFTWARE": {
+      "dims": [
+        "N_HISTORY",
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Name of software which performed action",
+        "conventions": "Institution dependent"
+      },
+      "dtype": "<U1"
+    },
+    "HISTORY_SOFTWARE_RELEASE": {
+      "dims": [
+        "N_HISTORY",
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Version/release of software which performed action",
+        "conventions": "Institution dependent"
+      },
+      "dtype": "<U1"
+    },
+    "HISTORY_REFERENCE": {
+      "dims": [
+        "N_HISTORY",
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Reference of database",
+        "conventions": "Institution dependent"
+      },
+      "dtype": "<U1"
+    },
+    "HISTORY_DATE": {
+      "dims": [
+        "N_HISTORY",
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Date the history record was created",
+        "conventions": "YYYYMMDDHHMISS"
+      },
+      "dtype": "datetime64[ns]"
+    },
+    "HISTORY_ACTION": {
+      "dims": [
+        "N_HISTORY",
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Action performed on data",
+        "conventions": "Argo reference table 7"
+      },
+      "dtype": "<U1"
+    },
+    "HISTORY_PARAMETER": {
+      "dims": [
+        "N_HISTORY",
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Station parameter action is performed on",
+        "conventions": "Argo reference table 3"
+      },
+      "dtype": "<U1"
+    },
+    "HISTORY_START_PRES": {
+      "dims": [
+        "N_HISTORY",
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Start pressure action applied on",
+        "units": "decibar"
+      },
+      "dtype": "float32"
+    },
+    "HISTORY_STOP_PRES": {
+      "dims": [
+        "N_HISTORY",
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Stop pressure action applied on",
+        "units": "decibar"
+      },
+      "dtype": "float32"
+    },
+    "HISTORY_PREVIOUS_VALUE": {
+      "dims": [
+        "N_HISTORY",
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Parameter/Flag previous value before action"
+      },
+      "dtype": "float32"
+    },
+    "HISTORY_QCTEST": {
+      "dims": [
+        "N_HISTORY",
+        "N_PROF"
+      ],
+      "attrs": {
+        "long_name": "Documentation of tests performed, tests failed (in hex form)",
+        "conventions": "Write tests performed when ACTION=QCP$; tests failed when ACTION=QCF$"
+      },
+      "dtype": "<U1"
+    }
+  },
+  "attrs": {
+    "title": "Argo float vertical profile",
+    "institution": "FR GDAC",
+    "source": "Argo float",
+    "history": "2025-06-09T15:15:19.555342+00:00 creation",
+    "references": "http://www.argodatamgt.org/Documentation",
+    "user_manual_version": "3.1",
+    "Conventions": "Argo-3.1 CF-1.6",
+    "featureType": "trajectoryProfile"
+  }
+}

@@ -4,9 +4,8 @@ import time
 import threading
 import logging
 
-
-log = logging.getLogger("argopy.utils.monitors")
-
+from .lists import list_available_data_src
+from .checkers import isAPIconnected
 
 try:
     importlib.import_module("matplotlib")  # noqa: E402
@@ -14,8 +13,8 @@ try:
 except ImportError:
     pass
 
-from .lists import list_available_data_src
-from .checkers import isAPIconnected
+
+log = logging.getLogger("argopy.utils.monitors")
 
 
 def badge(label="label", message="message", color="green", insert=False):

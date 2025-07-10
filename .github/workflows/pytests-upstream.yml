@@ -79,7 +79,7 @@ jobs:
     steps:
       - name: Energy Estimation - Initialize
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
         with:
           task: start-measurement
           project: ${{ secrets.CARBONDB_PROJECT_UUID }}
@@ -91,7 +91,7 @@ jobs:
         with:
           fetch-depth: 0 # Fetch all history for all branches and tags.
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4.1.0
+        uses: aws-actions/configure-aws-credentials@v4.2.1
         with:
           aws-region: us-west-1
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ga-ci-tests-argopy-01
@@ -124,7 +124,7 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Setup
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
         with:
           task: get-measurement
           label: 'setup core-free'
@@ -141,19 +141,11 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Exec
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
         with:
           task: get-measurement
           label: 'pytest core-free'
         continue-on-error: true
-      - name: Generate and publish a report on failure
-        if: |
-          failure()
-          && github.repository_owner == 'euroargodev'
-        uses: xarray-contrib/issue-from-pytest-log@main
-        with:
-          log-path: output-${{ matrix.python-version }}-log.jsonl
-          issue-title: "Upstream CI tests failed: Core - Free - Py${{matrix.python-version}} - ${{ matrix.os }}"
       - name: Save tests log as artifact
         uses: actions/upload-artifact@v4
         with:
@@ -162,7 +154,7 @@ jobs:
           retention-days: 90
       - name: Energy Estimation - Show Results
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
         with:
           task: display-results
         continue-on-error: true
@@ -194,7 +186,7 @@ jobs:
     steps:
       - name: Energy Estimation - Initialize
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
         with:
           task: start-measurement
           project: ${{ secrets.CARBONDB_PROJECT_UUID }}
@@ -206,7 +198,7 @@ jobs:
         with:
           fetch-depth: 0 # Fetch all history for all branches and tags.
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4.1.0
+        uses: aws-actions/configure-aws-credentials@v4.2.1
         with:
           aws-region: us-west-1
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ga-ci-tests-argopy-01
@@ -239,7 +231,7 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Setup
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
         with:
           task: get-measurement
           label: 'setup all-free'
@@ -256,7 +248,7 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Exec
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
         with:
           task: get-measurement
           label: 'pytest all-free'
@@ -269,7 +261,7 @@ jobs:
           retention-days: 90
       - name: Energy Estimation - Show Results
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
         with:
           task: display-results
         continue-on-error: true

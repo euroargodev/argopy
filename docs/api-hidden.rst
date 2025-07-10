@@ -14,6 +14,7 @@
     argopy.fetchers.ArgoDataFetcher.profile
     argopy.fetchers.ArgoDataFetcher.load
     argopy.fetchers.ArgoDataFetcher.to_xarray
+    argopy.fetchers.ArgoDataFetcher.to_dataset
     argopy.fetchers.ArgoDataFetcher.to_dataframe
     argopy.fetchers.ArgoDataFetcher.to_index
     argopy.fetchers.ArgoDataFetcher.plot
@@ -93,6 +94,7 @@
     argopy.utils.list_radiometry_variables
     argopy.utils.list_radiometry_parameters
     argopy.utils.list_gdac_servers
+    argopy.utils.shortcut2gdac
 
     argopy.utils.Chunker
 
@@ -126,6 +128,11 @@
     argopy.utils.fill_variables_not_in_all_datasets
 
     argopy.utils.MonitoredThreadPoolExecutor
+
+    argopy.utils.optical_modeling.Z_euphotic
+    argopy.utils.optical_modeling.Z_firstoptic
+    argopy.utils.optical_modeling.Z_iPAR_threshold
+    argopy.utils.optical_modeling.DCM
 
     argopy.related.load_dict
     argopy.related.get_coriolis_profile_id
@@ -169,11 +176,6 @@
     argopy.related.ArgoDOI.dx
     argopy.related.ArgoDOI.doi
     argopy.related.doi_snapshot.DOIrecord
-
-    argopy.extensions.CanyonMED
-    argopy.extensions.CanyonMED.predict
-    argopy.extensions.CanyonMED.input
-    argopy.extensions.CanyonMED.output_list
 
     argopy.plot
     argopy.plot.dashboard
@@ -274,9 +276,9 @@
     argopy.stores.ArgoKerchunker
     argopy.stores.ArgoKerchunker.supported
     argopy.stores.ArgoKerchunker.translate
-    argopy.stores.ArgoKerchunker.to_kerchunk
+    argopy.stores.ArgoKerchunker.nc2reference
+    argopy.stores.ArgoKerchunker.to_reference
     argopy.stores.ArgoKerchunker.pprint
-    argopy.stores.ArgoKerchunker.open_dataset
 
     argopy.stores.index.spec.ArgoIndexStoreProto
 
@@ -284,11 +286,17 @@
     argopy.ArgoIndex
     argopy.ArgoIndex.N_MATCH
     argopy.ArgoIndex.N_RECORDS
+    argopy.ArgoIndex.N_FILES
     argopy.ArgoIndex.convention_supported
     argopy.ArgoIndex.load
+
     argopy.ArgoIndex.read_wmo
-    argopy.ArgoIndex.records_per_wmo
+    argopy.ArgoIndex.read_dac_wmo
+    argopy.ArgoIndex.read_domain
     argopy.ArgoIndex.read_params
+    argopy.ArgoIndex.read_files
+    argopy.ArgoIndex.records_per_wmo
+
     argopy.ArgoIndex.search_wmo
     argopy.ArgoIndex.search_cyc
     argopy.ArgoIndex.search_wmo_cyc
@@ -299,6 +307,7 @@
     argopy.ArgoIndex.search_parameter_data_mode
     argopy.ArgoIndex.search_profiler_type
     argopy.ArgoIndex.search_profiler_label
+
     argopy.ArgoIndex.to_dataframe
     argopy.ArgoIndex.to_indexfile
     argopy.ArgoIndex.copy
@@ -307,6 +316,22 @@
     argopy.ArgoIndex.uri_full_index
     argopy.ArgoIndex.files
     argopy.ArgoIndex.files_full_index
+
+    argopy.ArgoIndex.query
+    argopy.ArgoIndex.query.wmo
+    argopy.ArgoIndex.query.cyc
+    argopy.ArgoIndex.query.lon
+    argopy.ArgoIndex.query.lat
+    argopy.ArgoIndex.query.date
+    argopy.ArgoIndex.query.params
+    argopy.ArgoIndex.query.parameter_data_mode
+    argopy.ArgoIndex.query.profiler_type
+    argopy.ArgoIndex.query.profiler_label
+
+    argopy.ArgoIndex.query.wmo_cyc
+    argopy.ArgoIndex.query.lon_lat
+    argopy.ArgoIndex.query.box
+    argopy.ArgoIndex.query.compose
 
     argopy.stores.index.implementations.index_s3.s3index
     argopy.stores.index.implementations.index_s3.s3index_core
@@ -330,17 +355,28 @@
     argopy.xarray.ArgoAccessor.N_POINTS
     argopy.xarray.ArgoAccessor.N_PROF
     argopy.xarray.ArgoAccessor.to_zarr
+    argopy.xarray.ArgoAccessor.reduce_profile
 
     argopy.xarray.ArgoEngine
 
     argopy.extensions.register_argo_accessor
     argopy.extensions.ArgoAccessorExtension
+
     argopy.extensions.CanyonMED
     argopy.extensions.CanyonMED.predict
+    argopy.extensions.CanyonMED.input
+    argopy.extensions.CanyonMED.output_list
+
     argopy.extensions.ParamsDataMode.compute
     argopy.extensions.ParamsDataMode.merge
     argopy.extensions.ParamsDataMode.filter
     argopy.extensions.ParamsDataMode.split
+
+    argopy.extensions.OpticalModeling
+    argopy.extensions.OpticalModeling.Zeu
+    argopy.extensions.OpticalModeling.Zpd
+    argopy.extensions.OpticalModeling.Z_iPAR_threshold
+    argopy.extensions.OpticalModeling.DCM
 
     argopy.errors.InvalidDatasetStructure
 

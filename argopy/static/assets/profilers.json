@@ -1,7 +1,7 @@
 {
   "name": "profilers",
   "long_name": "Profiler codes and description from Argo reference table 8",
-  "last_update": "2024-12-16T09:16:11.170268+00:00",
+  "last_update": "2025-06-09T15:13:50.916306+00:00",
   "data": {
     "profilers": {
       "831": "PALACE float",

@@ -15,23 +15,26 @@ dependencies:
   - requests
   - scipy
   - toolz
-#  - xarray > 2024.3 # to test if https://github.com/pydata/xarray/issues/8909 is solved
+  - xarray >= 2025.7
 
 # EXT.UTIL:
-  - boto3
   - gsw
-  - s3fs > 2023.12.12
   - tqdm
-  - zarr
 
 # EXT.PERF:
   - dask
   - distributed
   - pyarrow
 
+# EXT.FILES:
+  - boto3
+  - kerchunk
+  - s3fs > 2023.12.12
+  - zarr
+
 # EXT.PLOT:
   - IPython
-  - cartopy
+ - cartopy
   - ipykernel
   - ipywidgets
   - matplotlib
@@ -59,4 +62,5 @@ dependencies:
 # PIP:
   - pip:
       - pytest-reportlog
-      - git+https://github.com/pydata/xarray.git@backend-indexing
+      # - git+https://github.com/pydata/xarray.git@backend-indexing
+

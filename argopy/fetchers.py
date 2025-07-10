@@ -11,6 +11,9 @@ Validity of access points parameters (eg: wmo) is made here, not at the data/ind
 
 import os
 import warnings
+
+import netCDF4
+
 import xarray as xr
 import pandas as pd
 import numpy as np
@@ -134,9 +137,15 @@ class ArgoDataFetcher:
                 )
             self._cache = self.fetcher_kwargs["cache"]
 
-        os.makedirs(self.fetcher_kwargs.get("cachedir", OPTIONS["cachedir"]), exist_ok=True)
-        self._cachedir = VALIDATE("cachedir", self.fetcher_kwargs.get("cachedir", OPTIONS["cachedir"]))
-        self._parallel = VALIDATE("parallel", self.fetcher_kwargs.get("parallel", OPTIONS["parallel"]))
+        os.makedirs(
+            self.fetcher_kwargs.get("cachedir", OPTIONS["cachedir"]), exist_ok=True
+        )
+        self._cachedir = VALIDATE(
+            "cachedir", self.fetcher_kwargs.get("cachedir", OPTIONS["cachedir"])
+        )
+        self._parallel = VALIDATE(
+            "parallel", self.fetcher_kwargs.get("parallel", OPTIONS["parallel"])
+        )
 
         # Init sub-methods:
         self.fetcher = None
@@ -145,7 +154,10 @@ class ArgoDataFetcher:
                 "The '%s' dataset is not available for the '%s' data source"
                 % (self._dataset_id, self._src)
             )
-        [fetcher_kwargs.pop(k, None) for k in ['ds', 'mode', 'cache', 'cachedir', 'parallel']]
+        [
+            fetcher_kwargs.pop(k, None)
+            for k in ["ds", "mode", "cache", "cachedir", "parallel"]
+        ]
         self.fetcher_options = {
             **{
                 "ds": self._dataset_id,
@@ -156,7 +168,7 @@ class ArgoDataFetcher:
             },
             **fetcher_kwargs,
         }
-        delattr(self, 'fetcher_kwargs')
+        delattr(self, "fetcher_kwargs")
 
         self.define_postprocessor()
         self._AccessPoint = None
@@ -178,7 +190,9 @@ class ArgoDataFetcher:
                 "The 'argovis' data source fetching is only available in 'standard' user mode"
             )
         if self._src == "gdac" and "bgc" in self._dataset_id:
-            warnings.warn("BGC data support with the 'gdac' data source is still in Work In Progress")
+            warnings.warn(
+                "BGC data support with the 'gdac' data source is still in Work In Progress"
+            )
 
     @property
     def _icon_user_mode(self):
@@ -191,9 +205,9 @@ class ArgoDataFetcher:
 
     @property
     def _icon_dataset(self):
-        if self._dataset_id in ['bgc', 'bgc-s']:
+        if self._dataset_id in ["bgc", "bgc-s"]:
             return "🟢"
-        elif self._dataset_id in ['phy']:
+        elif self._dataset_id in ["phy"]:
             return "🟡+🔵"
 
     @property
@@ -228,14 +242,20 @@ class ArgoDataFetcher:
             parallel_txt = "True [%s]" % parallel_method
         else:
             parallel_txt = "False"
-        return "%s Performances: cache=%s, parallel=%s" % (self._icon_performances, str(self._cache), parallel_txt)
+        return "%s Performances: cache=%s, parallel=%s" % (
+            self._icon_performances,
+            str(self._cache),
+            parallel_txt,
+        )
 
     def __repr__(self):
         if self.fetcher:
             summary = [self.fetcher.__repr__()]
         else:
-            summary = ["<datafetcher.%s> 'No access point initialised'" % self._src,
-                       "Available access points: %s" % ", ".join(self.Fetchers.keys())]
+            summary = [
+                "<datafetcher.%s> 'No access point initialised'" % self._src,
+                "Available access points: %s" % ", ".join(self.Fetchers.keys()),
+            ]
 
         summary.append(self._repr_user_mode)
         summary.append(self._repr_dataset)
@@ -353,21 +373,24 @@ class ArgoDataFetcher:
         """
         # If data are not loaded yet, with the gdac and erddap+bgc,
         # we can rely on the fetcher ArgoIndex to make an answer faster
-        if (self._src == "erddap" and "bgc" in self._dataset_id) or (
-            self._src == "gdac") and (not isinstance(self._data, xr.Dataset)):
+        if (
+            (self._src == "erddap" and "bgc" in self._dataset_id)
+            or (self._src == "gdac")
+            and (not isinstance(self._data, xr.Dataset))
+        ):
             idx = self.fetcher.indexfs
             if self._AccessPoint == "region":
                 # Convert data box to index box (remove depth info):
                 index_box = self._AccessPoint_data["box"].copy()
                 del index_box[4:6]
                 if len(index_box) == 4:
-                    idx.search_lat_lon(index_box)
+                    idx.query.lon_lat(index_box)
                 else:
-                    idx.search_lat_lon_tim(index_box)
+                    idx.query.box(index_box)
             if self._AccessPoint == "float":
-                idx.search_wmo(self._AccessPoint_data["wmo"])
+                idx.query.wmo(self._AccessPoint_data["wmo"])
             if self._AccessPoint == "profile":
-                idx.search_wmo_cyc(
+                idx.query.wmo_cyc(
                     self._AccessPoint_data["wmo"], self._AccessPoint_data["cyc"]
                 )
             domain = idx.domain.copy()
@@ -628,7 +651,7 @@ class ArgoDataFetcher:
 
         return self
 
-    def to_xarray(self, **kwargs) -> xr.Dataset:
+    def _to_xarray(self, **kwargs) -> xr.Dataset:
         """Fetch and return data as :class:`xarray.DataSet`
 
         Trigger a fetch of data by the specified source and access point.
@@ -647,6 +670,44 @@ class ArgoDataFetcher:
         xds = self.postprocess(xds)
 
         return xds
+
+    def to_xarray(self, **kwargs) -> xr.Dataset:
+        """Fetch and return data as :class:`xarray.DataSet`
+
+        Trigger a fetch of data by the specified source and access point.
+
+        Returns
+        -------
+        :class:`xarray.DataSet`
+            Fetched data
+        """
+        return self.load(force=True, **kwargs).data
+
+    def to_dataset(self, **kwargs) -> netCDF4.Dataset:
+        """Fetch and return data as :class:`netCDF4.Dataset`
+
+        Trigger a fetch of data by the specified source and access point.
+
+        Notes
+        -----
+        This method will fetch data with :meth:`to_xarray` and then convert the **argopy** post-processed :class:`xarray.DataSet` into a :class:`netCDF4.Dataset`.
+
+        If you want to open an Argo netcdf file directly as a :class:`netCDF4.Dataset`, you should rely on the :class:`argopy.ArgoFloat.open_dataset` or :class:`argopy.gdacfs.open_dataset` lower-level methods.
+
+        Returns
+        -------
+        :class:`netCDF4.Dataset`
+            Fetched data
+        """
+        if not self.fetcher:
+            raise InvalidFetcher(
+                " Initialize an access point (%s) first."
+                % ",".join(self.Fetchers.keys())
+            )
+        xds = self.fetcher.to_xarray(**kwargs)
+        xds = self.postprocess(xds)
+        target = xds.to_netcdf(path=None)  # todo: include encoding for any possible Argo variable
+        return netCDF4.Dataset(None, memory=target, diskless=True, mode='r')
 
     def to_dataframe(self, **kwargs) -> pd.DataFrame:
         """Fetch and return data as :class:`pandas.DataFrame`
@@ -716,13 +777,13 @@ class ArgoDataFetcher:
                 index_box = self._AccessPoint_data["box"].copy()
                 del index_box[4:6]
                 if len(index_box) == 4:
-                    idx.search_lat_lon(index_box)
+                    idx.query.lon_lat(index_box)
                 else:
-                    idx.search_lat_lon_tim(index_box)
+                    idx.query.box(index_box)
             if self._AccessPoint == "float":
-                idx.search_wmo(self._AccessPoint_data["wmo"])
+                idx.query.wmo(self._AccessPoint_data["wmo"])
             if self._AccessPoint == "profile":
-                idx.search_wmo_cyc(
+                idx.query.wmo_cyc(
                     self._AccessPoint_data["wmo"], self._AccessPoint_data["cyc"]
                 )
 
@@ -738,8 +799,7 @@ class ArgoDataFetcher:
             if not full:
                 prt("to_index working with argo accessor attribute for a light index")
                 # Get a small index from the argo accessor attribute
-                if not self._loaded:
-                    self.load()
+                self.load()
                 df = self._data.argo.index
 
                 # Add Coriolis ID if requested:
@@ -777,7 +837,7 @@ class ArgoDataFetcher:
 
         if "wmo" in df and "cyc" in df and self._loaded and self._data is not None:
             # Ensure that all profiles reported in the index are indeed in the dataset
-            # This is not necessarily the case when the index is based on an ArgoIndex instance that may come to differ from postprocessed dataset
+            # This is not necessarily the case when the index is based on an ArgoIndex instance that may come to differ from post-processed dataset
             irow_remove = []
             for irow, row in df.iterrows():
                 i_found = np.logical_and.reduce(
@@ -819,7 +879,7 @@ class ArgoDataFetcher:
 
         if not self._loaded or force:
             # Fetch measurements:
-            self._data = self.to_xarray(**kwargs)
+            self._data = self._to_xarray(**kwargs)
             # Next 2 lines must come before ._index because to_index(full=False) calls back on .load() to read .data
             self._request = self.__repr__()  # Save definition of loaded data
             self._loaded = True

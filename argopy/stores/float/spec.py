@@ -12,9 +12,9 @@ import numpy as np
 
 from ...errors import InvalidOption
 from ...plot import dashboard
-from ...utils import check_wmo, isconnected, argo_split_path
+from ...utils import check_wmo, argo_split_path, shortcut2gdac
 from ...options import OPTIONS
-from .. import ArgoIndex, httpstore
+from .. import ArgoIndex
 
 
 log = logging.getLogger("argopy.stores.ArgoFloat")
@@ -62,7 +62,7 @@ class ArgoFloatProto(ABC):
             Time out in seconds to connect to a remote host (ftp or http).
         """
         self.WMO = check_wmo(wmo)[0]
-        self.host = OPTIONS["gdac"] if host is None else host
+        self.host = OPTIONS["gdac"] if host is None else shortcut2gdac(host)
         self.cache = bool(cache)
         self.cachedir = OPTIONS["cachedir"] if cachedir == "" else cachedir
         self.timeout = OPTIONS["api_timeout"] if timeout == 0 else timeout
@@ -93,7 +93,7 @@ class ArgoFloatProto(ABC):
 
     def load_index(self):
         """Load the Argo full index in memory and trigger search for this float"""
-        self.idx.load().search_wmo(self.WMO)
+        self.idx.load().query.wmo(self.WMO)
         return self
 
     @property
@@ -163,7 +163,6 @@ class ArgoFloatProto(ABC):
         self._metadata = data
 
         return self
-
 
     @abstractmethod
     def load_dac(self):
@@ -295,12 +294,18 @@ class ArgoFloatProto(ABC):
             Name of the dataset to open. It can be any key from the dictionary returned by :class:`ArgoFloat.ls_dataset`.
         cast: bool, optional, default = True
             Determine if the dataset variables should be cast or not. This is similar to opening the dataset directly with :class:`xr.open_dataset` using the ``engine=`argo``` option.
+            This will be ignored if the ``netCDF4` kwarg is set to True.
         **kwargs
             All the other parameters are passed to the GDAC store `open_dataset` method.
 
         Returns
         -------
         :class:`xarray.Dataset`
+
+        Notes
+        -----
+        Use the ``netCDF4=True`` option to return a :class:`netCDF4.Dataset` object instead of a :class:`xarray.Dataset`.
+
         """
         if name not in self.ls_dataset():
             raise ValueError(
@@ -310,7 +315,7 @@ class ArgoFloatProto(ABC):
         else:
             file = self.ls_dataset()[name]
 
-            if 'xr_opts' not in kwargs and cast == True:
+            if 'xr_opts' not in kwargs and cast is True:
                 kwargs.update({'xr_opts': {"engine": "argo"}})
 
             return self.fs.open_dataset(file, **kwargs)
@@ -336,12 +341,12 @@ class ArgoFloatProto(ABC):
                 desc["path"] = file
                 prof.append(desc)
             df = pd.DataFrame(data=prof)
-            stem2cyc = lambda s: (
+            stem2cyc = lambda s: (  # noqa: E731
                 int(s.split("_")[-1][0:-1])
                 if s.split("_")[-1][-1] == "D"
                 else int(s.split("_")[-1][:])
             )
-            row2cyc = lambda row: stem2cyc(row["stem"])
+            row2cyc = lambda row: stem2cyc(row["stem"])  # noqa: E731
             df["cyc"] = df.apply(row2cyc, axis=1)
             df["long_type"] = df.apply(
                 lambda row: row["type"].split(",")[-1].lstrip(), axis=1

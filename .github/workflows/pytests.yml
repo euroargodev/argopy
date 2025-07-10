@@ -57,7 +57,7 @@ jobs:
     steps:
       - name: Energy Estimation - Initialize
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
         with:
           task: start-measurement
           project: ${{ secrets.CARBONDB_PROJECT_UUID }}
@@ -67,7 +67,7 @@ jobs:
         continue-on-error: true
       - uses: actions/checkout@v4
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4.1.0
+        uses: aws-actions/configure-aws-credentials@v4.2.1
         with:
           aws-region: us-west-1
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ga-ci-tests-argopy-01
@@ -100,7 +100,7 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Setup
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
         with:
           task: get-measurement
           label: 'setup core-pinned'
@@ -116,13 +116,13 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Exec
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
         with:
           task: get-measurement
           label: 'pytest core-pinned'
         continue-on-error: true
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5.4.0
+        uses: codecov/codecov-action@v5.4.3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./cov.xml
@@ -143,7 +143,7 @@ jobs:
           retention-days: 90
       - name: Energy Estimation - Show Results
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
         with:
           task: display-results
         continue-on-error: true
@@ -172,7 +172,7 @@ jobs:
     steps:
       - name: Energy Estimation - Initialize
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
         with:
           task: start-measurement
           project: ${{ secrets.CARBONDB_PROJECT_UUID }}
@@ -182,7 +182,7 @@ jobs:
         continue-on-error: true
       - uses: actions/checkout@v4
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4.1.0
+        uses: aws-actions/configure-aws-credentials@v4.2.1
         with:
           aws-region: us-west-1
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ga-ci-tests-argopy-01
@@ -215,7 +215,7 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Setup
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
         with:
           task: get-measurement
           label: 'setup all-pinned'
@@ -231,13 +231,13 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Exec
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
         with:
           task: get-measurement
           label: 'pytest all-pinned'
         continue-on-error: true
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5.4.0
+        uses: codecov/codecov-action@v5.4.3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./cov.xml
@@ -258,7 +258,7 @@ jobs:
           retention-days: 90
       - name: Energy Estimation - Show Results
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
         with:
           task: display-results
         continue-on-error: true

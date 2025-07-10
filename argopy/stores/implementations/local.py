@@ -10,7 +10,7 @@ from typing import Literal, Any
 import fsspec
 from pathlib import Path
 import warnings
-
+from netCDF4 import Dataset
 
 from ...options import OPTIONS
 from ...errors import InvalidMethod, DataNotFound
@@ -155,7 +155,7 @@ class filestore(ArgoStoreProto):
                     "backend_kwargs": {
                         "consolidated": False,
                         "storage_options": {
-                            "fo": self.ak.to_kerchunk(path, overwrite=akoverwrite),
+                            "fo": self.ak.to_kerchunk(path, overwrite=akoverwrite),  # codespell:ignore
                             "remote_protocol": fsspec.core.split_protocol(path)[0],
                         },
                     },
@@ -169,6 +169,14 @@ class filestore(ArgoStoreProto):
                 log.debug("This path does not support byte range requests: %s" % path)
                 return load_in_memory(path, errors=errors, xr_opts=xr_opts)
 
+        netCDF4 = kwargs.get("netCDF4", False)
+        if lazy and netCDF4:
+            if errors == "raise":
+                raise ValueError("Cannot return a netCDF4.Dataset object in lazy mode")
+            elif errors == "ignore":
+                log.error("Cannot return a netCDF4.Dataset object in lazy mode")
+                return None
+
         if not lazy:
             target, _ = load_in_memory(path, errors=errors, xr_opts=xr_opts)
         else:
@@ -180,11 +188,16 @@ class filestore(ArgoStoreProto):
             )
 
         if target is not None:
-            ds = xr.open_dataset(target, **xr_opts)
+            if not netCDF4:
+                ds = xr.open_dataset(target, **xr_opts)
 
-            if "source" not in ds.encoding:
-                if isinstance(path, str):
-                    ds.encoding["source"] = path
+                if "source" not in ds.encoding:
+                    if isinstance(path, str):
+                        ds.encoding["source"] = path
+
+            else:
+                target = target if isinstance(target, bytes) else target.getbuffer()
+                ds = Dataset(None, memory=target, diskless=True, mode='r')
 
             self.register(path)
             return ds

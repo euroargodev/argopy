@@ -6,6 +6,10 @@ import shutil
 import pickle  # nosec B403 only used with internal files/assets
 import json
 import tempfile
+import aiohttp
+from typing import Union
+from pathlib import Path
+import logging
 
 
 from ..options import OPTIONS
@@ -14,6 +18,9 @@ from ..errors import (
     CacheFileNotFound,
 )
 from .filesystems import new_fs
+
+
+log = logging.getLogger("argopy.stores.spec")
 
 
 class ArgoStoreProto(ABC):
@@ -41,7 +48,7 @@ class ArgoStoreProto(ABC):
         self.cache = cache
         self.cachedir = OPTIONS["cachedir"] if cachedir == "" else cachedir
         self._fsspec_kwargs = {**kwargs}
-        self.fs, self.cache_registry = new_fs(
+        self.fs, self.cache_registry, self._fsspec_kwargs = new_fs(
             self.protocol, self.cache, self.cachedir, **self._fsspec_kwargs
         )
 
@@ -72,15 +79,58 @@ class ArgoStoreProto(ABC):
     def target_protocol(self):
         return getattr(self.fs, 'target_protocol', self.protocol)
 
+    def unstrip_protocol(self, path, **kwargs):
+        return self.fs.unstrip_protocol(path, **kwargs)
+
     def exists(self, path, *args):
         return self.fs.exists(path, *args)
 
     def info(self, path, *args, **kwargs):
         return self.fs.info(path, *args, **kwargs)
 
-    def expand_path(self, path):
+    def first(self, path: Union[str, Path], N: int = 4) -> str:
+        """Read first N bytes of a path
+
+        Return None if path cannot be open
+
+        Parameters
+        ----------
+        path: str, Path
+
+        Raises
+        ------
+        :class:`aiohttp.ClientResponseError`
+        """
+        def is_read(uri):
+            try:
+                self.ls(uri)
+                return True
+            except aiohttp.ClientResponseError:
+                raise
+            except Exception:
+                return False
+
+        if is_read(str(path)):
+            try:
+                return self.fs.open(str(path)).read(N)
+            except:  # noqa: E722
+                return None
+        else:
+            return None
+
+    def expand_path(self, path, **kwargs):
+        """Turn one or more globs or directories into a list of all matching paths to files or directories.
+
+        For http store, return path unchanged (not implemented).
+
+        kwargs are passed to fsspec expand_path which call ``glob`` or ``find``, which may in turn call ``ls``.
+
+        Returns
+        -------
+        list
+        """
         if self.protocol != "http" and self.protocol != "https":
-            return self.fs.expand_path(path)
+            return self.fs.expand_path(path, **kwargs)
         else:
             return [path]
 
@@ -92,6 +142,25 @@ class ArgoStoreProto(ABC):
         ) <= version.parse("0.8.3"):
             path = self.fs.target_protocol + "://" + path
         return path
+
+    def full_path(self, path, protocol: bool = False):
+        """Return fully developed path
+
+        Examples
+        --------
+        full_path('')
+
+        """
+        fp = getattr(self.fs, '_join', lambda x: x)(path)
+        if self.protocol == 'ftp':
+            fp = f"{self.host}:{self.port}{self.fs._strip_protocol(fp)}"
+        if not protocol:
+            return fp
+        else:
+            if self.fs.protocol == "dir":
+                return self.fs.fs.unstrip_protocol(fp)
+            else:
+                return self.unstrip_protocol(fp)
 
     def register(self, uri):
         """Keep track of files open with this instance"""
@@ -182,4 +251,3 @@ class ArgoStoreProto(ABC):
     @abstractmethod
     def read_csv(self):
         raise NotImplementedError("Not implemented")
-
