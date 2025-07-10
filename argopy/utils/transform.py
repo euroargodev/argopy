@@ -253,6 +253,8 @@ def merge_param_with_param_adjusted(
     )
 
     # Copy param_adjusted values onto param indexes where data_mode is in 'a' or 'd':
+    print(param)
+    print(ii_measured_adj)
     ds["%s" % param].loc[dict(N_POINTS=ii_measured_adj)] = ds[
         "%s_ADJUSTED" % param
     ].loc[dict(N_POINTS=ii_measured_adj)]

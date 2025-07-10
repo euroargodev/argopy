@@ -257,7 +257,12 @@ class ParamsDataMode(ArgoAccessorExtension):
 
         # Transform data:
         for param in parameters:
-            this = merge_param_with_param_adjusted(this, param, errors=errors)
+            try:
+                this = merge_param_with_param_adjusted(this, param, errors=errors)
+            except Exception:
+                print(param)
+                raise
+
 
         # Finalise:
         this = this[np.sort(this.data_vars)]

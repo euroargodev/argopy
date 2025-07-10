@@ -21,7 +21,7 @@ source ~/miniconda3/etc/profile.d/conda.sh
 declare -A ENV_LIST=(
 ['argopy-base']="requirements/py3.11-all-free.yml"
 ['argopy-coiled']="requirements/py3.11-coiled-free.yml"
-['argopy-xr-check']="requirements/py3.12-all-free-xarray-check.yml"
+['argopy-xarray-unpinned']="requirements/py3.12-all-free-xarray-check.yml"
 
 ['argopy-docs-rtd']="requirements/py3.10-docs-rtd.yml"
 
@@ -160,7 +160,7 @@ install_conda_env () {
 
 	# Installing argopy
 	printf "Installing argopy ...\n"
-	python -m pip install --no-deps -e ..
+	python -m pip install --no-deps -e ..	
 
 }
 
