@@ -34,7 +34,7 @@ dependencies:
 
 # EXT.PLOT:
   - IPython
- - cartopy
+  - cartopy
   - ipykernel
   - ipywidgets
   - matplotlib
