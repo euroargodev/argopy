@@ -30,9 +30,9 @@ you can also work with the ongoing development version:
 Required dependencies
 ---------------------
 
-- xarray < 2024.3.0 : because of `this issue <https://github.com/pydata/xarray/issues/8909>`_ (see also :issue:`390` and :issue:`404`). As of March 2025, a fix is on the way at `xarray <https://github.com/pydata/xarray/pull/9273>`_ but not yet available.
+- xarray >= 2025.7.0 (or < 2024.3.0 because of `this issue <https://github.com/pydata/xarray/issues/8909>`_)
 - scipy
-- numpy < 2 : because of the xarray limitation above
+- numpy
 - erddapy
 - netCDF4
 - h5netcdf
