@@ -8,6 +8,7 @@ from ..errors import InvalidDatasetStructure, DataNotFound
 from ..utils import path2assets, to_list
 from . import register_argo_accessor, ArgoAccessorExtension
 
+nan_value = lambda: np.nan if not hasattr(np, 'NaN') else np.NaN
 
 @register_argo_accessor("canyon_med")
 class CanyonMED(ArgoAccessorExtension):
@@ -148,7 +149,7 @@ class CanyonMED(ArgoAccessorExtension):
                 isin = True
             return isin
 
-        df[~df.apply(isin_medsea, axis=1)] = np.NaN
+        df[~df.apply(isin_medsea, axis=1)] = nan_value
         return df
 
     def load_normalisation_factors(self, param, subset="F"):
@@ -370,8 +371,8 @@ class CanyonMED(ArgoAccessorExtension):
         param_t = param_outputs_s.copy()
 
         for i in range(param_outputs_s.shape[0]):
-            param_t[i, :] = np.where(param_t[i, :] < lim_inf[i], np.nan, param_t[i, :])
-            param_t[i, :] = np.where(param_t[i, :] > lim_sup[i], np.nan, param_t[i, :])
+            param_t[i, :] = np.where(param_t[i, :] < lim_inf[i], nan_value, param_t[i, :])
+            param_t[i, :] = np.where(param_t[i, :] > lim_sup[i], nan_value, param_t[i, :])
 
         param_mean = np.nanmean(param_t, axis=1)
         param_std = np.nanstd(param_t, axis=1)
