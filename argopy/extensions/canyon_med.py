@@ -8,7 +8,9 @@ from ..errors import InvalidDatasetStructure, DataNotFound
 from ..utils import path2assets, to_list
 from . import register_argo_accessor, ArgoAccessorExtension
 
-nan_value = lambda: np.nan if not hasattr(np, 'NaN') else np.NaN
+
+nan_value = np.nan if not hasattr(np, 'NaN') else np.NaN
+
 
 @register_argo_accessor("canyon_med")
 class CanyonMED(ArgoAccessorExtension):
