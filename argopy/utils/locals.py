@@ -150,6 +150,7 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
         "core": sorted(
             [
                 ("argopy", get_version),
+
                 ("xarray", get_version),
                 ("scipy", get_version),
                 ("netCDF4", get_version),
@@ -173,13 +174,6 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
                 ("tqdm", get_version),
             ]
         ),
-        "ext.perf": sorted(
-            [
-                ("dask", get_version),
-                ("distributed", get_version),
-                ("pyarrow", get_version),
-            ]
-        ),
         "ext.files": sorted(
             [
                 ("boto3", get_version),
@@ -187,6 +181,13 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
                 ("s3fs", get_version),
                 ("kerchunk", get_version),
                 ("zarr", get_version),
+            ]
+        ),
+        "ext.perf": sorted(
+            [
+                ("dask", get_version),
+                ("distributed", get_version),
+                ("pyarrow", get_version),
             ]
         ),
         "ext.plot": sorted(
