@@ -159,7 +159,7 @@ jobs:
       - name: Test 1
         continue-on-error: true
         run: |
-          python -c "import fsspec; import argopy; fs=fsspec.filesystem('dir', fs=fsspec.filesystem('file'), path='~/.argopy_tutorial_data/ftp'); print(fs); print(argopy.utils.dirfs_relpath(fs, 'dac/aoml/13857/13857_meta.nc'))"
+          python -c "import fsspec; import argopy; fs=fsspec.filesystem('dir', fs=fsspec.filesystem('file'), path='~/.argopy_tutorial_data/ftp'); print(fs); print(fs.info('dac/aoml/13857/13857_meta.nc')); print(argopy.utils.dirfs_relpath(fs, 'dac/aoml/13857/13857_meta.nc'))"
 
       - name: Test 2
         continue-on-error: true
