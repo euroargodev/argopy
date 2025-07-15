@@ -83,7 +83,7 @@ jobs:
       - name: Test 2
         continue-on-error: true
         run: |
-          python -c "import argopy; p=argopy.tutorial.open_dataset('gdac')[0]; print(p); print(argopy.utils.argo_split_path(argopy.ArgoIndex(host=p).search_wmo(13857).uri[0]))"
+          python -c "import argopy; p=argopy.tutorial.open_dataset('gdac')[0]; print(p); print(argopy.utils.argo_split_path(argopy.ArgoIndex(host=p).query.wmo(13857).uri[0]))"
 
       - name: PyTest
         continue-on-error: true
@@ -165,6 +165,11 @@ jobs:
         continue-on-error: true
         run: |
           python -c "import argopy; p=argopy.tutorial.open_dataset('gdac')[0]; print(p); pf = argopy.ArgoIndex(host=p).query.wmo(13857).uri[0]; print(pf); print(argopy.utils.argo_split_path(pf))"
+
+      - name: Test 3
+        continue-on-error: true
+        run: |
+          python -c "import argopy; p=argopy.tutorial.open_dataset('gdac')[0]; print(p); fs=argopy.gdacfs(p)"
 
       - name: PyTest
         continue-on-error: true

@@ -15,7 +15,6 @@ from utils import patch_ftp
 log = logging.getLogger("argopy.tests.gdacfs")
 
 
-
 """
 List gdac hosts to be tested. 
 Since the GDAC fs is compatible with host from local, http, ftp or s3 protocols, we try to test them all:
