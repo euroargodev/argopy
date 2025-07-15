@@ -169,7 +169,7 @@ jobs:
       - name: Test 3
         continue-on-error: true
         run: |
-          python -c "import argopy; p=argopy.tutorial.open_dataset('gdac')[0]; print(p); fs=argopy.gdacfs(p)"
+          python -c "import argopy; p=argopy.tutorial.open_dataset('gdac')[0]; print(p); fs=argopy.gdacfs(p); print(fs.info('dac/aoml/13857/13857_meta.nc'))"
 
       - name: PyTest
         continue-on-error: true
