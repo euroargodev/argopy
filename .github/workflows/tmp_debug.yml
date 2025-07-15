@@ -171,10 +171,15 @@ jobs:
         run: |
           python -c "import argopy; p=argopy.tutorial.open_dataset('gdac')[0]; print(p); fs=argopy.gdacfs(p); print(fs.info('dac/aoml/13857/13857_meta.nc'))"
 
-      - name: PyTest
+      - name: Test 4
         continue-on-error: true
         run: |
-          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 argopy/tests/test_utils_format.py
+          python -c "import argopy; p=argopy.tutorial.open_dataset('gdac')[0]; print(p); fs=argopy.gdacfs(p); print(argopy.utils.dirfs_relpath(fs,'dac/aoml/13857/13857_meta.nc'))"
+
+#      - name: PyTest
+#        continue-on-error: true
+#        run: |
+#          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 argopy/tests/test_utils_format.py
 
 #      - name: PyTest
 #        continue-on-error: true
