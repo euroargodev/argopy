@@ -329,10 +329,10 @@ class ArgoAccessor:
             if direction is not None:
                 return (
                     encode_direction(direction)
-                    * np.vectorize(int)(offset * wmo_or_uid + cyc).ravel()
+                    * np.vectorize(np.int64)(offset * wmo_or_uid + cyc).ravel()
                 )
             else:
-                return np.vectorize(int)(offset * wmo_or_uid + cyc).ravel()
+                return np.vectorize(np.int64)(offset * wmo_or_uid + cyc).ravel()
         else:
             # DECODER
             drc = decode_direction(np.sign(wmo_or_uid))
