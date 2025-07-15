@@ -56,7 +56,7 @@ dependencies:
   - pytest
   - pytest-cov
   - pytest-env
-#  - pytest-localftpserver
+  - pytest-localftpserver
   - setuptools
 #  - sphinx
 
