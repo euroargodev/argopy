@@ -164,16 +164,16 @@ jobs:
       - name: Test 2
         continue-on-error: true
         run: |
-          python -c "import argopy; p=argopy.tutorial.open_dataset('gdac')[0]; print(p); print(argopy.utils.argo_split_path(argopy.ArgoIndex(host=p).search_wmo(13857).uri[0]))"
+          python -c "import argopy; p=argopy.tutorial.open_dataset('gdac')[0]; print(p); pf = argopy.ArgoIndex(host=p).query.wmo(13857).uri[0]; print(pf); print(argopy.utils.argo_split_path(pf))"
 
-      - name: PyTest
-        continue-on-error: true
-        run: |
-          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 argopy/tests/test_stores_fs_gdac.py
-
-      - name: PyTest
-        continue-on-error: true
-        run: |
-          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 argopy/tests/test_fetchers_data_gdac.py
-
+#      - name: PyTest
+#        continue-on-error: true
+#        run: |
+#          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 argopy/tests/test_stores_fs_gdac.py
+#
+#      - name: PyTest
+#        continue-on-error: true
+#        run: |
+#          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 argopy/tests/test_fetchers_data_gdac.py
+#
 
