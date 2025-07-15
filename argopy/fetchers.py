@@ -24,6 +24,7 @@ from .errors import (
     InvalidFetcherAccessPoint,
     InvalidFetcher,
     OptionValueError,
+    DataNotFound,
 )
 from .related import (
     get_coriolis_profile_id,
@@ -343,6 +344,8 @@ class ArgoDataFetcher:
         """
         if not isinstance(self._data, xr.Dataset) or self._request != self.__repr__():
             self.load()
+            if self._data is None:
+                raise DataNotFound("Seems like no data were found. Try to use to_xarray() explicitly")
         return self._data
 
     @property

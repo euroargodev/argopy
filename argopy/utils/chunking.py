@@ -130,8 +130,8 @@ class Chunker:
                 if ii < len(bins) - 1:
                     right = bins[ii + 1]
                     this_box = large_box.copy()
-                    this_box[i_left] = left
-                    this_box[i_right] = right
+                    this_box[i_left] = float(left)
+                    this_box[i_right] = float(right)
                     boxes.append(this_box)
         elif "t" in d:
             dates = pd.to_datetime(large_box[i_left : i_right + 1])

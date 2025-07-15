@@ -15,7 +15,7 @@ dependencies:
   - requests
   - scipy
   - toolz
-  - xarray > 2024.3 # to test if https://github.com/pydata/xarray/issues/8909 is solved
+  - xarray >= 2025.7
 
 # EXT.UTIL:
   - gsw
@@ -62,4 +62,5 @@ dependencies:
 # PIP:
   - pip:
       - pytest-reportlog
-#      - git+https://github.com/umr-lops/dask-hpcconfig.git#egg=dask-hpcconfig
+      # - git+https://github.com/pydata/xarray.git@backend-indexing
+

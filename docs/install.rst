@@ -30,9 +30,11 @@ you can also work with the ongoing development version:
 Required dependencies
 ---------------------
 
-- xarray < 2024.3.0 : because of `this issue <https://github.com/pydata/xarray/issues/8909>`_ (see also :issue:`390` and :issue:`404`). As of March 2025, a fix is on the way at `xarray <https://github.com/pydata/xarray/pull/9273>`_ but not yet available.
+Note that argopy is not compatible with xarray versions from 2024.3.0 to 2025.6.1 (included) (because of `this issue <https://github.com/pydata/xarray/issues/8909>`_). Note also that xarray >= 2025.7.0 requires python >= 3.11.
+
+- xarray >= 2025.7.0
 - scipy
-- numpy < 2 : because of the xarray limitation above
+- numpy
 - erddapy
 - netCDF4
 - h5netcdf

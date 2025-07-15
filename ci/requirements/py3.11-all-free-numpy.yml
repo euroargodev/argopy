@@ -8,14 +8,14 @@ dependencies:
   - aiohttp
   - decorator
   - erddapy
-  - fsspec < 2025.3.0
+  - fsspec
   - h5netcdf
   - netCDF4
   - packaging
   - requests
   - scipy
   - toolz
-  - xarray < 2024.3 # while https://github.com/pydata/xarray/issues/8909 is not solved
+  - xarray >= 2025.7.0
 
 # EXT.UTIL:
   - gsw
