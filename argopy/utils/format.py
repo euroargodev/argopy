@@ -47,7 +47,7 @@ def dirfs_relpath(fs, path):
         print("fs.path.startswith(fs.fs.sep)", fs.path.startswith(fs.fs.sep))
         print("path.startswith(fs.fs.sep)", path.startswith(fs.fs.sep))
         if fs.path.startswith(fs.fs.sep) and not path.startswith(fs.fs.sep):
-            prefix = prefix[1:]            
+            prefix = prefix[1:]
         print("prefix", prefix)
         print("path", path)
         assert path.startswith(prefix)
