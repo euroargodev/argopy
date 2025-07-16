@@ -7,17 +7,31 @@ What's New
 
 |pypi dwn| |conda dwn|
 
+
 Coming up next
 --------------
 
 .. versionadded:: next
 
-    This new version **argopy** requires Python 3.11. We drop support for Python 3.10.
+    This new **argopy** version requires Python 3.11 !
+
 
 Internals
 ^^^^^^^^^
 
-- **Identified incompatible versions of xarray**. Because of `this issue <https://github.com/pydata/xarray/issues/8909>`_ argopy is not compatible with xarray versions from 2024.3.0 to 2025.6.1, included (:pr:`451`) by |gmaze|.
+- **Fix bug** whereby a :class:`gdacfs` could not return one path info under Windows platform. :issue:`499`. (:pr:`451`) by |gmaze|.
+
+- **Identified incompatible versions of xarray**. Because of `this issue <https://github.com/pydata/xarray/issues/8909>`_ argopy is not compatible with xarray versions from 2024.3.0 to 2025.6.1, included. (:pr:`451`) by |gmaze|.
+
+Breaking changes
+^^^^^^^^^^^^^^^^
+
+- Drop support for Python 3.10
+
+Energy
+^^^^^^
+
+|eqco2_since_last_release|
 
 
 v1.2.0 (9 June 2025)
@@ -52,7 +66,7 @@ Internals
 Energy
 ^^^^^^
 
-|eqco2_since_last_release|
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.2.0%20%5BgCO2eq%5D-1328.99-black?style=plastic&labelColor=grey
 
 
 v1.1.0 (18 March 2025)

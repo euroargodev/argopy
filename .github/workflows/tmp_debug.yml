@@ -17,84 +17,84 @@ permissions:
   contents: read
 
 jobs:
-  core-pinned:
-
-    name: Core - Pinned - Py${{matrix.python-version}}
-    runs-on: ${{ matrix.os }}
-    defaults:
-      run:
-        shell: bash -l {0}
-    continue-on-error: ${{ matrix.experimental }}
-#    timeout-minutes: 45
-    strategy:
-      max-parallel: 12
-      fail-fast: false
-      matrix:
-        python-version: ["3.10"]
-        os: ["windows-latest"]
-        experimental: [false]
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4.2.1
-        with:
-          aws-region: us-west-1
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ga-ci-tests-argopy-01
-
-      - name: Set environment variables
-        run: |
-          echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-core-pinned.yml" >> $GITHUB_ENV
-          echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
-          echo "LOG_FILE=argopy-tests-Core-Pinned-Py${{matrix.python-version}}-${{matrix.os}}.log" >> $GITHUB_ENV
-
-      - name: Setup Micromamba ${{ matrix.python-version }}
-        uses: mamba-org/setup-micromamba@v2
-        with:
-          micromamba-version: '1.5.10-0'
-          environment-name: argopy-tests
-          environment-file: ${{ env.CONDA_ENV_FILE }}
-          init-shell: bash
-          cache-environment: true
-          cache-environment-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
-          create-args: >-
-            python=${{matrix.python-version}}
-
-      - name: Install argopy
-        run: |
-          python -m pip install --no-deps -e .
-
-      - name: Version info
-        run: |
-          micromamba info
-          micromamba list
-
-      - name: Load argopy tutorial data
-        continue-on-error: true
-        run: |
-          python -c "import argopy; argopy.tutorial.open_dataset('gdac')"
-
-      - name: Test 1
-        continue-on-error: true
-        run: |
-          python -c "import fsspec; fs=fsspec.filesystem('dir', fs=fsspec.filesystem('file'), path='~/.argopy_tutorial_data/ftp'); print(fs); print(fs.sep); print(fs.fs.sep); print(fs.info('dac/aoml/13857/13857_meta.nc'))"
-
-      - name: Test 2
-        continue-on-error: true
-        run: |
-          python -c "import argopy; p=argopy.tutorial.open_dataset('gdac')[0]; print(p); print(argopy.utils.argo_split_path(argopy.ArgoIndex(host=p).search_wmo(13857).uri[0]))"
-
-      - name: PyTest
-        continue-on-error: true
-        run: |
-          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 argopy/tests/test_stores_fs_gdac.py
-
-      - name: PyTest
-        continue-on-error: true
-        run: |
-          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 argopy/tests/test_fetchers_data_gdac.py
-
+#  core-pinned:
+#
+#    name: Core - Pinned - Py${{matrix.python-version}}
+#    runs-on: ${{ matrix.os }}
+#    defaults:
+#      run:
+#        shell: bash -l {0}
+#    continue-on-error: ${{ matrix.experimental }}
+##    timeout-minutes: 45
+#    strategy:
+#      max-parallel: 12
+#      fail-fast: false
+#      matrix:
+#        python-version: ["3.11"]
+#        os: ["windows-latest"]
+#        experimental: [false]
+#
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - name: Configure AWS Credentials
+#        uses: aws-actions/configure-aws-credentials@v4.2.1
+#        with:
+#          aws-region: us-west-1
+#          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ga-ci-tests-argopy-01
+#
+#      - name: Set environment variables
+#        run: |
+#          echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-core-pinned.yml" >> $GITHUB_ENV
+#          echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
+#          echo "LOG_FILE=argopy-tests-Core-Pinned-Py${{matrix.python-version}}-${{matrix.os}}.log" >> $GITHUB_ENV
+#
+#      - name: Setup Micromamba ${{ matrix.python-version }}
+#        uses: mamba-org/setup-micromamba@v2
+#        with:
+#          micromamba-version: '1.5.10-0'
+#          environment-name: argopy-tests
+#          environment-file: ${{ env.CONDA_ENV_FILE }}
+#          init-shell: bash
+#          cache-environment: true
+#          cache-environment-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
+#          create-args: >-
+#            python=${{matrix.python-version}}
+#
+#      - name: Install argopy
+#        run: |
+#          python -m pip install --no-deps -e .
+#
+#      - name: Version info
+#        run: |
+#          micromamba info
+#          micromamba list
+#
+#      - name: Load argopy tutorial data
+#        continue-on-error: true
+#        run: |
+#          python -c "import argopy; argopy.tutorial.open_dataset('gdac')"
+#
+#      - name: Test 1
+#        continue-on-error: true
+#        run: |
+#          python -c "import fsspec; fs=fsspec.filesystem('dir', fs=fsspec.filesystem('file'), path='~/.argopy_tutorial_data/ftp'); print(fs); print(fs.sep); print(fs.fs.sep); print(fs.info('dac/aoml/13857/13857_meta.nc'))"
+#
+#      - name: Test 2
+#        continue-on-error: true
+#        run: |
+#          python -c "import argopy; p=argopy.tutorial.open_dataset('gdac')[0]; print(p); print(argopy.utils.argo_split_path(argopy.ArgoIndex(host=p).query.wmo(13857).uri[0]))"
+#
+#      - name: PyTest
+#        continue-on-error: true
+#        run: |
+#          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 argopy/tests/test_stores_fs_gdac.py
+#
+#      - name: PyTest
+#        continue-on-error: true
+#        run: |
+#          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 argopy/tests/test_fetchers_data_gdac.py
+#
 
 
   core-free:
@@ -111,8 +111,8 @@ jobs:
       max-parallel: 12
       fail-fast: false
       matrix:
-        python-version: ["3.10"]
-        os: ["windows-latest"]
+        python-version: ["3.11"]
+        os: ["windows-latest", "ubuntu-latest"]
         experimental: [false]
 
     steps:
@@ -151,20 +151,10 @@ jobs:
           micromamba info
           micromamba list
 
-      - name: Load argopy tutorial data
+      - name: Debug script
         continue-on-error: true
         run: |
-          python -c "import argopy; argopy.tutorial.open_dataset('gdac')"
-
-      - name: Test 1
-        continue-on-error: true
-        run: |
-          python -c "import fsspec; fs=fsspec.filesystem('dir', fs=fsspec.filesystem('file'), path='~/.argopy_tutorial_data/ftp'); print(fs); print(fs.sep); print(fs.fs.sep); print(fs.info('dac/aoml/13857/13857_meta.nc'))"
-
-      - name: Test 2
-        continue-on-error: true
-        run: |
-          python -c "import argopy; p=argopy.tutorial.open_dataset('gdac')[0]; print(p); print(argopy.utils.argo_split_path(argopy.ArgoIndex(host=p).search_wmo(13857).uri[0]))"
+          python argopy/tests/debug_windows.py
 
       - name: PyTest
         continue-on-error: true

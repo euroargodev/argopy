@@ -30,6 +30,37 @@ def format_oneline(s, max_width=65):
         return s
 
 
+def dirfs_relpath(fs, path):
+    print("-"*40)
+    if isinstance(path, str):
+        if not fs.path:
+            return path
+        # We need to account for S3FileSystem returning paths that do not
+        # start with a '/'
+        if path == fs.path or (
+            fs.path.startswith(fs.fs.sep) and path == fs.path[1:]
+        ):
+            return ""
+        prefix = fs.path + fs.fs.sep
+        if fs.path.startswith(fs.fs.sep) and not path.startswith(fs.fs.sep):
+            prefix = prefix[1:]
+
+        print("fs=", fs)
+        print("fs.path=", fs.path)
+        print("prefix=", prefix)
+        print("fs.fs.sep=", fs.fs.sep)
+        print("fs.path.startswith(fs.fs.sep)=", fs.path.startswith(fs.fs.sep))
+        print("path.startswith(fs.fs.sep)=", path.startswith(fs.fs.sep))
+        print("prefix=", prefix)
+        print("path=", path)
+        print("path.startswith(prefix)=", path.startswith(prefix))
+
+        assert path.startswith(prefix)
+        return path[len(prefix) :]
+    print("-"*40)
+    return [dirfs_relpath(fs, _path) for _path in path]
+
+
 def argo_split_path(this_path):  # noqa C901
     """Split path from a GDAC ftp style Argo netcdf file and return information
 
