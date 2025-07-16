@@ -89,7 +89,8 @@ class ArgoStoreProto(ABC):
         if self.fs.protocol == "dir":
             info = self.fs.fs.info(self.fs._join(path), **kwargs)
             info = info.copy()
-            info["name"] = self.fs._relpath(self.fs._join(path))
+            # info["name"] = self.fs._relpath(info["name"])  # Raw code from fsspec
+            info["name"] = self.fs._relpath(self.fs._join(path))  # Fix https://github.com/euroargodev/argopy/issues/499
             return info
         else:
             return self.fs.info(path, *args, **kwargs)
