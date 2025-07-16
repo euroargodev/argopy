@@ -139,14 +139,22 @@ if __name__ == "__main__":
         # WINDOWS:
         # <fsspec.implementations.local.LocalFileSystem object at 0x000002232BA8AD90>
 
+        print(fs.fs.info('C:/Users/runneradmin/.argopy_tutorial_data/ftp/dac/aoml/13857/13857_meta.nc'))
+        # UBUNTU:
+        # WINDOWS:
+
+
         print(fs.fs.info('dac/aoml/13857/13857_meta.nc'))
         # UBUNTU:
+        # {'name': 'dac/aoml/13857/13857_meta.nc', 'size': 25352, 'type': 'file', 'created': 1752653601.366842, 'islink': False, 'mode': 33188, 'uid': 1001, 'gid': 118, 'mtime': 1752653601.366842, 'ino': 320823, 'nlink': 1}
         # WINDOWS:
 
         print(fs.info('dac/aoml/13857/13857_meta.nc'))
         # UBUNTU:
         # {'name': 'dac/aoml/13857/13857_meta.nc', 'size': 25352, 'type': 'file', 'created': 1752652506.554874, 'islink': False, 'mode': 33188, 'uid': 1001, 'gid': 118, 'mtime': 1752652506.554874, 'ino': 272870, 'nlink': 1}
         # WINDOWS:
+
+
     except Exception as e:
         print(e)
         pass
