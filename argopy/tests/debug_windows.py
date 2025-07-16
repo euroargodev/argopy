@@ -145,8 +145,20 @@ if __name__ == "__main__":
         # WINDOWS:
         # {'name': 'C:/Users/runneradmin/.argopy_tutorial_data/ftp/dac/aoml/13857/13857_meta.nc', 'size': 25352, 'type': 'file', 'created': 1752665593.1245666, 'islink': False, 'mode': 33206, 'uid': 0, 'gid': 0, 'mtime': 1752665593.1245666, 'ino': 844424930409965, 'nlink': 1}
 
-        print(fs.ls('dac/aoml/13857/13857_meta.nc')[0])
+        print(fs.fs._join('dac/aoml/13857/13857_meta.nc'))
+        # UBUNTU:
 
+        # WINDOWS:
+
+        print(fs.fs._relpath(fs.fs._join('dac/aoml/13857/13857_meta.nc')))
+        # UBUNTU:
+
+        # WINDOWS:
+
+        print(fs.fs._relpath('dac/aoml/13857/13857_meta.nc'))
+        # UBUNTU:
+
+        # WINDOWS:
 
     except Exception as e:
         print(e)
