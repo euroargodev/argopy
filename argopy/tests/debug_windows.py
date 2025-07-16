@@ -147,15 +147,17 @@ if __name__ == "__main__":
 
         print(fs.fs._join('dac/aoml/13857/13857_meta.nc'))
         # UBUNTU:
-
+        # /home/runner/.argopy_tutorial_data/ftp/dac/aoml/13857/13857_meta.nc
         # WINDOWS:
+        # C:/Users/runneradmin/.argopy_tutorial_data/ftp\dac/aoml/13857/13857_meta.nc
 
         print(fs.fs._relpath(fs.fs._join('dac/aoml/13857/13857_meta.nc')))
         # UBUNTU:
-
+        # dac/aoml/13857/13857_meta.nc
         # WINDOWS:
+        # dac/aoml/13857/13857_meta.nc
 
-        print(fs.fs._relpath('dac/aoml/13857/13857_meta.nc'))
+        print(fs.fs._relpath('\dac/aoml/13857/13857_meta.nc'))
         # UBUNTU:
 
         # WINDOWS:
