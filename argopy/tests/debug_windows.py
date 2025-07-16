@@ -14,8 +14,11 @@ if __name__ == "__main__":
     # WINDOWS:
     # C:\Users\runneradmin\.argopy_tutorial_data\ftp
 
-    fs=fsspec.filesystem('dir', fs=fsspec.filesystem('file'), path=p)
+    fs0 = fsspec.filesystem('file')
+    pp = fs0.unstrip_protocol(p)
+    print(pp)
 
+    fs=fsspec.filesystem('dir', fs=fs0, path=pp)
     print(fs)
     # UBUNTU:
     # DirFileSystem(path='/home/runner/.argopy_tutorial_data/ftp', fs=<fsspec.implementations.local.LocalFileSystem object at 0x7f443b470f10>)
