@@ -139,7 +139,7 @@ if __name__ == "__main__":
         # WINDOWS:
         # <fsspec.implementations.local.LocalFileSystem object at 0x000002232BA8AD90>
 
-        print(fs.fs.info('C:/Users/runneradmin/.argopy_tutorial_data/ftp/dac/aoml/13857/13857_meta.nc'))
+        print(fs.fs.fs.info('C:/Users/runneradmin/.argopy_tutorial_data/ftp/dac/aoml/13857/13857_meta.nc'))
         # UBUNTU:
         # WINDOWS:
 
