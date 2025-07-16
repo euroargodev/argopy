@@ -7,6 +7,27 @@ What's New
 
 |pypi dwn| |conda dwn|
 
+
+Coming up next
+--------------
+
+.. versionadded:: next
+
+    This new **argopy** version requires Python 3.11 !
+
+Internals
+^^^^^^^^^
+
+- **Fix bug** whereby a :class:`gdacfs` could not return one path info under Windows platform. :issue:`499`. (:pr:`451`) by |gmaze|.
+
+- **Identified incompatible versions of xarray**. Because of `this issue <https://github.com/pydata/xarray/issues/8909>`_ argopy is not compatible with xarray versions from 2024.3.0 to 2025.6.1, included (:pr:`451`) by |gmaze|.
+
+Breaking changes
+^^^^^^^^^^^^^^^^
+
+- Drop support for Python 3.10
+
+
 v1.2.0 (9 June 2025)
 --------------------
 
