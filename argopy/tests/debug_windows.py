@@ -15,10 +15,14 @@ if __name__ == "__main__":
     # C:\Users\runneradmin\.argopy_tutorial_data\ftp
 
     fs0 = fsspec.filesystem('file')
-    pp = fs0.unstrip_protocol(p)
-    print(pp)
+    # pp = fs0.unstrip_protocol(p)
+    # print(pp)
+    # # UBUNTU:
+    # # file:///home/runner/.argopy_tutorial_data/ftp
+    # # WINDOWS:
+    # # file://C:/Users/runneradmin/.argopy_tutorial_data/ftp
 
-    fs=fsspec.filesystem('dir', fs=fs0, path=pp)
+    fs=fsspec.filesystem('dir', fs=fs0, path=p)
     print(fs)
     # UBUNTU:
     # DirFileSystem(path='/home/runner/.argopy_tutorial_data/ftp', fs=<fsspec.implementations.local.LocalFileSystem object at 0x7f443b470f10>)
@@ -32,7 +36,7 @@ if __name__ == "__main__":
     # {'name': 'dac/aoml/13857/13857_meta.nc', 'size': 25352, 'type': 'file', 'created': 1752651012.0670562, 'islink': False, 'mode': 33206, 'uid': 0, 'gid': 0, 'mtime': 1752651012.0670562, 'ino': 844424930409953, 'nlink': 1}
 
     try:
-        print(argopy.utils.dirfs_relpath(fs, 'dac/aoml/13857/13857_meta.nc'))
+        print(argopy.utils.dirfs_relpath(fs, '/dac/aoml/13857/13857_meta.nc'))
         # UBUNTU:
         # ----------------------------------------
         # fs.path= /home/runner/.argopy_tutorial_data/ftp
