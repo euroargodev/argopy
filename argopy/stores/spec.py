@@ -86,7 +86,13 @@ class ArgoStoreProto(ABC):
         return self.fs.exists(path, *args)
 
     def info(self, path, *args, **kwargs):
-        return self.fs.info(path, *args, **kwargs)
+        if self.fs.protocol == "dir":
+            info = await self.fs.fs._info(self.fs._join(path), **kwargs)
+            info = info.copy()
+            # info["name"] = self._relpath(info["name"])
+            return info
+        else:
+            return self.fs.info(path, *args, **kwargs)
 
     def first(self, path: Union[str, Path], N: int = 4) -> str:
         """Read first N bytes of a path
