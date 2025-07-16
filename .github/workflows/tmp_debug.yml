@@ -151,35 +151,10 @@ jobs:
           micromamba info
           micromamba list
 
-      - name: Load argopy tutorial data
+      - name: Debug script
         continue-on-error: true
         run: |
-          python -c "import argopy; argopy.tutorial.open_dataset('gdac')"
-
-      - name: Test 1
-        continue-on-error: true
-        run: |
-          python -c "import fsspec; import argopy; fs=fsspec.filesystem('dir', fs=fsspec.filesystem('file'), path='/home/runner/.argopy_tutorial_data/ftp'); print(fs); print(fs.info('dac/aoml/13857/13857_meta.nc'))"
-
-      - name: Test 2
-        continue-on-error: true
-        run: |
-          python -c "import fsspec; import argopy; fs=fsspec.filesystem('dir', fs=fsspec.filesystem('file'), path='/home/runner/.argopy_tutorial_data/ftp'); print(fs); print(argopy.utils.dirfs_relpath(fs, 'dac/aoml/13857/13857_meta.nc'))"
-
-      - name: Test 3
-        continue-on-error: true
-        run: |
-          python -c "import argopy; p=argopy.tutorial.open_dataset('gdac')[0]; print(p); fs=argopy.gdacfs(p); print(fs.info('dac/aoml/13857/13857_meta.nc'))"
-
-      - name: Test 4
-        continue-on-error: true
-        run: |
-          python -c "import argopy; p=argopy.tutorial.open_dataset('gdac')[0]; print(p); fs=argopy.gdacfs(p); print(fs.fs); print(argopy.utils.dirfs_relpath(fs.fs,'dac/aoml/13857/13857_meta.nc'))"
-
-#      - name: PyTest
-#        continue-on-error: true
-#        run: |
-#          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 argopy/tests/test_utils_format.py
+          python argopy/tests/debug_windows.py
 
 #      - name: PyTest
 #        continue-on-error: true

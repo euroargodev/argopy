@@ -31,6 +31,7 @@ def format_oneline(s, max_width=65):
 
 
 def dirfs_relpath(fs, path):
+    print("-"*40)
     if isinstance(path, str):
         if not fs.path:
             return path
@@ -41,17 +42,19 @@ def dirfs_relpath(fs, path):
         ):
             return ""
         prefix = fs.path + fs.fs.sep
-        print("fs.path", fs.path)
-        print("prefix", prefix)
-        print("fs.fs.sep", fs.fs.sep)
-        print("fs.path.startswith(fs.fs.sep)", fs.path.startswith(fs.fs.sep))
-        print("path.startswith(fs.fs.sep)", path.startswith(fs.fs.sep))
+        print("fs.path=", fs.path)
+        print("prefix=", prefix)
+        print("fs.fs.sep=", fs.fs.sep)
+        print("fs.path.startswith(fs.fs.sep)=", fs.path.startswith(fs.fs.sep))
+        print("path.startswith(fs.fs.sep)=", path.startswith(fs.fs.sep))
         if fs.path.startswith(fs.fs.sep) and not path.startswith(fs.fs.sep):
             prefix = prefix[1:]
-        print("prefix", prefix)
-        print("path", path)
+        print("prefix=", prefix)
+        print("path=", path)
+        print("path.startswith(prefix)=", path.startswith(prefix))
         assert path.startswith(prefix)
         return path[len(prefix) :]
+    print("-"*40)
     return [dirfs_relpath(fs, _path) for _path in path]
 
 
