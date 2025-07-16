@@ -98,10 +98,10 @@ class Test_Gdacfs:
         yield self.get_a_gdacfs(host=host, xfail=xfail, reason=reason)
 
     def assert_fs(self, fs):
-        log.debug(fs)
-        log.debug(fs.fs)
-        log.debug(fs.sep)
-        log.debug(fs.fs.sep)
+        # log.debug(fs)
+        # log.debug(fs.fs)
+        # log.debug(fs.sep)
+        # log.debug(fs.fs.sep)
         # log.debug(fs.ls("."))
         # log.debug(fs.glob("."))
         assert isinstance(fs.open_dataset("dac/aoml/13857/13857_meta.nc"), xr.Dataset)

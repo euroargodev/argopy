@@ -159,7 +159,9 @@ if __name__ == "__main__":
 
         print(argopy.utils.dirfs_relpath(fs.fs, fs.fs._join('dac/aoml/13857/13857_meta.nc')))
         # UBUNTU:
+        # dac/aoml/13857/13857_meta.nc
         # WINDOWS:
+        # dac/aoml/13857/13857_meta.nc
 
         # print(fs.fs._relpath('/dac/aoml/13857/13857_meta.nc'))
         # UBUNTU:

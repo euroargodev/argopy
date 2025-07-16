@@ -156,14 +156,14 @@ jobs:
         run: |
           python argopy/tests/debug_windows.py
 
-#      - name: PyTest
-#        continue-on-error: true
-#        run: |
-#          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 argopy/tests/test_stores_fs_gdac.py
-#
-#      - name: PyTest
-#        continue-on-error: true
-#        run: |
-#          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 argopy/tests/test_fetchers_data_gdac.py
-#
+      - name: PyTest
+        continue-on-error: true
+        run: |
+          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 argopy/tests/test_stores_fs_gdac.py
+
+      - name: PyTest
+        continue-on-error: true
+        run: |
+          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 argopy/tests/test_fetchers_data_gdac.py
+
 
