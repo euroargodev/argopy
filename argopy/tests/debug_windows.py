@@ -1,55 +1,52 @@
 #!/usr/bin/env python
-"""
-================================== FAILURES ===================================
-_____________ Test_Gdacfs.test_implementation[host='c', no cache] _____________
+# ================================== FAILURES ===================================
+# _____________ Test_Gdacfs.test_implementation[host='c', no cache] _____________
+#
+# self = <argopy.tests.test_stores_fs_gdac.Test_Gdacfs object at 0x0000021AEE3DC290>
+# mocked_httpserver = 'http://127.0.0.1:9898'
+# store_maker = <argopy.stores.implementations.local.filestore object at 0x0000021A8520C110>
+#
+#     @pytest.mark.parametrize(
+#         "store_maker", scenarios, indirect=True, ids=scenarios_ids
+#     )
+#     def test_implementation(self, mocked_httpserver, store_maker):
+# >       self.assert_fs(store_maker)
+#
+# argopy\tests\test_stores_fs_gdac.py:118:
+# _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+# argopy\tests\test_stores_fs_gdac.py:109: in assert_fs
+#     assert fs.info("dac/aoml/13857/13857_meta.nc")['size'] == 25352
+#            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# argopy\stores\spec.py:89: in info
+#     return self.fs.info(path, *args, **kwargs)
+#            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# C:\Users\runneradmin\micromamba\envs\argopy-tests\Lib\site-packages\fsspec\implementations\dirfs.py:242: in info
+#     info["name"] = self._relpath(info["name"])
+#                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+#
+# self = DirFileSystem(path='C:/Users/runneradmin/.argopy_tutorial_data/ftp', fs=<fsspec.implementations.local.LocalFileSystem object at 0x0000021AE829B110>)
+# path = 'C:/Users/runneradmin/.argopy_tutorial_data/ftp/dac/aoml/13857/13857_meta.nc'
+#
+#     def _relpath(self, path):
+#         if isinstance(path, str):
+#             if not self.path:
+#                 return path
+#             # We need to account for S3FileSystem returning paths that do not
+#             # start with a '/'
+#             if path == self.path or (
+#                 self.path.startswith(self.fs.sep) and path == self.path[1:]
+#             ):
+#                 return ""
+#             prefix = self.path + self.fs.sep
+#             if self.path.startswith(self.fs.sep) and not path.startswith(self.fs.sep):
+#                 prefix = prefix[1:]
+# >           assert path.startswith(prefix)
+#                    ^^^^^^^^^^^^^^^^^^^^^^^
+# E           AssertionError
+#
+# C:\Users\runneradmin\micromamba\envs\argopy-tests\Lib\site-packages\fsspec\implementations\dirfs.py:74: AssertionError
 
-self = <argopy.tests.test_stores_fs_gdac.Test_Gdacfs object at 0x0000021AEE3DC290>
-mocked_httpserver = 'http://127.0.0.1:9898'
-store_maker = <argopy.stores.implementations.local.filestore object at 0x0000021A8520C110>
-
-    @pytest.mark.parametrize(
-        "store_maker", scenarios, indirect=True, ids=scenarios_ids
-    )
-    def test_implementation(self, mocked_httpserver, store_maker):
->       self.assert_fs(store_maker)
-
-argopy\tests\test_stores_fs_gdac.py:118:
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-argopy\tests\test_stores_fs_gdac.py:109: in assert_fs
-    assert fs.info("dac/aoml/13857/13857_meta.nc")['size'] == 25352
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-argopy\stores\spec.py:89: in info
-    return self.fs.info(path, *args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-C:\Users\runneradmin\micromamba\envs\argopy-tests\Lib\site-packages\fsspec\implementations\dirfs.py:242: in info
-    info["name"] = self._relpath(info["name"])
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-
-self = DirFileSystem(path='C:/Users/runneradmin/.argopy_tutorial_data/ftp', fs=<fsspec.implementations.local.LocalFileSystem object at 0x0000021AE829B110>)
-path = 'C:/Users/runneradmin/.argopy_tutorial_data/ftp/dac/aoml/13857/13857_meta.nc'
-
-    def _relpath(self, path):
-        if isinstance(path, str):
-            if not self.path:
-                return path
-            # We need to account for S3FileSystem returning paths that do not
-            # start with a '/'
-            if path == self.path or (
-                self.path.startswith(self.fs.sep) and path == self.path[1:]
-            ):
-                return ""
-            prefix = self.path + self.fs.sep
-            if self.path.startswith(self.fs.sep) and not path.startswith(self.fs.sep):
-                prefix = prefix[1:]
->           assert path.startswith(prefix)
-                   ^^^^^^^^^^^^^^^^^^^^^^^
-E           AssertionError
-
-C:\Users\runneradmin\micromamba\envs\argopy-tests\Lib\site-packages\fsspec\implementations\dirfs.py:74: AssertionError
-
-
-"""
 import argopy
 import fsspec
 
