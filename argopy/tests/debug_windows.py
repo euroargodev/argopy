@@ -118,7 +118,7 @@ if __name__ == "__main__":
     #     print(e)
     #     pass
     print('='*30, 'Now with gdacfs')
-    
+
     fs = argopy.gdacfs(p)
     try:
         print(fs)
@@ -133,8 +133,13 @@ if __name__ == "__main__":
         # WINDOWS:
         # DirFileSystem(path='C:/Users/runneradmin/.argopy_tutorial_data/ftp', fs=<fsspec.implementations.local.LocalFileSystem object at 0x00000128116ACE90>)
 
-
         print(fs.fs.fs)
+        # UBUNTU:
+        # <fsspec.implementations.local.LocalFileSystem object at 0x7f89c4f2ef90>
+        # WINDOWS:
+        # <fsspec.implementations.local.LocalFileSystem object at 0x000002232BA8AD90>
+
+        print(fs.fs.info('dac/aoml/13857/13857_meta.nc'))
         # UBUNTU:
         # WINDOWS:
 
