@@ -141,18 +141,16 @@ if __name__ == "__main__":
 
         print(fs.fs.fs.info('C:/Users/runneradmin/.argopy_tutorial_data/ftp/dac/aoml/13857/13857_meta.nc'))
         # UBUNTU:
+        # [Errno 2] No such file or directory: '/home/runner/work/argopy/argopy/C:/Users/runneradmin/.argopy_tutorial_data/ftp/dac/aoml/13857/13857_meta.nc'
         # WINDOWS:
+        # {'name': 'C:/Users/runneradmin/.argopy_tutorial_data/ftp/dac/aoml/13857/13857_meta.nc', 'size': 25352, 'type': 'file', 'created': 1752656867.749291, 'islink': False, 'mode': 33206, 'uid': 0, 'gid': 0, 'mtime': 1752656867.749291, 'ino': 844424930410158, 'nlink': 1}
 
-
-        print(fs.fs.info('dac/aoml/13857/13857_meta.nc'))
+        print(fs.info('C:/Users/runneradmin/.argopy_tutorial_data/ftp/dac/aoml/13857/13857_meta.nc'))
         # UBUNTU:
-        # {'name': 'dac/aoml/13857/13857_meta.nc', 'size': 25352, 'type': 'file', 'created': 1752653601.366842, 'islink': False, 'mode': 33188, 'uid': 1001, 'gid': 118, 'mtime': 1752653601.366842, 'ino': 320823, 'nlink': 1}
+
         # WINDOWS:
 
-        print(fs.info('dac/aoml/13857/13857_meta.nc'))
-        # UBUNTU:
-        # {'name': 'dac/aoml/13857/13857_meta.nc', 'size': 25352, 'type': 'file', 'created': 1752652506.554874, 'islink': False, 'mode': 33188, 'uid': 1001, 'gid': 118, 'mtime': 1752652506.554874, 'ino': 272870, 'nlink': 1}
-        # WINDOWS:
+
 
 
     except Exception as e:
