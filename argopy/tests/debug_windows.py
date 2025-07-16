@@ -139,17 +139,9 @@ if __name__ == "__main__":
         # WINDOWS:
         # <fsspec.implementations.local.LocalFileSystem object at 0x000002232BA8AD90>
 
-        print(fs.fs.fs.info('C:/Users/runneradmin/.argopy_tutorial_data/ftp/dac/aoml/13857/13857_meta.nc'))
+        print(fs.info('dac/aoml/13857/13857_meta.nc'))
         # UBUNTU:
-        # [Errno 2] No such file or directory: '/home/runner/work/argopy/argopy/C:/Users/runneradmin/.argopy_tutorial_data/ftp/dac/aoml/13857/13857_meta.nc'
         # WINDOWS:
-        # {'name': 'C:/Users/runneradmin/.argopy_tutorial_data/ftp/dac/aoml/13857/13857_meta.nc', 'size': 25352, 'type': 'file', 'created': 1752656867.749291, 'islink': False, 'mode': 33206, 'uid': 0, 'gid': 0, 'mtime': 1752656867.749291, 'ino': 844424930410158, 'nlink': 1}
-
-        print(fs.info('C:/Users/runneradmin/.argopy_tutorial_data/ftp/dac/aoml/13857/13857_meta.nc'))
-        # UBUNTU:
-
-        # WINDOWS:
-
 
 
 
