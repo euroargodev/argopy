@@ -157,7 +157,7 @@ if __name__ == "__main__":
         # WINDOWS:
         # dac/aoml/13857/13857_meta.nc
 
-        print(fs.fs._relpath('\dac/aoml/13857/13857_meta.nc'))
+        print(fs.fs._relpath('/dac/aoml/13857/13857_meta.nc'))
         # UBUNTU:
 
         # WINDOWS:
