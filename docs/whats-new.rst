@@ -7,6 +7,19 @@ What's New
 
 |pypi dwn| |conda dwn|
 
+Coming up next
+--------------
+
+.. versionadded:: next
+
+    This new version **argopy** requires Python 3.11. We drop support for Python 3.10.
+
+Internals
+^^^^^^^^^
+
+- **Identified incompatible versions of xarray**. Because of `this issue <https://github.com/pydata/xarray/issues/8909>`_ argopy is not compatible with xarray versions from 2024.3.0 to 2025.6.1, included (:pr:`451`) by |gmaze|.
+
+
 v1.2.0 (9 June 2025)
 --------------------
 
@@ -31,8 +44,6 @@ Features and front-end API
 
 Internals
 ^^^^^^^^^
-
-- **Identified incompatible versions of xarray**. Because of `this issue <https://github.com/pydata/xarray/issues/8909>`_ argopy is not compatible with xarray versions from 2024.3.0 to 2025.6.1, included (:pr:`451`) by |gmaze|.
 
 - **Open netcdf files lazily from ftp server**. Adding to s3 and http, we now support laziness with ftp using `kerchunk <https://fsspec.github.io/kerchunk/>`_. Checkout the dedicated :ref:`lazy` section of the documentation. (:pr:`460`) by |gmaze|.
 
