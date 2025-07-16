@@ -10,9 +10,11 @@ if __name__ == "__main__":
     p = argopy.tutorial.open_dataset('gdac')[0]
     print(p)
     # UBUNTU:
+    # /home/runner/.argopy_tutorial_data/ftp
     # WINDOWS:
+    # C:\Users\runneradmin\.argopy_tutorial_data\ftp
 
-    fs=fsspec.filesystem('dir', fs=fsspec.filesystem('file'), path='/home/runner/.argopy_tutorial_data/ftp')
+    fs=fsspec.filesystem('dir', fs=fsspec.filesystem('file'), path=p)
 
     print(fs)
     # UBUNTU:
