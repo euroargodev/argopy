@@ -89,7 +89,7 @@ class ArgoStoreProto(ABC):
         if self.fs.protocol == "dir":
             info = self.fs.fs.info(self.fs._join(path), **kwargs)
             info = info.copy()
-            # info["name"] = self._relpath(info["name"])
+            info["name"] = self.fs._relpath(self.fs._join(path))
             return info
         else:
             return self.fs.info(path, *args, **kwargs)
