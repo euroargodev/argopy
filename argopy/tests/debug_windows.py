@@ -117,13 +117,30 @@ if __name__ == "__main__":
     # except Exception as e:
     #     print(e)
     #     pass
-
+    print('='*30, 'Now with gdacfs')
+    
     fs = argopy.gdacfs(p)
     try:
         print(fs)
+        # UBUNTU:
+        # <argopy.stores.implementations.local.filestore object at 0x7fe3b5cd4350>
+        # WINDOWS:
+        # <argopy.stores.implementations.local.filestore object at 0x00000128116A7350>
+
         print(fs.fs)
+        # UBUNTU:
+        # DirFileSystem(path='/home/runner/.argopy_tutorial_data/ftp', fs=<fsspec.implementations.local.LocalFileSystem object at 0x7fe3b707a250>)
+        # WINDOWS:
+        # DirFileSystem(path='C:/Users/runneradmin/.argopy_tutorial_data/ftp', fs=<fsspec.implementations.local.LocalFileSystem object at 0x00000128116ACE90>)
+
+
+        print(fs.fs.fs)
+        # UBUNTU:
+        # WINDOWS:
+
         print(fs.info('dac/aoml/13857/13857_meta.nc'))
         # UBUNTU:
+        # {'name': 'dac/aoml/13857/13857_meta.nc', 'size': 25352, 'type': 'file', 'created': 1752652506.554874, 'islink': False, 'mode': 33188, 'uid': 1001, 'gid': 118, 'mtime': 1752652506.554874, 'ino': 272870, 'nlink': 1}
         # WINDOWS:
     except Exception as e:
         print(e)
