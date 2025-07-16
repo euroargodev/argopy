@@ -35,7 +35,7 @@ you can also work with the ongoing development version:
 Required dependencies
 ---------------------
 
-Because of a `bug in xarray versions 2024.3.0 to 2025.6.1 <https://github.com/pydata/xarray/issues/8909>`_ and since xarray >= 2025.7.0 requires python >= 3.11: **argopy** >= 1.3 requires Python 3.11.
+**argopy** >= 1.3 requires Python 3.11
 
 - xarray >= 2025.7.0
 - scipy
