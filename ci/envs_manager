@@ -20,9 +20,8 @@ source ~/miniconda3/etc/profile.d/conda.sh
 #########################
 declare -A ENV_LIST=(
 ['argopy-base']="requirements/py3.11-all-pinned.yml"
-['argopy-coiled']="requirements/py3.11-coiled-free.yml"
-['argopy-xarray-unpinned']="requirements/py3.12-all-free-xarray-check.yml"
 
+['argopy-coiled']="requirements/py3.11-coiled-free.yml"
 ['argopy-docs-rtd']="requirements/py3.11-docs-rtd.yml"
 
 ['argopy-py310-all-free']="requirements/py3.10-all-free.yml"
@@ -39,6 +38,9 @@ declare -A ENV_LIST=(
 
 ['argopy-py312-all-free']="requirements/py3.12-all-free.yml"
 ['argopy-py312-core-free']="requirements/py3.12-core-free.yml"
+
+['argopy-py312-all-pinned']="requirements/py3.12-all-pinned.yml"
+['argopy-py312-core-pinned']="requirements/py3.12-core-pinned.yml"
 
 )
 
