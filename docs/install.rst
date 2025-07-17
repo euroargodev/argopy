@@ -93,7 +93,7 @@ Environments
 
 You can simply use one of the **argopy** testing conda environments listed here: https://github.com/euroargodev/argopy/tree/master/ci/requirements
 
-You can also look at this section of the documentation :ref:`contributing.dev_envc`
+You can also look at this section of the documentation :ref:`contributing.dev_env`
 
 
 .. _Erddapy: https://github.com/ioos/erddapy
