@@ -73,25 +73,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.11", "3.12"]
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
 
     steps:
       - name: Energy Estimation - Initialize
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
         with:
           task: start-measurement
           project: ${{ secrets.CARBONDB_PROJECT_UUID }}
           tags: "${{github.workflow}},core-free,OS-${{matrix.os}},Company-${{ secrets.CARBONDB_COMPANY_UUID }},Py-${{matrix.python-version}}"
-          electricitymaps-api-token: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
+          co2-grid-intensity-api-token: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
           send-data: true
         continue-on-error: true
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Fetch all history for all branches and tags.
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4.1.0
+        uses: aws-actions/configure-aws-credentials@v4.2.1
         with:
           aws-region: us-west-1
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ga-ci-tests-argopy-01
@@ -124,7 +124,7 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Setup
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
         with:
           task: get-measurement
           label: 'setup core-free'
@@ -141,7 +141,7 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Exec
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
         with:
           task: get-measurement
           label: 'pytest core-free'
@@ -154,7 +154,7 @@ jobs:
           retention-days: 90
       - name: Energy Estimation - Show Results
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
         with:
           task: display-results
         continue-on-error: true
@@ -180,25 +180,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.11", "3.12"]
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
 
     steps:
       - name: Energy Estimation - Initialize
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
         with:
           task: start-measurement
           project: ${{ secrets.CARBONDB_PROJECT_UUID }}
           tags: "${{github.workflow}},all-free,OS-${{matrix.os}},Company-${{ secrets.CARBONDB_COMPANY_UUID }},Py-${{matrix.python-version}}"
-          electricitymaps-api-token: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
+          co2-grid-intensity-api-token: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
           send-data: true
         continue-on-error: true
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Fetch all history for all branches and tags.
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4.1.0
+        uses: aws-actions/configure-aws-credentials@v4.2.1
         with:
           aws-region: us-west-1
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ga-ci-tests-argopy-01
@@ -231,7 +231,7 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Setup
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
         with:
           task: get-measurement
           label: 'setup all-free'
@@ -248,7 +248,7 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Exec
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
         with:
           task: get-measurement
           label: 'pytest all-free'
@@ -261,7 +261,7 @@ jobs:
           retention-days: 90
       - name: Energy Estimation - Show Results
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
         with:
           task: display-results
         continue-on-error: true

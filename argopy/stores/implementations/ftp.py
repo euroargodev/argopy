@@ -4,13 +4,11 @@ import xarray as xr
 import concurrent.futures
 import multiprocessing
 import io
-from pathlib import Path
 import fsspec
 import warnings
 from typing import Literal
+from netCDF4 import Dataset
 
-
-from ...options import OPTIONS
 from ...errors import InvalidMethod, DataNotFound
 from ...utils.transform import drop_variables_not_in_all_datasets
 from ..filesystems import has_distributed, distributed
@@ -31,17 +29,20 @@ class ftpstore(httpstore):
 
     @property
     def host(self):
-        return self.fs.fs.host if self.fs.protocol == 'dir' else self.fs.host
+        return self.fs.fs.host if self.fs.protocol == "dir" else self.fs.host
 
     @property
     def port(self):
-        return self.fs.fs.port if self.fs.protocol == 'dir' else self.fs.port
+        return self.fs.fs.port if self.fs.protocol == "dir" else self.fs.port
 
-    def open_dataset(self, url: str,
+    def open_dataset(
+        self,
+        url: str,
         errors: Literal["raise", "ignore", "silent"] = "raise",
         lazy: bool = False,
         xr_opts: dict = {},
-        **kwargs):
+        **kwargs,
+    ):
         """Create a :class:`xarray.Dataset` from an url pointing to a netcdf file
 
         Parameters
@@ -68,7 +69,7 @@ class ftpstore(httpstore):
             the netcdf file lazily. You can provide a specific :class:`ArgoKerchunker` instance with the ``ak`` argument (see below).
 
         xr_opts: dict, default={}
-             Options passed to :func:`xarray.open_dataset`
+             Options passed to :func:`xarray.open_dataset`. This will be ignored if the ``netCDF4` option is set to True.
 
         Other Parameters
         ----------------
@@ -78,9 +79,12 @@ class ftpstore(httpstore):
         akoverwrite: bool, optional
             Determine if kerchunk data should be overwritten or not. This is passed to :meth:`ArgoKerchunker.to_kerchunk`.
 
+        netCDF4: bool, optional, default=False
+            Return a :class:`netCDF4.Dataset` object instead of a :class:`xarray.Dataset`
+
         Returns
         -------
-        :class:`xarray.Dataset`
+        :class:`xarray.Dataset` or :class:`netCDF4.Dataset`
 
         Raises
         ------
@@ -103,7 +107,6 @@ class ftpstore(httpstore):
             -------
             tuple: (data, xr_opts) or (None, None) if errors == "ignore"
             """
-
 
             try:
                 this_url = self.fs._strip_protocol(url)
@@ -129,9 +132,7 @@ class ftpstore(httpstore):
 
             return data, xr_opts
 
-        def load_lazily(
-            url, errors="raise", xr_opts={}, akoverwrite: bool = False
-        ):
+        def load_lazily(url, errors="raise", xr_opts={}, akoverwrite: bool = False):
             """Check if url support lazy access and return kerchunk data along with xarray option to open it lazily
 
             Otherwise, download url content and return data along with xarray option to open it.
@@ -158,28 +159,36 @@ class ftpstore(httpstore):
                     "backend_kwargs": {
                         "consolidated": False,
                         "storage_options": {
-                            "fo": self.ak.to_reference(url,
-                                                       overwrite=akoverwrite,
-                                                       fs=self),  # codespell:ignore
+                            "fo": self.ak.to_reference(
+                                url, overwrite=akoverwrite, fs=self
+                            ),  # codespell:ignore
                             "remote_protocol": fsspec.core.split_protocol(url)[0],
-                            "remote_options": self.ak.storage_options
+                            "remote_options": self.ak.storage_options,
                         },
                     },
                 }
                 return "reference://", xr_opts
             else:
                 warnings.warn(
-                    "This url does not support byte range requests so we cannot load it lazily, falling back on loading in memory.\n(url='%s')" % url
+                    "This url does not support byte range requests so we cannot load it lazily, falling back on loading in memory.\n(url='%s')"
+                    % url
                 )
-                log.debug("This url does not support byte range requests: %s" % self.full_path(url))
-                return load_in_memory(
-                    url, errors=errors, xr_opts=xr_opts
+                log.debug(
+                    "This url does not support byte range requests: %s"
+                    % self.full_path(url)
                 )
+                return load_in_memory(url, errors=errors, xr_opts=xr_opts)
+
+        netCDF4 = kwargs.get("netCDF4", False)
+        if lazy and netCDF4:
+            if errors == "raise":
+                raise ValueError("Cannot return a netCDF4.Dataset object in lazy mode")
+            elif errors == "ignore":
+                log.error("Cannot return a netCDF4.Dataset object in lazy mode")
+                return None
 
         if not lazy:
-            target, _ = load_in_memory(
-                url, errors=errors, xr_opts=xr_opts
-            )
+            target, _ = load_in_memory(url, errors=errors, xr_opts=xr_opts)
         else:
             target, xr_opts = load_lazily(
                 url,
@@ -189,11 +198,16 @@ class ftpstore(httpstore):
             )
 
         if target is not None:
-            ds = xr.open_dataset(target, **xr_opts)
+            if not netCDF4:
+                ds = xr.open_dataset(target, **xr_opts)
 
-            if "source" not in ds.encoding:
-                if isinstance(url, str):
-                    ds.encoding["source"] = self.full_path(url)
+                if "source" not in ds.encoding:
+                    if isinstance(url, str):
+                        ds.encoding["source"] = self.full_path(url)
+
+            else:
+                target = target if isinstance(target, bytes) else target.getbuffer()
+                ds = Dataset(None, memory=target, diskless=True, mode="r")
 
             self.register(url)
             return ds

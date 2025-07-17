@@ -1,13 +1,12 @@
-Gallery
-=======
+Gallery and tutorials
+=====================
 
-Here's a list of examples on how to use **argopy**. We will be adding more examples soon.
-Contributions are highly welcomed and appreciated. So, if you are interested in contributing, please consult the
+Here's a list of examples and tutorials on how to use **argopy**. Contributions are highly welcomed and appreciated. So, if you are interested in contributing, please consult the
 :doc:`contributing` guide.
 
 
-Notebook Examples
------------------
+Examples
+--------
 
 .. grid:: 1 1 2 2
     :gutter: 4
@@ -111,6 +110,39 @@ Notebook Examples
                     :outline:
 
                     :fas:`file-arrow-down` Download notebook
+
+
+Tutorials
+---------
+
+.. grid:: 1 1 2 2
+    :gutter: 4
+
+    .. grid-item-card:: Core-Argo basic features
+
+        |select_region| |ds_phy| |mode_standard| |src_erddap|
+        ^^^
+        A tutorial to get you started with argopy basic features for core-Argo.
+        +++
+        .. grid:: 2 2 2 2
+
+            .. grid-item::
+
+                .. button-link:: https://nbviewer.org/github/euroargodev/argopy/blob/master/docs/tutorials/basic_features_core_01.ipynb
+                    :color: primary
+                    :outline:
+
+                    :fas:`eye` Online viewer
+
+            .. grid-item::
+
+                .. button-link:: https://github.com/euroargodev/argopy/raw/refs/heads/master/docs/tutorials/basic_features_core_01.ipynb.zip
+                    :color: primary
+                    :outline:
+
+                    :fas:`file-arrow-down` Download notebook
+
+
 
 .. dropdown:: Notebook tags Legend
     :open:

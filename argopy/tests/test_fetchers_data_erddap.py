@@ -52,6 +52,7 @@ List user modes to be tested
 """
 USER_MODES = ['standard', 'expert', 'research']
 # USER_MODES = ['research']
+# USER_MODES = ['standard']
 
 
 """

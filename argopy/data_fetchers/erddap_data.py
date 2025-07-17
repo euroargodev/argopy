@@ -22,12 +22,9 @@ from erddapy.erddapy import _quote_string_constraints as quote_string_constraint
 
 from ..options import OPTIONS, PARALLEL_SETUP
 from ..utils.lists import list_bgc_s_variables, list_core_parameters
-from ..utils.decorators import deprecated
 from ..errors import ErddapServerError, DataNotFound
 from ..stores import httpstore, has_distributed, distributed
-from ..stores import (
-    indexstore_pd as ArgoIndex,
-)  # make sure we work with the Pandas index store
+from ..stores.index import indexstore_pd as ArgoIndex
 from ..utils import is_list_of_strings, to_list, Chunker
 from .proto import ArgoDataFetcherProto
 from .erddap_data_processors import pre_process
@@ -266,159 +263,6 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             log.debug("The erddap server has been modified, updating internal data")
             self._init_erddapy()
 
-    @deprecated("Not serializable, please use 'erddap_data_processors._add_attributes'", version="1.0.0")
-    def _add_attributes(self, this):  # noqa: C901
-        """Add variables attributes not return by erddap requests (csv)
-
-        This is hard coded, but should be retrieved from an API somewhere
-        """
-
-        for v in this.data_vars:
-            param = "PRES"
-            if v in [param, "%s_ADJUSTED" % param, "%s_ADJUSTED_ERROR" % param]:
-                this[v].attrs = {
-                    "long_name": "Sea Pressure",
-                    "standard_name": "sea_water_pressure",
-                    "units": "decibar",
-                    "valid_min": 0.0,
-                    "valid_max": 12000.0,
-                    "resolution": 0.1,
-                    "axis": "Z",
-                    "casted": (
-                        this[v].attrs["casted"] if "casted" in this[v].attrs else 0
-                    ),
-                }
-                if "ERROR" in v:
-                    this[v].attrs["long_name"] = (
-                        "ERROR IN %s" % this[v].attrs["long_name"]
-                    )
-
-        for v in this.data_vars:
-            param = "TEMP"
-            if v in [param, "%s_ADJUSTED" % param, "%s_ADJUSTED_ERROR" % param]:
-                this[v].attrs = {
-                    "long_name": "SEA TEMPERATURE IN SITU ITS-90 SCALE",
-                    "standard_name": "sea_water_temperature",
-                    "units": "degree_Celsius",
-                    "valid_min": -2.0,
-                    "valid_max": 40.0,
-                    "resolution": 0.001,
-                    "casted": (
-                        this[v].attrs["casted"] if "casted" in this[v].attrs else 0
-                    ),
-                }
-                if "ERROR" in v:
-                    this[v].attrs["long_name"] = (
-                        "ERROR IN %s" % this[v].attrs["long_name"]
-                    )
-
-        for v in this.data_vars:
-            param = "PSAL"
-            if v in [param, "%s_ADJUSTED" % param, "%s_ADJUSTED_ERROR" % param]:
-                this[v].attrs = {
-                    "long_name": "PRACTICAL SALINITY",
-                    "standard_name": "sea_water_salinity",
-                    "units": "psu",
-                    "valid_min": 0.0,
-                    "valid_max": 43.0,
-                    "resolution": 0.001,
-                    "casted": (
-                        this[v].attrs["casted"] if "casted" in this[v].attrs else 0
-                    ),
-                }
-                if "ERROR" in v:
-                    this[v].attrs["long_name"] = (
-                        "ERROR IN %s" % this[v].attrs["long_name"]
-                    )
-
-        for v in this.data_vars:
-            param = "DOXY"
-            if v in [param, "%s_ADJUSTED" % param, "%s_ADJUSTED_ERROR" % param]:
-                this[v].attrs = {
-                    "long_name": "Dissolved oxygen",
-                    "standard_name": "moles_of_oxygen_per_unit_mass_in_sea_water",
-                    "units": "micromole/kg",
-                    "valid_min": -5.0,
-                    "valid_max": 600.0,
-                    "resolution": 0.001,
-                    "casted": (
-                        this[v].attrs["casted"] if "casted" in this[v].attrs else 0
-                    ),
-                }
-                if "ERROR" in v:
-                    this[v].attrs["long_name"] = (
-                        "ERROR IN %s" % this[v].attrs["long_name"]
-                    )
-
-        for v in this.data_vars:
-            if "_QC" in v:
-                attrs = {
-                    "long_name": "Global quality flag of %s profile" % v,
-                    "conventions": "Argo reference table 2a",
-                    "casted": (
-                        this[v].attrs["casted"] if "casted" in this[v].attrs else 0
-                    ),
-                }
-                this[v].attrs = attrs
-
-        if "CYCLE_NUMBER" in this.data_vars:
-            this["CYCLE_NUMBER"].attrs = {
-                "long_name": "Float cycle number",
-                "conventions": "0..N, 0 : launch cycle (if exists), 1 : first complete cycle",
-                "casted": (
-                    this["CYCLE_NUMBER"].attrs["casted"]
-                    if "casted" in this["CYCLE_NUMBER"].attrs
-                    else 0
-                ),
-            }
-        if "DIRECTION" in this.data_vars:
-            this["DIRECTION"].attrs = {
-                "long_name": "Direction of the station profiles",
-                "conventions": "A: ascending profiles, D: descending profiles",
-                "casted": (
-                    this["DIRECTION"].attrs["casted"]
-                    if "casted" in this["DIRECTION"].attrs
-                    else 0
-                ),
-            }
-
-        if "PLATFORM_NUMBER" in this.data_vars:
-            this["PLATFORM_NUMBER"].attrs = {
-                "long_name": "Float unique identifier",
-                "conventions": "WMO float identifier : A9IIIII",
-                "casted": (
-                    this["PLATFORM_NUMBER"].attrs["casted"]
-                    if "casted" in this["PLATFORM_NUMBER"].attrs
-                    else 0
-                ),
-            }
-
-        if "DATA_MODE" in this.data_vars:
-            this["DATA_MODE"].attrs = {
-                "long_name": "Delayed mode or real time data",
-                "conventions": "R : real time; D : delayed mode; A : real time with adjustment",
-                "casted": (
-                    this["DATA_MODE"].attrs["casted"]
-                    if "casted" in this["DATA_MODE"].attrs
-                    else 0
-                ),
-            }
-
-        if self.dataset_id in ["bgc", "bgc-s"]:
-            for param in self._bgc_vlist_params:
-                if "%s_DATA_MODE" % param in this.data_vars:
-                    this["%s_DATA_MODE" % param].attrs = {
-                        "long_name": "Delayed mode or real time data",
-                        "conventions": "R : real time; D : delayed mode; A : real time with adjustment",
-                        "casted": (
-                            this["%s_DATA_MODE" % param].attrs["casted"]
-                            if "casted" in this["%s_DATA_MODE" % param].attrs
-                            else 0
-                        ),
-                    }
-
-        return this
-
     def _init_erddapy(self):
         # Init erddapy
         self.erddap = ERDDAP(server=str(self.server), protocol="tabledap")
@@ -450,14 +294,14 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         """
         if hasattr(self, "WMO"):
             if hasattr(self, "CYC") and self.CYC is not None:
-                self.indexfs.search_wmo_cyc(self.WMO, self.CYC)
+                self.indexfs.query.wmo_cyc(self.WMO, self.CYC)
             else:
-                self.indexfs.search_wmo(self.WMO)
+                self.indexfs.query.wmo(self.WMO)
         elif hasattr(self, "BOX"):
             if len(self.indexBOX) == 4:
-                self.indexfs.search_lat_lon(self.indexBOX)
+                self.indexfs.query.lon_lat(self.indexBOX)
             else:
-                self.indexfs.search_lat_lon_tim(self.indexBOX)
+                self.indexfs.query.box(self.indexBOX)
         params = self.indexfs.read_params()
 
         # Temporarily remove from params those missing on the erddap server:

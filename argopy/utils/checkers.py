@@ -535,7 +535,7 @@ def check_gdac_path(path, errors: str = "ignore", ignore_knowns: bool = False): 
             return False
 
 
-def isconnected(host: str = "https://www.ifremer.fr", maxtry: int = 10):
+def isconnected(host: str = "https://argopy.statuspage.io", maxtry: int = 10):
     """Check if an URL is alive
 
     Parameters

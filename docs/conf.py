@@ -151,7 +151,9 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '_templates',
 # Give *lots* of time for notebook cell execution!
 # Note nbsphinx compiles *all* notebooks in docs unless excluded
 nbsphinx_timeout = 60
-nbsphinx_execute = "always"
+nbsphinx_execute = "never"
+# nbsphinx_allow_errors = True
+
 # nbsphinx_prolog = """
 # {% set docname = env.doc2path(env.docname, base=None) %}
 # You can run this notebook in a `live session:
@@ -285,7 +287,7 @@ html_theme_options = {
             "type": "fontawesome",
         },
         {
-            "name": "Pre-registration for 2025 training-camps",
+            "name": "Pre-registration for 2025 online training-camps",
             "url": "https://forms.gle/d8xPbrWu7aZcvMut9",
             "icon": "fa-solid fa-graduation-cap",
             "type": "fontawesome",
@@ -414,4 +416,6 @@ intersphinx_mapping = {
     's3fs': ('https://s3fs.readthedocs.io/en/latest/', None),
     'kerchunk': ('https://fsspec.github.io/kerchunk/', None),
     'numcodecs': ('https://numcodecs.readthedocs.io/en/stable/', None),
+    'scipy': ('https://docs.scipy.org/doc/scipy/', None),
+    # 'netCDF4': ('https://unidata.github.io/netcdf4-python/', None),
 }

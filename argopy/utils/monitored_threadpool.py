@@ -352,7 +352,7 @@ class proto_MonitoredPoolExecutor_terminal(proto_MonitoredPoolExecutor_monitor):
         **kwargs,
     ):
         super().__init__(**kwargs)
-        self._text_only = ~bool(icon)
+        self._text_only = not bool(icon)
         self._reprinter = None
 
     class _Reprinter:

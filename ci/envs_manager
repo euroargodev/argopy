@@ -19,10 +19,10 @@ source ~/miniconda3/etc/profile.d/conda.sh
 # LIST ALL  AVAILABLE ENVIRONMENTS AND THE ASSOCIATED YAML FILE
 #########################
 declare -A ENV_LIST=(
-['argopy-base']="requirements/py3.10-all-free.yml"
+['argopy-base']="requirements/py3.11-all-pinned.yml"
 
-['argopy-docs-dev']="requirements/py3.10-docs-dev.yml"
-['argopy-docs-rtd']="requirements/py3.10-docs-rtd.yml"
+['argopy-coiled']="requirements/py3.11-coiled-free.yml"
+['argopy-docs-rtd']="requirements/py3.11-docs-rtd.yml"
 
 ['argopy-py310-all-free']="requirements/py3.10-all-free.yml"
 ['argopy-py310-all-pinned']="requirements/py3.10-all-pinned.yml"
@@ -39,12 +39,12 @@ declare -A ENV_LIST=(
 ['argopy-py312-all-free']="requirements/py3.12-all-free.yml"
 ['argopy-py312-core-free']="requirements/py3.12-core-free.yml"
 
-['argopy-coiled']="requirements/py3.11-coiled-free.yml"
+['argopy-py312-all-pinned']="requirements/py3.12-all-pinned.yml"
+['argopy-py312-core-pinned']="requirements/py3.12-core-pinned.yml"
 
 # Debug envs:
 ['argopy-debug-xr']="requirements/py3.10-all-free-xarray-check.yml"
 ['argopy-debug-fs']="requirements/py3.10-all-pinned-fsspec-check.yml"
-
 )
 
 #for k in "${!ENV_LIST[@]}"
@@ -165,7 +165,7 @@ install_conda_env () {
 
 	# Install local argopy
 	printf "Installing argopy ...\n"
-	python -m pip install --no-deps -e ..
+	python -m pip install --no-deps -e ..	
 
 }
 

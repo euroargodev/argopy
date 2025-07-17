@@ -19,7 +19,7 @@ from .checkers import (  # noqa: F401
     has_aws_credentials,
 )
 from .casting import DATA_TYPES, cast_Argo_variable_type, to_list
-from .decorators import deprecated, doc_inherit
+from .decorators import deprecated, doc_inherit, register_accessor
 from .lists import (
     list_available_data_src,
     list_available_index_src,
@@ -60,9 +60,10 @@ from .transform import (
     filter_param_by_data_mode,
     split_data_mode,
 )
-from .format import argo_split_path, format_oneline, UriCName, redact
+from .format import argo_split_path, format_oneline, UriCName, redact, dirfs_relpath
 from .loggers import warnUnless, log_argopy_callerstack
 from .carbon import GreenCoding, Github
+from . import optical_modeling
 
 import importlib
 path2assets = importlib.util.find_spec('argopy.static.assets').submodule_search_locations[0]
@@ -94,6 +95,7 @@ __all__ = (
     # Decorators:
     "deprecated",
     "doc_inherit",
+    "register_accessor",
     # Lists:
     "list_available_data_src",
     "list_available_index_src",
@@ -139,6 +141,7 @@ __all__ = (
     # Formatters:
     "format_oneline",
     "argo_split_path",
+    "dirfs_relpath",
     "UriCName",
     "redact",
     # Loggers:
@@ -147,4 +150,6 @@ __all__ = (
     # Carbon
     "GreenCoding",
     "Github",
+    # Optical modeling
+    "optical_modeling",
 )

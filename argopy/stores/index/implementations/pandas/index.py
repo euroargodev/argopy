@@ -5,11 +5,12 @@ import gzip
 from pathlib import Path
 from typing import List
 
-from ....errors import DataNotFound, InvalidDatasetStructure
-from ....utils.checkers import check_index_cols, is_indexbox, check_wmo, check_cyc
-from ....utils.casting import to_list
-from ..spec import ArgoIndexStoreProto
-from .index_s3 import search_s3
+from .....errors import DataNotFound, InvalidDatasetStructure
+from .....utils import check_index_cols, is_indexbox, check_wmo, check_cyc
+from .....utils import to_list
+from .....utils import deprecated
+from ...spec import ArgoIndexStoreProto
+from ..index_s3 import search_s3
 
 
 log = logging.getLogger("argopy.stores.index.pd")
@@ -202,6 +203,12 @@ class indexstore(ArgoIndexStoreProto):
 
         return df, src
 
+    def _reduce_a_filter_list(self, filters, op="or"):
+        if op == "or":
+            return np.logical_or.reduce(filters)
+        elif op == "and":
+            return np.logical_and.reduce(filters)
+
     @property
     def search_path(self):
         """Path to search result uri"""
@@ -226,24 +233,6 @@ class indexstore(ArgoIndexStoreProto):
         return [
             sep.join([self.host.replace("/idx", ""), "dac", f.replace("/", sep)])
             for f in self.search["file"]
-        ]
-
-    @property
-    def files(self) -> List[str]:
-        """File paths listed in search results"""
-        sep = self.fs["src"].fs.sep
-        return [
-            sep.join(["dac", f.replace("/", sep)])
-            for f in self.search["file"]
-        ]
-
-    @property
-    def files_full_index(self) -> List[str]:
-        """File paths listed in the index"""
-        sep = self.fs["src"].fs.sep
-        return [
-            sep.join(["dac", f.replace("/", sep)])
-            for f in self.index["file"]
         ]
 
     def read_wmo(self, index=False):
@@ -330,6 +319,27 @@ class indexstore(ArgoIndexStoreProto):
                 tmax(self.index["date"]),
             ]
 
+    def read_files(self, index=False) -> List[str]:
+        """File paths listed in index or search results
+
+        Fall back on full index if search not triggered
+
+        Returns
+        -------
+        list(str)
+        """
+        sep = self.fs["src"].fs.sep
+        if hasattr(self, "search") and not index:
+            return [
+                sep.join(["dac", f.replace("/", sep)])
+                for f in self.search["file"]
+            ]
+        else:
+            return [
+                sep.join(["dac", f.replace("/", sep)])
+                for f in self.index["file"]
+            ]
+
     def records_per_wmo(self, index=False):
         """Return the number of records per unique WMOs in search results
 
@@ -353,246 +363,6 @@ class indexstore(ArgoIndexStoreProto):
                 )
                 count[wmo] = self.index[search_filter].shape[0]
         return count
-
-    @search_s3
-    def search_wmo(self, WMOs, nrows=None):
-        WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
-        log.debug(
-            "Argo index searching for WMOs=[%s] ..."
-            % ";".join([str(wmo) for wmo in WMOs])
-        )
-        self.load(nrows=self._nrows_index)
-        self.search_type = {"WMO": WMOs}
-        filt = []
-        for wmo in WMOs:
-            filt.append(
-                self.index["file"].str.contains("/%i/" % wmo, regex=True, case=False)
-            )
-        self.search_filter = np.logical_or.reduce(filt)
-        self.run(nrows=nrows)
-        return self
-
-    @search_s3
-    def search_cyc(self, CYCs, nrows=None):
-        if self.convention in ["ar_index_global_meta"]:
-            raise InvalidDatasetStructure(
-                "Cannot search for cycle number in this index)"
-            )
-        CYCs = check_cyc(CYCs)  # Check and return a valid list of CYCs
-        log.debug(
-            "Argo index searching for CYCs=[%s] ..."
-            % (";".join([str(cyc) for cyc in CYCs]))
-        )
-        self.load(nrows=self._nrows_index)
-        self.search_type = {"CYC": CYCs}
-        filt = []
-        for cyc in CYCs:
-            if cyc < 1000:
-                pattern = "_%0.3d.nc" % (cyc)
-            else:
-                pattern = "_%0.4d.nc" % (cyc)
-            filt.append(
-                self.index["file"].str.contains(pattern, regex=True, case=False)
-            )
-        self.search_filter = np.logical_or.reduce(filt)
-        self.run(nrows=nrows)
-        return self
-
-    @search_s3
-    def search_wmo_cyc(self, WMOs, CYCs, nrows=None):
-        if self.convention in ["ar_index_global_meta"]:
-            raise InvalidDatasetStructure(
-                "Cannot search for cycle number in this index)"
-            )
-        WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
-        CYCs = check_cyc(CYCs)  # Check and return a valid list of CYCs
-        log.debug(
-            "Argo index searching for WMOs=[%s] and CYCs=[%s] ..."
-            % (
-                ";".join([str(wmo) for wmo in WMOs]),
-                ";".join([str(cyc) for cyc in CYCs]),
-            )
-        )
-        self.load(nrows=self._nrows_index)
-        self.search_type = {"WMO": WMOs, "CYC": CYCs}
-        filt = []
-        for wmo in WMOs:
-            for cyc in CYCs:
-                if cyc < 1000:
-                    pattern = "%i_%0.3d.nc" % (wmo, cyc)
-                else:
-                    pattern = "%i_%0.4d.nc" % (wmo, cyc)
-                filt.append(
-                    self.index["file"].str.contains(pattern, regex=True, case=False)
-                )
-        self.search_filter = np.logical_or.reduce(filt)
-        self.run(nrows=nrows)
-        return self
-
-    def search_tim(self, BOX, nrows=None):
-        key = "date"
-        if "longitude" not in self.convention_columns:
-            raise InvalidDatasetStructure("Cannot search coordinates in this index")
-        is_indexbox(BOX)
-        log.debug("Argo index searching for %s in BOX=%s ..." % (key, BOX))
-        self.load(nrows=self._nrows_index)
-        self.search_type = {"BOX": BOX}
-        tim_min = int(pd.to_datetime(BOX[4]).strftime("%Y%m%d%H%M%S"))
-        tim_max = int(pd.to_datetime(BOX[5]).strftime("%Y%m%d%H%M%S"))
-        filt = []
-        filt.append(self.index[key].ge(tim_min))
-        filt.append(self.index[key].le(tim_max))
-        self.search_filter = np.logical_and.reduce(filt)
-        self.run(nrows=nrows)
-        return self
-
-    def search_lat_lon(self, BOX, nrows=None):
-        if "longitude" not in self.convention_columns:
-            raise InvalidDatasetStructure("Cannot search coordinates in this index")
-        is_indexbox(BOX)
-        log.debug("Argo index searching for lat/lon in BOX=%s ..." % BOX)
-        self.load(nrows=self._nrows_index)
-        self.search_type = {"BOX": BOX}
-        filt = []
-        filt.append(self.index["longitude"].ge(BOX[0]))
-        filt.append(self.index["longitude"].le(BOX[1]))
-        filt.append(self.index["latitude"].ge(BOX[2]))
-        filt.append(self.index["latitude"].le(BOX[3]))
-        self.search_filter = np.logical_and.reduce(filt)
-        self.run(nrows=nrows)
-        return self
-
-    def search_lat_lon_tim(self, BOX, nrows=None):
-        if "longitude" not in self.convention_columns:
-            raise InvalidDatasetStructure("Cannot search coordinates in this index")
-        is_indexbox(BOX)
-        log.debug("Argo index searching for lat/lon/time in BOX=%s ..." % BOX)
-        self.load(nrows=self._nrows_index)
-        self.search_type = {"BOX": BOX}
-        tim_min = int(pd.to_datetime(BOX[4]).strftime("%Y%m%d%H%M%S"))
-        tim_max = int(pd.to_datetime(BOX[5]).strftime("%Y%m%d%H%M%S"))
-        filt = []
-        filt.append(self.index["date"].ge(tim_min))
-        filt.append(self.index["date"].le(tim_max))
-        filt.append(self.index["longitude"].ge(BOX[0]))
-        filt.append(self.index["longitude"].le(BOX[1]))
-        filt.append(self.index["latitude"].ge(BOX[2]))
-        filt.append(self.index["latitude"].le(BOX[3]))
-        self.search_filter = np.logical_and.reduce(filt)
-        self.run(nrows=nrows)
-        return self
-
-    def search_params(self, PARAMs, logical: bool = "and", nrows=None):
-        if "parameters" not in self.convention_columns:
-            raise InvalidDatasetStructure("Cannot search for parameters in this index")
-        log.debug("Argo index searching for parameters in PARAM=%s ..." % PARAMs)
-        PARAMs = to_list(PARAMs)  # Make sure we deal with a list
-        self.load(nrows=self._nrows_index)
-        self.search_type = {"PARAM": PARAMs, "logical": logical}
-        filt = []
-        self.index["variables"] = self.index["parameters"].apply(lambda x: x.split())
-        for param in PARAMs:
-            filt.append(self.index["variables"].apply(lambda x: param in x))
-        self.index = self.index.drop("variables", axis=1)
-        if logical == "and":
-            self.search_filter = np.logical_and.reduce(filt)
-        else:
-            self.search_filter = np.logical_or.reduce(filt)
-        self.run(nrows=nrows)
-        return self
-
-    def search_parameter_data_mode(
-        self, PARAMs: dict, logical: bool = "and", nrows=None
-    ):
-        if self.convention not in [
-            "ar_index_global_prof",
-            "argo_synthetic-profile_index",
-            "argo_bio-profile_index",
-        ]:
-            raise InvalidDatasetStructure(
-                "Cannot search for parameter data mode in this index)"
-            )
-        log.debug(
-            "Argo index searching for parameter data modes such as PARAM=%s ..."
-            % PARAMs
-        )
-
-        # Validate PARAMs argument type
-        [
-            PARAMs.update({p: to_list(PARAMs[p])}) for p in PARAMs
-        ]  # Make sure we deal with a list
-        if not np.all(
-            [v in ["R", "A", "D", "", " "] for vals in PARAMs.values() for v in vals]
-        ):
-            raise ValueError("Data mode must be a value in 'R', 'A', 'D', ' ', ''")
-        if self.convention in ["argo_aux-profile_index"]:
-            raise InvalidDatasetStructure(
-                "Method not available for this index ('%s')" % self.convention
-            )
-
-        self.load(nrows=self._nrows_index)
-        self.search_type = {"DMODE": PARAMs, "logical": logical}
-        filt = []
-
-        if self.convention in ["ar_index_global_prof"]:
-            for param in PARAMs:
-                data_mode = to_list(PARAMs[param])
-                filt.append(
-                    self.index["file"].apply(
-                        lambda x: str(x.split("/")[-1])[0] in data_mode
-                    )
-                )
-
-        elif self.convention in [
-            "argo_bio-profile_index",
-            "argo_synthetic-profile_index",
-        ]:
-            self.index["variables"] = self.index["parameters"].apply(
-                lambda x: x.split()
-            )
-            for param in PARAMs:
-                data_mode = to_list(PARAMs[param])
-                filt.append(
-                    self.index.apply(
-                        lambda x: (
-                            x["parameter_data_mode"][x["variables"].index(param)]
-                            if param in x["variables"]
-                            else ""
-                        )
-                        in data_mode,
-                        axis=1,
-                    )
-                )
-            self.index = self.index.drop("variables", axis=1)
-
-        if logical == "and":
-            self.search_filter = np.logical_and.reduce(filt)
-        else:
-            self.search_filter = np.logical_or.reduce(filt)
-        self.run(nrows=nrows)
-        return self
-
-    def search_profiler_type(self, profiler_type: List[int], nrows=None):
-        if "profiler_type" not in self.convention_columns:
-            raise InvalidDatasetStructure("Cannot search for profilers in this index)")
-        profiler_type = to_list(profiler_type)  # Make sure we deal with a list
-        log.debug("Argo index searching for profiler type in %s ..." % profiler_type)
-        self.load(nrows=self._nrows_index)
-        self.search_type = {"PTYPE": profiler_type}
-        self.search_filter = (
-            self.index["profiler_type"].fillna(99999).astype(int).isin(profiler_type)
-        )
-        self.run(nrows=nrows)
-        return self
-
-    def search_profiler_label(self, profiler_label: str, nrows=None):
-        if "profiler_type" not in self.convention_columns:
-            raise InvalidDatasetStructure("Cannot search for profilers in this index)")
-        log.debug("Argo index searching for profiler label '%s' ..." % profiler_label)
-        type_contains = lambda x: [key for key, value in self._r8.items() if x in str(value)]  # noqa: E731
-        self.load(nrows=self._nrows_index)
-        self.search_type = {"PLABEL": profiler_label}
-        return self.search_profiler_type(type_contains(profiler_label))
 
     def to_indexfile(self, outputfile):
         """Save search results on file, following the Argo standard index formats

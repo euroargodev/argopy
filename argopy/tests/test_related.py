@@ -5,6 +5,7 @@ from collections import ChainMap, OrderedDict
 import shutil
 
 from mocked_http import mocked_httpserver, mocked_server_address
+
 from utils import (
     requires_matplotlib,
     requires_cartopy,
@@ -219,6 +220,7 @@ class Test_OceanOPSDeployments:
         assert isinstance(ax, cartopy.mpl.geoaxes.GeoAxesSubplot)
 
 
+@pytest.mark.skipif(True, reason="Skipped temporarily, see http://github.com/euroargodev/argopy/issues/488")
 class Test_ArgoDocs:
 
     @pytest.fixture

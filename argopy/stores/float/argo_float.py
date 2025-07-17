@@ -43,7 +43,7 @@ class ArgoFloat(FloatStore):
         af = ArgoFloat(WMO, host='s3')     # Shortcut for s3://argo-gdac-sandbox/pub
 
     .. code-block:: python
-        :caption: Load/read GDAC netcdf files as a :class:`xarray.Dataset`
+        :caption: Load/read GDAC netcdf files as a :class:`xarray.Dataset` or :class:`netCDF4.Dataset`
 
         af.ls_dataset() # Return a dictionary with all available datasets for this float
         ds = af.open_dataset('prof') # Use keys from the available datasets dictionary
@@ -51,6 +51,8 @@ class ArgoFloat(FloatStore):
         ds = af.open_dataset('tech')
         ds = af.open_dataset('Rtraj')
         ds = af.open_dataset('Sprof')
+
+        ds = af.open_dataset('Sprof', netCDF4=True)  # Return a netCDF4 Dataset instead of an xarray
 
     .. code-block:: python
         :caption: Other attributes and methods

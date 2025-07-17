@@ -152,11 +152,12 @@ def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa
             ("xarray", get_version),
             ("scipy", get_version),
             ("netCDF4", get_version),
-            ("erddapy", get_version),  # This could go away from requirements ?
-            ("fsspec", get_version),
             ("h5netcdf", get_version),
+            ("erddapy", get_version),
+            ("fsspec", get_version),
             ("aiohttp", get_version),
-            ("packaging", get_version),  # will come with xarray, Using 'version' to make API compatible with several fsspec releases
+            ("packaging", get_version),
+            # will come with xarray, Using 'version' to make API compatible with several fsspec releases
             ("requests", get_version),
             ("toolz", get_version),
             ("decorator", get_version),
@@ -164,11 +165,6 @@ def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa
         'ext.util': sorted([
             ("gsw", get_version),   # Used by xarray accessor to compute new variables
             ("tqdm", get_version),
-        ]),
-        'ext.perf': sorted([
-            ("dask", get_version),
-            ("distributed", get_version),
-            ("pyarrow", get_version),
         ]),
         "ext.files": sorted(
             [
@@ -179,6 +175,11 @@ def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa
                 ("zarr", get_version),
             ]
         ),
+        'ext.perf': sorted([
+            ("dask", get_version),
+            ("distributed", get_version),
+            ("pyarrow", get_version),
+        ]),
         'ext.plot': sorted([
             ("cartopy", get_version),
             ("IPython", get_version),

@@ -17,7 +17,8 @@ from argopy.errors import (
     InvalidDatasetStructure,
 )
 from argopy.utils.checkers import is_list_of_strings, is_wmo
-from argopy.stores import indexstore_pd, ArgoFloat
+from argopy.stores.index import indexstore_pd
+from argopy.stores import ArgoFloat
 from utils import create_temp_folder
 from mocked_http import mocked_httpserver, mocked_server_address
 from utils import patch_ftp
@@ -60,9 +61,9 @@ VALID_SEARCHES = [
     {"cyc": [5, 45]},
     # {"wmo_cyc": [13857, 2]},
     {"wmo_cyc": [3902131, 2]},  # BGC
-    {"tim": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
-    {"lat_lon": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
-    {"lat_lon_tim": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
+    {"date": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
+    {"lon_lat": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
+    {"box": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
     {"profiler_type": [845]},
     {"profiler_label": 'ARVOR'},
 ]
@@ -88,17 +89,17 @@ def run_a_search(idx_maker, fetcher_args, search_point, xfail=False, reason="?")
         try:
             idx = idx_maker(**fargs)
             if "wmo" in apts:
-                idx.search_wmo(apts["wmo"], nrows=nrows)
+                idx.query.wmo(apts["wmo"], nrows=nrows)
             if "cyc" in apts:
-                idx.search_cyc(apts["cyc"], nrows=nrows)
+                idx.query.cyc(apts["cyc"], nrows=nrows)
             if "wmo_cyc" in apts:
-                idx.search_wmo_cyc(apts["wmo_cyc"][0], apts["wmo_cyc"][1], nrows=nrows)
-            if "tim" in apts:
-                idx.search_tim(apts["tim"], nrows=nrows)
-            if "lat_lon" in apts:
-                idx.search_lat_lon(apts["lat_lon"], nrows=nrows)
-            if "lat_lon_tim" in apts:
-                idx.search_lat_lon_tim(apts["lat_lon_tim"], nrows=nrows)
+                idx.query.wmo_cyc(apts["wmo_cyc"][0], apts["wmo_cyc"][1], nrows=nrows)
+            if "date" in apts:
+                idx.query.date(apts["date"], nrows=nrows)
+            if "lon_lat" in apts:
+                idx.query.lon_lat(apts["lon_lat"], nrows=nrows)
+            if "box" in apts:
+                idx.query.box(apts["box"], nrows=nrows)
             if "params" in apts:
                 if np.any(
                         [key in idx.convention_title for key in ["Bio", "Synthetic"]]
@@ -107,7 +108,7 @@ def run_a_search(idx_maker, fetcher_args, search_point, xfail=False, reason="?")
                         logical = apts["logical"]
                     else:
                         logical = "and"
-                    idx.search_params(apts["params"], nrows=nrows, logical=logical)
+                    idx.query.params(apts["params"], nrows=nrows, logical=logical)
                 else:
                     pytest.skip("For BGC index only")
             if "parameter_data_mode" in apts:
@@ -118,13 +119,13 @@ def run_a_search(idx_maker, fetcher_args, search_point, xfail=False, reason="?")
                         logical = apts["logical"]
                     else:
                         logical = "and"
-                    idx.search_parameter_data_mode(apts["parameter_data_mode"], nrows=nrows, logical=logical)
+                    idx.query.parameter_data_mode(apts["parameter_data_mode"], nrows=nrows, logical=logical)
                 else:
                     pytest.skip("For BGC index only")
             if "profiler_type" in apts:
-                idx.search_profiler_type(apts["profiler_type"], nrows=nrows)
+                idx.query.profiler_type(apts["profiler_type"], nrows=nrows)
             if "profiler_label" in apts:
-                idx.search_profiler_label(apts["profiler_label"], nrows=nrows)
+                idx.query.profiler_label(apts["profiler_label"], nrows=nrows)
         except:
             if xfail:
                 pytest.xfail(reason)
@@ -381,7 +382,7 @@ class IndexStore_test_proto:
     def test_to_dataframe_search(self):
         idx = self.new_idx()
         wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
-        idx = idx.search_wmo(wmo)
+        idx = idx.query.wmo(wmo)
 
         df = idx.to_dataframe()
         assert isinstance(df, pd.core.frame.DataFrame)
@@ -399,7 +400,7 @@ class IndexStore_test_proto:
     def test_caching_search(self):
         idx = self.new_idx(cache=True)
         wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
-        idx.search_wmo(wmo)
+        idx.query.wmo(wmo)
         self.assert_search(idx, cacheable=True)
 
     @pytest.mark.parametrize(
@@ -410,7 +411,7 @@ class IndexStore_test_proto:
     )
     def test_read_wmo(self, index):
         wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
-        idx = self.new_idx().search_wmo(wmo)
+        idx = self.new_idx().query.wmo(wmo)
         WMOs = idx.read_wmo(index=index)
         if index:
             assert all([is_wmo(w) for w in WMOs])
@@ -425,7 +426,7 @@ class IndexStore_test_proto:
     )
     def test_read_dac_wmo(self, index):
         wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
-        idx = self.new_idx().search_wmo(wmo)
+        idx = self.new_idx().query.wmo(wmo)
         DAC_WMOs = idx.read_dac_wmo(index=index)
         assert isinstance(DAC_WMOs, tuple)
         for row in DAC_WMOs:
@@ -440,7 +441,7 @@ class IndexStore_test_proto:
     )
     def test_read_params(self, index):
         wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
-        idx = self.new_idx().search_wmo(wmo)
+        idx = self.new_idx().query.wmo(wmo)
         if self.network == "bgc":
             params = idx.read_params(index=index)
             assert is_list_of_strings(params)
@@ -454,9 +455,41 @@ class IndexStore_test_proto:
         indirect=False,
         ids=["index=%s" % i for i in [False, True]],
     )
+    def test_read_domain(self, index):
+        wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
+        idx = self.new_idx().query.wmo(wmo)
+        domain = idx.read_domain(index=index)
+        assert isinstance(domain, list)
+        assert len(domain) == 6
+        assert domain[1]>domain[0]
+        assert domain[3]>domain[2]
+        assert domain[5]>domain[4]
+
+    @pytest.mark.parametrize(
+        "index",
+        [False, True],
+        indirect=False,
+        ids=["index=%s" % i for i in [False, True]],
+    )
+    def test_read_files(self, index):
+        wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
+        idx = self.new_idx().query.wmo(wmo)
+        files = idx.read_files(index=index)
+        assert isinstance(files, list)
+        if index==True:
+            assert len(files) == idx.N_RECORDS
+        else:
+            assert len(files) == idx.N_MATCH
+
+    @pytest.mark.parametrize(
+        "index",
+        [False, True],
+        indirect=False,
+        ids=["index=%s" % i for i in [False, True]],
+    )
     def test_records_per_wmo(self, index):
         wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
-        idx = self.new_idx().search_wmo(wmo)
+        idx = self.new_idx().query.wmo(wmo)
         C = idx.records_per_wmo(index=index)
         for w in C:
             assert str(C[w]).isdigit()
@@ -465,7 +498,7 @@ class IndexStore_test_proto:
         # Create a store and make a simple float search:
         idx0 = self.new_idx()
         wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
-        idx0 = idx0.search_wmo(wmo)
+        idx0 = idx0.query.wmo(wmo)
 
         # Then save this search as a new Argo index file:
         tf = tempfile.NamedTemporaryFile(delete=False)
@@ -492,7 +525,7 @@ class IndexStore_test_proto:
         # Create a store and make a simple float search:
         idx0 = self.new_idx()
         wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
-        idx0 = idx0.search_wmo(wmo)
+        idx0 = idx0.query.wmo(wmo)
         if chunksize is None:
             assert all([isinstance(float, ArgoFloat) for float in idx0.iterfloats(chunksize=chunksize)])
         else:
@@ -538,7 +571,7 @@ class Test_IndexStore_pandas_BGC_bio(IndexStore_test_proto):
 @skip_CORE
 class Test_IndexStore_pyarrow_CORE(IndexStore_test_proto):
     network = "core"
-    from argopy.stores import indexstore_pa
+    from argopy.stores.index import indexstore_pa
 
     indexstore = indexstore_pa
     index_file = "ar_index_global_prof.txt"
@@ -549,7 +582,7 @@ class Test_IndexStore_pyarrow_CORE(IndexStore_test_proto):
 @skip_BGCs
 class Test_IndexStore_pyarrow_BGC_bio(IndexStore_test_proto):
     network = "bgc"
-    from argopy.stores import indexstore_pa
+    from argopy.stores.index import indexstore_pa
 
     indexstore = indexstore_pa
     index_file = "argo_bio-profile_index.txt"
@@ -560,7 +593,7 @@ class Test_IndexStore_pyarrow_BGC_bio(IndexStore_test_proto):
 @skip_BGCb
 class Test_IndexStore_pyarrow_BGC_synthetic(IndexStore_test_proto):
     network = "bgc"
-    from argopy.stores import indexstore_pa
+    from argopy.stores.index import indexstore_pa
 
     indexstore = indexstore_pa
     index_file = "argo_synthetic-profile_index.txt"

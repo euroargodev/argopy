@@ -37,6 +37,7 @@ Data access methods
    DataFetcher.to_xarray
    DataFetcher.to_dataframe
    DataFetcher.to_index
+   DataFetcher.to_dataset
 
 .. _Fetcher Data Visualisation:
 
@@ -62,15 +63,75 @@ Properties
    DataFetcher.domain
    DataFetcher.uri
 
-Utilities for Argo related data
-===============================
+
+Argo file stores
+================
+
+.. autosummary::
+    :toctree: generated/
+
+    gdacfs
+
+ArgoFloat
+---------
+.. autosummary::
+    :toctree: generated/
+
+    ArgoFloat
+
+ArgoIndex
+---------
+
+.. autosummary::
+    :toctree: generated/
+
+    ArgoIndex
+
+List of extensions:
+
+.. currentmodule:: argopy
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor.rst
+
+   ArgoIndex.query
+
+**Search on a single property** of a file record:
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
+
+   ArgoIndex.query.wmo
+   ArgoIndex.query.cyc
+   ArgoIndex.query.lon
+   ArgoIndex.query.lat
+   ArgoIndex.query.date
+   ArgoIndex.query.params
+   ArgoIndex.query.parameter_data_mode
+   ArgoIndex.query.profiler_type
+   ArgoIndex.query.profiler_label
+
+**Search on at least two properties** of a file record:
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
+
+   ArgoIndex.query.wmo_cyc
+   ArgoIndex.query.lon_lat
+   ArgoIndex.query.box
+   ArgoIndex.query.compose
+
+
+Argo meta/related data
+======================
 
 .. autosummary::
    :toctree: generated/
 
    status
-   ArgoIndex
-   ArgoFloat
    ArgoDocs
    ArgoDOI
    ArgoNVSReferenceTables
@@ -163,6 +224,13 @@ Data Filters
 
 Extensions
 ----------
+.. currentmodule:: argopy
+
+You can create your own extension to an Argo dataset for specific features. It should be registered by inheriting from :class:`argopy.extensions.ArgoAccessorExtension` and decorated with :class:`argopy.extensions.register_argo_accessor`.
+
+**argopy** comes with the following extensions:
+
+.. currentmodule:: xarray
 
 .. autosummary::
    :toctree: generated/
@@ -172,12 +240,12 @@ Extensions
     Dataset.argo.create_float_source
     Dataset.argo.canyon_med
     Dataset.argo.datamode
+    Dataset.argo.optic
+    Dataset.argo.optic.Zeu
+    Dataset.argo.optic.Zpd
+    Dataset.argo.optic.Z_iPAR_threshold
+    Dataset.argo.optic.DCM
 
-.. currentmodule:: argopy
-
-You can register your own extension inheriting from :class:`argopy.extensions.ArgoAccessorExtension` and decorated with :class:`argopy.extensions.register_argo_accessor`
-
-.. currentmodule:: xarray
 
 Misc
 ----
@@ -193,6 +261,7 @@ Misc
     Dataset.argo.cast_types
     Dataset.argo.N_POINTS
     Dataset.argo.to_zarr
+    Dataset.argo.reduce_profile
 
 
 Utilities
@@ -252,6 +321,8 @@ Misc
     GreenCoding
     Github
 
+    optical_modeling
+
 Argopy helpers
 ==============
 .. currentmodule:: argopy
@@ -285,15 +356,6 @@ File systems
     stores.ftpstore
     stores.s3store
     stores.ArgoKerchunker
-
-Argo index and float stores
----------------------------
-
-.. autosummary::
-    :toctree: generated/
-
-    ArgoIndex
-    ArgoFloat
 
 Fetcher sources
 ---------------

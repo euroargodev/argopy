@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 import fsspec
-from fsspec.core import split_protocol
 from packaging import version
 import os
 import shutil
@@ -87,7 +86,14 @@ class ArgoStoreProto(ABC):
         return self.fs.exists(path, *args)
 
     def info(self, path, *args, **kwargs):
-        return self.fs.info(path, *args, **kwargs)
+        if self.fs.protocol == "dir":
+            info = self.fs.fs.info(self.fs._join(path), **kwargs)
+            info = info.copy()
+            # info["name"] = self.fs._relpath(info["name"])  # Raw code from fsspec
+            info["name"] = self.fs._relpath(self.fs._join(path))  # Fix https://github.com/euroargodev/argopy/issues/499
+            return info
+        else:
+            return self.fs.info(path, *args, **kwargs)
 
     def first(self, path: Union[str, Path], N: int = 4) -> str:
         """Read first N bytes of a path

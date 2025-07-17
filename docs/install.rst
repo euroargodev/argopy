@@ -5,6 +5,11 @@ Installation
 
 |pypi dwn| |conda dwn|
 
+.. admonition:: **argopy** >= 1.3 requires Python 3.11
+
+    Because of a `bug in xarray versions from 2024.3.0 to 2025.6.1 <https://github.com/pydata/xarray/issues/8909>`_ and since xarray >= 2025.7.0 requires python >= 3.11: **argopy** >= 1.3 requires Python 3.11.
+
+
 Instructions
 ------------
 
@@ -30,13 +35,15 @@ you can also work with the ongoing development version:
 Required dependencies
 ---------------------
 
-- xarray < 2024.3.0 : because of `this issue <https://github.com/pydata/xarray/issues/8909>`_ (see also :issue:`390` and :issue:`404`). As of March 2025, a fix is on the way at `xarray <https://github.com/pydata/xarray/pull/9273>`_ but not yet available.
+**argopy** >= 1.3 requires Python 3.11
+
+- xarray >= 2025.7.0
 - scipy
-- numpy < 2 : because of the xarray limitation above
+- numpy
 - erddapy
 - netCDF4
 - h5netcdf
-- fsspec < 2025.3 : because of `this issue <https://github.com/euroargodev/argopy/issues/459>`_.
+- fsspec >= 2025.5.1
 - toolz
 - requests
 - aiohttp
@@ -45,7 +52,7 @@ Required dependencies
 
 Requirement dependencies details can be found `here <https://github.com/euroargodev/argopy/blob/master/requirements.txt>`_.
 
-The **argopy** software is `continuously tested <https://github.com/euroargodev/argopy/actions?query=workflow%3Atests>`_ under latest OS (Linux, Mac OS and Windows) and with python versions 3.10 and 3.11
+The **argopy** software is `continuously tested <https://github.com/euroargodev/argopy/actions?query=workflow%3Atests>`_ under latest OS (Linux, Mac OS and Windows) and with python versions 3.11 and 3.12.
 
 Optional dependencies
 ---------------------
@@ -86,7 +93,7 @@ Environments
 
 You can simply use one of the **argopy** testing conda environments listed here: https://github.com/euroargodev/argopy/tree/master/ci/requirements
 
-You can also look at this section of the documentation :ref:`contributing.dev_envc`
+You can also look at this section of the documentation :ref:`contributing.dev_env`
 
 
 .. _Erddapy: https://github.com/ioos/erddapy

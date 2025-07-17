@@ -9,7 +9,6 @@ import warnings
 from ..stores import httpstore
 from ..options import OPTIONS, DEFAULT, PARALLEL_SETUP
 from ..utils.chunking import Chunker
-from ..utils.decorators import deprecated
 from ..errors import DataNotFound
 from .. import __version__
 from .proto import ArgoDataFetcherProto
@@ -163,53 +162,6 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
             return url
 
         return [safe_for_fsspec_cache(url) for url in urls]
-
-    @deprecated(
-        "Not serializable, please use 'argovis_data_processors.pre_process'",
-        version="1.0.0",
-    )
-    def json2dataframe(self, profiles):
-        """convert json data to Pandas DataFrame"""
-        # Make sure we deal with a list
-        if isinstance(profiles, list):
-            data = profiles
-        else:
-            data = [profiles]
-        # Transform
-        rows = []
-        for profile in data:
-            # construct metadata dictionary that will be repeated for each level
-            metadict = {
-                "date": profile["timestamp"],
-                "date_qc": profile["timestamp_argoqc"],
-                "lat": profile["geolocation"]["coordinates"][1],
-                "lon": profile["geolocation"]["coordinates"][0],
-                "cycle_number": profile["cycle_number"],
-                "DATA_MODE": profile["data_info"][2][0][1],
-                "DIRECTION": profile["profile_direction"],
-                "platform_number": profile["_id"].split("_")[0],
-                "position_qc": profile["geolocation_argoqc"],
-                "index": 0,
-            }
-            # construct a row for each level in the profile
-            for i in range(
-                len(profile["data"][profile["data_info"][0].index("pressure")])
-            ):
-                row = {
-                    "temp": profile["data"][
-                        profile["data_info"][0].index("temperature")
-                    ][i],
-                    "pres": profile["data"][profile["data_info"][0].index("pressure")][
-                        i
-                    ],
-                    "psal": profile["data"][profile["data_info"][0].index("salinity")][
-                        i
-                    ],
-                    **metadict,
-                }
-                rows.append(row)
-        df = pd.DataFrame(rows)
-        return df
 
     def to_dataframe(self, errors: str = "ignore") -> pd.DataFrame:
         """Load Argo data and return a Pandas dataframe"""

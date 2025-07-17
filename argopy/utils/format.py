@@ -6,6 +6,7 @@ from urllib.parse import urlparse, parse_qs
 import logging
 import pandas as pd
 import numpy as np
+import warnings
 from .checkers import check_cyc, check_wmo
 
 
@@ -27,6 +28,37 @@ def format_oneline(s, max_width=65):
             return "".join([s[0 : n + 1], padding, s[-n:]])
     else:
         return s
+
+
+def dirfs_relpath(fs, path):
+    print("-"*40)
+    if isinstance(path, str):
+        if not fs.path:
+            return path
+        # We need to account for S3FileSystem returning paths that do not
+        # start with a '/'
+        if path == fs.path or (
+            fs.path.startswith(fs.fs.sep) and path == fs.path[1:]
+        ):
+            return ""
+        prefix = fs.path + fs.fs.sep
+        if fs.path.startswith(fs.fs.sep) and not path.startswith(fs.fs.sep):
+            prefix = prefix[1:]
+
+        print("fs=", fs)
+        print("fs.path=", fs.path)
+        print("prefix=", prefix)
+        print("fs.fs.sep=", fs.fs.sep)
+        print("fs.path.startswith(fs.fs.sep)=", fs.path.startswith(fs.fs.sep))
+        print("path.startswith(fs.fs.sep)=", path.startswith(fs.fs.sep))
+        print("prefix=", prefix)
+        print("path=", path)
+        print("path.startswith(prefix)=", path.startswith(prefix))
+
+        assert path.startswith(prefix)
+        return path[len(prefix) :]
+    print("-"*40)
+    return [dirfs_relpath(fs, _path) for _path in path]
 
 
 def argo_split_path(this_path):  # noqa C901
@@ -52,7 +84,8 @@ def argo_split_path(this_path):  # noqa C901
         "incois",
         "jma",
         "kma",
-        "kordi",
+        "kordi",  # todo: remove this entry after some time, it will not be valid after 2025/06/30
+        "kiost",
         "meds",
         "nmdis",
     ]
@@ -163,6 +196,8 @@ def argo_split_path(this_path):  # noqa C901
             "This is not a Argo GDAC compliant file path (invalid DAC name: '%s')"
             % output["dac"]
         )
+    elif output["dac"] == 'kordi' and pd.to_datetime('now', utc=True) > pd.to_datetime('2025-06-30', utc=True):
+        warnings.warn("DAC 'kordi' has been deprecated by ADMT. Use 'kiost' instead.")
 
     # Deal with the file name:
     filename, file_extension = os.path.splitext(output["name"])
