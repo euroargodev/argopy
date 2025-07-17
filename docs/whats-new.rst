@@ -15,6 +15,10 @@ Coming up next
 
     This new **argopy** version requires Python 3.11 !
 
+Features and front-end API
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- :class:`ArgoFloat` **plotting features**: you can now use the new :class:`ArgoFloat.plot` attribute to call on visualizations tool for trajectories and parameters. See all details in :ref:`data-viz`_. (:pr:``) by |gmaze|.
 
 Internals
 ^^^^^^^^^
