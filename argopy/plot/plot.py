@@ -647,6 +647,13 @@ def scatter_plot(
         x_bounds, y_bounds = np.meshgrid(x, y, indexing="ij")
     c = ds[this_param]
 
+    # Possibly broadcast x,y on c dimensions:
+    if not x.shape == y.shape or not x.shape == c.shape or not y.shape == c.shape:
+        x = x.broadcast_like(c)
+        y = y.broadcast_like(c)
+        assert x.shape == y.shape
+        assert y.shape == c.shape
+
     #
     fig, ax = plt.subplots(dpi=90, figsize=figsize)
 
@@ -655,9 +662,9 @@ def scatter_plot(
     if vmax == "attrs":
         vmax = c.attrs["valid_max"] if "valid_max" in c.attrs else None
     if vmin is None:
-        vmin = np.percentile(c, 10)
+        vmin = np.nanpercentile(c, 10)
     if vmax is None:
-        vmax = np.percentile(c, 90)
+        vmax = np.nanpercentile(c, 90)
 
     if "INTERPOLATED" in this_y:
         m = ax.pcolormesh(x_bounds, y_bounds, c, cmap=cmap, vmin=vmin, vmax=vmax)
