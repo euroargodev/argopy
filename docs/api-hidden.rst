@@ -391,3 +391,7 @@
     argopy.ArgoFloat.metadata
     argopy.ArgoFloat.N_CYCLES
     argopy.ArgoFloat.dac
+    argopy.ArgoFloat.plot
+    argopy.ArgoFloat.plot.trajectory
+    argopy.ArgoFloat.plot.scatter
+    argopy.ArgoFloat.plot.map
