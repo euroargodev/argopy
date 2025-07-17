@@ -5,6 +5,11 @@ Installation
 
 |pypi dwn| |conda dwn|
 
+.. admonition:: **argopy** >= 1.3 requires Python 3.11
+
+    Because of a `bug in xarray versions from 2024.3.0 to 2025.6.1 <https://github.com/pydata/xarray/issues/8909>`_ and since xarray >= 2025.7.0 requires python >= 3.11: **argopy** >= 1.3 requires Python 3.11.
+
+
 Instructions
 ------------
 
@@ -30,7 +35,7 @@ you can also work with the ongoing development version:
 Required dependencies
 ---------------------
 
-Note that argopy is not compatible with xarray versions from 2024.3.0 to 2025.6.1 (included) (because of `this issue <https://github.com/pydata/xarray/issues/8909>`_). Note also that xarray >= 2025.7.0 requires python >= 3.11.
+**argopy** >= 1.3 requires Python 3.11
 
 - xarray >= 2025.7.0
 - scipy
@@ -38,7 +43,7 @@ Note that argopy is not compatible with xarray versions from 2024.3.0 to 2025.6.
 - erddapy
 - netCDF4
 - h5netcdf
-- fsspec < 2025.3 : because of `this issue <https://github.com/euroargodev/argopy/issues/459>`_.
+- fsspec >= 2025.5.1
 - toolz
 - requests
 - aiohttp
@@ -47,7 +52,7 @@ Note that argopy is not compatible with xarray versions from 2024.3.0 to 2025.6.
 
 Requirement dependencies details can be found `here <https://github.com/euroargodev/argopy/blob/master/requirements.txt>`_.
 
-The **argopy** software is `continuously tested <https://github.com/euroargodev/argopy/actions?query=workflow%3Atests>`_ under latest OS (Linux, Mac OS and Windows) and with python versions 3.10 and 3.11
+The **argopy** software is `continuously tested <https://github.com/euroargodev/argopy/actions?query=workflow%3Atests>`_ under latest OS (Linux, Mac OS and Windows) and with python versions 3.11 and 3.12.
 
 Optional dependencies
 ---------------------

@@ -73,7 +73,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.11", "3.12"]
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
 
     steps:
@@ -84,7 +84,7 @@ jobs:
           task: start-measurement
           project: ${{ secrets.CARBONDB_PROJECT_UUID }}
           tags: "${{github.workflow}},core-free,OS-${{matrix.os}},Company-${{ secrets.CARBONDB_COMPANY_UUID }},Py-${{matrix.python-version}}"
-          electricitymaps-api-token: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
+          co2-grid-intensity-api-token: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
           send-data: true
         continue-on-error: true
       - uses: actions/checkout@v4
@@ -180,7 +180,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.11", "3.12"]
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
 
     steps:
@@ -191,7 +191,7 @@ jobs:
           task: start-measurement
           project: ${{ secrets.CARBONDB_PROJECT_UUID }}
           tags: "${{github.workflow}},all-free,OS-${{matrix.os}},Company-${{ secrets.CARBONDB_COMPANY_UUID }},Py-${{matrix.python-version}}"
-          electricitymaps-api-token: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
+          co2-grid-intensity-api-token: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
           send-data: true
         continue-on-error: true
       - uses: actions/checkout@v4

@@ -14,7 +14,7 @@ build:
         python: "mambaforge-22.9"
 
 conda:
-    environment: ci/requirements/py3.10-docs-rtd.yml
+    environment: ci/requirements/py3.11-docs-rtd.yml
 
 python:
    install:
