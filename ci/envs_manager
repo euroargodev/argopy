@@ -24,12 +24,6 @@ declare -A ENV_LIST=(
 ['argopy-coiled']="requirements/py3.11-coiled-free.yml"
 ['argopy-docs-rtd']="requirements/py3.11-docs-rtd.yml"
 
-['argopy-py310-all-free']="requirements/py3.10-all-free.yml"
-['argopy-py310-all-pinned']="requirements/py3.10-all-pinned.yml"
-
-['argopy-py310-core-free']="requirements/py3.10-core-free.yml"
-['argopy-py310-core-pinned']="requirements/py3.10-core-pinned.yml"
-
 ['argopy-py311-all-pinned']="requirements/py3.11-all-pinned.yml"
 ['argopy-py311-all-free']="requirements/py3.11-all-free.yml"
 
@@ -42,9 +36,6 @@ declare -A ENV_LIST=(
 ['argopy-py312-all-pinned']="requirements/py3.12-all-pinned.yml"
 ['argopy-py312-core-pinned']="requirements/py3.12-core-pinned.yml"
 
-# Debug envs:
-['argopy-debug-xr']="requirements/py3.10-all-free-xarray-check.yml"
-['argopy-debug-fs']="requirements/py3.10-all-pinned-fsspec-check.yml"
 )
 
 #for k in "${!ENV_LIST[@]}"
