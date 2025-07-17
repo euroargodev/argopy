@@ -300,8 +300,8 @@ class indexstore(ArgoIndexStoreProto):
 
         if hasattr(self, "search") and not index:
             return [
-                np.round(conv_lon(min(self.search["longitude_360"]), '180'), 3),
-                np.round(conv_lon(max(self.search["longitude_360"]), '180'), 3),
+                conv_lon(min(self.search["longitude_360"]), '180'),
+                conv_lon(max(self.search["longitude_360"]), '180'),
                 self.search["latitude"].min(),
                 self.search["latitude"].max(),
                 tmin(self.search["date"]),
@@ -311,8 +311,8 @@ class indexstore(ArgoIndexStoreProto):
             if not hasattr(self, "index"):
                 self.load()
             return [
-                np.round(conv_lon(min(self.index["longitude_360"]), '180'), 3),
-                np.round(conv_lon(max(self.index["longitude_360"]), '180'), 3),
+                conv_lon(min(self.index["longitude_360"]), '180'),
+                conv_lon(max(self.index["longitude_360"]), '180'),
                 self.index["latitude"].min(),
                 self.index["latitude"].max(),
                 tmin(self.index["date"]),

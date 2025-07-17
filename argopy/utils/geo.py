@@ -48,9 +48,9 @@ def conv_lon(x, conv: str = '180'):
     Transformed x
     """
     if conv == '360':
-        c = lambda x: np.where(np.logical_and(x>=-180, x < 0), x + 360, x)[np.newaxis][0]
+        c = lambda x: type(x)(np.where(np.logical_and(x>=-180., x < 0.), x + 360., x)[np.newaxis][0])
     elif conv == '180':
-        c = lambda x: np.where(x > 180, x - 360, x)[np.newaxis][0]
+        c = lambda x: type(x)(np.where(x > 180., x - 360., x)[np.newaxis][0])
     else:
         return x
 
