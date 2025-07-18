@@ -15,6 +15,7 @@ from ..options import OPTIONS
 from ..errors import InvalidDatasetStructure, GdacPathError, InvalidFetcher
 from .lists import list_available_data_src, list_available_index_src, list_gdac_servers
 from .casting import to_list
+from .geo import conv_lon
 
 
 log = logging.getLogger("argopy.utils.checkers")
@@ -97,7 +98,7 @@ def is_indexbox(box: list, errors="raise"):
     tests["lat_max must be in [-90;90]"] = lambda b: b[3] >= -90.0 and b[3] <= 90.0
 
     # Orders:
-    tests["lon_max must be larger than lon_min"] = lambda b: b[0] < b[1]
+    tests["lon_max must be larger than lon_min"] = lambda b: conv_lon(b[0], '360') < conv_lon(b[1], '360')
     tests["lat_max must be larger than lat_min"] = lambda b: b[2] < b[3]
     if len(box) > 4:
         tests["datetim_max must come after datetim_min"] = lambda b: pd.to_datetime(
@@ -192,7 +193,7 @@ def is_box(box: list, errors="raise"):
     tests["pres_max must be in [0;10000]"] = lambda b: b[5] >= 0 and b[5] <= 10000
 
     # Orders:
-    tests["lon_max must be larger than lon_min"] = lambda b: b[0] <= b[1]
+    tests["lon_max must be larger than lon_min"] = lambda b: conv_lon(b[0], '360') <= conv_lon(b[1], '360')
     tests["lat_max must be larger than lat_min"] = lambda b: b[2] <= b[3]
     tests["pres_max must be larger than pres_min"] = lambda b: b[4] <= b[5]
     if len(box) == 8:
