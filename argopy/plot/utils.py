@@ -63,7 +63,7 @@ def axes_style(style: str = STYLE["axes"]):
         yield
 
 
-def latlongrid(ax, dx="auto", dy="auto", fontsize="auto", label_style_arg={}, **kwargs):
+def latlongrid(ax, dx="auto", dy="auto", fontsize="auto", label_style_arg={}, longitude_convention='180', **kwargs):
     """ Add latitude/longitude grid line and labels to a cartopy geoaxes
 
     Parameters
@@ -86,7 +86,11 @@ def latlongrid(ax, dx="auto", dy="auto", fontsize="auto", label_style_arg={}, **
     defaults = {"linewidth": 0.5, "color": "gray", "alpha": 0.5, "linestyle": ":"}
     gl = ax.gridlines(crs=ax.projection, draw_labels=True, **{**defaults, **kwargs})
     if dx != "auto":
-        gl.xlocator = mticker.FixedLocator(np.arange(-180, 180 + 1, dx))
+        if longitude_convention == '180':
+            gl.xlocator = mticker.FixedLocator(np.arange(-180, 180 + 1, dx))
+        else:  # 360
+            gl.xlocator = mticker.FixedLocator(np.arange(0, 360 + 1, dx))
+
     if dy != "auto":
         gl.ylocator = mticker.FixedLocator(np.arange(-90, 90 + 1, dy))
     gl.xformatter = LONGITUDE_FORMATTER
