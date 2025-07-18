@@ -296,6 +296,9 @@ class ArgoColors:
     def cbar(self, ticklabels=None, **kwargs):
         """Return a colorbar with adjusted tick labels, **experimental**
 
+        We create a `.ScalarMappable` "on-the-fly" to generate a colorbar
+        not attached to a previously drawn artist.
+
         Returns
         -------
         :class:`matplotlib.pyplot.colorbar`

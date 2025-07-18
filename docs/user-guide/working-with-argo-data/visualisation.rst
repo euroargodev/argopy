@@ -11,7 +11,7 @@ Data visualisation
 From Data or Index fetchers
 ***************************
 
-The :class:`DataFetcher` and :class:`IndexFetcher` come with a ``plot`` method to have a quick look to your data. This method can take *trajectory*, *profiler*, *dac* and *qc_altimetry* as arguments. All details are available in the :class:`DataFetcher.plot` and :class:`IndexFetcher.plot` class documentation.
+The :class:`DataFetcher` come with a ``plot`` method to have a quick look to your data. This method can take *trajectory*, *profiler*, *dac* and *qc_altimetry* as arguments. All details are available in the :class:`DataFetcher.plot` class documentation.
 
 Below we demonstrate major plotting features.
 
@@ -53,6 +53,17 @@ If you have `Seaborn <https://seaborn.pydata.org/>`_ installed, you can change t
     fig, ax = idx.plot('profiler', style='whitegrid')
 
 .. image:: ../../_static/bar_profiler.png
+
+From ArgoFloat instance
+***********************
+
+The :class:`ArgoFloat` class come with a ``plot`` accessor than can take several methods to quickly visualize data from the float.
+
+.. code-block:: python
+
+    from argopy import ArgoFloat
+
+    ArgoFloat(6902772).plot.trajectory()
 
 
 Dashboards
