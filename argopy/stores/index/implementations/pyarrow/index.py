@@ -455,7 +455,8 @@ class indexstore(ArgoIndexStoreProto):
         s = self.search
 
         # Drop internal variable 'longitude_360':
-        s = s.drop_columns('longitude_360')
+        if 'longitude_360' in s.column_names:
+            s = s.drop_columns('longitude_360')
 
         if self.convention not in [
             "ar_index_global_meta",

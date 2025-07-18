@@ -376,8 +376,14 @@ class indexstore(ArgoIndexStoreProto):
         -------
         str
         """
+        df = self.search.copy()
+
+        # Drop internal variable 'longitude_360':
+        if 'longitude_360' in df.columns:
+            df = df.drop('longitude_360')
+
         columns = self.convention_columns
-        self.search.to_csv(
+        df.to_csv(
             outputfile,
             sep=",",
             index=False,
