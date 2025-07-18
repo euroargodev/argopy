@@ -380,7 +380,7 @@ class indexstore(ArgoIndexStoreProto):
 
         # Drop internal variable 'longitude_360':
         if 'longitude_360' in df.columns:
-            df = df.drop('longitude_360')
+            df = df.drop('longitude_360', axis=1)
 
         columns = self.convention_columns
         df.to_csv(
