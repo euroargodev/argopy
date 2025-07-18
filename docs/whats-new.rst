@@ -32,6 +32,8 @@ Internals
 Breaking changes
 ^^^^^^^^^^^^^^^^
 
+- :class:`argopy.plot.scatter_map` now return 3 values for fig, ax and handles, instead of 2 values for fig, ax. (:pr:`501`) by |gmaze|.
+
 - Drop support for Python 3.10
 
 Energy
