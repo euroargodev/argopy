@@ -9,13 +9,12 @@ from abc import ABC, abstractmethod
 import logging
 import numpy as np
 
-
 from ...errors import InvalidOption
 from ...plot import dashboard
 from ...utils import check_wmo, argo_split_path, shortcut2gdac
 from ...options import OPTIONS
 from .. import ArgoIndex
-
+from .accessors import ArgoFloatPlotAccessor
 
 log = logging.getLogger("argopy.stores.ArgoFloat")
 
@@ -25,6 +24,7 @@ class ArgoFloatProto(ABC):
     _dac = None
     _df_profiles = None
     _online = None  # Web access status
+    _dataset = {}  # Internal placeholder for open datasets
 
     def __init__(
         self,
@@ -90,6 +90,8 @@ class ArgoFloatProto(ABC):
 
         # Load some data (in a perfect world, this should be done asynchronously):
         # self.load_index()
+
+    plot = xr.core.utils.UncachedAccessor(ArgoFloatPlotAccessor)
 
     def load_index(self):
         """Load the Argo full index in memory and trigger search for this float"""
