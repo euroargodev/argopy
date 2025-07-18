@@ -62,6 +62,8 @@ VALID_SEARCHES = [
     # {"wmo_cyc": [13857, 2]},
     {"wmo_cyc": [3902131, 2]},  # BGC
     {"date": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
+    {"lon": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
+    {"lat": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
     {"lon_lat": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
     {"box": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
     {"profiler_type": [845]},
@@ -96,6 +98,10 @@ def run_a_search(idx_maker, fetcher_args, search_point, xfail=False, reason="?")
                 idx.query.wmo_cyc(apts["wmo_cyc"][0], apts["wmo_cyc"][1], nrows=nrows)
             if "date" in apts:
                 idx.query.date(apts["date"], nrows=nrows)
+            if "lon" in apts:
+                idx.query.lon(apts["lon"], nrows=nrows)
+            if "lat" in apts:
+                idx.query.lat(apts["lat"], nrows=nrows)
             if "lon_lat" in apts:
                 idx.query.lon_lat(apts["lon_lat"], nrows=nrows)
             if "box" in apts:
@@ -252,7 +258,7 @@ class IndexStore_test_proto:
             },
             cached=cache,
         )
-        idx = self.create_store(fetcher_args)  # .load(nrows=N_RECORDS)
+        idx = self.create_store(fetcher_args)
         return idx
 
     @pytest.fixture
@@ -533,6 +539,23 @@ class IndexStore_test_proto:
                 assert len(chunk) == chunksize
                 assert all([isinstance(float, ArgoFloat) for float in chunk])
 
+    def test_dateline_search(self):
+        idx = self.new_idx()
+        BOX = [140, 180., -90, 90, '2020-01', '2021-01']
+        N_left = idx.query.lon(BOX).N_MATCH
+        BOX = [180, 240, -90, 90, '2020-01', '2021-01']
+        N_right360 = idx.query.lon(BOX).N_MATCH
+        BOX = [-180, -120, -90, 90, '2020-01', '2021-01']
+        N_right180 = idx.query.lon(BOX).N_MATCH
+
+        BOX = [140, 240, -90, 90, '2020-01', '2021-01']
+        N_conv360 = idx.query.lon(BOX).N_MATCH
+        BOX = [140, -120, -90, 90, '2020-01', '2021-01']
+        N_conv180 = idx.query.lon(BOX).N_MATCH
+
+        assert N_left + N_right180 == N_conv360
+        assert N_left + N_right360 == N_conv360
+        assert N_conv180 == N_conv360
 
 ############################
 # TESTS FOR PANDAS BACKEND #

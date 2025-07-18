@@ -23,6 +23,8 @@ Features and front-end API
 Internals
 ^^^^^^^^^
 
+- **Fix bug** whereby the :class:`ArgoIndex` could not select profiles through the dateline :issue:`494`. (:pr:`495`)by |gmaze|.
+
 - **Fix bug** whereby a :class:`gdacfs` could not return one path info under Windows platform. :issue:`499`. (:pr:`451`) by |gmaze|.
 
 - **Identified incompatible versions of xarray**. Because of `this issue <https://github.com/pydata/xarray/issues/8909>`_ argopy is not compatible with xarray versions from 2024.3.0 to 2025.6.1, included. (:pr:`451`) by |gmaze|.

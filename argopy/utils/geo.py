@@ -40,6 +40,7 @@ def conv_lon(x, conv: str = '180'):
     Params
     ------
     x:
+        Object to iterate over (e.g. list, numpy array,...)
     conv: str, default='180'
         Convention to apply, must be '180' or '360'
     Returns
@@ -47,11 +48,13 @@ def conv_lon(x, conv: str = '180'):
     Transformed x
     """
     if conv == '360':
-        return np.where(x < 0, x + 360, x)
+        c = lambda x: type(x)(np.where(np.logical_and(x>=-180., x < 0.), x + 360., x)[np.newaxis][0])
     elif conv == '180':
-        return np.where(x > 180, x - 360, x)
+        c = lambda x: type(x)(np.where(x > 180., x - 360., x)[np.newaxis][0])
     else:
         return x
+
+    return np.frompyfunc(c, 1, 1)(x)
 
 
 def wmo2box(wmo_id: int):
