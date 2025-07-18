@@ -20,6 +20,7 @@ from .argo_colors import ArgoColors
 
 from ..utils.loggers import warnUnless
 from ..utils.checkers import check_wmo
+from ..utils.geo import conv_lon
 from ..errors import InvalidDatasetStructure
 
 if has_mpl:
@@ -324,6 +325,8 @@ def scatter_map(  # noqa: C901
     cbar: bool = False,
     cbarlabels: Union[str, list] = "auto",
     set_global: bool = False,
+    padding: Union[str, list] = 'auto',
+    longitude_convention: str = '180',
     **kwargs
 ):
     """Try-to-be generic function to create a scatter plot on a map from **argopy** :class:`xarray.Dataset` or :class:`pandas.DataFrame` data
@@ -407,6 +410,15 @@ def scatter_map(  # noqa: C901
 
     set_global: bool, default=False
         Force the map to be global.
+
+    padding: str, list, default='auto'
+        Additional space to the map around data points. If not set to 'auto', this argument must be a list:
+
+        - of 2 values for longitude and latitude padding
+        - of 4 values for west, east, south and north padding
+
+    longitude_convention: str, default='180'
+        Convention of the longitude: '180' for -180/180, or '360' for 0/360 values.
 
     kwargs
         All other arguments are passed to :class:`matplotlib.figure.Figure.subplots`
@@ -559,6 +571,7 @@ def scatter_map(  # noqa: C901
                 scatter_opts[
                     "legend"
                 ] = False  # otherwise Pandas will add a legend even if we set legend=False
+            group[x] = conv_lon(group[x], longitude_convention)
             sc = group.plot.scatter(x=x, y=y, ax=ax, **scatter_opts)
             patches.append(sc)
 
@@ -582,6 +595,25 @@ def scatter_map(  # noqa: C901
 
     if set_global:
         ax.set_global()
+    else:
+        lon = conv_lon(data[x], longitude_convention)
+        lat = data[y]
+        extent = [np.min(lon), np.max(lon), np.min(lat), np.max(lat)]
+        rge = [np.max(lon)-np.min(lon), np.max(lat)-np.min(lat)]
+        if padding == 'auto':
+            padding = [-rge[0]/10, rge[0]/10, -rge[1]/10, rge[1]/10]
+        elif len(padding) == 1:
+            padding = [-padding[0], padding[0], -padding[0], padding[0]]
+        elif len(padding) == 2:
+            padding = [-padding[0], padding[0], -padding[1], padding[1]]
+        elif len(padding) != 4:
+            raise ValueError("'padding' must be 'auto', a list of 2 or 4 values")
+
+        extent[0] = extent[0]+padding[0]
+        extent[1] = extent[1]+padding[1]
+        extent[2] = extent[2]+padding[2]
+        extent[3] = extent[3]+padding[3]
+        ax.set_extent(extent)
 
     latlongrid(
         ax,
