@@ -8,11 +8,14 @@
 #
 import warnings
 import logging
+import os
+import json
 
 import xarray as xr
 import pandas as pd
 import numpy as np
 from typing import Union
+import importlib
 
 from .utils import STYLE, has_seaborn, has_mpl, has_cartopy, has_ipython, has_ipywidgets
 from .utils import axes_style, latlongrid, land_feature
@@ -21,6 +24,7 @@ from .argo_colors import ArgoColors
 from ..utils.loggers import warnUnless
 from ..utils.checkers import check_wmo
 from ..utils.geo import conv_lon
+from ..utils.lists import subsample_list
 from ..errors import InvalidDatasetStructure
 
 if has_mpl:
@@ -42,6 +46,13 @@ if has_ipywidgets:
 
 
 log = logging.getLogger("argopy.plot.plot")
+
+path2assets = importlib.util.find_spec(
+    "argopy.static.assets"
+).submodule_search_locations[0]
+
+with open(os.path.join(path2assets, "data_types.json"), "r") as f:
+    DATA_TYPES = json.load(f)
 
 
 def open_sat_altim_report(
@@ -324,6 +335,7 @@ def scatter_map(  # noqa: C901
     legend_location: Union[str, int] = 0,
     cbar: bool = False,
     cbarlabels: Union[str, list] = "auto",
+    cbarmaxlabels: int = 12,
     set_global: bool = False,
     padding: Union[str, list] = 'auto',
     longitude_convention: str = '180',
@@ -380,6 +392,7 @@ def scatter_map(  # noqa: C901
     -------
     fig: :class:`matplotlib.figure.Figure`
     ax: :class:`matplotlib.axes.Axes`
+    patches: List of :class:`matplotlib.collections.PathCollection`
 
     Other Parameters
     ----------------
@@ -402,11 +415,18 @@ def scatter_map(  # noqa: C901
         The unique color to use for all trajectories. The default color is the ``markeredgecolor`` value.
 
     legend: bool, default=True
-        Display or not a legend for hue colors meaning. If the legend is too large, it can be removed with ``ax.get_legend().remove()``
+        Display or not a legend for hue colors meaning. If the legend is too large, it can be removed with ``ax.get_legend().remove()``, or you may use the colorbar instead.
     legend_title: str, default='default'
         String title of the legend box. By default, it is set to the ``hue`` value.
     legend_location: str, default='upper right'
         Location of the legend box. This is passed to the ``loc`` argument of :class:`~matplotlib:matplotlib.legend.Legend`.
+
+    cbar: bool, default=False
+        Display or not a colorbar for hue colors.
+    cbarlabels: list[str], default="auto"
+        Possibly customize the list of colorbar labels or let it be determined automatically.
+    cbarmaxlabels: int, default=12
+        Maximum number of ticks and labels on the colorbar.
 
     set_global: bool, default=False
         Force the map to be global.
@@ -429,7 +449,7 @@ def scatter_map(  # noqa: C901
     if isinstance(data, xr.Dataset) and data.argo._type == "point":
         # data = data.argo.point2profile(drop=True)
         raise InvalidDatasetStructure(
-            "Function only available to a collection of profiles"
+            "Function only available for a collection of profiles"
         )
 
     # Try to guess the default hue, i.e. name for WMO:
@@ -576,15 +596,30 @@ def scatter_map(  # noqa: C901
             patches.append(sc)
 
     if cbar:
-        if cbarlabels == "auto":
-            cbarlabels = None
-        mycolors.cbar(
-            ticklabels=cbarlabels, ax=ax, cax=sc, fraction=0.03, label=legend_title
+        if isinstance(cbarlabels, str) and cbarlabels == "auto":
+            handles, cbarlabels = ax.get_legend_handles_labels()
+        cbar_handle = mycolors.cbar(
+            ticklabels=cbarlabels, ax=ax, fraction=0.03, label=legend_title
         )
+        ticks = cbar_handle.get_ticks()
+        if cbarmaxlabels is not None:
+
+            new_ticks = [ticks[0]]
+            [new_ticks.append(v) for v in subsample_list(ticks, cbarmaxlabels-2)]
+            new_ticks.append(ticks[-1])
+
+            new_cbarlabels = [cbarlabels[0]]
+            [new_cbarlabels.append(v) for v in subsample_list(cbarlabels, cbarmaxlabels-2)]
+            new_cbarlabels.append(cbarlabels[-1])
+
+            cbar_handle.set_ticks(subsample_list(ticks, cbarmaxlabels))
+            cbar_handle.set_ticklabels(subsample_list(cbarlabels, cbarmaxlabels))
+    else:
+        cbar_handle = None
 
     if traj:
         for k, [name, group] in enumerate(data.groupby(traj_axis)):
-            ax.plot(
+            traj_handle = ax.plot(
                 group[x],
                 group[y],
                 color=traj_color,
@@ -592,6 +627,8 @@ def scatter_map(  # noqa: C901
                 label="_nolegend_",
                 zorder=2,
             )
+    else:
+        traj_handle = None
 
     if set_global:
         ax.set_global()
@@ -627,20 +664,29 @@ def scatter_map(  # noqa: C901
 
     if legend:
         handles, labels = ax.get_legend_handles_labels()
-        plt.legend(
+        legend_handle = plt.legend(
             handles,
             labels,
             loc=legend_location,
             bbox_to_anchor=(1.26, 1),
             title=legend_title,
         )
+    else:
+        legend_handle = None
 
     for spine in ax.spines.values():
         spine.set_edgecolor(COLORS["DARKBLUE"])
 
     ax.set_title("")
 
-    return fig, ax
+    handles = {
+        'scatter': patches,
+        'cbar': cbar_handle,
+        'legend': legend_handle,
+        'traj': traj_handle,
+        'ArgoColors': mycolors,
+    }
+    return fig, ax, handles
 
 
 def scatter_plot(
@@ -658,6 +704,9 @@ def scatter_plot(
 ):
     """A quick-and-dirty parameter scatter plot for one variable"""
     warnUnless(has_mpl, "requires matplotlib installed")
+
+    if this_param in DATA_TYPES['data']['str']:
+        raise ValueError("scatter_plot does not support string data type (yet !)")
 
     if cmap is None:
         cmap = mpl.colormaps["gist_ncar"]
@@ -679,7 +728,7 @@ def scatter_plot(
         x_bounds, y_bounds = np.meshgrid(x, y, indexing="ij")
     c = ds[this_param]
 
-    # Possibly broadcast x,y on c dimensions:
+    # Possibly broadcast x, y on c dimensions:
     if not x.shape == y.shape or not x.shape == c.shape or not y.shape == c.shape:
         x = x.broadcast_like(c)
         y = y.broadcast_like(c)
