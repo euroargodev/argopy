@@ -200,7 +200,8 @@ def plot_trajectory(
                 },
             }
             opts = {**opts, **kwargs}
-            return scatter_map(df, **opts)
+            fig, ax, hdl = scatter_map(df, **opts)
+            return fig, ax
         else:
             fig, ax = plt.subplots(**{**defaults, **kwargs})
 
