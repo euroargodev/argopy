@@ -169,7 +169,7 @@ class ArgoDataFetcher:
             },
             **fetcher_kwargs,
         }
-        delattr(self, "fetcher_kwargs")
+        # delattr(self, "fetcher_kwargs")
 
         self.define_postprocessor()
         self._AccessPoint = None
@@ -281,6 +281,7 @@ class ArgoDataFetcher:
             "_cache",
             "_cachedir",
             "_parallel",
+            "fetcher_kwargs",
         ]
         if key not in self.valid_access_points and key not in valid_attrs:
             raise InvalidFetcherAccessPoint("'%s' is not a valid access point" % key)
