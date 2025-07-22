@@ -7,7 +7,7 @@ from ...utils.lists import list_multiprofile_file_variables, list_bgc_s_variable
 
 class ArgoFloatPlotAccessor:
     """
-    Enables use of :module:`argopy.plot` functions as attributes on a ArgoFloat.
+    Enables use of :class:`argopy.plot` functions as attributes on a ArgoFloat.
 
     Examples
     --------
@@ -34,7 +34,7 @@ class ArgoFloatPlotAccessor:
 
     See Also
     --------
-    :class:`ArgoFloat.plot.trajectory`, :class:`ArgoFloat.plot.map`, :class:`ArgoFloat.plot.scatter`
+    :class:`argopy.stores.ArgoFloat.plot.trajectory`, :class:`argopy.ArgoFloat.plot.map`, :class:`ArgoFloat.plot.scatter`
 
     """
 
