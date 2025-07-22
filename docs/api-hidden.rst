@@ -382,6 +382,7 @@
 
     argopy.stores.float.spec.ArgoFloatProto
     argopy.stores.ArgoFloat
+    argopy.stores.ArgoFloat.plot
     argopy.ArgoFloat.open_dataset
     argopy.ArgoFloat.ls_dataset
     argopy.ArgoFloat.path

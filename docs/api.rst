@@ -79,6 +79,16 @@ ArgoFloat
 
     ArgoFloat
 
+List of extensions:
+
+.. currentmodule:: argopy
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor.rst
+
+   ArgoFloat.plot
+
 ArgoIndex
 ---------
 

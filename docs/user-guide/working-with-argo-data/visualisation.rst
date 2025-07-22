@@ -8,8 +8,8 @@ Data visualisation
 .. contents::
    :local:
 
-From Data or Index fetchers
-***************************
+From Data fetcher
+*****************
 
 The :class:`DataFetcher` come with a ``plot`` method to have a quick look to your data. This method can take *trajectory*, *profiler*, *dac* and *qc_altimetry* as arguments. All details are available in the :class:`DataFetcher.plot` class documentation.
 
@@ -19,7 +19,7 @@ Let's import the usual suspects:
 
 .. code-block:: python
 
-    from argopy import DataFetcher, IndexFetcher
+    from argopy import DataFetcher
 
 .. _viz_traj:
 
@@ -28,9 +28,9 @@ Trajectories
 
 .. code-block:: python
 
-    idx = IndexFetcher().float([6902745, 6902746]).load()
-    fig, ax = idx.plot('trajectory')
-    fig, ax = idx.plot()  # Trajectory is the default plot
+    Adf = DataFetcher().float([6902745, 6902746]).load()
+    fig, ax = Adf.plot('trajectory')
+    fig, ax = Adf.plot()  # Trajectory is the default plot
 
 .. image:: ../../_static/trajectory_sample.png
 
@@ -41,8 +41,8 @@ It is also possible to create horizontal bar plots for histograms on some data p
 
 .. code-block:: python
 
-    idx = IndexFetcher().region([-80,-30,20,50,'2021-01','2021-08']).load()
-    fig, ax = idx.plot('dac')
+    Adf = DataFetcher().region([-80,-30,20,50,0,100,'2021-01','2021-08']).load()
+    fig, ax = Adf.plot('dac')
 
 .. image:: ../../_static/bar_dac.png
 
@@ -50,21 +50,41 @@ If you have `Seaborn <https://seaborn.pydata.org/>`_ installed, you can change t
 
 .. code-block:: python
 
-    fig, ax = idx.plot('profiler', style='whitegrid')
+    fig, ax = Adf.plot('profiler', style='whitegrid')
 
 .. image:: ../../_static/bar_profiler.png
 
 From ArgoFloat instance
 ***********************
 
-The :class:`ArgoFloat` class come with a ``plot`` accessor than can take several methods to quickly visualize data from the float.
+.. currentmodule:: argopy
+
+The :class:`ArgoFloat` class come with a :class:`ArgoFloat.plot` accessor than can take several methods to quickly visualize data from the float:
 
 .. code-block:: python
 
     from argopy import ArgoFloat
 
-    ArgoFloat(6902772).plot.trajectory()
+    wmo = 6902772
 
+    af = ArgoFloat(wmo)
+
+    af.plot.trajectory()
+
+    af.plot.trajectory(figsize=(18,18), padding=[1, 5])
+
+    af.plot.map('TEMP', pres=450, cmap='Spectral_r')
+
+    af.plot.map('DATA_MODE', cbar=False, legend=True)
+
+    af.plot.scatter('PSAL')
+
+    af.plot.scatter('DOXY', ds='Sprof')
+
+    af.plot.scatter('MEASUREMENT_CODE', ds='Rtraj')
+
+
+Check all the detailed arguments on the API reference :class:`ArgoFloat.plot`.
 
 Dashboards
 **********

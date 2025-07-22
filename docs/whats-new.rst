@@ -18,7 +18,7 @@ Coming up next
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- :class:`ArgoFloat` **plotting features**: you can now use the new :class:`ArgoFloat.plot` attribute to call on visualizations tool for trajectories and parameters. See all details in :ref:`data-viz`_. (:pr:``) by |gmaze|.
+- :class:`ArgoFloat` **plotting features**: you can now use the new :class:`ArgoFloat.plot` accessor to call on visualizations tool for trajectories and parameters. See all details in :ref:`From ArgoFloat instance`. (:pr:`501`) by |gmaze|.
 
 Internals
 ^^^^^^^^^
@@ -32,7 +32,7 @@ Internals
 Breaking changes
 ^^^^^^^^^^^^^^^^
 
-- :class:`argopy.plot.scatter_map` now return 3 values for fig, ax and handles, instead of 2 values for fig, ax. (:pr:`501`) by |gmaze|.
+- :class:`argopy.plot.scatter_map` now return 3 values for the figure, axis and handles, instead of 2 values (:pr:`501`) by |gmaze|.
 
 - Drop support for Python 3.10
 

@@ -7,11 +7,12 @@ from ...utils.lists import list_multiprofile_file_variables, list_bgc_s_variable
 
 class ArgoFloatPlotAccessor:
     """
-    Enables use of argopy.plot functions as attributes on a ArgoFloat.
+    Enables use of :module:`argopy.plot` functions as attributes on a ArgoFloat.
 
     Examples
     --------
     .. code-block:: python
+        :caption: Examples of plotting methods
 
         from argopy import ArgoFloat
 
@@ -19,13 +20,21 @@ class ArgoFloatPlotAccessor:
 
         af.plot.trajectory()
 
+        af.plot.trajectory(figsize=(18,18), padding=[1, 5])
+
         af.plot.map('TEMP', pres=450, cmap='Spectral_r')
 
         af.plot.map('DATA_MODE', cbar=False, legend=True)
 
         af.plot.scatter('PSAL')
 
+        af.plot.scatter('DOXY', ds='Sprof')
+
         af.plot.scatter('MEASUREMENT_CODE', ds='Rtraj')
+
+    See Also
+    --------
+    :class:`ArgoFloat.plot.trajectory`, :class:`ArgoFloat.plot.map`, :class:`ArgoFloat.plot.scatter`
 
     """
 
