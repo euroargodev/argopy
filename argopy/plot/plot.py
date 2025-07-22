@@ -393,7 +393,7 @@ def scatter_map(  # noqa: C901
     -------
     fig: :class:`matplotlib.figure.Figure`
     ax: :class:`matplotlib.axes.Axes`
-    patches: List of :class:`matplotlib.collections.PathCollection`
+    patches: Dict with ax collections
 
     Other Parameters
     ----------------
