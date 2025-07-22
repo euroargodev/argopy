@@ -166,12 +166,6 @@ class ArgoFloatPlotAccessor:
         }
         this_kwargs = {**default_kwargs, **kwargs}
 
-        if this_kwargs["hue"] not in this_ds:
-            raise ValueError(
-                "The parameter to map must be a variable in %s"
-                % str([c for c in this_ds.data_vars])
-            )
-
         fig, ax, hdl = scatter_map(this_ds, **this_kwargs)
         ax.set_title(self._default_title)
         return fig, ax, hdl
