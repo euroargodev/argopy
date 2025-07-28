@@ -28,7 +28,7 @@ else:
 class ArgoFloat(FloatStore):
     """Argo GDAC float store
 
-    This store makes it easy to load/read data for a given float from any GDAC location and netcdf files
+    This store makes it easy to load/read/visualize data for a given float from any GDAC location and netcdf files
 
     Examples
     --------

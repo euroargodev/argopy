@@ -34,7 +34,7 @@ class ArgoFloatPlotAccessor:
 
     See Also
     --------
-    :meth:`argopy.ArgoFloat.plot.trajectory`, :meth:`argopy.ArgoFloat.plot.map`, :meth:`ArgoFloat.plot.scatter`
+    :meth:`ArgoFloat.plot.trajectory`, :meth:`ArgoFloat.plot.map`, :meth:`ArgoFloat.plot.scatter`
 
     """
 
