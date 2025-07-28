@@ -68,6 +68,12 @@ class ArgoFloatProto(ABC):
         self.timeout = OPTIONS["api_timeout"] if timeout == 0 else timeout
         self._aux = bool(aux)
 
+        if not self._online and (self.host.startswith('http') or self.host.startswith('ftp') or self.host.startswith('s3')):
+            raise InvalidOption(
+                "Trying to work with remote host '%s' without a web connection. Check your connection parameters or try to work with a local GDAC path."
+                % self.host
+            )
+
         if "idx" not in kwargs:
             self.idx = ArgoIndex(
                 index_file="core",
@@ -81,12 +87,6 @@ class ArgoFloatProto(ABC):
 
         self.host = self.idx.host  # Fix host shortcuts with correct values
         self.fs = self.idx.fs["src"]
-
-        if not self._online and self.host_protocol != "file":
-            raise InvalidOption(
-                "Trying to work with remote host '%s' without a web connection. Check your connection parameters or try to work with a local GDAC path."
-                % self.host
-            )
 
         # Load some data (in a perfect world, this should be done asynchronously):
         # self.load_index()
