@@ -9,13 +9,12 @@ from abc import ABC, abstractmethod
 import logging
 import numpy as np
 
-
 from ...errors import InvalidOption
 from ...plot import dashboard
 from ...utils import check_wmo, argo_split_path, shortcut2gdac
 from ...options import OPTIONS
 from .. import ArgoIndex
-
+from .accessors import ArgoFloatPlotAccessor
 
 log = logging.getLogger("argopy.stores.ArgoFloat")
 
@@ -25,6 +24,7 @@ class ArgoFloatProto(ABC):
     _dac = None
     _df_profiles = None
     _online = None  # Web access status
+    _dataset = {}  # Internal placeholder for open datasets
 
     def __init__(
         self,
@@ -68,6 +68,12 @@ class ArgoFloatProto(ABC):
         self.timeout = OPTIONS["api_timeout"] if timeout == 0 else timeout
         self._aux = bool(aux)
 
+        if not self._online and (self.host.startswith('http') or self.host.startswith('ftp') or self.host.startswith('s3')):
+            raise InvalidOption(
+                "Trying to work with remote host '%s' without a web connection. Check your connection parameters or try to work with a local GDAC path."
+                % self.host
+            )
+
         if "idx" not in kwargs:
             self.idx = ArgoIndex(
                 index_file="core",
@@ -82,14 +88,10 @@ class ArgoFloatProto(ABC):
         self.host = self.idx.host  # Fix host shortcuts with correct values
         self.fs = self.idx.fs["src"]
 
-        if not self._online and self.host_protocol != "file":
-            raise InvalidOption(
-                "Trying to work with remote host '%s' without a web connection. Check your connection parameters or try to work with a local GDAC path."
-                % self.host
-            )
-
         # Load some data (in a perfect world, this should be done asynchronously):
         # self.load_index()
+
+    plot = xr.core.utils.UncachedAccessor(ArgoFloatPlotAccessor)
 
     def load_index(self):
         """Load the Argo full index in memory and trigger search for this float"""

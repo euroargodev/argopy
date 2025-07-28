@@ -420,9 +420,10 @@ class OceanOPSDeployments:
         -------
         fig: :class:`matplotlib.figure.Figure`
         ax: :class:`matplotlib.axes.Axes`
+        hdl: dict
         """
         df = self.to_dataframe()
-        fig, ax = scatter_map(
+        fig, ax, hdl = scatter_map(
             df,
             x="lon",
             y="lat",
@@ -439,4 +440,4 @@ class OceanOPSDeployments:
             ),
             fontsize=12,
         )
-        return fig, ax
+        return fig, ax, hdl

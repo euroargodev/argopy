@@ -28,7 +28,7 @@ else:
 class ArgoFloat(FloatStore):
     """Argo GDAC float store
 
-    This store makes it easy to load/read data for a given float from any GDAC location and netcdf files
+    This store makes it easy to load/read/visualize data for a given float from any GDAC location and netcdf files
 
     Examples
     --------
@@ -68,6 +68,17 @@ class ArgoFloat(FloatStore):
 
         af.lsprofiles() # list float "profiles" folder content
         af.describe_profiles()  # Pandas DataFrame describing all available float profile files
+
+    .. code-block:: python
+        :caption: Quick plotting methods
+
+        af.plot.trajectory()
+        af.plot.trajectory(figsize=(18,18), padding=[1, 5])
+        af.plot.map('TEMP', pres=450, cmap='Spectral_r')
+        af.plot.map('DATA_MODE', cbar=False, legend=True)
+        af.plot.scatter('PSAL')
+        af.plot.scatter('DOXY', ds='Sprof')
+        af.plot.scatter('MEASUREMENT_CODE', ds='Rtraj')
 
     """
 

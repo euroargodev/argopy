@@ -79,6 +79,26 @@ ArgoFloat
 
     ArgoFloat
 
+List of extensions:
+
+.. currentmodule:: argopy
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor.rst
+
+   ArgoFloat.plot
+
+This extension provides the following **plotting methods** for one Argo float data:
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
+
+   ArgoFloat.plot.trajectory
+   ArgoFloat.plot.map
+   ArgoFloat.plot.scatter
+
 ArgoIndex
 ---------
 

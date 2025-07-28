@@ -1,5 +1,11 @@
 """
-Plot Submodule docstring !
+Plot Submodule
+
+See Also
+--------
+:func:`argopy.plot.scatter_map`, :func:`argopy.plot.scatter_plot`, :func:`argopy.plot.plot_trajectory`, :func:`argopy.plot.dashboard`, :class:`argopy.plot.ArgoColors`, :class:`argopy.ArgoColors`, :func:`argopy.plot.latlongrid`
+
+
 """
 from .plot import plot_trajectory, bar_plot, open_sat_altim_report, scatter_map, scatter_plot
 from .argo_colors import ArgoColors

@@ -2121,7 +2121,8 @@ class ArgoAccessor:
 
 
 def open_Argo_dataset(filename_or_obj):
-    ds = xr.open_dataset(filename_or_obj, decode_cf=1, use_cftime=0, mask_and_scale=1)
+    time_coder = xr.coders.CFDatetimeCoder(use_cftime=False)
+    ds = xr.open_dataset(filename_or_obj, decode_cf=1, decode_times=time_coder, mask_and_scale=1, decode_timedelta=True)
     ds = cast_Argo_variable_type(ds)
     return ds
 

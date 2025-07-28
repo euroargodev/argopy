@@ -11,6 +11,16 @@ path2assets = importlib.util.find_spec(
 ).submodule_search_locations[0]
 
 
+def subsample_list(original_list, N):
+    if len(original_list) <= N:
+        return original_list
+    else:
+        step = len(original_list) / N
+        indices = [int(i * step) for i in range(N)]
+        subsampled_list = [original_list[i] for i in indices]
+        return subsampled_list
+
+
 def list_available_data_src() -> dict:
     """List all available data sources"""
     sources = {}

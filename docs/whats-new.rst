@@ -15,6 +15,10 @@ Coming up next
 
     This new **argopy** version requires Python 3.11 !
 
+Features and front-end API
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- :class:`ArgoFloat` **plotting features**: you can now use the new :class:`ArgoFloat.plot` accessor to call on visualizations tool for trajectories and parameters. See all details on the documentation section about data visualization :ref:`From ArgoFloat instance`. (:pr:`501`) by |gmaze|.
 
 Internals
 ^^^^^^^^^
@@ -27,6 +31,8 @@ Internals
 
 Breaking changes
 ^^^^^^^^^^^^^^^^
+
+- :class:`argopy.plot.scatter_map` now return 3 values for the figure, axis and handles, instead of 2 values (:pr:`501`) by |gmaze|.
 
 - Drop support for Python 3.10
 

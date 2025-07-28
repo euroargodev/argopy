@@ -174,12 +174,14 @@ class Test_scatter_map:
 
     def __test(self, data, axis, opts):
         traj, legend = opts
-        fig, ax = scatter_map(
+        fig, ax, hdl = scatter_map(
             data, x=axis[0], y=axis[1], hue=axis[2], traj=traj, traj_axis=axis[2], legend=legend
         )
         assert isinstance(fig, mpl.figure.Figure)
 
         assert isinstance(ax, cartopy.mpl.geoaxes.GeoAxesSubplot)
+
+        assert isinstance(hdl, dict)
 
         expected_lg_type = mpl.legend.Legend if legend else type(None)
         assert isinstance(ax.get_legend(), expected_lg_type)

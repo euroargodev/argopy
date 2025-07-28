@@ -382,6 +382,10 @@
 
     argopy.stores.float.spec.ArgoFloatProto
     argopy.stores.ArgoFloat
+    argopy.stores.ArgoFloat.plot
+    argopy.stores.ArgoFloat.plot.trajectory
+    argopy.stores.ArgoFloat.plot.map
+    argopy.stores.ArgoFloat.plot.scatter
     argopy.ArgoFloat.open_dataset
     argopy.ArgoFloat.ls_dataset
     argopy.ArgoFloat.path
@@ -391,3 +395,7 @@
     argopy.ArgoFloat.metadata
     argopy.ArgoFloat.N_CYCLES
     argopy.ArgoFloat.dac
+    argopy.ArgoFloat.plot
+    argopy.ArgoFloat.plot.trajectory
+    argopy.ArgoFloat.plot.scatter
+    argopy.ArgoFloat.plot.map

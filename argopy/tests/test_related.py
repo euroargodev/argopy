@@ -215,7 +215,7 @@ class Test_OceanOPSDeployments:
     @requires_matplotlib
     @requires_cartopy
     def test_plot_status(self, an_instance):
-        fig, ax = an_instance.plot_status()
+        fig, ax, hdl = an_instance.plot_status()
         assert isinstance(fig, mpl.figure.Figure)
         assert isinstance(ax, cartopy.mpl.geoaxes.GeoAxesSubplot)
 
