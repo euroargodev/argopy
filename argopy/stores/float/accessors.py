@@ -7,12 +7,12 @@ from ...utils.lists import list_multiprofile_file_variables, list_bgc_s_variable
 
 class ArgoFloatPlotAccessor:
     """
-    Enables use of :class:`argopy.plot` functions as attributes on a ArgoFloat.
+    Enables use of :mod:`argopy.plot` functions as attributes on a ArgoFloat.
 
     Examples
     --------
     .. code-block:: python
-        :caption: Examples of plotting methods
+        :caption: Examples of :class:`ArgoFloat` plotting methods
 
         from argopy import ArgoFloat
 
@@ -34,7 +34,7 @@ class ArgoFloatPlotAccessor:
 
     See Also
     --------
-    :class:`argopy.stores.ArgoFloat.plot.trajectory`, :class:`argopy.ArgoFloat.plot.map`, :class:`ArgoFloat.plot.scatter`
+    :meth:`argopy.ArgoFloat.plot.trajectory`, :meth:`argopy.ArgoFloat.plot.map`, :meth:`ArgoFloat.plot.scatter`
 
     """
 
@@ -67,21 +67,32 @@ class ArgoFloatPlotAccessor:
 
         Parameters
         ----------
-        All arguments are passed to :meth:`ArgoFloat.plot.map`.
+        **kwargs
+            All arguments are passed to :meth:`ArgoFloat.plot.map`.
 
         Returns
         -------
-        Output from :meth:`ArgoFloat.plot.map`, typically:
-
-            fig: :class:`matplotlib.figure.Figure`
-            ax: :class:`matplotlib.axes.Axes`
-            patches: Dict with ax collections
+        tuple
+            Output from :class:`argopy.plot.scatter_map`, typically:
+                - fig: :class:`matplotlib.figure.Figure`
+                - ax: :class:`matplotlib.axes.Axes`
+                - patches: Dict with ax collections
 
         Notes
         -----
-        You can adjust the map aspect ratio with the `figsize` argument, e.g.: (18,18)
+        You can adjust the map aspect ratio with the ``figsize`` argument, e.g.: (18,18)
 
-        You can also adjust space around the trajectory with the `padding` argument, e.g.: [1, 5]
+        You can also adjust space around the trajectory with the ``padding`` argument, e.g.: [1, 5]
+
+        Examples
+        --------
+        .. code-block:: python
+
+            from argopy import ArgoFloat
+
+            af = ArgoFloat(wmo)
+            af.plot.trajectory()
+            af.plot.trajectory(figsize=(18,18), padding=[1, 5])
         """
         # todo: Load (cyc,lat,lon) from an API call or index, much faster than a netcdf dataset
 
@@ -107,33 +118,41 @@ class ArgoFloatPlotAccessor:
         param : str
             Name of the dataset parameter to map.
         ds: str, default='prof'
-            Argo dataset (netcdf file) to use to load the parameter to plot.
+            Argo dataset name to load the parameter to plot. Must be valid key from :meth:`ArgoFloat.ls_dataset`.
         pres: float, default=0.
             If the parameter has a N_LEVELS dimension, this is the pressure value to slice the vertical dimension of the parameter to plot.
 
-            We use the :class:`Dataset.argo.groupby_pressure_bins` method to select the parameter value the closest to the pressure target value.
+            We use the :meth:`xarray.Dataset.argo.groupby_pressure_bins` method to select the parameter value the closest to the pressure target value.
 
         Returns
         -------
-        Output from :class:`argopy.plot.scatter_map`, typically:
-
-            fig: :class:`matplotlib.figure.Figure`
-            ax: :class:`matplotlib.axes.Axes`
-            patches: Dict with ax collections
+        tuple
+            Output from :class:`argopy.plot.scatter_map`, typically:
+                - fig: :class:`matplotlib.figure.Figure`
+                - ax: :class:`matplotlib.axes.Axes`
+                - patches: Dict with ax collections
 
         Other Parameters
         ----------------
         pres_bin_size: float, default=100.
             Pressure bin size deeper than the `pres` argument to consider in slicing the parameter to plot.
         select: str, default='shallow'
-            Pressure bin parameter value selection method. This is directly passed to :class:`Dataset.argo.groupby_pressure_bins`.
+            Pressure bin parameter value selection method. This is directly passed to :meth:`xarray.Dataset.argo.groupby_pressure_bins`.
 
         Notes
         -----
-        You can adjust the map aspect ratio with the `figsize` argument, e.g.: (18,18)
+        You can adjust the map aspect ratio with the ``figsize`` argument, e.g.: (18,18)
 
-        You can also adjust space around the trajectory with the `padding` argument, e.g.: [1, 5]
+        You can also adjust space around the trajectory with the ``padding`` argument, e.g.: [1, 5]
 
+        Examples
+        --------
+        .. code-block:: python
+
+            from argopy import ArgoFloat
+            af = ArgoFloat(wmo)
+            af.plot.map('TEMP', pres=450, cmap='Spectral_r')
+            af.plot.map('DATA_MODE', cbar=False, legend=True)
         """
 
         if ds == "prof" and param not in list_multiprofile_file_variables():
@@ -189,19 +208,30 @@ class ArgoFloatPlotAccessor:
         param : str
             Name of the dataset parameter to map.
         ds: str, default='prof'
-            Argo dataset (netcdf file) to use to load the parameter to plot.
+            Argo dataset name to load the parameter to plot. Must be valid key from :meth:`ArgoFloat.ls_dataset`.
         pres: float, default=0.
             If the parameter has a N_LEVELS dimension, this is the pressure value to slice the vertical dimension of the parameter to plot.
 
-            We use the :class:`Dataset.argo.groupby_pressure_bins` method to select the parameter value the closest to the pressure target value.
+            We use the :class:`xarray.Dataset.argo.groupby_pressure_bins` method to select the parameter value the closest to the pressure target value.
 
         Returns
         -------
-        Output from :meth:`argopy.plot.scatter_plot`, typically:
+        tuple
+            Output from :meth:`argopy.plot.scatter_plot`, typically:
+                - :class:`matplotlib.figure.Figure`
+                - :class:`matplotlib.axes.Axes`
+                - list of patches
 
-            fig: :class:`matplotlib.figure.Figure`
-            ax: :class:`matplotlib.axes.Axes`
-            patches
+        Examples
+        --------
+        .. code-block:: python
+
+            from argopy import ArgoFloat
+            af = ArgoFloat(wmo)
+            af.plot.scatter('PSAL')
+            af.plot.scatter('DOXY', ds='Sprof')
+            af.plot.scatter('MEASUREMENT_CODE', ds='Rtraj')
+
         """
 
         if ds == "prof" and param not in list_multiprofile_file_variables():

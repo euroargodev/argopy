@@ -1197,7 +1197,7 @@ class ArgoIndexExtension:
 
 
 class ArgoIndexSearchEngine(ArgoIndexExtension):
-    """:class:`argopy.ArgoIndex` extension providing search methods to query index entries
+    """Extension providing search methods to query index entries
 
     All search methods can be combined with the :meth:`ArgoIndex.query.compose` method, see examples.
 

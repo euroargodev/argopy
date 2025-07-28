@@ -383,6 +383,9 @@
     argopy.stores.float.spec.ArgoFloatProto
     argopy.stores.ArgoFloat
     argopy.stores.ArgoFloat.plot
+    argopy.stores.ArgoFloat.plot.trajectory
+    argopy.stores.ArgoFloat.plot.map
+    argopy.stores.ArgoFloat.plot.scatter
     argopy.ArgoFloat.open_dataset
     argopy.ArgoFloat.ls_dataset
     argopy.ArgoFloat.path
