@@ -87,5 +87,5 @@ class ArgoFloat(FloatStore):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    # Register extensions:
+    # Possibly register extensions:
     plot = xr.core.utils.UncachedAccessor(ArgoFloatPlot)
