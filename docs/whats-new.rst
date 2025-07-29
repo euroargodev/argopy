@@ -23,7 +23,9 @@ Features and front-end API
 Internals
 ^^^^^^^^^
 
-- **Fix bug** whereby the :class:`ArgoIndex` could not select profiles through the dateline :issue:`494`. (:pr:`495`)by |gmaze|.
+- **Fix bug** whereby the :class:`DataFetcher` could not return profiles through the dateline :issue:`494`.
+
+- **Fix bug** whereby the :class:`ArgoIndex` could not select profiles through the dateline :issue:`494`. (:pr:`495`) by |gmaze|.
 
 - **Fix bug** whereby a :class:`gdacfs` could not return one path info under Windows platform. :issue:`499`. (:pr:`451`) by |gmaze|.
 
