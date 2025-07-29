@@ -86,10 +86,10 @@ class FloatStoreProto(ABC):
         # self.load_index()
 
         # Init Internal placeholder for this instance:
-        self._dataset = {}  # For open datasets
-        self._metadata = None  # For float meta-data dictionary
-        self._dac = None
-        self._df_profiles = None
+        self._dataset = {}  # xarray datasets
+        self._metadata = None  # Float meta-data dictionary
+        self._dac = None  # DAC name (string)
+        self._df_profiles = None  # Dataframe with profiles index
         self._online = None  # Web access status
 
 
