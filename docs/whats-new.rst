@@ -23,6 +23,8 @@ Features and front-end API
 Internals
 ^^^^^^^^^
 
+- Refactoring of :class:`ArgoIndex` and :class:`ArgoFloat` to follow the same specs/facade/implementations/extensions design. (:pr:`503`)by |gmaze|.
+
 - **Fix bug** whereby the :class:`ArgoIndex` could not select profiles through the dateline :issue:`494`. (:pr:`495`)by |gmaze|.
 
 - **Fix bug** whereby a :class:`gdacfs` could not return one path info under Windows platform. :issue:`499`. (:pr:`451`) by |gmaze|.
