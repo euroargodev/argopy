@@ -6,7 +6,7 @@ from typing import List
 from .....errors import InvalidDatasetStructure
 from .....utils import is_indexbox, check_wmo, check_cyc, to_list, conv_lon
 from .....utils import register_accessor
-from ...spec import ArgoIndexSearchEngine
+from ...extensions import ArgoIndexSearchEngine
 from ..index_s3 import search_s3
 from .index import indexstore
 

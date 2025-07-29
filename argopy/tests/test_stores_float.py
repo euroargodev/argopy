@@ -12,8 +12,8 @@ import random
 import argopy
 from argopy.utils.checkers import is_list_of_strings
 
-from argopy.stores.float.implementations.argo_float_offline import ArgoFloatOffline
-from argopy.stores.float.implementations.argo_float_online import ArgoFloatOnline
+from argopy.stores.float.implementations.offline.float import FloatStore as ArgoFloatOffline
+from argopy.stores.float.implementations.online.float import FloatStore as ArgoFloatOnline
 
 from mocked_http import mocked_httpserver, mocked_server_address
 from utils import patch_ftp
