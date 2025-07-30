@@ -2,11 +2,42 @@ from abc import abstractmethod
 from typing import NoReturn
 import logging
 
+from ...utils import register_accessor
 from ...errors import InvalidDatasetStructure
 from ...utils import to_list
 
 
 log = logging.getLogger("argopy.stores.index.extensions")
+
+
+def register_ArgoIndex_accessor(name, store):
+    """A decorator to register an accessor as a custom property on :class:`ArgoIndex` objects.
+
+    Parameters
+    ----------
+    name : str
+        Name under which the accessor should be registered. A warning is issued
+        if this name conflicts with a preexisting attribute.
+    store: :class:`ArgoIndex`
+
+    Examples
+    --------
+    .. code-block:: python
+
+        @register_ArgoIndex_accessor('query')
+        class SearchEngine(ArgoIndexExtension):
+
+             def __init__(self, *args, **kwargs):
+                 super().__init__(*args, **kwargs)
+
+             def wmo(self, WMOs):
+                 return WMOs
+
+    It will be available to an ArgoIndex object, like this::
+
+        ArgoIndex().query.wmo(WMOs)
+    """
+    return register_accessor(name, store)
 
 
 class ArgoIndexExtension:
@@ -489,3 +520,46 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         self._obj.search_filter = self._obj._reduce_a_filter_list(filters, op='and')
         self._obj.run(nrows=nrows)
         return self._obj
+
+
+class ArgoIndexPlotProto(ArgoIndexExtension):
+    """Extension providing plot methods
+
+    Examples
+    --------
+    .. code-block:: python
+        :caption: Examples of plotting methods
+
+        from argopy import ArgoIndex
+
+        idx = ArgoIndex().query.wmo(6903091)
+
+        idx.plot.trajectory()
+        idx.plot.trajectory(figsize=(18,18), padding=[1, 5])
+
+    See Also
+    --------
+    :class:`argopy.stores.ArgoIndex.plot.trajectory`
+
+    """
+
+    def __call__(self, *args, **kwargs) -> NoReturn:
+        raise ValueError(
+            "ArgoIndex.plot cannot be called directly. Use "
+            "an explicit plot method, e.g. ArgoIndex.plot.trajectory(...)"
+        )
+
+    def get_title(self, index=False):
+        title = "Argo index '%s'" % self._obj.index_file
+        if hasattr(self._obj, "search") and not index:
+            title += ": %s" % self._obj.search_type
+        return title
+
+    @abstractmethod
+    def trajectory(self, *args, **kwargs) -> NoReturn:
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def bar(self, *args, **kwargs) -> NoReturn:
+        raise NotImplementedError("Not implemented")
+

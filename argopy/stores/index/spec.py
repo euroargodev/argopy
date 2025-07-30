@@ -1,6 +1,7 @@
 import copy
 import numpy as np
 import pandas as pd
+import xarray as xr
 import logging
 import time
 from abc import ABC, abstractmethod
@@ -25,6 +26,7 @@ from ...utils import deprecated
 
 from .. import httpstore, memorystore, filestore, ftpstore, s3store
 from .implementations.index_s3 import get_a_s3index
+from .implementations.plot import ArgoIndexPlot
 
 try:
     import pyarrow.csv as csv  # noqa: F401
@@ -1180,3 +1182,6 @@ file,profiler_type,institution,date_update
         else:
             for wmo in wmos:
                 yield ArgoFloat(wmo, idx=self)
+
+    # Possibly register extensions without specific implementations:
+    plot = xr.core.utils.UncachedAccessor(ArgoIndexPlot)
