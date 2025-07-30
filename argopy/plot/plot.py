@@ -25,6 +25,7 @@ from ..utils.loggers import warnUnless
 from ..utils.checkers import check_wmo
 from ..utils.geo import conv_lon
 from ..utils.lists import subsample_list
+from ..utils.casting import to_list
 from ..errors import InvalidDatasetStructure
 
 if has_mpl:
@@ -569,6 +570,7 @@ def scatter_map(  # noqa: C901
     # vmax = data[hue].max() if vmax == 'auto' else vmax
 
     patches = []
+    scatter_legend_labels = []
     for k, [name, group] in enumerate(data.groupby(hue)):
         if mycolors.registered and name not in mycolors.lookup:
             log.info(
@@ -595,10 +597,12 @@ def scatter_map(  # noqa: C901
             group[x] = conv_lon(group[x], longitude_convention)
             sc = group.plot.scatter(x=x, y=y, ax=ax, **scatter_opts)
             patches.append(sc)
+            scatter_legend_labels.append(scatter_opts['label'])
 
     if cbar:
         if isinstance(cbarlabels, str) and cbarlabels == "auto":
-            handles, cbarlabels = ax.get_legend_handles_labels()
+            # handles, cbarlabels = ax.get_legend_handles_labels()
+            cbarlabels = scatter_legend_labels.copy()
         cbar_handle = mycolors.cbar(
             ticklabels=cbarlabels, ax=ax, fraction=0.03, label=legend_title
         )
@@ -640,12 +644,14 @@ def scatter_map(  # noqa: C901
         rge = [np.max(lon)-np.min(lon), np.max(lat)-np.min(lat)]
         if padding == 'auto':
             padding = [-rge[0]/10, rge[0]/10, -rge[1]/10, rge[1]/10]
-        elif len(padding) == 1:
-            padding = [-padding[0], padding[0], -padding[0], padding[0]]
-        elif len(padding) == 2:
-            padding = [-padding[0], padding[0], -padding[1], padding[1]]
-        elif len(padding) != 4:
-            raise ValueError("'padding' must be 'auto', a list of 2 or 4 values")
+        else:
+            padding = to_list(padding)
+            if len(padding) == 1:
+                padding = [-padding[0], padding[0], -padding[0], padding[0]]
+            elif len(padding) == 2:
+                padding = [-padding[0], padding[0], -padding[1], padding[1]]
+            elif len(padding) != 4:
+                raise ValueError("'padding' must be 'auto', a list of 1, 2 or 4 values")
 
         extent[0] = extent[0]+padding[0]
         extent[1] = extent[1]+padding[1]
