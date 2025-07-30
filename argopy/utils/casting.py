@@ -209,6 +209,8 @@ def to_list(obj):
     if not isinstance(obj, list):
         if isinstance(obj, np.ndarray):
             obj = list(obj)
+        elif isinstance(obj, tuple):
+            obj = [o for o in obj]
         else:
             obj = [obj]
     return obj

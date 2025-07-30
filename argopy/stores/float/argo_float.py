@@ -8,19 +8,21 @@ we don't know if client intends to be online or offline, so we check and impleme
 """
 
 import logging
+import xarray as xr
 
 from ...utils import isconnected
+from .implementations.plot import ArgoFloatPlot
 
 
 log = logging.getLogger("argopy.stores.ArgoFloat")
 
 
 if isconnected():
-    from .implementations.argo_float_online import ArgoFloatOnline as FloatStore
+    from .implementations.online.float import FloatStore
 
     log.info("Using ONLINE Argo Float implementation")
 else:
-    from .implementations.argo_float_offline import ArgoFloatOffline as FloatStore
+    from .implementations.offline.float import FloatStore
 
     log.info("Using OFFLINE Argo Float implementation")
 
@@ -84,3 +86,6 @@ class ArgoFloat(FloatStore):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+    # Possibly register extensions:
+    plot = xr.core.utils.UncachedAccessor(ArgoFloatPlot)
