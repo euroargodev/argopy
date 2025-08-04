@@ -98,7 +98,12 @@ def is_indexbox(box: list, errors="raise"):
     tests["lat_max must be in [-90;90]"] = lambda b: b[3] >= -90.0 and b[3] <= 90.0
 
     # Orders:
-    tests["lon_max must be larger than lon_min"] = lambda b: conv_lon(b[0], '360') < conv_lon(b[1], '360')
+
+    # https://github.com/euroargodev/argopy/issues/505:
+    # tests["lon_max must be larger than lon_min"] = lambda b: conv_lon(b[0], '360') < conv_lon(b[1], '360')
+    if not conv_lon(box[0], '360') < conv_lon(box[1], '360'):
+        log.warning("%s: %s" % (box, "lon_max must be larger than lon_min"))
+
     tests["lat_max must be larger than lat_min"] = lambda b: b[2] < b[3]
     if len(box) > 4:
         tests["datetim_max must come after datetim_min"] = lambda b: pd.to_datetime(
