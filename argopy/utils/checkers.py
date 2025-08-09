@@ -32,7 +32,7 @@ else:
     HAS_BOTO3 = False
 
 
-def is_indexbox(box: list, errors="raise"):
+def is_indexbox(box: list, errors:str="raise"):
     """Check if this array matches a 2d or 3d index box definition
 
     Argopy expects one of the following 2 format to define an index box:
@@ -45,7 +45,12 @@ def is_indexbox(box: list, errors="raise"):
     Parameters
     ----------
     box: list
-    errors: str, default='raise'
+    errors: str, default: ``raise``
+        Define how to handle box format non-compliance:
+            - ``raise``: Raise ValueError message
+            - ``warn``: Return False and issue warning
+            - ``ignore``: Return False and issue warning in logging console
+            - ``silent``:  Return False
 
     Returns
     -------
@@ -98,33 +103,36 @@ def is_indexbox(box: list, errors="raise"):
     tests["lat_max must be in [-90;90]"] = lambda b: b[3] >= -90.0 and b[3] <= 90.0
 
     # Orders:
-
-    # https://github.com/euroargodev/argopy/issues/505:
-    # tests["lon_max must be larger than lon_min"] = lambda b: conv_lon(b[0], '360') < conv_lon(b[1], '360')
-    if not conv_lon(box[0], '360') < conv_lon(box[1], '360'):
-        log.warning("%s: %s" % (box, "lon_max must be larger than lon_min"))
-
+    if OPTIONS['longitude_convention'] == '360':
+        tests[f"lon_max={conv_lon(box[1], '360')} must be larger than lon_min={conv_lon(box[0], '360')}. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."] = lambda b: conv_lon(b[0], '360') < conv_lon(b[1], '360')
+    elif OPTIONS['longitude_convention'] == '180':
+        tests[f"lon_max={conv_lon(box[1], '180')} must be larger than lon_min={conv_lon(box[0], '180')}. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."] = lambda b: conv_lon(b[0], '180') < conv_lon(b[1], '180')
     tests["lat_max must be larger than lat_min"] = lambda b: b[2] < b[3]
     if len(box) > 4:
         tests["datetim_max must come after datetim_min"] = lambda b: pd.to_datetime(
             b[-2]
         ) < pd.to_datetime(b[-1])
 
-    error = None
+    error_msg = None
     for msg, test in tests.items():
         if not test(box):
-            error = msg
+            error_msg = msg
             break
 
-    if error and errors == "raise":
-        raise ValueError("%s: %s" % (box, error))
-    elif error:
-        return False
+    if error_msg:
+        if errors == "raise":
+            raise ValueError("%s: %s" % (box, error_msg))
+        elif errors == "warn":
+            warnings.warn("%s: %s" % (box, error_msg))
+        elif errors == "silent":
+            log.warning("%s: %s" % (box, error_msg))
+        else:
+            return False
     else:
         return True
 
 
-def is_box(box: list, errors="raise"):
+def is_box(box: list, errors:str="raise"):
     """Check if this array matches a 3d or 4d data box definition
 
     Argopy expects one of the following 2 format to define a box:
@@ -137,7 +145,12 @@ def is_box(box: list, errors="raise"):
     Parameters
     ----------
     box: list
-    errors: 'raise'
+    errors: str, default: ``raise``
+        Define how to handle box format non-compliance:
+            - ``raise``: Raise ValueError message
+            - ``warn``: Return False and issue warning
+            - ``ignore``: Return False and issue warning in logging console
+            - ``silent``:  Return False
 
     Returns
     -------
@@ -198,7 +211,10 @@ def is_box(box: list, errors="raise"):
     tests["pres_max must be in [0;10000]"] = lambda b: b[5] >= 0 and b[5] <= 10000
 
     # Orders:
-    tests["lon_max must be larger than lon_min"] = lambda b: conv_lon(b[0], '360') <= conv_lon(b[1], '360')
+    if OPTIONS['longitude_convention'] == '360':
+        tests[f"lon_max={conv_lon(box[1], '360')} must be larger than lon_min={conv_lon(box[0], '360')}. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."] = lambda b: conv_lon(b[0], '360') < conv_lon(b[1], '360')
+    elif OPTIONS['longitude_convention'] == '180':
+        tests[f"lon_max={conv_lon(box[1], '180')} must be larger than lon_min={conv_lon(box[0], '180')}. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."] = lambda b: conv_lon(b[0], '180') < conv_lon(b[1], '180')
     tests["lat_max must be larger than lat_min"] = lambda b: b[2] <= b[3]
     tests["pres_max must be larger than pres_min"] = lambda b: b[4] <= b[5]
     if len(box) == 8:
@@ -206,16 +222,21 @@ def is_box(box: list, errors="raise"):
             b[-2]
         ) <= pd.to_datetime(b[-1])
 
-    error = None
+    error_msg = None
     for msg, test in tests.items():
         if not test(box):
-            error = msg
+            error_msg = msg
             break
 
-    if error and errors == "raise":
-        raise ValueError("%s: %s" % (box, error))
-    elif error:
-        return False
+    if error_msg:
+        if errors == "raise":
+            raise ValueError("%s: %s" % (box, error_msg))
+        elif errors == "warn":
+            warnings.warn("%s: %s" % (box, error_msg))
+        elif errors == "silent":
+            log.warning("%s: %s" % (box, error_msg))
+        else:
+            return False
     else:
         return True
 
