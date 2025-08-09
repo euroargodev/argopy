@@ -11,6 +11,7 @@ try:
 except ModuleNotFoundError:
     pass
 
+from .....options import OPTIONS
 from .....errors import InvalidDatasetStructure
 from .....utils import is_indexbox, check_wmo, check_cyc, to_list, conv_lon
 from .....utils import register_accessor
@@ -256,8 +257,12 @@ class SearchEngine(ArgoIndexSearchEngine):
 
         def composer(BOX):
             filt = []
-            filt.append(pa.compute.greater_equal(self._obj.index["longitude_360"], conv_lon(BOX[0], '360')))
-            filt.append(pa.compute.less_equal(self._obj.index["longitude_360"], conv_lon(BOX[1], '360')))
+            if OPTIONS['longitude_convention'] == '360':
+                filt.append(pa.compute.greater_equal(self._obj.index["longitude_360"], conv_lon(BOX[0], '360')))
+                filt.append(pa.compute.less_equal(self._obj.index["longitude_360"], conv_lon(BOX[1], '360')))
+            elif OPTIONS['longitude_convention'] == '180':
+                filt.append(pa.compute.greater_equal(self._obj.index["longitude"], conv_lon(BOX[0], '180')))
+                filt.append(pa.compute.less_equal(self._obj.index["longitude"], conv_lon(BOX[1], '180')))
             return self._obj._reduce_a_filter_list(filt, op="and")
 
         checker(BOX)
@@ -284,8 +289,12 @@ class SearchEngine(ArgoIndexSearchEngine):
 
         def composer(BOX):
             filt = []
-            filt.append(pa.compute.greater_equal(self._obj.index["longitude_360"], conv_lon(BOX[0], '360')))
-            filt.append(pa.compute.less_equal(self._obj.index["longitude_360"], conv_lon(BOX[1], '360')))
+            if OPTIONS['longitude_convention'] == '360':
+                filt.append(pa.compute.greater_equal(self._obj.index["longitude_360"], conv_lon(BOX[0], '360')))
+                filt.append(pa.compute.less_equal(self._obj.index["longitude_360"], conv_lon(BOX[1], '360')))
+            elif OPTIONS['longitude_convention'] == '180':
+                filt.append(pa.compute.greater_equal(self._obj.index["longitude"], conv_lon(BOX[0], '180')))
+                filt.append(pa.compute.less_equal(self._obj.index["longitude"], conv_lon(BOX[1], '180')))
             filt.append(pa.compute.greater_equal(self._obj.index["latitude"], BOX[2]))
             filt.append(pa.compute.less_equal(self._obj.index["latitude"], BOX[3]))
             return self._obj._reduce_a_filter_list(filt, op="and")
@@ -315,8 +324,12 @@ class SearchEngine(ArgoIndexSearchEngine):
 
         def composer(BOX, key):
             filt = []
-            filt.append(pa.compute.greater_equal(self._obj.index["longitude_360"], conv_lon(BOX[0], '360')))
-            filt.append(pa.compute.less_equal(self._obj.index["longitude_360"], conv_lon(BOX[1], '360')))
+            if OPTIONS['longitude_convention'] == '360':
+                filt.append(pa.compute.greater_equal(self._obj.index["longitude_360"], conv_lon(BOX[0], '360')))
+                filt.append(pa.compute.less_equal(self._obj.index["longitude_360"], conv_lon(BOX[1], '360')))
+            elif OPTIONS['longitude_convention'] == '180':
+                filt.append(pa.compute.greater_equal(self._obj.index["longitude"], conv_lon(BOX[0], '180')))
+                filt.append(pa.compute.less_equal(self._obj.index["longitude"], conv_lon(BOX[1], '180')))
             filt.append(pa.compute.greater_equal(self._obj.index["latitude"], BOX[2]))
             filt.append(pa.compute.less_equal(self._obj.index["latitude"], BOX[3]))
             filt.append(

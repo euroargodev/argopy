@@ -33,7 +33,7 @@ from .errors import OptionValueError, GdacPathError, ErddapPathError
 # Define a logger
 log = logging.getLogger("argopy.options")
 
-# Define option names as seen by users:
+# Define option names as seen by users and internals:
 DATA_SOURCE = "src"
 GDAC = "gdac"
 ERDDAP = "erddap"
@@ -49,6 +49,7 @@ PASSWORD = "password"
 ARGOVIS_API_KEY = "argovis_api_key"
 PARALLEL = "parallel"
 PARALLEL_DEFAULT_METHOD = "parallel_default_method"
+LON = "longitude_convention"
 
 # Define the list of available options and default values:
 OPTIONS = {
@@ -67,6 +68,7 @@ OPTIONS = {
     ARGOVIS_API_KEY: "guest",  # https://argovis-keygen.colorado.edu
     PARALLEL: False,
     PARALLEL_DEFAULT_METHOD: "thread",
+    LON: "180",
 }
 DEFAULT = OPTIONS.copy()
 
@@ -131,6 +133,7 @@ _VALIDATORS = {
     ARGOVIS_API_KEY: lambda x: isinstance(x, str) or x is None,
     PARALLEL: validate_parallel,
     PARALLEL_DEFAULT_METHOD: validate_parallel_method,
+    LON: lambda x: x in ['180', '360'],
 }
 
 
@@ -218,6 +221,13 @@ class set_options:
                 - ``thread``: use `multi-threading <https://en.wikipedia.org/wiki/Multithreading_(computer_architecture)>`_ with a :class:`concurrent.futures.ThreadPoolExecutor`
                 - ``process``: use `multi-processing <https://en.wikipedia.org/wiki/Multiprocessing>`_ with a :class:`concurrent.futures.ProcessPoolExecutor`
                 -  :class:`distributed.Client`: Use a `Dask Cluster <https://docs.dask.org/en/stable/deploying.html>`_ `client <https://distributed.dask.org/en/latest/client.html>`_.
+
+    longitude_convention: str, default: '180',
+        The longitude convention to use when longitudes are compared.
+
+            Possible values:
+                - '180': longitude goes from -180 to 180
+                - '360': longitude goes from 0 to 360
 
     Other Parameters
     ----------------

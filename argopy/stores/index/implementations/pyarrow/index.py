@@ -15,6 +15,7 @@ try:
 except ModuleNotFoundError:
     pass
 
+from .....options import OPTIONS
 from .....errors import DataNotFound, InvalidDatasetStructure
 from .....utils import check_index_cols, conv_lon
 from ...spec import ArgoIndexStoreProto
@@ -97,8 +98,10 @@ class indexstore(ArgoIndexStoreProto):
                 convention=self.convention,
             )
             if "longitude" in self.convention_columns:
-                index = index.append_column('longitude_360',
-                                            pa.array(conv_lon(index["longitude"].to_numpy(), '360')))
+                index = index.append_column(
+                    "longitude_360",
+                    pa.array(conv_lon(index["longitude"].to_numpy(), "360")),
+                )
             return index
 
         def index2cache_path(path, nrows=None):
@@ -244,7 +247,7 @@ class indexstore(ArgoIndexStoreProto):
                 self.load(nrows=nrows)
             df = self.index.to_pandas()
 
-        df.drop('longitude_360', inplace=True, axis='columns')
+        df.drop("longitude_360", inplace=True, axis="columns")
         return df, src
 
     def _reduce_a_filter_list(self, filters, op="or"):
@@ -375,10 +378,24 @@ class indexstore(ArgoIndexStoreProto):
         tmin = lambda x: pd.to_datetime(min(x)).to_numpy()  # noqa: E731
         tmax = lambda x: pd.to_datetime(max(x)).to_numpy()  # noqa: E731
 
+        def xmin(xtble):
+            if OPTIONS["longitude_convention"] == "360":
+                xcol = "longitude_360"
+            else:  #  OPTIONS['longitude_convention'] == '180':
+                xcol = "longitude"
+            return min(xtble[xcol])
+
+        def xmax(xtble):
+            if OPTIONS["longitude_convention"] == "360":
+                xcol = "longitude_360"
+            else:  # OPTIONS['longitude_convention'] == '180':
+                xcol = "longitude"
+            return max(xtble[xcol])
+
         if hasattr(self, "search") and not index:
             return [
-                conv_lon(min(self.search["longitude_360"]), '180'),
-                conv_lon(max(self.search["longitude_360"]), '180'),
+                xmin(self.search),
+                xmax(self.search),
                 min(self.search["latitude"]),
                 max(self.search["latitude"]),
                 tmin(self.search["date"]),
@@ -388,8 +405,8 @@ class indexstore(ArgoIndexStoreProto):
             if not hasattr(self, "index"):
                 self.load()
             return [
-                conv_lon(min(self.index["longitude_360"]), '180'),
-                conv_lon(max(self.index["longitude_360"]), '180'),
+                xmin(self.index),
+                xmax(self.index),
                 min(self.index["latitude"]),
                 max(self.index["latitude"]),
                 tmin(self.index["date"]),
@@ -400,16 +417,12 @@ class indexstore(ArgoIndexStoreProto):
         sep = self.fs["src"].fs.sep
         if hasattr(self, "search") and not index:
             return [
-                sep.join(
-                    ["dac", f.as_py().replace("/", sep)]
-                )
+                sep.join(["dac", f.as_py().replace("/", sep)])
                 for f in self.search["file"]
             ]
         else:
             return [
-                sep.join(
-                    ["dac", f.as_py().replace("/", sep)]
-                )
+                sep.join(["dac", f.as_py().replace("/", sep)])
                 for f in self.index["file"]
             ]
 
@@ -457,8 +470,8 @@ class indexstore(ArgoIndexStoreProto):
         s = self.search
 
         # Drop internal variable 'longitude_360':
-        if 'longitude_360' in s.column_names:
-            s = s.drop_columns('longitude_360')
+        if "longitude_360" in s.column_names:
+            s = s.drop_columns("longitude_360")
 
         if self.convention not in [
             "ar_index_global_meta",
