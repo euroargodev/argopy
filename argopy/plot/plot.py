@@ -17,15 +17,16 @@ import numpy as np
 from typing import Union
 import importlib
 
-from .utils import STYLE, has_seaborn, has_mpl, has_cartopy, has_ipython, has_ipywidgets
-from .utils import axes_style, latlongrid, land_feature
-from .argo_colors import ArgoColors
-
+from ..options import OPTIONS
 from ..utils.loggers import warnUnless
 from ..utils.checkers import check_wmo
 from ..utils.geo import conv_lon
 from ..utils.lists import subsample_list
 from ..errors import InvalidDatasetStructure
+
+from .utils import STYLE, has_seaborn, has_mpl, has_cartopy, has_ipython, has_ipywidgets
+from .utils import axes_style, latlongrid, land_feature
+from .argo_colors import ArgoColors
 
 if has_mpl:
     import matplotlib.pyplot as plt
@@ -339,7 +340,6 @@ def scatter_map(  # noqa: C901
     cbarmaxlabels: int = 12,
     set_global: bool = False,
     padding: Union[str, list] = 'auto',
-    longitude_convention: str = '180',
     **kwargs
 ):
     """Try-to-be generic function to create a scatter plot on a map from **argopy** :class:`xarray.Dataset` or :class:`pandas.DataFrame` data
@@ -437,9 +437,6 @@ def scatter_map(  # noqa: C901
 
         - of 2 values for longitude and latitude padding
         - of 4 values for west, east, south and north padding
-
-    longitude_convention: str, default='180'
-        Convention of the longitude: '180' for -180/180, or '360' for 0/360 values.
 
     kwargs
         All other arguments are passed to :class:`matplotlib.figure.Figure.subplots`
@@ -555,7 +552,12 @@ def scatter_map(  # noqa: C901
     # Set up the figure and axis:
     defaults = {"figsize": (10, 6), "dpi": 90}
 
-    subplot_kw = {"projection": ccrs.PlateCarree()}
+    if OPTIONS["longitude_convention"] == "180":
+        central_longitude = 0.
+    else:  # OPTIONS['longitude_convention'] == '360':
+        central_longitude = 180.
+
+    subplot_kw = {"projection": ccrs.PlateCarree(central_longitude=central_longitude)}
     fig, ax = plt.subplots(**{**defaults, **kwargs}, subplot_kw=subplot_kw)
     ax.add_feature(
         land_feature,
@@ -592,7 +594,7 @@ def scatter_map(  # noqa: C901
                 scatter_opts[
                     "legend"
                 ] = False  # otherwise Pandas will add a legend even if we set legend=False
-            group[x] = conv_lon(group[x], longitude_convention)
+            group[x] = conv_lon(group[x], OPTIONS["longitude_convention"])
             sc = group.plot.scatter(x=x, y=y, ax=ax, **scatter_opts)
             patches.append(sc)
 
@@ -634,10 +636,10 @@ def scatter_map(  # noqa: C901
     if set_global:
         ax.set_global()
     else:
-        lon = conv_lon(data[x], longitude_convention)
+        lon = conv_lon(data[x], OPTIONS["longitude_convention"])
         lat = data[y]
         extent = [np.min(lon), np.max(lon), np.min(lat), np.max(lat)]
-        rge = [np.max(lon)-np.min(lon), np.max(lat)-np.min(lat)]
+        rge = [np.abs(np.max(lon)-np.min(lon)), np.abs(np.max(lat)-np.min(lat))]
         if padding == 'auto':
             padding = [-rge[0]/10, rge[0]/10, -rge[1]/10, rge[1]/10]
         elif len(padding) == 1:
