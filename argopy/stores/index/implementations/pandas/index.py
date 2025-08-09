@@ -5,6 +5,7 @@ import gzip
 from pathlib import Path
 from typing import List
 
+from .....options import OPTIONS
 from .....errors import DataNotFound, InvalidDatasetStructure
 from .....utils import check_index_cols, conv_lon
 from ...spec import ArgoIndexStoreProto
@@ -56,7 +57,7 @@ class indexstore(ArgoIndexStoreProto):
                 convention=self.convention,
             )
             if "longitude" in self.convention_columns:
-                index['longitude_360'] = conv_lon(index['longitude'], '360')
+                index["longitude_360"] = conv_lon(index["longitude"], "360")
             return index
 
         def index2cache_path(path, nrows=None):
@@ -200,7 +201,7 @@ class indexstore(ArgoIndexStoreProto):
                 self.load(nrows=nrows)
             df = self.index.copy()
 
-        df.drop('longitude_360', inplace=True, axis='columns')
+        df.drop("longitude_360", inplace=True, axis="columns")
         return df, src
 
     def _reduce_a_filter_list(self, filters, op="or"):
@@ -298,10 +299,24 @@ class indexstore(ArgoIndexStoreProto):
         tmin = lambda x: pd.to_datetime(str(int(x.min()))).to_numpy()  # noqa: E731
         tmax = lambda x: pd.to_datetime(str(int(x.max()))).to_numpy()  # noqa: E731
 
+        def xmin(xtble):
+            if OPTIONS["longitude_convention"] == "360":
+                xcol = "longitude_360"
+            else:  #  OPTIONS['longitude_convention'] == '180':
+                xcol = "longitude"
+            return xtble[xcol].min()
+
+        def xmax(xtble):
+            if OPTIONS["longitude_convention"] == "360":
+                xcol = "longitude_360"
+            else:  #  OPTIONS['longitude_convention'] == '180':
+                xcol = "longitude"
+            return xtble[xcol].max()
+
         if hasattr(self, "search") and not index:
             return [
-                conv_lon(min(self.search["longitude_360"]), '180'),
-                conv_lon(max(self.search["longitude_360"]), '180'),
+                xmin(self.search),
+                xmax(self.search),
                 self.search["latitude"].min(),
                 self.search["latitude"].max(),
                 tmin(self.search["date"]),
@@ -311,8 +326,8 @@ class indexstore(ArgoIndexStoreProto):
             if not hasattr(self, "index"):
                 self.load()
             return [
-                conv_lon(min(self.index["longitude_360"]), '180'),
-                conv_lon(max(self.index["longitude_360"]), '180'),
+                xmin(self.index),
+                xmax(self.index),
                 self.index["latitude"].min(),
                 self.index["latitude"].max(),
                 tmin(self.index["date"]),
@@ -330,15 +345,9 @@ class indexstore(ArgoIndexStoreProto):
         """
         sep = self.fs["src"].fs.sep
         if hasattr(self, "search") and not index:
-            return [
-                sep.join(["dac", f.replace("/", sep)])
-                for f in self.search["file"]
-            ]
+            return [sep.join(["dac", f.replace("/", sep)]) for f in self.search["file"]]
         else:
-            return [
-                sep.join(["dac", f.replace("/", sep)])
-                for f in self.index["file"]
-            ]
+            return [sep.join(["dac", f.replace("/", sep)]) for f in self.index["file"]]
 
     def records_per_wmo(self, index=False):
         """Return the number of records per unique WMOs in search results
@@ -379,8 +388,8 @@ class indexstore(ArgoIndexStoreProto):
         df = self.search.copy()
 
         # Drop internal variable 'longitude_360':
-        if 'longitude_360' in df.columns:
-            df = df.drop('longitude_360', axis=1)
+        if "longitude_360" in df.columns:
+            df = df.drop("longitude_360", axis=1)
 
         columns = self.convention_columns
         df.to_csv(
