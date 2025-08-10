@@ -65,13 +65,11 @@ def is_indexbox(box: list, errors:str="raise"):
             isit = False
         return isit
 
-    tests = {}
 
-    # Formats:
+    # Test object format :
+    tests = {}
     tests["index box must be a list"] = lambda b: isinstance(b, list)
     tests["index box must be a list with 4 or 6 elements"] = lambda b: len(b) in [4, 6]
-
-    # Types:
     tests["lon_min must be numeric"] = lambda b: (
         isinstance(b[0], int) or isinstance(b[0], (np.floating, float))
     )
@@ -92,15 +90,40 @@ def is_indexbox(box: list, errors:str="raise"):
             "datetim_max must be a string convertible to a Pandas datetime"
         ] = lambda b: isinstance(b[-1], str) and is_dateconvertible(b[-1])
 
+    error_msg = None
+    for msg, test in tests.items():
+        if not test(box):
+            error_msg = msg
+            break
+
+    if error_msg:
+        if errors == "raise":
+            raise ValueError("%s: %s" % (box, error_msg))
+        elif errors == "warn":
+            warnings.warn("%s: %s" % (box, error_msg))
+        elif errors == "silent":
+            log.warning("%s: %s" % (box, error_msg))
+        return False
+
+    # Test object content :
+    tests = {}
     # Ranges:
-    tests["lon_min must be in [-180;180] or [0;360]"] = (
-        lambda b: b[0] >= -180.0 and b[0] <= 360.0
-    )
-    tests["lon_max must be in [-180;180] or [0;360]"] = (
-        lambda b: b[1] >= -180.0 and b[1] <= 360.0
-    )
-    tests["lat_min must be in [-90;90]"] = lambda b: b[2] >= -90.0 and b[2] <= 90
-    tests["lat_max must be in [-90;90]"] = lambda b: b[3] >= -90.0 and b[3] <= 90.0
+    if OPTIONS['longitude_convention'] == '360':
+        tests[f"lon_min must be in [0;360]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."] = (
+            lambda b: 0.0 <= b[0] <= 360.0
+        )
+        tests[f"lon_max must be in [0;360]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."] = (
+            lambda b: 0.0 <= b[1] <= 360.0
+        )
+    else:  #  OPTIONS['longitude_convention'] == '180':
+        tests[f"lon_min must be in [-180;180]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."] = (
+            lambda b: -180.0 <= b[0] <= 180.0
+        )
+        tests[f"lon_max must be in [-180;180]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."] = (
+            lambda b: -180.0 <= b[1] <= 180.0
+        )
+    tests["lat_min must be in [-90;90]"] = lambda b: -90. <= b[2] <= 90.
+    tests["lat_max must be in [-90;90]"] = lambda b: -90. <= b[3] <= 90.
 
     # Orders:
     if OPTIONS['longitude_convention'] == '360':
@@ -126,10 +149,9 @@ def is_indexbox(box: list, errors:str="raise"):
             warnings.warn("%s: %s" % (box, error_msg))
         elif errors == "silent":
             log.warning("%s: %s" % (box, error_msg))
-        else:
-            return False
-    else:
-        return True
+        return False
+
+    return True
 
 
 def is_box(box: list, errors:str="raise"):
@@ -165,13 +187,10 @@ def is_box(box: list, errors:str="raise"):
             isit = False
         return isit
 
+    # Test object format :
     tests = {}
-    #     print(box)
-    # Formats:
     tests["box must be a list"] = lambda b: isinstance(b, list)
     tests["box must be a list with 6 or 8 elements"] = lambda b: len(b) in [6, 8]
-
-    # Types:
     tests["lon_min must be numeric"] = lambda b: (
         isinstance(b[0], int) or isinstance(b[0], (np.floating, float))
     )
@@ -198,17 +217,42 @@ def is_box(box: list, errors:str="raise"):
             "datetim_max must be an object convertible to a Pandas datetime"
         ] = lambda b: is_dateconvertible(b[-1])
 
+    error_msg = None
+    for msg, test in tests.items():
+        if not test(box):
+            error_msg = msg
+            break
+
+    if error_msg:
+        if errors == "raise":
+            raise ValueError("%s: %s" % (box, error_msg))
+        elif errors == "warn":
+            warnings.warn("%s: %s" % (box, error_msg))
+        elif errors == "silent":
+            log.warning("%s: %s" % (box, error_msg))
+        return False
+
+    # Test object content :
+    tests = {}
     # Ranges:
-    tests["lon_min must be in [-180;180] or [0;360]"] = (
-        lambda b: b[0] >= -180.0 and b[0] <= 360.0
-    )
-    tests["lon_max must be in [-180;180] or [0;360]"] = (
-        lambda b: b[1] >= -180.0 and b[1] <= 360.0
-    )
-    tests["lat_min must be in [-90;90]"] = lambda b: b[2] >= -90.0 and b[2] <= 90
-    tests["lat_max must be in [-90;90]"] = lambda b: b[3] >= -90.0 and b[3] <= 90.0
-    tests["pres_min must be in [0;10000]"] = lambda b: b[4] >= 0 and b[4] <= 10000
-    tests["pres_max must be in [0;10000]"] = lambda b: b[5] >= 0 and b[5] <= 10000
+    if OPTIONS['longitude_convention'] == '360':
+        tests[f"lon_min must be in [0;360]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."] = (
+            lambda b: 0.0 <= b[0] <= 360.0
+        )
+        tests[f"lon_max must be in [0;360]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."] = (
+            lambda b: 0.0 <= b[1] <= 360.0
+        )
+    else:  #  OPTIONS['longitude_convention'] == '180':
+        tests[f"lon_min must be in [-180;180]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."] = (
+            lambda b: -180.0 <= b[0] <= 180.0
+        )
+        tests[f"lon_max must be in [-180;180]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."] = (
+            lambda b: -180.0 <= b[1] <= 180.0
+        )
+    tests["lat_min must be in [-90;90]"] = lambda b: -90. <= b[2] <= 90.
+    tests["lat_max must be in [-90;90]"] = lambda b: -90. <= b[3] <= 90.
+    tests["pres_min must be in [0;10000]"] = lambda b: 0. <= b[4] <= 10000.
+    tests["pres_max must be in [0;10000]"] = lambda b: 0. <= b[5] <= 10000.
 
     # Orders:
     if OPTIONS['longitude_convention'] == '360':
@@ -235,10 +279,9 @@ def is_box(box: list, errors:str="raise"):
             warnings.warn("%s: %s" % (box, error_msg))
         elif errors == "silent":
             log.warning("%s: %s" % (box, error_msg))
-        else:
-            return False
-    else:
-        return True
+        return False
+
+    return True
 
 
 def is_list_of_strings(lst):
