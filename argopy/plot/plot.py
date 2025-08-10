@@ -33,7 +33,7 @@ if has_mpl:
     import matplotlib as mpl
 
 if has_seaborn:
-    STYLE["axes"] = "dark"
+    # STYLE["axes"] = "dark"
     import seaborn as sns
 
 if has_cartopy:
@@ -146,15 +146,19 @@ def plot_trajectory(
 ):
     """Plot trajectories for an Argo index dataframe
 
-    This function is called by the Data and Index fetchers method 'plot' with the 'trajectory' option::
+    This function is called by the Data fetcher and ArgoIndex methods 'plot' with the 'trajectory' option:
 
-        from argopy import DataFetcher, IndexFetcher
+    Examples
+    --------
+    .. code-block:: python
 
-        obj = IndexFetcher().float([6902766, 6902772, 6902914, 6902746])
-        # OR
+        from argopy import DataFetcher, ArgoIndex
+
         obj = DataFetcher().float([6902766, 6902772, 6902914, 6902746])
-
         fig, ax = obj.plot('trajectory')
+
+        obj = ArgoIndex().query.wmo([6902766, 6902772, 6902914, 6902746])
+        fig, ax = obj.plot.trajectory()
 
     Parameters
     ----------
@@ -707,7 +711,7 @@ def scatter_plot(
     vmax=None,
     s=4,
     cbar: bool = False,
-    bgcolor="lightgrey",
+    style: str = STYLE["axes"],
 ):
     """A quick-and-dirty parameter scatter plot for one variable"""
     warnUnless(has_mpl, "requires matplotlib installed")
@@ -743,44 +747,46 @@ def scatter_plot(
         assert y.shape == c.shape
 
     #
-    fig, ax = plt.subplots(dpi=90, figsize=figsize)
+    with axes_style(style):
 
-    if vmin == "attrs":
-        vmin = c.attrs["valid_min"] if "valid_min" in c.attrs else None
-    if vmax == "attrs":
-        vmax = c.attrs["valid_max"] if "valid_max" in c.attrs else None
-    if vmin is None:
-        vmin = np.nanpercentile(c, 10)
-    if vmax is None:
-        vmax = np.nanpercentile(c, 90)
+        fig, ax = plt.subplots(dpi=90, figsize=figsize)
 
-    if "INTERPOLATED" in this_y:
-        m = ax.pcolormesh(x_bounds, y_bounds, c, cmap=cmap, vmin=vmin, vmax=vmax)
-    else:
-        m = ax.scatter(x, y, c=c, cmap=cmap, s=s, vmin=vmin, vmax=vmax)
-        ax.set_facecolor(bgcolor)
+        if vmin == "attrs":
+            vmin = c.attrs["valid_min"] if "valid_min" in c.attrs else None
+        if vmax == "attrs":
+            vmax = c.attrs["valid_max"] if "valid_max" in c.attrs else None
+        if vmin is None:
+            vmin = np.nanpercentile(c, 10)
+        if vmax is None:
+            vmax = np.nanpercentile(c, 90)
 
-    if cbar:
-        cbar = fig.colorbar(m, shrink=0.9, extend="both", ax=ax)
-        cbar.ax.set_ylabel(get_vlabel(ds, this_param), rotation=90)
+        if "INTERPOLATED" in this_y:
+            m = ax.pcolormesh(x_bounds, y_bounds, c, cmap=cmap, vmin=vmin, vmax=vmax)
+        else:
+            m = ax.scatter(x, y, c=c, cmap=cmap, s=s, vmin=vmin, vmax=vmax)
+            # ax.set_facecolor(bgcolor)
 
-    ylim = ax.get_ylim()
-    if "PRES" in this_y:
-        ax.invert_yaxis()
-        y_bottom, y_top = np.max(ylim), np.min(ylim)
-    else:
-        y_bottom, y_top = ylim
+        if cbar:
+            cbar = fig.colorbar(m, shrink=0.9, extend="both", ax=ax)
+            cbar.ax.set_ylabel(get_vlabel(ds, this_param), rotation=90)
 
-    if this_x == "CYCLE_NUMBER":
-        ax.set_xlim([np.min(ds[this_x]) - 1, np.max(ds[this_x]) + 1])
-    elif this_x == "TIME":
-        ax.set_xlim([np.min(ds[this_x]), np.max(ds[this_x])])
-    if "PRES" in this_y:
-        ax.set_ylim([y_bottom, 0])
+        ylim = ax.get_ylim()
+        if "PRES" in this_y:
+            ax.invert_yaxis()
+            y_bottom, y_top = np.max(ylim), np.min(ylim)
+        else:
+            y_bottom, y_top = ylim
 
-    #
-    ax.set_xlabel(get_vlabel(ds, this_x))
-    ax.set_ylabel(get_vlabel(ds, this_y))
+        if this_x == "CYCLE_NUMBER":
+            ax.set_xlim([np.min(ds[this_x]) - 1, np.max(ds[this_x]) + 1])
+        elif this_x == "TIME":
+            ax.set_xlim([np.min(ds[this_x]), np.max(ds[this_x])])
+        if "PRES" in this_y:
+            ax.set_ylim([y_bottom, 0])
+
+        #
+        ax.set_xlabel(get_vlabel(ds, this_x))
+        ax.set_ylabel(get_vlabel(ds, this_y))
 
     if cbar:
         return fig, ax, m, cbar
