@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 from typing import List
 
+from .....options import OPTIONS
 from .....errors import InvalidDatasetStructure
 from .....utils import is_indexbox, check_wmo, check_cyc, to_list, conv_lon
 from ...extensions import register_ArgoIndex_accessor, ArgoIndexSearchEngine
@@ -206,8 +207,12 @@ class SearchEngine(ArgoIndexSearchEngine):
 
         def composer(BOX):
             filt = []
-            filt.append(self._obj.index["longitude_360"].ge(conv_lon(BOX[0], '360')))
-            filt.append(self._obj.index["longitude_360"].le(conv_lon(BOX[1], '360')))
+            if OPTIONS['longitude_convention'] == '360':
+                filt.append(self._obj.index["longitude_360"].ge(conv_lon(BOX[0], '360')))
+                filt.append(self._obj.index["longitude_360"].le(conv_lon(BOX[1], '360')))
+            elif OPTIONS['longitude_convention'] == '180':
+                filt.append(self._obj.index["longitude"].ge(conv_lon(BOX[0], '180')))
+                filt.append(self._obj.index["longitude"].le(conv_lon(BOX[1], '180')))
             return self._obj._reduce_a_filter_list(filt, op="and")
 
         checker(BOX)
@@ -234,8 +239,12 @@ class SearchEngine(ArgoIndexSearchEngine):
 
         def composer(BOX):
             filt = []
-            filt.append(self._obj.index["longitude_360"].ge(conv_lon(BOX[0], '360')))
-            filt.append(self._obj.index["longitude_360"].le(conv_lon(BOX[1], '360')))
+            if OPTIONS['longitude_convention'] == '360':
+                filt.append(self._obj.index["longitude_360"].ge(conv_lon(BOX[0], '360')))
+                filt.append(self._obj.index["longitude_360"].le(conv_lon(BOX[1], '360')))
+            elif OPTIONS['longitude_convention'] == '180':
+                filt.append(self._obj.index["longitude"].ge(conv_lon(BOX[0], '180')))
+                filt.append(self._obj.index["longitude"].le(conv_lon(BOX[1], '180')))
             filt.append(self._obj.index["latitude"].ge(BOX[2]))
             filt.append(self._obj.index["latitude"].le(BOX[3]))
             return self._obj._reduce_a_filter_list(filt, op="and")
@@ -268,8 +277,12 @@ class SearchEngine(ArgoIndexSearchEngine):
             tim_max = int(pd.to_datetime(BOX[5]).strftime("%Y%m%d%H%M%S"))
             
             filt = []
-            filt.append(self._obj.index["longitude_360"].ge(conv_lon(BOX[0], '360')))
-            filt.append(self._obj.index["longitude_360"].le(conv_lon(BOX[1], '360')))
+            if OPTIONS['longitude_convention'] == '360':
+                filt.append(self._obj.index["longitude_360"].ge(conv_lon(BOX[0], '360')))
+                filt.append(self._obj.index["longitude_360"].le(conv_lon(BOX[1], '360')))
+            elif OPTIONS['longitude_convention'] == '180':
+                filt.append(self._obj.index["longitude"].ge(conv_lon(BOX[0], '180')))
+                filt.append(self._obj.index["longitude"].le(conv_lon(BOX[1], '180')))
             filt.append(self._obj.index["latitude"].ge(BOX[2]))
             filt.append(self._obj.index["latitude"].le(BOX[3]))
             filt.append(self._obj.index[key].ge(tim_min))

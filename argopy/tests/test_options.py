@@ -124,3 +124,8 @@ def test_opt_parallel(method):
 def test_invalid_opt_parallel(method):
     with pytest.raises(OptionValueError):
         argopy.set_options(parallel=method)
+
+
+def test_opt_longitude_convention():
+    with pytest.raises(ValueError):
+        argopy.set_options(longitude_convention='toto')

@@ -1,9 +1,12 @@
 import pytest
+import logging
 import numpy as np
+
 from mocked_http import mocked_httpserver, mocked_server_address
 from utils import (
     requires_erddap,
 )
+
 import argopy
 from argopy.errors import GdacPathError
 from argopy.utils.checkers import (
@@ -13,6 +16,8 @@ from argopy.utils.checkers import (
     check_gdac_path,
     isconnected, urlhaskeyword, isAPIconnected, erddap_ds_exists, isalive
 )
+
+log = logging.getLogger("argopy.tests.utils.checkers")
 
 
 class Test_is_box:
