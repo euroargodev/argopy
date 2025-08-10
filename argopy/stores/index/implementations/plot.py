@@ -12,8 +12,10 @@ class ArgoIndexPlot(ArgoIndexPlotProto):
 
         Parameters
         ----------
+        index: bool, default=False
+            Determine if the method makes a plot with the full index (True) or only the query search result (False).
         **kwargs
-            All arguments are passed to :meth:`argopy.plot.plot_trajectory`.
+            All other arguments are passed to :meth:`argopy.plot.plot_trajectory`.
 
         Returns
         -------
