@@ -1,13 +1,13 @@
 import numpy as np
-from typing import NoReturn, Any
+from typing import Any
 
-from ...plot import scatter_plot, scatter_map
-from ...utils.lists import list_multiprofile_file_variables, list_bgc_s_variables
+from ....plot import scatter_plot, scatter_map
+from ....utils.lists import list_multiprofile_file_variables, list_bgc_s_variables
+from ..extensions import ArgoFloatPlotProto
 
 
-class ArgoFloatPlotAccessor:
-    """
-    Enables use of :mod:`argopy.plot` functions as attributes on a ArgoFloat.
+class ArgoFloatPlot(ArgoFloatPlotProto):
+    """Extension providing plot methods
 
     Examples
     --------
@@ -36,23 +36,15 @@ class ArgoFloatPlotAccessor:
     --------
     :meth:`ArgoFloat.plot.trajectory`, :meth:`ArgoFloat.plot.map`, :meth:`ArgoFloat.plot.scatter`
 
+    Notes
+    -----
+    This extension works with both the offline and online ArgoFloat implementations. It is based on data downloaded using the :meth:`ArgoFloat.open_dataset` method.
+
     """
-
-    _af: None
-    __slots__ = "_af"
-
-    def __init__(self, af) -> None:
-        self._af = af
-
-    def __call__(self, *args, **kwargs) -> NoReturn:
-        raise ValueError(
-            "ArgoFloat.plot cannot be called directly. Use "
-            "an explicit plot method, e.g. ArgoFloat.plot.trajectory(...)"
-        )
 
     @property
     def _default_title(self):
-        return "Argo float WMO: %s" % self._af.WMO
+        return "Argo float WMO: %s" % self._obj.WMO
 
     def trajectory(self, **kwargs) -> Any:
         """Quick map of the float trajectory
@@ -163,15 +155,13 @@ class ArgoFloatPlotAccessor:
             raise ValueError(
                 "'%s' variables is not available in the 'Sprof' dataset file"
             )
-        if ds not in self._af._dataset:
-            self._af._dataset[ds] = self._af.open_dataset(ds)
-        if param not in self._af._dataset[ds]:
+        this_ds = self._obj.dataset(ds)
+        if param not in this_ds:
             raise ValueError(
                 "'%s' parameter is not available in the '%s' dataset (%s)"
-                % (param, ds, self._af.ls_dataset()[ds])
+                % (param, ds, self._obj.ls_dataset()[ds])
             )
 
-        this_ds = self._af._dataset[ds]
         # Slice dataset to the appropriate level:
         if pres == 0:
             bins = [0.0, pres + pres_bin_size, 10000.0]
@@ -242,22 +232,21 @@ class ArgoFloatPlotAccessor:
             raise ValueError(
                 "'%s' variables is not available in the 'Sprof' dataset file"
             )
-        if ds not in self._af._dataset:
-            self._af._dataset[ds] = self._af.open_dataset(ds)
-        if param not in self._af._dataset[ds]:
+        this_ds = self._obj.dataset(ds)
+        if param not in this_ds:
             raise ValueError(
                 "'%s' parameter is not available in the '%s' dataset (%s)"
-                % (param, ds, self._af.ls_dataset()[ds])
+                % (param, ds, self._obj.ls_dataset()[ds])
             )
 
         default_kwargs = {"this_x": "JULD", "cbar": True}
         this_kwargs = {**default_kwargs, **kwargs}
 
         if this_kwargs["cbar"]:
-            fig, ax, m, cbar = scatter_plot(self._af._dataset[ds], param, **this_kwargs)
+            fig, ax, m, cbar = scatter_plot(this_ds, param, **this_kwargs)
             ax.set_title(self._default_title)
             return fig, ax, m, cbar
         else:
-            fig, ax, m = scatter_plot(self._af._dataset[ds], param, **this_kwargs)
+            fig, ax, m = scatter_plot(this_ds, param, **this_kwargs)
             ax.set_title(self._default_title)
             return fig, ax, m

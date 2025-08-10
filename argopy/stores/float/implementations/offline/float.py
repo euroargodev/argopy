@@ -1,15 +1,15 @@
 from pathlib import Path
 import logging
 
-from ....errors import InvalidOption
-from ..spec import ArgoFloatProto
+from .....errors import InvalidOption
+from ...spec import FloatStoreProto
 
 
-log = logging.getLogger("argopy.stores.ArgoFloat")
+log = logging.getLogger("argopy.stores.offline.FloatStore")
 
 
-class ArgoFloatOffline(ArgoFloatProto):
-    """Offline :class:`ArgoFloat` implementation"""
+class FloatStore(FloatStoreProto):
+    """:class:`FloatStore` implementation for local GDAC files, no internet connection."""
 
     _online = False
 

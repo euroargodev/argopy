@@ -1,16 +1,16 @@
 import pandas as pd
 import logging
 
-from ....errors import DataNotFound
-from ... import httpstore
-from ..spec import ArgoFloatProto
+from .....errors import DataNotFound
+from .... import httpstore
+from ...spec import FloatStoreProto
 
 
-log = logging.getLogger("argopy.stores.ArgoFloat")
+log = logging.getLogger("argopy.stores.online.FloatStore")
 
 
-class ArgoFloatOnline(ArgoFloatProto):
-    """:class:`ArgoFloat` implementation using web access"""
+class FloatStore(FloatStoreProto):
+    """:class:`ArgoFloat` implementation using web access and full advantage of Argo web-API."""
 
     _online = True
     _eafleetmonitoring_server = "https://fleetmonitoring.euro-argo.eu"
@@ -102,7 +102,7 @@ class ArgoFloatOnline(ArgoFloatProto):
             self._dac = self.metadata["dataCenter"]["name"].lower()
         except Exception:
             try:
-                self._dac = self.idx.search_wmo(self.WMO).read_dac_wmo()[0][
+                self._dac = self.idx.query.wmo(self.WMO).read_dac_wmo()[0][
                     0
                 ]  # Get DAC from Argo index
             except Exception:

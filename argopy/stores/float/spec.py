@@ -14,18 +14,12 @@ from ...plot import dashboard
 from ...utils import check_wmo, argo_split_path, shortcut2gdac
 from ...options import OPTIONS
 from .. import ArgoIndex
-from .accessors import ArgoFloatPlotAccessor
+
 
 log = logging.getLogger("argopy.stores.ArgoFloat")
 
 
-class ArgoFloatProto(ABC):
-    _metadata = None  # Private holder for float meta-data dictionary
-    _dac = None
-    _df_profiles = None
-    _online = None  # Web access status
-    _dataset = {}  # Internal placeholder for open datasets
-
+class FloatStoreProto(ABC):
     def __init__(
         self,
         wmo: Union[int, str],
@@ -91,7 +85,13 @@ class ArgoFloatProto(ABC):
         # Load some data (in a perfect world, this should be done asynchronously):
         # self.load_index()
 
-    plot = xr.core.utils.UncachedAccessor(ArgoFloatPlotAccessor)
+        # Init Internal placeholder for this instance:
+        self._dataset = {}  # xarray datasets
+        self._metadata = None  # Float meta-data dictionary
+        self._dac = None  # DAC name (string)
+        self._df_profiles = None  # Dataframe with profiles index
+        self._online = None  # Web access status
+
 
     def load_index(self):
         """Load the Argo full index in memory and trigger search for this float"""
@@ -320,7 +320,14 @@ class ArgoFloatProto(ABC):
             if 'xr_opts' not in kwargs and cast is True:
                 kwargs.update({'xr_opts': {"engine": "argo"}})
 
-            return self.fs.open_dataset(file, **kwargs)
+            ds = self.fs.open_dataset(file, **kwargs)
+            self._dataset[name] = ds
+            return self.dataset(name)
+
+    def dataset(self, name: str = "prof"):
+        if name not in self._dataset:
+            self._dataset[name] = self.open_dataset(name)
+        return self._dataset[name]
 
     @property
     def N_CYCLES(self) -> int:
