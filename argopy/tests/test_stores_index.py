@@ -541,21 +541,16 @@ class IndexStore_test_proto:
 
     def test_dateline_search(self):
         idx = self.new_idx()
-        BOX = [140, 180., -90, 90, '2020-01', '2021-01']
-        N_left = idx.query.lon(BOX).N_MATCH
-        BOX = [180, 240, -90, 90, '2020-01', '2021-01']
-        N_right360 = idx.query.lon(BOX).N_MATCH
-        BOX = [-180, -120, -90, 90, '2020-01', '2021-01']
-        N_right180 = idx.query.lon(BOX).N_MATCH
+        with argopy.set_options(longitude_convention='360'):
+            BOX = [170,-170., -90, 90, '2020-01', '2021-01']
+            idx.query.lon(BOX)
+            self.assert_search(idx)
 
-        BOX = [140, 240, -90, 90, '2020-01', '2021-01']
-        N_conv360 = idx.query.lon(BOX).N_MATCH
-        BOX = [140, -120, -90, 90, '2020-01', '2021-01']
-        N_conv180 = idx.query.lon(BOX).N_MATCH
+            idx.query.lon_lat(BOX)
+            self.assert_search(idx)
 
-        assert N_left + N_right180 == N_conv360
-        assert N_left + N_right360 == N_conv360
-        assert N_conv180 == N_conv360
+            idx.query.box(BOX)
+            self.assert_search(idx)
 
 ############################
 # TESTS FOR PANDAS BACKEND #
