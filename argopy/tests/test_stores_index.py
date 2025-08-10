@@ -542,7 +542,7 @@ class IndexStore_test_proto:
     def test_dateline_search(self):
         idx = self.new_idx()
         with argopy.set_options(longitude_convention='360'):
-            BOX = [170,-170., -90, 90, '2020-01', '2021-01']
+            BOX = [170, 190., -90, 90, '2020-01', '2021-01']
             idx.query.lon(BOX)
             self.assert_search(idx)
 
