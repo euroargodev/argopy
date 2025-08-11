@@ -2,6 +2,8 @@ import numpy as np
 from contextlib import contextmanager
 import importlib
 
+from ..options import OPTIONS
+
 
 def _importorskip(modname):
     try:
@@ -118,7 +120,6 @@ def latlongrid(
     dy="auto",
     fontsize="auto",
     label_style_arg={},
-    longitude_convention="180",
     **kwargs
 ):
     """Add latitude/longitude grid line and labels to a cartopy geoaxes
@@ -143,7 +144,7 @@ def latlongrid(
     defaults = {"linewidth": 0.5, "color": "gray", "alpha": 0.5, "linestyle": ":"}
     gl = ax.gridlines(crs=ax.projection, draw_labels=True, **{**defaults, **kwargs})
     if dx != "auto":
-        if longitude_convention == "180":
+        if OPTIONS['longitude_convention'] == "180":
             gl.xlocator = mticker.FixedLocator(np.arange(-180, 180 + 1, dx))
         else:  # 360
             gl.xlocator = mticker.FixedLocator(np.arange(0, 360 + 1, dx))
