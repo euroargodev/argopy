@@ -333,6 +333,10 @@
     argopy.ArgoIndex.query.box
     argopy.ArgoIndex.query.compose
 
+    argopy.ArgoIndex.plot
+    argopy.ArgoIndex.plot.trajectory
+    argopy.ArgoIndex.plot.bar
+
     argopy.stores.index.implementations.index_s3.s3index
     argopy.stores.index.implementations.index_s3.s3index_core
     argopy.stores.index.implementations.index_s3.s3index_bgc_bio

@@ -5,7 +5,52 @@ from ..extensions import ArgoIndexPlotProto
 
 
 class ArgoIndexPlot(ArgoIndexPlotProto):
-    """Extension providing plot methods"""
+    """Extension providing plot methods
+
+    Examples
+    --------
+    .. code-block:: python
+        :caption: Example of :class:`ArgoIndex` trajectory plotting method
+
+        from argopy import ArgoIndex
+
+        idx = ArgoIndex().query.wmo(6903091)
+
+        idx.plot.trajectory()
+
+    .. code-block:: python
+        :caption: Examples of :class:`ArgoIndex` trajectory plotting methods with custom arguments
+
+        from argopy import ArgoIndex
+
+        idx = ArgoIndex(index_file='bgc-s')
+        idx.query.params('CHLA')
+
+        idx.plot.trajectory(set_global=1,
+                            add_legend=0,
+                            traj=0,
+                            cbar=False,
+                            markersize=12,
+                            markeredgesize=0.1,
+                            dpi=120,
+                            figsize=(20,20));
+
+    .. code-block:: python
+        :caption: Example of :class:`ArgoIndex` bar plotting methods
+
+        from argopy import ArgoIndex
+
+        idx = ArgoIndex().load()
+
+        idx.plot.bar(by='profiler')
+
+        idx.plot.bar(by='dac')
+
+    See Also
+    --------
+    :class:`ArgoIndex.plot.trajectory`, :class:`ArgoIndex.plot.bar`
+
+    """
 
     def trajectory(self, index:bool=False, **kwargs) -> Any:
         """Quick map of profile index trajectories

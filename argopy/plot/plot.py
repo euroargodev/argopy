@@ -147,7 +147,7 @@ def plot_trajectory(
 ):
     """Plot trajectories for an Argo index dataframe
 
-    This function is called by the Data fetcher and ArgoIndex methods 'plot' with the 'trajectory' option:
+    This function is called by the Data fetcher and :class:`ArgoIndex` plotting methods for trajectories:
 
     Examples
     --------

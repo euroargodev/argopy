@@ -525,28 +525,12 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
 class ArgoIndexPlotProto(ArgoIndexExtension):
     """Extension providing plot methods
 
-    Examples
-    --------
-    .. code-block:: python
-        :caption: Examples of plotting methods
-
-        from argopy import ArgoIndex
-
-        idx = ArgoIndex().query.wmo(6903091)
-
-        idx.plot.trajectory()
-        idx.plot.trajectory(figsize=(18,18), padding=[1, 5])
-
-    See Also
-    --------
-    :class:`argopy.stores.ArgoIndex.plot.trajectory`
-
     """
 
     def __call__(self, *args, **kwargs) -> NoReturn:
         raise ValueError(
             "ArgoIndex.plot cannot be called directly. Use "
-            "an explicit plot method, e.g. ArgoIndex.plot.trajectory(...)"
+            "an explicit plot method, e.g. ArgoIndex.plot.bar(...)"
         )
 
     def get_title(self, index=False):

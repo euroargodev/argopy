@@ -18,6 +18,8 @@ Coming up next
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+- :class:`ArgoIndex` **plotting features**: you can now use the new :class:`ArgoIndex.plot` accessor to call on visualizations tool for trajectories or parameters bar plots. See all details on the documentation section about data visualization :ref:`From ArgoIndex instance`. (:pr:`504`) by |gmaze|.
+
 - :class:`ArgoFloat` **plotting features**: you can now use the new :class:`ArgoFloat.plot` accessor to call on visualizations tool for trajectories and parameters. See all details on the documentation section about data visualization :ref:`From ArgoFloat instance`. (:pr:`501`) by |gmaze|.
 
 Internals
