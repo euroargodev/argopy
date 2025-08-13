@@ -117,6 +117,34 @@ class ArgoIndex(indexstore):
         >>>     print(a_float.WMO)
         >>>     ds = a_float.open_dataset('prof')
 
+    .. code-block:: python
+        :caption: Trajectory map
+
+        >>> idx = idx.query.wmo(6903091)
+        >>> idx.plot.trajectory()
+
+    .. code-block:: python
+        :caption: Trajectory map with custom arguments
+
+        >>> idx = ArgoIndex(index_file='bgc-s')
+        >>> idx.query.params('CHLA')
+
+        >>> idx.plot.trajectory(set_global=1,
+        >>>                     add_legend=0,
+        >>>                     traj=0,
+        >>>                     cbar=False,
+        >>>                     markersize=12,
+        >>>                     markeredgesize=0.1,
+        >>>                     dpi=120,
+        >>>                     figsize=(20,20));
+
+    .. code-block:: python
+        :caption: Bar plot
+
+        >>> idx.plot.bar(by='dac', index=1)
+        >>> idx.plot.bar(by='profiler')
+
+
     """
 
     def __init__(self, **kwargs):
