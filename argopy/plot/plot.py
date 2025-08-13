@@ -252,7 +252,10 @@ def plot_trajectory(
                 ax.get_yaxis().set_visible(False)
         else:
             if set_global:
-                ax.set_xlim(-180, 180)
+                if OPTIONS["longitude_convention"] == "360":
+                    ax.set_xlim(0, 360)
+                else:  # OPTIONS["longitude_convention"] == "180":
+                    ax.set_xlim(-180, 180)
                 ax.set_ylim(-90, 90)
             ax.grid(visible=True, linewidth=1, color="gray", alpha=0.7, linestyle=":")
 
