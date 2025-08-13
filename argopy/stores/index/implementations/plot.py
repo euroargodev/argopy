@@ -121,8 +121,6 @@ class ArgoIndexPlot(ArgoIndexPlotProto):
         """
         if by not in ['date', 'latitude', 'longitude', 'ocean', 'profiler_code', 'institution_code', 'date_update', 'wmo', 'cyc', 'institution', 'dac', 'profiler']:
             raise ValueError('Invalid value for "by", must be in "date", "latitude", "longitude", "ocean", "profiler_code"')
-        if 'by' in kwargs:
-            kwargs.pop('by')
         fig, ax = bar_plot(
                 self._obj.to_dataframe(index=index),
                 by = by,
