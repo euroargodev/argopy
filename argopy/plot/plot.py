@@ -286,24 +286,20 @@ def bar_plot(
     """Create a bar plot for an Argo index dataframe
 
 
-    This is the method called when using the facade fetcher methods ``plot`` with the ``dac`` or ``profiler`` arguments::
+    Pass a :class:`pandas.DataFrame` as returned by a :class:`argopy.DataFetcher.index` or :class:`argopy.ArgoIndex.to_dataframe` ::
 
-        IndexFetcher(src='gdac').region([-80,-30,20,50,'2021-01','2021-08']).plot('dac')
-
-    To use it directly, you must pass a :class:`pandas.DataFrame` as returned by a :class:`argopy.DataFetcher.index` or :class:`argopy.IndexFetcher.index` property::
-
-        from argopy import IndexFetcher
-        df = IndexFetcher(src='gdac').region([-80,-30,20,50,'2021-01','2021-08']).index
+        from argopy import DataFetcher
+        df = DataFetcher(src='gdac').region([-80,-30,20,50,'2021-01','2021-08']).index
         bar_plot(df, by='profiler')
 
     Parameters
     ----------
     df: :class:`pandas.DataFrame`
-        As returned by a fetcher index property
+        As returned by an argopy index dataframe
     by: str, default='institution'
         The profile property to plot
     style: str, optional
-        Define the Seaborn axes style: 'white', 'darkgrid', 'whitegrid', 'dark', 'ticks'
+        Define the Seaborn axes style: 'argopy', 'white', 'darkgrid', 'whitegrid', 'dark', 'ticks'
 
     Returns
     -------
