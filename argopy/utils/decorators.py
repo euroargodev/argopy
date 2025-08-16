@@ -216,7 +216,7 @@ class _CachedAccessor:
 
     def __get__(self, obj, cls):
         if obj is None:
-            # we're accessing the attribute of the class, i.e., Dataset.argo.canyon
+            # we're accessing the attribute of the class, i.e., Dataset.argo.extension
             return self._accessor
 
         # Use the same dict as @pandas.util.cache_readonly.

@@ -116,6 +116,7 @@ List of extensions:
    :template: autosummary/accessor.rst
 
    ArgoIndex.query
+   ArgoIndex.plot
 
 **Search on a single property** of a file record:
 
@@ -144,6 +145,14 @@ List of extensions:
    ArgoIndex.query.box
    ArgoIndex.query.compose
 
+**Ploting methods**:
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
+
+    ArgoIndex.plot.trajectory
+    ArgoIndex.plot.bar
 
 Argo meta/related data
 ======================

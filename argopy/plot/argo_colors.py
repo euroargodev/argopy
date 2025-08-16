@@ -1,6 +1,6 @@
 import numpy as np
 from packaging import version
-from .utils import has_mpl, has_seaborn
+from .utils import has_mpl, has_seaborn, ARGOPY_COLORS
 from ..utils.loggers import warnUnless
 
 if has_mpl:
@@ -40,12 +40,7 @@ class ArgoColors:
     }
     """Dictionary with number of colors in known quantitative maps"""
 
-    COLORS = {'CYAN': (18 / 256, 235 / 256, 229 / 256),
-              'BLUE': (16 / 256, 137 / 256, 182 / 256),
-              'DARKBLUE': (10 / 256, 89 / 256, 162 / 256),
-              'YELLOW': (229 / 256, 174 / 256, 41 / 256),
-              'DARKYELLOW': (224 / 256, 158 / 256, 37 / 256),
-              }
+    COLORS = ARGOPY_COLORS.copy()
     """Set of Argo colors derived from the logo"""
 
     def __init__(self, name: str = "Set1", N: int = None):

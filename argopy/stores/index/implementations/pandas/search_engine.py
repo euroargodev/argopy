@@ -6,44 +6,14 @@ from typing import List
 from .....options import OPTIONS
 from .....errors import InvalidDatasetStructure
 from .....utils import is_indexbox, check_wmo, check_cyc, to_list, conv_lon
-from .....utils import register_accessor
-from ...extensions import ArgoIndexSearchEngine
+from ...extensions import register_ArgoIndex_accessor, ArgoIndexSearchEngine
 from ..index_s3 import search_s3
 from .index import indexstore
 
 log = logging.getLogger("argopy.stores.index.pd")
 
 
-def register_ArgoIndex_accessor(name):
-    """A decorator to register an accessor as a custom property on :class:`ArgoIndex` objects.
-
-    Parameters
-    ----------
-    name : str
-        Name under which the accessor should be registered. A warning is issued
-        if this name conflicts with a preexisting attribute.
-
-    Examples
-    --------
-    .. code-block:: python
-
-        @register_ArgoIndex_accessor('query')
-        class SearchEngine(ArgoIndexExtension):
-
-             def __init__(self, *args, **kwargs):
-                 super().__init__(*args, **kwargs)
-
-             def wmo(self, WMOs):
-                 return WMOs
-
-    It will be available to an ArgoIndex object, like this::
-
-        ArgoIndex().query.wmo(WMOs)
-    """
-    return register_accessor(name, indexstore)
-
-
-@register_ArgoIndex_accessor('query')
+@register_ArgoIndex_accessor('query', indexstore)
 class SearchEngine(ArgoIndexSearchEngine):
 
     @search_s3

@@ -10,7 +10,7 @@ See Also
 from .plot import plot_trajectory, bar_plot, open_sat_altim_report, scatter_map, scatter_plot
 from .argo_colors import ArgoColors
 from .dashboards import open_dashboard as dashboard
-from .utils import latlongrid
+from .utils import latlongrid, ARGOPY_COLORS
 
 
 __all__ = (
@@ -27,4 +27,5 @@ __all__ = (
 
     # Utils:
     "latlongrid",
+    "ARGOPY_COLORS",
 )

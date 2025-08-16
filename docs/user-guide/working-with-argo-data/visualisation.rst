@@ -86,6 +86,38 @@ The :class:`ArgoFloat` class come with a :class:`ArgoFloat.plot` accessor than c
 
 Check all the detailed arguments on the API reference :class:`ArgoFloat.plot`.
 
+From ArgoIndex instance
+************************
+
+.. currentmodule:: argopy
+
+The :class:`ArgoIndex` class come with a :class:`ArgoIndex.plot` accessor than can take several methods to quickly visualize data from the float:
+
+.. code-block:: python
+
+    from argopy import ArgoIndex
+
+    idx = ArgoIndex(index_file='bgc-s')
+    idx.query.params('CHLA')
+
+    idx.plot.trajectory()
+
+    idx.plot.trajectory(set_global=1,
+                        add_legend=0,
+                        traj=0,
+                        cbar=False,
+                        markersize=12,
+                        markeredgesize=0.1,
+                        dpi=120,
+                        figsize=(20,20));
+
+    idx.plot.bar(by='profiler')
+
+    idx.plot.bar(by='dac')
+
+Check all the detailed arguments on the API reference :class:`ArgoIndex.plot`.
+
+
 Dashboards
 **********
 

@@ -18,6 +18,8 @@ Coming up next
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+- :class:`ArgoIndex` **plotting features**: you can now use the new :class:`ArgoIndex.plot` accessor to call on visualizations tool for trajectories or parameters bar plots. See all details on the documentation section about data visualization :ref:`From ArgoIndex instance`. (:pr:`504`) by |gmaze|.
+
 - :class:`ArgoFloat` **plotting features**: you can now use the new :class:`ArgoFloat.plot` accessor to call on visualizations tool for trajectories and parameters. See all details on the documentation section about data visualization :ref:`From ArgoFloat instance`. (:pr:`501`) by |gmaze|.
 
 Internals
@@ -25,7 +27,7 @@ Internals
 
 - Refactoring of :class:`ArgoIndex` and :class:`ArgoFloat` to follow the same specs/facade/implementations/extensions design. (:pr:`503`)by |gmaze|.
 
-- **Fix bug** whereby the :class:`ArgoIndex` could not select profiles through the dateline :issue:`494`. (:pr:`495`)by |gmaze|.
+- **Fix bug** whereby the :class:`ArgoIndex` could not select profiles through the dateline :issue:`494`. (:pr:`495`) by |gmaze|. Modified by :pr:`506`.
 
 - **Fix bug** whereby a :class:`gdacfs` could not return one path info under Windows platform. :issue:`499`. (:pr:`451`) by |gmaze|.
 
@@ -33,6 +35,10 @@ Internals
 
 Breaking changes
 ^^^^^^^^^^^^^^^^
+
+- New argopy option `longitude_convention` and improved box region validation with :meth:`argopy.utils.is_box` and :meth:`argopy.utils.is_indexbox` may lead to unexpected breaking changes. You may need to change the longitude convention from the default '180' to '360' to fix your code. (:pr:`506`) by |gmaze|.
+
+- :meth:`argopy.utils.wmo2box` now return domain with longitude values following the new argopy option `longitude_convention`. (:pr:`506`) by |gmaze|.
 
 - :class:`argopy.plot.scatter_map` now return 3 values for the figure, axis and handles, instead of 2 values (:pr:`501`) by |gmaze|.
 
