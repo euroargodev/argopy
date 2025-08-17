@@ -209,7 +209,15 @@ def plot_trajectory(
             fig, ax, hdl = scatter_map(df, **opts)
             return fig, ax
         else:
-            fig, ax = plt.subplots(**{**defaults, **kwargs})
+            opts = {**defaults, **kwargs}
+            unvalid_keys = []
+            for key in opts.keys():
+                if key not in ["nrows", "ncols", "sharex", "sharey", "squeeze",
+                               "width_ratios", "height_ratios", "subplot_kw", "gridspec_kw",
+                               "figsize", "dpi"]:
+                    unvalid_keys.append(key)
+            [opts.pop(key) for key in unvalid_keys]
+            fig, ax = plt.subplots(**opts)
 
         # How many float in this dataset ?
         nfloat = len(df.groupby("wmo").first())
