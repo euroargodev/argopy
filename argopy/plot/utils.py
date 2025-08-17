@@ -2,8 +2,6 @@ import numpy as np
 from contextlib import contextmanager
 import importlib
 
-from ..options import OPTIONS
-
 
 def _importorskip(modname):
     try:
@@ -141,14 +139,10 @@ def latlongrid(
     """
     if not isinstance(ax, cartopy.mpl.geoaxes.GeoAxesSubplot):
         raise ValueError("Please provide a cartopy.mpl.geoaxes.GeoAxesSubplot instance")
-    defaults = {"linewidth": 0.5, "color": "gray", "alpha": 0.5, "linestyle": ":"}
-    gl = ax.gridlines(crs=ax.projection, draw_labels=True, **{**defaults, **kwargs})
+    defaults = {"linewidth": 0.5, "color": ARGOPY_COLORS['BLUE'], "alpha": 0.5, "linestyle": ":"}
+    gl = ax.gridlines(crs=cartopy.crs.PlateCarree(), draw_labels=True, **{**defaults, **kwargs})
     if dx != "auto":
-        if OPTIONS['longitude_convention'] == "180":
-            gl.xlocator = mticker.FixedLocator(np.arange(-180, 180 + 1, dx))
-        else:  # 360
-            gl.xlocator = mticker.FixedLocator(np.arange(0, 360 + 1, dx))
-
+        gl.xlocator = mticker.FixedLocator(np.arange(-180, 180 + 1, dx))
     if dy != "auto":
         gl.ylocator = mticker.FixedLocator(np.arange(-90, 90 + 1, dy))
     gl.xformatter = LONGITUDE_FORMATTER

@@ -571,9 +571,6 @@ def scatter_map(  # noqa: C901
         alpha=0.3,
     )
 
-    # vmin = data[hue].min() if vmin == 'auto' else vmin
-    # vmax = data[hue].max() if vmax == 'auto' else vmax
-
     patches = []
     scatter_legend_labels = []
     for k, [name, group] in enumerate(data.groupby(hue)):
@@ -594,12 +591,12 @@ def scatter_map(  # noqa: C901
                 "sizes": [markersize],
                 "edgecolor": markeredgecolor,
                 "linewidths": markeredgesize,
+                "transform": ccrs.PlateCarree(),
             }
             if isinstance(data, pd.DataFrame) and not legend:
                 scatter_opts[
                     "legend"
                 ] = False  # otherwise Pandas will add a legend even if we set legend=False
-            group[x] = conv_lon(group[x], OPTIONS["longitude_convention"])
             sc = group.plot.scatter(x=x, y=y, ax=ax, **scatter_opts)
             patches.append(sc)
             scatter_legend_labels.append(scatter_opts['label'])
@@ -628,7 +625,7 @@ def scatter_map(  # noqa: C901
         cbar_handle = None
 
     if traj:
-        for k, [name, group] in enumerate(data.groupby(traj_axis)):
+        for k, [_, group] in enumerate(data.groupby(traj_axis)):
             traj_handle = ax.plot(
                 group[x],
                 group[y],
@@ -636,6 +633,7 @@ def scatter_map(  # noqa: C901
                 linewidth=0.5,
                 label="_nolegend_",
                 zorder=2,
+                transform=ccrs.Geodetic(),  # do not use PlateCarree here, Geodetic allows smooth traj across 0 & 180
             )
     else:
         traj_handle = None
