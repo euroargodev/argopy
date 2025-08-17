@@ -199,10 +199,6 @@ class ArgoFloatPlot(ArgoFloatPlotProto):
             Name of the dataset parameter to map.
         ds: str, default='prof'
             Argo dataset name to load the parameter to plot. Must be valid key from :meth:`ArgoFloat.ls_dataset`.
-        pres: float, default=0.
-            If the parameter has a N_LEVELS dimension, this is the pressure value to slice the vertical dimension of the parameter to plot.
-
-            We use the :class:`xarray.Dataset.argo.groupby_pressure_bins` method to select the parameter value the closest to the pressure target value.
 
         Returns
         -------
