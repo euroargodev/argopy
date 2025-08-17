@@ -25,6 +25,8 @@ Features and front-end API
 Internals
 ^^^^^^^^^
 
+- **Fix bug** whereby depending on the new longitude convention option value, some floats trajectory would not show up on a map correctly. (:pr:`504`) by |gmaze|.
+
 - Refactoring of :class:`ArgoIndex` and :class:`ArgoFloat` to follow the same specs/facade/implementations/extensions design. (:pr:`503`)by |gmaze|.
 
 - **Fix bug** whereby the :class:`ArgoIndex` could not select profiles through the dateline :issue:`494`. (:pr:`495`) by |gmaze|. Modified by :pr:`506`.
