@@ -625,7 +625,7 @@ def scatter_map(  # noqa: C901
         cbar_handle = None
 
     if traj:
-        for k, [name, group] in enumerate(data.groupby(traj_axis)):
+        for k, [_, group] in enumerate(data.groupby(traj_axis)):
             traj_handle = ax.plot(
                 group[x],
                 group[y],
@@ -633,7 +633,7 @@ def scatter_map(  # noqa: C901
                 linewidth=0.5,
                 label="_nolegend_",
                 zorder=2,
-                transform=ccrs.PlateCarree(),
+                transform=ccrs.Geodetic(),  # do not use PlateCarree here, Geodetic allows smooth traj across 0 & 180
             )
     else:
         traj_handle = None
