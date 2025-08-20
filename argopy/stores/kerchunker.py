@@ -62,11 +62,11 @@ class ArgoKerchunker:
         ak = ArgoKerchunker(store='memory')
 
         # Use a local file store to keep track of zarr kerchunk data (for later
-        # re-use or sharing):
+        # reuse or sharing):
         ak = ArgoKerchunker(store='local', root='kerchunk_data_folder')
 
         # Use a remote file store to keep track of zarr kerchunk data (for later
-        # re-use or sharing):
+        # reuse or sharing):
         fs = fsspec.filesystem('dir',
                                path='s3://.../kerchunk_data_folder/',
                                target_protocol='s3')
@@ -253,9 +253,9 @@ class ArgoKerchunker:
         fs: None
             An **argopy** file store, inheriting from :class:`ArgoStoreProto`.
         chunker : Literal['auto', 'cdf3', 'hdf5'] = 'auto'
-            Define the kerchunker formater to use. Two formater are available: :class:`kerchunk.netCDF3.NetCDF3ToZarr` or :class:`kerchunk.hdf.SingleHdf5ToZarr`:
+            Define the kerchunker formatter to use. Two formatter are available: :class:`kerchunk.netCDF3.NetCDF3ToZarr` or :class:`kerchunk.hdf.SingleHdf5ToZarr`:
 
-            - 'auto': detect and select formater for each netcdf of the ncfiles
+            - 'auto': detect and select formatter for each netcdf of the ncfiles
             - 'cdf3': impose use of :class:`kerchunk.netCDF3.NetCDF3ToZarr`
             - 'hdf5': impose use of :class:`kerchunk.hdf.SingleHdf5ToZarr`
 
@@ -330,10 +330,10 @@ class ArgoKerchunker:
         fs: None
             An **argopy** file store, inheriting from :class:`ArgoStoreProto`.
         chunker : Literal['first', 'auto', 'cdf3', 'hdf5'] = 'first'
-            Define the kerchunker formater to use. Two formater are available: :class:`kerchunk.netCDF3.NetCDF3ToZarr` or :class:`kerchunk.hdf.SingleHdf5ToZarr`:
+            Define the kerchunker formatter to use. Two formatter are available: :class:`kerchunk.netCDF3.NetCDF3ToZarr` or :class:`kerchunk.hdf.SingleHdf5ToZarr`:
 
-            - 'first': detect and select formater from the first netcdf file type
-            - 'auto': detect and select formater for each netcdf of the nc files
+            - 'first': detect and select formatter from the first netcdf file type
+            - 'auto': detect and select formatter for each netcdf of the nc files
             - 'cdf3': impose use of :class:`kerchunk.netCDF3.NetCDF3ToZarr` for all nc files
             - 'hdf5': impose use of :class:`kerchunk.hdf.SingleHdf5ToZarr` for all nc files
 
