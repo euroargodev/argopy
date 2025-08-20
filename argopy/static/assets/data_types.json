@@ -1,7 +1,7 @@
 {
   "name": "data_types",
   "long_name": "Expected data types of Argo variables",
-  "last_update": "2025-07-18T11:11:02.432974+00:00",
+  "last_update": "2025-08-20T06:50:55.965456+00:00",
   "data": {
     "str": [
       "ANOMALY",
