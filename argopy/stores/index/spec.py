@@ -22,7 +22,6 @@ from ...utils import isconnected, has_aws_credentials
 from ...utils import Registry
 from ...utils import Chunker
 from ...utils import shortcut2gdac
-from ...utils import deprecated
 
 from .. import httpstore, memorystore, filestore, ftpstore, s3store
 from .implementations.index_s3 import get_a_s3index
@@ -914,58 +913,6 @@ class ArgoIndexStoreProto(ABC):
             WMO are in keys, nb of records in values
         """
         raise NotImplementedError("Not implemented")
-
-    @deprecated("this method is replaced by `ArgoIndex().query.wmo()`", version="1.1.0")
-    def search_wmo(self, WMOs, nrows=None):
-        return self.query.wmo(WMOs, nrows=nrows)
-
-    @deprecated("this method is replaced by `ArgoIndex().query.cyc()`", version="1.1.0")
-    def search_cyc(self, CYCs, nrows=None):
-        """Deprecated: this method is replaced by `ArgoIndex().query.cyc()`"""
-        return self.query.cyc(CYCs, nrows=nrows)
-
-    @deprecated("this method is replaced by `ArgoIndex().query.compose()`", version="1.1.0")
-    def search_wmo_cyc(self, WMOs, CYCs, nrows=None):
-        """Deprecated: this method is replaced by `ArgoIndex().query.wmo_cyc()`"""
-        return self.query.wmo_cyc(WMOs, CYCs, nrows=nrows)
-
-    @deprecated("this method is replaced by `ArgoIndex().query.date()`", version="1.1.0")
-    def search_tim(self, BOX, nrows=None):
-        """Deprecated: this method is replaced by `ArgoIndex().query.date()`"""
-        return self.query.date(BOX, nrows=nrows)
-
-    @deprecated("this method is replaced by `ArgoIndex().query.lon_lat()`", version="1.1.0")
-    def search_lat_lon(self, BOX, nrows=None):
-        """Deprecated: this method is replaced by ``ArgoIndex().query.lon_lat()``"""
-        return self.query.lon_lat(BOX, nrows=nrows)  # Faster than .compose()
-        # return self.query.compose({'lon': BOX, 'lat': BOX}, nrows=nrows)
-
-    @deprecated("this method is replaced by `ArgoIndex().query.box()`", version="1.1.0")
-    def search_lat_lon_tim(self, BOX, nrows=None):
-        """Deprecated: this method is replaced by ``ArgoIndex().query.box()``"""
-        return self.query.box(BOX, nrows=nrows)
-
-    @deprecated("this method is replaced by `ArgoIndex().query.params()`", version="1.1.0")
-    def search_params(self, PARAMs, logical: bool = "and", nrows=None):
-        """Deprecated: this method is replaced by ``ArgoIndex().query.params()``"""
-        return self.query.params(PARAMs, logical=logical, nrows=nrows)
-
-    @deprecated("this method is replaced by `ArgoIndex().query.parameter_data_mode()`", version="1.1.0")
-    def search_parameter_data_mode(
-        self, PARAMs: dict, logical: bool = "and", nrows=None
-    ):
-        """Deprecated: this method is replaced by ``ArgoIndex().query.parameter_data_mode()``"""
-        return self.query.parameter_data_mode(PARAMs, logical=logical, nrows=nrows)
-
-    @deprecated("this method is replaced by `ArgoIndex().query.profiler_type()`", version="1.1.0")
-    def search_profiler_type(self, profiler_type: List[int], nrows=None):
-        """Deprecated: this method is replaced by ``ArgoIndex().query.profiler_type()``"""
-        return self.query.profiler_type(profiler_type, nrows=nrows)
-
-    @deprecated("this method is replaced by `ArgoIndex().query.profiler_label()`", version="1.1.0")
-    def search_profiler_label(self, profiler_label: str, nrows=None):
-        """Deprecated: this method is replaced by ``ArgoIndex().query.profiler_label()``"""
-        return self.query.profiler_label(profiler_label, nrows=nrows)
 
     def _insert_header(self, originalfile):
         if self.convention == "ar_index_global_prof":
