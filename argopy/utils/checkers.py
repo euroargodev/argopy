@@ -32,7 +32,7 @@ else:
     HAS_BOTO3 = False
 
 
-def is_indexbox(box: list, errors:str="raise"):
+def is_indexbox(box: list, errors: str = "raise"):
     """Check if this array matches a 2d or 3d index box definition
 
     Argopy expects one of the following 2 format to define an index box:
@@ -65,7 +65,6 @@ def is_indexbox(box: list, errors:str="raise"):
             isit = False
         return isit
 
-
     # Test object format :
     tests = {}
     tests["index box must be a list"] = lambda b: isinstance(b, list)
@@ -83,12 +82,12 @@ def is_indexbox(box: list, errors:str="raise"):
         isinstance(b[3], int) or isinstance(b[3], (np.floating, float))
     )
     if len(box) > 4:
-        tests[
-            "datetim_min must be a string convertible to a Pandas datetime"
-        ] = lambda b: isinstance(b[-2], str) and is_dateconvertible(b[-2])
-        tests[
-            "datetim_max must be a string convertible to a Pandas datetime"
-        ] = lambda b: isinstance(b[-1], str) and is_dateconvertible(b[-1])
+        tests["datetim_min must be a string convertible to a Pandas datetime"] = (
+            lambda b: isinstance(b[-2], str) and is_dateconvertible(b[-2])
+        )
+        tests["datetim_max must be a string convertible to a Pandas datetime"] = (
+            lambda b: isinstance(b[-1], str) and is_dateconvertible(b[-1])
+        )
 
     error_msg = None
     for msg, test in tests.items():
@@ -108,28 +107,32 @@ def is_indexbox(box: list, errors:str="raise"):
     # Test object content :
     tests = {}
     # Ranges:
-    if OPTIONS['longitude_convention'] == '360':
-        tests[f"lon_min must be in [0;360]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."] = (
-            lambda b: 0.0 <= b[0] <= 360.0
-        )
-        tests[f"lon_max must be in [0;360]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."] = (
-            lambda b: 0.0 <= b[1] <= 360.0
-        )
-    else:  #  OPTIONS['longitude_convention'] == '180':
-        tests[f"lon_min must be in [-180;180]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."] = (
-            lambda b: -180.0 <= b[0] <= 180.0
-        )
-        tests[f"lon_max must be in [-180;180]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."] = (
-            lambda b: -180.0 <= b[1] <= 180.0
-        )
-    tests["lat_min must be in [-90;90]"] = lambda b: -90. <= b[2] <= 90.
-    tests["lat_max must be in [-90;90]"] = lambda b: -90. <= b[3] <= 90.
+    if OPTIONS["longitude_convention"] == "360":
+        tests[
+            f"lon_min must be in [0;360]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."
+        ] = (lambda b: 0.0 <= b[0] <= 360.0)
+        tests[
+            f"lon_max must be in [0;360]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."
+        ] = (lambda b: 0.0 <= b[1] <= 360.0)
+    else:  # OPTIONS['longitude_convention'] == '180':
+        tests[
+            f"lon_min must be in [-180;180]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."
+        ] = (lambda b: -180.0 <= b[0] <= 180.0)
+        tests[
+            f"lon_max must be in [-180;180]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."
+        ] = (lambda b: -180.0 <= b[1] <= 180.0)
+    tests["lat_min must be in [-90;90]"] = lambda b: -90.0 <= b[2] <= 90.0
+    tests["lat_max must be in [-90;90]"] = lambda b: -90.0 <= b[3] <= 90.0
 
     # Orders:
-    if OPTIONS['longitude_convention'] == '360':
-        tests[f"lon_max={conv_lon(box[1], '360')} must be larger than lon_min={conv_lon(box[0], '360')}. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."] = lambda b: conv_lon(b[0], '360') < conv_lon(b[1], '360')
-    elif OPTIONS['longitude_convention'] == '180':
-        tests[f"lon_max={conv_lon(box[1], '180')} must be larger than lon_min={conv_lon(box[0], '180')}. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."] = lambda b: conv_lon(b[0], '180') < conv_lon(b[1], '180')
+    if OPTIONS["longitude_convention"] == "360":
+        tests[
+            f"lon_max={conv_lon(box[1], '360')} must be larger than lon_min={conv_lon(box[0], '360')}. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."
+        ] = lambda b: conv_lon(b[0], "360") < conv_lon(b[1], "360")
+    elif OPTIONS["longitude_convention"] == "180":
+        tests[
+            f"lon_max={conv_lon(box[1], '180')} must be larger than lon_min={conv_lon(box[0], '180')}. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."
+        ] = lambda b: conv_lon(b[0], "180") < conv_lon(b[1], "180")
     tests["lat_max must be larger than lat_min"] = lambda b: b[2] < b[3]
     if len(box) > 4:
         tests["datetim_max must come after datetim_min"] = lambda b: pd.to_datetime(
@@ -154,7 +157,7 @@ def is_indexbox(box: list, errors:str="raise"):
     return True
 
 
-def is_box(box: list, errors:str="raise"):
+def is_box(box: list, errors: str = "raise"):
     """Check if this array matches a 3d or 4d data box definition
 
     Argopy expects one of the following 2 format to define a box:
@@ -210,12 +213,12 @@ def is_box(box: list, errors:str="raise"):
         isinstance(b[5], int) or isinstance(b[5], (np.floating, float))
     )
     if len(box) == 8:
-        tests[
-            "datetim_min must be an object convertible to a Pandas datetime"
-        ] = lambda b: is_dateconvertible(b[-2])
-        tests[
-            "datetim_max must be an object convertible to a Pandas datetime"
-        ] = lambda b: is_dateconvertible(b[-1])
+        tests["datetim_min must be an object convertible to a Pandas datetime"] = (
+            lambda b: is_dateconvertible(b[-2])
+        )
+        tests["datetim_max must be an object convertible to a Pandas datetime"] = (
+            lambda b: is_dateconvertible(b[-1])
+        )
 
     error_msg = None
     for msg, test in tests.items():
@@ -235,30 +238,34 @@ def is_box(box: list, errors:str="raise"):
     # Test object content :
     tests = {}
     # Ranges:
-    if OPTIONS['longitude_convention'] == '360':
-        tests[f"lon_min must be in [0;360]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."] = (
-            lambda b: 0.0 <= b[0] <= 360.0
-        )
-        tests[f"lon_max must be in [0;360]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."] = (
-            lambda b: 0.0 <= b[1] <= 360.0
-        )
-    else:  #  OPTIONS['longitude_convention'] == '180':
-        tests[f"lon_min must be in [-180;180]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."] = (
-            lambda b: -180.0 <= b[0] <= 180.0
-        )
-        tests[f"lon_max must be in [-180;180]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."] = (
-            lambda b: -180.0 <= b[1] <= 180.0
-        )
-    tests["lat_min must be in [-90;90]"] = lambda b: -90. <= b[2] <= 90.
-    tests["lat_max must be in [-90;90]"] = lambda b: -90. <= b[3] <= 90.
-    tests["pres_min must be in [0;10000]"] = lambda b: 0. <= b[4] <= 10000.
-    tests["pres_max must be in [0;10000]"] = lambda b: 0. <= b[5] <= 10000.
+    if OPTIONS["longitude_convention"] == "360":
+        tests[
+            f"lon_min must be in [0;360]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."
+        ] = (lambda b: 0.0 <= b[0] <= 360.0)
+        tests[
+            f"lon_max must be in [0;360]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."
+        ] = (lambda b: 0.0 <= b[1] <= 360.0)
+    else:  # OPTIONS['longitude_convention'] == '180':
+        tests[
+            f"lon_min must be in [-180;180]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."
+        ] = (lambda b: -180.0 <= b[0] <= 180.0)
+        tests[
+            f"lon_max must be in [-180;180]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."
+        ] = (lambda b: -180.0 <= b[1] <= 180.0)
+    tests["lat_min must be in [-90;90]"] = lambda b: -90.0 <= b[2] <= 90.0
+    tests["lat_max must be in [-90;90]"] = lambda b: -90.0 <= b[3] <= 90.0
+    tests["pres_min must be in [0;10000]"] = lambda b: 0.0 <= b[4] <= 10000.0
+    tests["pres_max must be in [0;10000]"] = lambda b: 0.0 <= b[5] <= 10000.0
 
     # Orders:
-    if OPTIONS['longitude_convention'] == '360':
-        tests[f"lon_max={conv_lon(box[1], '360')} must be larger than lon_min={conv_lon(box[0], '360')}. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."] = lambda b: conv_lon(b[0], '360') < conv_lon(b[1], '360')
-    elif OPTIONS['longitude_convention'] == '180':
-        tests[f"lon_max={conv_lon(box[1], '180')} must be larger than lon_min={conv_lon(box[0], '180')}. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."] = lambda b: conv_lon(b[0], '180') < conv_lon(b[1], '180')
+    if OPTIONS["longitude_convention"] == "360":
+        tests[
+            f"lon_max={conv_lon(box[1], '360')} must be larger than lon_min={conv_lon(box[0], '360')}. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."
+        ] = lambda b: conv_lon(b[0], "360") < conv_lon(b[1], "360")
+    elif OPTIONS["longitude_convention"] == "180":
+        tests[
+            f"lon_max={conv_lon(box[1], '180')} must be larger than lon_min={conv_lon(box[0], '180')}. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."
+        ] = lambda b: conv_lon(b[0], "180") < conv_lon(b[1], "180")
     tests["lat_max must be larger than lat_min"] = lambda b: b[2] <= b[3]
     tests["pres_max must be larger than pres_min"] = lambda b: b[4] <= b[5]
     if len(box) == 8:
@@ -492,9 +499,7 @@ def check_index_cols(column_names: list, convention: str = "ar_index_global_prof
             "date_update",
         ]
 
-    if (
-        convention == "argo_aux-profile_index"
-    ):
+    if convention == "argo_aux-profile_index":
         # ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution', 'parameters', 'date_update']
         ref = [
             "file",
@@ -508,9 +513,7 @@ def check_index_cols(column_names: list, convention: str = "ar_index_global_prof
             "date_update",
         ]
 
-    if (
-        convention == "ar_index_global_meta"
-    ):
+    if convention == "ar_index_global_meta":
         # ['file', 'profiler_type', 'institution', 'date_update']
         ref = [
             "file",
@@ -520,13 +523,18 @@ def check_index_cols(column_names: list, convention: str = "ar_index_global_prof
         ]
 
     if not is_list_equal(column_names, ref):
-        log.debug("Expected (convention=%s): %s, got: %s" % (convention, ";".join(ref), ";".join(column_names)))
+        log.debug(
+            "Expected (convention=%s): %s, got: %s"
+            % (convention, ";".join(ref), ";".join(column_names))
+        )
         raise InvalidDatasetStructure("Unexpected column names in this index !")
     else:
         return column_names
 
 
-def check_gdac_path(path, errors: str = "ignore", ignore_knowns: bool = False):  # noqa: C901
+def check_gdac_path(
+    path, errors: str = "ignore", ignore_knowns: bool = False
+):  # noqa: C901
     """Check if a path has the expected GDAC structure
 
     Expected GDAC structure::
@@ -587,7 +595,7 @@ def check_gdac_path(path, errors: str = "ignore", ignore_knowns: bool = False): 
             else:
                 return False
 
-        check1 = fs.exists('dac')
+        check1 = fs.exists("dac")
         if check1:
             return True
 
@@ -598,7 +606,10 @@ def check_gdac_path(path, errors: str = "ignore", ignore_knowns: bool = False): 
             )
 
         elif errors == "warn":
-            warnings.warn("This path is not GDAC compliant (no legitimate sub-folder `dac`):\n%s" % path)
+            warnings.warn(
+                "This path is not GDAC compliant (no legitimate sub-folder `dac`):\n%s"
+                % path
+            )
             return False
 
         else:
@@ -619,6 +630,7 @@ def isconnected(host: str = "https://argopy.statuspage.io", maxtry: int = 10):
     -------
     bool
     """
+
     def test_retry(host, checker, maxtry):
         it = 0
         while it < maxtry:
@@ -638,7 +650,11 @@ def isconnected(host: str = "https://argopy.statuspage.io", maxtry: int = 10):
         )  # nosec B310 because host protocol already checked
 
     def check_s3(host):
-        anon = boto3.client('s3')._request_signer._credentials is None if HAS_BOTO3 else True
+        anon = (
+            boto3.client("s3")._request_signer._credentials is None
+            if HAS_BOTO3
+            else True
+        )
         fs = fsspec.filesystem("s3", anon=anon)
         return fs.exists(host)
 
@@ -650,7 +666,8 @@ def isconnected(host: str = "https://argopy.statuspage.io", maxtry: int = 10):
         else:
             raise ValueError(
                 "Can't check if an S3 server is connected without the 's3fs' library. Please update your environment "
-                "with this dependency.")
+                "with this dependency."
+            )
     else:
         return test_retry(host, check_local, 1)
 
@@ -732,7 +749,7 @@ def isAPIconnected(src="erddap", data=True):
         list_src = list_available_index_src()
 
     if src in list_src and getattr(list_src[src], "api_server_check", None):
-        if src == 'gdac':
+        if src == "gdac":
             return check_gdac_path(list_src[src].api_server_check, ignore_knowns=True)
         else:
             return isalive(list_src[src].api_server_check)
@@ -785,7 +802,7 @@ def erddap_ds_exists(
 
 def has_aws_credentials():
     if HAS_BOTO3:
-        client = boto3.client('s3')
+        client = boto3.client("s3")
         return client._request_signer._credentials is not None
     else:
         raise Exception("boto3 is not available !")

@@ -212,9 +212,19 @@ def plot_trajectory(
             opts = {**defaults, **kwargs}
             unvalid_keys = []
             for key in opts.keys():
-                if key not in ["nrows", "ncols", "sharex", "sharey", "squeeze",
-                               "width_ratios", "height_ratios", "subplot_kw", "gridspec_kw",
-                               "figsize", "dpi"]:
+                if key not in [
+                    "nrows",
+                    "ncols",
+                    "sharex",
+                    "sharey",
+                    "squeeze",
+                    "width_ratios",
+                    "height_ratios",
+                    "subplot_kw",
+                    "gridspec_kw",
+                    "figsize",
+                    "dpi",
+                ]:
                     unvalid_keys.append(key)
             [opts.pop(key) for key in unvalid_keys]
             fig, ax = plt.subplots(**opts)
@@ -351,7 +361,7 @@ def scatter_map(  # noqa: C901
     cbarlabels: Union[str, list] = "auto",
     cbarmaxlabels: int = 12,
     set_global: bool = False,
-    padding: Union[str, list] = 'auto',
+    padding: Union[str, list] = "auto",
     **kwargs
 ):
     """Try-to-be generic function to create a scatter plot on a map from **argopy** :class:`xarray.Dataset` or :class:`pandas.DataFrame` data
@@ -565,9 +575,9 @@ def scatter_map(  # noqa: C901
     defaults = {"figsize": (10, 6), "dpi": 90}
 
     if OPTIONS["longitude_convention"] == "180":
-        central_longitude = 0.
+        central_longitude = 0.0
     else:  # OPTIONS['longitude_convention'] == '360':
-        central_longitude = 180.
+        central_longitude = 180.0
 
     subplot_kw = {"projection": ccrs.PlateCarree(central_longitude=central_longitude)}
     fig, ax = plt.subplots(**{**defaults, **kwargs}, subplot_kw=subplot_kw)
@@ -589,12 +599,14 @@ def scatter_map(  # noqa: C901
             )
         else:
             scatter_opts = {
-                "color": mycolors.lookup[name]
-                if mycolors.registered
-                else mycolors.cmap(k),
-                "label": "%s: %s" % (name, mycolors.ticklabels[name])
-                if mycolors.registered
-                else name,
+                "color": (
+                    mycolors.lookup[name] if mycolors.registered else mycolors.cmap(k)
+                ),
+                "label": (
+                    "%s: %s" % (name, mycolors.ticklabels[name])
+                    if mycolors.registered
+                    else name
+                ),
                 "zorder": 10,
                 "sizes": [markersize],
                 "edgecolor": markeredgecolor,
@@ -602,12 +614,12 @@ def scatter_map(  # noqa: C901
                 "transform": ccrs.PlateCarree(),
             }
             if isinstance(data, pd.DataFrame) and not legend:
-                scatter_opts[
-                    "legend"
-                ] = False  # otherwise Pandas will add a legend even if we set legend=False
+                scatter_opts["legend"] = (
+                    False  # otherwise Pandas will add a legend even if we set legend=False
+                )
             sc = group.plot.scatter(x=x, y=y, ax=ax, **scatter_opts)
             patches.append(sc)
-            scatter_legend_labels.append(scatter_opts['label'])
+            scatter_legend_labels.append(scatter_opts["label"])
 
     if cbar:
         if isinstance(cbarlabels, str) and cbarlabels == "auto":
@@ -620,11 +632,14 @@ def scatter_map(  # noqa: C901
         if cbarmaxlabels is not None:
 
             new_ticks = [ticks[0]]
-            [new_ticks.append(v) for v in subsample_list(ticks, cbarmaxlabels-2)]
+            [new_ticks.append(v) for v in subsample_list(ticks, cbarmaxlabels - 2)]
             new_ticks.append(ticks[-1])
 
             new_cbarlabels = [cbarlabels[0]]
-            [new_cbarlabels.append(v) for v in subsample_list(cbarlabels, cbarmaxlabels-2)]
+            [
+                new_cbarlabels.append(v)
+                for v in subsample_list(cbarlabels, cbarmaxlabels - 2)
+            ]
             new_cbarlabels.append(cbarlabels[-1])
 
             cbar_handle.set_ticks(subsample_list(ticks, cbarmaxlabels))
@@ -652,9 +667,9 @@ def scatter_map(  # noqa: C901
         lon = conv_lon(data[x], OPTIONS["longitude_convention"])
         lat = data[y]
         extent = [np.min(lon), np.max(lon), np.min(lat), np.max(lat)]
-        rge = [np.abs(np.max(lon)-np.min(lon)), np.abs(np.max(lat)-np.min(lat))]
-        if padding == 'auto':
-            padding = [-rge[0]/10, rge[0]/10, -rge[1]/10, rge[1]/10]
+        rge = [np.abs(np.max(lon) - np.min(lon)), np.abs(np.max(lat) - np.min(lat))]
+        if padding == "auto":
+            padding = [-rge[0] / 10, rge[0] / 10, -rge[1] / 10, rge[1] / 10]
         else:
             padding = to_list(padding)
             if len(padding) == 1:
@@ -664,10 +679,10 @@ def scatter_map(  # noqa: C901
             elif len(padding) != 4:
                 raise ValueError("'padding' must be 'auto', a list of 1, 2 or 4 values")
 
-        extent[0] = extent[0]+padding[0]
-        extent[1] = extent[1]+padding[1]
-        extent[2] = extent[2]+padding[2]
-        extent[3] = extent[3]+padding[3]
+        extent[0] = extent[0] + padding[0]
+        extent[1] = extent[1] + padding[1]
+        extent[2] = extent[2] + padding[2]
+        extent[3] = extent[3] + padding[3]
         ax.set_extent(extent)
 
     latlongrid(
@@ -698,11 +713,11 @@ def scatter_map(  # noqa: C901
     ax.set_title("")
 
     handles = {
-        'scatter': patches,
-        'cbar': cbar_handle,
-        'legend': legend_handle,
-        'traj': traj_handle,
-        'ArgoColors': mycolors,
+        "scatter": patches,
+        "cbar": cbar_handle,
+        "legend": legend_handle,
+        "traj": traj_handle,
+        "ArgoColors": mycolors,
     }
     return fig, ax, handles
 
@@ -723,7 +738,7 @@ def scatter_plot(
     """A quick-and-dirty parameter scatter plot for one variable"""
     warnUnless(has_mpl, "requires matplotlib installed")
 
-    if this_param in DATA_TYPES['data']['str']:
+    if this_param in DATA_TYPES["data"]["str"]:
         raise ValueError("scatter_plot does not support string data type (yet !)")
 
     if cmap is None:

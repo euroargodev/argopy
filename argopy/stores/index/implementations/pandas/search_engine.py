@@ -13,7 +13,7 @@ from .index import indexstore
 log = logging.getLogger("argopy.stores.index.pd")
 
 
-@register_ArgoIndex_accessor('query', indexstore)
+@register_ArgoIndex_accessor("query", indexstore)
 class SearchEngine(ArgoIndexSearchEngine):
 
     @search_s3
@@ -33,7 +33,9 @@ class SearchEngine(ArgoIndexSearchEngine):
             filt = []
             for wmo in WMOs:
                 filt.append(
-                    self._obj.index["file"].str.contains("/%i/" % wmo, regex=True, case=False)
+                    self._obj.index["file"].str.contains(
+                        "/%i/" % wmo, regex=True, case=False
+                    )
                 )
             return self._obj._reduce_a_filter_list(filt, op="or")
 
@@ -74,7 +76,9 @@ class SearchEngine(ArgoIndexSearchEngine):
                 else:
                     pattern = "_%0.4d.nc" % (cyc)
                 filt.append(
-                    self._obj.index["file"].str.contains(pattern, regex=True, case=False)
+                    self._obj.index["file"].str.contains(
+                        pattern, regex=True, case=False
+                    )
                 )
             return self._obj._reduce_a_filter_list(filt, op="or")
 
@@ -120,7 +124,9 @@ class SearchEngine(ArgoIndexSearchEngine):
                     else:
                         pattern = "%i_%0.4d.nc" % (wmo, cyc)
                     filt.append(
-                        self._obj.index["file"].str.contains(pattern, regex=True, case=False)
+                        self._obj.index["file"].str.contains(
+                            pattern, regex=True, case=False
+                        )
                     )
             return self._obj._reduce_a_filter_list(filt, op="or")
 
@@ -170,7 +176,9 @@ class SearchEngine(ArgoIndexSearchEngine):
     def lat(self, BOX, nrows=None, composed=False):
         def checker(BOX):
             if "latitude" not in self._obj.convention_columns:
-                raise InvalidDatasetStructure("Cannot search for latitude in this index")
+                raise InvalidDatasetStructure(
+                    "Cannot search for latitude in this index"
+                )
             is_indexbox(BOX)
             log.debug("Argo index searching for latitude in BOX=%s ..." % BOX)
 
@@ -198,7 +206,9 @@ class SearchEngine(ArgoIndexSearchEngine):
     def lon(self, BOX, nrows=None, composed=False):
         def checker(BOX):
             if "longitude" not in self._obj.convention_columns:
-                raise InvalidDatasetStructure("Cannot search for longitude in this index")
+                raise InvalidDatasetStructure(
+                    "Cannot search for longitude in this index"
+                )
             is_indexbox(BOX)
             log.debug("Argo index searching for longitude in BOX=%s ..." % BOX)
 
@@ -207,12 +217,16 @@ class SearchEngine(ArgoIndexSearchEngine):
 
         def composer(BOX):
             filt = []
-            if OPTIONS['longitude_convention'] == '360':
-                filt.append(self._obj.index["longitude_360"].ge(conv_lon(BOX[0], '360')))
-                filt.append(self._obj.index["longitude_360"].le(conv_lon(BOX[1], '360')))
-            elif OPTIONS['longitude_convention'] == '180':
-                filt.append(self._obj.index["longitude"].ge(conv_lon(BOX[0], '180')))
-                filt.append(self._obj.index["longitude"].le(conv_lon(BOX[1], '180')))
+            if OPTIONS["longitude_convention"] == "360":
+                filt.append(
+                    self._obj.index["longitude_360"].ge(conv_lon(BOX[0], "360"))
+                )
+                filt.append(
+                    self._obj.index["longitude_360"].le(conv_lon(BOX[1], "360"))
+                )
+            elif OPTIONS["longitude_convention"] == "180":
+                filt.append(self._obj.index["longitude"].ge(conv_lon(BOX[0], "180")))
+                filt.append(self._obj.index["longitude"].le(conv_lon(BOX[1], "180")))
             return self._obj._reduce_a_filter_list(filt, op="and")
 
         checker(BOX)
@@ -239,12 +253,16 @@ class SearchEngine(ArgoIndexSearchEngine):
 
         def composer(BOX):
             filt = []
-            if OPTIONS['longitude_convention'] == '360':
-                filt.append(self._obj.index["longitude_360"].ge(conv_lon(BOX[0], '360')))
-                filt.append(self._obj.index["longitude_360"].le(conv_lon(BOX[1], '360')))
-            elif OPTIONS['longitude_convention'] == '180':
-                filt.append(self._obj.index["longitude"].ge(conv_lon(BOX[0], '180')))
-                filt.append(self._obj.index["longitude"].le(conv_lon(BOX[1], '180')))
+            if OPTIONS["longitude_convention"] == "360":
+                filt.append(
+                    self._obj.index["longitude_360"].ge(conv_lon(BOX[0], "360"))
+                )
+                filt.append(
+                    self._obj.index["longitude_360"].le(conv_lon(BOX[1], "360"))
+                )
+            elif OPTIONS["longitude_convention"] == "180":
+                filt.append(self._obj.index["longitude"].ge(conv_lon(BOX[0], "180")))
+                filt.append(self._obj.index["longitude"].le(conv_lon(BOX[1], "180")))
             filt.append(self._obj.index["latitude"].ge(BOX[2]))
             filt.append(self._obj.index["latitude"].le(BOX[3]))
             return self._obj._reduce_a_filter_list(filt, op="and")
@@ -264,7 +282,9 @@ class SearchEngine(ArgoIndexSearchEngine):
     def box(self, BOX, nrows=None, composed=False):
         def checker(BOX):
             if "longitude" not in self._obj.convention_columns:
-                raise InvalidDatasetStructure("Cannot search for coordinates in this index")
+                raise InvalidDatasetStructure(
+                    "Cannot search for coordinates in this index"
+                )
             is_indexbox(BOX)
             log.debug("Argo index searching for lat/lon/date in BOX=%s ..." % BOX)
             return "date"  # Return key to use for time axis
@@ -275,14 +295,18 @@ class SearchEngine(ArgoIndexSearchEngine):
         def composer(BOX, key):
             tim_min = int(pd.to_datetime(BOX[4]).strftime("%Y%m%d%H%M%S"))
             tim_max = int(pd.to_datetime(BOX[5]).strftime("%Y%m%d%H%M%S"))
-            
+
             filt = []
-            if OPTIONS['longitude_convention'] == '360':
-                filt.append(self._obj.index["longitude_360"].ge(conv_lon(BOX[0], '360')))
-                filt.append(self._obj.index["longitude_360"].le(conv_lon(BOX[1], '360')))
-            elif OPTIONS['longitude_convention'] == '180':
-                filt.append(self._obj.index["longitude"].ge(conv_lon(BOX[0], '180')))
-                filt.append(self._obj.index["longitude"].le(conv_lon(BOX[1], '180')))
+            if OPTIONS["longitude_convention"] == "360":
+                filt.append(
+                    self._obj.index["longitude_360"].ge(conv_lon(BOX[0], "360"))
+                )
+                filt.append(
+                    self._obj.index["longitude_360"].le(conv_lon(BOX[1], "360"))
+                )
+            elif OPTIONS["longitude_convention"] == "180":
+                filt.append(self._obj.index["longitude"].ge(conv_lon(BOX[0], "180")))
+                filt.append(self._obj.index["longitude"].le(conv_lon(BOX[1], "180")))
             filt.append(self._obj.index["latitude"].ge(BOX[2]))
             filt.append(self._obj.index["latitude"].le(BOX[3]))
             filt.append(self._obj.index[key].ge(tim_min))
@@ -304,7 +328,10 @@ class SearchEngine(ArgoIndexSearchEngine):
     def params(self, PARAMs, logical="and", nrows=None, composed=False):
         def checker(PARAMs):
             if "parameters" not in self._obj.convention_columns:
-                raise InvalidDatasetStructure("Cannot search for parameters in this index (%s: %s)." % (self._obj.convention, self._obj.convention_title))
+                raise InvalidDatasetStructure(
+                    "Cannot search for parameters in this index (%s: %s)."
+                    % (self._obj.convention, self._obj.convention_title)
+                )
             log.debug("Argo index searching for parameters in PARAM=%s." % PARAMs)
             return to_list(PARAMs)  # Make sure we deal with a list
 
@@ -313,7 +340,9 @@ class SearchEngine(ArgoIndexSearchEngine):
 
         def composer(PARAMs, logical):
             filt = []
-            self._obj.index["variables"] = self._obj.index["parameters"].apply(lambda x: x.split())
+            self._obj.index["variables"] = self._obj.index["parameters"].apply(
+                lambda x: x.split()
+            )
             for param in PARAMs:
                 filt.append(self._obj.index["variables"].apply(lambda x: param in x))
             self._obj.index = self._obj.index.drop("variables", axis=1)
@@ -331,7 +360,9 @@ class SearchEngine(ArgoIndexSearchEngine):
             self._obj.search_type.update(namer(PARAMs, logical))
             return search_filter
 
-    def parameter_data_mode(self, PARAMs: dict, logical="and", nrows=None, composed=False):
+    def parameter_data_mode(
+        self, PARAMs: dict, logical="and", nrows=None, composed=False
+    ):
         def checker(PARAMs):
             if self._obj.convention not in [
                 "ar_index_global_prof",
@@ -347,11 +378,13 @@ class SearchEngine(ArgoIndexSearchEngine):
             )
 
             # Validate PARAMs argument type
-            [
-                PARAMs.update({p: to_list(PARAMs[p])}) for p in PARAMs
-            ]
+            [PARAMs.update({p: to_list(PARAMs[p])}) for p in PARAMs]
             if not np.all(
-                [v in ["R", "A", "D", "", " "] for vals in PARAMs.values() for v in vals]
+                [
+                    v in ["R", "A", "D", "", " "]
+                    for vals in PARAMs.values()
+                    for v in vals
+                ]
             ):
                 raise ValueError("Data mode must be a value in 'R', 'A', 'D', ' ', ''")
             if self._obj.convention in ["argo_aux-profile_index"]:
@@ -387,11 +420,11 @@ class SearchEngine(ArgoIndexSearchEngine):
                     filt.append(
                         self._obj.index.apply(
                             lambda x: (
-                                          x["parameter_data_mode"][x["variables"].index(param)]
-                                          if param in x["variables"]
-                                          else ""
-                                      )
-                                      in data_mode,
+                                x["parameter_data_mode"][x["variables"].index(param)]
+                                if param in x["variables"]
+                                else ""
+                            )
+                            in data_mode,
                             axis=1,
                         )
                     )
@@ -414,15 +447,24 @@ class SearchEngine(ArgoIndexSearchEngine):
     def profiler_type(self, profiler_type: List[int], nrows=None, composed=False):
         def checker(profiler_type):
             if "profiler_type" not in self._obj.convention_columns:
-                raise InvalidDatasetStructure("Cannot search for profiler types in this index)")
-            log.debug("Argo index searching for profiler type in %s ..." % profiler_type)
+                raise InvalidDatasetStructure(
+                    "Cannot search for profiler types in this index)"
+                )
+            log.debug(
+                "Argo index searching for profiler type in %s ..." % profiler_type
+            )
             return to_list(profiler_type)
 
         def namer(profiler_type):
             return {"PTYPE": profiler_type}
 
         def composer(profiler_type):
-            return self._obj.index["profiler_type"].fillna(99999).astype(int).isin(profiler_type)
+            return (
+                self._obj.index["profiler_type"]
+                .fillna(99999)
+                .astype(int)
+                .isin(profiler_type)
+            )
 
         profiler_type = checker(profiler_type)
         self._obj.load(nrows=self._obj._nrows_index)

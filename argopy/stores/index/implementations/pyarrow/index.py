@@ -381,7 +381,7 @@ class indexstore(ArgoIndexStoreProto):
         def xmin(xtble):
             if OPTIONS["longitude_convention"] == "360":
                 xcol = "longitude_360"
-            else:  #  OPTIONS['longitude_convention'] == '180':
+            else:  # OPTIONS['longitude_convention'] == '180':
                 xcol = "longitude"
             return min(xtble[xcol])
 

@@ -7,7 +7,7 @@ import time
 from abc import ABC, abstractmethod
 from fsspec.core import split_protocol
 from urllib.parse import urlparse
-from typing import Union, List
+from typing import Union, List  # noqa: F401
 from pathlib import Path
 import sys
 

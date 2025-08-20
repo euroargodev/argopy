@@ -36,7 +36,7 @@ def wrap_longitude(grid_long):
     return grid_long
 
 
-def conv_lon(x, conv: str = '180'):
+def conv_lon(x, conv: str = "180"):
     """Apply longitude convention to array x
 
     Params
@@ -49,10 +49,14 @@ def conv_lon(x, conv: str = '180'):
     -------
     Transformed x
     """
-    if conv == '360':
-        c = lambda x: type(x)(np.where(np.logical_and(x>=-180., x < 0.), x + 360., x)[np.newaxis][0])
-    elif conv == '180':
-        c = lambda x: type(x)(np.where(x > 180., x - 360., x)[np.newaxis][0])
+    if conv == "360":
+        c = lambda x: type(x)(  # noqa: E731
+            np.where(np.logical_and(x >= -180.0, x < 0.0), x + 360.0, x)[np.newaxis][0]
+        )
+    elif conv == "180":
+        c = lambda x: type(x)(  # noqa: E731
+            np.where(x > 180.0, x - 360.0, x)[np.newaxis][0]
+        )
     else:
         return x
 
@@ -111,9 +115,12 @@ def wmo2box(wmo_id: int):
         lat_min = -nearest_to_the_Equator_latitude * dd - dd
         lat_max = -nearest_to_the_Equator_latitude * dd
 
-    box = [conv_lon(lon_min, OPTIONS['longitude_convention']),
-           conv_lon(lon_max, OPTIONS['longitude_convention']),
-           lat_min, lat_max]
+    box = [
+        conv_lon(lon_min, OPTIONS["longitude_convention"]),
+        conv_lon(lon_max, OPTIONS["longitude_convention"]),
+        lat_min,
+        lat_max,
+    ]
     return box
 
 

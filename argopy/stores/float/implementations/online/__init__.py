@@ -1,1 +1,1 @@
-from .float import FloatStore
+from .float import FloatStore  # noqa: F401

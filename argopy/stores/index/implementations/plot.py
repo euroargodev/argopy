@@ -52,7 +52,7 @@ class ArgoIndexPlot(ArgoIndexPlotProto):
 
     """
 
-    def trajectory(self, index:bool=False, **kwargs) -> Any:
+    def trajectory(self, index: bool = False, **kwargs) -> Any:
         """Quick map of profile index trajectories
 
         Parameters
@@ -78,21 +78,20 @@ class ArgoIndexPlot(ArgoIndexPlotProto):
             idx = ArgoIndex().query.wmo(WMO)
             idx.plot.trajectory()
         """
-        default_opts = {'style': 'white'}
+        default_opts = {"style": "white"}
         N = len(self._obj.read_wmo(index=index))
         if N == 1:
-            default_opts['hue'] = 'cyc'
-            default_opts['add_legend'] = False
-            default_opts['palette'] = 'Spectral_r'
-            default_opts['cbar'] = True
+            default_opts["hue"] = "cyc"
+            default_opts["add_legend"] = False
+            default_opts["palette"] = "Spectral_r"
+            default_opts["cbar"] = True
         fig, ax = plot_trajectory(
-                self._obj.to_dataframe(index=index),
-                **{**default_opts, **kwargs}
+            self._obj.to_dataframe(index=index), **{**default_opts, **kwargs}
         )
         ax.set_title(self.get_title(index))
         return fig, ax
 
-    def bar(self, by: str='dac', index:bool=False, **kwargs) -> Any:
+    def bar(self, by: str = "dac", index: bool = False, **kwargs) -> Any:
         """Bar plot of one index property
 
         Parameters
@@ -119,12 +118,23 @@ class ArgoIndexPlot(ArgoIndexPlotProto):
             idx = ArgoIndex()
             idx.plot.bar('institution')
         """
-        if by not in ['date', 'latitude', 'longitude', 'ocean', 'profiler_code', 'institution_code', 'date_update', 'wmo', 'cyc', 'institution', 'dac', 'profiler']:
-            raise ValueError('Invalid value for "by", must be in "date", "latitude", "longitude", "ocean", "profiler_code"')
-        fig, ax = bar_plot(
-                self._obj.to_dataframe(index=index),
-                by = by,
-                **kwargs
-        )
+        if by not in [
+            "date",
+            "latitude",
+            "longitude",
+            "ocean",
+            "profiler_code",
+            "institution_code",
+            "date_update",
+            "wmo",
+            "cyc",
+            "institution",
+            "dac",
+            "profiler",
+        ]:
+            raise ValueError(
+                'Invalid value for "by", must be in "date", "latitude", "longitude", "ocean", "profiler_code"'
+            )
+        fig, ax = bar_plot(self._obj.to_dataframe(index=index), by=by, **kwargs)
         ax.set_title(self.get_title(index))
         return fig, ax
