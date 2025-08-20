@@ -223,7 +223,8 @@ def setup_args():
 
 def can_xr_be_opened(src, file):
     try:
-        xr.open_dataset(file)
+        time_coder = xr.coders.CFDatetimeCoder(use_cftime=False)
+        xr.open_dataset(file, decode_cf=1, decode_times=time_coder, mask_and_scale=1, decode_timedelta=True)
         return src
     except:
         # print("This source can't be opened with xarray: %s" % src)
