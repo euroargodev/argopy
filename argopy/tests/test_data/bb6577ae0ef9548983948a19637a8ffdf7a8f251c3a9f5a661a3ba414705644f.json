@@ -125,37 +125,6 @@
             "@type": "skos:Concept"
         },
         {
-            "@id": "http://vocab.nerc.ac.uk/collection/R11/current/15/",
-            "pav:authoredOn": "2020-04-07 22:59:46.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R11/current/15/1/"
-            },
-            "dce:identifier": "SDN:R11::15",
-            "pav:version": "1",
-            "skos:notation": "SDN:R11::15",
-            "skos:altLabel": "Test 15",
-            "dc:date": "2020-04-07 22:59:46.0",
-            "owl:versionInfo": "1",
-            "skos:prefLabel": {
-                "@language": "en",
-                "@value": "Grey List test"
-            },
-            "dc:identifier": "SDN:R11::15",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
-            },
-            "owl:deprecated": "false",
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "skos:definition": {
-                "@language": "en",
-                "@value": "Grey List test. Test binary ID = 32768"
-            },
-            "@type": "skos:Concept"
-        },
-        {
             "@id": "http://vocab.nerc.ac.uk/collection/R11/current/11/",
             "pav:hasVersion": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R11/current/11/1/"
@@ -596,6 +565,40 @@
             "@type": "skos:Concept"
         },
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R11/current/15/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R11/current/15/1/"
+            },
+            "pav:authoredOn": "2025-03-06 09:09:15.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R11/current/15/2/"
+            },
+            "dce:identifier": "SDN:R11::15",
+            "pav:version": "2",
+            "skos:notation": "SDN:R11::15",
+            "skos:altLabel": "Test 15",
+            "dc:date": "2025-03-06 09:09:15.0",
+            "owl:versionInfo": "2",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Supplemental sensor exclusion list test"
+            },
+            "dc:identifier": "SDN:R11::15",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Supplemental sensor exclusion list test. Test binary ID = 32768"
+            },
+            "@type": "skos:Concept"
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R11/current/21/",
             "pav:authoredOn": "2020-04-07 22:59:46.0",
             "pav:hasCurrentVersion": {
@@ -831,9 +834,6 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R11/current/9/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R11/current/15/"
-                },
-                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R11/current/11/"
                 },
                 {
@@ -876,6 +876,9 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R11/current/5/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R11/current/15/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R11/current/21/"
                 },
                 {
@@ -902,8 +905,8 @@
             "dc:description": "List of real-time quality-control tests and corresponding binary identifiers, used as reference to populate the Argo netCDF HISTORY_QCTEST variable.",
             "dc:title": "Argo real-time quality-control test identifiers",
             "skos:prefLabel": "Argo real-time quality-control test identifiers",
-            "owl:versionInfo": "3",
-            "dc:date": "2024-09-12 03:00:00.0",
+            "owl:versionInfo": "4",
+            "dc:date": "2025-03-07 02:00:00.0",
             "skos:altLabel": "RTQC_TESTID",
             "dc:creator": "Argo Data Management Team",
             "dc:alternative": "RTQC_TESTID",
