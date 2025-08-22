@@ -5,7 +5,6 @@ from fsspec.core import split_protocol
 from urllib.parse import urlparse
 from socket import gaierror
 import fsspec
-import os
 
 from ...options import OPTIONS
 from ...errors import GdacPathError

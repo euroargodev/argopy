@@ -1,6 +1,7 @@
 """
 Manipulate Argo formatted string and print/stdout formatters
 """
+
 import os
 from urllib.parse import urlparse, parse_qs
 import logging
@@ -13,7 +14,7 @@ from .checkers import check_cyc, check_wmo
 log = logging.getLogger("argopy.utils.format")
 
 
-redact = lambda s, n: s[:n] + '*' * max(0, len(s) - n)  # noqa: E731
+redact = lambda s, n: s[:n] + "*" * max(0, len(s) - n)  # noqa: E731
 
 
 def format_oneline(s, max_width=65):
@@ -31,15 +32,13 @@ def format_oneline(s, max_width=65):
 
 
 def dirfs_relpath(fs, path):
-    print("-"*40)
+    print("-" * 40)
     if isinstance(path, str):
         if not fs.path:
             return path
         # We need to account for S3FileSystem returning paths that do not
         # start with a '/'
-        if path == fs.path or (
-            fs.path.startswith(fs.fs.sep) and path == fs.path[1:]
-        ):
+        if path == fs.path or (fs.path.startswith(fs.fs.sep) and path == fs.path[1:]):
             return ""
         prefix = fs.path + fs.fs.sep
         if fs.path.startswith(fs.fs.sep) and not path.startswith(fs.fs.sep):
@@ -57,7 +56,7 @@ def dirfs_relpath(fs, path):
 
         assert path.startswith(prefix)
         return path[len(prefix) :]
-    print("-"*40)
+    print("-" * 40)
     return [dirfs_relpath(fs, _path) for _path in path]
 
 
@@ -91,9 +90,9 @@ def argo_split_path(this_path):  # noqa C901
     ]
     output = {}
 
-    start_with = (
-        lambda f, x: f[0 : len(x)] == x if len(x) <= len(f) else False
-    )  # noqa: E731
+    start_with = lambda f, x: (  # noqa: E731
+        f[0 : len(x)] == x if len(x) <= len(f) else False
+    )
 
     def detect_path_separator(path):
         """
@@ -164,9 +163,9 @@ def argo_split_path(this_path):  # noqa C901
     try:
         # Adjust origin and path for local files:
         # This ensures that output['path'] is agnostic to users and can be reused on any gdac compliant architecture
-        output["origin"] = sep.join(path_parts[0:path_parts.index('dac')])
-        output["origin"] = sep if output["origin"] == "" else output['origin']
-        output["path"] = sep.join(path_parts[path_parts.index('dac'):])
+        output["origin"] = sep.join(path_parts[0 : path_parts.index("dac")])
+        output["origin"] = sep if output["origin"] == "" else output["origin"]
+        output["path"] = sep.join(path_parts[path_parts.index("dac") :])
 
         # Extract file information
         if path_parts[-1] == "profiles":
@@ -196,7 +195,9 @@ def argo_split_path(this_path):  # noqa C901
             "This is not a Argo GDAC compliant file path (invalid DAC name: '%s')"
             % output["dac"]
         )
-    elif output["dac"] == 'kordi' and pd.to_datetime('now', utc=True) > pd.to_datetime('2025-06-30', utc=True):
+    elif output["dac"] == "kordi" and pd.to_datetime("now", utc=True) > pd.to_datetime(
+        "2025-06-30", utc=True
+    ):
         warnings.warn("DAC 'kordi' has been deprecated by ADMT. Use 'kiost' instead.")
 
     # Deal with the file name:
@@ -273,7 +274,10 @@ def erddapuri2fetchobj(uri: str) -> dict:
             box.append(float(params["pres_adjusted>"][0]))
             box.append(float(params["pres_adjusted<"][0]))
         else:
-            raise ValueError("This erddap uri is invalid, it must have pressure constraints with coordinates constraints: %s" % uri)
+            raise ValueError(
+                "This erddap uri is invalid, it must have pressure constraints with coordinates constraints: %s"
+                % uri
+            )
 
         if "time>" in params.keys():
             box.append(

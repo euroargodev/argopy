@@ -13,11 +13,9 @@ import fsspec
 import time
 import warnings
 import io
-from pathlib import Path
 from functools import lru_cache
 from netCDF4 import Dataset
 
-from ...options import OPTIONS
 from ...errors import InvalidMethod, DataNotFound
 from ...utils import Registry, UriCName
 from ...utils import has_aws_credentials

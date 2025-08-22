@@ -1,12 +1,11 @@
 {
   "name": "parameters",
   "long_name": "All valid requests to https://api-coriolis.ifremer.fr/legacy/parameter?code={code}",
-  "last_update": "2025-06-09T15:15:16.660328+00:00",
+  "last_update": "2025-08-20T06:51:59.232023+00:00",
   "data": {
     "valid_codes": [
       "9",
       "11",
-      "12",
       "13",
       "20",
       "28",
@@ -44,7 +43,6 @@
       "88",
       "89",
       "90",
-      "94",
       "95",
       "96",
       "97",
@@ -68,7 +66,6 @@
       "150",
       "151",
       "153",
-      "154",
       "155",
       "156",
       "157",
@@ -544,7 +541,6 @@
     "valid_params": [
       "DEPH",
       "DOXY",
-      "UDOX",
       "EWCT",
       "NSCT",
       "PRES",
@@ -582,7 +578,6 @@
       "WDIR",
       "DRYT",
       "RELH",
-      "SWPR",
       "SWHT",
       "TEMP_DOXY",
       "TEMP_DOXY_ADJUSTED",
@@ -606,7 +601,6 @@
       "PRRD",
       "PETD",
       "DEWT",
-      "SWDR",
       "FLU3",
       "LGH4",
       "TRANSMISSIVITY",
@@ -1090,16 +1084,6 @@
         "label": "Dissolved oxygen",
         "param_type": "P"
       },
-      "12": {
-        "unit": "unknown",
-        "time_sampling": "",
-        "code": "12",
-        "gf3_strict_name": "",
-        "gf3_extended_name": "UDOX",
-        "parent_code": "0",
-        "label": "Dissolved oxygen (deprecated)",
-        "param_type": "P"
-      },
       "13": {
         "unit": "meter/second",
         "time_sampling": "",
@@ -1135,7 +1119,7 @@
         "time_sampling": "",
         "code": "30",
         "gf3_strict_name": "PSAL",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "SSPS",
         "parent_code": "0",
         "label": "Practical salinity",
         "param_type": "P"
@@ -1145,7 +1129,7 @@
         "time_sampling": "",
         "code": "35",
         "gf3_strict_name": "TEMP",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "SSTP",
         "parent_code": "0",
         "label": "Sea temperature",
         "param_type": "P"
@@ -1225,7 +1209,7 @@
         "time_sampling": "",
         "code": "59",
         "gf3_strict_name": "HCSP",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "SCSP",
         "parent_code": "0",
         "label": "Horizontal current speed",
         "param_type": "P"
@@ -1235,7 +1219,7 @@
         "time_sampling": "",
         "code": "60",
         "gf3_strict_name": "HCDT",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "SCDT",
         "parent_code": "0",
         "label": "Current to direction relative true north",
         "param_type": "P"
@@ -1275,7 +1259,7 @@
         "time_sampling": "",
         "code": "65",
         "gf3_strict_name": "CPHL",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "CPH$",
         "parent_code": "0",
         "label": "Chlorophyll-a",
         "param_type": "P"
@@ -1470,16 +1454,6 @@
         "label": "Relative humidity",
         "param_type": "P"
       },
-      "94": {
-        "unit": "second",
-        "time_sampling": "",
-        "code": "94",
-        "gf3_strict_name": "SWPR",
-        "gf3_extended_name": "",
-        "parent_code": "0",
-        "label": "SWELL PERIOD",
-        "param_type": "P"
-      },
       "95": {
         "unit": "meter",
         "time_sampling": "",
@@ -1662,7 +1636,7 @@
       },
       "146": {
         "unit": "meter",
-        "time_sampling": "",
+        "time_sampling": "3",
         "code": "712",
         "gf3_strict_name": "SLEV",
         "gf3_extended_name": "",
@@ -1708,16 +1682,6 @@
         "gf3_extended_name": "",
         "parent_code": "0",
         "label": "Dew point temperature",
-        "param_type": "P"
-      },
-      "154": {
-        "unit": "degree",
-        "time_sampling": "",
-        "code": "154",
-        "gf3_strict_name": "SWDR",
-        "gf3_extended_name": "",
-        "parent_code": "0",
-        "label": "SWELL DIRECTION REL TRUE N.",
         "param_type": "P"
       },
       "155": {
@@ -3285,7 +3249,7 @@
         "time_sampling": "",
         "code": "403",
         "gf3_strict_name": "PHTP",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "PHA$",
         "parent_code": "0",
         "label": "Total Pheophytin",
         "param_type": "P"
@@ -4275,7 +4239,7 @@
         "time_sampling": "",
         "code": "579",
         "gf3_strict_name": "LGHT",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "DOWNWELLING_PAR",
         "parent_code": "0",
         "label": "Immerged incoming photosynthetic active radiation",
         "param_type": "P"
@@ -6352,16 +6316,6 @@
         "label": "Dissolved oxygen",
         "param_type": "P"
       },
-      "UDOX": {
-        "unit": "unknown",
-        "time_sampling": "",
-        "code": "12",
-        "gf3_strict_name": "",
-        "gf3_extended_name": "UDOX",
-        "parent_code": "0",
-        "label": "Dissolved oxygen (deprecated)",
-        "param_type": "P"
-      },
       "EWCT": {
         "unit": "meter/second",
         "time_sampling": "",
@@ -6397,7 +6351,7 @@
         "time_sampling": "",
         "code": "30",
         "gf3_strict_name": "PSAL",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "SSPS",
         "parent_code": "0",
         "label": "Practical salinity",
         "param_type": "P"
@@ -6407,7 +6361,7 @@
         "time_sampling": "",
         "code": "35",
         "gf3_strict_name": "TEMP",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "SSTP",
         "parent_code": "0",
         "label": "Sea temperature",
         "param_type": "P"
@@ -6487,7 +6441,7 @@
         "time_sampling": "",
         "code": "59",
         "gf3_strict_name": "HCSP",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "SCSP",
         "parent_code": "0",
         "label": "Horizontal current speed",
         "param_type": "P"
@@ -6497,7 +6451,7 @@
         "time_sampling": "",
         "code": "60",
         "gf3_strict_name": "HCDT",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "SCDT",
         "parent_code": "0",
         "label": "Current to direction relative true north",
         "param_type": "P"
@@ -6537,7 +6491,7 @@
         "time_sampling": "",
         "code": "65",
         "gf3_strict_name": "CPHL",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "CPH$",
         "parent_code": "0",
         "label": "Chlorophyll-a",
         "param_type": "P"
@@ -6732,16 +6686,6 @@
         "label": "Relative humidity",
         "param_type": "P"
       },
-      "SWPR": {
-        "unit": "second",
-        "time_sampling": "",
-        "code": "94",
-        "gf3_strict_name": "SWPR",
-        "gf3_extended_name": "",
-        "parent_code": "0",
-        "label": "SWELL PERIOD",
-        "param_type": "P"
-      },
       "SWHT": {
         "unit": "meter",
         "time_sampling": "",
@@ -6924,7 +6868,7 @@
       },
       "SLEV": {
         "unit": "meter",
-        "time_sampling": "",
+        "time_sampling": "3",
         "code": "712",
         "gf3_strict_name": "SLEV",
         "gf3_extended_name": "",
@@ -6970,16 +6914,6 @@
         "gf3_extended_name": "",
         "parent_code": "0",
         "label": "Dew point temperature",
-        "param_type": "P"
-      },
-      "SWDR": {
-        "unit": "degree",
-        "time_sampling": "",
-        "code": "154",
-        "gf3_strict_name": "SWDR",
-        "gf3_extended_name": "",
-        "parent_code": "0",
-        "label": "SWELL DIRECTION REL TRUE N.",
         "param_type": "P"
       },
       "FLU3": {
@@ -8547,7 +8481,7 @@
         "time_sampling": "",
         "code": "403",
         "gf3_strict_name": "PHTP",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "PHA$",
         "parent_code": "0",
         "label": "Total Pheophytin",
         "param_type": "P"
@@ -9537,7 +9471,7 @@
         "time_sampling": "",
         "code": "579",
         "gf3_strict_name": "LGHT",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "DOWNWELLING_PAR",
         "parent_code": "0",
         "label": "Immerged incoming photosynthetic active radiation",
         "param_type": "P"

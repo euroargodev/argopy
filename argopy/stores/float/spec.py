@@ -92,7 +92,6 @@ class FloatStoreProto(ABC):
         self._df_profiles = None  # Dataframe with profiles index
         self._online = None  # Web access status
 
-
     def load_index(self):
         """Load the Argo full index in memory and trigger search for this float"""
         self.idx.load().query.wmo(self.WMO)

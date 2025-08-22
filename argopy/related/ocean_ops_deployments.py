@@ -398,7 +398,7 @@ class OceanOPSDeployments:
                 else ptf["program"]["nameShort"]
             )
             res["program"].append(program)
-            res["country"].append(ptf["program"]["country"]["nameShort"])
+            res["country"].append(ptf["program"]["country"]["nameShort"] if ptf["program"]["country"] is not None else None)
             res["model"].append(ptf["ptfModel"]["nameShort"])
 
             # if status[ptf['ptfStatus']['name']] is None:

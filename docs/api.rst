@@ -145,7 +145,7 @@ List of extensions:
    ArgoIndex.query.box
    ArgoIndex.query.compose
 
-**Ploting methods**:
+**Plotting methods**:
 
 .. autosummary::
    :toctree: generated/

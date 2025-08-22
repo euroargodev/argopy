@@ -8,12 +8,14 @@ What's New
 |pypi dwn| |conda dwn|
 
 
-Coming up next
---------------
+v1.3.0 (Aug. 2025)
+------------------
 
 .. versionadded:: next
 
     This new **argopy** version requires Python 3.11 !
+
+.. _v1.3.0-features:
 
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -21,6 +23,8 @@ Features and front-end API
 - :class:`ArgoIndex` **plotting features**: you can now use the new :class:`ArgoIndex.plot` accessor to call on visualizations tool for trajectories or parameters bar plots. See all details on the documentation section about data visualization :ref:`From ArgoIndex instance`. (:pr:`504`) by |gmaze|.
 
 - :class:`ArgoFloat` **plotting features**: you can now use the new :class:`ArgoFloat.plot` accessor to call on visualizations tool for trajectories and parameters. See all details on the documentation section about data visualization :ref:`From ArgoFloat instance`. (:pr:`501`) by |gmaze|.
+
+.. _v1.3.0-internals:
 
 Internals
 ^^^^^^^^^
@@ -35,6 +39,8 @@ Internals
 
 - **Identified incompatible versions of xarray**. Because of `this issue <https://github.com/pydata/xarray/issues/8909>`_ argopy is not compatible with xarray versions from 2024.3.0 to 2025.6.1, included. (:pr:`451`) by |gmaze|.
 
+.. _v1.3.0-breaking:
+
 Breaking changes
 ^^^^^^^^^^^^^^^^
 
@@ -46,10 +52,10 @@ Breaking changes
 
 - Drop support for Python 3.10
 
+.. _v1.3.0-energy:
+
 Energy
 ^^^^^^
-
-|eqco2_since_last_release|
 
 
 v1.2.0 (9 June 2025)

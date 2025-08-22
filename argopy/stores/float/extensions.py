@@ -38,4 +38,3 @@ class ArgoFloatPlotProto(ArgoFloatExtension):
     @abstractmethod
     def scatter(self):
         raise NotImplementedError
-

@@ -173,7 +173,7 @@ and compute zarr references that will be saved by the :class:`stores.ArgoKerchun
 
 The ``chunker`` option determines which chunker to use, which is different for netcdf 3 and netcdf4/hdf5 files. Checkout the API documentation for more details here :meth:`stores.ArgoKerchunker.translate`.
 
-To later re-use such references to open lazily one of these netcdf files, an operation that does not require the
+To later reuse such references to open lazily one of these netcdf files, an operation that does not require the
 `kerchunk <https://fsspec.github.io/kerchunk/>`_ library, you can provide the appropriate :class:`stores.ArgoKerchunker`
 instance to a :class:`ArgoFloat` or :class:`gdacfs`:
 

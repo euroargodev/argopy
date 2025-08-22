@@ -546,4 +546,3 @@ class ArgoIndexPlotProto(ArgoIndexExtension):
     @abstractmethod
     def bar(self, *args, **kwargs) -> NoReturn:
         raise NotImplementedError("Not implemented")
-

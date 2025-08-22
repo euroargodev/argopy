@@ -4,13 +4,13 @@
         "ext": "json",
         "sha": "5cf80c9330a7befe09246770236bfd5f5147a2a0ccfd2e29ebdfba2609a197ad",
         "type": "application/json",
-        "ts": "2025-03-04 09:34:54"
+        "ts": "2025-08-20 06:56:28"
     },
     {
         "uri": "https://api.ifremer.fr/argopy/data/ARGO-BGC.json",
         "ext": "json",
         "sha": "3c0d46e0e115812606b9796f2d51a57b2ef226bd4c046afb67d2dc617c0ee6dd",
         "type": "application/json",
-        "ts": "2025-03-04 09:34:54"
+        "ts": "2025-08-20 06:56:28"
     }
 ]

@@ -3,7 +3,6 @@ import fsspec
 import logging
 import importlib
 from typing import Union
-from packaging import version
 
 from ..options import OPTIONS
 from ..utils.accessories import Registry

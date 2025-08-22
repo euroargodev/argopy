@@ -79,7 +79,7 @@ def Z_euphotic(
     if method == "percentage":
         try:
             Surface_levels = np.where(axis <= max_surface)[0]
-        except:
+        except Exception:
             Surface_levels = np.ndarray()
             pass
 
@@ -347,13 +347,13 @@ def time_UTC_to_offset(time_64, longitude):
         return 0
 
     elif abs(longitude) > 7.5 and abs(longitude) < 15:
-        local = time_64 + np.timedelta64(int(1 * np.sign(longitude)), "h")
+        # local = time_64 + np.timedelta64(int(1 * np.sign(longitude)), "h")
         # return local
         return 1 * np.sign(longitude)
 
     else:
         offset_hours = int((abs(longitude) + 7.5) / 15)
-        local = time_64 + np.timedelta64(int(offset_hours * np.sign(longitude)), "h")
+        # local = time_64 + np.timedelta64(int(offset_hours * np.sign(longitude)), "h")
         # return local
         return offset_hours * np.sign(longitude)
 
