@@ -8,10 +8,10 @@ What's New
 |pypi dwn| |conda dwn|
 
 
-v1.3.0 (Aug. 2025)
-------------------
+v1.3.0 (22 Aug. 2025)
+---------------------
 
-.. versionadded:: next
+.. versionadded:: v1.3.0
 
     This new **argopy** version requires Python 3.11 !
 
@@ -56,6 +56,8 @@ Breaking changes
 
 Energy
 ^^^^^^
+
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.3.0%20%5BgCO2eq%5D-TBA-black?style=plastic&labelColor=grey
 
 
 v1.2.0 (9 June 2025)
