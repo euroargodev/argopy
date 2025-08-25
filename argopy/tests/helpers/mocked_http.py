@@ -15,6 +15,7 @@ Servers covered by this fixture:
             "https://coastwatch.pfeg.noaa.gov/erddap",
             "https://www.ocean-ops.org/api/1",
             "https://dataselection.euro-argo.eu/api",
+            "https://fleetmonitoring.euro-argo.eu",
             "https://vocab.nerc.ac.uk/collection",
             "https://argovis-api.colorado.edu",
             "https://dx.doi.org",
@@ -92,6 +93,7 @@ if DB_FILE.exists():
             "https://coastwatch.pfeg.noaa.gov/erddap",
             "https://www.ocean-ops.org/api/1",
             "https://dataselection.euro-argo.eu/api",
+            "https://fleetmonitoring.euro-argo.eu",
             "https://vocab.nerc.ac.uk/collection",
             "https://argovis-api.colorado.edu",
             # "https://argovisbeta02.colorado.edu",
@@ -162,7 +164,6 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
         # log.debug("Requesting: '%s'" % file_path)
         # log.debug("Found: %s" % (file_path in self.files.keys()))
         # log.debug("Found B: %s" % (file_path in MOCKED_REQUESTS.keys()))
-
         # [log.debug("\t└─ '%s'" % k) for k in self.files.keys()]
 
         file_data = self.files.get(file_path)
