@@ -22,6 +22,8 @@ class FloatStore(FloatStoreProto):
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
+        if 'eafleetmonitoring_server' in kwargs:
+            self._eafleetmonitoring_server = kwargs['eafleetmonitoring_server']
 
         if self.host_protocol == "s3":
             self.host = self.host.replace(
@@ -58,11 +60,12 @@ class FloatStore(FloatStoreProto):
             self._metadata = httpstore(
                 cache=self.cache, cachedir=self.cachedir
             ).open_json(self.api_point["meta"], errors="raise")
-        except DataNotFound:
+        except Exception:
             # Try to load metadata from the meta file
             # to so, we first need the DAC name
-            self._dac = self.idx.search_wmo(self.WMO).read_dac_wmo()[0][0]
+            self._dac = self.idx.query.wmo(self.WMO).read_dac_wmo()[0][0]
             self.load_metadata_from_meta_file()
+            log.debug(f"Can't get metadata from {self.api_point['meta']}, fall back on meta data netcdf file.")
 
         # Fix data type for some useful keys:
         self._metadata["deployment"]["launchDate"] = pd.to_datetime(
@@ -84,8 +87,7 @@ class FloatStore(FloatStoreProto):
         """
         self._technicaldata = httpstore(
             cache=self.cache, cachedir=self.cachedir
-        ).open_json(self.api_point["technical"])
-
+        ).open_json(self.api_point["technical"], errors="raise")
         return self
 
     @property
