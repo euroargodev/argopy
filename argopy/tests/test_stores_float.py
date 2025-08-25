@@ -98,6 +98,7 @@ class Test_FloatStore_Online():
 
     def _patch_host(self, host):
         if 's3' in host and not has_connection:
+            log.info("Skip this test with 's3' because there is no internet connection")
             pytest.skip("Skip this test with 's3' because there is no internet connection")
         return patch_ftp(host)
 
