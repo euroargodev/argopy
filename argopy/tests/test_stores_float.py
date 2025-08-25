@@ -16,7 +16,7 @@ from argopy.stores.float.implementations.offline.float import FloatStore as Argo
 from argopy.stores.float.implementations.online.float import FloatStore as ArgoFloatOnline
 
 from mocked_http import mocked_httpserver, mocked_server_address
-from utils import patch_ftp
+from utils import patch_ftp, has_connection
 
 
 log = logging.getLogger("argopy.tests.floatstore")
@@ -74,7 +74,7 @@ def id_for_host(host):
 class Test_FloatStore_Online():
     floatstore = ArgoFloatOnline
 
-    scenarios = [(wmo, h, cache) for wmo in VALID_WMO for h in VALID_HOSTS.keys() for cache in [False]]
+    scenarios = [(wmo, h, cache) for wmo in VALID_WMO for h in VALID_HOSTS.keys() for cache in [False, True]]
     scenarios_ids = [
         "wmo=%i, host='%s', %s" % (opts[0], id_for_host(VALID_HOSTS[opts[1]]), 'cached' if opts[2] else 'no cache')
         for opts in scenarios
@@ -96,15 +96,16 @@ class Test_FloatStore_Online():
 
         remove_test_dir()
 
-    def _patch_ftp(self, ftp):
-        return patch_ftp(ftp)
+    def _patch_host(self, host):
+        if 's3' in host and not has_connection:
+            pytest.skip("Skip this test with 's3' because there is no internet connection")
+        return patch_ftp(host)
 
     def call_floatstore(self, WMO, store_args, xfail=False, reason="?"):
         def core(WMO, fargs):
             try:
                 log.debug(f"Instantiating a FloatStore with: {fargs}")
                 af = self.floatstore(WMO, **fargs)
-                # af._eafleetmonitoring_server = mocked_server_address  # Use mocked server
             except Exception:
                 if xfail:
                     pytest.xfail(reason)
@@ -131,14 +132,12 @@ class Test_FloatStore_Online():
         log.debug("-"*50)
         log.debug(request)
         wmo = request.param[0]
-        host = self._patch_ftp(VALID_HOSTS[request.param[1]])
+        host = self._patch_host(VALID_HOSTS[request.param[1]])
         cache = request.param[2]
 
         xfail, reason = False, ""
         if not HAS_S3FS and 's3' in host:
             xfail, reason = True, 's3fs not available'
-        # elif 's3' in host:
-        #     xfail, reason = True, 's3 is experimental'
 
         yield self.get_a_floatstore(wmo, host=host, cache=cache,
                                     xfail=xfail, reason=reason)
