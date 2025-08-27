@@ -16,6 +16,11 @@ Features and front-end API
 
 - **New colormap in** :class:`ArgoColors` **for whole profile QC flags**. See the new documentation section on :ref:`Argo colors` for more (:pr:`515`) by |gmaze|.
 
+Internals
+^^^^^^^^^
+
+- Let :meth:`ArgoFloat.plot.map` method auto-select colorbar and legend settings depending on the parameter to plot. (:pr:`515`) by |gmaze|.
+
 
 v1.3.0 (22 Aug. 2025)
 ---------------------

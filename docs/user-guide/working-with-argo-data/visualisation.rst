@@ -8,8 +8,8 @@ Data visualisation
 .. contents::
    :local:
 
-From Data fetcher
-*****************
+From a DataFetcher
+******************
 
 The :class:`DataFetcher` come with a ``plot`` method to have a quick look to your data. This method can take *trajectory*, *profiler*, *dac* and *qc_altimetry* as arguments. All details are available in the :class:`DataFetcher.plot` class documentation.
 
@@ -28,9 +28,9 @@ Trajectories
 
 .. code-block:: python
 
-    Adf = DataFetcher().float([6902745, 6902746]).load()
-    fig, ax = Adf.plot('trajectory')
-    fig, ax = Adf.plot()  # Trajectory is the default plot
+    Adf = DataFetcher(src='gdac').float([6902745, 6902746])
+    Adf.plot('trajectory')
+    Adf.plot()  # Trajectory is the default plot
 
 .. image:: ../../_static/trajectory_sample.png
 
@@ -41,8 +41,8 @@ It is also possible to create horizontal bar plots for histograms on some data p
 
 .. code-block:: python
 
-    Adf = DataFetcher().region([-80,-30,20,50,0,100,'2021-01','2021-08']).load()
-    fig, ax = Adf.plot('dac')
+    Adf = DataFetcher(src='gdac').region([-80,-30,20,50,0,100,'2021-01','2021-08'])
+    Adf.plot('dac')
 
 .. image:: ../../_static/bar_dac.png
 
@@ -50,72 +50,148 @@ If you have `Seaborn <https://seaborn.pydata.org/>`_ installed, you can change t
 
 .. code-block:: python
 
-    fig, ax = Adf.plot('profiler', style='whitegrid')
+    Adf.plot('profiler', style='whitegrid')
 
-.. image:: ../../_static/bar_profiler.png
+.. image:: ../../_static/bar_profiler_whitegrid.png
 
-From ArgoFloat instance
-***********************
+From an ArgoFloat
+*****************
 
 .. currentmodule:: argopy
 
 The :class:`ArgoFloat` class come with a :class:`ArgoFloat.plot` accessor than can take several methods to quickly visualize data from the float:
 
-.. code-block:: python
-
-    from argopy import ArgoFloat
-
-    wmo = 6902772
-
-    af = ArgoFloat(wmo)
-
-    af.plot.trajectory()
-
-    af.plot.trajectory(figsize=(18,18), padding=[1, 5])
-
-    af.plot.map('TEMP', pres=450, cmap='Spectral_r')
-
-    af.plot.map('DATA_MODE', cbar=False, legend=True)
-
-    af.plot.scatter('PSAL')
-
-    af.plot.scatter('DOXY', ds='Sprof')
-
-    af.plot.scatter('MEASUREMENT_CODE', ds='Rtraj')
-
-
 Check all the detailed arguments on the API reference :class:`ArgoFloat.plot`.
 
-From ArgoIndex instance
-************************
+.. tabs::
+
+    .. tab:: Simple trajectory
+
+        .. code-block:: python
+
+                from argopy import ArgoFloat
+                af = ArgoFloat(6903262)
+
+                af.plot.trajectory()
+                # af.plot.trajectory(figsize=(18,18), padding=[1, 5])
+
+        .. image:: ../../_static/ArgoFloat_trajectory.png
+
+    .. tab:: Data along trajectory
+
+        .. code-block:: python
+
+                from argopy import ArgoFloat
+                af = ArgoFloat(6903262)
+
+                af.plot.map('TEMP', pres=450, cmap='Spectral_r')
+
+        .. image:: ../../_static/ArgoFloat_TEMP.png
+
+        .. code-block:: python
+
+                from argopy import ArgoFloat
+                af = ArgoFloat(6903262)
+
+                af.plot.map('PROFILE_PSAL_QC')
+
+        .. image:: ../../_static/ArgoFloat_PROFILE_PSAL_QC.png
+
+    .. tab:: Data as a function of pressure
+
+        .. code-block:: python
+
+                from argopy import ArgoFloat
+                af = ArgoFloat(6903262)
+
+                af.plot.scatter('PSAL')
+
+        .. image:: ../../_static/ArgoFloat_PSAL.png
+
+        Also with data from other netcdf dataset:
+
+        .. code-block:: python
+
+                from argopy import ArgoFloat
+                af = ArgoFloat(6903262)
+
+                af.plot.scatter('MEASUREMENT_CODE', ds='Rtraj')
+
+        .. image:: ../../_static/ArgoFloat_MEASUREMENT_CODE.png
+
+
+
+From an ArgoIndex
+*****************
 
 .. currentmodule:: argopy
 
 The :class:`ArgoIndex` class come with a :class:`ArgoIndex.plot` accessor than can take several methods to quickly visualize data from the float:
 
-.. code-block:: python
-
-    from argopy import ArgoIndex
-
-    idx = ArgoIndex(index_file='bgc-s')
-    idx.query.params('CHLA')
-
-    idx.plot.trajectory()
-
-    idx.plot.trajectory(set_global=1,
-                        add_legend=0,
-                        traj=0,
-                        cbar=False,
-                        markersize=12,
-                        markeredgesize=0.1,
-                        dpi=120,
-                        figsize=(20,20));
-
-    idx.plot.bar(by='profiler')
-
-    idx.plot.bar(by='dac')
-
 Check all the detailed arguments on the API reference :class:`ArgoIndex.plot`.
+
+.. tabs::
+
+    .. tab:: Float index trajectory
+
+        .. code-block:: python
+
+            from argopy import ArgoIndex
+            idx = ArgoIndex(index_file='bgc-s')
+
+            idx.query.wmo('6904240')
+            idx.plot.trajectory()
+
+        .. image:: ../../_static/ArgoIndex_trajectory.png
+
+        Also with much more floats:
+
+        .. code-block:: python
+
+            from argopy import ArgoIndex
+            idx = ArgoIndex(index_file='bgc-s')
+
+            idx.query.params('PH')
+            idx.plot.trajectory(set_global=True,
+                                add_legend=False,
+                                traj=False,
+                                cbar=False,
+                                markersize=12,
+                                markeredgesize=0.1,
+                                dpi=120,
+                                figsize=(20,20));
+
+        .. image:: ../../_static/ArgoIndex_trajectory_ph.png
+
+    .. tab:: Bar plots of index properties
+
+        .. code-block:: python
+
+            from argopy import ArgoIndex
+            idx = ArgoIndex(index_file='bgc-s')
+
+            idx.query.params('CHLA')
+            idx.plot.bar(by='profiler')
+
+        .. image:: ../../_static/ArgoIndex_profiler.png
+
+        .. code-block:: python
+
+            from argopy import ArgoIndex
+            idx = ArgoIndex(index_file='bgc-s')
+
+            idx.plot.bar(by='dac')
+
+        .. image:: ../../_static/ArgoIndex_dac.png
+
+        .. code-block:: python
+
+            from argopy import ArgoIndex
+            idx = ArgoIndex(index_file='bgc-s')
+
+            idx.plot.bar(by='institution')
+
+        .. image:: ../../_static/ArgoIndex_institution.png
 
 
 Dashboards
@@ -221,7 +297,7 @@ Let's import the usual suspects and some data to work with.
     ds = ArgoSet.data.argo.point2profile()
     df = ArgoSet.index
 
-    df_deployment = OceanOPSDeployments([-90, 0, 0, 90]).to_dataframe()
+    df_deployment = OceanOPSDeployments([-90, -10, 0, 90]).to_dataframe()
 
 
 And see in the examples below how it can be used and tuned.
@@ -256,7 +332,7 @@ Some options are available to customise the plot, for instance:
 
 .. code-block:: python
 
-    fig, ax = scatter_map(df,
+    fig, ax, _ = scatter_map(df,
                        figsize=(10,6),
                        set_global=True,
                        markersize=2,
@@ -387,6 +463,18 @@ The :ref:`Use predefined Argo Colors` section above gives examples of the availa
         .. ipython:: python
 
             ArgoColors('qc_flag').definition
+
+    .. tab:: Profile Quality control flag scale
+
+        .. code-block:: python
+
+            ArgoColors('pqc_flag')
+
+        .. image:: ../../_static/ArgoColors_pqc.png
+
+        .. ipython:: python
+
+            ArgoColors('pqc_flag').definition
 
     .. tab:: Deployment status
 
