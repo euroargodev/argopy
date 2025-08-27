@@ -8,6 +8,15 @@ What's New
 |pypi dwn| |conda dwn|
 
 
+Coming up next
+--------------
+
+Features and front-end API
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- **New colormap in** :class:`ArgoColors` **for whole profile QC flags**. See the new documentation section on :ref:`Argo colors` for more (:pr:`515`) by |gmaze|.
+
+
 v1.3.0 (22 Aug. 2025)
 ---------------------
 
