@@ -59,66 +59,11 @@ From an ArgoFloat
 
 .. currentmodule:: argopy
 
-The :class:`ArgoFloat` class come with a :class:`ArgoFloat.plot` accessor than can take several methods to quickly visualize data from the float:
+The :class:`ArgoFloat` class come with a :class:`ArgoFloat.plot` accessor than can take several methods to quickly visualize data from the float.
 
-Check all the detailed arguments on the API reference :class:`ArgoFloat.plot`.
+Check the :ref:`dedicated documentation section <argofloat-visu>` or the detailed arguments on the API reference :class:`ArgoFloat.plot`.
 
-.. tabs::
-
-    .. tab:: Simple trajectory
-
-        .. code-block:: python
-
-                from argopy import ArgoFloat
-                af = ArgoFloat(6903262)
-
-                af.plot.trajectory()
-                # af.plot.trajectory(figsize=(18,18), padding=[1, 5])
-
-        .. image:: ../../_static/ArgoFloat_trajectory.png
-
-    .. tab:: Data along trajectory
-
-        .. code-block:: python
-
-                from argopy import ArgoFloat
-                af = ArgoFloat(6903262)
-
-                af.plot.map('TEMP', pres=450, cmap='Spectral_r')
-
-        .. image:: ../../_static/ArgoFloat_TEMP.png
-
-        .. code-block:: python
-
-                from argopy import ArgoFloat
-                af = ArgoFloat(6903262)
-
-                af.plot.map('PROFILE_PSAL_QC')
-
-        .. image:: ../../_static/ArgoFloat_PROFILE_PSAL_QC.png
-
-    .. tab:: Data as a function of pressure
-
-        .. code-block:: python
-
-                from argopy import ArgoFloat
-                af = ArgoFloat(6903262)
-
-                af.plot.scatter('PSAL')
-
-        .. image:: ../../_static/ArgoFloat_PSAL.png
-
-        Also with data from other netcdf dataset:
-
-        .. code-block:: python
-
-                from argopy import ArgoFloat
-                af = ArgoFloat(6903262)
-
-                af.plot.scatter('MEASUREMENT_CODE', ds='Rtraj')
-
-        .. image:: ../../_static/ArgoFloat_MEASUREMENT_CODE.png
-
+.. image:: ../../_static/ArgoFloat_TEMP.png
 
 
 From an ArgoIndex
@@ -126,72 +71,11 @@ From an ArgoIndex
 
 .. currentmodule:: argopy
 
-The :class:`ArgoIndex` class come with a :class:`ArgoIndex.plot` accessor than can take several methods to quickly visualize data from the float:
+The :class:`ArgoIndex` class come with a :class:`ArgoIndex.plot` accessor than can take several methods to quickly visualize data from the float.
 
-Check all the detailed arguments on the API reference :class:`ArgoIndex.plot`.
+Check the :ref:`dedicated documentation section <argoindex-visu>` or the detailed arguments on the API reference :class:`ArgoIndex.plot`.
 
-.. tabs::
-
-    .. tab:: Float index trajectory
-
-        .. code-block:: python
-
-            from argopy import ArgoIndex
-            idx = ArgoIndex(index_file='bgc-s')
-
-            idx.query.wmo('6904240')
-            idx.plot.trajectory()
-
-        .. image:: ../../_static/ArgoIndex_trajectory.png
-
-        Also with much more floats:
-
-        .. code-block:: python
-
-            from argopy import ArgoIndex
-            idx = ArgoIndex(index_file='bgc-s')
-
-            idx.query.params('PH')
-            idx.plot.trajectory(set_global=True,
-                                add_legend=False,
-                                traj=False,
-                                cbar=False,
-                                markersize=12,
-                                markeredgesize=0.1,
-                                dpi=120,
-                                figsize=(20,20));
-
-        .. image:: ../../_static/ArgoIndex_trajectory_ph.png
-
-    .. tab:: Bar plots of index properties
-
-        .. code-block:: python
-
-            from argopy import ArgoIndex
-            idx = ArgoIndex(index_file='bgc-s')
-
-            idx.query.params('CHLA')
-            idx.plot.bar(by='profiler')
-
-        .. image:: ../../_static/ArgoIndex_profiler.png
-
-        .. code-block:: python
-
-            from argopy import ArgoIndex
-            idx = ArgoIndex(index_file='bgc-s')
-
-            idx.plot.bar(by='dac')
-
-        .. image:: ../../_static/ArgoIndex_dac.png
-
-        .. code-block:: python
-
-            from argopy import ArgoIndex
-            idx = ArgoIndex(index_file='bgc-s')
-
-            idx.plot.bar(by='institution')
-
-        .. image:: ../../_static/ArgoIndex_institution.png
+.. image:: ../../_static/ArgoIndex_profiler.png
 
 
 Dashboards
@@ -277,8 +161,11 @@ Examples:
         # similar to:
         DataFetcher().profile(WMO, CYC).dashboard()
 
+Utilities
+*********
+
 Scatter Maps
-************
+============
 
 The :class:`argopy.plot.scatter_map` utility function is dedicated to making maps with Argo profile positions coloured according to specific variables: **a scatter map**.
 
@@ -303,7 +190,7 @@ Let's import the usual suspects and some data to work with.
 And see in the examples below how it can be used and tuned.
 
 Default scatter map for trajectories
-====================================
+------------------------------------
 By default, the :func:`argopy.plot.scatter_map` function will try to plot a trajectory map, i.e. a map where profile points are of the same color for each floats and joined by a simple line.
 
 .. note::
@@ -345,7 +232,7 @@ Some options are available to customise the plot, for instance:
 
 
 Use predefined Argo Colors
-==========================
+--------------------------
 The :class:`argopy.plot.scatter_map` function uses the :class:`ArgoColors` utility class to better resolve discrete colormaps of known variables. The colormap is automatically guessed using the ``hue`` argument. Here are some examples.
 
 .. tabs::
@@ -358,7 +245,7 @@ The :class:`argopy.plot.scatter_map` function uses the :class:`ArgoColors` utili
 
             scatter_map(ds, hue='DATA_MODE')
 
-        or more explicitly:
+        or more explicitly, this is equivalent to:
 
         .. code-block:: python
 
@@ -374,13 +261,13 @@ The :class:`argopy.plot.scatter_map` function uses the :class:`ArgoColors` utili
 
     .. tab:: QC flag
 
-        Since QC flags are given for each measurements, we need to select a specific depth levels for this plot:
+        Since QC flags are given for each measurements, we need to select a specific depth levels for this plot. By default, we select data from the first vertical level along the `N_LEVELS` dimension.
 
         .. code-block:: python
 
             scatter_map(ds, hue='PSAL_QC')
 
-        using guess mode for arguments, or more explicitly:
+        using guess mode for arguments, or more explicitly, this is equivalent to:
 
         .. code-block:: python
 
@@ -409,7 +296,7 @@ The :class:`argopy.plot.scatter_map` function uses the :class:`ArgoColors` utili
 
 
 Use any colormap
-================
+----------------
 Beyond the predefined set of Argo colors, one can use any colormap that can be discretesized.
 
 In the example below, we plot profile years of sampling using the reverse ``Spectral`` colormap:
@@ -426,7 +313,7 @@ In the example below, we plot profile years of sampling using the reverse ``Spec
 
 
 Argo colors
-***********
+===========
 For your own plot methods, **argopy** provides the :class:`ArgoColors` utility class to better resolve discrete colormaps of known Argo variables.
 
 The class :class:`ArgoColors` is used to get a discrete colormap (available with the ``cmap`` attribute), as a :class:`matplotlib.colors.LinearSegmentedColormap`.
