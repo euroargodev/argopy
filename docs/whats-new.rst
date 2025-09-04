@@ -8,6 +8,15 @@ What's New
 |pypi dwn| |conda dwn|
 
 
+Coming up next
+--------------
+
+Internals
+^^^^^^^^^
+
+- **Fix bug** whereby fetching data from a selection of profiles with only real-time data would fail :issue:`517`. (:pr:`518`) by |gmaze|.
+
+
 v1.3.0 (22 Aug. 2025)
 ---------------------
 
