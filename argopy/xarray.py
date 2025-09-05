@@ -901,7 +901,7 @@ class ArgoAccessor:
             core_params.remove("PSAL")
 
         # Apply transforms and filters:
-        this = this.argo.filter_qc(QC_list=1, QC_fields=["POSITION_QC", "TIME_QC"])
+        this = this.argo.filter_qc(QC_list=1, QC_fields=["POSITION_QC", f"{self._TNAME}_QC"])
         this = this.argo.datamode.merge(params=core_params)
         this = this.argo.datamode.filter(params=core_params, dm="D")
 
