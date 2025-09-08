@@ -300,8 +300,8 @@ class httpstore(ArgoStoreProto):
 
             if "ak" not in kwargs:
                 self.ak = ArgoKerchunker()
-                if self.protocol == 's3':
-                    storage_options = {'anon': not has_aws_credentials()}
+                if self.protocol == "s3":
+                    storage_options = {"anon": not has_aws_credentials()}
                 else:
                     storage_options = {}
                 self.ak.storage_options = storage_options
@@ -314,11 +314,11 @@ class httpstore(ArgoStoreProto):
                     "backend_kwargs": {
                         "consolidated": False,
                         "storage_options": {
-                            "fo": self.ak.to_reference(url,
-                                                       overwrite=akoverwrite,
-                                                       fs=self),  # codespell:ignore
+                            "fo": self.ak.to_reference(
+                                url, overwrite=akoverwrite, fs=self
+                            ),  # codespell:ignore
                             "remote_protocol": fsspec.core.split_protocol(url)[0],
-                            "remote_options": self.ak.storage_options
+                            "remote_options": self.ak.storage_options,
                         },
                     },
                 }
@@ -327,7 +327,10 @@ class httpstore(ArgoStoreProto):
                 warnings.warn(
                     "This url does not support byte range requests so we cannot load it lazily, falling back on loading in memory."
                 )
-                log.debug("This url does not support byte range requests: %s" % self.full_path(url))
+                log.debug(
+                    "This url does not support byte range requests: %s"
+                    % self.full_path(url)
+                )
                 return load_in_memory(
                     url, errors=errors, dwn_opts=dwn_opts, xr_opts=xr_opts
                 )
@@ -363,7 +366,7 @@ class httpstore(ArgoStoreProto):
 
             else:
                 target = target if isinstance(target, bytes) else target.getbuffer()
-                ds = Dataset(None, memory=target, diskless=True, mode='r')
+                ds = Dataset(None, memory=target, diskless=True, mode="r")
 
             self.register(url)
             return ds
@@ -897,7 +900,9 @@ class httpstore(ArgoStoreProto):
         self.register(url)
         return df
 
-    def open_json(self, url: str, errors: Literal['raise', 'silent', 'ignore'] = 'raise', **kwargs) -> Any:
+    def open_json(
+        self, url: str, errors: Literal["raise", "silent", "ignore"] = "raise", **kwargs
+    ) -> Any:
         """Download and process a json document from an url
 
         Steps performed:
@@ -952,10 +957,15 @@ class httpstore(ArgoStoreProto):
         js = json.loads(data, **js_opts)
         if len(js) == 0:
             if errors == "raise":
-                raise DataNotFound("No data loadable from %s, although the url return some data: '%s'" % (url, data))
+                raise DataNotFound(
+                    "No data loadable from %s, although the url return some data: '%s'"
+                    % (url, data)
+                )
 
             elif errors == "ignore":
-                log.debug("No data loaded from %s, although the url return some data" % url)
+                log.debug(
+                    "No data loaded from %s, although the url return some data" % url
+                )
                 return None
 
             else:
