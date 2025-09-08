@@ -416,9 +416,11 @@ class ftpstore(httpstore):
                 ds = xr.concat(
                     results,
                     dim=concat_dim,
-                    data_vars="minimal",
-                    coords="minimal",
-                    compat="override",
+                    data_vars="minimal",  # Only data variables in which the dimension already appears are included.
+                    coords="minimal",     # Only coordinates in which the dimension already appears are included.
+                                          # If concatenating over a dimension _not_ present in any of the objects,
+                                          # then all data variables will be concatenated along that new dimension.
+                    compat="override",    # skip comparing and pick variable from first dataset,
                 )
                 return ds
             else:

@@ -514,9 +514,11 @@ class httpstore(ArgoStoreProto):
                     ds = xr.concat(
                         ds_list,
                         dim=concat_dim,
-                        data_vars="minimal",
-                        coords="minimal",
-                        compat="override",
+                        data_vars="minimal",  # Only data variables in which the dimension already appears are included.
+                        coords="minimal",     # Only coordinates in which the dimension already appears are included.
+                                              # If concatenating over a dimension _not_ present in any of the objects,
+                                              # then all data variables will be concatenated along that new dimension.
+                        compat="override",    # skip comparing and pick variable from first dataset
                     )
                     log.info("Dataset size after concat: %i" % len(ds[concat_dim]))
                     return ds, True
@@ -862,9 +864,11 @@ class httpstore(ArgoStoreProto):
                 ds = xr.concat(
                     results,
                     dim=concat_dim,
-                    data_vars="minimal",
-                    coords="minimal",
-                    compat="override",
+                    data_vars="minimal",  # Only data variables in which the dimension already appears are included.
+                    coords="minimal",     # Only coordinates in which the dimension already appears are included.
+                                          # If concatenating over a dimension _not_ present in any of the objects,
+                                          # then all data variables will be concatenated along that new dimension.
+                    compat="override",    # skip comparing and pick variable from first dataset
                 )
                 if not compute_details:
                     return ds
