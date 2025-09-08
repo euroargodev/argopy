@@ -1508,7 +1508,7 @@ class ArgoAccessor:
             that.append(CS)
 
         # Create a dataset with all new variables:
-        that = xr.merge(that)
+        that = xr.merge(that, compat='no_conflicts')
         # Add to the dataset essential Argo variables (allows to keep using the argo accessor):
         that = that.assign(
             {
