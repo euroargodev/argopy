@@ -67,7 +67,7 @@ jobs:
         continue-on-error: true
       - uses: actions/checkout@v5
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4.3.1
+        uses: aws-actions/configure-aws-credentials@v5.0.0
         with:
           aws-region: us-west-1
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ga-ci-tests-argopy-01
@@ -122,7 +122,7 @@ jobs:
           label: 'pytest core-pinned'
         continue-on-error: true
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5.5.0
+        uses: codecov/codecov-action@v5.5.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./cov.xml
@@ -182,7 +182,7 @@ jobs:
         continue-on-error: true
       - uses: actions/checkout@v5
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4.3.1
+        uses: aws-actions/configure-aws-credentials@v5.0.0
         with:
           aws-region: us-west-1
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ga-ci-tests-argopy-01
@@ -237,7 +237,7 @@ jobs:
           label: 'pytest all-pinned'
         continue-on-error: true
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5.5.0
+        uses: codecov/codecov-action@v5.5.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./cov.xml
