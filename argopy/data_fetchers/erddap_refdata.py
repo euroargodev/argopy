@@ -141,12 +141,13 @@ class ErddapREFDataFetcher(ErddapArgoDataFetcher):
                 )
                 g.append(sub_grp[-1])
         ds = xr.concat(
-            g, 
+            g,
             dim="N_POINTS",
             data_vars="minimal",  # Only data variables in which the dimension already appears are included.
-            coords="minimal",     # Only coordinates in which the dimension already appears are included.
-                                  # If concatenating over a dimension _not_ present in any of the objects,
-                                  # then all data variables will be concatenated along that new dimension.
+            coords="all",
+            # coords="minimal",     # Only coordinates in which the dimension already appears are included.
+            #                       # If concatenating over a dimension _not_ present in any of the objects,
+            #                       # then all data variables will be concatenated along that new dimension.
             compat="override",  # skip comparing and pick variable from first dataset,
         )
 
