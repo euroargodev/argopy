@@ -391,13 +391,13 @@ class filestore(ArgoStoreProto):
         results = [r for r in results if r is not None]  # Only keep non-empty results
         if len(results) > 0:
             if concat:
-                # ds = xr.concat(results, dim=concat_dim, data_vars='all', coords='all', compat='override')
                 ds = xr.concat(
                     results,
                     dim=concat_dim,
-                    data_vars="minimal",
-                    coords="minimal",
-                    compat="override",
+                    data_vars="minimal",  # Only data variables in which the dimension already appears are included.
+                    coords="all",         # All coordinate variables will be concatenated, except those corresponding
+                                          # to other dimensions.
+                    compat="override",    # skip comparing and pick variable from first dataset,
                 )
                 return ds
             else:
