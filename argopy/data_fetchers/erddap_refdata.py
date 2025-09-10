@@ -1,6 +1,7 @@
 """
 Fetcher to retrieve ship-based CTD reference data from Ifremer erddap
 """
+
 import xarray as xr
 import logging
 from ..options import OPTIONS
@@ -17,7 +18,9 @@ try:
 except:  # noqa: E722
     # >= v0.8.0
     from erddapy.erddapy import ERDDAP  # noqa: F401
-    from erddapy.erddapy import _quote_string_constraints as quote_string_constraints  # noqa: F401
+    from erddapy.erddapy import (
+        _quote_string_constraints as quote_string_constraints,
+    )  # noqa: F401
     from erddapy.erddapy import parse_dates  # noqa: F401
 
     # Soon ! https://github.com/ioos/erddapy
@@ -138,7 +141,12 @@ class ErddapREFDataFetcher(ErddapArgoDataFetcher):
                 )
                 g.append(sub_grp[-1])
         ds = xr.concat(
-            g, dim="N_POINTS", data_vars="minimal", coords="minimal", compat="override"
+            g,
+            dim="N_POINTS",
+            data_vars="minimal",  # Only data variables in which the dimension already appears are included.
+            coords="all",         # All coordinate variables will be concatenated, except those corresponding
+                                  # to other dimensions.
+            compat="override",  # skip comparing and pick variable from first dataset,
         )
 
         # Cast data types and add variable attributes (not available in the csv download):
@@ -163,16 +171,16 @@ class Fetch_box(ErddapREFDataFetcher):
                 box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
         """
         self.BOX = box.copy()
-        self.definition = (
-            "Ifremer erddap ship-based CTD-REFERENCE data fetcher for a space/time region"
-        )
+        self.definition = "Ifremer erddap ship-based CTD-REFERENCE data fetcher for a space/time region"
         return self
 
     def define_constraints(self):
         """Define request constraints"""
 
-        self.erddap.constraints = {"longitude>=": conv_lon(self.BOX[0], conv='180')}
-        self.erddap.constraints.update({"longitude<=": conv_lon(self.BOX[1], conv='180')})
+        self.erddap.constraints = {"longitude>=": conv_lon(self.BOX[0], conv="180")}
+        self.erddap.constraints.update(
+            {"longitude<=": conv_lon(self.BOX[1], conv="180")}
+        )
         self.erddap.constraints.update({"latitude>=": self.BOX[2]})
         self.erddap.constraints.update({"latitude<=": self.BOX[3]})
         self.erddap.constraints.update({"pres>=": self.BOX[4]})
