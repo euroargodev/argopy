@@ -90,7 +90,6 @@ class FloatStoreProto(ABC):
         self._metadata = None  # Float meta-data dictionary
         self._dac = None  # DAC name (string)
         self._df_profiles = None  # Dataframe with profiles index
-        self._online = None  # Web access status
 
     def load_index(self):
         """Load the Argo full index in memory and trigger search for this float"""
