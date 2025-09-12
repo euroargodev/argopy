@@ -926,7 +926,7 @@ class ArgoDataFetcher:
         Calling this method will automatically trigger a call to the :class:`argopy.DataFetcher.load` method.
 
         """
-        self.load()
+        # self.load()
         if ptype in ["dac", "institution"]:
             if "institution" not in self.index:
                 self.to_index(full=True)

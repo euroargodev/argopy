@@ -101,3 +101,71 @@ The :class:`ArgoFloat` class is further used in **argopy** in the :class:`ArgoIn
     for a_float in idx.iterfloats():
         ds = a_float.open_dataset('meta')
         print(a_float.WMO, ds['LAUNCH_DATE'].data)
+
+.. _argofloat-visu:
+
+Plotting features
+-----------------
+.. currentmodule:: argopy
+
+The :class:`ArgoFloat` class come with a :class:`ArgoFloat.plot` accessor than can take several methods to quickly visualize data from the float:
+
+Check all the detailed arguments on the API reference :class:`ArgoFloat.plot`.
+
+.. tabs::
+
+    .. tab:: Simple trajectory
+
+        .. code-block:: python
+
+                from argopy import ArgoFloat
+                af = ArgoFloat(6903262)
+
+                af.plot.trajectory()
+                # af.plot.trajectory(figsize=(18,18), padding=[1, 5])
+
+        .. image:: ../../_static/ArgoFloat_trajectory.png
+
+    .. tab:: Data along trajectory
+
+        .. code-block:: python
+
+                from argopy import ArgoFloat
+                af = ArgoFloat(6903262)
+
+                af.plot.map('TEMP', pres=450, cmap='Spectral_r')
+
+        .. image:: ../../_static/ArgoFloat_TEMP.png
+
+        .. code-block:: python
+
+                from argopy import ArgoFloat
+                af = ArgoFloat(6903262)
+
+                af.plot.map('PROFILE_PSAL_QC')
+
+        .. image:: ../../_static/ArgoFloat_PROFILE_PSAL_QC.png
+
+    .. tab:: Data as a function of pressure
+
+        .. code-block:: python
+
+                from argopy import ArgoFloat
+                af = ArgoFloat(6903262)
+
+                af.plot.scatter('PSAL')
+
+        .. image:: ../../_static/ArgoFloat_PSAL.png
+
+        By default, variables are loaded from the `prof` netcdf dataset, but variables from other netcdf dataset can also be plotted if the appropriate dataset is indicated with the `ds` argument:
+
+        .. code-block:: python
+
+                from argopy import ArgoFloat
+                af = ArgoFloat(6903262)
+
+                af.plot.scatter('MEASUREMENT_CODE', ds='Rtraj')
+
+        .. image:: ../../_static/ArgoFloat_MEASUREMENT_CODE.png
+
+

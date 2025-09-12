@@ -496,7 +496,10 @@ def scatter_map(  # noqa: C901
         if hue.lower() in ArgoColors().list_valid_known_colormaps:
             cmap = hue.lower()
         elif "qc" in hue.lower():
-            cmap = "qc"
+            if "profile_" not in hue.lower():
+                cmap = "qc"
+            else:
+                cmap = "pqc"
         elif "mode" in hue.lower():
             cmap = "data_mode"
         elif "status_code" in hue.lower():
