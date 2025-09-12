@@ -251,23 +251,25 @@ def merge_param_with_param_adjusted(
             ),
         )
     )
+    copy_adj = np.count_nonzero(ii_measured_adj) > 0
 
     # Copy param_adjusted values onto param indexes where data_mode is in 'a' or 'd':
-    ds["%s" % param].loc[dict(N_POINTS=ii_measured_adj)] = ds[
-        "%s_ADJUSTED" % param
-    ].loc[dict(N_POINTS=ii_measured_adj)]
+    if copy_adj:
+        ds["%s" % param].loc[dict(N_POINTS=ii_measured_adj)] = ds[
+            "%s_ADJUSTED" % param
+        ].loc[dict(N_POINTS=ii_measured_adj)]
     ds = ds.drop_vars(["%s_ADJUSTED" % param])
-
-    if "%s_ADJUSTED_QC" % param in ds and "%s_ADJUSTED_QC" % param in ds:
-        ds["%s_QC" % param].loc[dict(N_POINTS=ii_measured_adj)] = ds[
-            "%s_ADJUSTED_QC" % param
-        ].loc[dict(N_POINTS=ii_measured_adj)]
+    if "%s_ADJUSTED_QC" % param in ds:
+        if copy_adj:
+            ds["%s_QC" % param].loc[dict(N_POINTS=ii_measured_adj)] = ds[
+                "%s_ADJUSTED_QC" % param
+            ].loc[dict(N_POINTS=ii_measured_adj)]
         ds = ds.drop_vars(["%s_ADJUSTED_QC" % param])
-
     if "%s_ERROR" % param in ds and "%s_ADJUSTED_ERROR" % param in ds:
-        ds["%s_ERROR" % param].loc[dict(N_POINTS=ii_measured_adj)] = ds[
-            "%s_ADJUSTED_ERROR" % param
-        ].loc[dict(N_POINTS=ii_measured_adj)]
+        if copy_adj:
+            ds["%s_ERROR" % param].loc[dict(N_POINTS=ii_measured_adj)] = ds[
+                "%s_ADJUSTED_ERROR" % param
+            ].loc[dict(N_POINTS=ii_measured_adj)]
         ds = ds.drop_vars(["%s_ADJUSTED_ERROR" % param])
 
     if core_ds:
