@@ -13,7 +13,7 @@ for standard users as well as Argo experts.
 
     The argopy team will organise "training camps" in 2025:
 
-    1. **in person** training: Monday Sept. 22nd afternoon, `Thalassocosmos <https://cretaquarium.gr/>`_, HCMR, Heraklion, Crete, during the `Euro-Argo Science Meeting <https://www.euro-argo.eu/News-Meetings/News/News-archives/2025/8th-Euro-Argo-Science-Meeting>`_: `registration are now open here <https://forms.ifremer.fr/euroargo/8th-euro-argo-science-meeting-registration-form/>`_.
+    1. **in person** training: Monday Sept. 22nd afternoon, `Thalassocosmos <https://cretaquarium.gr/>`_, HCMR, Heraklion, Crete, during the `Euro-Argo Science Meeting <https://www.euro-argo.eu/News-Meetings/News/News-archives/2025/8th-Euro-Argo-Science-Meeting>`_. Registration closed.
 
     2. **in person** training: Wednesday June 25th 10am, room 304, `JAMSTEC Headquarters <https://www.jamstec.go.jp/e/about/access/yokosuka.html>`_ `GOORC <https://www.jamstec.go.jp/goorc/e/>`_, Yokosuka, Japan. No registration required.
 
