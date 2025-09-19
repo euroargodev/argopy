@@ -1,7 +1,7 @@
 import numpy as np
 from typing import Any
 
-from ....plot import scatter_plot, scatter_map
+from ....plot import scatter_plot, scatter_map, ArgoColors
 from ....utils.lists import list_multiprofile_file_variables, list_bgc_s_variables
 from ..extensions import ArgoFloatPlotProto
 
@@ -175,12 +175,29 @@ class ArgoFloatPlot(ArgoFloatPlotProto):
             N_LEVELS=0
         )
 
+        # Check if param will be plotted using a discrete and known Argo colormap
+        discrete = False
+        if param.lower() in ArgoColors().list_valid_known_colormaps:
+            discrete = True
+        elif "qc" in param.lower():
+            discrete = True
+        elif "mode" in param.lower():
+            discrete = True
+        elif "status_code" in param.lower():
+            discrete = True
+
+        if 'N_LEVELS' in self._obj.dataset(ds)[param].dims:
+            legend_title = "%s @ %s PRES level in [%0.1f-%0.1f] db" % (param, select, bins[0], bins[1])
+        else:
+            legend_title = param
+
         default_kwargs = {
             "x": "LONGITUDE",
             "y": "LATITUDE",
             "hue": param,
-            "legend": False,
-            "cbar": True,
+            "legend": True if discrete else False,
+            "cbar": False if discrete else True,
+            "legend_title": legend_title,
         }
         this_kwargs = {**default_kwargs, **kwargs}
 
