@@ -37,7 +37,7 @@ from .utils import (
 )
 from .utils import list_core_parameters
 from .utils import toYearFraction
-from .errors import InvalidDatasetStructure, DataNotFound, OptionValueError
+from .errors import InvalidDatasetStructure, DataNotFound, OptionValueError, NoData
 
 log = logging.getLogger("argopy.xarray")
 
@@ -165,17 +165,20 @@ class ArgoAccessor:
     def N_PROF(self):
         """Number of profiles"""
         if self._type == "point":
-            dummy_argo_uid = xr.DataArray(
-                self.uid(
-                    self._obj["PLATFORM_NUMBER"].values,
-                    self._obj["CYCLE_NUMBER"].values,
-                    self._obj["DIRECTION"].values,
-                ),
-                dims="N_POINTS",
-                coords={"N_POINTS": self._obj["N_POINTS"]},
-                name="dummy_argo_uid",
-            )
-            N_PROF = len(np.unique(dummy_argo_uid))
+            if self.N_POINTS > 0:
+                dummy_argo_uid = xr.DataArray(
+                    self.uid(
+                        self._obj["PLATFORM_NUMBER"].values,
+                        self._obj["CYCLE_NUMBER"].values,
+                        self._obj["DIRECTION"].values,
+                    ),
+                    dims="N_POINTS",
+                    coords={"N_POINTS": self._obj["N_POINTS"]},
+                    name="dummy_argo_uid",
+                )
+                N_PROF = len(np.unique(dummy_argo_uid))
+            else:
+                N_PROF = 0.
         else:
             N_PROF = len(np.unique(self._obj["N_PROF"]))
         return N_PROF
@@ -184,27 +187,30 @@ class ArgoAccessor:
     def N_LEVELS(self):
         """Number of vertical levels"""
         if self._type == "point":
-            dummy_argo_uid = xr.DataArray(
-                self.uid(
-                    self._obj["PLATFORM_NUMBER"].values,
-                    self._obj["CYCLE_NUMBER"].values,
-                    self._obj["DIRECTION"].values,
-                ),
-                dims="N_POINTS",
-                coords={"N_POINTS": self._obj["N_POINTS"]},
-                name="dummy_argo_uid",
-            )
-            N_LEVELS = int(
-                xr.DataArray(
-                    np.ones_like(self._obj["N_POINTS"].values),
+            if self.N_POINTS > 0:
+                dummy_argo_uid = xr.DataArray(
+                    self.uid(
+                        self._obj["PLATFORM_NUMBER"].values,
+                        self._obj["CYCLE_NUMBER"].values,
+                        self._obj["DIRECTION"].values,
+                    ),
                     dims="N_POINTS",
                     coords={"N_POINTS": self._obj["N_POINTS"]},
+                    name="dummy_argo_uid",
                 )
-                .groupby(dummy_argo_uid)
-                .sum()
-                .max()
-                .values
-            )
+                N_LEVELS = int(
+                    xr.DataArray(
+                        np.ones_like(self._obj["N_POINTS"].values),
+                        dims="N_POINTS",
+                        coords={"N_POINTS": self._obj["N_POINTS"]},
+                    )
+                    .groupby(dummy_argo_uid)
+                    .sum()
+                    .max()
+                    .values
+                )
+            else:
+                N_LEVELS = 0.
         else:
             N_LEVELS = len(np.unique(self._obj["N_LEVELS"]))
         return N_LEVELS
@@ -213,7 +219,10 @@ class ArgoAccessor:
     def N_POINTS(self):
         """Number of measurement points"""
         if self._type == "profile":
-            N_POINTS = self.N_PROF * self.N_LEVELS
+            if self.N_PROF > 0:
+                N_POINTS = self.N_PROF * self.N_LEVELS
+            else:
+                N_POINTS = 0.
         else:
             N_POINTS = len(np.unique(self._obj["N_POINTS"]))
         return N_POINTS
@@ -268,16 +277,19 @@ class ArgoAccessor:
     @property
     def _dummy_argo_uid(self):
         if self._type == "point":
-            return xr.DataArray(
-                self.uid(
-                    self._obj["PLATFORM_NUMBER"].values,
-                    self._obj["CYCLE_NUMBER"].values,
-                    self._obj["DIRECTION"].values,
-                ),
-                dims="N_POINTS",
-                coords={"N_POINTS": self._obj["N_POINTS"]},
-                name="dummy_argo_uid",
-            )
+            if self.N_POINTS > 0:
+                return xr.DataArray(
+                    self.uid(
+                        self._obj["PLATFORM_NUMBER"].values,
+                        self._obj["CYCLE_NUMBER"].values,
+                        self._obj["DIRECTION"].values,
+                    ),
+                    dims="N_POINTS",
+                    coords={"N_POINTS": self._obj["N_POINTS"]},
+                    name="dummy_argo_uid",
+                )
+            else:
+                raise NoData("Cannot create UID for an empty dataset")
         else:
             raise InvalidDatasetStructure(
                 "Property only available for a collection of points"
@@ -450,7 +462,7 @@ class ArgoAccessor:
                 "Method only available for a collection of points"
             )
         if self.N_POINTS == 0:
-            raise DataNotFound("Empty dataset, no data to transform !")
+            raise NoData("Empty dataset, no data to transform !")
 
         this = self._obj  # Should not be modified
 
@@ -759,7 +771,11 @@ class ArgoAccessor:
             this_mask = this_mask >= 1  # any
 
         if not mask:
-            this = this.argo._where(this_mask, drop=drop)
+            if np.count_nonzero(this_mask) > 0:
+                this = this.argo._where(this_mask, drop=drop)
+            else:
+                this = this.loc[dict(N_POINTS=this_mask)]
+
             this.argo.add_history(
                 "[%s] filtered to retain points with QC in [%s]"
                 % (
@@ -1753,7 +1769,7 @@ class ArgoAccessor:
                 mode="any",
             )  # Matlab says to keep != 4
             if len(this_one["N_POINTS"]) == 0:
-                raise DataNotFound(
+                raise NoDataLeft(
                     "All data have been discarded because either PSAL_QC or TEMP_QC is filled with 4 or"
                     " PRES_QC is filled with 3 or 4\n"
                     "NO SOURCE FILE WILL BE GENERATED !!!"
@@ -1771,7 +1787,7 @@ class ArgoAccessor:
                 .argo._where(this_one["PRES"] >= 0, drop=True)
             )
             if len(this_one["N_POINTS"]) == 0:
-                raise DataNotFound(
+                raise NoDataLeft(
                     "All data have been discarded because they are filled with values out of range\n"
                     "NO SOURCE FILE WILL BE GENERATED !!!"
                 )
