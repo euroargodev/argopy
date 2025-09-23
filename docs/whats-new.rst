@@ -13,6 +13,8 @@ Coming up next (unreleased)
 Internals
 ---------
 
+- **New post method for the** :class:`stores.httpstore` by |gmaze|.
+
 - **Fix upstream compatibility** whereby xarray >= 2025.8 deprecation cycle for changing default keyword arguments in :meth:`xarray.merge` and :meth:`xarray.concat` would make Argopy to fail with internal data processing, :issue:`521`. (:pr:`504`) by |gmaze|.
 
 

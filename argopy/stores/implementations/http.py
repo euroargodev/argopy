@@ -9,12 +9,14 @@ import logging
 from typing import Union, Any, List, Literal
 from collections.abc import Callable
 import aiohttp
+import asyncio
 import fsspec
 import time
 import warnings
 import io
 from functools import lru_cache
 from netCDF4 import Dataset
+from urllib.parse import urlparse
 
 from ...errors import InvalidMethod, DataNotFound
 from ...utils import Registry, UriCName
@@ -1256,3 +1258,38 @@ class httpstore(ArgoStoreProto):
             return results
         else:
             raise DataNotFound(urls)
+
+    async def _post(self, api, json_data):
+        """Asynchronous post request to a URL with a data payload as a json dict
+
+        Returns
+        -------
+        :class:`coroutine`
+        """
+        p = urlparse(api)
+        root = p.scheme + '://' + p.netloc
+        get_client = lambda api: aiohttp.ClientSession(api)
+        async with get_client(root) as session:
+            async with session.post(p.path, json=json_data) as resp:
+                return await resp.json()
+
+    def post(self, api, json_data) -> Any:
+        """Post request to a URL with a data payload as a json dict
+
+        Parameters
+        ----------
+        api : str
+            The full URL to request. Eg: https://fleetmonitoring.euro-argo.eu/platformCodes/multi-lines-search
+        json_data : dict
+            Json data to post.
+
+        Returns
+        -------
+        Any
+
+        See Also
+        --------
+        :class:`open_json`
+        """
+        future = asyncio.run_coroutine_threadsafe(self._post(api, json_data), self.fs.loop)
+        return future.result()
