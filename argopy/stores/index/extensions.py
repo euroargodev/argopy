@@ -85,6 +85,8 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         idx.query.profiler_type
         idx.query.profiler_label
 
+        idx.query.institution_code
+
     .. code-block:: python
         :caption: Composition of queries
 
@@ -479,6 +481,20 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         else:
             self._obj.search_type.update(namer(profiler_label))
             return search_filter
+
+    @abstractmethod
+    def institution_code(self, institution_code,  nrows=None, composed=False):
+        """Search index for institution/dac code
+
+        Parameters
+        ----------
+        institution_code: str, list(str)
+
+        Returns
+        -------
+        :class:`ArgoIndex`
+        """
+        raise NotImplementedError("Not implemented")
 
     def compose(self, query: dict, nrows=None):
         """Compose query with multiple search methods

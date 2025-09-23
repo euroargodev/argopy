@@ -472,3 +472,30 @@ class SearchEngine(ArgoIndexSearchEngine):
         else:
             self._obj.search_type.update(namer(profiler_type))
             return search_filter
+
+    def institution_code(self, institution_code: List[str],  nrows=None, composed=False):
+        def checker(institution_code):
+            if "institution" not in self._obj.convention_columns:
+                raise InvalidDatasetStructure("Cannot search for institution codes in this index)")
+            log.debug("Argo index searching for institution code in %s ..." % institution_code)
+            return to_list(institution_code)
+
+        def namer(institution_code):
+            return {"DAC_CODE": institution_code}
+
+        def composer(institution_code):
+            return pa.compute.is_in(
+                self._obj.index["institution"], pa.array(institution_code)
+            )
+
+        institution_code = checker(institution_code)
+        self._obj.load(nrows=self._obj._nrows_index)
+        search_filter = composer(institution_code)
+        if not composed:
+            self._obj.search_type = namer(institution_code)
+            self._obj.search_filter = search_filter
+            self._obj.run(nrows=nrows)
+            return self._obj
+        else:
+            self._obj.search_type.update(namer(institution_code))
+            return search_filter

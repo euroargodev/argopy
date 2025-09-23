@@ -681,7 +681,7 @@ class ArgoIndexStoreProto(ABC):
 
         if self.cache and self.fs["client"].exists(fname):
             log.debug(
-                "[%s] already processed as Dataframe, loading ... src='%s'"
+                "[%s] already processed as a Dataframe, loading ... src='%s'"
                 % (src, fname)
             )
             df = self._read(self.fs["client"].fs, fname, fmt="pd")
