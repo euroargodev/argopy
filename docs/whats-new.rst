@@ -10,6 +10,12 @@ What's New
 Coming up next (unreleased)
 ---------------------------
 
+Features and front-end API
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- New query to search institution-related entries in an ArgoIndex, :issue:`527`. (:pr:``) by |gmaze|.
+
+
 Internals
 ---------
 
