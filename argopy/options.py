@@ -27,7 +27,7 @@ else:
     HAS_BOTO3 = False
 
 
-from .errors import OptionValueError, GdacPathError, ErddapPathError
+from .errors import OptionValueError, GdacPathError, ErddapPathError, APIServerError
 
 
 # Define a logger
@@ -50,6 +50,7 @@ ARGOVIS_API_KEY = "argovis_api_key"
 PARALLEL = "parallel"
 PARALLEL_DEFAULT_METHOD = "parallel_default_method"
 LON = "longitude_convention"
+API_FLEETMONITORING = "fleetmonitoring"
 
 # Define the list of available options and default values:
 OPTIONS = {
@@ -69,6 +70,7 @@ OPTIONS = {
     PARALLEL: False,
     PARALLEL_DEFAULT_METHOD: "thread",
     LON: "180",
+    API_FLEETMONITORING: "https://fleetmonitoring.euro-argo.eu",
 }
 DEFAULT = OPTIONS.copy()
 
@@ -78,7 +80,7 @@ _DATASET_LIST = frozenset(["phy", "bgc", "ref", "bgc-s", "bgc-b"])
 _USER_LEVEL_LIST = frozenset(["standard", "expert", "research"])
 
 
-# Define how to validate options:
+
 def _positive_integer(value):
     return isinstance(value, int) and value > 0
 
@@ -91,7 +93,7 @@ def validate_gdac(this_path):
         return False
 
 
-def validate_http(this_path):
+def validate_erddap(this_path):
     if this_path != "-":
         return check_erddap_path(this_path, errors="raise")
     else:
@@ -117,10 +119,148 @@ def validate_parallel_method(method):
         return False
 
 
+def validate_fleetmonitoring(this_path):
+    if this_path != "-":
+        return check_fleetmonitoring_path(this_path, errors="raise")
+    else:
+        log.debug("OPTIONS['%s'] is not defined" % API_FLEETMONITORING)
+        return False
+
+
+def PARALLEL_SETUP(parallel):
+    parallel = VALIDATE("parallel", parallel)
+    if isinstance(parallel, bool):
+        if parallel:
+            return True, OPTIONS["parallel_default_method"]
+        else:
+            return False, "sequential"
+    else:
+        return True, parallel
+
+
+def check_erddap_path(path, errors="ignore"):
+    """Check if a url points to a valid ERDDAP server"""
+    fs = fsspec.filesystem("http", ssl=False)
+    check1 = fs.exists(path + "/info/index.json")
+    if check1:
+        return True
+    elif errors == "raise":
+        raise ErddapPathError(f"This url is not a valid ERDDAP server:\n{path}")
+    elif errors == "warn":
+        warnings.warn(f"This url is not a valid ERDDAP server:\n{path}")
+        return False
+    else:
+        return False
+
+
+def check_fleetmonitoring_path(path, errors='ignore'):
+    """Check if a url points to a Euro-Argo valid FleetMonitoring server"""
+    fs = fsspec.filesystem("http", ssl=False)
+    try:
+        fs.open_json(path + "/get-version")
+        return True
+    except Exception as e:
+        if errors == "raise":
+            raise APIServerError(f"This url is not a valid Euro-Argo FleetMonitoring server:\n{path}")
+        elif errors == "warn":
+            warnings.warn(f"This url is not a valid Euro-Argo FleetMonitoring server:\n{path}")
+            return False
+        else:
+            return False
+
+
+def check_gdac_option(
+    path, errors: str = "ignore", ignore_knowns: bool = True
+):  # noqa: C901
+    """Check if a path has the expected GDAC structure
+
+    Expected GDAC structure::
+
+        .
+        └── dac
+            ├── aoml
+            ├── ...
+            ├── coriolis
+            ├── ...
+            ├── meds
+            └── nmdis
+
+    Examples::
+
+    >>> check_gdac_path("https://data-argo.ifremer.fr")  # True
+    >>> check_gdac_path("https://usgodae.org/pub/outgoing/argo") # True
+    >>> check_gdac_path("ftp://ftp.ifremer.fr/ifremer/argo") # True
+    >>> check_gdac_path("/home/ref-argo/gdac") # True
+    >>> check_gdac_path("s3://argo-gdac-sandbox/pub") # True
+
+    >>> check_gdac_path("https://www.ifremer.fr") # False
+    >>> check_gdac_path("ftp://usgodae.org/pub/outgoing") # False
+
+    Parameters
+    ----------
+    path: str
+        Path name to check, including access protocol
+    errors: str, default="ignore"
+        Determine how check procedure error are handled: "ignore", "raise" or "warn"
+    ignore_knowns: bool, default=False
+        Should the checking procedure be by-passed for the internal list of known GDACs.
+        Set this to True to check if a known GDACs is connected or not.
+
+    Returns
+    -------
+    checked: boolean
+
+    See also
+    --------
+    :class:`argopy.stores.gdacfs`, :meth:`argopy.utils.list_gdac_servers`
+
+    """
+    from .utils import (
+        list_gdac_servers,
+    )  # import here, otherwise raises circular import
+
+    if path in list_gdac_servers() and ignore_knowns:
+        return True
+    else:
+
+        from .stores import gdacfs  # import here, otherwise raises circular import
+
+        try:
+            fs = gdacfs(path)
+        except GdacPathError:
+            if errors == "raise":
+                raise
+            elif errors == "warn":
+                warnings.warn("Can't get address info (GAIerror) on '%s'" % path)
+                return False
+            else:
+                return False
+
+        check1 = fs.exists("dac")
+        if check1:
+            return True
+
+        elif errors == "raise":
+            raise GdacPathError(
+                "This path is not GDAC compliant (no legitimate sub-folder `dac`):\n%s"
+                % path
+            )
+
+        elif errors == "warn":
+            warnings.warn(
+                "This path is not GDAC compliant (no legitimate sub-folder `dac`):\n%s"
+                % path
+            )
+            return False
+
+        else:
+            return False
+
+
 _VALIDATORS = {
     DATA_SOURCE: _DATA_SOURCE_LIST.__contains__,
     GDAC: validate_gdac,
-    ERDDAP: validate_http,
+    ERDDAP: validate_erddap,
     DATASET: _DATASET_LIST.__contains__,
     CACHE_FOLDER: lambda x: os.access(x, os.W_OK),
     CACHE_EXPIRATION: lambda x: isinstance(x, int) and x > 0,
@@ -134,6 +274,7 @@ _VALIDATORS = {
     PARALLEL: validate_parallel,
     PARALLEL_DEFAULT_METHOD: validate_parallel_method,
     LON: lambda x: x in ['180', '360'],
+    API_FLEETMONITORING: validate_fleetmonitoring,
 }
 
 
@@ -146,17 +287,6 @@ def VALIDATE(key, val):
             return val
     else:
         raise ValueError(f"option '{key}' has no validation method")
-
-
-def PARALLEL_SETUP(parallel):
-    parallel = VALIDATE("parallel", parallel)
-    if isinstance(parallel, bool):
-        if parallel:
-            return True, OPTIONS["parallel_default_method"]
-        else:
-            return False, "sequential"
-    else:
-        return True, parallel
 
 
 class set_options:
@@ -285,107 +415,3 @@ class set_options:
 def reset_options():
     """Reset all options to default values"""
     set_options(**DEFAULT)
-
-
-def check_erddap_path(path, errors="ignore"):
-    """Check if an url points to an ERDDAP server"""
-    fs = fsspec.filesystem("http", ssl=False)
-    check1 = fs.exists(path + "/info/index.json")
-    if check1:
-        return True
-    elif errors == "raise":
-        raise ErddapPathError("This url is not a valid ERDDAP server:\n%s" % path)
-
-    elif errors == "warn":
-        warnings.warn("This url is not a valid ERDDAP server:\n%s" % path)
-        return False
-    else:
-        return False
-
-
-def check_gdac_option(
-    path, errors: str = "ignore", ignore_knowns: bool = True
-):  # noqa: C901
-    """Check if a path has the expected GDAC structure
-
-    Expected GDAC structure::
-
-        .
-        └── dac
-            ├── aoml
-            ├── ...
-            ├── coriolis
-            ├── ...
-            ├── meds
-            └── nmdis
-
-    Examples::
-
-    >>> check_gdac_path("https://data-argo.ifremer.fr")  # True
-    >>> check_gdac_path("https://usgodae.org/pub/outgoing/argo") # True
-    >>> check_gdac_path("ftp://ftp.ifremer.fr/ifremer/argo") # True
-    >>> check_gdac_path("/home/ref-argo/gdac") # True
-    >>> check_gdac_path("s3://argo-gdac-sandbox/pub") # True
-
-    >>> check_gdac_path("https://www.ifremer.fr") # False
-    >>> check_gdac_path("ftp://usgodae.org/pub/outgoing") # False
-
-    Parameters
-    ----------
-    path: str
-        Path name to check, including access protocol
-    errors: str, default="ignore"
-        Determine how check procedure error are handled: "ignore", "raise" or "warn"
-    ignore_knowns: bool, default=False
-        Should the checking procedure be by-passed for the internal list of known GDACs.
-        Set this to True to check if a known GDACs is connected or not.
-
-    Returns
-    -------
-    checked: boolean
-
-    See also
-    --------
-    :class:`argopy.stores.gdacfs`, :meth:`argopy.utils.list_gdac_servers`
-
-    """
-    from .utils import (
-        list_gdac_servers,
-    )  # import here, otherwise raises circular import
-
-    if path in list_gdac_servers() and ignore_knowns:
-        return True
-    else:
-
-        from .stores import gdacfs  # import here, otherwise raises circular import
-
-        try:
-            fs = gdacfs(path)
-        except GdacPathError:
-            if errors == "raise":
-                raise
-            elif errors == "warn":
-                warnings.warn("Can't get address info (GAIerror) on '%s'" % path)
-                return False
-            else:
-                return False
-
-        check1 = fs.exists("dac")
-        if check1:
-            return True
-
-        elif errors == "raise":
-            raise GdacPathError(
-                "This path is not GDAC compliant (no legitimate sub-folder `dac`):\n%s"
-                % path
-            )
-
-        elif errors == "warn":
-            warnings.warn(
-                "This path is not GDAC compliant (no legitimate sub-folder `dac`):\n%s"
-                % path
-            )
-            return False
-
-        else:
-            return False
