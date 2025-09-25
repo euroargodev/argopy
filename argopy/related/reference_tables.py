@@ -109,6 +109,7 @@ class ArgoNVSReferenceTables:
                 content["deprecated"].append(k["owl:deprecated"])
                 content["id"].append(k["@id"])
         df = pd.DataFrame.from_dict(content)
+        df['deprecated'] = df.apply(lambda x: True if x['deprecated']=='true' else False, axis=1)
         df.name = Collection_name
         return df
 
