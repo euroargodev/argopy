@@ -5,6 +5,7 @@ from pathlib import Path
 from dataclasses import dataclass
 from typing import Optional, ClassVar, Literal,Union
 import warnings
+import logging
 
 # from ..errors import InvalidOption
 from ..stores import ArgoFloat, ArgoIndex, httpstore, filestore
@@ -18,6 +19,9 @@ from ..errors import (
 from ..options import OPTIONS
 from ..utils import path2assets
 from . import ArgoNVSReferenceTables
+
+
+log = logging.getLogger("argopy.related.sensors")
 
 
 @dataclass
@@ -96,6 +100,38 @@ class ArgoSensor:
             :caption: ?
 
             from argopy import ArgoSensor
+
+            # Return the reference table R27 with the list of sensor models
+            ArgoSensor().reference_model
+
+            # Return all R27 referenced sensor models with some string in their name
+            ArgoSensor().search_model('RBR')
+            ArgoSensor().search_model('RBR', output='name') # Return list of names instead of dataframe
+            ArgoSensor().search_model('SBE41CP', strict=False)
+            ArgoSensor().search_model('SBE41CP', strict=True)
+
+            # Return list of WMOs equipped with a sensor model name having some string
+            ArgoSensor().search('RBR', output='wmo')
+
+            # Return list of sensor serial number for a sensor model name having some string
+            ArgoSensor().search('SBE', output='sn')
+            ArgoSensor().search('SBE', output='sn', progress=True)
+
+            # Return dict of WMOs with sensor serial number for a sensor model name having some string
+            ArgoSensor().search('SBE', output='wmo_sn')
+            ArgoSensor().search('SBE', output='wmo_sn', progress=True)
+
+            # Loop through each (or chunks) of ArgoFloat instances for floats equipped with a sensor model name having some string
+            for af in ArgoSensor().iterfloats_with("RAFOS"):
+                print(af.WMO)
+
+            # Same loop, show casing how to use the metadata attribute of an ArgoFloat instance:
+            model = "RAFOS"
+            for af in ArgoSensor().iterfloats_with(model):
+                models = af.metadata['sensors']
+                for s in models:
+                    if model in s['model']:
+                        print(af.WMO, s['maker'], s['model'], s['serial'])
 
         Notes
         -----
@@ -263,7 +299,7 @@ class ArgoSensor:
         """
         return sorted(to_list(self.reference_sensor["altLabel"].values))
 
-    def search_model(self, model: str, strict: bool = False) -> pd.DataFrame:
+    def search_model(self, model: str, strict: bool = False, output: Literal['table', 'name'] = 'table') -> pd.DataFrame:
         """Return references of Argo sensor models matching a string
 
         Look for occurrences in Argo Reference table R27 altLabel values and return a dataframe with matching row(s).
@@ -286,26 +322,12 @@ class ArgoSensor:
                     f"No sensor model names with '{model}' string occurrence."
                 )
         else:
-            return data
-
-    def search_model_name(self, model: str = None, strict: bool = False) -> List[str]:
-        """Return a list of Argo sensor model names matching a string
-
-        Notes
-        -----
-        Argo netCDF variable SENSOR_MODEL is populated by such R27 altLabel names.
-        """
-        if model is None:
-            if self._model is not None:
-                model = self._model
+            if output == 'name':
+                return sorted(to_list(data["altLabel"].values))
             else:
-                raise OptionValueError(
-                    "You must provide a sensor model name or create an ArgoSensor instance with an exact sensor model name to use this method"
-                )
-        df = self.search_model(model=model, strict=strict)
-        return sorted(to_list(df["altLabel"].values))
+                return data
 
-    def search_wmo_with(self, model: str):
+    def _search_wmo_with(self, model: str, errors="raise"):
         """Return the list of WMOs with a given sensor model
 
         Notes
@@ -324,7 +346,10 @@ class ArgoSensor:
         ]
         wmos = self.fs.post(api_point, json_data=payload)
         if wmos is None or len(wmos) == 0:
-            raise DataNotFound(f"No floats matching sensor model name '{model}'")
+            if errors == 'raise':
+                raise DataNotFound(f"No floats matching sensor model name '{model}'")
+            else:
+                log.error(f"No floats matching sensor model name '{model}'")
         return check_wmo(wmos)
 
     def _floats_api(
@@ -343,9 +368,9 @@ class ArgoSensor:
 
         Notes
         -----
-        Based on a fleet-monitoring API request to `/floats/{wmo}`.
+        Based on fleet-monitoring API requests to `/floats/{wmo}`.
         """
-        wmos = self.search_wmo_with(model)
+        wmos = self._search_wmo_with(model)
 
         URI = []
         for wmo in wmos:
@@ -361,7 +386,7 @@ class ArgoSensor:
 
         return postprocess(sns, **postprocess_opts)
 
-    def search_sn_with(self, model: str, progress=False, errors="raise"):
+    def _search_sn_with(self, model: str, progress=False, errors="raise"):
         """Return serial number of sensor models with a given string in name"""
 
         def preprocess(jsdata, model_name: str = ""):
@@ -386,14 +411,14 @@ class ArgoSensor:
             errors=errors,
         )
 
-    def search_wmo_sn_with(self, model: str, progress=False, errors="raise"):
+    def _search_wmo_sn_with(self, model: str, progress=False, errors="raise"):
         """Return a dictionary of float WMOs with their sensor serial numbers"""
 
         def preprocess(jsdata, model_name: str = ""):
             sn = np.unique(
                 [s["serial"] for s in jsdata["sensors"] if model_name in s["model"]]
             )
-            return [jsdata["wmo"], sn]
+            return [jsdata["wmo"], [str(s) for s in sn]]
 
         def postprocess(data, **kwargs):
             S = {}
@@ -409,6 +434,16 @@ class ArgoSensor:
             progress=progress,
             errors=errors,
         )
+
+    def search(self, model: str, output: Literal['wmo', 'sn', 'wmo_sn'] = 'wmo', progress=False, errors='raise'):
+        if output == 'wmo':
+            return self._search_wmo_with(model=model, errors=errors)
+        elif output == 'sn':
+            return self._search_sn_with(model=model, progress=progress, errors=errors)
+        elif output == 'wmo_sn':
+            return self._search_wmo_sn_with(model=model, progress=progress, errors=errors)
+        else:
+            raise OptionValueError("'output' option value must be in: 'wmo', 'sn', or 'wmo_sn'")
 
     def iterfloats_with(self, model: str, chunksize: int = None):
         """Iterate over ArgoFloat equipped with a given sensor model
@@ -437,7 +472,7 @@ class ArgoSensor:
                 float # is a ArgoFloat instance
 
         """
-        wmos = self.search_wmo_with(model=model)
+        wmos = self._search_wmo_with(model=model)
 
         idx = ArgoIndex(
             index_file="core",
@@ -450,7 +485,7 @@ class ArgoSensor:
             chk_opts.update({"chunks": {"wmo": "auto"}})
             chk_opts.update({"chunksize": {"wmo": chunksize}})
             chunked = Chunker(
-                {"wmo": self.search_wmo_with(model=model)}, **chk_opts
+                {"wmo": self._search_wmo_with(model=model)}, **chk_opts
             ).fit_transform()
             for grp in chunked:
                 yield [ArgoFloat(wmo, idx=idx) for wmo in grp]
