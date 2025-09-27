@@ -1,9 +1,10 @@
 from typing import List
-
 import pandas as pd
+import numpy as np
+from pathlib import Path
 
 # from ..errors import InvalidOption
-from ..stores import ArgoFloat, ArgoIndex, httpstore
+from ..stores import ArgoFloat, ArgoIndex, httpstore, filestore
 from ..utils import check_wmo, Chunker, to_list
 from ..errors import (
     DataNotFound,
@@ -12,8 +13,8 @@ from ..errors import (
     OptionValueError,
 )
 from ..options import OPTIONS
+from ..utils import path2assets
 from . import ArgoNVSReferenceTables
-import numpy as np
 
 
 class ArgoSensor:
@@ -21,7 +22,8 @@ class ArgoSensor:
 
     Notes
     -----
-    We keep this class in line with:
+    Related NVS issues:
+        - https://github.com/OneArgo/ADMT/issues/112
         - https://github.com/OneArgo/ArgoVocabs/issues/156
         - https://github.com/OneArgo/ArgoVocabs/issues/157
     """
@@ -41,8 +43,10 @@ class ArgoSensor:
             A sensor model to use, by default None.
 
             Allowed values can be obtained with:
-            ``ArgoSensor().reference_model_list['altLabel']``
+            ``ArgoSensor().reference_model_name``
 
+        Other Parameters
+        ----------------
         cache : bool, optional, default: False
             Use cache or not for fetched data
         cachedir: str, optional, default: OPTIONS['cachedir']
@@ -55,15 +59,16 @@ class ArgoSensor:
         self.timeout = OPTIONS["api_timeout"] if timeout == 0 else timeout
         self.fs = httpstore(cache=self._cache, cachedir=self._cachedir)
 
-        self._r25 = None
-        self._r27 = None
+        self._r25 = None  # will be loaded when necessary
+        self._r27 = None  # will be loaded when necessary
+        self._load_mappers()  # Load r25 model to r27 type mapping dictionary
 
         if model is not None:
             try:
                 df = self.search_model(model, strict=True)
             except DataNotFound:
                 raise DataNotFound(
-                    f"No sensor model named '{model}', as per ArgoSensor().reference_model_list['altLabel'] values, based on Ref. Table 27."
+                    f"No sensor model named '{model}', as per ArgoSensor().reference_model_name values, based on Ref. Table 27."
                 )
 
             if df.shape[0] == 1:
@@ -78,55 +83,102 @@ class ArgoSensor:
             self._model = None
             self._model_r27 = None
 
+    def _load_mappers(self):
+        """Load the NVS R25 to R27 key mappings"""
+        df = []
+        for p in Path(path2assets).joinpath("nvs_R25_R27").glob("NVS_R25_R27_mappings_*.txt"):
+            df.append(filestore().read_csv(p, header=None, names=["origin", "model", "?", "destination", "type", "??"]))
+        df = pd.concat(df)
+        df = df.reset_index(drop=True)
+        self.r27_to_r25 = {}
+        df.apply(lambda row: self.r27_to_r25.update({row['model'].strip(): row['type'].strip()}), axis=1)
+
     @property
-    def model(self):
+    def model(self) -> str:
         if self._model is not None:
             return self._model
         else:
             raise InvalidDataset(
-                "No model name available for an ArgoSensor instance not created with a specific sensor model"
+                "The 'model' property is not available for an ArgoSensor instance not created with a specific sensor model"
             )
 
     @property
-    def model_long_name(self):
+    def model_long_name(self) -> str:
         if self._model_r27 is not None:
             return self._model_r27["prefLabel"]
         else:
             raise InvalidDataset(
-                "No model long name available for an ArgoSensor instance not created with a specific sensor model"
+                "The 'model_long_name' property is not available for an ArgoSensor instance not created with a specific sensor model"
             )
 
     @property
-    def model_definition(self):
+    def model_definition(self) -> str:
         if self._model_r27 is not None:
             return self._model_r27["definition"]
         else:
             raise InvalidDataset(
-                "No model definition available for an ArgoSensor instance not created with a specific sensor model"
+                "The 'model_definition' property is not available for an ArgoSensor instance not created with a specific sensor model"
             )
 
     @property
-    def model_deprecated(self):
+    def model_deprecated(self) -> bool:
         if self._model_r27 is not None:
             return self._model_r27["deprecated"]
         else:
             raise InvalidDataset(
-                "No model deprecation available for an ArgoSensor instance not created with a specific sensor model"
+                "The 'model_deprecated' property is not available for an ArgoSensor instance not created with a specific sensor model"
             )
 
     @property
-    def model_uri(self):
+    def model_uri(self) -> str:
         if self._model_r27 is not None:
             return self._model_r27["id"]
         else:
             raise InvalidDataset(
-                "No model URI available for an ArgoSensor instance not created with a specific sensor model"
+                "The 'model_uri' property is not available for an ArgoSensor instance not created with a specific sensor model"
+            )
+
+    @property
+    def type(self) -> str:
+        if self._model_r27 is not None:
+            if self.model in self.r27_to_r25:
+                return self.r27_to_r25[self.model]
+            else:
+                return "?"
+        else:
+            raise InvalidDataset(
+                "The 'type' property is not available for an ArgoSensor instance not created with a specific sensor model"
+            )
+
+    @property
+    def type_long_name(self) -> str:
+        if self.type is not "?":
+            sensor = self.reference_sensor[
+                self.reference_sensor["altLabel"].apply(lambda x: x == self.type)
+            ].iloc[0].to_dict()
+            return sensor['prefLabel']
+        else:
+            raise InvalidDataset(
+                "The 'type_long_name' property is not available for an ArgoSensor instance not created with a specific sensor model"
+            )
+
+    @property
+    def type_definition(self) -> str:
+        if self.type is not "?":
+            sensor = self.reference_sensor[
+                self.reference_sensor["altLabel"].apply(lambda x: x == self.type)
+            ].iloc[0].to_dict()
+            return sensor['definition']
+        else:
+            raise InvalidDataset(
+                "The 'type_definition' property is not available for an ArgoSensor instance not created with a specific sensor model"
             )
 
     def __repr__(self):
         if self._model_r27 is not None:
-            summary = [f"<argosensor.{self.model}>"]
-            summary.append(f"➤ {self.model_long_name}")
+            summary = [f"<argosensor.{self.type}.{self.model}>"]
+            summary.append(f"TYPE➤ {self.type_long_name}")
+            summary.append(f"MODEL➤ {self.model_long_name}")
             if self.model_deprecated:
                 summary.append("⛔ This model is deprecated !")
             else:
@@ -135,14 +187,28 @@ class ArgoSensor:
             summary.append(f"❝{self.model_definition}❞")
         else:
             summary = ["<argosensor>"]
-            summary.append("This instance was not created with a sensor model name, you still have access to the following:")
+            summary.append(
+                "This instance was not created with a sensor model name, you still have access to the following:"
+            )
             summary.append("👉 attributes: ")
-            for attr in ['reference_model', 'reference_model_name', 'reference_sensor', 'reference_sensor_type']:
-                summary.append(f"╰┈➤ ArgoSensor().{attr}")
+            for attr in [
+                "reference_model",
+                "reference_model_name",
+                "reference_sensor",
+                "reference_sensor_type",
+            ]:
+                summary.append(f"  ╰┈➤ ArgoSensor().{attr}")
 
             summary.append("👉 methods: ")
-            for meth in ['search_model', 'search_model_name', 'search_wmo_with', 'search_sn_with', 'search_wmo_sn_with', 'iterfloats_with']:
-                summary.append(f"╰┈➤ ArgoSensor().{meth}()")
+            for meth in [
+                "search_model",
+                "search_model_name",
+                "search_wmo_with",
+                "search_sn_with",
+                "search_wmo_sn_with",
+                "iterfloats_with",
+            ]:
+                summary.append(f"  ╰┈➤ ArgoSensor().{meth}()")
         return "\n".join(summary)
 
     @property
@@ -154,7 +220,9 @@ class ArgoSensor:
         > Terms listing models of sensors mounted on Argo floats.
         """
         if self._r27 is None:
-            self._r27 = ArgoNVSReferenceTables(cache=self._cache, cachedir=self._cachedir).tbl("R27")
+            self._r27 = ArgoNVSReferenceTables(
+                cache=self._cache, cachedir=self._cachedir
+            ).tbl("R27")
         return self._r27
 
     @property
@@ -178,7 +246,9 @@ class ArgoSensor:
         > Terms describing sensor types mounted on Argo floats.
         """
         if self._r25 is None:
-            self._r25 = ArgoNVSReferenceTables(cache=self._cache, cachedir=self._cachedir).tbl("R25")
+            self._r25 = ArgoNVSReferenceTables(
+                cache=self._cache, cachedir=self._cachedir
+            ).tbl("R25")
         return self._r25
 
     @property
@@ -208,9 +278,13 @@ class ArgoSensor:
             ]
         if data.shape[0] == 0:
             if strict:
-                raise DataNotFound(f"No sensor models matching '{model}'. You may try to search with strict=False.")
+                raise DataNotFound(
+                    f"No sensor models matching '{model}'. You may try to search with strict=False."
+                )
             else:
-                raise DataNotFound(f"No sensor model names with '{model}' string occurrence.")
+                raise DataNotFound(
+                    f"No sensor model names with '{model}' string occurrence."
+                )
         else:
             return data
 
@@ -363,13 +437,12 @@ class ArgoSensor:
                 float # is a ArgoFloat instance
 
         """
-        # from .. import ArgoFloat  # Prevent circular import
-
         wmos = self.search_wmo_with(model=model)
 
         idx = ArgoIndex(
             index_file="core",
-            cache=self.cache,
+            cache=self._cache,
+            cachedir=self._cachedir,
         )
 
         if chunksize is not None:
