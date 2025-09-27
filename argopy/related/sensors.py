@@ -2,6 +2,9 @@ from typing import List
 import pandas as pd
 import numpy as np
 from pathlib import Path
+from dataclasses import dataclass
+from typing import Optional, ClassVar, Literal,Union
+import warnings
 
 # from ..errors import InvalidOption
 from ..stores import ArgoFloat, ArgoIndex, httpstore, filestore
@@ -15,6 +18,51 @@ from ..errors import (
 from ..options import OPTIONS
 from ..utils import path2assets
 from . import ArgoNVSReferenceTables
+
+
+@dataclass
+class NVSrow:
+    """This class makes it easier to work with a single :class:`pd.DataFrame` row as an object"""
+    name: str = ""
+    long_name: str = ""
+    definition: str = ""
+    uri: str = ""
+    deprecated: bool = None
+
+    reftable : ClassVar[str]
+    """Reference table"""
+
+    def __init__(self, row: pd.Series):
+        if not isinstance(row, pd.Series) and isinstance(row, pd.DataFrame):
+            row = row.iloc[0]
+        row = row.to_dict()
+        self.name = row['altLabel']
+        self.long_name = row['prefLabel']
+        self.definition = row['definition']
+        self.deprecated = row['deprecated']
+        self.uri = row['id']
+
+    @staticmethod
+    def from_series(obj: pd.Series) -> 'NVSrow':
+        return NVSrow(obj)
+
+
+class SensorType(NVSrow):
+    """One single sensor type data from a R25 row"""
+    reftable = 'R25'
+
+    @staticmethod
+    def from_series(obj: pd.Series) -> 'SensorType':
+        return SensorType(obj)
+
+
+class SensorModel(NVSrow):
+    """One single sensor model data from a R27 row"""
+    reftable = 'R27'
+
+    @staticmethod
+    def from_series(obj: pd.Series) -> 'SensorModel':
+        return SensorModel(obj)
 
 
 class ArgoSensor:
@@ -74,16 +122,16 @@ class ArgoSensor:
                 )
 
             if df.shape[0] == 1:
-                self._model = model
-                self._model_r27 = df.iloc[0].to_dict()
+                self._model = SensorModel.from_series(df)
+                self._type = self._model_to_type(self._model, errors='ignore')
             else:
                 raise InvalidDatasetStructure(
-                    f"Found multiple sensor models with '{model}'. Refine your sensor model name to only one value in: {to_list(df['altLabel'].values)}"
+                    f"Found multiple sensor models with '{model}'. Restrict your sensor model name to only one value in: {to_list(df['altLabel'].values)}"
                 )
 
         else:
             self._model = None
-            self._model_r27 = None
+            self._type = None
 
     def _load_mappers(self):
         """Load the NVS R25 to R27 key mappings"""
@@ -95,9 +143,22 @@ class ArgoSensor:
         self.r27_to_r25 = {}
         df.apply(lambda row: self.r27_to_r25.update({row['model'].strip(): row['type'].strip()}), axis=1)
 
+    def _model_to_type(self, model: Union[str, SensorModel] = None, errors : Literal['raise', 'ignore'] = 'raise') -> Optional[SensorType]:
+        """Read a sensor type for a given sensor model"""
+        model_name = model.name if isinstance(model, SensorModel) else model
+        if model_name in self.r27_to_r25:
+            sensor_type = self.r27_to_r25[model_name]
+            row = self.reference_sensor[
+                self.reference_sensor["altLabel"].apply(lambda x: x == sensor_type)
+            ].iloc[0]
+            return SensorType.from_series(row)
+        elif errors == 'raise':
+            raise DataNotFound(f"Can't determine the type of sensor model '{model_name}' (no matching key in self.r27_to_r25 mapper)")
+        return None
+
     @property
-    def model(self) -> str:
-        if self._model is not None:
+    def model(self) -> SensorModel:
+        if isinstance(self._model, SensorModel):
             return self._model
         else:
             raise InvalidDataset(
@@ -105,88 +166,25 @@ class ArgoSensor:
             )
 
     @property
-    def model_long_name(self) -> str:
-        if self._model_r27 is not None:
-            return self._model_r27["prefLabel"]
-        else:
-            raise InvalidDataset(
-                "The 'model_long_name' property is not available for an ArgoSensor instance not created with a specific sensor model"
-            )
-
-    @property
-    def model_definition(self) -> str:
-        if self._model_r27 is not None:
-            return self._model_r27["definition"]
-        else:
-            raise InvalidDataset(
-                "The 'model_definition' property is not available for an ArgoSensor instance not created with a specific sensor model"
-            )
-
-    @property
-    def model_deprecated(self) -> bool:
-        if self._model_r27 is not None:
-            return self._model_r27["deprecated"]
-        else:
-            raise InvalidDataset(
-                "The 'model_deprecated' property is not available for an ArgoSensor instance not created with a specific sensor model"
-            )
-
-    @property
-    def model_uri(self) -> str:
-        if self._model_r27 is not None:
-            return self._model_r27["id"]
-        else:
-            raise InvalidDataset(
-                "The 'model_uri' property is not available for an ArgoSensor instance not created with a specific sensor model"
-            )
-
-    @property
-    def type(self) -> str:
-        if self._model_r27 is not None:
-            if self.model in self.r27_to_r25:
-                return self.r27_to_r25[self.model]
-            else:
-                return "?"
+    def type(self) -> SensorType:
+        if isinstance(self._type, SensorType):
+            return self._type
         else:
             raise InvalidDataset(
                 "The 'type' property is not available for an ArgoSensor instance not created with a specific sensor model"
             )
 
-    @property
-    def type_long_name(self) -> str:
-        if self.type is not "?":
-            sensor = self.reference_sensor[
-                self.reference_sensor["altLabel"].apply(lambda x: x == self.type)
-            ].iloc[0].to_dict()
-            return sensor['prefLabel']
-        else:
-            raise InvalidDataset(
-                "The 'type_long_name' property is not available for an ArgoSensor instance not created with a specific sensor model"
-            )
-
-    @property
-    def type_definition(self) -> str:
-        if self.type is not "?":
-            sensor = self.reference_sensor[
-                self.reference_sensor["altLabel"].apply(lambda x: x == self.type)
-            ].iloc[0].to_dict()
-            return sensor['definition']
-        else:
-            raise InvalidDataset(
-                "The 'type_definition' property is not available for an ArgoSensor instance not created with a specific sensor model"
-            )
-
     def __repr__(self):
-        if self._model_r27 is not None:
-            summary = [f"<argosensor.{self.type}.{self.model}>"]
-            summary.append(f"TYPE➤ {self.type_long_name}")
-            summary.append(f"MODEL➤ {self.model_long_name}")
-            if self.model_deprecated:
+        if isinstance(self._model, SensorModel):
+            summary = [f"<argosensor.{self.type.name}.{self.model.name}>"]
+            summary.append(f"TYPE➤ {self.type.long_name}")
+            summary.append(f"MODEL➤ {self.model.long_name}")
+            if self.model.deprecated:
                 summary.append("⛔ This model is deprecated !")
             else:
                 summary.append("✅ This model is not deprecated.")
-            summary.append(f"🔗 {self.model_uri}")
-            summary.append(f"❝{self.model_definition}❞")
+            summary.append(f"🔗 {self.model.uri}")
+            summary.append(f"❝{self.model.definition}❞")
         else:
             summary = ["<argosensor>"]
             summary.append(
