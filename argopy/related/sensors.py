@@ -18,22 +18,10 @@ from . import ArgoNVSReferenceTables
 
 
 class ArgoSensor:
-    """
-
-    Notes
-    -----
-    Related NVS issues:
-        - https://github.com/OneArgo/ADMT/issues/112
-        - https://github.com/OneArgo/ArgoVocabs/issues/156
-        - https://github.com/OneArgo/ArgoVocabs/issues/157
-    """
-
     def __init__(
         self,
         model: str = None,
-        cache: bool = True,
-        cachedir: str = "",
-        timeout: int = 0,
+        **kwargs,
     ):
         """Create an ArgoSensor helper class instance
 
@@ -53,10 +41,24 @@ class ArgoSensor:
             Folder where to store cached files.
         timeout: int, optional, default: OPTIONS['api_timeout']
             Time out in seconds to connect to web API
+
+        Examples
+        --------
+        .. code-block:: python
+            :caption: ?
+
+            from argopy import ArgoSensor
+
+        Notes
+        -----
+        Related NVS issues:
+            - https://github.com/OneArgo/ADMT/issues/112
+            - https://github.com/OneArgo/ArgoVocabs/issues/156
+            - https://github.com/OneArgo/ArgoVocabs/issues/157
         """
-        self._cache = bool(cache)
-        self._cachedir = OPTIONS["cachedir"] if cachedir == "" else cachedir
-        self.timeout = OPTIONS["api_timeout"] if timeout == 0 else timeout
+        self._cache = kwargs.get('cache', True)
+        self._cachedir = kwargs.get('cachedir', OPTIONS["cachedir"])
+        self.timeout = kwargs.get('timeout', OPTIONS["api_timeout"])
         self.fs = httpstore(cache=self._cache, cachedir=self._cachedir)
 
         self._r25 = None  # will be loaded when necessary
