@@ -50,6 +50,9 @@ class NVSrow:
     def from_series(obj: pd.Series) -> 'NVSrow':
         return NVSrow(obj)
 
+    def __eq__(self, obj):
+        return self.name == obj
+
 
 class SensorType(NVSrow):
     """One single sensor type data from a R25 row"""
@@ -103,8 +106,13 @@ class ArgoSensor:
 
             # Return the reference table R27 with the list of sensor models
             ArgoSensor().reference_model
+            ArgoSensor().reference_model_name  # Only the list of names (used to fill 'SENSOR_MODEL')
 
-            # Return all R27 referenced sensor models with some string in their name
+            # Return the reference table R25 with the list of sensor types
+            ArgoSensor().reference_sensor
+            ArgoSensor().reference_sensor_type # Only the list of types (used to fill 'SENSOR')
+
+            # Return all (R27) referenced sensor models with some string in their name
             ArgoSensor().search_model('RBR')
             ArgoSensor().search_model('RBR', output='name') # Return list of names instead of dataframe
             ArgoSensor().search_model('SBE41CP', strict=False)
@@ -114,8 +122,8 @@ class ArgoSensor:
             ArgoSensor().search('RBR', output='wmo')
 
             # Return list of sensor serial number for a sensor model name having some string
-            ArgoSensor().search('SBE', output='sn')
-            ArgoSensor().search('SBE', output='sn', progress=True)
+            ArgoSensor().search('RBR_ARGO3_DEEP6K', output='sn')
+            ArgoSensor().search('RBR_ARGO3_DEEP6K', output='sn', progress=True)
 
             # Return dict of WMOs with sensor serial number for a sensor model name having some string
             ArgoSensor().search('SBE', output='wmo_sn')
@@ -159,7 +167,7 @@ class ArgoSensor:
 
             if df.shape[0] == 1:
                 self._model = SensorModel.from_series(df)
-                self._type = self._model_to_type(self._model, errors='ignore')
+                self._type = self.model_to_type(self._model, errors='ignore')
             else:
                 raise InvalidDatasetStructure(
                     f"Found multiple sensor models with '{model}'. Restrict your sensor model name to only one value in: {to_list(df['altLabel'].values)}"
@@ -179,11 +187,11 @@ class ArgoSensor:
         self.r27_to_r25 = {}
         df.apply(lambda row: self.r27_to_r25.update({row['model'].strip(): row['type'].strip()}), axis=1)
 
-    def _model_to_type(self, model: Union[str, SensorModel] = None, errors : Literal['raise', 'ignore'] = 'raise') -> Optional[SensorType]:
+    def model_to_type(self, model: Union[str, SensorModel] = None, errors : Literal['raise', 'ignore'] = 'raise') -> Optional[SensorType]:
         """Read a sensor type for a given sensor model"""
         model_name = model.name if isinstance(model, SensorModel) else model
-        if model_name in self.r27_to_r25:
-            sensor_type = self.r27_to_r25[model_name]
+        sensor_type = self.r27_to_r25.get(model_name, None)
+        if sensor_type is not None:
             row = self.reference_sensor[
                 self.reference_sensor["altLabel"].apply(lambda x: x == sensor_type)
             ].iloc[0]
