@@ -13,7 +13,7 @@ Coming up next (unreleased)
 Internals
 ---------
 
-- **Fix bug** whereby no static asset subfolders were included in the pypi and conda distribution, thus making the :class:`Dataset.argo.canyon_med` predictor to raise an error when predictions were triggered :issue:`530`. (:pr:`504`) by |gmaze|.
+- **Fix bug** whereby no static asset subfolders were included in the pypi and conda distribution, thus making the :class:`Dataset.argo.canyon_med` predictor to raise an error when predictions were triggered :issue:`530`. (:pr:`531`) by |gmaze|.
 
 - **New post method for the** :class:`stores.httpstore` by |gmaze|.
 
