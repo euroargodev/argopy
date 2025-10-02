@@ -58,9 +58,9 @@ dependencies:
   - pytest-env = 1.1.5
   - pytest-localftpserver
   - setuptools = 80.9.0
-  - pyasynchat
 #  - sphinx = -
 
 # PIP:
   - pip:
       - pytest-reportlog == 0.4.0
+      - pyasynchat

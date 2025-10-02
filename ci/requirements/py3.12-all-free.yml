@@ -58,9 +58,9 @@ dependencies:
   - pytest-env
   - pytest-localftpserver
   - setuptools
-  - pyasynchat
 #  - sphinx
 
 # PIP:
   - pip:
       - pytest-reportlog
+      - pyasynchat
