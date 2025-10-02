@@ -117,6 +117,9 @@ class Test_FileStore:
         ds = self.fs.open_mfdataset(uri, method=method, progress='disable' if progress else False, concat=concat)
         if concat:
             assert isinstance(ds, xr.Dataset)
+            assert len(ds.coords) == 0
+            assert len(ds.data_vars) == 64
+            assert ds.sizes == {'N_PROF': 1, 'N_PARAM': 3, 'N_LEVELS': 55, 'N_CALIB': 1, 'N_HISTORY': 10}
         else:
             assert is_list_of_datasets(ds)
 
@@ -323,6 +326,9 @@ class Test_HttpStore:
         )
         if concat:
             assert isinstance(ds, xr.Dataset)
+            assert len(ds.coords) == 0
+            assert len(ds.data_vars) == 64
+            assert ds.sizes == {'N_PROF': 1, 'N_PARAM': 3, 'N_LEVELS': 71, 'N_CALIB': 1, 'N_HISTORY': 8}
         else:
             assert is_list_of_datasets(ds)
 
@@ -535,6 +541,9 @@ class Test_FtpStore:
             )
             if concat:
                 assert isinstance(ds, xr.Dataset)
+                assert len(ds.coords) == 0
+                assert len(ds.data_vars) == 64
+                assert ds.sizes == {'N_PROF': 1, 'N_PARAM': 3, 'N_LEVELS': 71, 'N_CALIB': 1, 'N_HISTORY': 8}
             else:
                 assert is_list_of_datasets(ds)
 

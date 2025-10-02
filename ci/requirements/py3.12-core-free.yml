@@ -15,7 +15,7 @@ dependencies:
   - requests
   - scipy
   - toolz
-  - xarray >= 2025.7.0
+  - xarray >= 2025.8.0
 
 # EXT.UTIL:
 #  - gsw
