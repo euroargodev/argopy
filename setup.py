@@ -20,6 +20,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     package_dir={"argopy": "argopy"},
     package_data={"argopy": ["static/assets/*", "static/css/*"]},
+    include_package_data=True,
     install_requires=requirements,
     classifiers=[
         "Programming Language :: Python :: 3.11",
