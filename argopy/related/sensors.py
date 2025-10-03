@@ -2,7 +2,7 @@ from typing import List
 import pandas as pd
 import numpy as np
 from pathlib import Path
-from typing import Optional, Literal, Union
+from typing import Optional, Literal, Union, Callable
 import logging
 
 # from ..errors import InvalidOption
@@ -132,6 +132,9 @@ class ArgoSensor:
 
             from argopy import ArgoSensor
 
+            # Search for sensor model name(s) having some string and return a DataFrame with full sensor information from floats equipped
+            ArgoSensor().search('RBR', output='df')
+
             # Search for sensor model name(s) having some string and return a list of WMOs equipped with it/them
             ArgoSensor().search('RBR', output='wmo')
 
@@ -173,6 +176,14 @@ class ArgoSensor:
             sensor.search(output='wmo')
             sensor.search(output='sn')
             sensor.search(output='wmo_sn')
+
+        .. code-block:: bash
+            :caption: Get clean search results from the command-line
+
+            python -c "from argopy import ArgoSensor; ArgoSensor().cli_search('RBR', output='wmo')"
+
+            python -c "from argopy import ArgoSensor; ArgoSensor().cli_search('RBR', output='sn')"
+
 
         Notes
         -----
@@ -248,9 +259,32 @@ class ArgoSensor:
             return SensorType.from_series(row)
         elif errors == "raise":
             raise DataNotFound(
-                f"Can't determine the type of sensor model '{model_name}' (no matching key in self.r27_to_r25 mapper)"
+                f"Can't determine the type of sensor model '{model_name}' (no matching key in ArgoSensor().r27_to_r25 mapper)"
             )
         return None
+
+    def type_to_model(self, type: Union[str, SensorType],
+        errors: Literal["raise", "ignore"] = "raise",) -> Optional[List[str]]:
+        """Read all sensor models for a given sensor type"""
+        sensor_type = type.name if isinstance(type, SensorType) else type
+        result = []
+        for key, val in self.r27_to_r25.items():
+            if sensor_type.lower() in val.lower():
+                row = self.reference_model[
+                    self.reference_model["altLabel"].apply(lambda x: x == key)
+                ].iloc[0]
+                result.append(SensorModel.from_series(row).name)
+        if len(result) == 0:
+            if errors == "raise":
+                raise DataNotFound(
+                    f"Can't find any sensor model for this type '{sensor_type}' (no matching key in ArgoSensor().r27_to_r25 mapper)"
+                )
+            else:
+                return None
+        else:
+            return result
+
+
 
     @property
     def model(self) -> SensorModel:
@@ -388,7 +422,7 @@ class ArgoSensor:
             if output == "name":
                 return sorted(to_list(data["altLabel"].values))
             else:
-                return data
+                return data.reset_index(drop=True)
 
     def _search_wmo_with(self, model: str, errors="raise"):
         """Return the list of WMOs with a given sensor model
@@ -414,10 +448,15 @@ class ArgoSensor:
         ]
         wmos = self.fs.post(api_point, json_data=payload)
         if wmos is None or len(wmos) == 0:
+            try:
+                search_hint = self.search_model(model, output='name', strict=False)
+                msg = f"No floats matching this sensor model name '{model}'. Possible hint: %s" % ("; ".join(search_hint))
+            except DataNotFound:
+                msg = f"No floats matching this sensor model name '{model}'"
             if errors == "raise":
-                raise DataNotFound(f"No floats matching sensor model name '{model}'")
+                raise DataNotFound(msg)
             else:
-                log.error(f"No floats matching sensor model name '{model}'")
+                log.error(msg)
         return check_wmo(wmos)
 
     def _floats_api(
@@ -467,7 +506,8 @@ class ArgoSensor:
             S = []
             for row in data:
                 for sensor in row:
-                    S.append(sensor)
+                    if sensor is not None:
+                        S.append(sensor)
             return np.sort(np.array(S))
 
         return self._floats_api(
@@ -503,10 +543,69 @@ class ArgoSensor:
             errors=errors,
         )
 
+    def _to_dataframe(self, model: str, progress=False, errors="raise") -> pd.DataFrame:
+        """Return a DataFrame with WMO, sensor type, model, maker, sn, units, accuracy and resolution
+
+        Parameters
+        ----------
+        model: str, optional
+            A string to search in the `sensorModels` field of the Euro-Argo fleet-monitoring API `platformCodes/multi-lines-search` endpoint.
+
+        """
+        if model is None and self.model is not None:
+            model = self.model.name
+
+        def preprocess(jsdata, model_name: str = ""):
+            output = []
+            for s in jsdata["sensors"]:
+                if model_name in s["model"]:
+                    this = [jsdata["wmo"]]
+                    [
+                        this.append(s[key])
+                        for key in [
+                            "id",
+                            "maker",
+                            "model",
+                            "serial",
+                            "units",
+                            "accuracy",
+                            "resolution",
+                        ]
+                    ]
+                    output.append(this)
+            return output
+
+        def postprocess(data, **kwargs):
+            d = []
+            for this in data:
+                for wmo, sid, maker, model, sn, units, accuracy, resolution in this:
+                    d.append(
+                        {
+                            "WMO": wmo,
+                            "Type": sid,
+                            "Model": model,
+                            "Maker": maker,
+                            "SerialNumber": sn,
+                            "Units": units,
+                            "Accuracy": accuracy,
+                            "Resolution": resolution,
+                        }
+                    )
+            return pd.DataFrame(d).sort_values(by="WMO").reset_index(drop=True)
+
+        return self._floats_api(
+            model,
+            preprocess=preprocess,
+            preprocess_opts={"model_name": model},
+            postprocess=postprocess,
+            progress=progress,
+            errors=errors,
+        )
+
     def search(
         self,
         model: str = None,
-        output: Literal["wmo", "sn", "wmo_sn"] = "wmo",
+        output: Literal["wmo", "sn", "wmo_sn", "df"] = "wmo",
         progress=False,
         errors="raise",
     ):
@@ -519,9 +618,10 @@ class ArgoSensor:
         model: str, optional
             A string to search in the `sensorModels` field of the Euro-Argo fleet-monitoring API `platformCodes/multi-lines-search` endpoint.
 
-        output: str, Literal["wmo", "sn", "wmo_sn"], default "wmo"
+        output: str, Literal["wmo", "sn", "wmo_sn", "df"], default "wmo"
             Define the output to return:
 
+                - "df": a :class:`pandas.DataFrame` with WMO, sensor type/model/maker and serial number
                 - "wmo": a list of WMO numbers (integers)
                 - "sn": a list of sensor serial numbers (strings)
                 - "wmo_sn": a list of dictionary with WMO as key and serial numbers as values
@@ -533,7 +633,7 @@ class ArgoSensor:
 
         Returns
         -------
-        List[int], List[str], Dict
+        :class:`pandas.DataFrame`, List[int], List[str], Dict
 
         Notes
         -----
@@ -541,16 +641,16 @@ class ArgoSensor:
 
         Sensor serial numbers are given by float meta-data retrieved using the Euro-Argo fleet-monitoring API and a request to the `/floats/{wmo}` endpoint:
 
-        See Also
-        --------
-        `Endpoint 'platformCodes/multi-lines-search' documentation <https://fleetmonitoring.euro-argo.eu/swagger-ui.html#!/platform-code-controller/getPlatformCodesMultiLinesSearchUsingPOST>`_.
+        `Endpoint platformCodes/multi-lines-search documentation <https://fleetmonitoring.euro-argo.eu/swagger-ui.html#!/platform-code-controller/getPlatformCodesMultiLinesSearchUsingPOST>`_.
 
-        `Endpoint '/floats/{wmo}' documentation <https://fleetmonitoring.euro-argo.eu/swagger-ui.html#!/autonomous-float-controller/getFullFloatUsingGET>`_.
+        `Endpoint /floats/{wmo} documentation <https://fleetmonitoring.euro-argo.eu/swagger-ui.html#!/autonomous-float-controller/getFullFloatUsingGET>`_.
 
         """
         if model is None and self.model is not None:
             model = self.model.name
-        if output == "wmo":
+        if output == "df":
+            return self._to_dataframe(model=model, progress=progress, errors=errors)
+        elif output == "wmo":
             return self._search_wmo_with(model=model, errors=errors)
         elif output == "sn":
             return self._search_sn_with(model=model, progress=progress, errors=errors)
@@ -560,7 +660,7 @@ class ArgoSensor:
             )
         else:
             raise OptionValueError(
-                "'output' option value must be in: 'wmo', 'sn', or 'wmo_sn'"
+                "'output' option value must be in: 'wmo', 'sn', 'wmo_sn' or 'df'"
             )
 
     def iterfloats_with(self, model: str = None, chunksize: int = None):
@@ -615,3 +715,21 @@ class ArgoSensor:
         else:
             for wmo in wmos:
                 yield ArgoFloat(wmo, idx=idx)
+
+    def cli_search(self, model: str, output: str = "wmo"):
+        """Quick sensor lookups from the terminal
+
+        This function is a command-line-friendly output for float search (e.g., for piping to other tools).
+
+        Examples
+        --------
+        .. code-block:: bash
+            :caption: Example of search results from the command-line
+
+            python -c "from argopy import ArgoSensor; ArgoSensor().cli_search('RBR', output='wmo')"
+
+            python -c "from argopy import ArgoSensor; ArgoSensor().cli_search('RBR', output='sn')"
+
+        """
+        results = self.search(model, output=output)
+        print("\n".join(map(str, results)))
