@@ -299,9 +299,7 @@ class ArgoSensor:
             for meth in [
                 "search_model",
                 "search_model_name",
-                "search_wmo_with",
-                "search_sn_with",
-                "search_wmo_sn_with",
+                "search",
                 "iterfloats_with",
             ]:
                 summary.append(f"  ╰┈➤ ArgoSensor().{meth}()")
@@ -398,6 +396,11 @@ class ArgoSensor:
         Notes
         -----
         Based on a fleet-monitoring API request to `platformCodes/multi-lines-search` on `sensorModels` field.
+
+        Documentation:
+
+        https://fleetmonitoring.euro-argo.eu/swagger-ui.html#!/platform-code-controller/getPlatformCodesMultiLinesSearchUsingPOST
+
         """
         api_point = f"{OPTIONS['fleetmonitoring']}/platformCodes/multi-lines-search"
         payload = [
@@ -427,13 +430,13 @@ class ArgoSensor:
         progress=False,
         errors="raise",
     ):
-        """Fetch and process JSON data returned from the fleet-monitoring API for a list of float WMOs
-
-        Process float metadata (calibrations, sensors, cycles, configs, ...) for all WMOs with a given sensor model name
+        """Search floats with a sensor model and then fetch and process JSON data returned from the fleet-monitoring API for each floats
 
         Notes
         -----
-        Based on fleet-monitoring API requests to `/floats/{wmo}`.
+        Based on a POST request to the fleet-monitoring API requests to `/floats/{wmo}`.
+
+        `Endpoint documentation <https://fleetmonitoring.euro-argo.eu/swagger-ui.html#!/autonomous-float-controller/getFullFloatUsingGET>`_.
         """
         wmos = self._search_wmo_with(model)
 
@@ -507,6 +510,44 @@ class ArgoSensor:
         progress=False,
         errors="raise",
     ):
+        """Search for Argo floats equipped with a sensor model name
+
+        All information are retrieved using the `Euro-Argo fleet-monitoring API <https://fleetmonitoring.euro-argo.eu>`_.
+
+        Parameters
+        ----------
+        model: str, optional
+            A string to search in the `sensorModels` field of the Euro-Argo fleet-monitoring API `platformCodes/multi-lines-search` endpoint.
+
+        output: str, Literal["wmo", "sn", "wmo_sn"], default "wmo"
+            Define the output to return:
+
+                - "wmo": a list of WMO numbers (integers)
+                - "sn": a list of sensor serial numbers (strings)
+                - "wmo_sn": a list of dictionary with WMO as key and serial numbers as values
+
+        progress: bool, default False
+            Define whether to display a progress bar or not
+
+        errors: str, default "raise"
+
+        Returns
+        -------
+        List[int], List[str], Dict
+
+        Notes
+        -----
+        The list of WMOs equipped with a given sensor model is retrieved using the Euro-Argo fleet-monitoring API and a request to the `platformCodes/multi-lines-search` endpoint using the `sensorModels` search field.
+
+        Sensor serial numbers are given by float meta-data retrieved using the Euro-Argo fleet-monitoring API and a request to the `/floats/{wmo}` endpoint:
+
+        See Also
+        --------
+        `Endpoint 'platformCodes/multi-lines-search' documentation <https://fleetmonitoring.euro-argo.eu/swagger-ui.html#!/platform-code-controller/getPlatformCodesMultiLinesSearchUsingPOST>`_.
+
+        `Endpoint '/floats/{wmo}' documentation <https://fleetmonitoring.euro-argo.eu/swagger-ui.html#!/autonomous-float-controller/getFullFloatUsingGET>`_.
+
+        """
         if model is None and self.model is not None:
             model = self.model.name
         if output == "wmo":
@@ -523,13 +564,14 @@ class ArgoSensor:
             )
 
     def iterfloats_with(self, model: str = None, chunksize: int = None):
-        """Iterate over ArgoFloat equipped with a given sensor model
+        """Iterator over :class:`ArgoFloat` equipped with a given sensor model
 
         By default, iterate over a single float, otherwise use the `chunksize` argument to iterate over chunk of floats.
 
         Parameters
         ----------
         model: str
+            A string to search in the `sensorModels` field of the Euro-Argo fleet-monitoring API `platformCodes/multi-lines-search` endpoint.
 
         chunksize: int, optional
             Maximum chunk size
@@ -545,8 +587,8 @@ class ArgoSensor:
         .. code-block:: python
             :caption: Example of iteration
 
-            for float in ArgoSensor().iterfloats_with('SBE41CP'):
-                float # is a ArgoFloat instance
+            for af in ArgoSensor().iterfloats_with('SBE41CP'):
+                af # is a ArgoFloat instance
 
         """
         if model is None and self.model is not None:
