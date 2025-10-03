@@ -3,6 +3,9 @@ from collections import UserList
 import warnings
 import logging
 import copy
+from dataclasses import dataclass
+from typing import ClassVar
+import pandas as pd
 
 from .checkers import check_wmo, is_wmo
 
@@ -256,3 +259,71 @@ class Registry(UserList):
     def copy(self):
         """Return a shallow copy of the registry"""
         return self.__copy__()
+
+
+@dataclass
+class NVSrow:
+    """This proto makes it easier to work with a single NVS table row from a :class:`pd.DataFrame`
+
+    Examples
+    --------
+    .. code-block:: python
+        :caption: Use this prototype to create a NVS table row class
+
+        class SensorType(NVSrow):
+            reftable = "R25"
+            @staticmethod
+            def from_series(obj: pd.Series) -> "SensorType":
+                return SensorType(obj)
+
+    .. code-block:: python
+        :caption: Then use the row class
+
+        from argopy import ArgoNVSReferenceTables
+
+        df = ArgoNVSReferenceTables().tbl(25)
+
+        st = SensorType.from_series(df[df["altLabel"].apply(lambda x: x == 'CTD')].iloc[0])
+
+        st.name
+        st.long_name
+        st.definition
+        st.deprecated
+        st.uri
+
+    """
+
+    name: str = ""
+    long_name: str = ""
+    definition: str = ""
+    uri: str = ""
+    deprecated: bool = None
+
+    reftable: ClassVar[str]
+    """Reference table"""
+
+    def __init__(self, row: pd.Series):
+        if not isinstance(row, pd.Series) and isinstance(row, pd.DataFrame):
+            row = row.iloc[0]
+        row = row.to_dict()
+        self.name = row["altLabel"]
+        self.long_name = row["prefLabel"]
+        self.definition = row["definition"]
+        self.deprecated = row["deprecated"]
+        self.uri = row["id"]
+
+    @staticmethod
+    def from_series(obj: pd.Series) -> "NVSrow":
+        return NVSrow(obj)
+
+    def __eq__(self, obj):
+        return self.name == obj
+
+    def __repr__(self):
+        summary = [f"<{self.reftable}.row>"]
+        summary.append(f"%12s: {self.name}" % "name")
+        summary.append(f"%12s: {self.long_name}" % "long_name")
+        summary.append(f"%12s: {self.uri}" % "uri")
+        summary.append(f"%12s: {self.deprecated}" % "deprecated")
+        summary.append(f'%12s: "{self.definition}"' % "definition")
+        return "\n".join(summary)
