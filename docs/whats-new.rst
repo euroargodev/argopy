@@ -20,15 +20,6 @@ Internals
 - **Fix upstream compatibility** whereby xarray >= 2025.8 deprecation cycle for changing default keyword arguments in :meth:`xarray.merge` and :meth:`xarray.concat` would make Argopy to fail with internal data processing, :issue:`521`. (:pr:`504`) by |gmaze|.
 
 
-Coming up next
---------------
-
-Internals
-^^^^^^^^^
-
-- **Fix bug** whereby fetching data from a selection of profiles with only real-time data would fail :issue:`517`. (:pr:`518`) by |gmaze|.
-
-
 v1.3.0 (22 Aug. 2025)
 ---------------------
 
