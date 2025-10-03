@@ -486,7 +486,7 @@ class SearchEngine(ArgoIndexSearchEngine):
             return to_list(institution_code)
 
         def namer(institution_code):
-            return {"DAC_CODE": institution_code}
+            return {"INST_CODE": institution_code}
 
         def composer(institution_code):
             return (
@@ -505,4 +505,36 @@ class SearchEngine(ArgoIndexSearchEngine):
             return self._obj
         else:
             self._obj.search_type.update(namer(institution_code))
+            return search_filter
+
+    def dac(self, dac: List[str], nrows=None, composed=False):
+        def checker(dac):
+            if "file" not in self._obj.convention_columns:
+                raise InvalidDatasetStructure("Cannot search for DAC in this index)")
+            log.debug("Argo index searching for DAC in %s ..." % dac)
+            return to_list(dac)
+
+        def namer(dac):
+            return {"DAC": dac}
+
+        def composer(DACs):
+            filt = []
+            for dac in DACs:
+                filt.append(
+                    self._obj.index["file"].str.contains(
+                        "%s/" % dac, regex=True, case=False
+                    )
+                )
+            return self._obj._reduce_a_filter_list(filt, op="or")
+
+        dac = checker(dac)
+        self._obj.load(nrows=self._obj._nrows_index)
+        search_filter = composer(dac)
+        if not composed:
+            self._obj.search_type = namer(dac)
+            self._obj.search_filter = search_filter
+            self._obj.run(nrows=nrows)
+            return self._obj
+        else:
+            self._obj.search_type.update(namer(dac))
             return search_filter
