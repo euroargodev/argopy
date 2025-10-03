@@ -13,7 +13,14 @@ Coming up next (unreleased)
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- New query to search institution-related entries in an ArgoIndex, :issue:`527`. (:pr:``) by |gmaze|.
+- New query to search institution-related entries in an ArgoIndex, :issue:`527`. (:pr:`528`) by |gmaze|.
+
+Breaking changes
+^^^^^^^^^^^^^^^^
+
+- In the :class:`pandas.Dataframe` output of the :meth:`ArgoIndex.to_dataframe` method (:pr:`528`) by |gmaze|:
+    - column 'institution_code' is replaced by 'institution', to preserve the original Argo index file column name,
+    - column 'institution' is replaced by 'institution_name'.
 
 
 Internals
