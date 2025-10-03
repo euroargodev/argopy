@@ -325,5 +325,5 @@ class NVSrow:
         summary.append(f"%12s: {self.long_name}" % "long_name")
         summary.append(f"%12s: {self.uri}" % "uri")
         summary.append(f"%12s: {self.deprecated}" % "deprecated")
-        summary.append(f'%12s: "{self.definition}"' % "definition")
+        summary.append("%12s: %s" % ("definition", self.definition))
         return "\n".join(summary)
