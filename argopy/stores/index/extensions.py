@@ -427,12 +427,12 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         raise NotImplementedError("Not implemented")
 
     def profiler_label(self, profiler_label: str, nrows=None, composed=False):
-        """Search index for profiler types with a given string in their label
+        """Search index for profiler types with a given string in their long name
 
         Parameters
         ----------
         profiler_label: str
-            The string to be found in the R8 Argo Reference table label
+            The string to be found in the R8 Argo Reference table prefLabel column
 
         Returns
         -------
@@ -461,7 +461,7 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
                 for label in profiler_label:
                     if label in long_name:
                         profiler_type.append(ptype)
-            return profiler_type
+            return profiler_label, profiler_type
 
         def namer(profiler_label):
             self._obj.search_type.pop('PTYPE')
@@ -470,7 +470,7 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         def composer(profiler_type):
             return self.profiler_type(profiler_type, nrows=nrows, composed=True)
 
-        profiler_type = checker(profiler_label)
+        profiler_label, profiler_type = checker(profiler_label)
         self._obj.load(nrows=self._obj._nrows_index)
         search_filter = composer(profiler_type)
         if not composed:
@@ -484,7 +484,9 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
 
     @abstractmethod
     def institution_code(self, institution_code,  nrows=None, composed=False):
-        """Search index for institution/dac code
+        """Search index for institution codes
+
+        Valid entries are altLabel from the Argo reference table 4 'DATA_CENTRE_CODES'.
 
         Parameters
         ----------
@@ -495,6 +497,63 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         :class:`ArgoIndex`
         """
         raise NotImplementedError("Not implemented")
+
+    def institution_name(self, institution_name: str, nrows=None, composed=False):
+        """Search index for institutions with a given string in their long name
+
+        Parameters
+        ----------
+        institution_name: str
+            The string to be found in the R4 Argo Reference table prefLabel column
+
+        Returns
+        -------
+        :class:`ArgoIndex`
+
+        Examples
+        --------
+        .. code-block:: python
+
+            from argopy import ArgoIndex
+            idx = ArgoIndex(index_file='bgc-s')
+
+            idx.query.institution_name('Canada')
+
+        See Also
+        --------
+        :class:`ArgoIndex.query.institution_code`
+        """
+        def checker(institution_name):
+            if "institution" not in self._obj.convention_columns:
+                raise InvalidDatasetStructure("Cannot search for institution name in this index)")
+            log.debug("Argo index searching for institution name '%s' ..." % institution_name)
+            institution_name = to_list(institution_name)
+            institution_code = []
+            for code, long_name in self._obj._r4.items():
+                for label in institution_name:
+                    if label.lower() in long_name.lower():
+                        institution_code.append(code)
+                        log.debug(f"{label} in {long_name}")
+            return institution_name, institution_code
+
+        def namer(institution_name):
+            self._obj.search_type.pop('INST_CODE')
+            return {"INST_NAME": institution_name}
+
+        def composer(institution_code):
+            return self.institution_code(institution_code, nrows=nrows, composed=True)
+
+        institution_name, institution_code = checker(institution_name)
+        self._obj.load(nrows=self._obj._nrows_index)
+        search_filter = composer(institution_code)
+        if not composed:
+            self._obj.search_type = namer(institution_name)
+            self._obj.search_filter = search_filter
+            self._obj.run(nrows=nrows)
+            return self._obj
+        else:
+            self._obj.search_type.update(namer(institution_name))
+            return search_filter
 
     def compose(self, query: dict, nrows=None):
         """Compose query with multiple search methods
