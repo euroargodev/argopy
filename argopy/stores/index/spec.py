@@ -290,8 +290,8 @@ class ArgoIndexStoreProto(ABC):
         if hasattr(self, "search"):
             match = "matches" if self.N_MATCH > 1 else "match"
             summary.append(
-                "Searched: True (%i %s, %0.4f%%)"
-                % (self.N_MATCH, match, self.N_MATCH * 100 / self.N_RECORDS)
+                "Searched: True (%i %s, %0.4f%%) - %s"
+                % (self.N_MATCH, match, self.N_MATCH * 100 / self.N_RECORDS, self.search_type)
             )
         else:
             summary.append("Searched: False")
@@ -361,14 +361,14 @@ class ArgoIndexStoreProto(ABC):
                     self._format(BOX[5], "tim"),
                 )
 
-            elif "WMO" == key:
+            elif key == "WMO":
                 WMO = self.search_type["WMO"]
                 if len(WMO) == 1:
                     cname = "WMO%i" % (WMO[0])
                 else:
                     cname = ";".join(["WMO%i" % wmo for wmo in sorted(WMO)])
 
-            elif "CYC" == key:
+            elif key == "CYC":
                 CYC = self.search_type["CYC"]
                 if len(CYC) == 1:
                     cname = "CYC%i" % (CYC[0])
@@ -376,17 +376,17 @@ class ArgoIndexStoreProto(ABC):
                     cname = ";".join(["CYC%i" % cyc for cyc in sorted(CYC)])
                 cname = "%s" % cname
 
-            elif "PARAMS" == key:
+            elif key == "PARAMS":
                 PARAM, LOG = self.search_type["PARAMS"]
                 cname = ("_%s_" % LOG).join(PARAM)
 
-            elif "DMODE" == key:
+            elif key == "DMODE":
                 DMODE, LOG = self.search_type["DMODE"]
                 cname = ("_%s_" % LOG).join(
                     ["%s_%s" % (p, "".join(DMODE[p])) for p in DMODE]
                 )
 
-            elif "PTYPE" == key:
+            elif key == "PTYPE":
                 PTYPE = self.search_type["PTYPE"]
                 if len(PTYPE) == 1:
                     cname = "PTYPE%i" % (PTYPE[0])
@@ -394,10 +394,33 @@ class ArgoIndexStoreProto(ABC):
                     cname = ";".join(["PTYPE%i" % pt for pt in sorted(PTYPE)])
                 cname = "%s" % cname
 
-            elif "PLABEL" == key:
+            elif key == "PLABEL":
                 PLABEL = self.search_type["PLABEL"]
-                LOG = 'or'
-                cname = ("_%s_" % LOG).join(PLABEL)
+                if len(PLABEL) == 1:
+                    cname = "PLABEL%s" % (PLABEL[0])
+                else:
+                    cname = ";".join(["PLABEL%s" % inst for inst in sorted(PLABEL)])
+
+            elif key == "INST_CODE":
+                INST_CODE = self.search_type["INST_CODE"]
+                if len(INST_CODE) == 1:
+                    cname = "ICODE%s" % (INST_CODE[0])
+                else:
+                    cname = ";".join(["INAME%s" % inst for inst in sorted(INST_CODE)])
+
+            elif key == "INST_NAME":
+                INST_NAME = self.search_type["INST_NAME"]
+                if len(INST_NAME) == 1:
+                    cname = "INAME%s" % (INST_NAME[0])
+                else:
+                    cname = ";".join(["INAME%s" % inst for inst in sorted(INST_NAME)])
+
+            elif key == "DAC":
+                DAC = self.search_type["DAC"]
+                if len(DAC) == 1:
+                    cname = "DAC%s" % (DAC[0])
+                else:
+                    cname = ";".join(["DAC%s" % dac for dac in sorted(DAC)])
 
             C.append(cname)
 
@@ -715,11 +738,8 @@ class ArgoIndexStoreProto(ABC):
                 # institution & profiler mapping for all users
                 # todo: may be we need to separate this for standard and expert users
                 institution_dictionary = self._r4
-                df["tmp1"] = df["institution"].apply(
+                df["institution_name"] = df["institution"].apply(
                     lambda x: mapp_dict(institution_dictionary, x)
-                )
-                df = df.rename(
-                    columns={"institution": "institution_code", "tmp1": "institution"}
                 )
                 df["dac"] = df["file"].apply(lambda x: x.split("/")[0])
 
