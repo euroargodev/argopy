@@ -13,6 +13,8 @@ Coming up next (unreleased)
 Internals
 ---------
 
+- **Fix bug** whereby profiles with Real time only data mode data failed to pass :meth:`Dataset.argo.datamode.merge` without raising an error, :issue:`517`, :issue:`519`. (:pr:`518`) by |gmaze|.
+
 - **New post method for the** :class:`stores.httpstore` by |gmaze|.
 
 - **Fix upstream compatibility** whereby xarray >= 2025.8 deprecation cycle for changing default keyword arguments in :meth:`xarray.merge` and :meth:`xarray.concat` would make Argopy to fail with internal data processing, :issue:`521`. (:pr:`504`) by |gmaze|.
