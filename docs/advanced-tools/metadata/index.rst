@@ -13,6 +13,7 @@ Here we document **argopy** tools related to:
 * :doc:`the ADMT collection of documentation manuals <admt_documentation>`
 * :doc:`the global deployment plan from Ocean-OPS <deployment_plan>`
 * :doc:`GDAC snapshot with DOIs <gdac_doi>`
+* :doc:`Argo sensor models and types <argosensor>`
 
 Note that data more specifically used in quality control are described in the dedicated :ref:`data_qc` documentation section (e.g.
 topography, altimetry, in-situ reference data from Argo float and GOSHIP, etc ...).
@@ -24,4 +25,4 @@ topography, altimetry, in-situ reference data from Argo float and GOSHIP, etc ..
     Argo reference tables (NVS) <nvs_ref_tables>
     admt_documentation
     deployment_plan
-    gdac_doi
+    argosensor

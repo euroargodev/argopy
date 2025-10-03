@@ -10,8 +10,13 @@ What's New
 Coming up next (unreleased)
 ---------------------------
 
+Features and front-end API
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- **New** :class:`ArgoSensor` class to work with Argo sensor models, types and floats equipped with. (:pr:`532`) by |gmaze|.
+
 Internals
----------
+^^^^^^^^^
 
 - **New post method for the** :class:`stores.httpstore` by |gmaze|.
 

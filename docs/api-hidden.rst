@@ -177,6 +177,17 @@
     argopy.related.ArgoDOI.doi
     argopy.related.doi_snapshot.DOIrecord
 
+    argopy.related.ArgoSensor
+    argopy.related.ArgoSensor.reference_model
+    argopy.related.ArgoSensor.reference_model_name
+    argopy.related.ArgoSensor.reference_sensor
+    argopy.related.ArgoSensor.reference_sensor_type
+    argopy.related.ArgoSensor.search_model
+    argopy.related.ArgoSensor.model_to_type
+    argopy.related.ArgoSensor.type_to_model
+    argopy.related.ArgoSensor.search
+    argopy.related.ArgoSensor.iterfloats_with
+
     argopy.plot
     argopy.plot.dashboard
     argopy.plot.bar_plot
