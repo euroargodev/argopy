@@ -63,3 +63,4 @@ dependencies:
 # PIP:
   - pip:
       - pytest-reportlog == 0.4.0
+      - pyasynchat
