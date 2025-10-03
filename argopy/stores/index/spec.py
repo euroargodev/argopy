@@ -661,19 +661,19 @@ class ArgoIndexStoreProto(ABC):
         return [self.fs["client"].cachepath(p) for p in path]
 
     def to_dataframe(self, nrows=None, index=False, completed=True):  # noqa: C901
-        """Return index or search results as :class:`pandas.DataFrame`
+        """Return index or search results as a :class:`pandas.DataFrame`
 
         If search not triggered, fall back on full index by default. Using index=True force to return the full index.
 
         Parameters
         ----------
-        nrows: {int, None}, default: None
+        nrows: int, default: None
             Will return only the first `nrows` of search results. None returns all.
         index: bool, default: False
             Force to return the index, even if a search was performed with this store instance.
         completed: bool, default: True
-            Complete the raw index columns with: Platform Number (WMO), Cycle Number, Institution and Profiler details
-            This is adding an extra computation, so if you care about performances, you may set this to False.
+            Complete the raw index columns with: Platform Number (WMO), Cycle Number, Institution name and Profiler labels.
+            This is adding an extra computation time, so if you care about performances, you may set this to False.
 
         Returns
         -------

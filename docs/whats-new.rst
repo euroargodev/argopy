@@ -20,13 +20,13 @@ Breaking changes
 
 - In the :class:`pandas.DataFrame` output of the :meth:`ArgoIndex.to_dataframe` method (:pr:`528`) by |gmaze|:
 
-    - column 'institution_code' is replaced by 'institution', to preserve the original Argo index file column name,
-    - column 'institution' is replaced by 'institution_name'.
+  - column `institution_code` is renamed `institution`, to preserve the original Argo index file column name,
+  - column `institution` is renamed by `institution_name`.
 
 Internals
 ^^^^^^^^^
 
-- **Fix upstream compatibility** whereby xarray >= 2025.8 deprecation cycle for changing default keyword arguments in :meth:`xarray.merge` and :meth:`xarray.concat` would make Argopy to fail with internal data processing, :issue:`521`. (:pr:`504`) by |gmaze|.
+- **Fix upstream compatibility** whereby xarray >= 2025.8 deprecation cycle for changing default keyword arguments in :func:`xarray.merge` and :func:`xarray.concat` would make Argopy to fail with internal data processing, :issue:`521`. (:pr:`504`) by |gmaze|.
 
 
 v1.3.0 (22 Aug. 2025)
