@@ -172,7 +172,11 @@ Here is the list of methods available to search an index:
 .. code-block:: python
 
     idx.query.wmo(1901393)
+    idx.query.wmo([6902915, 1901393])
     idx.query.cyc(1)
+    idx.query.cyc([1, 12])
+    idx.query.wmo_cyc(1901393, [1,12])
+
     idx.query.lon([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition, only lat/lon is used
     idx.query.lat([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition, only lat/lon is used
     idx.query.date([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition, only time is used
@@ -183,8 +187,18 @@ Here is the list of methods available to search an index:
 
     idx.query.params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])  # Only for BGC profile index
     idx.query.parameter_data_mode({'BBP700': 'D'})  # Only for BGC profile index
+
     idx.query.profiler_type(845)
+    idx.query.profiler_type([845, 856])
     idx.query.profiler_label('NINJA')
+    idx.query.profiler_label(['NINJA', 'SOLO-D deep'])
+
+    idx.query.institution_code('IF')
+    idx.query.institution_code(['IF', 'JA'])
+    idx.query.institution_name('Canada')
+    idx.query.institution_name(['Canada', 'INCOIS'])
+    idx.query.dac('coriolis')
+    idx.query.dac(['meds', 'aoml'])
 
 You will note that the space/time search methods ``lon``, ``lat``, ``date``, ``lon_lat`` and ``box`` all take the same argument that is a list with [lon_min, lon_max, lat_min, lat_max, datim_min, datim_max] values.
 

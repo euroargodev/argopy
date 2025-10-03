@@ -86,6 +86,8 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         idx.query.profiler_label
 
         idx.query.institution_code
+        idx.query.institution_name
+        idx.query.dac
 
     .. code-block:: python
         :caption: Composition of queries
@@ -399,10 +401,12 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
     def profiler_type(self):
         """Search index for profiler types
 
+        The list of valid types is given by IDs of `Argo reference table 8 <http://vocab.nerc.ac.uk/collection/R08/current/>`_.
+
         Parameters
         ----------
-        profiler_type: list(str)
-            List of profiler types to search for. Valid types are given by integers with values from the R8 Argo Reference table
+        profiler_type: str, list(str)
+            List of profiler types to search for.
 
         Returns
         -------
@@ -413,9 +417,12 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         .. code-block:: python
 
             from argopy import ArgoIndex
-            idx = ArgoIndex(index_file='core')
+            idx = ArgoIndex()
 
             idx.query.profiler_type(845)
+
+        .. code-block:: python
+            :caption: List valid types
 
             from argopy import ArgoNVSReferenceTables
             valid_types = ArgoNVSReferenceTables().tbl(8)['altLabel']
@@ -429,10 +436,12 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
     def profiler_label(self, profiler_label: str, nrows=None, composed=False):
         """Search index for profiler types with a given string in their long name
 
+        Will search for string occurrences in the preferred label of `Argo reference table 8 <http://vocab.nerc.ac.uk/collection/R08/current/>`_.
+
         Parameters
         ----------
-        profiler_label: str
-            The string to be found in the R8 Argo Reference table prefLabel column
+        profiler_label: str, list(str)
+            The string (not exact) to be found in profiler preferred labels.
 
         Returns
         -------
@@ -443,9 +452,15 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         .. code-block:: python
 
             from argopy import ArgoIndex
-            idx = ArgoIndex(index_file='bgc-s')
+            idx = ArgoIndex()
 
             idx.query.profiler_label('ARVOR')
+
+        .. code-block:: python
+            :caption: List valid labels
+
+            from argopy import ArgoNVSReferenceTables
+            valid_labels = ArgoNVSReferenceTables().tbl(8)['prefLabel']
 
         See Also
         --------
@@ -486,25 +501,12 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
     def institution_code(self, institution_code,  nrows=None, composed=False):
         """Search index for institution codes
 
-        Valid entries are altLabel from the Argo reference table 4 'DATA_CENTRE_CODES'.
+        The list of valid codes is given by IDs of `Argo reference table 4 <http://vocab.nerc.ac.uk/collection/R04/current/>`_.
 
         Parameters
         ----------
         institution_code: str, list(str)
-
-        Returns
-        -------
-        :class:`ArgoIndex`
-        """
-        raise NotImplementedError("Not implemented")
-
-    def institution_name(self, institution_name: str, nrows=None, composed=False):
-        """Search index for institutions with a given string in their long name
-
-        Parameters
-        ----------
-        institution_name: str
-            The string to be found in the R4 Argo Reference table prefLabel column
+            List of institution codes to search for.
 
         Returns
         -------
@@ -515,13 +517,56 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         .. code-block:: python
 
             from argopy import ArgoIndex
-            idx = ArgoIndex(index_file='bgc-s')
+            idx = ArgoIndex()
 
-            idx.query.institution_name('Canada')
+            idx.query.institution_code('IF')
+            idx.query.institution_code(['IF', 'JA'])
+
+        .. code-block:: python
+            :captio: List valid codes
+
+            from argopy import ArgoNVSReferenceTables
+            valid_codes = ArgoNVSReferenceTables().tbl(4)['altLabel']
 
         See Also
         --------
-        :class:`ArgoIndex.query.institution_code`
+        :class:`ArgoIndex.query.institution_name`, :class:`ArgoIndex.query.dac`
+        """
+        raise NotImplementedError("Not implemented")
+
+    def institution_name(self, institution_name: str, nrows=None, composed=False):
+        """Search index for institutions with a given string in their long name
+
+        Will search for string occurrences in the preferred label of `Argo reference table 4 <http://vocab.nerc.ac.uk/collection/R04/current/>`_.
+
+        Parameters
+        ----------
+        institution_name: str, list(str)
+            The string (not exact) to be found in institution preferred labels.
+
+        Returns
+        -------
+        :class:`ArgoIndex`
+
+        Examples
+        --------
+        .. code-block:: python
+
+            from argopy import ArgoIndex
+            idx = ArgoIndex()
+
+            idx.query.institution_name('Canada')
+            idx.query.institution_name(['Canada', 'germany'])
+
+        .. code-block:: python
+            :captio: List valid names
+
+            from argopy import ArgoNVSReferenceTables
+            valid_names = ArgoNVSReferenceTables().tbl(4)['prefLabel']
+
+        See Also
+        --------
+        :class:`ArgoIndex.query.institution_code`, :class:`ArgoIndex.query.dac`
         """
         def checker(institution_name):
             if "institution" not in self._obj.convention_columns:
@@ -554,6 +599,35 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         else:
             self._obj.search_type.update(namer(institution_name))
             return search_filter
+
+    @abstractmethod
+    def dac(self, dac,  nrows=None, composed=False):
+        """Search index for DAC
+
+        Parameters
+        ----------
+        dac: str, list(str)
+            One or more DAC names to look for (based on file paths).
+
+        Returns
+        -------
+        :class:`ArgoIndex`
+
+        Examples
+        --------
+        .. code-block:: python
+
+            from argopy import ArgoIndex
+            idx = ArgoIndex()
+
+            idx.query.dac('coriolis')
+            idx.query.dac(['aoml', 'meds'])
+
+        See Also
+        --------
+        :class:`ArgoIndex.query.institution_code`, :class:`ArgoIndex.query.institution_name`
+        """
+        raise NotImplementedError("Not implemented")
 
     def compose(self, query: dict, nrows=None):
         """Compose query with multiple search methods

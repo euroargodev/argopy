@@ -13,18 +13,18 @@ Coming up next (unreleased)
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- New query to search institution-related entries in an ArgoIndex, :issue:`527`. (:pr:`528`) by |gmaze|.
+- New queries to search institution-related entries in an :class:`ArgoIndex`: :meth:`ArgoIndex.query.institution_code`, :meth:`ArgoIndex.query.institution_name` and :meth:`ArgoIndex.query.dac`, :issue:`527`. (:pr:`528`) by |gmaze|.
 
 Breaking changes
 ^^^^^^^^^^^^^^^^
 
-- In the :class:`pandas.Dataframe` output of the :meth:`ArgoIndex.to_dataframe` method (:pr:`528`) by |gmaze|:
+- In the :class:`pandas.DataFrame` output of the :meth:`ArgoIndex.to_dataframe` method (:pr:`528`) by |gmaze|:
+
     - column 'institution_code' is replaced by 'institution', to preserve the original Argo index file column name,
     - column 'institution' is replaced by 'institution_name'.
 
-
 Internals
----------
+^^^^^^^^^
 
 - **Fix upstream compatibility** whereby xarray >= 2025.8 deprecation cycle for changing default keyword arguments in :meth:`xarray.merge` and :meth:`xarray.concat` would make Argopy to fail with internal data processing, :issue:`521`. (:pr:`504`) by |gmaze|.
 
