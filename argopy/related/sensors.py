@@ -2,8 +2,11 @@ from typing import List
 import pandas as pd
 import numpy as np
 from pathlib import Path
-from typing import Optional, Literal, Union, Dict
+from typing import TYPE_CHECKING, Optional, Literal, Union, Any, Iterator
 import logging
+
+if TYPE_CHECKING:
+    SearchOutputOptions = Literal["wmo", "sn", "wmo_sn", "df"]
 
 # from ..errors import InvalidOption
 from ..stores import ArgoFloat, ArgoIndex, httpstore, filestore
@@ -99,7 +102,7 @@ class ArgoSensor:
 
     def __init__(
         self,
-        model: str = None,
+        model: str | None = None,
         **kwargs,
     ):
         """Create an instance of :class:`ArgoSensor`
@@ -212,10 +215,12 @@ class ArgoSensor:
         self.timeout = kwargs.get("timeout", OPTIONS["api_timeout"])
         self.fs = httpstore(cache=self._cache, cachedir=self._cachedir)
 
-        self._r25 = None  # will be loaded when necessary
-        self._r27 = None  # will be loaded when necessary
+        self._r25: pd.DataFrame | None = None  # will be loaded when necessary
+        self._r27: pd.DataFrame | None = None  # will be loaded when necessary
         self._load_mappers()  # Load r25 model to r27 type mapping dictionary
 
+        self._model: SensorModel | None = None
+        self._type: SensorType | None = None
         if model is not None:
             try:
                 df = self.search_model(model, strict=True)
@@ -225,16 +230,12 @@ class ArgoSensor:
                 )
 
             if df.shape[0] == 1:
-                self._model = SensorModel.from_series(df)
+                self._model = SensorModel.from_series(df.iloc[0])
                 self._type = self.model_to_type(self._model, errors="ignore")
             else:
                 raise InvalidDatasetStructure(
                     f"Found multiple sensor models with '{model}'. Restrict your sensor model name to only one value in: {to_list(df['altLabel'].values)}"
                 )
-
-        else:
-            self._model = None
-            self._type = None
 
     def _load_mappers(self):
         """Load from static assets file the NVS R25 to R27 key mappings
@@ -254,7 +255,7 @@ class ArgoSensor:
             )
         df = pd.concat(df)
         df = df.reset_index(drop=True)
-        self._r27_to_r25 = {}
+        self._r27_to_r25: dict[str, str] = {}
         df.apply(
             lambda row: self._r27_to_r25.update(
                 {row["model"].strip(): row["type"].strip()}
@@ -263,14 +264,14 @@ class ArgoSensor:
         )
 
     @property
-    def r27_to_r25(self) -> Dict:
+    def r27_to_r25(self) -> dict[str, str]:
         """Dictionary mapping of R27 to R25
 
         This mapping is from files for group 1, 2, 2b, 3, 3b and 4(s) downloaded on 2025/10/03 from https://github.com/OneArgo/ArgoVocabs/issues/156.
 
         Returns
         -------
-        Dict
+        dict[str, str]
 
         Notes
         -----
@@ -282,7 +283,7 @@ class ArgoSensor:
 
     def model_to_type(
         self,
-        model: Union[str, SensorModel] = None,
+        model: Union[str, SensorModel, None] = None,
         errors: Literal["raise", "ignore"] = "raise",
     ) -> Optional[SensorType]:
         """Get a sensor type for a given sensor model
@@ -306,7 +307,7 @@ class ArgoSensor:
         --------
         :attr:`ArgoSensor.type_to_model`
         """
-        model_name = model.name if isinstance(model, SensorModel) else model
+        model_name: str = model.name if isinstance(model, SensorModel) else model
         sensor_type = self.r27_to_r25.get(model_name, None)
         if sensor_type is not None:
             row = self.reference_sensor[
@@ -323,7 +324,7 @@ class ArgoSensor:
         self,
         type: Union[str, SensorType],
         errors: Literal["raise", "ignore"] = "raise",
-    ) -> Optional[List[str]]:
+    ) -> list[str] | None:
         """Get all sensor model names of a given sensor type
 
         All valid sensor types can be obtained with :attr:`ArgoSensor.reference_sensor_type`
@@ -405,7 +406,7 @@ class ArgoSensor:
                 "The 'type' property is not available for an ArgoSensor instance not created with a specific sensor model"
             )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         if isinstance(self._model, SensorModel):
             summary = [f"<argosensor.{self.type.name}.{self.model.name}>"]
             summary.append(f"TYPE➤ {self.type.long_name}")
@@ -459,14 +460,14 @@ class ArgoSensor:
         return self._r27
 
     @property
-    def reference_model_name(self) -> List[str]:
+    def reference_model_name(self) -> list[str]:
         """Official list of Argo sensor models (R27)
 
         Return a sorted list of strings with altLabel from Argo Reference table R27 on 'SENSOR_MODEL'.
 
         Returns
         -------
-        List[str]
+        list[str]
 
         Notes
         -----
@@ -497,14 +498,14 @@ class ArgoSensor:
         return self._r25
 
     @property
-    def reference_sensor_type(self) -> List[str]:
+    def reference_sensor_type(self) -> list[str]:
         """Official list of Argo sensor types (R25)
 
         Return a sorted list of strings with altLabel from Argo Reference table R25 on 'SENSOR'.
 
         Returns
         -------
-        List[str]
+        list[str]
 
         Notes
         -----
@@ -521,7 +522,7 @@ class ArgoSensor:
         model: str,
         strict: bool = False,
         output: Literal["df", "name"] = "df",
-    ) -> pd.DataFrame:
+    ) -> pd.DataFrame | list[str]:
         """Return references of Argo sensor models matching a string
 
         Look for occurrences in Argo Reference table R27 `altLabel` and return a :class:`pandas.DataFrame` with matching row(s).
@@ -537,7 +538,7 @@ class ArgoSensor:
 
         Returns
         -------
-        :class:`pandas.DataFrame`, sorted(List[str])
+        :class:`pandas.DataFrame`, list[str]
 
         See Also
         --------
@@ -566,7 +567,7 @@ class ArgoSensor:
             else:
                 return data.reset_index(drop=True)
 
-    def _search_wmo_with(self, model: str, errors="raise"):
+    def _search_wmo_with(self, model: str, errors="raise") -> list[int]:
         """Return the list of WMOs with a given sensor model
 
         Notes
@@ -591,7 +592,9 @@ class ArgoSensor:
         wmos = self.fs.post(api_point, json_data=payload)
         if wmos is None or len(wmos) == 0:
             try:
-                search_hint = self.search_model(model, output="name", strict=False)
+                search_hint: list[str] = self.search_model(
+                    model, output="name", strict=False
+                )
                 msg = (
                     f"No floats matching this sensor model name '{model}'. Possible hint: %s"
                     % ("; ".join(search_hint))
@@ -613,7 +616,7 @@ class ArgoSensor:
         postprocess_opts={},
         progress=False,
         errors="raise",
-    ):
+    ) -> Any:
         """Search floats with a sensor model and then fetch and process JSON data returned from the fleet-monitoring API for each floats
 
         Notes
@@ -638,7 +641,7 @@ class ArgoSensor:
 
         return postprocess(sns, **postprocess_opts)
 
-    def _search_sn_with(self, model: str, progress=False, errors="raise"):
+    def _search_sn_with(self, model: str, progress=False, errors="raise") -> list[str]:
         """Return serial number of sensor models with a given string in name"""
 
         def preprocess(jsdata, model_name: str = ""):
@@ -664,7 +667,9 @@ class ArgoSensor:
             errors=errors,
         )
 
-    def _search_wmo_sn_with(self, model: str, progress=False, errors="raise"):
+    def _search_wmo_sn_with(
+        self, model: str, progress=False, errors="raise"
+    ) -> dict[int, str]:
         """Return a dictionary of float WMOs with their sensor serial numbers"""
 
         def preprocess(jsdata, model_name: str = ""):
@@ -706,7 +711,7 @@ class ArgoSensor:
                 if model_name in s["model"]:
                     this = [jsdata["wmo"]]
                     [
-                        this.append(s[key])
+                        this.append(s[key])  # type: ignore
                         for key in [
                             "id",
                             "maker",
@@ -749,11 +754,11 @@ class ArgoSensor:
 
     def search(
         self,
-        model: str = None,
-        output: Literal["wmo", "sn", "wmo_sn", "df"] = "wmo",
+        model: str | None = None,
+        output: SearchOutputOptions = "wmo",
         progress=False,
         errors="raise",
-    ):
+    ) -> list[int] | list[str] | dict[int, str] | pd.DataFrame:
         """Search for Argo floats equipped with a sensor model name
 
         All information are retrieved using the `Euro-Argo fleet-monitoring API <https://fleetmonitoring.euro-argo.eu>`_.
@@ -778,7 +783,7 @@ class ArgoSensor:
 
         Returns
         -------
-        :class:`pandas.DataFrame`, List[int], List[str], Dict
+        list[int], list[str], dict[int, str], :class:`pandas.DataFrame`
 
         Notes
         -----
@@ -808,7 +813,9 @@ class ArgoSensor:
                 "'output' option value must be in: 'wmo', 'sn', 'wmo_sn' or 'df'"
             )
 
-    def iterfloats_with(self, model: str = None, chunksize: int = None):
+    def iterfloats_with(
+        self, model: str | None = None, chunksize: int | None = None
+    ) -> Iterator[ArgoFloat]:
         """Iterator over :class:`argopy.ArgoFloat` equipped with a given sensor model
 
         By default, iterate over a single float, otherwise use the `chunksize` argument to iterate over chunk of floats.
@@ -866,7 +873,7 @@ class ArgoSensor:
             for wmo in wmos:
                 yield ArgoFloat(wmo, idx=idx)
 
-    def cli_search(self, model: str, output: str = "wmo"):
+    def cli_search(self, model: str, output: SearchOutputOptions = "wmo") -> str:  # type: ignore
         """Quick sensor lookups from the terminal
 
         This function is a command-line-friendly output for float search (e.g., for piping to other tools).

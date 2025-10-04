@@ -312,7 +312,7 @@ class NVSrow:
     reftable: ClassVar[str]
     """Reference table this row is based on"""
 
-    def __init__(self, row: pd.Series):
+    def __init__(self, row: pd.Series | pd.DataFrame):
         if not isinstance(row, pd.Series) and isinstance(row, pd.DataFrame):
             row = row.iloc[0]
         row = row.to_dict()
