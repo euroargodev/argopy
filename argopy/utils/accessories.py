@@ -282,8 +282,9 @@ class NVSrow:
         from argopy import ArgoNVSReferenceTables
 
         df = ArgoNVSReferenceTables().tbl(25)
+        row = df[df["altLabel"].apply(lambda x: x == 'CTD')].iloc[0]
 
-        st = SensorType.from_series(df[df["altLabel"].apply(lambda x: x == 'CTD')].iloc[0])
+        st = SensorType.from_series(row)
 
         st.name
         st.long_name
@@ -294,13 +295,22 @@ class NVSrow:
     """
 
     name: str = ""
+    """From 'altLabel' column"""
+
     long_name: str = ""
+    """From 'prefLabel' column"""
+
     definition: str = ""
+    """From 'definition' column"""
+
     uri: str = ""
+    """From 'ID' column"""
+
     deprecated: bool = None
+    """From 'deprecated' column"""
 
     reftable: ClassVar[str]
-    """Reference table"""
+    """Reference table this row is based on"""
 
     def __init__(self, row: pd.Series):
         if not isinstance(row, pd.Series) and isinstance(row, pd.DataFrame):

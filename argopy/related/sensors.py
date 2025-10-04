@@ -2,7 +2,7 @@ from typing import List
 import pandas as pd
 import numpy as np
 from pathlib import Path
-from typing import Optional, Literal, Union, Callable
+from typing import Optional, Literal, Union, Dict
 import logging
 
 # from ..errors import InvalidOption
@@ -28,14 +28,15 @@ class SensorType(NVSrow):
     Examples
     --------
     .. code-block:: python
-        :caption: Search methods
 
         from argopy import ArgoNVSReferenceTables
 
-        df = ArgoNVSReferenceTables().tbl(25)
-
         sensor_type = 'CTD'
-        st = SensorType.from_series(df[df["altLabel"].apply(lambda x: x == sensor_type)].iloc[0])
+
+        df = ArgoNVSReferenceTables().tbl(25)
+        df_match = df[df["altLabel"].apply(lambda x: x == sensor_type)].iloc[0]
+
+        st = SensorType.from_series(df_match)
 
         st.name
         st.long_name
@@ -49,6 +50,7 @@ class SensorType(NVSrow):
 
     @staticmethod
     def from_series(obj: pd.Series) -> "SensorType":
+        """Create a :class:`SensorType` from a a R25-"Argo sensor models" row"""
         return SensorType(obj)
 
 
@@ -58,14 +60,15 @@ class SensorModel(NVSrow):
     Examples
     --------
     .. code-block:: python
-        :caption: Search methods
 
         from argopy import ArgoNVSReferenceTables
 
-        df = ArgoNVSReferenceTables().tbl(27)
-
         sensor_model = 'AANDERAA_OPTODE_4330F'
-        sm = SensorModel.from_series(df[df["altLabel"].apply(lambda x: x == sensor_model)].iloc[0])
+
+        df = ArgoNVSReferenceTables().tbl(27)
+        df_match = df[df["altLabel"].apply(lambda x: x == sensor_model)].iloc[0]
+
+        sm = SensorModel.from_series(df_match)
 
         sm.name
         sm.long_name
@@ -78,24 +81,35 @@ class SensorModel(NVSrow):
 
     @staticmethod
     def from_series(obj: pd.Series) -> "SensorModel":
+        """Create a :class:`SensorModel` from a R27-"Argo sensor models" row"""
         return SensorModel(obj)
 
 
 class ArgoSensor:
+    """
+    Argo sensors helper class
+
+    The :class:`ArgoSensor` class provides direct access to Argo's sensor metadata through Reference Tables `Sensor Types (R25) <http://vocab.nerc.ac.uk/collection/R25>`_ and `Sensor Models (R27) <http://vocab.nerc.ac.uk/collection/R27>`_, combined with the `Euro-Argo fleet-monitoring API <https://fleetmonitoring.euro-argo.eu/>`_. This enables users to:
+
+    - navigate reference tables 25 and 27,
+    - search for/iterate over floats equipped with specific sensor models,
+    - retrieve sensor serial numbers across the global array.
+
+    """
     def __init__(
         self,
         model: str = None,
         **kwargs,
     ):
-        """Argo sensors helper class
+        """Create an instance of :class:`ArgoSensor`
 
         Parameters
         ----------
         model: str, optional
-            An exact sensor model name, by default None.
+            An exact sensor model name, by default set to None because this is optional.
 
-            Allowed values can be obtained with:
-            ``ArgoSensor().reference_model_name``
+            Allowed possible values can be obtained with:
+            :class:`ArgoSensor.reference_model_name`
 
         Other Parameters
         ----------------
@@ -109,45 +123,45 @@ class ArgoSensor:
         Examples
         --------
         .. code-block:: python
-            :caption: Access and search reference tables 25 and 27
+            :caption: Access and search reference tables
 
             from argopy import ArgoSensor
 
-            # Return reference table R27-"Argo sensor models" with the list of sensor models
+            # Reference table R27-"Argo sensor models" with the list of sensor models
             ArgoSensor().reference_model
             ArgoSensor().reference_model_name  # Only the list of names (used to fill 'SENSOR_MODEL' parameter)
 
-            # Return reference table R25-"Argo sensor types" with the list of sensor types
+            # Reference table R25-"Argo sensor types" with the list of sensor types
             ArgoSensor().reference_sensor
             ArgoSensor().reference_sensor_type # Only the list of types (used to fill 'SENSOR' parameter)
 
-            # Search for all (R27) referenced sensor models with some string in their name
+            # Search for all referenced sensor models with some string in their name
             ArgoSensor().search_model('RBR')
             ArgoSensor().search_model('RBR', output='name') # Return a list of names instead of a DataFrame
             ArgoSensor().search_model('SBE41CP', strict=False)
             ArgoSensor().search_model('SBE41CP', strict=True)  # Exact string match required
 
         .. code-block:: python
-            :caption: Search the Argo dataset for some sensor models and retrieve a list of WMOs or sensor serial numbers, or both
+            :caption: Search for Argo floats with some sensor models
 
             from argopy import ArgoSensor
 
-            # Search for sensor model name(s) having some string and return a DataFrame with full sensor information from floats equipped
-            ArgoSensor().search('RBR', output='df')
-
-            # Search for sensor model name(s) having some string and return a list of WMOs equipped with it/them
+            # Search and return a list of WMOs equipped with it/them
             ArgoSensor().search('RBR', output='wmo')
 
-            # Search for sensor model name(s) having some string and return a list of sensor serial numbers in Argo
+            # Search and return a list of sensor serial numbers in Argo
             ArgoSensor().search('RBR_ARGO3_DEEP6K', output='sn')
             ArgoSensor().search('RBR_ARGO3_DEEP6K', output='sn', progress=True)
 
-            # Search for sensor model name(s) having some string and return a list of tuples with WMOs and serial numbers for those equipped with this model
+            # Search and return a list of tuples with WMOs and serial numbers for those equipped with this model
             ArgoSensor().search('SBE', output='wmo_sn')
             ArgoSensor().search('SBE', output='wmo_sn', progress=True)
 
+            # Search and return a DataFrame with full sensor information from floats equipped
+            ArgoSensor().search('RBR', output='df')
+
         .. code-block:: python
-            :caption: Search the Argo dataset for some sensor models and easily loop through `ArgoFloat` instances for each floats
+            :caption: Easily loop through `ArgoFloat` instances for each floats equipped with a sensor model
 
             from argopy import ArgoSensor
 
@@ -178,7 +192,7 @@ class ArgoSensor:
             sensor.search(output='wmo_sn')
 
         .. code-block:: bash
-            :caption: Get clean search results from the command-line
+            :caption: Get clean search results from the command-line with :class:`ArgoSensor.cli_search`
 
             python -c "from argopy import ArgoSensor; ArgoSensor().cli_search('RBR', output='wmo')"
 
@@ -187,7 +201,7 @@ class ArgoSensor:
 
         Notes
         -----
-        Related ADMT/AVTT issues:
+        Related ADMT/AVTT work:
             - https://github.com/OneArgo/ADMT/issues/112
             - https://github.com/OneArgo/ArgoVocabs/issues/156
             - https://github.com/OneArgo/ArgoVocabs/issues/157
@@ -222,7 +236,10 @@ class ArgoSensor:
             self._type = None
 
     def _load_mappers(self):
-        """Load the NVS R25 to R27 key mappings"""
+        """Load from static assets file the NVS R25 to R27 key mappings
+
+        These mapping files were download from https://github.com/OneArgo/ArgoVocabs/issues/156.
+        """
         df = []
         for p in (
             Path(path2assets).joinpath("nvs_R25_R27").glob("NVS_R25_R27_mappings_*.txt")
@@ -236,20 +253,58 @@ class ArgoSensor:
             )
         df = pd.concat(df)
         df = df.reset_index(drop=True)
-        self.r27_to_r25 = {}
+        self._r27_to_r25 = {}
         df.apply(
-            lambda row: self.r27_to_r25.update(
+            lambda row: self._r27_to_r25.update(
                 {row["model"].strip(): row["type"].strip()}
             ),
             axis=1,
         )
+
+    @property
+    def r27_to_r25(self) -> Dict:
+        """Dictionary mapping of R27 to R25
+
+        This mapping is from files for group 1, 2, 2b, 3, 3b and 4(s) downloaded on 2025/10/03 from https://github.com/OneArgo/ArgoVocabs/issues/156.
+
+        Returns
+        -------
+        Dict
+
+        Notes
+        -----
+        If you think a key is missing or that mapping files bundled with argopy are out of date, please raise an issue at https://github.com/euroargodev/argopy/issues.
+        """
+        if self._r27_to_r25 is None:
+            self._load_mappers()
+        return self._r27_to_r25
 
     def model_to_type(
         self,
         model: Union[str, SensorModel] = None,
         errors: Literal["raise", "ignore"] = "raise",
     ) -> Optional[SensorType]:
-        """Read a sensor type for a given sensor model"""
+        """Get a sensor type for a given sensor model
+
+        All valid sensor model name can be obtained with :attr:`ArgoSensor.reference_model_name`.
+
+        Mapping between sensor model name (R27) and sensor type (R25) are from AVTT work at https://github.com/OneArgo/ArgoVocabs/issues/156.
+
+        Parameters
+        ----------
+        model : Union[str, SensorModel]
+            The model to read the sensor type for.
+        errors : Literal["raise", "ignore"] = "raise"
+            How to handle possible errors. If set to "ignore", the method will return None.
+
+        Returns
+        -------
+        :class:`SensorType` or None
+
+        See Also
+        --------
+        :attr:`ArgoSensor.type_to_model`
+        """
         model_name = model.name if isinstance(model, SensorModel) else model
         sensor_type = self.r27_to_r25.get(model_name, None)
         if sensor_type is not None:
@@ -265,7 +320,27 @@ class ArgoSensor:
 
     def type_to_model(self, type: Union[str, SensorType],
         errors: Literal["raise", "ignore"] = "raise",) -> Optional[List[str]]:
-        """Read all sensor models for a given sensor type"""
+        """Get all sensor model names of a given sensor type
+
+        All valid sensor types can be obtained with :attr:`ArgoSensor.reference_sensor_type`
+
+        Mapping between sensor model name (R27) and sensor type (R25) are from AVTT work at https://github.com/OneArgo/ArgoVocabs/issues/156.
+
+        Parameters
+        ----------
+        type : Union[str, SensorType]
+            The sensor type to read the sensor model name for.
+        errors : Literal["raise", "ignore"] = "raise"
+            How to handle possible errors. If set to "ignore", the method will return None.
+
+        Returns
+        -------
+        List[str]
+
+        See Also
+        --------
+        :attr:`ArgoSensor.model_to_type`
+        """
         sensor_type = type.name if isinstance(type, SensorType) else type
         result = []
         for key, val in self.r27_to_r25.items():
@@ -284,10 +359,20 @@ class ArgoSensor:
         else:
             return result
 
-
-
     @property
     def model(self) -> SensorModel:
+        """ :class:`SensorModel` of this class instance
+
+        Only available for a class instance created with an explicit sensor model name.
+
+        Returns
+        -------
+        :class:`SensorModel`
+
+        Raises
+        ------
+        :class:`InvalidDataset`
+        """
         if isinstance(self._model, SensorModel):
             return self._model
         else:
@@ -297,6 +382,18 @@ class ArgoSensor:
 
     @property
     def type(self) -> SensorType:
+        """ :class:`SensorType` of this class instance sensor model
+
+        Only available for a class instance created with an explicit sensor model name.
+
+        Returns:
+        -------
+        :class:`SensorType`
+
+        Raises
+        ------
+        :class:`InvalidDataset`
+        """
         if isinstance(self._type, SensorType):
             return self._type
         else:
@@ -341,11 +438,15 @@ class ArgoSensor:
 
     @property
     def reference_model(self) -> pd.DataFrame:
-        """Return the official reference table for Argo sensor models
+        """Official reference table for Argo sensor models (R27)
 
-        Return the Argo Reference table R27 'SENSOR_MODEL':
+        Returns
+        -------
+        :class:`pandas.DataFrame`
 
-        > Terms listing models of sensors mounted on Argo floats.
+        See Also
+        --------
+        :class:`ArgoNVSReferenceTables`
         """
         if self._r27 is None:
             self._r27 = ArgoNVSReferenceTables(
@@ -355,23 +456,35 @@ class ArgoSensor:
 
     @property
     def reference_model_name(self) -> List[str]:
-        """Return the official list of Argo sensor models
+        """Official list of Argo sensor models (R27)
 
-        Return a sorted list of strings with altLabel from Argo Reference table R27 'SENSOR_MODEL'.
+        Return a sorted list of strings with altLabel from Argo Reference table R27 on 'SENSOR_MODEL'.
+
+        Returns
+        -------
+        List[str]
 
         Notes
         -----
         Argo netCDF variable ``SENSOR_MODEL`` is populated with values from this list.
+
+        See Also
+        --------
+        :attr:`ArgoSensor.reference_model`
         """
         return sorted(to_list(self.reference_model["altLabel"].values))
 
     @property
     def reference_sensor(self) -> pd.DataFrame:
-        """Return the official list of Argo sensor types
+        """Official reference table for Argo sensor types (R25)
 
-        Return the Argo Reference table R25 'SENSOR':
+        Returns
+        -------
+        :class:`pandas.DataFrame`
 
-        > Terms describing sensor types mounted on Argo floats.
+        See Also
+        --------
+        :class:`ArgoNVSReferenceTables`
         """
         if self._r25 is None:
             self._r25 = ArgoNVSReferenceTables(
@@ -381,13 +494,21 @@ class ArgoSensor:
 
     @property
     def reference_sensor_type(self) -> List[str]:
-        """Return the official list of Argo sensor types
+        """Official list of Argo sensor types (R25)
 
-        Return a sorted list of strings with altLabel from Argo Reference table R25 'SENSOR'.
+        Return a sorted list of strings with altLabel from Argo Reference table R25 on 'SENSOR'.
+
+        Returns
+        -------
+        List[str]
 
         Notes
         -----
         Argo netCDF variable ``SENSOR`` is populated with values from this list.
+
+        See Also
+        --------
+        :attr:`ArgoSensor.reference_sensor`
         """
         return sorted(to_list(self.reference_sensor["altLabel"].values))
 
@@ -395,19 +516,36 @@ class ArgoSensor:
         self,
         model: str,
         strict: bool = False,
-        output: Literal["table", "name"] = "table",
+        output: Literal["df", "name"] = "df",
     ) -> pd.DataFrame:
         """Return references of Argo sensor models matching a string
 
-        Look for occurrences in Argo Reference table R27 altLabel values and return a dataframe with matching row(s).
+        Look for occurrences in Argo Reference table R27 `altLabel` and return a :class:`pandas.DataFrame` with matching row(s).
+
+        Parameters
+        ----------
+        model : str
+            The model to search for.
+        strict : bool, optional, default: False
+            Is the model string a strict match or an occurrence in table look up.
+        output : str, Literal["table", "name"], default "table"
+            Is the output a :class:`pandas.DataFrame` with matching rows from :attr:`ArgoSensor.reference_model`, or a list of string.
+
+        Returns
+        -------
+        :class:`pandas.DataFrame`, sorted(List[str])
+
+        See Also
+        --------
+        :class:`ArgoSensor.reference_model`
         """
         if strict:
             data = self.reference_model[
-                self.reference_model["altLabel"].apply(lambda x: x == model)
+                self.reference_model["altLabel"].apply(lambda x: x == model.upper())
             ]
         else:
             data = self.reference_model[
-                self.reference_model["altLabel"].apply(lambda x: model in x)
+                self.reference_model["altLabel"].apply(lambda x: model.upper() in x)
             ]
         if data.shape[0] == 0:
             if strict:
@@ -616,15 +754,15 @@ class ArgoSensor:
         Parameters
         ----------
         model: str, optional
-            A string to search in the `sensorModels` field of the Euro-Argo fleet-monitoring API `platformCodes/multi-lines-search` endpoint.
+            A string to search in the ``sensorModels`` field of the Euro-Argo fleet-monitoring API ``platformCodes/multi-lines-search`` endpoint.
 
         output: str, Literal["wmo", "sn", "wmo_sn", "df"], default "wmo"
             Define the output to return:
 
-                - "df": a :class:`pandas.DataFrame` with WMO, sensor type/model/maker and serial number
-                - "wmo": a list of WMO numbers (integers)
-                - "sn": a list of sensor serial numbers (strings)
-                - "wmo_sn": a list of dictionary with WMO as key and serial numbers as values
+            - ``wmo``: a list of WMO numbers (integers)
+            - ``sn``: a list of sensor serial numbers (strings)
+            - ``wmo_sn``: a list of dictionary with WMO as key and serial numbers as values
+            - ``df``: a :class:`pandas.DataFrame` with WMO, sensor type/model/maker and serial number
 
         progress: bool, default False
             Define whether to display a progress bar or not
@@ -637,13 +775,13 @@ class ArgoSensor:
 
         Notes
         -----
-        The list of WMOs equipped with a given sensor model is retrieved using the Euro-Argo fleet-monitoring API and a request to the `platformCodes/multi-lines-search` endpoint using the `sensorModels` search field.
+        The list of WMOs equipped with a given sensor model is retrieved using the Euro-Argo fleet-monitoring API and a request to the ``platformCodes/multi-lines-search`` endpoint using the ``sensorModels`` search field.
 
-        Sensor serial numbers are given by float meta-data retrieved using the Euro-Argo fleet-monitoring API and a request to the `/floats/{wmo}` endpoint:
+        Sensor serial numbers are given by float meta-data retrieved using the Euro-Argo fleet-monitoring API and a request to the ``/floats/{wmo}`` endpoint:
 
-        `Endpoint platformCodes/multi-lines-search documentation <https://fleetmonitoring.euro-argo.eu/swagger-ui.html#!/platform-code-controller/getPlatformCodesMultiLinesSearchUsingPOST>`_.
+        - `Documentation for endpoint: platformCodes/multi-lines-search <https://fleetmonitoring.euro-argo.eu/swagger-ui.html#!/platform-code-controller/getPlatformCodesMultiLinesSearchUsingPOST>`_.
 
-        `Endpoint /floats/{wmo} documentation <https://fleetmonitoring.euro-argo.eu/swagger-ui.html#!/autonomous-float-controller/getFullFloatUsingGET>`_.
+        - `Documentation for endpoint: /floats/{wmo} <https://fleetmonitoring.euro-argo.eu/swagger-ui.html#!/autonomous-float-controller/getFullFloatUsingGET>`_.
 
         """
         if model is None and self.model is not None:
@@ -664,7 +802,7 @@ class ArgoSensor:
             )
 
     def iterfloats_with(self, model: str = None, chunksize: int = None):
-        """Iterator over :class:`ArgoFloat` equipped with a given sensor model
+        """Iterator over :class:`argopy.ArgoFloat` equipped with a given sensor model
 
         By default, iterate over a single float, otherwise use the `chunksize` argument to iterate over chunk of floats.
 
@@ -680,15 +818,20 @@ class ArgoSensor:
 
         Returns
         -------
-        Iterator of :class:`ArgoFloat`
+        Iterator of :class:`argopy.ArgoFloat`
 
         Examples
         --------
         .. code-block:: python
             :caption: Example of iteration
 
-            for af in ArgoSensor().iterfloats_with('SBE41CP'):
-                af # is a ArgoFloat instance
+            from argopy import ArgoSensor
+
+            for afloat in ArgoSensor().iterfloats_with("SATLANTIC_PAR"):
+                print(f"\n-Float {afloat.WMO}: Platform description = {afloat.metadata['platform']['description']}")
+                for sensor in afloat.metadata["sensors"]:
+                    if "SATLANTIC_PAR" in sensor["model"]:
+                        print(f"  - Sensor Maker: {sensor['maker']}, Serial: {sensor['serial']}")
 
         """
         if model is None and self.model is not None:
