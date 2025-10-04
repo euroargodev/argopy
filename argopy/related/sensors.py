@@ -2,11 +2,10 @@ from typing import List
 import pandas as pd
 import numpy as np
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional, Literal, Union, Any, Iterator
+from typing import Optional, Literal, Union, Any, Iterator
 import logging
 
-if TYPE_CHECKING:
-    SearchOutputOptions = Literal["wmo", "sn", "wmo_sn", "df"]
+SearchOutputOptions = Literal["wmo", "sn", "wmo_sn", "df"]
 
 # from ..errors import InvalidOption
 from ..stores import ArgoFloat, ArgoIndex, httpstore, filestore
@@ -53,7 +52,7 @@ class SensorType(NVSrow):
 
     @staticmethod
     def from_series(obj: pd.Series) -> "SensorType":
-        """Create a :class:`SensorType` from a a R25-"Argo sensor models" row"""
+        """Create a :class:`SensorType` from a R25-"Argo sensor models" row"""
         return SensorType(obj)
 
 
@@ -283,9 +282,9 @@ class ArgoSensor:
 
     def model_to_type(
         self,
-        model: Union[str, SensorModel, None] = None,
+        model: str | SensorModel | None = None,
         errors: Literal["raise", "ignore"] = "raise",
-    ) -> Optional[SensorType]:
+    ) -> SensorType | None:
         """Get a sensor type for a given sensor model
 
         All valid sensor model name can be obtained with :attr:`ArgoSensor.reference_model_name`.
@@ -294,14 +293,14 @@ class ArgoSensor:
 
         Parameters
         ----------
-        model : Union[str, SensorModel]
+        model : str | :class:`SensorModel`
             The model to read the sensor type for.
         errors : Literal["raise", "ignore"] = "raise"
             How to handle possible errors. If set to "ignore", the method will return None.
 
         Returns
         -------
-        :class:`SensorType` or None
+        :class:`SensorType` | None
 
         See Also
         --------
@@ -322,7 +321,7 @@ class ArgoSensor:
 
     def type_to_model(
         self,
-        type: Union[str, SensorType],
+        type: str | SensorType,
         errors: Literal["raise", "ignore"] = "raise",
     ) -> list[str] | None:
         """Get all sensor model names of a given sensor type
@@ -333,14 +332,14 @@ class ArgoSensor:
 
         Parameters
         ----------
-        type : Union[str, SensorType]
+        type : str, :class:`SensorType`
             The sensor type to read the sensor model name for.
         errors : Literal["raise", "ignore"] = "raise"
             How to handle possible errors. If set to "ignore", the method will return None.
 
         Returns
         -------
-        List[str]
+        list[str]
 
         See Also
         --------
@@ -533,7 +532,7 @@ class ArgoSensor:
             The model to search for.
         strict : bool, optional, default: False
             Is the model string a strict match or an occurrence in table look up.
-        output : str, Literal["table", "name"], default "table"
+        output : str, Literal["df", "name"], default "df"
             Is the output a :class:`pandas.DataFrame` with matching rows from :attr:`ArgoSensor.reference_model`, or a list of string.
 
         Returns
