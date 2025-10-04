@@ -69,7 +69,7 @@ Examples
 
     ArgoSensor().search_model('SBE61_V5.0.1', strict=True)
 
-- List the sensor type of a given model:
+- Get the sensor type of a given model:
 
 .. ipython:: python
     :okwarning:
@@ -91,17 +91,17 @@ Search for Argo floats equipped with a given sensor model
 
 In this section we show how to find WMOs, serial numbers for floats equipped with a specific sensor model using the :meth:`ArgoSensor.search` method.
 
-The method takes a model sensor name as input, and possibly 4 values to `output` to determine how to format results:
+The method takes a model sensor name as input, and possibly 4 values to the ``output`` option to determine how to format results:
 
 - ``output='wmo'`` returns a list of WMOs (e.g., ``[1901234, 1901235]``)
 - ``output='sn'`` returns a list of serial numbers (e.g., ``['1234', '5678']``)
-- ``output='wmo_sn'`` returns a dict mapping serial numbers  to float WMOs (e.g. ``{WMO: [serial1, serial2]}``)
+- ``output='wmo_sn'`` returns a dictionary mapping float WMOs to serial numbers (e.g. ``{WMO: [serial1, serial2]}``)
 - ``output='df'`` returns a :class:`pandas.DataFrame` with WMO, sensor type, model, maker, serial number, units, accuracy and resolution.
 
 Examples
 ^^^^^^^^
 
-- Get WMOs for all floats equiped with the "AANDERAA_OPTODE_4831" model:
+- Get WMOs for all floats equipped with the "AANDERAA_OPTODE_4831" model:
 
 .. ipython:: python
     :okwarning:
@@ -109,14 +109,14 @@ Examples
     ArgoSensor().search("AANDERAA_OPTODE_4831")  # output='wmo' is default
 
 
-- Get sensor serial numbers for floats equiped with the "SBE43F_IDO" model:
+- Get sensor serial numbers for floats equipped with the "SBE43F_IDO" model:
 
 .. ipython:: python
     :okwarning:
 
     ArgoSensor().search("SBE43F_IDO", output="sn")
 
-- Get WMO-serial dictionnary for floats equiped with the "RBR_ARGO3_DEEP6K" model:
+- Get WMO/serial-number dictionary for floats equipped with the "RBR_ARGO3_DEEP6K" model:
 
 .. ipython:: python
     :okwarning:
@@ -129,9 +129,9 @@ Examples
 Use an exact sensor model name to create an instance
 ----------------------------------------------------
 
-You can initialize an :class:`ArgoSensor` instance for a specific model to access its metadata and methods directly.
+You can initialize an :class:`ArgoSensor` instance with a specific model to access its metadata and methods directly.
 
-.. csv-table:: Attributes and Methods
+.. csv-table:: :class:`ArgoSensor` Attributes and Methods for a specific model
    :header: "Attribute/Method", "Description"
    :widths: 30, 70
 
@@ -163,7 +163,7 @@ You can then access model metadata:
 
     sensor.type
 
-And you can look for floats equiped:
+And you can look for floats equipped:
 
 .. ipython:: python
     :okwarning:
@@ -171,7 +171,7 @@ And you can look for floats equiped:
     df = sensor.search(output="df")
     df
 
-Loop Through ArgoFloat Instances for Each Float
+Loop through ArgoFloat instances for each float
 -----------------------------------------------
 
 The :meth:`ArgoSensor.iterfloats_with` will yields :class:`argopy.ArgoFloat` instances for floats with the specified sensor model (use ``chunksize`` to process floats in batches).
@@ -179,7 +179,7 @@ The :meth:`ArgoSensor.iterfloats_with` will yields :class:`argopy.ArgoFloat` ins
 Example
 ^^^^^^^
 
-Loop through all floats with "SATLANTIC_PAR" sensors:
+Loop through all floats with "SATLANTIC_PAR" sensor:
 
 .. ipython:: python
     :okwarning:
@@ -189,3 +189,19 @@ Loop through all floats with "SATLANTIC_PAR" sensors:
         for sensor in afloat.metadata["sensors"]:
             if "SATLANTIC_PAR" in sensor["model"]:
                 print(f"  - Sensor Maker: {sensor['maker']}, Serial: {sensor['serial']}")
+
+Quick float and sensor lookups from the command line
+----------------------------------------------------
+
+The :meth:`ArgoSensor.cli_search` function is available to search for Argo floats equipped with a given sensor model from the command line and retrieve a `CLI <https://en.wikipedia.org/wiki/Command-line_interface>`_ friendly list of WMOs or serial numbers.
+
+This could be useful for piping to other tools.
+
+Here is an example with the "SATLANTIC_PAR" sensor:
+
+.. code-block:: bash
+    :caption: Call :meth:`ArgoSensor.search` from the command line
+
+    python -c "from argopy import ArgoSensor; ArgoSensor().cli_search('SATLANTIC_PAR', output='wmo')"
+
+    python -c "from argopy import ArgoSensor; ArgoSensor().cli_search('SATLANTIC_PAR', output='sn')"

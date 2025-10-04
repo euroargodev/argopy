@@ -96,6 +96,7 @@ class ArgoSensor:
     - retrieve sensor serial numbers across the global array.
 
     """
+
     def __init__(
         self,
         model: str = None,
@@ -318,8 +319,11 @@ class ArgoSensor:
             )
         return None
 
-    def type_to_model(self, type: Union[str, SensorType],
-        errors: Literal["raise", "ignore"] = "raise",) -> Optional[List[str]]:
+    def type_to_model(
+        self,
+        type: Union[str, SensorType],
+        errors: Literal["raise", "ignore"] = "raise",
+    ) -> Optional[List[str]]:
         """Get all sensor model names of a given sensor type
 
         All valid sensor types can be obtained with :attr:`ArgoSensor.reference_sensor_type`
@@ -361,7 +365,7 @@ class ArgoSensor:
 
     @property
     def model(self) -> SensorModel:
-        """ :class:`SensorModel` of this class instance
+        """:class:`SensorModel` of this class instance
 
         Only available for a class instance created with an explicit sensor model name.
 
@@ -382,7 +386,7 @@ class ArgoSensor:
 
     @property
     def type(self) -> SensorType:
-        """ :class:`SensorType` of this class instance sensor model
+        """:class:`SensorType` of this class instance sensor model
 
         Only available for a class instance created with an explicit sensor model name.
 
@@ -587,8 +591,11 @@ class ArgoSensor:
         wmos = self.fs.post(api_point, json_data=payload)
         if wmos is None or len(wmos) == 0:
             try:
-                search_hint = self.search_model(model, output='name', strict=False)
-                msg = f"No floats matching this sensor model name '{model}'. Possible hint: %s" % ("; ".join(search_hint))
+                search_hint = self.search_model(model, output="name", strict=False)
+                msg = (
+                    f"No floats matching this sensor model name '{model}'. Possible hint: %s"
+                    % ("; ".join(search_hint))
+                )
             except DataNotFound:
                 msg = f"No floats matching this sensor model name '{model}'"
             if errors == "raise":
