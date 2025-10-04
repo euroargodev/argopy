@@ -1,158 +1,191 @@
 .. currentmodule:: argopy.related
 .. _argosensor:
 
-ArgoSensor
-==========
+Argo sensor: models and types
+=============================
 
-**Simplify Argo float sensor queries with standardized metadata access.**
+The :class:`ArgoSensor` class provides direct access to Argo's sensor metadata through Reference Tables `Sensor Types (R25) <http://vocab.nerc.ac.uk/collection/R25>`_ and `Sensor Models (R27) <http://vocab.nerc.ac.uk/collection/R27>`_, combined with the `Euro-Argo fleet-monitoring API <https://fleetmonitoring.euro-argo.eu/>`_. This enables users to:
 
-The :class:`ArgoSensor` class provides direct access to Argo's sensor metadata through Reference Tables R25 (sensor types) and R27 (sensor models), combined with the Euro-Argo fleet-monitoring API. This enables users to:
+- Navigate reference tables,
+- Search for floats equipped with specific sensor models,
+- Retrieve sensor serial numbers across the global array.
 
-- Search for floats equipped with specific sensor models
-- Retrieve sensor serial numbers across the global array
+.. contents::
+   :local:
 
 .. _argosensor-reference-tables:
 
-Access and Search Reference Tables 25 and 27
---------------------------------------------
+Work with reference tables on sensors
+-------------------------------------
 
-**Purpose**: Explore the official Argo vocabularies for sensor types (R25) and models (R27).
+With the :class:`ArgoSensor` class, you can work with official Argo vocabularies for `Sensor Types (R25) <http://vocab.nerc.ac.uk/collection/R25>`_ and `Sensor Models (R27) <http://vocab.nerc.ac.uk/collection/R27>`_. With these methods, it is easy to look for a specific sensor model name, which can then be used to :ref:`look for floats <argosensor-search-floats>` or :ref:`create a ArgoSensor class <argosensor-exact-sensor>` directly.
 
-.. csv-table:: Attributes and Methods
-   :header: "Attribute/Method", "Description"
-   :widths: 30, 70
+.. list-table:: :class:`ArgoSensor` attributes and methods for reference tables
+    :header-rows: 1
+    :stub-columns: 1
 
-   ``reference_model``, "Returns Reference Table **R27** (``SENSOR_MODEL``) as a ``pandas.DataFrame``"
-   ``reference_model_name``, "List of all sensor model names (e.g., ``'SBE41CP'``)"
-   ``reference_sensor``, "Returns Reference Table **R25** (``SENSOR``) as a ``pandas.DataFrame``"
-   ``reference_sensor_type``, "List of all sensor types (e.g., ``'CTD'``, ``'OPTODE'``)"
-   ``search_model(model, strict)``, "Search R27 for models matching a string (exact or fuzzy)"
-   ``model_to_type(model_name)``, "Returns AVTT mapping on sensor type for a given model name"
-   ``type_to_model(sensor_type)``, "Returns AVTT mapping on model names for a given sensor type"
+    * - Attribute/Method
+      - Description
+    * - :attr:`ArgoSensor.reference_model`
+      - Returns Reference Table **Sensor Models (R27)** as a :class:`pandas.DataFrame`
+    * - :attr:`ArgoSensor.reference_model_name`
+      - List of all sensor model names (e.g., ``'SBE41CP'``)
+    * - :attr:`ArgoSensor.reference_sensor`
+      - Returns Reference Table **Sensor Types (R25)** as a :class:`pandas.DataFrame`
+    * - :attr:`ArgoSensor.reference_sensor_type`
+      - List of all sensor types (e.g., ``'CTD'``, ``'OPTODE'``)
+    * - :attr:`ArgoSensor.r27_to_r25`
+      - Dictionary mapping of R27 to R25
+    * - :meth:`ArgoSensor.search_model`
+      - Search R27 for models matching a string (exact or fuzzy)
+    * - :meth:`ArgoSensor.model_to_type`
+      - Returns AVTT mapping on sensor type for a given model name
+    * - :meth:`ArgoSensor.type_to_model`
+      - Returns AVTT mapping on model names for a given sensor type
 
-**Example**:
+Examples
+^^^^^^^^
 
-.. code-block:: python
+- List all CTD sensor models (R27):
+
+.. ipython:: python
+    :okwarning:
 
     from argopy import ArgoSensor
 
-    # List all CTD sensor models (R27)
     ArgoSensor().reference_model
 
-    # Fuzzy search (default):
-    ArgoSensor().search_model('RBR', strict=False)
+- Fuzzy search (default):
 
-    # Exact search:
-    ArgoSensor().search_model('SBE61_V5.0.12', strict=True)
+.. ipython:: python
+    :okwarning:
 
-    # List the sensor type of a given model:
-    ArgoSensor().model_to_type('SBE61')
+    ArgoSensor().search_model('SBE61_V5.0.1', strict=False)
 
-    # List all possible model names of a given sensor type:
+- Exact search:
+
+.. ipython:: python
+    :okwarning:
+
+    ArgoSensor().search_model('SBE61_V5.0.1', strict=True)
+
+- List the sensor type of a given model:
+
+.. ipython:: python
+    :okwarning:
+
+    ArgoSensor().model_to_type('RBR_ARGO3_DEEP6K')
+
+- List all possible model names of a given sensor type:
+
+.. ipython:: python
+    :okwarning:
+
     ArgoSensor().type_to_model('FLUOROMETER_CDOM')
 
 
 .. _argosensor-search-floats:
 
-Search the Argo Array for Floats Equipped with a Given Sensor Model
--------------------------------------------------------------------
+Search for Argo floats equipped with a given sensor model
+---------------------------------------------------------
 
-**Purpose**: Find WMOs, serial numbers, or any other sensor information floats equipped with a specific sensor model.
+In this section we show how to find WMOs, serial numbers for floats equipped with a specific sensor model using the :meth:`ArgoSensor.search` method.
+
+The method takes a model sensor name as input, and possibly 4 values to `output` to determine how to format results:
+
+- ``output='wmo'`` returns a list of WMOs (e.g., ``[1901234, 1901235]``)
+- ``output='sn'`` returns a list of serial numbers (e.g., ``['1234', '5678']``)
+- ``output='wmo_sn'`` returns a dict mapping serial numbers  to float WMOs (e.g. ``{WMO: [serial1, serial2]}``)
+- ``output='df'`` returns a :class:`pandas.DataFrame` with WMO, sensor type, model, maker, serial number, units, accuracy and resolution.
+
+Examples
+^^^^^^^^
+
+- Get WMOs for all floats equiped with the "AANDERAA_OPTODE_4831" model:
+
+.. ipython:: python
+    :okwarning:
+
+    ArgoSensor().search("AANDERAA_OPTODE_4831")  # output='wmo' is default
+
+
+- Get sensor serial numbers for floats equiped with the "SBE43F_IDO" model:
+
+.. ipython:: python
+    :okwarning:
+
+    ArgoSensor().search("SBE43F_IDO", output="sn")
+
+- Get WMO-serial dictionnary for floats equiped with the "RBR_ARGO3_DEEP6K" model:
+
+.. ipython:: python
+    :okwarning:
+
+    wmo_sn = ArgoSensor().search("RBR_ARGO3_DEEP6K", output="wmo_sn")
+    wmo_sn
+
+.. _argosensor-exact-sensor:
+
+Use an exact sensor model name to create an instance
+----------------------------------------------------
+
+You can initialize an :class:`ArgoSensor` instance for a specific model to access its metadata and methods directly.
 
 .. csv-table:: Attributes and Methods
    :header: "Attribute/Method", "Description"
    :widths: 30, 70
 
-   ``search(model, output)``, "Search for floats with a sensor model"
-   "", "``output='wmo'``: Returns list of WMOs (e.g., ``[1901234, 1901235]``)"
-   "", "``output='sn'``: Returns list of serial numbers (e.g., ``['1234', '5678']``)"
-   "", "``output='wmo_sn'``: Returns dict ``{WMO: [serial1, serial2]}``"
-   "", "``output='df'``: Returns a :class:`pandas.DataFrame` with WMO, sensor type, model, maker, sn, units, accuracy and resolution
+   :class:`ArgoSensor`, "Create an instance for an exact model name (e.g., ``'SBE41CP'``)"
+   :attr:`ArgoSensor.model`, "Returns a :class:`SensorModel` object (name, long_name, definition, URI, deprecated)"
+   :attr:`ArgoSensor.type`, "Returns a :class:`SensorType` object (name, long_name, definition, URI, deprecated)"
+   :meth:`ArgoSensor.search`, "Inherits search methods but defaults to the instance's model"
 
-**Example**:
+Examples
+^^^^^^^^
 
-.. code-block:: python
+As an example, let's create an instance for the "SBE43F_IDO" sensor model:
 
-    from argopy import ArgoSensor
+.. ipython:: python
+    :okwarning:
 
-    # Get WMOs for all floats with "AANDERAA_OPTODE_4831"
-    wmos = ArgoSensor().search("KISTLER_10153PSIA", output="df")
+    sensor = ArgoSensor("SBE43F_IDO")
+    sensor
 
-    # Get WMOs for all floats with "AANDERAA_OPTODE_4831"
-    wmos = ArgoSensor().search("AANDERAA_OPTODE_4831", output="wmo")
+You can then access model metadata:
 
-    # Get serial numbers for the "SBE43F_IDO" model
-    serials = ArgoSensor().search("SBE43F_IDO", output="sn")
+.. ipython:: python
+    :okwarning:
 
-    # Get WMO-serial pairs for "RBR_ARGO3_DEEP6K"
-    wmo_sn = sensor_tool.search("RBR_ARGO3_DEEP6K", output="wmo_sn")
-    for wmo, sns in list(wmo_sn.items()):  # First float
-        print(f"Float {wmo}: Serials {sns}")
+    sensor.model
 
+.. ipython:: python
+    :okwarning:
 
-Using an Exact Sensor Model Name to Create an Instance
-------------------------------------------------------
+    sensor.type
 
-**Purpose**: Initialize an :class:`ArgoSensor` instance for a specific model to access its metadata and methods directly.
+And you can look for floats equiped:
 
-.. csv-table:: Attributes and Methods
-   :header: "Attribute/Method", "Description"
-   :widths: 30, 70
+.. ipython:: python
+    :okwarning:
 
-   ``ArgoSensor(model)``, "Create an instance for an exact model name (e.g., ``'SBE41CP'``)"
-   ``model``, "Returns a ``SensorModel`` object (name, long_name, definition, URI, deprecated)"
-   ``type``, "Returns a ``SensorType`` object (name, long_name, definition, URI, deprecated)"
-   ``search(output)``, "Inherits search methods but defaults to the instance's model"
-
-**Example**:
-
-.. code-block:: python
-
-   # Create an instance for the "SBE43F_IDO" sensor model:
-   sbe_sensor = ArgoSensor("SBE43F_IDO")
-
-   # Access model metadata
-   print(f"Model: {sbe_sensor.model.name}")
-   print(f"Type: {sbe_sensor.type.name}")
-   print(f"Definition: {sbe_sensor.model.definition}")
-
-   # Search for floats with this model
-   df = sbe_sensor.search(output="df")
-
-    # WMO	Type	Model	Maker	SerialNumber	Units	Accuracy	Resolution
-    # 0	1901328	IDO_DOXY	SBE43F_IDO	SBE	577	micro moles	5.0	None
-    # 1	1901329	IDO_DOXY	SBE43F_IDO	SBE	579	micro moles	5.0	None
-    # 2	2900114	IDO_DOXY	SBE43F_IDO	SBE	0164	micromole/kg	NaN	None
-    # 3	2900115	IDO_DOXY	SBE43F_IDO	SBE	0188	micromole/kg	NaN	None
-    # 4	2900116	IDO_DOXY	SBE43F_IDO	SBE	0179	micromole/kg	NaN	None
-
+    df = sensor.search(output="df")
+    df
 
 Loop Through ArgoFloat Instances for Each Float
 -----------------------------------------------
 
-**Purpose**: Iterate over ``ArgoFloat`` instances for floats matching a sensor model.
+The :meth:`ArgoSensor.iterfloats_with` will yields :class:`argopy.ArgoFloat` instances for floats with the specified sensor model (use ``chunksize`` to process floats in batches).
 
-.. csv-table:: Attributes and Methods
-   :header: "Attribute/Method", "Description"
-   :widths: 30, 70
+Example
+^^^^^^^
 
-   ``iterfloats_with(model)``, "Yields :class:`ArgoFloat` instances for floats with the specified sensor model"
-   "", "Use ``chunksize`` to process floats in batches"
+Loop through all floats with "SATLANTIC_PAR" sensors:
 
-**Example**:
+.. ipython:: python
+    :okwarning:
 
-.. code-block:: python
-
-    from argopy import ArgoSensor
-    # Loop through all floats with "RAFOS" sensors
-    for afloat in ArgoSensor().iterfloats_with("RAFOS"):
-       print(f"Float {afloat.WMO}: Platform type = {afloat.metadata['platform_type']}")
-
-       # Access sensor metadata
-       for sensor in afloat.metadata["sensors"]:
-           if "RAFOS" in sensor["model"]:
-               print(f"  - Maker: {sensor['maker']}, Serial: {sensor['serial']}")
-
-    # Output:
-    # Float 1901234: Platform type = APF11
-    #   - Maker: Webb Research, Serial: RAFOS-001
+    for afloat in ArgoSensor().iterfloats_with("SATLANTIC_PAR"):
+        print(f"\n-Float {afloat.WMO}: Platform description = {afloat.metadata['platform']['description']}")
+        for sensor in afloat.metadata["sensors"]:
+            if "SATLANTIC_PAR" in sensor["model"]:
+                print(f"  - Sensor Maker: {sensor['maker']}, Serial: {sensor['serial']}")

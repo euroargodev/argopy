@@ -182,11 +182,17 @@
     argopy.related.ArgoSensor.reference_model_name
     argopy.related.ArgoSensor.reference_sensor
     argopy.related.ArgoSensor.reference_sensor_type
+    argopy.related.ArgoSensor.model
+    argopy.related.ArgoSensor.type
+    argopy.related.ArgoSensor.r27_to_r25
     argopy.related.ArgoSensor.search_model
     argopy.related.ArgoSensor.model_to_type
     argopy.related.ArgoSensor.type_to_model
     argopy.related.ArgoSensor.search
     argopy.related.ArgoSensor.iterfloats_with
+    argopy.related.ArgoSensor.cli_search
+    argopy.related.SensorModel
+    argopy.related.SensorType
 
     argopy.plot
     argopy.plot.dashboard
