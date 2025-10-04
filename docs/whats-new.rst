@@ -30,6 +30,12 @@ Internals
 
 - **New post method for the** :class:`stores.httpstore` by |gmaze|.
 
+Energy
+^^^^^^
+
+.. image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_carbonfootprint_since_last_release.json
+
+.. images:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_carbonfootprint_baseline.json
 
 v1.3.0 (22 Aug. 2025)
 ---------------------
