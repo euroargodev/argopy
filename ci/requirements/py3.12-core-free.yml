@@ -63,3 +63,4 @@ dependencies:
 # PIP:
   - pip:
       - pytest-reportlog
+      - pyasynchat
