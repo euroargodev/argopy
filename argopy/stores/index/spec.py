@@ -10,6 +10,7 @@ from urllib.parse import urlparse
 from typing import Union, List  # noqa: F401
 from pathlib import Path
 import sys
+import warnings
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -18,10 +19,7 @@ else:
 
 from ...options import OPTIONS
 from ...errors import GdacPathError, S3PathError, InvalidDataset, OptionValueError
-from ...utils import isconnected, has_aws_credentials
-from ...utils import Registry
-from ...utils import Chunker
-from ...utils import shortcut2gdac
+from ...utils import isconnected, has_aws_credentials, Registry, Chunker, shortcut2gdac, deprecated
 
 from .. import httpstore, memorystore, filestore, ftpstore, s3store
 from .implementations.index_s3 import get_a_s3index
@@ -42,10 +40,10 @@ class ArgoIndexStoreProto(ABC):
     backend = "?"
     """Name of store backend (pandas or pyarrow)"""  # Pandas or Pyarrow
 
-    search_type = {}
+    search_type : dict = {}
     """Dictionary with search meta-data"""
 
-    ext = None
+    ext : str | None = None
     """Storage file extension"""
 
     convention_supported = [
@@ -69,9 +67,9 @@ class ArgoIndexStoreProto(ABC):
 
     def __init__(
         self,
-        host: str = None,
+        host: str | None = None,
         index_file: str = "ar_index_global_prof.txt",
-        convention: str = None,
+        convention: str | None = None,
         cache: bool = False,
         cachedir: str = "",
         timeout: int = 0,
@@ -679,6 +677,11 @@ class ArgoIndexStoreProto(ABC):
         -------
         :class:`pandas.DataFrame`
         """
+        warnings.warn(
+            "Note that the long name for institution is now in 'institution_name' while the 'institution' column will hold the institution code -- Deprecated since version 1.4",
+            category=FutureWarning,
+            stacklevel=2,
+        )
 
         def get_filename(s, index):
             if hasattr(self, "search") and not index:
