@@ -13,7 +13,7 @@ Coming up next (unreleased)
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- **New** :class:`ArgoSensor` class to work with Argo sensor models, types and floats equipped with. (:pr:`532`) by |gmaze|.
+- **New** :class:`ArgoSensor` class to work with Argo sensor models, types and floats equipped with. Check the new :ref:`Argo sensor: models and types` documentation section. (:pr:`532`) by |gmaze|.
 
 Internals
 ^^^^^^^^^
