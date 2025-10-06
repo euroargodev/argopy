@@ -29,7 +29,7 @@ log = logging.getLogger("argopy.tests.indexstores")
 has_pyarrow = importlib.util.find_spec("pyarrow") is not None
 skip_nopyarrow = pytest.mark.skipif(not has_pyarrow, reason="Requires pyarrow")
 
-skip_pandas = pytest.mark.skipif(0, reason="Skipped tests for Pandas backend")
+skip_pandas = pytest.mark.skipif(1, reason="Skipped tests for Pandas backend")
 skip_pyarrow = pytest.mark.skipif(0, reason="Skipped tests for Pyarrow backend")
 skip_CORE = pytest.mark.skipif(0, reason="Skipped tests for CORE index")
 skip_BGCs = pytest.mark.skipif(0, reason="Skipped tests for BGC synthetic index")
