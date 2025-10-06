@@ -1,13 +1,12 @@
-from typing import List
 import pandas as pd
 import numpy as np
 from pathlib import Path
-from typing import Optional, Literal, Union, Any, Iterator
+from typing import Literal, Any, Iterator
 import logging
 
 SearchOutputOptions = Literal["wmo", "sn", "wmo_sn", "df"]
+ErrorOptions = Literal["raise", "ignore"]
 
-# from ..errors import InvalidOption
 from ..stores import ArgoFloat, ArgoIndex, httpstore, filestore
 from ..utils import check_wmo, Chunker, to_list, NVSrow
 from ..errors import (
@@ -98,6 +97,8 @@ class ArgoSensor:
     - retrieve sensor serial numbers across the global array.
 
     """
+
+    __slots__ = ["_cache", "_cachedir", "_timeout", "fs", "_r25", "_r27", "_r27_to_r25", "_model", "_type"]
 
     def __init__(
         self,
@@ -211,8 +212,8 @@ class ArgoSensor:
         """
         self._cache = kwargs.get("cache", True)
         self._cachedir = kwargs.get("cachedir", OPTIONS["cachedir"])
-        self.timeout = kwargs.get("timeout", OPTIONS["api_timeout"])
-        self.fs = httpstore(cache=self._cache, cachedir=self._cachedir)
+        self._timeout = kwargs.get("timeout", OPTIONS["api_timeout"])
+        self.fs = httpstore(cache=self._cache, cachedir=self._cachedir, timeout=self._timeout)
 
         self._r25: pd.DataFrame | None = None  # will be loaded when necessary
         self._r27: pd.DataFrame | None = None  # will be loaded when necessary
@@ -453,9 +454,7 @@ class ArgoSensor:
         :class:`ArgoNVSReferenceTables`
         """
         if self._r27 is None:
-            self._r27 = ArgoNVSReferenceTables(
-                cache=self._cache, cachedir=self._cachedir
-            ).tbl("R27")
+            self._r27 = ArgoNVSReferenceTables(fs=self.fs).tbl("R27")
         return self._r27
 
     @property
@@ -491,9 +490,7 @@ class ArgoSensor:
         :class:`ArgoNVSReferenceTables`
         """
         if self._r25 is None:
-            self._r25 = ArgoNVSReferenceTables(
-                cache=self._cache, cachedir=self._cachedir
-            ).tbl("R25")
+            self._r25 = ArgoNVSReferenceTables(fs=self.fs).tbl("R25")
         return self._r25
 
     @property
@@ -566,7 +563,7 @@ class ArgoSensor:
             else:
                 return data.reset_index(drop=True)
 
-    def _search_wmo_with(self, model: str, errors="raise") -> list[int]:
+    def _search_wmo_with(self, model: str, errors : ErrorOptions = "raise") -> list[int]:
         """Return the list of WMOs with a given sensor model
 
         Notes
@@ -640,7 +637,7 @@ class ArgoSensor:
 
         return postprocess(sns, **postprocess_opts)
 
-    def _search_sn_with(self, model: str, progress=False, errors="raise") -> list[str]:
+    def _search_sn_with(self, model: str, progress=False, errors : ErrorOptions = "raise") -> list[str]:
         """Return serial number of sensor models with a given string in name"""
 
         def preprocess(jsdata, model_name: str = ""):
@@ -692,7 +689,7 @@ class ArgoSensor:
             errors=errors,
         )
 
-    def _to_dataframe(self, model: str, progress=False, errors="raise") -> pd.DataFrame:
+    def _to_dataframe(self, model: str, progress=False, errors : ErrorOptions = "raise") -> pd.DataFrame:
         """Return a DataFrame with WMO, sensor type, model, maker, sn, units, accuracy and resolution
 
         Parameters
@@ -755,8 +752,8 @@ class ArgoSensor:
         self,
         model: str | None = None,
         output: SearchOutputOptions = "wmo",
-        progress=False,
-        errors="raise",
+        progress : bool = False,
+        errors : ErrorOptions = "raise",
     ) -> list[int] | list[str] | dict[int, str] | pd.DataFrame:
         """Search for Argo floats equipped with a sensor model name
 

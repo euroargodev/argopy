@@ -293,7 +293,6 @@ class NVSrow:
         st.uri
 
     """
-
     name: str = ""
     """From 'altLabel' column"""
 
