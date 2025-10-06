@@ -473,6 +473,7 @@ class SearchEngine(ArgoIndexSearchEngine):
             self._obj.search_type.update(namer(profiler_type))
             return search_filter
 
+    @search_s3
     def institution_code(self, institution_code: List[str],  nrows=None, composed=False):
         def checker(institution_code):
             if "institution" not in self._obj.convention_columns:
@@ -500,7 +501,8 @@ class SearchEngine(ArgoIndexSearchEngine):
             self._obj.search_type.update(namer(institution_code))
             return search_filter
 
-    def dac(self, dac: List[str],  nrows=None, composed=False):
+    @search_s3
+    def dac(self, dac: list[str],  nrows=None, composed=False):
         def checker(dac):
             if "file" not in self._obj.convention_columns:
                 raise InvalidDatasetStructure("Cannot search for DAC in this index)")

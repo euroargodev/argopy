@@ -280,17 +280,23 @@ class ArgoIndexStoreProto(ABC):
             summary.append("In memory: True (%i records)" % self.N_RECORDS)
         elif "s3" in self.host:
             summary.append(
-                "In memory: False [But there's no need to load the full index with a S3 host to make wmo/cycles searches]"
+                "In memory: False [But there's no need to load the full index with a S3 host]"
             )
         else:
             summary.append("In memory: False")
 
         if hasattr(self, "search"):
             match = "matches" if self.N_MATCH > 1 else "match"
-            summary.append(
-                "Searched: True (%i %s, %0.4f%%) - %s"
-                % (self.N_MATCH, match, self.N_MATCH * 100 / self.N_RECORDS, self.search_type)
-            )
+            if "s3" in self.host:
+                summary.append(
+                    "Searched: True (%i %s) - %s"
+                    % (self.N_MATCH, match, self.search_type)
+                )
+            else:
+                summary.append(
+                    "Searched: True (%i %s, %0.4f%%) - %s"
+                    % (self.N_MATCH, match, self.N_MATCH * 100 / self.N_RECORDS, self.search_type)
+                )
         else:
             summary.append("Searched: False")
         return "\n".join(summary)
@@ -503,7 +509,7 @@ class ArgoIndexStoreProto(ABC):
         if hasattr(self, "index"):
             return self.index.shape[0]
         elif "s3" in self.host:
-            return np.Inf
+            return np.inf
         else:
             raise InvalidDataset("Load the index first !")
 
