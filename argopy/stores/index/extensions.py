@@ -578,7 +578,6 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
                 for label in institution_name:
                     if label.lower() in long_name.lower():
                         institution_code.append(code)
-                        log.debug(f"{label} in {long_name}")
             return institution_name, institution_code
 
         def namer(institution_name):
