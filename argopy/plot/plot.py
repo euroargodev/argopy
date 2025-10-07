@@ -792,7 +792,7 @@ def scatter_plot(
             # ax.set_facecolor(bgcolor)
 
         if cbar:
-            cbar = fig.colorbar(m, shrink=0.9, extend="both", ax=ax)
+            cbar = fig.colorbar(m, shrink=0.9, ax=ax)
             cbar.ax.set_ylabel(get_vlabel(ds, this_param), rotation=90)
 
         ylim = ax.get_ylim()
