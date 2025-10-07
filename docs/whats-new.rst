@@ -13,12 +13,12 @@ Coming up next (unreleased)
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- **New colormap in** :class:`ArgoColors` **for whole profile QC flags**. See the new documentation section on :ref:`Argo colors` for more (:pr:`515`) by |gmaze|.
+- **New colormap in** :class:`ArgoColors` **for whole profile QC flags**. See the new documentation section on :ref:`Argo colors` for more. (:pr:`515`) by |gmaze|.
 
 - **Improved** :class:`ArgoFloat.plot` **methods**: now auto-select colormap, colorbar and legend settings depending on the parameter to plot. Check the documentation at: :ref:`argofloat-visu`. (:pr:`515`) by |gmaze|.
 
 Internals
----------
+^^^^^^^^^
 
 - **New post method for the** :class:`stores.httpstore` by |gmaze|.
 
