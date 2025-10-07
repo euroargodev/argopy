@@ -6,7 +6,9 @@
 version: 2
 
 # Build PDF & ePub
-#formats: htmlzip
+formats:
+  - pdf
+  - epub
 
 build:
     os: "ubuntu-22.04"
