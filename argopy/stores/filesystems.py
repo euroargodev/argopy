@@ -1,5 +1,6 @@
 import os
 import fsspec
+import aiohttp
 import logging
 import importlib
 from typing import Union
@@ -40,7 +41,7 @@ except ModuleNotFoundError:
 
 
 USER_AGENT: str = "Python/{0[0]}.{0[1]} aiohttp/{1} Argopy/{2} (+https://github.com/euroargodev/argopy)".format(
-    sys.version_info, fsspec.implementations.http.aiohttp.__version__, __version__
+    sys.version_info, aiohttp.__version__, __version__
 )
 
 
