@@ -3,6 +3,7 @@ import fsspec
 import logging
 import importlib
 from typing import Union
+import sys
 
 from ..options import OPTIONS
 from ..utils.accessories import Registry
@@ -38,6 +39,11 @@ except ModuleNotFoundError:
     distributed = None
 
 
+USER_AGENT: str = "Python/{0[0]}.{0[1]} aiohttp/{1} Argopy/{2} (+https://github.com/euroargodev/argopy)".format(
+    sys.version_info, fsspec.implementations.http.aiohttp.__version__, __version__
+)
+
+
 def new_fs(
     protocol: str = "",
     cache: bool = False,
@@ -68,7 +74,7 @@ def new_fs(
     if protocol == "http":
         client_kwargs = {
             "trust_env": OPTIONS["trust_env"],
-            "headers": {"Argopy-Version": __version__},
+            "headers": {"User-Agent": USER_AGENT},
         }  # Passed to aiohttp.ClientSession
         if "client_kwargs" in kwargs:
             client_kwargs = {**client_kwargs, **kwargs["client_kwargs"]}
