@@ -69,6 +69,11 @@ def new_fs(
     (fs, cache_registry)
         A tuple with the fsspec file system and :class:`argopy.Registry` for cache if any
 
+    Notes
+    -----
+    For the specific case of the 'http' file system, the ``client_kwargs`` argument can be used to customise HTTP requests header fields like:
+    ``httpstore(client_kwargs={"headers": {"Some-Header": "a value"}})``
+
     """
     # Merge default FSSPEC kwargs with user defined kwargs:
     default_fsspec_kwargs = {"simple_links": True, "block_size": 0}
