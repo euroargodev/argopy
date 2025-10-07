@@ -161,13 +161,13 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         file_path = unquote(self.path.rstrip("/"))
-        log.debug("Requesting: '%s'" % file_path)
+        # log.debug("Requesting: '%s'" % file_path)
         # log.debug("Found: %s" % (file_path in self.files.keys()))
         # log.debug("Found B: %s" % (file_path in MOCKED_REQUESTS.keys()))
         # [log.debug("\t└─ '%s'" % k) for k in self.files.keys()]
         # [log.debug("\t└─ '%s': %s" % (k, v) for k, v in self.headers.items())]
-        log.debug("Headers: ")
-        log.debug("\n".join([f"\t└─ '{k}': {self.headers[k]}" for k in self.headers.keys()]))
+        # log.debug("Headers: ")
+        # log.debug("\n".join([f"\t└─ '{k}': {self.headers[k]}" for k in self.headers.keys()]))
 
         file_data = self.files.get(file_path)
         if "give_path" in self.headers:
