@@ -10,26 +10,19 @@ What's New
 Coming up next (unreleased)
 ---------------------------
 
+Features and front-end API
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- **New colormap in** :class:`ArgoColors` **for whole profile QC flags**. See the new documentation section on :ref:`Argo colors` for more (:pr:`515`) by |gmaze|.
+
+- Improved :class:`ArgoFloat.plot` methods, now auto-select colorbar and legend settings depending on the parameter to plot. (:pr:`515`) by |gmaze|.
+
 Internals
 ---------
 
 - **New post method for the** :class:`stores.httpstore` by |gmaze|.
 
 - **Fix upstream compatibility** whereby xarray >= 2025.8 deprecation cycle for changing default keyword arguments in :meth:`xarray.merge` and :meth:`xarray.concat` would make Argopy to fail with internal data processing, :issue:`521`. (:pr:`504`) by |gmaze|.
-
-
-Coming up next
---------------
-
-Features and front-end API
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-- **New colormap in** :class:`ArgoColors` **for whole profile QC flags**. See the new documentation section on :ref:`Argo colors` for more (:pr:`515`) by |gmaze|.
-
-Internals
-^^^^^^^^^
-
-- Let :meth:`ArgoFloat.plot.map` method auto-select colorbar and legend settings depending on the parameter to plot. (:pr:`515`) by |gmaze|.
 
 
 v1.3.0 (22 Aug. 2025)

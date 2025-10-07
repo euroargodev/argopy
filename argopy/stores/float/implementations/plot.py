@@ -24,7 +24,7 @@ class ArgoFloatPlot(ArgoFloatPlotProto):
 
         af.plot.map('TEMP', pres=450, cmap='Spectral_r')
 
-        af.plot.map('DATA_MODE', cbar=False, legend=True)
+        af.plot.map('DATA_MODE')
 
         af.plot.scatter('PSAL')
 
@@ -186,8 +186,13 @@ class ArgoFloatPlot(ArgoFloatPlotProto):
         elif "status_code" in param.lower():
             discrete = True
 
-        if 'N_LEVELS' in self._obj.dataset(ds)[param].dims:
-            legend_title = "%s @ %s PRES level in [%0.1f-%0.1f] db" % (param, select, bins[0], bins[1])
+        if "N_LEVELS" in self._obj.dataset(ds)[param].dims:
+            legend_title = "%s @ %s PRES level in [%0.1f-%0.1f] db" % (
+                param,
+                select,
+                bins[0],
+                bins[1],
+            )
         else:
             legend_title = param
 
