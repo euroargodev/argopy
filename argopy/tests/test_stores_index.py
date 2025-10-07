@@ -46,6 +46,7 @@ VALID_HOSTS = [
 ]
 
 HAS_S3FS = importlib.util.find_spec("s3fs") is not None
+HAS_S3FS = False
 if HAS_S3FS:
     # todo Create a mocked server for s3 tests
     VALID_HOSTS.append("s3://argo-gdac-sandbox/pub/idx")
