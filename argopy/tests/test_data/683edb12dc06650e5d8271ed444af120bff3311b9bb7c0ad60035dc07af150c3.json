@@ -449,6 +449,34 @@
             "@type": "skos:Concept"
         },
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0243/",
+            "pav:authoredOn": "2025-06-30 16:01:23.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0243/1/"
+            },
+            "dce:identifier": "SDN:R40::PI0243",
+            "pav:version": "1",
+            "skos:notation": "SDN:R40::PI0243",
+            "skos:altLabel": "Tetsuichi FUJIKI",
+            "dc:date": "2025-06-30 16:01:23.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Tetsuichi FUJIKI"
+            },
+            "dc:identifier": "SDN:R40::PI0243",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": "",
+            "@type": "skos:Concept"
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0079/",
             "pav:authoredOn": "2023-06-22 12:58:04.0",
             "pav:hasCurrentVersion": {
@@ -465,6 +493,34 @@
                 "@value": "Henry BITTIG"
             },
             "dc:identifier": "SDN:R40::PI0079",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": "",
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0237/",
+            "pav:authoredOn": "2025-06-27 11:02:01.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0237/1/"
+            },
+            "dce:identifier": "SDN:R40::PI0237",
+            "pav:version": "1",
+            "skos:notation": "SDN:R40::PI0237",
+            "skos:altLabel": "Christina SCHALLENBERG",
+            "dc:date": "2025-06-27 11:02:01.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Christina SCHALLENBERG"
+            },
+            "dc:identifier": "SDN:R40::PI0237",
             "skos:note": {
                 "@language": "en",
                 "@value": "accepted"
@@ -2673,6 +2729,34 @@
             "@type": "skos:Concept"
         },
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0240/",
+            "pav:authoredOn": "2025-06-27 11:02:01.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0240/1/"
+            },
+            "dce:identifier": "SDN:R40::PI0240",
+            "pav:version": "1",
+            "skos:notation": "SDN:R40::PI0240",
+            "skos:altLabel": "Esmee VAN WIJK",
+            "dc:date": "2025-06-27 11:02:01.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Esmee VAN WIJK"
+            },
+            "dc:identifier": "SDN:R40::PI0240",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": "",
+            "@type": "skos:Concept"
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0044/",
             "pav:authoredOn": "2023-06-22 12:58:04.0",
             "pav:hasCurrentVersion": {
@@ -2745,6 +2829,34 @@
                 "@value": "Hyun-Suk KANG"
             },
             "dc:identifier": "SDN:R40::PI0085",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": "",
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0235/",
+            "pav:authoredOn": "2024-11-11 09:32:24.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0235/1/"
+            },
+            "dce:identifier": "SDN:R40::PI0235",
+            "pav:version": "1",
+            "skos:notation": "SDN:R40::PI0235",
+            "skos:altLabel": "Stefanie SEMPER",
+            "dc:date": "2024-11-11 09:32:24.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Stefanie SEMPER"
+            },
+            "dc:identifier": "SDN:R40::PI0235",
             "skos:note": {
                 "@language": "en",
                 "@value": "accepted"
@@ -3992,6 +4104,34 @@
             "@type": "skos:Concept"
         },
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0238/",
+            "pav:authoredOn": "2025-06-27 11:02:01.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0238/1/"
+            },
+            "dce:identifier": "SDN:R40::PI0238",
+            "pav:version": "1",
+            "skos:notation": "SDN:R40::PI0238",
+            "skos:altLabel": "Craig STEVENS",
+            "dc:date": "2025-06-27 11:02:01.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Craig STEVENS"
+            },
+            "dc:identifier": "SDN:R40::PI0238",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": "",
+            "@type": "skos:Concept"
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0149/",
             "pav:authoredOn": "2023-06-22 12:58:04.0",
             "pav:hasCurrentVersion": {
@@ -4301,21 +4441,52 @@
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0183/",
-            "pav:authoredOn": "2023-06-22 12:58:04.0",
-            "pav:hasCurrentVersion": {
+            "pav:hasVersion": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0183/1/"
             },
+            "pav:authoredOn": "2025-06-27 11:02:01.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0183/2/"
+            },
             "dce:identifier": "SDN:R40::PI0183",
-            "pav:version": "1",
+            "pav:version": "2",
             "skos:notation": "SDN:R40::PI0183",
-            "skos:altLabel": "Stephen RINTOUL",
-            "dc:date": "2023-06-22 12:58:04.0",
+            "skos:altLabel": "Steve RINTOUL",
+            "dc:date": "2025-06-27 11:02:01.0",
+            "owl:versionInfo": "2",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Steve RINTOUL"
+            },
+            "dc:identifier": "SDN:R40::PI0183",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": "",
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0241/",
+            "pav:authoredOn": "2025-06-27 11:02:01.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0241/1/"
+            },
+            "dce:identifier": "SDN:R40::PI0241",
+            "pav:version": "1",
+            "skos:notation": "SDN:R40::PI0241",
+            "skos:altLabel": "Felicity MCCORMACK",
+            "dc:date": "2025-06-27 11:02:01.0",
             "owl:versionInfo": "1",
             "skos:prefLabel": {
                 "@language": "en",
-                "@value": "Stephen RINTOUL"
+                "@value": "Felicity MCCORMACK"
             },
-            "dc:identifier": "SDN:R40::PI0183",
+            "dc:identifier": "SDN:R40::PI0241",
             "skos:note": {
                 "@language": "en",
                 "@value": "accepted"
@@ -5000,22 +5171,22 @@
             "@type": "skos:Concept"
         },
         {
-            "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0013/",
-            "pav:authoredOn": "2023-06-22 12:58:04.0",
+            "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0236/",
+            "pav:authoredOn": "2024-11-11 09:32:23.0",
             "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0013/1/"
+                "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0236/1/"
             },
-            "dce:identifier": "SDN:R40::PI0013",
+            "dce:identifier": "SDN:R40::PI0236",
             "pav:version": "1",
-            "skos:notation": "SDN:R40::PI0013",
-            "skos:altLabel": "Ariel TROISI",
-            "dc:date": "2023-06-22 12:58:04.0",
+            "skos:notation": "SDN:R40::PI0236",
+            "skos:altLabel": "Johan SODERQVIST",
+            "dc:date": "2024-11-11 09:32:23.0",
             "owl:versionInfo": "1",
             "skos:prefLabel": {
                 "@language": "en",
-                "@value": "Ariel TROISI"
+                "@value": "Johan SODERQVIST"
             },
-            "dc:identifier": "SDN:R40::PI0013",
+            "dc:identifier": "SDN:R40::PI0236",
             "skos:note": {
                 "@language": "en",
                 "@value": "accepted"
@@ -5044,6 +5215,34 @@
                 "@value": "Guillaume MAZE"
             },
             "dc:identifier": "SDN:R40::PI0075",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": "",
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0013/",
+            "pav:authoredOn": "2023-06-22 12:58:04.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0013/1/"
+            },
+            "dce:identifier": "SDN:R40::PI0013",
+            "pav:version": "1",
+            "skos:notation": "SDN:R40::PI0013",
+            "skos:altLabel": "Ariel TROISI",
+            "dc:date": "2023-06-22 12:58:04.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Ariel TROISI"
+            },
+            "dc:identifier": "SDN:R40::PI0013",
             "skos:note": {
                 "@language": "en",
                 "@value": "accepted"
@@ -5128,6 +5327,34 @@
                 "@value": "Emil STANEV"
             },
             "dc:identifier": "SDN:R40::PI0054",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": "",
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0239/",
+            "pav:authoredOn": "2025-06-27 11:02:01.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0239/1/"
+            },
+            "dce:identifier": "SDN:R40::PI0239",
+            "pav:version": "1",
+            "skos:notation": "SDN:R40::PI0239",
+            "skos:altLabel": "Denise FERNANDEZ",
+            "dc:date": "2025-06-27 11:02:01.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Denise FERNANDEZ"
+            },
+            "dc:identifier": "SDN:R40::PI0239",
             "skos:note": {
                 "@language": "en",
                 "@value": "accepted"
@@ -5955,34 +6182,6 @@
             "@type": "skos:Concept"
         },
         {
-            "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0210/",
-            "pav:authoredOn": "2023-06-22 12:58:04.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0210/1/"
-            },
-            "dce:identifier": "SDN:R40::PI0210",
-            "pav:version": "1",
-            "skos:notation": "SDN:R40::PI0210",
-            "skos:altLabel": "Wei FAN",
-            "dc:date": "2023-06-22 12:58:04.0",
-            "owl:versionInfo": "1",
-            "skos:prefLabel": {
-                "@language": "en",
-                "@value": "Wei FAN"
-            },
-            "dc:identifier": "SDN:R40::PI0210",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
-            },
-            "owl:deprecated": "false",
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "skos:definition": "",
-            "@type": "skos:Concept"
-        },
-        {
             "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0160/",
             "pav:authoredOn": "2023-06-22 12:58:04.0",
             "pav:hasCurrentVersion": {
@@ -5999,6 +6198,34 @@
                 "@value": "Robert S PICKART"
             },
             "dc:identifier": "SDN:R40::PI0160",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": "",
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0210/",
+            "pav:authoredOn": "2023-06-22 12:58:04.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0210/1/"
+            },
+            "dce:identifier": "SDN:R40::PI0210",
+            "pav:version": "1",
+            "skos:notation": "SDN:R40::PI0210",
+            "skos:altLabel": "Wei FAN",
+            "dc:date": "2023-06-22 12:58:04.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Wei FAN"
+            },
+            "dc:identifier": "SDN:R40::PI0210",
             "skos:note": {
                 "@language": "en",
                 "@value": "accepted"
@@ -6167,6 +6394,34 @@
                 "@value": "Hubert LOISEL"
             },
             "dc:identifier": "SDN:R40::PI0084",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": "",
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0234/",
+            "pav:authoredOn": "2024-11-11 09:32:24.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0234/1/"
+            },
+            "dce:identifier": "SDN:R40::PI0234",
+            "pav:version": "1",
+            "skos:notation": "SDN:R40::PI0234",
+            "skos:altLabel": "Marius ARTHUN",
+            "dc:date": "2024-11-11 09:32:24.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Marius ARTHUN"
+            },
+            "dc:identifier": "SDN:R40::PI0234",
             "skos:note": {
                 "@language": "en",
                 "@value": "accepted"
@@ -6462,6 +6717,34 @@
             "@type": "skos:Concept"
         },
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0242/",
+            "pav:authoredOn": "2025-06-30 16:01:23.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0242/1/"
+            },
+            "dce:identifier": "SDN:R40::PI0242",
+            "pav:version": "1",
+            "skos:notation": "SDN:R40::PI0242",
+            "skos:altLabel": "Shigeki HOSODA",
+            "dc:date": "2025-06-30 16:01:23.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Shigeki HOSODA"
+            },
+            "dc:identifier": "SDN:R40::PI0242",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": "",
+            "@type": "skos:Concept"
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0155/",
             "pav:authoredOn": "2023-06-22 12:58:04.0",
             "pav:hasCurrentVersion": {
@@ -6597,7 +6880,13 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0229/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0243/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0079/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0237/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0083/"
@@ -6834,6 +7123,9 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0024/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0240/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0044/"
                 },
                 {
@@ -6841,6 +7133,9 @@
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0085/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0235/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0208/"
@@ -6975,6 +7270,9 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0103/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0238/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0149/"
                 },
                 {
@@ -7009,6 +7307,9 @@
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0183/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0241/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0186/"
@@ -7083,10 +7384,13 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0100/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0013/"
+                    "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0236/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0075/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0013/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0141/"
@@ -7096,6 +7400,9 @@
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0054/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0239/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0095/"
@@ -7185,10 +7492,10 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0181/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0210/"
+                    "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0160/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0160/"
+                    "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0210/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0123/"
@@ -7207,6 +7514,9 @@
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0084/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0234/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0019/"
@@ -7239,6 +7549,9 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0201/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0242/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0196/"
                 },
                 {
@@ -7253,8 +7566,8 @@
             "dc:description": "List of Principal Investigator (PI) names in charge of Argo floats. Argo netCDF variable PI_NAME is populated by R40 altLabel.",
             "dc:title": "Argo Principal Investigator (PI) names",
             "skos:prefLabel": "Argo Principal Investigator (PI) names",
-            "owl:versionInfo": "3",
-            "dc:date": "2024-04-26 03:00:10.0",
+            "owl:versionInfo": "6",
+            "dc:date": "2025-07-01 03:00:01.0",
             "skos:altLabel": "PI_NAME",
             "dc:creator": "Argo Data Management Team",
             "dc:alternative": "PI_NAME",

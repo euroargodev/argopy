@@ -5,8 +5,9 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 import logging
-from typing import Union, List
+from typing import Union
 from xarray.backends import BackendEntrypoint  # For xarray > 0.18
+from xarray.backends import ZarrStore
 
 try:
     import gsw
@@ -14,6 +15,15 @@ try:
     with_gsw = True
 except ModuleNotFoundError:
     with_gsw = False
+
+try:
+    from dask.delayed import Delayed
+
+    with_dask = True
+except ModuleNotFoundError:
+    with_dask = False
+    Delayed = lambda x: x  # noqa: E731
+
 
 from .utils import is_list_of_strings
 from .utils import (
@@ -27,13 +37,6 @@ from .utils import (
 )
 from .utils import list_core_parameters
 from .utils import toYearFraction
-from .utils import (
-    merge_param_with_param_adjusted,
-    filter_param_by_data_mode,
-    split_data_mode,
-)
-from .utils import deprecated
-
 from .errors import InvalidDatasetStructure, DataNotFound, OptionValueError
 
 log = logging.getLogger("argopy.xarray")
@@ -43,51 +46,62 @@ log = logging.getLogger("argopy.xarray")
 class ArgoAccessor:
     """Class registered under scope ``argo`` to access a :class:`xarray.Dataset` object.
 
+
+
     Examples
     --------
-    - Ensure all variables are of the Argo required dtype with:
+    .. code-block:: python
+        :caption: Conformity
 
-    >>> ds.argo.cast_types()
+        ds.argo.cast_types()
 
-    - Convert a collection of points into a collection of profiles:
+    .. code-block:: python
+        :caption: Transformation
 
-    >>> ds.argo.point2profile()
+        ds.argo.point2profile()
+        ds.argo.profile2point()
+        ds.argo.inter_std_levels(std_lev=[10., 500., 1000.])
+        ds.argo.groupby_pressure_bins(bins=[0, 200., 500., 1000.])
 
-    - Convert a collection of profiles to a collection of points:
+    .. code-block:: python
+        :caption: QC flags and methods
 
-    >>> ds.argo.profile2point()
+        ds.argo.filter_qc(QC_list=[1, 2], QC_fields='all')
+        ds.argo.filter_scalib_pres(force='default')
+        ds.argo.create_float_source("output_folder")
 
-    - Transform dataset variables according to data mode:
+    .. code-block:: python
+        :caption: TEOS10
 
-    >>> ds.argo.transform_data_mode()
+        ds.argo.teos10(vlist='PV')
 
-    - Filter measurements according to data mode values:
+    .. code-block:: python
+        :caption: Extensions: Data Mode
 
-    >>> ds.argo.filter_date_mode(dm=['D'], params='all')
+        ds.argo.datamode.compute()
+        ds.argo.datamode.merge()
+        ds.argo.datamode.filter()
+        ds.argo.datamode.filter(dm=['D'], params='all')
+        ds.argo.datamode.split()
 
-    - Filter measurements according to QC flag values:
+    .. code-block:: python
+        :caption: Extensions: CANYON-MED
 
-    >>> ds.argo.filter_qc(QC_list=[1, 2], QC_fields='all')
+        ds.argo.canyon_med.fit()
+        ds.argo.canyon_med.predict()
+        ds.argo.canyon_med.predict('PO4')
 
-    - Filter variables according to OWC salinity calibration requirements:
+    .. code-block:: python
+        :caption: Extensions: Optical modeling
 
-    >>> ds.argo.filter_scalib_pres(force='default')
+        ds.argo.optic.Zeu()
+        ds.argo.optic.Zeu(inplace=True)
+        ds.argo.optic.Zeu(method='percentage')
+        ds.argo.optic.Zeu(method='KdPAR')
 
-    - Interpolate measurements on pressure levels:
+        ds.argo.optic.Zpd()
+        ds.argo.optic.Zpd(inplace=True)
 
-    >>> ds.argo.inter_std_levels(std_lev=[10., 500., 1000.])
-
-    - Group and reduce measurements by pressure bins:
-
-    >>> ds.argo.groupby_pressure_bins(bins=[0, 200., 500., 1000.])
-
-    - Compute and add additional variables to the dataset:
-
-    >>> ds.argo.teos10(vlist='PV')
-
-    - Preprocess data for OWC salinity calibration:
-
-    >>> ds.argo.create_float_source("output_folder")
     """
 
     def __init__(self, xarray_obj):
@@ -238,6 +252,20 @@ class ArgoAccessor:
         return cast_Argo_variable_type(ds, **kwargs)
 
     @property
+    def _TNAME(self):
+        """Internal handling of the time variable names
+
+        This allows the accessor to work with a dataset:
+        - post-processed internally by a datafetcher (where JULD has been renamed TIME)
+        - loaded from a raw netcdf
+
+        """
+        if "TIME" in self._obj:
+            return "TIME"
+        elif "JULD" in self._obj:
+            return "JULD"
+
+    @property
     def _dummy_argo_uid(self):
         if self._type == "point":
             return xr.DataArray(
@@ -273,8 +301,8 @@ class ArgoAccessor:
 
         Examples
         --------
-        >>> unique_float_profile_id = uid(690024,13,'A') # Encode
-        >>> wmo, cyc, drc = uid(unique_float_profile_id) # Decode
+        unique_float_profile_id = uid(690024,13,'A') # Encode
+        wmo, cyc, drc = uid(unique_float_profile_id) # Decode
 
         """
 
@@ -301,10 +329,10 @@ class ArgoAccessor:
             if direction is not None:
                 return (
                     encode_direction(direction)
-                    * np.vectorize(int)(offset * wmo_or_uid + cyc).ravel()
+                    * np.vectorize(np.int64)(offset * wmo_or_uid + cyc).ravel()
                 )
             else:
-                return np.vectorize(int)(offset * wmo_or_uid + cyc).ravel()
+                return np.vectorize(np.int64)(offset * wmo_or_uid + cyc).ravel()
         else:
             # DECODER
             drc = decode_direction(np.sign(wmo_or_uid))
@@ -324,7 +352,7 @@ class ArgoAccessor:
 
         idx = (
             xr.DataArray(
-                this["TIME"],
+                this[self._TNAME],
                 dims="N_POINTS",
                 coords={"N_POINTS": this["N_POINTS"]},
             )
@@ -353,7 +381,7 @@ class ArgoAccessor:
                     "CYCLE_NUMBER": "cyc",
                     "LONGITUDE": "longitude",
                     "LATITUDE": "latitude",
-                    "TIME": "date",
+                    self._TNAME: "date",
                 }
             )
             .drop(columns="dummy_argo_uid")
@@ -392,8 +420,8 @@ class ArgoAccessor:
             np.max(this_ds["LATITUDE"].values),
             Pmin,
             Pmax,
-            np.min(this_ds["TIME"].values),
-            np.max(this_ds["TIME"].values),
+            np.min(this_ds[self._TNAME].values),
+            np.max(this_ds[self._TNAME].values),
         ]
 
     def point2profile(self, drop: bool = False) -> xr.Dataset:  # noqa: C901
@@ -410,7 +438,7 @@ class ArgoAccessor:
 
         Returns
         -------
-        :class:`xr.dataset`
+        :class:`xr.Dataset`
 
         See Also
         --------
@@ -478,7 +506,7 @@ class ArgoAccessor:
             i_uid, prof = grp
             for iv, vname in enumerate(this.data_vars):
                 try:
-                    count[i_prof, iv] = len(np.unique(prof[vname]))
+                    count[i_prof, iv] = len(np.unique(prof[vname]))  # This is very long because it must read all the data !
                 except Exception:
                     log.error(
                         "point2profile: An error happened when dealing with the '%s' data variable"
@@ -553,7 +581,7 @@ class ArgoAccessor:
             new_ds["LONGITUDE"] = new_ds["LONGITUDE"].isel(N_LEVELS=0)
 
         # Misc formatting
-        new_ds = new_ds.sortby("TIME")
+        new_ds = new_ds.sortby(self._TNAME)
         new_ds = (
             new_ds.argo.cast_types() if not drop else cast_Argo_variable_type(new_ds)
         )
@@ -571,9 +599,11 @@ class ArgoAccessor:
         - A "point" is a location with unique (N_PROF, N_LEVELS) indexes
         - A "profile" is a collection of points with an unique UID based on WMO, CYCLE_NUMBER and DIRECTION
 
+        Note that this method will systematically apply the :meth:`datamode.split` method.
+
         Returns
         -------
-        :class:`xr.dataset`
+        :class:`xr.Dataset`
 
         Warnings
         --------
@@ -588,11 +618,7 @@ class ArgoAccessor:
                 "Method only available for a collection of profiles (N_PROF dimension)"
             )
         ds = self._obj
-        # print(ds.attrs)
-        ds = split_data_mode(
-            ds
-        )  # Otherwise this method will fail with BGC netcdf files
-        # print(ds.attrs)
+        ds = ds.argo.datamode.split()  # Otherwise this method will fail with BGC netcdf files
 
         # Remove all variables for which a dimension is length=0 (eg: N_HISTORY)
         # todo: We should be able to find a way to keep them somewhere in the data structure
@@ -618,232 +644,21 @@ class ArgoAccessor:
         (ds,) = xr.broadcast(ds)
         ds = ds.stack({"N_POINTS": list(ds.dims)})
         ds = ds.reset_index("N_POINTS").drop_vars(["N_PROF", "N_LEVELS"])
-        possible_coords = ["LATITUDE", "LONGITUDE", "TIME", "JULD", "N_POINTS"]
+        possible_coords = ["LATITUDE", "LONGITUDE", self._TNAME, "N_POINTS"]
         for c in [c for c in possible_coords if c in ds.data_vars]:
             ds = ds.set_coords(c)
 
         # Remove index without data (useless points)
+        ds["PRES"].load()
         ds = ds.where(~np.isnan(ds["PRES"]), drop=1)
-        ds = ds.sortby("TIME") if "TIME" in ds else ds.sortby("JULD")
+        ds = ds.sortby(self._TNAME)
         ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
-        ds = cast_Argo_variable_type(ds)
+        ds = cast_Argo_variable_type(ds, overwrite=False)
         ds = ds[np.sort(ds.data_vars)]
         ds.encoding = self.encoding  # Preserve low-level encoding information
         ds.argo.add_history("Transformed with 'profile2point'")
         ds.argo._type = "point"
         return ds
-
-    def split_data_mode(self, **kw) -> xr.Dataset:
-        ds = self._obj
-        return split_data_mode(ds, **kw)
-
-    def transform_data_mode(
-        self, params: Union[str, List[str]] = "all", errors: str = "raise"
-    ) -> xr.Dataset:
-        """Merge <PARAM> and <PARAM>_ADJUSTED variables according to DATA_MODE or <PARAM>_DATA_MODE
-
-        Merging is done as follows:
-
-        - For measurements with data mode ``R``: keep <PARAM> (eg: 'DOXY')
-        - For measurements with data mode ``D`` or ``A``: keep <PARAM>_ADJUSTED (eg: 'DOXY_ADJUSTED')
-
-        Since adjusted variables are not required anymore after the transformation, all <PARAM>_ADJUSTED variables
-        are dropped from the dataset in order to avoid confusion with regard to variable content.
-        Variable DATA_MODE or <PARAM>_DATA_MODE are preserved for the record.
-
-        Parameters
-        ----------
-        params: str, List[str], optional, default='all'
-            Name or list of names of the parameter(s) to merge.
-            Use the default keyword ``all`` to merge all possible parameters in the :class:`xarray.Dataset`.
-        errors: str, optional, default='raise'
-            If ``raise``, raises a :class:`argopy.errors.InvalidDatasetStructure` error if any of the expected variables is
-            not found.
-            If ``ignore``, fails silently and return unmodified dataset.
-
-        Returns
-        -------
-        :class:`xarray.Dataset`
-
-        Notes
-        -----
-        This method is compatible with core, deep and BGC datasets
-
-        See Also
-        --------
-        :meth:`filter_data_mode`
-        """
-        if self._type != "point":
-            raise InvalidDatasetStructure(
-                "Method only available to a collection of points"
-            )
-        else:
-            this = self._obj
-
-        # Determine the list of variables to transform:
-        params = to_list(params)
-        parameters = []
-        # log.debug(params)
-        if params[0] == "all":
-            if "DATA_MODE" in this.data_vars:
-                for p in list_core_parameters():
-                    if p in this.data_vars or "%s_ADJUSTED" % p in this.data_vars:
-                        parameters.append(p)
-            else:
-                parameters = [
-                    p.replace("_DATA_MODE", "")
-                    for p in this.data_vars
-                    if "_DATA_MODE" in p
-                ]
-        else:
-            [parameters.append(v) for v in params]
-        # log.debug(parameters)
-
-        # Transform data:
-        for param in parameters:
-            this = merge_param_with_param_adjusted(this, param, errors=errors)
-
-        # Finalise:
-        this = this[np.sort(this.data_vars)]
-        this.argo.add_history(
-            "[%s] real-time and adjusted/delayed variables merged according to their data mode"
-            % (",".join(parameters))
-        )
-
-        return this
-
-    def filter_data_mode(
-        self,  # noqa: C901
-        dm: Union[str, List[str]] = ["R", "A", "D"],
-        params: Union[str, List[str]] = "all",
-        logical: str = "and",
-        mask: bool = False,
-        errors: str = "raise",
-    ):
-        """Filter measurements according to parameters data mode
-
-        Filter the dataset to keep points where all or some of the parameters are in any of the data mode specified.
-
-        This method can return the filtered dataset or the filter mask.
-
-        Parameters
-        ----------
-        dm: str, List[str], optional, default=[``R``, ``A``, ``D``]
-            List of data mode values (string) to keep
-        params: str, List[str], optional, default='all'
-            List of parameters to apply the filter to. By default, we use all parameters for which a data mode
-            can be found
-        logical: str, optional, default='and'
-            Reduce parameter filters with a logical ``and`` or ``or``. With ``and`` the filter shall be True
-            if all parameters match the data mode requested, while with ``or`` it will be True for at least one parameter.
-        mask: bool, optional, default=False
-            Determine if we should return the filter mask or the filtered dataset
-        errors: str, optional, default='raise'
-            If ``raise``, raises a :class:`argopy.errors.InvalidDatasetStructure` error if any of the expected variables is
-            not found.
-            If ``ignore``, fails silently and return unmodified dataset.
-
-        Returns
-        -------
-        :class:`xarray.Dataset`
-
-        Notes
-        -----
-        - Method compatible with core, deep and BGC datasets
-        - Can be applied after :meth:`transform_data_mode`
-
-        See Also
-        --------
-        :meth:`transform_data_mode`
-
-        """
-        if self._type != "point":
-            raise InvalidDatasetStructure(
-                "Method only available to a collection of points"
-            )
-        else:
-            this = self._obj
-
-        # Make sure we deal with a list of strings:
-        if not isinstance(dm, list):
-            dm = to_list(dm)
-        dm = [str(x).upper() for x in dm]
-
-        if logical not in ["and", "or"]:
-            raise ValueError("'logical' must be 'and' or 'or'")
-
-        # Determine the list of variables to filter:
-        params = to_list(params)
-        if params[0] == "all":
-            if "DATA_MODE" in this.data_vars:
-                params = ["PRES", "TEMP"]
-                if "PSAL" in this.data_vars:
-                    params.append("PSAL")
-            else:
-                params = [
-                    p.replace("_DATA_MODE", "")
-                    for p in this.data_vars
-                    if "_DATA_MODE" in p
-                ]
-        elif params[0] == "core":
-            params = list_core_parameters()
-        else:
-            for p in params:
-                if p not in this.data_vars:
-                    if errors == "raise":
-                        raise InvalidDatasetStructure(
-                            "Parameter '%s' not found in this dataset" % p
-                        )
-                    else:
-                        log.debug("Parameter '%s' not found in this dataset" % p)
-                    params.remove(p)
-
-        if len(params) == 0:
-            this.argo.add_history("Found no variables to select according to DATA_MODE")
-            return this
-
-        logging.debug(
-            "filter_data_mode: Filtering dataset to keep points with DATA_MODE in %s for '%s' fields in %s"
-            % (dm, logical, ",".join(params))
-        )
-
-        # Get a filter mask for each variables:
-        filter = []
-        for param in params:
-            f = filter_param_by_data_mode(this, param, dm=dm, mask=True)
-            [filter.append(f) if len(f) > 0 else None]
-
-        # Reduce dataset:
-        if len(filter) > 0:
-            if logical == "and":
-                filter = np.logical_and.reduce(filter)
-            else:
-                filter = np.logical_or.reduce(filter)
-
-        if mask:
-            # Return mask:
-            return filter
-        elif len(filter) > 0:
-            # Apply mask:
-            this = this.loc[dict(N_POINTS=filter)]
-
-            # Finalise:
-            this = this[np.sort(this.data_vars)]
-            this.argo.add_history(
-                "[%s] filtered to retain points with data mode in [%s]"
-                % (",".join(params), ",".join(dm))
-            )
-
-            if this.argo.N_POINTS == 0:
-                log.warning("No data left after DATA_MODE filtering !")
-
-            return this
-
-        else:
-            this.argo.add_history(
-                "No data mode found for [%s], no filtering applied" % (",".join(params))
-            )
-            return this
 
     def filter_qc(  # noqa: C901
         self, QC_list=[1, 2], QC_fields="all", drop=True, mode="all", mask=False
@@ -861,7 +676,7 @@ class ArgoAccessor:
 
         Parameters
         ----------
-        QC_list: list(int)
+        QC_list: list of int
             List of QC flag values (integers) to keep
         QC_fields: 'all' or list(str)
             List of QC fields to consider to apply the filter. By default, we use all available QC fields
@@ -914,7 +729,7 @@ class ArgoAccessor:
             )
 
         if len(QC_fields) == 0:
-            this.argo._add_history(
+            this.argo.add_history(
                 "Variables selected according to QC (but found no QC variables)"
             )
             return this
@@ -1086,9 +901,9 @@ class ArgoAccessor:
             core_params.remove("PSAL")
 
         # Apply transforms and filters:
-        this = this.argo.filter_qc(QC_list=1, QC_fields=["POSITION_QC", "TIME_QC"])
-        this = this.argo.transform_data_mode(params=core_params)
-        this = this.argo.filter_data_mode(params=core_params, dm="D")
+        this = this.argo.filter_qc(QC_list=1, QC_fields=["POSITION_QC", f"{self._TNAME}_QC"])
+        this = this.argo.datamode.merge(params=core_params)
+        this = this.argo.datamode.filter(params=core_params, dm="D")
 
         this = this.argo.filter_qc(
             QC_list=1, QC_fields=["%s_QC" % p for p in core_params]
@@ -1693,13 +1508,13 @@ class ArgoAccessor:
             that.append(CS)
 
         # Create a dataset with all new variables:
-        that = xr.merge(that)
+        that = xr.merge(that, compat='no_conflicts')
         # Add to the dataset essential Argo variables (allows to keep using the argo accessor):
         that = that.assign(
             {
                 k: this[k]
                 for k in [
-                    "TIME",
+                    self._TNAME,
                     "LATITUDE",
                     "LONGITUDE",
                     "PRES",
@@ -1755,11 +1570,11 @@ class ArgoAccessor:
 
         You can force the program to load raw PRES, PSAL and TEMP whatever PRES is adjusted or not:
 
-        >>> ds.argo.create_float_source(force='raw')
+        ds.argo.create_float_source(force='raw')
 
         or you can force the program to load adjusted variables: PRES_ADJUSTED, PSAL_ADJUSTED, TEMP_ADJUSTED
 
-        >>> ds.argo.create_float_source(force='adjusted')
+        ds.argo.create_float_source(force='adjusted')
 
         **Pre-processing details**:
 
@@ -1858,7 +1673,7 @@ class ArgoAccessor:
             # Return a Matlab dictionary with dataset data to be used by savemat:
             mdata = {}
             mdata["PROFILE_NO"] = (
-                this_dsp["PROFILE_NO"].astype("uint8").values.T[np.newaxis, :]
+                this_dsp["PROFILE_NO"].astype("uint16").values.T[np.newaxis, :]
             )  # 1-based index in Matlab
             mdata["DATES"] = this_dsp["DATES"].values.T[np.newaxis, :]
             mdata["LAT"] = this_dsp["LAT"].values.T[np.newaxis, :]
@@ -1981,7 +1796,7 @@ class ArgoAccessor:
             # Compute fractional year:
             # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L334
             DATES = np.array(
-                [toYearFraction(d) for d in pd.to_datetime(this_one["TIME"].values)]
+                [toYearFraction(d) for d in pd.to_datetime(this_one[self._TNAME].values)]
             )[np.newaxis, :]
 
             # Read measurements:
@@ -2137,6 +1952,7 @@ class ArgoAccessor:
         else:
             return list_1d, dummy_argo_uid
 
+    @property
     def list_WMO_CYC(self):
         """Return a tuple with all (PLATFORM_NUMBER, CYCLE_NUMBER) in the dataset"""
         profiles = []
@@ -2144,9 +1960,169 @@ class ArgoAccessor:
             [profiles.append((wmo, cyc)) for cyc in np.unique(grp["CYCLE_NUMBER"])]
         return profiles
 
+    @property
+    def list_WMO(self):
+        """Return all possible WMO as a list"""
+        return to_list(np.unique(self._obj["PLATFORM_NUMBER"].values))
+
+    def to_zarr(self, *args, **kwargs) -> Union[ZarrStore, Delayed]:
+        """Write Argo dataset content to a zarr group
+
+        Before write operation is delegated to :class:`xarray.Dataset.to_zarr`, we perform the following:
+
+        - Ensure all variables are appropriately cast.
+        - If the ``encoding`` argument is not specified, we automatically add a ``Blosc(cname="zstd", clevel=3, shuffle=2)`` compression to all variables. Set `encoding=None` for no compression.
+
+        Parameters
+        ----------
+        *args, **kwargs:
+            Passed to :class:`xarray.Dataset.to_zarr`.
+
+        Returns
+        -------
+        The output from :class:`xarray.Dataset.to_zarr` call
+
+        See Also
+        --------
+        :class:`xarray.Dataset.to_zarr`, :class:`numcodecs.blosc.Blosc`
+        """
+
+        # Ensure that all variables are cast appropriately
+        # (those already cast are not changed)
+        self._obj = self.cast_types()
+
+        # Add zarr compression to encoding:
+        if "encoding" not in kwargs:
+            from numcodecs import Blosc
+            compressor = Blosc(cname="zstd", clevel=3, shuffle=2)
+            encoding = {}
+            for v in self._obj:
+                encoding.update({v: {"compressor": compressor}})
+            kwargs.update({'encoding': encoding})
+
+        # Convert to a zarr file using compression:
+        return self._obj.to_zarr(*args, **kwargs)
+
+    def reduce_profile(self, func, params=[], **kwargs) -> xr.DataArray:
+        """Apply a vectorized function for unlabeled arrays for each Argo profiles
+
+        This method allows to execute a per profile diagnostic function very efficiently. Such a diagnostic function
+        takes vertical profiles as input and return a single value as output (see examples below).
+
+        Typical usage example would include computation of mixed layer depth or euphotic layer depth.
+
+        Parameters
+        ----------
+        func: callable
+            A function that takes one or more profile parameters as input, and return a single value as output.
+
+        params: [List, str]
+            Name, or list of names, of the dataset parameters expected by ``func``. All of these parameters
+            must have ``N_LEVELS`` as a dimension.
+
+        **kwargs: dict, optional
+            Keyword arguments to be passed to ``func``.
+
+        Returns
+        -------
+        :class:`xarray.DataArray`
+
+        Examples
+        --------
+        .. code-block:: python
+            :caption: Example 1
+
+            from argopy import ArgoFloat
+            dsp = ArgoFloat(6901864).open_dataset('Sprof')
+
+            def max_salinity_depth(pres, psal):
+                # A dummy function returning depth of the maximum salinity
+                idx = ~np.logical_or(np.isnan(pres), np.isnan(psal))
+                return pres[idx][np.argmax(psal[idx])]
+
+            # Apply reduce function on all profiles:
+            dsp.argo.reduce_profile(max_salinity_depth, params=['PRES', 'PSAL'])
+
+        .. code-block:: python
+            :caption: Example 2: with keyword arguments
+
+            from argopy import ArgoFloat
+            dsp = ArgoFloat(6901864).open_dataset('Sprof')
+
+            def max_salinity_depth(pres, psal, max_layer=1000.):
+                # A dummy function returning depth of the maximum salinity above max_layer:
+                idx = ~np.logical_or(np.isnan(pres), np.isnan(psal))
+                idx = np.logical_and(idx, pres<=max_layer)
+                if np.any(idx):
+                    return pres[idx][np.argmax(psal[idx])]
+                else:
+                    return np.NaN
+
+            # Apply reduce function on all profiles:
+            dsp.argo.reduce_profile(max_salinity_depth, params=['PRES', 'PSAL'], max_layer=700)
+
+        .. code-block:: python
+            :caption: Example 3: automatically parallelize func with Dask
+
+            from argopy import ArgoFloat
+            dsp = ArgoFloat(6901864).open_dataset('Sprof')
+
+            # Make sure we're working with dask arrays
+            dsp = dsp.chunk({'N_PROF': 10})
+
+            def max_salinity_depth(pres, psal):
+                # A dummy function returning depth of the maximum salinity
+                idx = ~np.logical_or(np.isnan(pres), np.isnan(psal))
+                return pres[idx][np.argmax(psal[idx])]
+
+            # Apply reduce function on all profiles:
+            da = dsp.argo.reduce_profile(max_salinity_depth, params=['PRES', 'PSAL'])  # Return a dask array
+            da.compute()
+        """
+        if self._type != "profile":
+            raise InvalidDatasetStructure(
+                "Method only available for a collection of profiles (with N_PROF dimension)"
+            )
+
+        # plist holds the list of dataset variable(s) required by the reducer with a N_PROF dimension:
+        # eg: ['PRES', 'TEMP']
+        plist = to_list(params)
+        for param in plist:
+            if param not in self._obj:
+                raise ValueError(f"Parameter {param} not in dataset")
+            if 'N_LEVELS' not in self._obj[param].dims:
+                raise ValueError(f"Parameter {param} must have the 'N_LEVELS' dimension")
+
+        # There should be one input core dimension 'N_LEVELS' for each argument of the reduce function
+        input_core_dims = [["N_LEVELS"] for _ in plist]
+
+        # Create the reduce function list of arguments:
+        ufunc_args = []
+        [ufunc_args.append(self._obj[param]) for param in plist]
+
+        # Create the xr.apply_ufunc list of keywords arguments:
+        ufunc_kwargs = dict(
+            kwargs=kwargs,  # Keywords arguments to be passed to the reduce function
+            input_core_dims=input_core_dims,
+
+            # dimensions allowed to change size. Must be set!
+            # must also appear in ``input_core_dims`` for at least one argument
+            exclude_dims=set(("N_LEVELS",)),
+
+            vectorize=True,  # loop over non-core dims
+            dask="parallelized",
+        )
+        reduced = xr.apply_ufunc(
+            func,
+            *ufunc_args,
+            **ufunc_kwargs,
+        )
+        return reduced
+
 
 def open_Argo_dataset(filename_or_obj):
-    ds = xr.open_dataset(filename_or_obj, decode_cf=1, use_cftime=0, mask_and_scale=1)
+    time_coder = xr.coders.CFDatetimeCoder(use_cftime=False)
+    ds = xr.open_dataset(filename_or_obj, decode_cf=1, decode_times=time_coder, mask_and_scale=1, decode_timedelta=True)
     ds = cast_Argo_variable_type(ds)
     return ds
 
@@ -2161,8 +2137,11 @@ class ArgoEngine(BackendEntrypoint):
 
     Examples
     --------
-    >>> import xarray as xr
-    >>> ds = xr.open_dataset("dac/aoml/1901393/1901393_prof.nc", engine='argo')
+    .. code-block:: python
+
+        import xarray as xr
+        ds = xr.open_dataset("dac/aoml/1901393/1901393_prof.nc", engine='argo')
+
     """
 
     description = "Open Argo netCDF files (.nc)"

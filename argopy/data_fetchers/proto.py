@@ -6,8 +6,8 @@ import hashlib
 import warnings
 import logging
 from ..plot import dashboard
-from ..utils.lists import list_standard_variables, list_bgc_s_variables
-from ..utils.format import UriCName
+from ..utils.lists import list_standard_variables
+from ..utils.format import UriCName, format_oneline
 
 
 log = logging.getLogger("argopy.fetcher.proto")
@@ -120,3 +120,37 @@ class ArgoDataFetcherProto(ABC):
                 return dashboard(wmo=self.WMO[0], **kw)
             else:
                 warnings.warn("Dashboard only available for a single float or profile request")
+
+    @property
+    def _icon_access_point(self):
+        if hasattr(self, "WMO"):
+            if self.CYC is not None:
+                return "⚓"
+            else:
+                return "🤖"
+        else:
+            return "🗺 "
+
+    @property
+    def _icon_data_source(self):
+        if self.data_source == 'erddap':
+            return "⭐"
+        if self.data_source == 'gdac':
+            return "🌐"
+        if self.data_source == 'argovis':
+            return "👁"
+
+    @property
+    def _repr_access_point(self):
+        if hasattr(self, "BOX"):
+            return "%s Domain: %s" % (self._icon_access_point, self.cname())
+        else:
+            return "%s Domain: %s" % (self._icon_access_point, format_oneline(self.cname()))
+
+    @property
+    def _repr_server(self):
+        return "🔗 API: %s" % self.server
+
+    @property
+    def _repr_data_source(self):
+        return "%s Name: %s" % (self._icon_data_source, self.definition)

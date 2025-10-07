@@ -12,7 +12,7 @@ import logging
 log = logging.getLogger("argopy.tests.options")
 
 
-def test_invalid_option_name():
+def test_invalid_opt_name():
     with pytest.raises(ValueError):
         argopy.set_options(not_a_valid_options=True)
 
@@ -103,3 +103,29 @@ def test_opt_trust_env():
         argopy.set_options(trust_env='toto')
     with pytest.raises(ValueError):
         argopy.set_options(trust_env=0)
+
+
+@pytest.mark.parametrize("method", [
+    True,
+    False,
+    'thread',
+    'process',
+    # client
+    ], indirect=False)
+def test_opt_parallel(method):
+    with argopy.set_options(parallel=method):
+        assert OPTIONS['parallel'] == method
+
+
+@pytest.mark.parametrize("method", [
+    2,
+    'dummy',
+    ], indirect=False)
+def test_invalid_opt_parallel(method):
+    with pytest.raises(OptionValueError):
+        argopy.set_options(parallel=method)
+
+
+def test_opt_longitude_convention():
+    with pytest.raises(ValueError):
+        argopy.set_options(longitude_convention='toto')

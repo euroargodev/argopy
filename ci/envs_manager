@@ -19,14 +19,10 @@ source ~/miniconda3/etc/profile.d/conda.sh
 # LIST ALL  AVAILABLE ENVIRONMENTS AND THE ASSOCIATED YAML FILE
 #########################
 declare -A ENV_LIST=(
-['argopy-docs-dev']="requirements/py3.9-docs-dev.yml"
-['argopy-docs-rtd']="requirements/py3.9-docs-rtd.yml"
+['argopy-base']="requirements/py3.11-all-pinned.yml"
 
-['argopy-py39-all-free']="requirements/py3.9-all-free.yml"
-['argopy-py39-all-pinned']="requirements/py3.9-all-pinned.yml"
-
-['argopy-py39-core-pinned']="requirements/py3.9-core-pinned.yml"
-['argopy-py39-core-free']="requirements/py3.9-core-free.yml"
+['argopy-coiled']="requirements/py3.11-coiled-free.yml"
+['argopy-docs-rtd']="requirements/py3.11-docs-rtd.yml"
 
 ['argopy-py310-all-free']="requirements/py3.10-all-free.yml"
 ['argopy-py310-all-pinned']="requirements/py3.10-all-pinned.yml"
@@ -34,8 +30,25 @@ declare -A ENV_LIST=(
 ['argopy-py310-core-free']="requirements/py3.10-core-free.yml"
 ['argopy-py310-core-pinned']="requirements/py3.10-core-pinned.yml"
 
+['argopy-py311-all-pinned']="requirements/py3.11-all-pinned.yml"
+['argopy-py311-all-free']="requirements/py3.11-all-free.yml"
+
+['argopy-py311-core-pinned']="requirements/py3.11-core-pinned.yml"
+['argopy-py311-core-free']="requirements/py3.11-core-free.yml"
+
+['argopy-py312-all-free']="requirements/py3.12-all-free.yml"
+['argopy-py312-core-free']="requirements/py3.12-core-free.yml"
+
+['argopy-py312-all-pinned']="requirements/py3.12-all-pinned.yml"
+['argopy-py312-core-pinned']="requirements/py3.12-core-pinned.yml"
+
 )
 
+#for k in "${!ENV_LIST[@]}"
+#do
+#    echo $k ' - ' ${ENV_LIST["$k"]}
+#done |
+#sort | xargs -n3
 
 #########################
 # FUNCTIONS
@@ -61,9 +74,10 @@ List_avail_envs () {
   for NAME in "${!ENV_LIST[@]}"
   do
     :
-    FILE=${ENV_LIST[$NAME]}
+#    FILE=${ENV_LIST[$NAME]}
     echo " ${NAME}"
-  done
+  done |
+  sort | xargs -n1
 }
 
 fix_kernel_path (){
@@ -121,7 +135,7 @@ remove_ipykernel(){
 
 install_conda_env () {
 	# $1 is the name of the environment to install
-	# $2 is path to the environment yaml file to use
+	# $2 is the path to the environment yaml file to use
 	# (we replace the yaml file 'name' with the value from $1)
 
 	# Overwrite name of the environment set in the file
@@ -142,6 +156,14 @@ install_conda_env () {
 	# Clean-up
 	/bin/rm tmp.json > /dev/null 2>&1
 	/bin/rm temp_env.yml > /dev/null 2>&1
+
+	# Activate the new environment
+	conda activate $1
+
+	# Installing argopy
+	printf "Installing argopy ...\n"
+	python -m pip install --no-deps -e ..	
+
 }
 
 remove_conda_env () {

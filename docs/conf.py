@@ -151,7 +151,9 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '_templates',
 # Give *lots* of time for notebook cell execution!
 # Note nbsphinx compiles *all* notebooks in docs unless excluded
 nbsphinx_timeout = 60
-nbsphinx_execute = "always"
+nbsphinx_execute = "never"
+# nbsphinx_allow_errors = True
+
 # nbsphinx_prolog = """
 # {% set docname = env.doc2path(env.docname, base=None) %}
 # You can run this notebook in a `live session:
@@ -160,6 +162,8 @@ nbsphinx_execute = "always"
 # .. |Binder| image:: https://mybinder.org/badge.svg
 #    :target: https://mybinder.org/v2/gh/euroargodev/argopy/master-doc?urlpath=lab/tree/docs/{{ docname }}
 # """
+
+numfig = True
 
 # sphinx-copybutton
 copybutton_exclude = '.linenos, .gp, .go, .gh'
@@ -264,7 +268,10 @@ html_theme_options = {
     # 'show_toc_level': 3,  # https://pydata-sphinx-theme.readthedocs.io/en/latest/user_guide/page-toc.html#show-more-levels-of-the-in-page-toc-by-default
     # 'launch_buttons': { "thebe": True}
     # "announcement": (
-    #     "⚠️ <a href='https://argopy.readthedocs.io/en/latest/_static/argopy-cheatsheet.pdf'>Download argopy cheatsheet last version here !</a> ⚠️"
+    #     "🎓 2025 argopy training camps are open: <a href='https://forms.gle/d8xPbrWu7aZcvMut9' target='blank'>pre-register here</a> 🎓"
+    # ),
+    # "announcement": (
+    #     "🎉 argopy turns 5! <a href='https://euroargodev.github.io/argopy-5years' target='blank'>Check full details here</a> 🎊"
     # ),
     "icon_links": [
         {
@@ -279,19 +286,38 @@ html_theme_options = {
             "icon": "fa-solid fa-headset",
             "type": "fontawesome",
         },
+        {
+            "name": "Pre-registration for 2025 online training-camps",
+            "url": "https://forms.gle/d8xPbrWu7aZcvMut9",
+            "icon": "fa-solid fa-graduation-cap",
+            "type": "fontawesome",
+        },
+        {
+            "name": "5 years anniversary events",
+            "url": "https://euroargodev.github.io/argopy-5years",
+            "icon": "fa-solid fa-cake-candles",
+            "type": "fontawesome",
+        },
     ]
 }
 
 # Redirects for pages that were moved to new locations
-rediraffe_redirects = "redirects.txt"
+# rediraffe_redirects = "redirects.txt"
 
 rediraffe_redirects = {
     "data_fetching.rst": "user-guide/fetching-argo-data/data_selection.rst",
     "data_sources.rst": "user-guide/fetching-argo-data/data_sources.rst",
     "user_mode.rst": "user-guide/fetching-argo-data/user_mode.rst",
     "data_manipulation.rst": "user-guide/working-with-argo-data/data_manipulation.rst",
-    "data_quality_control.rst": "user-guide/working-with-argo-data/data_quality_control.rst",
     "visualisation.rst": "user-guide/working-with-argo-data/visualisation.rst",
+
+    "user-guide/working-with-argo-data/data_quality_control.rst": "advanced-tools/quality_control/index.rst",
+    "metadata_fetching.rst": "advanced-tools/metadata/index.rst",
+    "performances.rst": "advanced-tools/performances/index.rst",
+    "why.rst": "what_why.rst",
+    "what_is_argo.rst": "what_why.rst",
+
+    "data_quality_control.rst": "advanced-tools/quality_control/index.rst",
 }
 
 googleanalytics_id = 'G-C4MWDXYMXQ'
@@ -387,4 +413,9 @@ intersphinx_mapping = {
     'IPython': ('https://ipython.readthedocs.io/en/stable/', None),
     'virtualfleet': ('https://virtualfleet.readthedocs.io/en/latest/', None),
     'boto3': ('https://boto3.amazonaws.com/v1/documentation/api/latest/', None),
+    's3fs': ('https://s3fs.readthedocs.io/en/latest/', None),
+    'kerchunk': ('https://fsspec.github.io/kerchunk/', None),
+    'numcodecs': ('https://numcodecs.readthedocs.io/en/stable/', None),
+    'scipy': ('https://docs.scipy.org/doc/scipy/', None),
+    # 'netCDF4': ('https://unidata.github.io/netcdf4-python/', None),
 }

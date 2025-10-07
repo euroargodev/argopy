@@ -1,7 +1,16 @@
 import os
+import warnings
+
 import pytest
 import argopy
+import pandas as pd
+from unittest import mock
+import logging
+
+
 from argopy.utils.format import format_oneline, argo_split_path
+
+log = logging.getLogger("argopy.tests.utils.format")
 
 
 def test_format_oneline():
@@ -16,7 +25,6 @@ class Test_argo_split_path:
     #############
     # UTILITIES #
     #############
-    # src = "https://data-argo.ifremer.fr/dac"
     src = argopy.tutorial.open_dataset("gdac")[0] + "/dac"
     list_of_files = [
         src + "/bodc/6901929/6901929_prof.nc",  # core / multi-profile
@@ -47,14 +55,58 @@ class Test_argo_split_path:
     ]
     list_of_files = [f.replace("/", os.path.sep) for f in list_of_files]
 
+    other_scenarios = [
+        '/dac/coriolis/6901035/profiles/D6901035_001D.nc',
+        'dac/coriolis/6901035/profiles/D6901035_001D.nc',
+        'https://data-argo.ifremer.fr/dac/csiro/5903939/profiles/D5903939_103.nc',
+        'C:/Users/runneradmin/.argopy_tutorial_data/ftp/dac/aoml/13857/profiles/R13857_001.nc',
+        's3://argo-gdac-sandbox/pub/dac/aoml/13857/profiles/R13857_001.nc',
+    ]
+
+    invalid_scenarios = [
+        'coriolis/6901035/profiles/D6901035_001D.nc',
+        'dac/invalid_dacname/6901035/profiles/D6901035_001D.nc',
+    ]
     #########
     # TESTS #
     #########
 
     @pytest.mark.parametrize("file", list_of_files,
                              indirect=False)
-    def test_argo_split_path(self, file):
+    def test_AllFileTypes(self, file):
         desc = argo_split_path(file)
         assert isinstance(desc, dict)
         for key in ['origin', 'path', 'name', 'type', 'extension', 'wmo', 'dac']:
             assert key in desc
+
+    @pytest.mark.parametrize("file", other_scenarios,
+                             indirect=False)
+    def test_OtherScenarios(self, file):
+        desc = argo_split_path(file)
+        assert isinstance(desc, dict)
+        for key in ['origin', 'path', 'name', 'type', 'extension', 'wmo', 'dac']:
+            assert key in desc
+
+    @pytest.mark.parametrize("file", invalid_scenarios,
+                             indirect=False)
+    def test_Invalid(self, file):
+        with pytest.raises(ValueError):
+            argo_split_path(file)
+
+    def test_KORDI_renaming(self):
+        original_to_datetime = pd.to_datetime  # Save the real function
+
+        def mock_to_datetime(arg, *args, **kwargs):
+            """Simulate that we're after KORDI deprecation of 2025/06/30"""
+            if arg == "now" and kwargs.get("utc", False):
+                return pd.Timestamp("2025-07-01 12:00:00", tz="UTC")
+            return original_to_datetime(arg, *args, **kwargs)  # Default behavior for other inputs
+
+        with mock.patch.object(pd, "to_datetime", side_effect=mock_to_datetime) as mock_to_datetime_func:
+            with pytest.warns():
+                src = argopy.tutorial.open_dataset("gdac")[0] + "/dac"
+                ncfile = src + "/kordi/2901780/profiles/R2901780_060.nc"
+                ncfile = ncfile.replace("/", os.path.sep)
+                argo_split_path(ncfile)
+
+

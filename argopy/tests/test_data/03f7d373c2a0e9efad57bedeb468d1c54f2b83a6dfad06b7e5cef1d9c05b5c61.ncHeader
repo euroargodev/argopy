@@ -1,12 +1,11 @@
-netcdf ArgoFloats-reference_b803_50e2_b574.nc {
+netcdf ArgoFloats-reference_b803_50e2_b574_U1755673291165.nc {
   dimensions:
     row = 227;
-    cycle_number_strlen = 3;
     platform_number_strlen = 7;
   variables:
-    char cycle_number(row=227, cycle_number_strlen=3);
+    int cycle_number(row=227);
       :_ChunkSizes = 1227; // int
-      :_Encoding = "ISO-8859-1";
+      :actual_range = 8, 143; // int
       :ioos_category = "Unknown";
       :long_name = "Cycle number";
 
@@ -96,8 +95,8 @@ netcdf ArgoFloats-reference_b803_50e2_b574.nc {
   :geospatial_lon_min = -24.757000000000005; // double
   :geospatial_lon_units = "degrees_east";
   :history = "Mon Apr 29 14:02:51 2024: ncks -d n_levels,1501,2034 7402.nc 7402_3.nc
-2024-09-24T08:15:48Z (local files)
-2024-09-24T08:15:48Z https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-reference.nc?cycle_number,latitude,longitude,platform_number,pres,psal,ptmp,temp,time&longitude%3E=-25&longitude%3C=-10&latitude%3E=36&latitude%3C=40&pres%3E=0&pres%3C=10.0&time%3E=1514764800.0&time%3C=1546300800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy(%22time,pres%22)";
+2025-08-20T07:01:31Z (local files)
+2025-08-20T07:01:31Z https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-reference.ncHeader?cycle_number,latitude,longitude,platform_number,pres,psal,ptmp,temp,time&longitude%3E=-25&longitude%3C=-10&latitude%3E=36&latitude%3C=40&pres%3E=0&pres%3C=10.0&time%3E=1514764800.0&time%3C=1546300800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy(%22time,pres%22)";
   :id = "ArgoFloats-reference";
   :infoUrl = "http://www.argodatamgt.org/DMQC/Reference-data-base";
   :institution = "Argo";

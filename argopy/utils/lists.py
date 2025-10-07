@@ -4,11 +4,21 @@ import importlib
 import os
 import json
 from ..options import OPTIONS
-from typing import List
+from typing import List, Union
 
 path2assets = importlib.util.find_spec(
     "argopy.static.assets"
 ).submodule_search_locations[0]
+
+
+def subsample_list(original_list, N):
+    if len(original_list) <= N:
+        return original_list
+    else:
+        step = len(original_list) / N
+        indices = [int(i * step) for i in range(N)]
+        subsampled_list = [original_list[i] for i in indices]
+        return subsampled_list
 
 
 def list_available_data_src() -> dict:
@@ -241,7 +251,7 @@ def list_standard_variables(ds: str = 'phy') -> List[str]:
         if ds in ['bgc', 'bgc-s']:
             sv.append("%s_DATA_MODE" % param)
         sv.append("%s_QC" % param)
-        sv.append("%s_ERROR" % param)   # <PARAM>_ERROR variables are added by :class:`Dataset.argo.transform_data_mode`
+        sv.append("%s_ERROR" % param)   # <PARAM>_ERROR variables are added by :class:`Dataset.argo.datamode.merge`
 
         sv.append("%s_ADJUSTED" % param)
         sv.append("%s_ADJUSTED_QC" % param)
@@ -390,3 +400,55 @@ def list_radiometry_parameters() -> List[str]:
         for v in params
         if "DATA_MODE" not in v and "QC" not in v and "ADJUSTED" not in v
     ]
+
+
+def list_gdac_servers() -> List[str]:
+    """List of official Argo GDAC servers
+
+    Returns
+    -------
+    List[str]
+
+    See also
+    --------
+    :class:`argopy.gdacfs`, :meth:`argopy.utils.check_gdac_path`, :meth:`argopy.utils.shortcut2gdac`
+
+    """
+    with open(os.path.join(path2assets, "gdac_servers.json"), "r") as f:
+        vlist = json.load(f)
+    return vlist["data"]["paths"]
+
+
+def shortcut2gdac(short: str = None) -> Union[str, dict]:
+    """Shortcut to GDAC server host mapping
+
+    Parameters
+    ----------
+    short : str, optional
+        Return GDAC host for a given shortcut, otherwise return the complete dictionary mapping. If the
+        shortcut is unknown, return string unchanged.
+
+    Returns
+    -------
+    str or dict
+
+    See also
+    --------
+    :func:`argopy.utils.list_gdac_servers`, :class:`argopy.gdacfs`, :meth:`argopy.utils.check_gdac_path`
+
+    """
+    with open(os.path.join(path2assets, "gdac_servers.json"), "r") as f:
+        vlist = json.load(f)
+    shortcuts = vlist["data"]["shortcuts"]
+
+    if short is not None:
+        if short.lower().strip() in shortcuts.keys():
+            return shortcuts[short.lower().strip()]
+        else:
+            return short
+        # elif short in shortcuts.values():
+        #     return short
+        # else:
+        #     raise ValueError("This shortcut '%s' does not exist. Must be one in [%s]" % (short, shortcuts.keys()))
+    else:
+        return shortcuts

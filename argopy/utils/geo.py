@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 
+from ..options import OPTIONS
+
 
 def wrap_longitude(grid_long):
     """Allows longitude (0-360) to wrap beyond the 360 mark, for mapping purposes.
@@ -34,24 +36,31 @@ def wrap_longitude(grid_long):
     return grid_long
 
 
-def conv_lon(x, conv: str = '180'):
+def conv_lon(x, conv: str = "180"):
     """Apply longitude convention to array x
 
     Params
     ------
     x:
+        Object to iterate over (e.g. list, numpy array,...)
     conv: str, default='180'
         Convention to apply, must be '180' or '360'
     Returns
     -------
     Transformed x
     """
-    if conv == '360':
-        return np.where(x < 0, x + 360, x)
-    elif conv == '180':
-        return np.where(x > 180, x - 360, x)
+    if conv == "360":
+        c = lambda x: type(x)(  # noqa: E731
+            np.where(np.logical_and(x >= -180.0, x < 0.0), x + 360.0, x)[np.newaxis][0]
+        )
+    elif conv == "180":
+        c = lambda x: type(x)(  # noqa: E731
+            np.where(x > 180.0, x - 360.0, x)[np.newaxis][0]
+        )
     else:
         return x
+
+    return np.frompyfunc(c, 1, 1)(x)
 
 
 def wmo2box(wmo_id: int):
@@ -70,6 +79,10 @@ def wmo2box(wmo_id: int):
     -------
     box: list(int)
         [lon_min, lon_max, lat_min, lat_max] bounds to the WMO square number
+
+    Notes
+    -----
+    Longitude values are returned according the argopy option "longitude_convention", which is '180' or '360'.
     """
     if wmo_id < 1000 or wmo_id > 7817:
         raise ValueError("Invalid WMO square number, must be between 1000 and 7817.")
@@ -102,7 +115,12 @@ def wmo2box(wmo_id: int):
         lat_min = -nearest_to_the_Equator_latitude * dd - dd
         lat_max = -nearest_to_the_Equator_latitude * dd
 
-    box = [lon_min, lon_max, lat_min, lat_max]
+    box = [
+        conv_lon(lon_min, OPTIONS["longitude_convention"]),
+        conv_lon(lon_max, OPTIONS["longitude_convention"]),
+        lat_min,
+        lat_max,
+    ]
     return box
 
 

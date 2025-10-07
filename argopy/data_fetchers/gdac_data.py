@@ -4,6 +4,7 @@ Argo data fetcher for remote GDAC servers
 This is not intended to be used directly, only by the facade at fetchers.py
 
 """
+
 import numpy as np
 import pandas as pd
 import xarray as xr
@@ -11,12 +12,15 @@ from abc import abstractmethod
 import warnings
 import getpass
 import logging
+from typing import Literal
 
-from ..utils.format import format_oneline, argo_split_path
-from ..options import OPTIONS, check_gdac_path
+from ..utils.format import argo_split_path
+from ..options import OPTIONS, check_gdac_option, PARALLEL_SETUP
 from ..errors import DataNotFound
-from ..stores import ArgoIndex
+from ..stores import ArgoIndex, has_distributed, distributed
 from .proto import ArgoDataFetcherProto
+from .gdac_data_processors import pre_process_multiprof
+
 
 log = logging.getLogger("argopy.gdac.data")
 access_points = ["wmo", "box"]
@@ -37,38 +41,36 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
 
     """
 
+    data_source = "gdac"
+
     ###
     # Methods to be customised for a specific request
     ###
     @abstractmethod
     def init(self, *args, **kwargs):
-        """ Initialisation for a specific fetcher """
+        """Initialisation for a specific fetcher"""
         raise NotImplementedError("Not implemented")
 
     ###
     # Methods that must not change
     ###
     def __init__(
-            self,
-            gdac: str = "",
-            ds: str = "",
-            cache: bool = False,
-            cachedir: str = "",
-            dimension: str = "point",
-            errors: str = "raise",
-            parallel: bool = False,
-            parallel_method: str = "thread",
-            progress: bool = False,
-            api_timeout: int = 0,
-            **kwargs
+        self,
+        ds: str = "",
+        cache: bool = False,
+        cachedir: str = "",
+        parallel: bool = False,
+        progress: bool = False,
+        dimension: Literal["point", "profile"] = "point",
+        errors: str = "raise",
+        api_timeout: int = 0,
+        **kwargs
     ):
-        """ Init fetcher
+        """Init fetcher
 
         Parameters
         ----------
-        gdac: str (optional)
-            Path to the local or remote directory where the 'dac' folder is located
-        ds: str (optional)
+        ds: str, default = OPTIONS['ds']
             Dataset to load: 'phy' or 'bgc'
         cache: bool (optional)
             Cache data or not (default: False)
@@ -81,29 +83,39 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         errors: str (optional)
             If set to 'raise' (default), will raise a NetCDF4FileNotFoundError error if any of the requested
             files cannot be found. If set to 'ignore', the file not found is skipped when fetching data.
-        parallel: bool (optional)
-            Chunk request to use parallel fetching (default: False)
-        parallel_method: str (optional)
-            Define the parallelization method: ``thread``, ``process`` or a :class:`dask.distributed.client.Client`.
+        parallel: bool, str, :class:`distributed.Client`, default: False
+            Set whether to use parallelization or not, and possibly which method to use.
+
+                Possible values:
+                    - ``False``: no parallelization is used
+                    - ``True``: use default method specified by the ``parallel_default_method`` option
+                    - any other values accepted by the ``parallel_default_method`` option
         progress: bool (optional)
             Show a progress bar or not when fetching data.
         api_timeout: int (optional)
             Server request time out in seconds. Set to OPTIONS['api_timeout'] by default.
+
+        Other parameters
+        ----------------
+        gdac: str, default = OPTIONS['gdac']
+            Path to the local or remote directory where the 'dac' folder is located
         """
         self.timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.dataset_id = OPTIONS["ds"] if ds == "" else ds
+        self.server = kwargs["gdac"] if "gdac" in kwargs else OPTIONS["gdac"]
         self.user_mode = kwargs["mode"] if "mode" in kwargs else OPTIONS["mode"]
-        self.server = OPTIONS["gdac"] if gdac == "" else gdac
+
         self.errors = errors
+        self.dimension = dimension
 
         # Validate server, raise GdacPathError if not valid.
-        check_gdac_path(self.server, errors="raise")
+        check_gdac_option(self.server, errors="raise")
 
         index_file = "core"
         if self.dataset_id in ["bgc-s", "bgc-b"]:
             index_file = self.dataset_id
 
-        # Validation of self.server is done by the ArgoIndex:
+        # Validation of self.server is done by the ArgoIndex instance:
         self.indexfs = ArgoIndex(
             host=self.server,
             index_file=index_file,
@@ -111,62 +123,54 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
             cachedir=cachedir,
             timeout=self.timeout,
         )
-        self.fs = self.indexfs.fs["src"]  # Re-use the appropriate file system
+        self.fs = self.indexfs.fs["src"]  # Reuse the appropriate file system
 
         nrows = None
         if "N_RECORDS" in kwargs:
             nrows = kwargs["N_RECORDS"]
         # Number of records in the index, this will force to load the index file:
-        self.N_RECORDS = self.indexfs.load(
-            nrows=nrows
-        ).N_RECORDS
+        self.N_RECORDS = self.indexfs.load(nrows=nrows).N_RECORDS
         self._post_filter_points = False
 
         # Set method to download data:
-        if not isinstance(parallel, bool):
-            method = parallel
-            parallel = True
-        elif not parallel:
-            method = "sequential"
-        else:
-            method = parallel_method
-        self.parallel = parallel
-        self.method = method
+        self.parallelize, self.parallel_method = PARALLEL_SETUP(parallel)
         self.progress = progress
 
         self.init(**kwargs)
 
     def __repr__(self):
         summary = ["<datafetcher.gdac>"]
-        summary.append("Name: %s" % self.definition)
-        summary.append("Index: %s" % self.indexfs.index_file)
-        summary.append("Server: %s" % self.server)
-        if hasattr(self, "BOX"):
-            summary.append("Domain: %s" % self.cname())
-        else:
-            summary.append("Domain: %s" % format_oneline(self.cname()))
+        summary.append(self._repr_data_source)
+        summary.append(self._repr_access_point)
+        summary.append(self._repr_server)
         if hasattr(self.indexfs, "index"):
-            summary.append("Index loaded: True (%i records)" % self.N_RECORDS)
-        else:
-            summary.append("Index loaded: False")
-        if hasattr(self.indexfs, "search"):
-            match = "matches" if self.N_FILES > 1 else "match"
             summary.append(
-                "Index searched: True (%i %s, %0.4f%%)"
-                % (self.N_FILES, match, self.N_FILES * 100 / self.N_RECORDS)
+                "📗 Index: %s (%i records)" % (self.indexfs.index_file, self.N_RECORDS)
             )
         else:
-            summary.append("Index searched: False")
+            summary.append("📕 Index: %s (not loaded)" % self.indexfs.index_file)
+        if hasattr(self.indexfs, "search"):
+            match = "matches" if self.indexfs.N_MATCH > 1 else "match"
+            summary.append(
+                "📸 Index searched: True (%i %s, %0.4f%%)"
+                % (
+                    self.indexfs.N_MATCH,
+                    match,
+                    self.indexfs.N_MATCH * 100 / self.N_RECORDS,
+                )
+            )
+        else:
+            summary.append("📷 Index searched: False")
         return "\n".join(summary)
 
     def cname(self):
-        """ Return a unique string defining the constraints """
+        """Return a unique string defining the constraints"""
         return self._cname()
 
     @property
     @abstractmethod
     def uri(self):
-        """ Return the list of files to load
+        """Return the list of files to load
 
         Returns
         -------
@@ -175,7 +179,7 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         raise NotImplementedError("Not implemented")
 
     def uri_mono2multi(self, URIs: list):
-        """ Convert mono-profile URI files to multi-profile files
+        """Convert mono-profile URI files to multi-profile files
 
         Multi-profile file name is based on the dataset requested ('phy', 'bgc'/'bgc-s')
 
@@ -225,7 +229,7 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
 
     @property
     def cachepath(self):
-        """ Return path to cache file(s) for this request
+        """Return path to cache file(s) for this request
 
         Returns
         -------
@@ -234,78 +238,22 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         return [self.fs.cachepath(url) for url in self.uri]
 
     def clear_cache(self):
-        """ Remove cached files and entries from resources opened with this fetcher """
+        """Remove cached files and entries from resources opened with this fetcher"""
         self.indexfs.clear_cache()
         self.fs.clear_cache()
         return self
 
-    def _preprocess_multiprof(self, ds):
-        """ Pre-process one Argo multi-profile file as a collection of points
+    def pre_process(self, ds, *args, **kwargs):
+        return pre_process_multiprof(ds, *args, **kwargs)
 
-        Parameters
-        ----------
-        ds: :class:`xarray.Dataset`
-            Dataset to process
-
-        Returns
-        -------
-        :class:`xarray.Dataset`
-
-        """
-        # Remove raw netcdf file attributes and replace them with argopy ones:
-        raw_attrs = ds.attrs
-        ds.attrs = {}
-        ds.attrs.update({'raw_attrs': raw_attrs})
-
-        # Rename JULD and JULD_QC to TIME and TIME_QC
-        ds = ds.rename(
-            {"JULD": "TIME", "JULD_QC": "TIME_QC", "JULD_LOCATION": "TIME_LOCATION"}
-        )
-        ds["TIME"].attrs = {
-            "long_name": "Datetime (UTC) of the station",
-            "standard_name": "time",
-        }
-
-        # Cast data types:
-        ds = ds.argo.cast_types()
-
-        # Enforce real pressure resolution : 0.1 db
-        for vname in ds.data_vars:
-            if "PRES" in vname and "QC" not in vname:
-                ds[vname].values = np.round(ds[vname].values, 1)
-
-        # Remove variables without dimensions:
-        # todo: We should be able to find a way to keep them somewhere in the data structure
-        for v in ds.data_vars:
-            if len(list(ds[v].dims)) == 0:
-                ds = ds.drop_vars(v)
-
-        ds = (
-            ds.argo.profile2point()
-        )  # Default output is a collection of points, along N_POINTS
-
-        if self.dataset_id == "phy":
-            ds.attrs["DATA_ID"] = "ARGO"
-        if self.dataset_id == "bgc":
-            ds.attrs["DATA_ID"] = "ARGO-BGC"
-        ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
-        ds.attrs["Fetched_from"] = self.server
-        try:
-            ds.attrs["Fetched_by"] = getpass.getuser()
-        except:  # noqa: E722
-            ds.attrs["Fetched_by"] = 'anonymous'
-        ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime("%Y/%m/%d")
-        ds.attrs["Fetched_constraints"] = self.cname()
-        ds.attrs["Fetched_uri"] = ds.encoding["source"]
-        ds = ds[np.sort(ds.data_vars)]
-
-        if self._post_filter_points:
-            ds = self.filter_points(ds)
-
-        return ds
-
-    def to_xarray(self, errors: str = "ignore"):
-        """ Load Argo data and return a :class:`xarray.Dataset`
+    def to_xarray(
+        self,
+        errors: str = "ignore",
+        concat: bool = True,
+        concat_method: Literal["drop", "fill"] = "fill",
+        dimension: Literal["point", "profile"] = "",
+    ):
+        """Load Argo data and return a :class:`xarray.Dataset`
 
         Parameters
         ----------
@@ -320,109 +268,128 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         -------
         :class:`xarray.Dataset`
         """
+        URI = self.uri  # Call it once
+        dimension = self.dimension if dimension == "" else dimension
+
         if (
-            len(self.uri) > 50
-            and isinstance(self.method, str)
-            and self.method == "sequential"
+            len(URI) > 50
+            and not self.parallelize
+            and self.parallel_method == "sequential"
         ):
             warnings.warn(
                 "Found more than 50 files to load, this may take a while to process sequentially ! "
                 "Consider using another data source (eg: 'erddap') or the 'parallel=True' option to improve processing time."
             )
-        elif len(self.uri) == 0:
+        elif len(URI) == 0:
             raise DataNotFound("No data found for: %s" % self.indexfs.cname)
 
-        # Download data:
-        ds = self.fs.open_mfdataset(
-            self.uri,
-            method=self.method,
-            concat_dim="N_POINTS",
-            concat=True,
-            preprocess=self._preprocess_multiprof,
-            progress=self.progress,
-            errors=errors,
-            open_dataset_opts={'xr_opts': {'decode_cf': 1, 'use_cftime': 0, 'mask_and_scale': 1}},
-        )
-
-        # Data post-processing:
-        ds["N_POINTS"] = np.arange(
-            0, len(ds["N_POINTS"])
-        )  # Re-index to avoid duplicate values
-        ds = ds.set_coords("N_POINTS")
-        ds = ds.sortby("TIME")
-
-        # Remove netcdf file attributes and replace them with simplified argopy ones:
-        if "Fetched_from" not in ds.attrs:
-            raw_attrs = ds.attrs
-            ds.attrs = {}
-            ds.attrs.update({'raw_attrs': raw_attrs})
-            if self.dataset_id == "phy":
-                ds.attrs["DATA_ID"] = "ARGO"
-            if self.dataset_id == "bgc":
-                ds.attrs["DATA_ID"] = "ARGO-BGC"
-            ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
-            ds.attrs["Fetched_from"] = self.server
-            try:
-                ds.attrs["Fetched_by"] = getpass.getuser()
-            except:
-                ds.attrs["Fetched_by"] = 'anonymous'
-            ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime("%Y/%m/%d")
-
-        ds.attrs["Fetched_constraints"] = self.cname()
-        if len(self.uri) == 1:
-            ds.attrs["Fetched_uri"] = self.uri[0]
-        else:
-            ds.attrs["Fetched_uri"] = ";".join(self.uri)
-
-        return ds
-
-    def filter_points(self, ds):
-        """ Enforce request criteria
-
-        This may be necessary if for download performance improvement we had to work with multi instead of mono profile
-        files: we loaded and merged multi-profile files, and then we need to make sure to retain only profiles requested.
-        """
+        # Pre-processor options:
         if hasattr(self, "BOX"):
-            # - box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max]
-            # - box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
-            ds = (
-                ds.where(ds["LONGITUDE"] >= self.BOX[0], drop=True)
-                .where(ds["LONGITUDE"] < self.BOX[1], drop=True)
-                .where(ds["LATITUDE"] >= self.BOX[2], drop=True)
-                .where(ds["LATITUDE"] < self.BOX[3], drop=True)
-                .where(ds["PRES"] >= self.BOX[4], drop=True)  # todo what about PRES_ADJUSTED ?
-                .where(ds["PRES"] < self.BOX[5], drop=True)
+            access_point = "BOX"
+            access_point_opts = {"BOX": self.BOX}
+        elif hasattr(self, "CYC"):
+            access_point = "CYC"
+            access_point_opts = {"CYC": self.CYC}
+        elif hasattr(self, "WMO"):
+            access_point = "WMO"
+            access_point_opts = {"WMO": self.WMO}
+        preprocess_opts = {
+            "access_point": access_point,
+            "access_point_opts": access_point_opts,
+            "pre_filter_points": self._post_filter_points,
+            "dimension": dimension,
+        }
+
+        # Download and pre-process data:
+        opts = {
+            "progress": self.progress,
+            "errors": errors,
+            "concat": concat,
+            "concat_dim": "N_POINTS",
+            "preprocess": pre_process_multiprof,
+            "preprocess_opts": preprocess_opts,
+        }
+        if self.parallel_method in ["thread"]:
+            opts["method"] = "thread"
+            opts["open_dataset_opts"] = {
+                "xr_opts": {"decode_cf": 1, "use_cftime": 0, "mask_and_scale": 1}
+            }
+
+        elif (self.parallel_method in ["process"]) | (
+            has_distributed
+            and isinstance(self.parallel_method, distributed.client.Client)
+        ):
+            opts["method"] = self.parallel_method
+            opts["open_dataset_opts"] = {
+                "errors": "ignore",
+                "download_url_opts": {"errors": "ignore"},
+            }
+            opts["progress"] = False
+
+        results = self.fs.open_mfdataset(URI, **opts)
+
+        if concat and results is not None:
+            if self.progress:
+                print("Final post-processing of the merged dataset ...")
+            # results = pre_process_multiprof(results, **preprocess_opts)
+            results = results.argo.cast_types(overwrite=False)
+
+            # Meta-data processing for a single merged dataset:
+            results = results.assign_coords(
+                {"N_POINTS": np.arange(0, len(results["N_POINTS"]))}
             )
-            if len(self.BOX) == 8:
-                ds = ds.where(
-                    ds["TIME"] >= np.datetime64(self.BOX[6]), drop=True
-                ).where(ds["TIME"] < np.datetime64(self.BOX[7]), drop=True)
+            results = results.sortby("TIME")
 
-        if hasattr(self, "CYC"):
-            this_mask = xr.DataArray(
-                np.zeros_like(ds["N_POINTS"]),
-                dims=["N_POINTS"],
-                coords={"N_POINTS": ds["N_POINTS"]},
-            )
-            for cyc in self.CYC:
-                this_mask += ds["CYCLE_NUMBER"] == cyc
-            this_mask = this_mask >= 1  # any
-            ds = ds.where(this_mask, drop=True)
+            # Remove netcdf file attributes and replace them with simplified argopy ones:
+            if "Fetched_from" not in results.attrs:
+                raw_attrs = results.attrs
 
-        ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
+                results.attrs = {}
+                if "Processing_history" in raw_attrs:
+                    results.attrs.update(
+                        {"Processing_history": raw_attrs["Processing_history"]}
+                    )
+                    raw_attrs.pop("Processing_history")
+                results.argo.add_history("URI merged with '%s'" % concat_method)
 
-        return ds
+                results.attrs.update({"raw_attrs": raw_attrs})
+                if self.dataset_id == "phy":
+                    results.attrs["DATA_ID"] = "ARGO"
+                if self.dataset_id in ["bgc", "bgc-s"]:
+                    results.attrs["DATA_ID"] = "ARGO-BGC"
+                results.attrs["DOI"] = "http://doi.org/10.17882/42182"
+                results.attrs["Fetched_from"] = self.server
+                try:
+                    results.attrs["Fetched_by"] = getpass.getuser()
+                except:  # noqa: E722
+                    results.attrs["Fetched_by"] = "anonymous"
+                results.attrs["Fetched_date"] = pd.to_datetime(
+                    "now", utc=True
+                ).strftime("%Y/%m/%d")
+
+            results.attrs["Fetched_constraints"] = self.cname()
+            if len(self.uri) == 1:
+                results.attrs["Fetched_uri"] = self.uri[0]
+            else:
+                results.attrs["Fetched_uri"] = ";".join(self.uri)
+
+        if concat:
+            results.attrs = dict(sorted(results.attrs.items()))
+        else:
+            for ds in results:
+                ds.attrs = dict(sorted(ds.attrs.items()))
+        return results
 
     def transform_data_mode(self, ds: xr.Dataset, **kwargs):
         """Apply xarray argo accessor transform_data_mode method"""
-        ds = ds.argo.transform_data_mode(**kwargs)
+        ds = ds.argo.datamode.merge(**kwargs)
         if ds.argo._type == "point":
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
 
     def filter_data_mode(self, ds: xr.Dataset, **kwargs):
         """Apply xarray argo accessor filter_data_mode method"""
-        ds = ds.argo.filter_data_mode(**kwargs)
+        ds = ds.argo.datamode.filter(**kwargs)
         if ds.argo._type == "point":
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
@@ -436,9 +403,9 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
     def filter_researchmode(self, ds: xr.Dataset, *args, **kwargs) -> xr.Dataset:
         """Filter dataset for research user mode
 
-            This filter will select only QC=1 delayed mode data with pressure errors smaller than 20db
+        This filter will select only QC=1 delayed mode data with pressure errors smaller than 20db
 
-            Use this filter instead of transform_data_mode and filter_qc
+        Use this filter instead of transform_data_mode and filter_qc
         """
         ds = ds.argo.filter_researchmode(**kwargs)
         if ds.argo._type == "point":
@@ -457,7 +424,7 @@ class Fetch_wmo(GDACArgoDataFetcher):
     """
 
     def init(self, WMO: list = [], CYC=None, **kwargs):
-        """ Create Argo data loader for WMOs
+        """Create Argo data loader for WMOs
 
         Parameters
         ----------
@@ -483,7 +450,7 @@ class Fetch_wmo(GDACArgoDataFetcher):
 
     @property
     def uri(self):
-        """ List of files to load for a request
+        """List of files to load for a request
 
         Returns
         -------
@@ -492,10 +459,10 @@ class Fetch_wmo(GDACArgoDataFetcher):
         # Get list of files to load:
         if not hasattr(self, "_list_of_argo_files"):
             if self.CYC is None:
-                URIs = self.indexfs.search_wmo(self.WMO, nrows=self._nrows).uri
+                URIs = self.indexfs.query.wmo(self.WMO, nrows=self._nrows).uri
                 self._list_of_argo_files = self.uri_mono2multi(URIs)
             else:
-                self._list_of_argo_files = self.indexfs.search_wmo_cyc(
+                self._list_of_argo_files = self.indexfs.query.wmo_cyc(
                     self.WMO, self.CYC, nrows=self._nrows
                 ).uri
 
@@ -513,7 +480,7 @@ class Fetch_box(GDACArgoDataFetcher):
     """
 
     def init(self, box: list, nrows=None, **kwargs):
-        """ Create Argo data loader
+        """Create Argo data loader
 
         Parameters
         ----------
@@ -540,7 +507,7 @@ class Fetch_box(GDACArgoDataFetcher):
 
     @property
     def uri(self):
-        """ List of files to load for a request
+        """List of files to load for a request
 
         Returns
         -------
@@ -549,11 +516,9 @@ class Fetch_box(GDACArgoDataFetcher):
         # Get list of files to load:
         if not hasattr(self, "_list_of_argo_files"):
             if len(self.indexBOX) == 4:
-                URIs = self.indexfs.search_lat_lon(self.indexBOX, nrows=self._nrows).uri
+                URIs = self.indexfs.query.lon_lat(self.indexBOX, nrows=self._nrows).uri
             else:
-                URIs = self.indexfs.search_lat_lon_tim(
-                    self.indexBOX, nrows=self._nrows
-                ).uri
+                URIs = self.indexfs.query.box(self.indexBOX, nrows=self._nrows).uri
 
             if len(URIs) > 25:
                 self._list_of_argo_files = self.uri_mono2multi(URIs)

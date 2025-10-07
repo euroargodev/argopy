@@ -1,8 +1,10 @@
 """
 Manipulate/transform xarray objects or list of objects
 """
+
 import numpy as np
 import xarray as xr
+import pandas as pd
 import logging
 from typing import List, Union
 
@@ -13,7 +15,9 @@ from .lists import list_core_parameters
 log = logging.getLogger("argopy.utils.manip")
 
 
-def drop_variables_not_in_all_datasets(ds_collection: List[xr.Dataset]) -> List[xr.Dataset]:
+def drop_variables_not_in_all_datasets(
+    ds_collection: List[xr.Dataset],
+) -> List[xr.Dataset]:
     """Drop variables that are not in all datasets (the lowest common denominator)
 
     Parameters
@@ -24,6 +28,10 @@ def drop_variables_not_in_all_datasets(ds_collection: List[xr.Dataset]) -> List[
     Returns
     -------
     List[xarray.Dataset]
+
+    See Also
+    --------
+    :func:`argopy.utils.fill_variables_not_in_all_datasets`
     """
 
     # List all possible data variables:
@@ -42,6 +50,7 @@ def drop_variables_not_in_all_datasets(ds_collection: List[xr.Dataset]) -> List[
 
     # List of dataset with missing variables:
     # ir_missing = np.sum(ishere, axis=0) < len(vlist)
+
     # List of variables missing in some dataset:
     iv_missing = np.sum(ishere, axis=1) < len(ds_collection)
     if len(iv_missing) > 0:
@@ -65,7 +74,7 @@ def drop_variables_not_in_all_datasets(ds_collection: List[xr.Dataset]) -> List[
 def fill_variables_not_in_all_datasets(
     ds_collection: List[xr.Dataset], concat_dim: str = "rows"
 ) -> List[xr.Dataset]:
-    """Add empty variables to dataset so that all the collection have the same :attr:`xarray.Dataset.data_vars` and :props:`xarray.Dataset.coords`
+    """Add empty variables to dataset so that all the collection have the same :attr:`xarray.Dataset.data_vars` and :attr:`xarray.Dataset.coords`
 
     This is to make sure that the collection of dataset can be concatenated
 
@@ -79,6 +88,10 @@ def fill_variables_not_in_all_datasets(
     Returns
     -------
     List[xarray.Dataset]
+
+    See Also
+    --------
+    :func:`argopy.utils.drop_variables_not_in_all_datasets`
     """
 
     def first_variable_with_concat_dim(this_ds, concat_dim="rows"):
@@ -108,14 +121,14 @@ def fill_variables_not_in_all_datasets(
     for res in ds_collection:
         [vlist.append(v) for v in list(res.variables) if concat_dim in res[v].dims]
     vlist = np.unique(vlist)
-    # log.debug('variables', vlist)
+    log.debug("variables: %s" % vlist)
 
     # List all possible coordinates:
     clist = []
     for res in ds_collection:
         [clist.append(c) for c in list(res.coords) if concat_dim in res[c].dims]
     clist = np.unique(clist)
-    # log.debu('coordinates', clist)
+    log.debug("coordinates: %s" % clist)
 
     # Get the first occurrence of each variable, to be used as a template for attributes and dtype
     meta = {}
@@ -127,7 +140,7 @@ def fill_variables_not_in_all_datasets(
                     "dtype": ds[v].dtype,
                     "fill_value": fillvalue(ds[v]),
                 }
-    # [log.debug(meta[m]) for m in meta.keys()]
+    [log.debug(meta[m]) for m in meta.keys()]
 
     # Add missing variables to dataset
     datasets = [ds.copy() for ds in ds_collection]
@@ -149,7 +162,9 @@ def fill_variables_not_in_all_datasets(
     return results
 
 
-def merge_param_with_param_adjusted(ds: xr.Dataset, param: str, errors: str = 'raise') -> xr.Dataset:
+def merge_param_with_param_adjusted(
+    ds: xr.Dataset, param: str, errors: str = "raise"
+) -> xr.Dataset:
     """Copy <PARAM>_ADJUSTED values onto <PARAM> for points where param data mode is 'A' or 'D'
 
     After values have been copied, all <PARAM>_ADJUSTED* variables are dropped to avoid confusion.
@@ -177,21 +192,23 @@ def merge_param_with_param_adjusted(ds: xr.Dataset, param: str, errors: str = 'r
 
     """
     if "%s_ADJUSTED" % param not in ds:
-        if errors == 'raise':
-            raise InvalidDatasetStructure("Parameter '%s_ADJUSTED' adjusted values not found in this dataset" % param)
+        if errors == "raise":
+            raise InvalidDatasetStructure(
+                "Parameter '%s_ADJUSTED' adjusted values not found in this dataset"
+                % param
+            )
         else:
             return ds
     if ds.argo._type != "point":
-        raise InvalidDatasetStructure(
-            "Method only available to a collection of points"
-        )
+        raise InvalidDatasetStructure("Method only available to a collection of points")
 
     core_ds = False
     if "%s_DATA_MODE" % param not in ds and param in list_core_parameters():
         if "DATA_MODE" not in ds:
-            if errors == 'raise':
-                    raise InvalidDatasetStructure(
-                    "Parameter '%s' data mode not found in this dataset (no 'DATA_MODE')" % param
+            if errors == "raise":
+                raise InvalidDatasetStructure(
+                    "Parameter '%s' data mode not found in this dataset (no 'DATA_MODE')"
+                    % param
                 )
             else:
                 return ds
@@ -208,32 +225,49 @@ def merge_param_with_param_adjusted(ds: xr.Dataset, param: str, errors: str = 'r
     if "%s_ERROR" % param not in ds and "%s_ADJUSTED_ERROR" % param in ds:
         ds["%s_ERROR" % param] = ds["%s_ADJUSTED_ERROR" % param].copy()
 
-    ii_measured = np.logical_or.reduce((ds["%s_DATA_MODE" % param] == 'R',
-                                        ds["%s_DATA_MODE" % param] == 'A',
-                                        ds["%s_DATA_MODE" % param] == 'D'))
-    ii_missing = np.logical_and.reduce((ds["%s_DATA_MODE" % param] != 'R',
-                                        ds["%s_DATA_MODE" % param] != 'A',
-                                        ds["%s_DATA_MODE" % param] != 'D'))
-    assert ii_measured.sum() + ii_missing.sum() == len(ds['N_POINTS']), "Unexpected data mode values !"
+    ii_measured = np.logical_or.reduce(
+        (
+            ds["%s_DATA_MODE" % param] == "R",
+            ds["%s_DATA_MODE" % param] == "A",
+            ds["%s_DATA_MODE" % param] == "D",
+        )
+    )
+    ii_missing = np.logical_and.reduce(
+        (
+            ds["%s_DATA_MODE" % param] != "R",
+            ds["%s_DATA_MODE" % param] != "A",
+            ds["%s_DATA_MODE" % param] != "D",
+        )
+    )
+    assert ii_measured.sum() + ii_missing.sum() == len(
+        ds["N_POINTS"]
+    ), "Unexpected data mode values !"
 
-    ii_measured_adj = np.logical_and.reduce((ii_measured,
-                                             np.logical_or.reduce((ds["%s_DATA_MODE" % param] == 'A',
-                                                                   ds["%s_DATA_MODE" % param] == 'D'))
-                                             ))
+    ii_measured_adj = np.logical_and.reduce(
+        (
+            ii_measured,
+            np.logical_or.reduce(
+                (ds["%s_DATA_MODE" % param] == "A", ds["%s_DATA_MODE" % param] == "D")
+            ),
+        )
+    )
 
     # Copy param_adjusted values onto param indexes where data_mode is in 'a' or 'd':
-    ds["%s" % param].loc[dict(N_POINTS=ii_measured_adj)] = ds["%s_ADJUSTED" % param].loc[
-        dict(N_POINTS=ii_measured_adj)]
+    ds["%s" % param].loc[dict(N_POINTS=ii_measured_adj)] = ds[
+        "%s_ADJUSTED" % param
+    ].loc[dict(N_POINTS=ii_measured_adj)]
     ds = ds.drop_vars(["%s_ADJUSTED" % param])
 
     if "%s_ADJUSTED_QC" % param in ds and "%s_ADJUSTED_QC" % param in ds:
-        ds["%s_QC" % param].loc[dict(N_POINTS=ii_measured_adj)] = ds["%s_ADJUSTED_QC" % param].loc[
-            dict(N_POINTS=ii_measured_adj)]
+        ds["%s_QC" % param].loc[dict(N_POINTS=ii_measured_adj)] = ds[
+            "%s_ADJUSTED_QC" % param
+        ].loc[dict(N_POINTS=ii_measured_adj)]
         ds = ds.drop_vars(["%s_ADJUSTED_QC" % param])
 
     if "%s_ERROR" % param in ds and "%s_ADJUSTED_ERROR" % param in ds:
-        ds["%s_ERROR" % param].loc[dict(N_POINTS=ii_measured_adj)] = ds["%s_ADJUSTED_ERROR" % param].loc[
-            dict(N_POINTS=ii_measured_adj)]
+        ds["%s_ERROR" % param].loc[dict(N_POINTS=ii_measured_adj)] = ds[
+            "%s_ADJUSTED_ERROR" % param
+        ].loc[dict(N_POINTS=ii_measured_adj)]
         ds = ds.drop_vars(["%s_ADJUSTED_ERROR" % param])
 
     if core_ds:
@@ -242,11 +276,13 @@ def merge_param_with_param_adjusted(ds: xr.Dataset, param: str, errors: str = 'r
     return ds
 
 
-def filter_param_by_data_mode(ds: xr.Dataset,
-                              param: str,
-                              dm: Union[str, List[str]] = ['R', 'A', 'D'],
-                              mask: bool = False,
-                              errors: str = 'raise') -> xr.Dataset:
+def filter_param_by_data_mode(
+    ds: xr.Dataset,
+    param: str,
+    dm: Union[str, List[str]] = ["R", "A", "D"],
+    mask: bool = False,
+    errors: str = "raise",
+) -> xr.Dataset:
     """Filter measurements according to a parameter data mode
 
     Filter the dataset to keep points where a parameter is in any of the data mode specified.
@@ -281,9 +317,10 @@ def filter_param_by_data_mode(ds: xr.Dataset,
     core_ds = False
     if "%s_DATA_MODE" % param not in ds and param in list_core_parameters():
         if "DATA_MODE" not in ds:
-            if errors == 'raise':
+            if errors == "raise":
                 raise InvalidDatasetStructure(
-                    "Parameter '%s' data mode not found in this dataset (no 'DATA_MODE')" % param
+                    "Parameter '%s' data mode not found in this dataset (no 'DATA_MODE')"
+                    % param
                 )
             else:
                 return ds
@@ -325,21 +362,56 @@ def split_data_mode(ds: xr.Dataset) -> xr.Dataset:
     -------
     :class:`xr.Dataset`
     """
+    if ds.argo._type != "profile":
+        raise InvalidDatasetStructure(
+            "Method only available to a collection of profiles"
+        )
+
     if "STATION_PARAMETERS" in ds and "PARAMETER_DATA_MODE" in ds:
 
-        u64 = lambda s: "%s%s" % (s, " " * (64 - len(s)))
-        params = [p.strip() for p in np.unique(ds['STATION_PARAMETERS'])]
+        # Ensure N_PROF is a coordinate
+        # otherwise, the ``ds[name] = da`` line below will fail when a PARAMETER is not
+        # available in all profiles, hence da['N_PROF'] != ds['N_PROF']
+        if "N_PROF" in ds.dims and "N_PROF" not in ds.coords:
+            ds = ds.assign_coords(N_PROF=np.arange(0, len(ds["N_PROF"])))
+
+        u64 = lambda s: "%s%s" % (s, " " * (64 - len(s)))  # noqa: E731
+        params = [p.strip() for p in np.unique(ds["STATION_PARAMETERS"])]
+
+        def read_data_mode_for(ds: xr.Dataset, param: str) -> xr.DataArray:
+            """Return data mode of a given parameter"""
+            da_masked = ds['PARAMETER_DATA_MODE'].where(ds['STATION_PARAMETERS'] == u64(param))
+
+            def _dropna(x):
+                # x('N_PARAM') is reduced to the first non nan value, a scalar, no dimension
+                y = pd.Series(x).dropna().tolist()
+                if len(y) == 0:
+                    return ""
+                else:
+                    return y[0]
+
+            kwargs = dict(
+                dask="parallelized",
+                input_core_dims=[["N_PARAM"]],  # Function takes N_PARAM as input
+                output_core_dims=[[]],  # Function reduces to a scalar (no dimension)
+                vectorize=True  # Apply function element-wise along the other dimensions
+            )
+
+            dm = xr.apply_ufunc(_dropna, da_masked, **kwargs)
+            dm = dm.rename("%s_DATA_MODE" % param)
+            dm.attrs = ds['PARAMETER_DATA_MODE'].attrs
+            return dm
 
         for param in params:
-            name = "%s_DATA_MODE" % param.replace("_PARAMETER", "").replace("PARAMETER_", "")
-            mask = ds['STATION_PARAMETERS'] == xr.full_like(ds['STATION_PARAMETERS'], u64(param),
-                                                            dtype=ds['STATION_PARAMETERS'].dtype)
-            da = ds['PARAMETER_DATA_MODE'].where(mask, drop=True).isel(N_PARAM=0)
-            da = da.rename(name)
-            da = da.astype(ds['PARAMETER_DATA_MODE'].dtype)
-            ds[name] = da
+            name = "%s_DATA_MODE" % param.replace("_PARAMETER", "").replace(
+                "PARAMETER_", ""
+            )
+            if name == "_DATA_MODE":
+                log.error("This dataset has an error in 'STATION_PARAMETERS': it contains an empty string")
+            else:
+                ds[name] = read_data_mode_for(ds, param)
 
-        ds = ds.drop_vars('PARAMETER_DATA_MODE')
+        ds = ds.drop_vars("PARAMETER_DATA_MODE")
         ds.argo.add_history("Transformed with 'split_data_mode'")
 
     return ds

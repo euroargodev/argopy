@@ -7,12 +7,12 @@ import pytest
 import xarray as xr
 from utils import (
     requires_erddap,
+    create_temp_folder,
 )
 
 from mocked_http import mocked_server_address
 from mocked_http import mocked_httpserver as mocked_erddapserver
 
-import tempfile
 import shutil
 from collections import ChainMap
 
@@ -52,6 +52,7 @@ List user modes to be tested
 """
 USER_MODES = ['standard', 'expert', 'research']
 # USER_MODES = ['research']
+# USER_MODES = ['standard']
 
 
 """
@@ -142,7 +143,7 @@ class Test_Backend:
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
         # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
-        self.cachedir = tempfile.mkdtemp()
+        self.cachedir = create_temp_folder().folder
 
     def _setup_fetcher(self, this_request, cached=False, parallel=False):
         """Helper method to set up options for a fetcher creation"""
@@ -166,6 +167,9 @@ class Test_Backend:
         if not parallel:
             # parallel is False by default, so we don't need to clutter the arguments list
             del fetcher_args["parallel"]
+        else:
+            # Use small chunks for the small test domain (ensure we're producing more than 1 uri to handle):
+            fetcher_args['chunks_maxsize'] = {'lon': 2.5, 'lat': 2.5, 'wmo': 1}
 
         # log.debug("Setting up a new fetcher with the following arguments:")
         # log.debug(fetcher_args)
@@ -186,7 +190,8 @@ class Test_Backend:
     @pytest.fixture
     def parallel_fetcher(self, request):
         """ Fixture to create a parallel ERDDAP data fetcher for a given dataset and access point """
-        fetcher_args, access_point = self._setup_fetcher(request, parallel="thread")
+        fetcher_args, access_point = self._setup_fetcher(request,
+                                                         parallel="thread")
         yield create_fetcher(fetcher_args, access_point)
 
     def teardown_class(self):
@@ -213,5 +218,5 @@ class Test_Backend:
     @pytest.mark.parametrize("parallel_fetcher", VALID_PARALLEL_ACCESS_POINTS,
                              indirect=True,
                              ids=VALID_PARALLEL_ACCESS_POINTS_IDS)
-    def test_fetching_parallel(self, mocked_erddapserver, parallel_fetcher):
+    def test_fetching_parallel_thread(self, mocked_erddapserver, parallel_fetcher):
         assert_fetcher(mocked_erddapserver, parallel_fetcher, cacheable=False)

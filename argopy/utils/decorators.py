@@ -189,3 +189,70 @@ def deprecated(reason: str = None, version: str = None, ignore_caller: List = []
 
     else:
         raise TypeError(repr(type(reason)))
+
+
+class AccessorRegistrationWarning(Warning):
+    """Warning for conflicts in accessor registration.
+
+    Disclosure
+    ----------
+    This class was copied from [xarray](https://github.com/pydata/xarray/blob/main/xarray/core/extensions.py)
+    under Apache License 2.0
+    """
+
+
+class _CachedAccessor:
+    """Custom property-like object (descriptor) for caching accessors.
+
+    Disclosure
+    ----------
+    This class was copied from [xarray](https://github.com/pydata/xarray/blob/main/xarray/core/extensions.py)
+    under Apache License 2.0
+    """
+
+    def __init__(self, name, accessor):
+        self._name = name
+        self._accessor = accessor
+
+    def __get__(self, obj, cls):
+        if obj is None:
+            # we're accessing the attribute of the class, i.e., Dataset.argo.extension
+            return self._accessor
+
+        # Use the same dict as @pandas.util.cache_readonly.
+        # It must be explicitly declared in obj.__slots__.
+        try:
+            cache = obj._cache
+        except AttributeError:
+            cache = obj._cache = {}
+
+        try:
+            return cache[self._name]
+        except KeyError:
+            pass
+
+        try:
+            accessor_obj = self._accessor(obj)
+        except AttributeError:
+            # __getattr__ on data object will swallow any AttributeErrors
+            # raised when initializing the accessor, so we need to raise as
+            # something else (GH933):
+            raise RuntimeError(f"error initializing {self._name!r} accessor.")
+
+        cache[self._name] = accessor_obj
+        return accessor_obj
+
+
+def register_accessor(name, cls):
+    def decorator(accessor):
+        if hasattr(cls, name):
+            warnings.warn(
+                f"registration of accessor {accessor!r} under name {name!r} for type {cls!r} is "
+                "overriding a preexisting attribute with the same name.",
+                AccessorRegistrationWarning,
+                stacklevel=2,
+            )
+        setattr(cls, name, _CachedAccessor(name, accessor))
+        return accessor
+
+    return decorator

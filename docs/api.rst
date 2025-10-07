@@ -16,7 +16,6 @@ Argo Data Fetchers
     :toctree: generated/
 
     DataFetcher
-    IndexFetcher
 
 Data selection methods
 ----------------------
@@ -28,13 +27,6 @@ Data selection methods
    DataFetcher.float
    DataFetcher.profile
 
-.. autosummary::
-   :toctree: generated/
-
-   IndexFetcher.region
-   IndexFetcher.float
-   IndexFetcher.profile
-
 Data access methods
 -------------------
 
@@ -45,14 +37,7 @@ Data access methods
    DataFetcher.to_xarray
    DataFetcher.to_dataframe
    DataFetcher.to_index
-
-.. autosummary::
-   :toctree: generated/
-
-   IndexFetcher.load
-   IndexFetcher.to_xarray
-   IndexFetcher.to_dataframe
-   IndexFetcher.to_csv
+   DataFetcher.to_dataset
 
 .. _Fetcher Data Visualisation:
 
@@ -77,16 +62,105 @@ Properties
    DataFetcher.index
    DataFetcher.domain
    DataFetcher.uri
-   IndexFetcher.index
 
-Utilities for Argo related data
-===============================
+
+Argo file stores
+================
+
+.. autosummary::
+    :toctree: generated/
+
+    gdacfs
+
+ArgoFloat
+---------
+.. autosummary::
+    :toctree: generated/
+
+    ArgoFloat
+
+List of extensions:
+
+.. currentmodule:: argopy
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor.rst
+
+   ArgoFloat.plot
+
+This extension provides the following **plotting methods** for one Argo float data:
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
+
+   ArgoFloat.plot.trajectory
+   ArgoFloat.plot.map
+   ArgoFloat.plot.scatter
+
+ArgoIndex
+---------
+
+.. autosummary::
+    :toctree: generated/
+
+    ArgoIndex
+
+List of extensions:
+
+.. currentmodule:: argopy
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor.rst
+
+   ArgoIndex.query
+   ArgoIndex.plot
+
+**Search on a single property** of a file record:
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
+
+   ArgoIndex.query.wmo
+   ArgoIndex.query.cyc
+   ArgoIndex.query.lon
+   ArgoIndex.query.lat
+   ArgoIndex.query.date
+   ArgoIndex.query.params
+   ArgoIndex.query.parameter_data_mode
+   ArgoIndex.query.profiler_type
+   ArgoIndex.query.profiler_label
+
+**Search on at least two properties** of a file record:
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
+
+   ArgoIndex.query.wmo_cyc
+   ArgoIndex.query.lon_lat
+   ArgoIndex.query.box
+   ArgoIndex.query.compose
+
+**Plotting methods**:
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
+
+    ArgoIndex.plot.trajectory
+    ArgoIndex.plot.bar
+
+Argo meta/related data
+======================
 
 .. autosummary::
    :toctree: generated/
 
    status
-   ArgoIndex
    ArgoDocs
    ArgoDOI
    ArgoNVSReferenceTables
@@ -158,7 +232,10 @@ Data Transformation
    Dataset.argo.profile2point
    Dataset.argo.interp_std_levels
    Dataset.argo.groupby_pressure_bins
-   Dataset.argo.transform_data_mode
+   Dataset.argo.datamode.compute
+   Dataset.argo.datamode.filter
+   Dataset.argo.datamode.merge
+   Dataset.argo.datamode.split
 
 
 Data Filters
@@ -168,13 +245,21 @@ Data Filters
    :toctree: generated/
    :template: autosummary/accessor_method.rst
 
-   Dataset.argo.filter_data_mode
    Dataset.argo.filter_qc
    Dataset.argo.filter_scalib_pres
    Dataset.argo.filter_researchmode
+   Dataset.argo.datamode.filter
+
 
 Extensions
 ----------
+.. currentmodule:: argopy
+
+You can create your own extension to an Argo dataset for specific features. It should be registered by inheriting from :class:`argopy.extensions.ArgoAccessorExtension` and decorated with :class:`argopy.extensions.register_argo_accessor`.
+
+**argopy** comes with the following extensions:
+
+.. currentmodule:: xarray
 
 .. autosummary::
    :toctree: generated/
@@ -183,12 +268,13 @@ Extensions
     Dataset.argo.teos10
     Dataset.argo.create_float_source
     Dataset.argo.canyon_med
+    Dataset.argo.datamode
+    Dataset.argo.optic
+    Dataset.argo.optic.Zeu
+    Dataset.argo.optic.Zpd
+    Dataset.argo.optic.Z_iPAR_threshold
+    Dataset.argo.optic.DCM
 
-.. currentmodule:: argopy
-
-You can register your own extension inheriting from :class:`argopy.extensions.ArgoAccessorExtension` and decorated with :class:`argopy.extensions.register_argo_accessor`
-
-.. currentmodule:: xarray
 
 Misc
 ----
@@ -202,6 +288,10 @@ Misc
     Dataset.argo.list_WMO_CYC
     Dataset.argo.uid
     Dataset.argo.cast_types
+    Dataset.argo.N_POINTS
+    Dataset.argo.to_zarr
+    Dataset.argo.reduce_profile
+
 
 Utilities
 =========
@@ -209,6 +299,9 @@ Utilities
 Function under the ``argopy.utils`` submodule.
 
 .. currentmodule:: argopy.utils
+
+Lists
+-----
 
 .. autosummary::
    :toctree: generated/
@@ -222,22 +315,42 @@ Function under the ``argopy.utils`` submodule.
     list_bgc_s_parameters
     list_radiometry_variables
     list_radiometry_parameters
+    list_gdac_servers
+
+Checkers
+--------
+
+.. autosummary::
+   :toctree: generated/
 
     check_wmo
     check_cyc
-
-    float_wmo
-    Registry
-
-    Chunker
+    check_gdac_path
 
     isconnected
     urlhaskeyword
     isalive
     isAPIconnected
 
+
+Misc
+--------
+
+.. autosummary::
+   :toctree: generated/
+
+    float_wmo
+    Registry
+
+    Chunker
+
     drop_variables_not_in_all_datasets
     fill_variables_not_in_all_datasets
+
+    GreenCoding
+    Github
+
+    optical_modeling
 
 Argopy helpers
 ==============
@@ -263,22 +376,15 @@ File systems
 .. autosummary::
     :toctree: generated/
 
+    gdacfs
+    stores.ArgoStoreProto
     stores.filestore
     stores.httpstore
+    stores.httpstore_erddap
     stores.memorystore
     stores.ftpstore
-    stores.httpstore_erddap_auth
     stores.s3store
-
-Argo index store
-----------------
-
-.. autosummary::
-    :toctree: generated/
-
-    ArgoIndex
-    stores.indexstore_pa
-    stores.indexstore_pd
+    stores.ArgoKerchunker
 
 Fetcher sources
 ---------------
@@ -299,7 +405,7 @@ GDAC
 .. autosummary::
     :toctree: generated/
 
-    data_fetchers.gdac_data.FTPArgoDataFetcher
+    data_fetchers.gdac_data.GDACArgoDataFetcher
     data_fetchers.gdac_data.Fetch_wmo
     data_fetchers.gdac_data.Fetch_box
 

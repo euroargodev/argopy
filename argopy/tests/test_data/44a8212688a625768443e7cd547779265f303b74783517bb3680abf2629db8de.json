@@ -218,37 +218,6 @@
             "@type": "skos:Concept"
         },
         {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00142/",
-            "pav:authoredOn": "2023-05-02 16:34:05.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00142/1/"
-            },
-            "dce:identifier": "SDN:R18::CC00142",
-            "pav:version": "1",
-            "skos:notation": "SDN:R18::CC00142",
-            "skos:altLabel": "Core Config 142 - Optional",
-            "dc:date": "2023-05-02 16:34:05.0",
-            "owl:versionInfo": "1",
-            "skos:prefLabel": {
-                "@language": "en",
-                "@value": "CONFIG_PressureActivationMode_LOGICAL"
-            },
-            "dc:identifier": "SDN:R18::CC00142",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
-            },
-            "owl:deprecated": "false",
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "skos:definition": {
-                "@language": "en",
-                "@value": "Use the pressure activation feature."
-            },
-            "@type": "skos:Concept"
-        },
-        {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00102/",
             "pav:authoredOn": "2023-05-02 16:34:05.0",
             "pav:hasCurrentVersion": {
@@ -276,6 +245,37 @@
             "skos:definition": {
                 "@language": "en",
                 "@value": "First coefficient used to compute float internal pressure in mBars from sensor counts."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00142/",
+            "pav:authoredOn": "2023-05-02 16:34:05.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00142/1/"
+            },
+            "dce:identifier": "SDN:R18::CC00142",
+            "pav:version": "1",
+            "skos:notation": "SDN:R18::CC00142",
+            "skos:altLabel": "Core Config 142 - Optional",
+            "dc:date": "2023-05-02 16:34:05.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "CONFIG_PressureActivationMode_LOGICAL"
+            },
+            "dc:identifier": "SDN:R18::CC00142",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Use the pressure activation feature."
             },
             "@type": "skos:Concept"
         },
@@ -1592,6 +1592,37 @@
             "skos:definition": {
                 "@language": "en",
                 "@value": "Threshold between depth zone #N and depth zone #N+1 for <short_sensor_name> (in dbar)."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00048b/",
+            "pav:authoredOn": "2025-06-09 09:14:49.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00048b/1/"
+            },
+            "dce:identifier": "SDN:R18::CB00048b",
+            "pav:version": "1",
+            "skos:notation": "SDN:R18::CB00048b",
+            "skos:altLabel": "BGC Config 48bis - Optional",
+            "dc:date": "2025-06-09 09:14:49.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "CONFIG_<short_sensor_name><N>VerticalPressureOffset_dbar"
+            },
+            "dc:identifier": "SDN:R18::CB00048b",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure. <N> refers to the sensor number: <N> = 2 or 3, etc."
             },
             "@type": "skos:Concept"
         },
@@ -3185,6 +3216,40 @@
             "@type": "skos:Concept"
         },
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00243/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00243/1/"
+            },
+            "pav:authoredOn": "2025-06-09 09:14:49.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00243/2/"
+            },
+            "dce:identifier": "SDN:R18::CC00243",
+            "pav:version": "2",
+            "skos:notation": "SDN:R18::CC00243",
+            "skos:altLabel": "Core Config 243 - Optional",
+            "dc:date": "2025-06-09 09:14:49.0",
+            "owl:versionInfo": "2",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "CONFIG_EndOfLifeAtDepth_LOGICAL"
+            },
+            "dc:identifier": "SDN:R18::CC00243",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Flag to manage \"end of life at depth\" function. This function consists of requesting to the float not to ascent at the end of his life if the battery is exhausted. (Yes = 1, No = 0)."
+            },
+            "@type": "skos:Concept"
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00214/",
             "pav:authoredOn": "2023-05-02 16:34:05.0",
             "pav:hasCurrentVersion": {
@@ -4519,6 +4584,40 @@
             "skos:definition": {
                 "@language": "en",
                 "@value": "Preset time to start ascent profile, if units = MINUTES (in minutes past midnight), if units = HH (24 hour clock). Potentially phase determining, phase 0 if never changed."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00101/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00101/1/"
+            },
+            "pav:authoredOn": "2025-06-09 09:14:49.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00101/2/"
+            },
+            "dce:identifier": "SDN:R18::CB00101",
+            "pav:version": "2",
+            "skos:notation": "SDN:R18::CB00101",
+            "skos:altLabel": "",
+            "dc:date": "2025-06-09 09:14:49.0",
+            "owl:versionInfo": "2",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "CONFIG_Optode2VerticalPressureOffset_dbar"
+            },
+            "dc:identifier": "SDN:R18::CB00101",
+            "skos:note": {
+                "@language": "en",
+                "@value": "deprecated"
+            },
+            "owl:deprecated": "true",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Vertical pressure offset of the secondary optode sensor"
             },
             "@type": "skos:Concept"
         },
@@ -8775,6 +8874,40 @@
             "@type": "skos:Concept"
         },
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00100/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00100/1/"
+            },
+            "pav:authoredOn": "2025-06-09 09:14:49.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00100/2/"
+            },
+            "dce:identifier": "SDN:R18::CB00100",
+            "pav:version": "2",
+            "skos:notation": "SDN:R18::CB00100",
+            "skos:altLabel": "",
+            "dc:date": "2025-06-09 09:14:49.0",
+            "owl:versionInfo": "2",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "CONFIG_OptodeVerticalPressureOffset_dbar"
+            },
+            "dc:identifier": "SDN:R18::CB00100",
+            "skos:note": {
+                "@language": "en",
+                "@value": "deprecated"
+            },
+            "owl:deprecated": "true",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Vertical pressure offset of the optode sensor"
+            },
+            "@type": "skos:Concept"
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00021/",
             "pav:authoredOn": "2023-05-02 16:34:05.0",
             "pav:hasCurrentVersion": {
@@ -10264,10 +10397,10 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00163/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00142/"
+                    "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00102/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00102/"
+                    "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00142/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00050/"
@@ -10391,6 +10524,9 @@
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00001/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00048b/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00134/"
@@ -10543,6 +10679,9 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00057/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00243/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00214/"
                 },
                 {
@@ -10667,6 +10806,9 @@
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00022/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00101/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00018/"
@@ -11068,6 +11210,9 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00080/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00100/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00021/"
                 },
                 {
@@ -11211,8 +11356,8 @@
             "dc:description": "List of float configuration settings selected by the float Principal Investigator (PI). Configuration parameters may or may not be reported by the float, and do not constitute float measurements. Configuration parameters selected for a float are stored in the float 'meta.nc' file, under CONFIG_PARAMETER_NAME. Each configuration parameter name has an associated value, stored in CONFIG_PARAMETER_VALUE. Argo netCDF variable CONFIG_PARAMETER_NAME is populated by R18 prefLabel.",
             "dc:title": "Argo configuration parameter names",
             "skos:prefLabel": "Argo configuration parameter names",
-            "owl:versionInfo": "1",
-            "dc:date": "2023-05-03 03:00:04.0",
+            "owl:versionInfo": "3",
+            "dc:date": "2025-06-10 03:00:00.0",
             "skos:altLabel": "CONFIG_PARAMETER_NAME",
             "dc:creator": "Argo Data Management Team",
             "dc:alternative": "CONFIG_PARAMETER_NAME",

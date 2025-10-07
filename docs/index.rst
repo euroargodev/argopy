@@ -9,6 +9,22 @@ for standard users as well as Argo experts.
 |License| |Python version| |Anaconda-Server Badge|
 
 
+.. admonition:: 2025 argopy training camps 🎓
+
+    The argopy team will organise "training camps" in 2025:
+
+    1. **in person** training: Monday Sept. 22nd afternoon, `Thalassocosmos <https://cretaquarium.gr/>`_, HCMR, Heraklion, Crete, during the `Euro-Argo Science Meeting <https://www.euro-argo.eu/News-Meetings/News/News-archives/2025/8th-Euro-Argo-Science-Meeting>`_. Registration closed.
+
+    2. **in person** training: Wednesday June 25th 10am, room 304, `JAMSTEC Headquarters <https://www.jamstec.go.jp/e/about/access/yokosuka.html>`_ `GOORC <https://www.jamstec.go.jp/goorc/e/>`_, Yokosuka, Japan. No registration required.
+
+    3. **in person** training: Wednesday June 18th 10am, room 425, `Tohoku University <https://www.gp.tohoku.ac.jp/pol/index-e.html>`_ `WPI-AIMEC <https://wpi-aimec.jp/en/>`_, Sendai, Japan. No registration required.
+
+    4. **online** training, to be organised sometime this fall: `register here <https://forms.gle/d8xPbrWu7aZcvMut9>`_
+
+    The goal of these events is to train users with all the argopy features.
+    Whether you're a standard, research or expert users, argopy has features for you !
+
+
 Documentation
 -------------
 
@@ -16,9 +32,8 @@ Documentation
 
 * :doc:`install`
 * :doc:`usage`
-* :doc:`why`
-* :doc:`what_is_argo`
 * :doc:`Gallery of examples <gallery>`
+* :doc:`What is Argo ? Why argopy ? <what_why>`
 * :doc:`impact`
 
 .. toctree::
@@ -28,27 +43,40 @@ Documentation
 
     install
     usage
-    why
-    what_is_argo
-    Gallery of examples <gallery>
+    Gallery of examples and tutorials <gallery>
+    What is Argo ? Why argopy ? <what_why>
     impact
 
 **User Guide**
 
 * :doc:`user-guide/fetching-argo-data/index`
 * :doc:`user-guide/working-with-argo-data/index`
-* :doc:`metadata_fetching`
-* :doc:`performances`
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 3
     :hidden:
     :caption: User Guide
 
     Fetching Argo data <user-guide/fetching-argo-data/index>
     user-guide/working-with-argo-data/index
-    metadata_fetching
-    performances
+
+**Advanced Tools**
+
+* :doc:`Argo file stores <advanced-tools/stores/index>`
+* :doc:`advanced-tools/metadata/index`
+* :doc:`advanced-tools/quality_control/index`
+* :doc:`Improving performances  <advanced-tools/performances/index>`
+
+.. toctree::
+    :maxdepth: 2
+    :hidden:
+    :caption: Advanced Tools
+
+    Argo file stores <advanced-tools/stores/index>
+    advanced-tools/metadata/index
+    advanced-tools/quality_control/index
+    Improving performances <advanced-tools/performances/index>
+
 
 **Help & reference**
 

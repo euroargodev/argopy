@@ -8,26 +8,33 @@
 #
 import warnings
 import logging
+import os
+import json
 
 import xarray as xr
 import pandas as pd
 import numpy as np
 from typing import Union
+import importlib
+
+from ..options import OPTIONS
+from ..utils.loggers import warnUnless
+from ..utils.checkers import check_wmo
+from ..utils.geo import conv_lon
+from ..utils.lists import subsample_list
+from ..utils.casting import to_list
+from ..errors import InvalidDatasetStructure
 
 from .utils import STYLE, has_seaborn, has_mpl, has_cartopy, has_ipython, has_ipywidgets
 from .utils import axes_style, latlongrid, land_feature
 from .argo_colors import ArgoColors
-
-from ..utils.loggers import warnUnless
-from ..utils.checkers import check_wmo
-from ..errors import InvalidDatasetStructure
 
 if has_mpl:
     import matplotlib.pyplot as plt
     import matplotlib as mpl
 
 if has_seaborn:
-    STYLE["axes"] = "dark"
+    # STYLE["axes"] = "dark"
     import seaborn as sns
 
 if has_cartopy:
@@ -41,6 +48,13 @@ if has_ipywidgets:
 
 
 log = logging.getLogger("argopy.plot.plot")
+
+path2assets = importlib.util.find_spec(
+    "argopy.static.assets"
+).submodule_search_locations[0]
+
+with open(os.path.join(path2assets, "data_types.json"), "r") as f:
+    DATA_TYPES = json.load(f)
 
 
 def open_sat_altim_report(
@@ -133,15 +147,19 @@ def plot_trajectory(
 ):
     """Plot trajectories for an Argo index dataframe
 
-    This function is called by the Data and Index fetchers method 'plot' with the 'trajectory' option::
+    This function is called by the Data fetcher and :class:`ArgoIndex` plotting methods for trajectories:
 
-        from argopy import DataFetcher, IndexFetcher
+    Examples
+    --------
+    .. code-block:: python
 
-        obj = IndexFetcher().float([6902766, 6902772, 6902914, 6902746])
-        # OR
+        from argopy import DataFetcher, ArgoIndex
+
         obj = DataFetcher().float([6902766, 6902772, 6902914, 6902746])
-
         fig, ax = obj.plot('trajectory')
+
+        obj = ArgoIndex().query.wmo([6902766, 6902772, 6902914, 6902746])
+        fig, ax = obj.plot.trajectory()
 
     Parameters
     ----------
@@ -188,9 +206,28 @@ def plot_trajectory(
                 },
             }
             opts = {**opts, **kwargs}
-            return scatter_map(df, **opts)
+            fig, ax, hdl = scatter_map(df, **opts)
+            return fig, ax
         else:
-            fig, ax = plt.subplots(**{**defaults, **kwargs})
+            opts = {**defaults, **kwargs}
+            unvalid_keys = []
+            for key in opts.keys():
+                if key not in [
+                    "nrows",
+                    "ncols",
+                    "sharex",
+                    "sharey",
+                    "squeeze",
+                    "width_ratios",
+                    "height_ratios",
+                    "subplot_kw",
+                    "gridspec_kw",
+                    "figsize",
+                    "dpi",
+                ]:
+                    unvalid_keys.append(key)
+            [opts.pop(key) for key in unvalid_keys]
+            fig, ax = plt.subplots(**opts)
 
         # How many float in this dataset ?
         nfloat = len(df.groupby("wmo").first())
@@ -233,7 +270,10 @@ def plot_trajectory(
                 ax.get_yaxis().set_visible(False)
         else:
             if set_global:
-                ax.set_xlim(-180, 180)
+                if OPTIONS["longitude_convention"] == "360":
+                    ax.set_xlim(0, 360)
+                else:  # OPTIONS["longitude_convention"] == "180":
+                    ax.set_xlim(-180, 180)
                 ax.set_ylim(-90, 90)
             ax.grid(visible=True, linewidth=1, color="gray", alpha=0.7, linestyle=":")
 
@@ -264,24 +304,20 @@ def bar_plot(
     """Create a bar plot for an Argo index dataframe
 
 
-    This is the method called when using the facade fetcher methods ``plot`` with the ``dac`` or ``profiler`` arguments::
+    Pass a :class:`pandas.DataFrame` as returned by a :class:`argopy.DataFetcher.index` or :class:`argopy.ArgoIndex.to_dataframe` ::
 
-        IndexFetcher(src='gdac').region([-80,-30,20,50,'2021-01','2021-08']).plot('dac')
-
-    To use it directly, you must pass a :class:`pandas.DataFrame` as returned by a :class:`argopy.DataFetcher.index` or :class:`argopy.IndexFetcher.index` property::
-
-        from argopy import IndexFetcher
-        df = IndexFetcher(src='gdac').region([-80,-30,20,50,'2021-01','2021-08']).index
+        from argopy import DataFetcher
+        df = DataFetcher(src='gdac').region([-80,-30,20,50,'2021-01','2021-08']).index
         bar_plot(df, by='profiler')
 
     Parameters
     ----------
     df: :class:`pandas.DataFrame`
-        As returned by a fetcher index property
+        As returned by an argopy index dataframe
     by: str, default='institution'
         The profile property to plot
     style: str, optional
-        Define the Seaborn axes style: 'white', 'darkgrid', 'whitegrid', 'dark', 'ticks'
+        Define the Seaborn axes style: 'argopy', 'white', 'darkgrid', 'whitegrid', 'dark', 'ticks'
 
     Returns
     -------
@@ -323,7 +359,9 @@ def scatter_map(  # noqa: C901
     legend_location: Union[str, int] = 0,
     cbar: bool = False,
     cbarlabels: Union[str, list] = "auto",
+    cbarmaxlabels: int = 12,
     set_global: bool = False,
+    padding: Union[str, list] = "auto",
     **kwargs
 ):
     """Try-to-be generic function to create a scatter plot on a map from **argopy** :class:`xarray.Dataset` or :class:`pandas.DataFrame` data
@@ -377,6 +415,7 @@ def scatter_map(  # noqa: C901
     -------
     fig: :class:`matplotlib.figure.Figure`
     ax: :class:`matplotlib.axes.Axes`
+    patches: Dict with ax collections
 
     Other Parameters
     ----------------
@@ -399,14 +438,27 @@ def scatter_map(  # noqa: C901
         The unique color to use for all trajectories. The default color is the ``markeredgecolor`` value.
 
     legend: bool, default=True
-        Display or not a legend for hue colors meaning. If the legend is too large, it can be removed with ``ax.get_legend().remove()``
+        Display or not a legend for hue colors meaning. If the legend is too large, it can be removed with ``ax.get_legend().remove()``, or you may use the colorbar instead.
     legend_title: str, default='default'
         String title of the legend box. By default, it is set to the ``hue`` value.
     legend_location: str, default='upper right'
         Location of the legend box. This is passed to the ``loc`` argument of :class:`~matplotlib:matplotlib.legend.Legend`.
 
+    cbar: bool, default=False
+        Display or not a colorbar for hue colors.
+    cbarlabels: list[str], default="auto"
+        Possibly customize the list of colorbar labels or let it be determined automatically.
+    cbarmaxlabels: int, default=12
+        Maximum number of ticks and labels on the colorbar.
+
     set_global: bool, default=False
         Force the map to be global.
+
+    padding: str, list, default='auto'
+        Additional space to the map around data points. If not set to 'auto', this argument must be a list:
+
+        - of 2 values for longitude and latitude padding
+        - of 4 values for west, east, south and north padding
 
     kwargs
         All other arguments are passed to :class:`matplotlib.figure.Figure.subplots`
@@ -417,7 +469,7 @@ def scatter_map(  # noqa: C901
     if isinstance(data, xr.Dataset) and data.argo._type == "point":
         # data = data.argo.point2profile(drop=True)
         raise InvalidDatasetStructure(
-            "Function only available to a collection of profiles"
+            "Function only available for a collection of profiles"
         )
 
     # Try to guess the default hue, i.e. name for WMO:
@@ -522,7 +574,12 @@ def scatter_map(  # noqa: C901
     # Set up the figure and axis:
     defaults = {"figsize": (10, 6), "dpi": 90}
 
-    subplot_kw = {"projection": ccrs.PlateCarree()}
+    if OPTIONS["longitude_convention"] == "180":
+        central_longitude = 0.0
+    else:  # OPTIONS['longitude_convention'] == '360':
+        central_longitude = 180.0
+
+    subplot_kw = {"projection": ccrs.PlateCarree(central_longitude=central_longitude)}
     fig, ax = plt.subplots(**{**defaults, **kwargs}, subplot_kw=subplot_kw)
     ax.add_feature(
         land_feature,
@@ -532,10 +589,8 @@ def scatter_map(  # noqa: C901
         alpha=0.3,
     )
 
-    # vmin = data[hue].min() if vmin == 'auto' else vmin
-    # vmax = data[hue].max() if vmax == 'auto' else vmax
-
     patches = []
+    scatter_legend_labels = []
     for k, [name, group] in enumerate(data.groupby(hue)):
         if mycolors.registered and name not in mycolors.lookup:
             log.info(
@@ -544,44 +599,91 @@ def scatter_map(  # noqa: C901
             )
         else:
             scatter_opts = {
-                "color": mycolors.lookup[name]
-                if mycolors.registered
-                else mycolors.cmap(k),
-                "label": "%s: %s" % (name, mycolors.ticklabels[name])
-                if mycolors.registered
-                else name,
+                "color": (
+                    mycolors.lookup[name] if mycolors.registered else mycolors.cmap(k)
+                ),
+                "label": (
+                    "%s: %s" % (name, mycolors.ticklabels[name])
+                    if mycolors.registered
+                    else name
+                ),
                 "zorder": 10,
                 "sizes": [markersize],
                 "edgecolor": markeredgecolor,
                 "linewidths": markeredgesize,
+                "transform": ccrs.PlateCarree(),
             }
             if isinstance(data, pd.DataFrame) and not legend:
-                scatter_opts[
-                    "legend"
-                ] = False  # otherwise Pandas will add a legend even if we set legend=False
+                scatter_opts["legend"] = (
+                    False  # otherwise Pandas will add a legend even if we set legend=False
+                )
             sc = group.plot.scatter(x=x, y=y, ax=ax, **scatter_opts)
             patches.append(sc)
+            scatter_legend_labels.append(scatter_opts["label"])
 
     if cbar:
-        if cbarlabels == "auto":
-            cbarlabels = None
-        mycolors.cbar(
-            ticklabels=cbarlabels, ax=ax, cax=sc, fraction=0.03, label=legend_title
+        if isinstance(cbarlabels, str) and cbarlabels == "auto":
+            # handles, cbarlabels = ax.get_legend_handles_labels()
+            cbarlabels = scatter_legend_labels.copy()
+        cbar_handle = mycolors.cbar(
+            ticklabels=cbarlabels, ax=ax, fraction=0.03, label=legend_title
         )
+        ticks = cbar_handle.get_ticks()
+        if cbarmaxlabels is not None:
+
+            new_ticks = [ticks[0]]
+            [new_ticks.append(v) for v in subsample_list(ticks, cbarmaxlabels - 2)]
+            new_ticks.append(ticks[-1])
+
+            new_cbarlabels = [cbarlabels[0]]
+            [
+                new_cbarlabels.append(v)
+                for v in subsample_list(cbarlabels, cbarmaxlabels - 2)
+            ]
+            new_cbarlabels.append(cbarlabels[-1])
+
+            cbar_handle.set_ticks(subsample_list(ticks, cbarmaxlabels))
+            cbar_handle.set_ticklabels(subsample_list(cbarlabels, cbarmaxlabels))
+    else:
+        cbar_handle = None
 
     if traj:
-        for k, [name, group] in enumerate(data.groupby(traj_axis)):
-            ax.plot(
+        for k, [_, group] in enumerate(data.groupby(traj_axis)):
+            traj_handle = ax.plot(
                 group[x],
                 group[y],
                 color=traj_color,
                 linewidth=0.5,
                 label="_nolegend_",
                 zorder=2,
+                transform=ccrs.Geodetic(),  # do not use PlateCarree here, Geodetic allows smooth traj across 0 & 180
             )
+    else:
+        traj_handle = None
 
     if set_global:
         ax.set_global()
+    else:
+        lon = conv_lon(data[x], OPTIONS["longitude_convention"])
+        lat = data[y]
+        extent = [np.min(lon), np.max(lon), np.min(lat), np.max(lat)]
+        rge = [np.abs(np.max(lon) - np.min(lon)), np.abs(np.max(lat) - np.min(lat))]
+        if padding == "auto":
+            padding = [-rge[0] / 10, rge[0] / 10, -rge[1] / 10, rge[1] / 10]
+        else:
+            padding = to_list(padding)
+            if len(padding) == 1:
+                padding = [-padding[0], padding[0], -padding[0], padding[0]]
+            elif len(padding) == 2:
+                padding = [-padding[0], padding[0], -padding[1], padding[1]]
+            elif len(padding) != 4:
+                raise ValueError("'padding' must be 'auto', a list of 1, 2 or 4 values")
+
+        extent[0] = extent[0] + padding[0]
+        extent[1] = extent[1] + padding[1]
+        extent[2] = extent[2] + padding[2]
+        extent[3] = extent[3] + padding[3]
+        ax.set_extent(extent)
 
     latlongrid(
         ax,
@@ -595,20 +697,29 @@ def scatter_map(  # noqa: C901
 
     if legend:
         handles, labels = ax.get_legend_handles_labels()
-        plt.legend(
+        legend_handle = plt.legend(
             handles,
             labels,
             loc=legend_location,
             bbox_to_anchor=(1.26, 1),
             title=legend_title,
         )
+    else:
+        legend_handle = None
 
     for spine in ax.spines.values():
         spine.set_edgecolor(COLORS["DARKBLUE"])
 
     ax.set_title("")
 
-    return fig, ax
+    handles = {
+        "scatter": patches,
+        "cbar": cbar_handle,
+        "legend": legend_handle,
+        "traj": traj_handle,
+        "ArgoColors": mycolors,
+    }
+    return fig, ax, handles
 
 
 def scatter_plot(
@@ -621,10 +732,14 @@ def scatter_plot(
     vmin=None,
     vmax=None,
     s=4,
-    bgcolor="lightgrey",
+    cbar: bool = False,
+    style: str = STYLE["axes"],
 ):
     """A quick-and-dirty parameter scatter plot for one variable"""
     warnUnless(has_mpl, "requires matplotlib installed")
+
+    if this_param in DATA_TYPES["data"]["str"]:
+        raise ValueError("scatter_plot does not support string data type (yet !)")
 
     if cmap is None:
         cmap = mpl.colormaps["gist_ncar"]
@@ -646,43 +761,56 @@ def scatter_plot(
         x_bounds, y_bounds = np.meshgrid(x, y, indexing="ij")
     c = ds[this_param]
 
-    #
-    fig, ax = plt.subplots(dpi=90, figsize=figsize)
-
-    if vmin == "attrs":
-        vmin = c.attrs["valid_min"] if "valid_min" in c.attrs else None
-    if vmax == "attrs":
-        vmax = c.attrs["valid_max"] if "valid_max" in c.attrs else None
-    if vmin is None:
-        vmin = np.percentile(c, 10)
-    if vmax is None:
-        vmax = np.percentile(c, 90)
-
-    if "INTERPOLATED" in this_y:
-        m = ax.pcolormesh(x_bounds, y_bounds, c, cmap=cmap, vmin=vmin, vmax=vmax)
-    else:
-        m = ax.scatter(x, y, c=c, cmap=cmap, s=s, vmin=vmin, vmax=vmax)
-        ax.set_facecolor(bgcolor)
-
-    cbar = fig.colorbar(m, shrink=0.9, extend="both", ax=ax)
-    cbar.ax.set_ylabel(get_vlabel(ds, this_param), rotation=90)
-
-    ylim = ax.get_ylim()
-    if "PRES" in this_y:
-        ax.invert_yaxis()
-        y_bottom, y_top = np.max(ylim), np.min(ylim)
-    else:
-        y_bottom, y_top = ylim
-
-    if this_x == "CYCLE_NUMBER":
-        ax.set_xlim([np.min(ds[this_x]) - 1, np.max(ds[this_x]) + 1])
-    elif this_x == "TIME":
-        ax.set_xlim([np.min(ds[this_x]), np.max(ds[this_x])])
-    if "PRES" in this_y:
-        ax.set_ylim([y_bottom, 0])
+    # Possibly broadcast x, y on c dimensions:
+    if not x.shape == y.shape or not x.shape == c.shape or not y.shape == c.shape:
+        x = x.broadcast_like(c)
+        y = y.broadcast_like(c)
+        assert x.shape == y.shape
+        assert y.shape == c.shape
 
     #
-    ax.set_xlabel(get_vlabel(ds, this_x))
-    ax.set_ylabel(get_vlabel(ds, this_y))
+    with axes_style(style):
 
-    return fig, ax
+        fig, ax = plt.subplots(dpi=90, figsize=figsize)
+
+        if vmin == "attrs":
+            vmin = c.attrs["valid_min"] if "valid_min" in c.attrs else None
+        if vmax == "attrs":
+            vmax = c.attrs["valid_max"] if "valid_max" in c.attrs else None
+        if vmin is None:
+            vmin = np.nanpercentile(c, 10)
+        if vmax is None:
+            vmax = np.nanpercentile(c, 90)
+
+        if "INTERPOLATED" in this_y:
+            m = ax.pcolormesh(x_bounds, y_bounds, c, cmap=cmap, vmin=vmin, vmax=vmax)
+        else:
+            m = ax.scatter(x, y, c=c, cmap=cmap, s=s, vmin=vmin, vmax=vmax)
+            # ax.set_facecolor(bgcolor)
+
+        if cbar:
+            cbar = fig.colorbar(m, shrink=0.9, extend="both", ax=ax)
+            cbar.ax.set_ylabel(get_vlabel(ds, this_param), rotation=90)
+
+        ylim = ax.get_ylim()
+        if "PRES" in this_y:
+            ax.invert_yaxis()
+            y_bottom, y_top = np.max(ylim), np.min(ylim)
+        else:
+            y_bottom, y_top = ylim
+
+        if this_x == "CYCLE_NUMBER":
+            ax.set_xlim([np.min(ds[this_x]) - 1, np.max(ds[this_x]) + 1])
+        elif this_x == "TIME":
+            ax.set_xlim([np.min(ds[this_x]), np.max(ds[this_x])])
+        if "PRES" in this_y:
+            ax.set_ylim([y_bottom, 0])
+
+        #
+        ax.set_xlabel(get_vlabel(ds, this_x))
+        ax.set_ylabel(get_vlabel(ds, this_y))
+
+    if cbar:
+        return fig, ax, m, cbar
+    else:
+        return fig, ax, m

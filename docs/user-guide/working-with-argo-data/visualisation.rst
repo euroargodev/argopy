@@ -8,10 +8,10 @@ Data visualisation
 .. contents::
    :local:
 
-From Data or Index fetchers
-***************************
+From Data fetcher
+*****************
 
-The :class:`DataFetcher` and :class:`IndexFetcher` come with a ``plot`` method to have a quick look to your data. This method can take *trajectory*, *profiler*, *dac* and *qc_altimetry* as arguments. All details are available in the :class:`DataFetcher.plot` and :class:`IndexFetcher.plot` class documentation.
+The :class:`DataFetcher` come with a ``plot`` method to have a quick look to your data. This method can take *trajectory*, *profiler*, *dac* and *qc_altimetry* as arguments. All details are available in the :class:`DataFetcher.plot` class documentation.
 
 Below we demonstrate major plotting features.
 
@@ -19,7 +19,7 @@ Let's import the usual suspects:
 
 .. code-block:: python
 
-    from argopy import DataFetcher, IndexFetcher
+    from argopy import DataFetcher
 
 .. _viz_traj:
 
@@ -28,9 +28,9 @@ Trajectories
 
 .. code-block:: python
 
-    idx = IndexFetcher().float([6902745, 6902746]).load()
-    fig, ax = idx.plot('trajectory')
-    fig, ax = idx.plot()  # Trajectory is the default plot
+    Adf = DataFetcher().float([6902745, 6902746]).load()
+    fig, ax = Adf.plot('trajectory')
+    fig, ax = Adf.plot()  # Trajectory is the default plot
 
 .. image:: ../../_static/trajectory_sample.png
 
@@ -41,8 +41,8 @@ It is also possible to create horizontal bar plots for histograms on some data p
 
 .. code-block:: python
 
-    idx = IndexFetcher().region([-80,-30,20,50,'2021-01','2021-08']).load()
-    fig, ax = idx.plot('dac')
+    Adf = DataFetcher().region([-80,-30,20,50,0,100,'2021-01','2021-08']).load()
+    fig, ax = Adf.plot('dac')
 
 .. image:: ../../_static/bar_dac.png
 
@@ -50,9 +50,72 @@ If you have `Seaborn <https://seaborn.pydata.org/>`_ installed, you can change t
 
 .. code-block:: python
 
-    fig, ax = idx.plot('profiler', style='whitegrid')
+    fig, ax = Adf.plot('profiler', style='whitegrid')
 
 .. image:: ../../_static/bar_profiler.png
+
+From ArgoFloat instance
+***********************
+
+.. currentmodule:: argopy
+
+The :class:`ArgoFloat` class come with a :class:`ArgoFloat.plot` accessor than can take several methods to quickly visualize data from the float:
+
+.. code-block:: python
+
+    from argopy import ArgoFloat
+
+    wmo = 6902772
+
+    af = ArgoFloat(wmo)
+
+    af.plot.trajectory()
+
+    af.plot.trajectory(figsize=(18,18), padding=[1, 5])
+
+    af.plot.map('TEMP', pres=450, cmap='Spectral_r')
+
+    af.plot.map('DATA_MODE', cbar=False, legend=True)
+
+    af.plot.scatter('PSAL')
+
+    af.plot.scatter('DOXY', ds='Sprof')
+
+    af.plot.scatter('MEASUREMENT_CODE', ds='Rtraj')
+
+
+Check all the detailed arguments on the API reference :class:`ArgoFloat.plot`.
+
+From ArgoIndex instance
+************************
+
+.. currentmodule:: argopy
+
+The :class:`ArgoIndex` class come with a :class:`ArgoIndex.plot` accessor than can take several methods to quickly visualize data from the float:
+
+.. code-block:: python
+
+    from argopy import ArgoIndex
+
+    idx = ArgoIndex(index_file='bgc-s')
+    idx.query.params('CHLA')
+
+    idx.plot.trajectory()
+
+    idx.plot.trajectory(set_global=1,
+                        add_legend=0,
+                        traj=0,
+                        cbar=False,
+                        markersize=12,
+                        markeredgesize=0.1,
+                        dpi=120,
+                        figsize=(20,20));
+
+    idx.plot.bar(by='profiler')
+
+    idx.plot.bar(by='dac')
+
+Check all the detailed arguments on the API reference :class:`ArgoIndex.plot`.
 
 
 Dashboards
@@ -145,7 +208,7 @@ The :class:`argopy.plot.scatter_map` utility function is dedicated to making map
 
 Profiles colouring is finely tuned for some variables: QC flags, Data Mode and Deployment Status. By default, floats trajectories are always shown, but this can be changed with the ``traj`` boolean option.
 
-Note that the :class:`argopy.plot.scatter_map` integrates seamlessly with **argopy** :ref:`Index of profiles` :class:`pandas.DataFrame` and :class:`xarray.Dataset` :ref:`collection of profiles <Points vs profiles>`. However, all default arguments can be overwritten so that it should work with other data models.
+Note that the :class:`argopy.plot.scatter_map` integrates seamlessly with **argopy** :ref:`tools-argoindex` :class:`pandas.DataFrame` and :class:`xarray.Dataset` :ref:`collection of profiles <Points vs profiles>`. However, all default arguments can be overwritten so that it should work with other data models.
 
 Let's import the usual suspects and some data to work with.
 

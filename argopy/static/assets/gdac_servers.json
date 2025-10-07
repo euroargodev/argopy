@@ -1,0 +1,25 @@
+{
+  "name": "gdac",
+  "long_name": "List of official Argo GDAC servers",
+  "last_update": "2025-08-20T06:52:06.768112+00:00",
+  "data": {
+    "paths": [
+      "https://data-argo.ifremer.fr",
+      "https://usgodae.org/pub/outgoing/argo",
+      "https://argo-gdac-sandbox.s3-eu-west-3.amazonaws.com/pub",
+      "ftp://ftp.ifremer.fr/ifremer/argo",
+      "s3://argo-gdac-sandbox/pub"
+    ],
+    "shortcuts": {
+      "http": "https://data-argo.ifremer.fr",
+      "https": "https://data-argo.ifremer.fr",
+      "fr-http": "https://data-argo.ifremer.fr",
+      "fr-https": "https://data-argo.ifremer.fr",
+      "us-http": "https://usgodae.org/pub/outgoing/argo",
+      "us-https": "https://usgodae.org/pub/outgoing/argo",
+      "ftp": "ftp://ftp.ifremer.fr/ifremer/argo",
+      "s3": "s3://argo-gdac-sandbox/pub",
+      "aws": "s3://argo-gdac-sandbox/pub"
+    }
+  }
+}

@@ -9,24 +9,28 @@ dependencies:
   - decorator
   - erddapy
   - fsspec
+  - h5netcdf
   - netCDF4
   - packaging
   - requests
   - scipy
   - toolz
-  - xarray < 2024.3 # while https://github.com/pydata/xarray/issues/8909 is not solved
+  - xarray < 2024.3  # latest before xarray >=2025.7.0 requiring python >=3.11
 
 # EXT.UTIL:
-#  - boto3
 #  - gsw
-#  - s3fs
 #  - tqdm
+
+# EXT.FILES:
+#  - boto3
+#  - kerchunk
+#  - numcodecs
+#  - s3fs
 #  - zarr
 
 # EXT.PERF:
 #  - dask
 #  - distributed
-#  - h5netcdf
 #  - pyarrow
 
 # EXT.PLOT:

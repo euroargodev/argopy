@@ -7,12 +7,12 @@ import pytest
 import xarray as xr
 from utils import (
     requires_argovis,
+    create_temp_folder,
 )
 
 from mocked_http import mocked_server_address
 from mocked_http import mocked_httpserver as mocked_argovisserver
 
-import tempfile
 import shutil
 from collections import ChainMap
 
@@ -126,7 +126,7 @@ class Test_Backend:
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
         # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
-        self.cachedir = tempfile.mkdtemp()
+        self.cachedir = create_temp_folder().folder
 
     def _setup_fetcher(self, this_request, cached=False, parallel=False):
         """Helper method to set up options for a fetcher creation"""
@@ -157,19 +157,19 @@ class Test_Backend:
 
     @pytest.fixture
     def fetcher(self, request):
-        """ Fixture to create a ERDDAP data fetcher for a given dataset and access point """
+        """ Fixture to create a data fetcher for a given dataset and access point """
         fetcher_args, access_point = self._setup_fetcher(request, cached=False)
         yield create_fetcher(fetcher_args, access_point)
 
     @pytest.fixture
     def cached_fetcher(self, request):
-        """ Fixture to create a cached ERDDAP data fetcher for a given dataset and access point """
+        """ Fixture to create a cached data fetcher for a given dataset and access point """
         fetcher_args, access_point = self._setup_fetcher(request, cached=True)
         yield create_fetcher(fetcher_args, access_point)
 
     @pytest.fixture
     def parallel_fetcher(self, request):
-        """ Fixture to create a parallel ERDDAP data fetcher for a given dataset and access point """
+        """ Fixture to create a parallel data fetcher for a given dataset and access point """
         fetcher_args, access_point = self._setup_fetcher(request, parallel="thread")
         yield create_fetcher(fetcher_args, access_point)
 
@@ -197,5 +197,5 @@ class Test_Backend:
     @pytest.mark.parametrize("parallel_fetcher", VALID_PARALLEL_ACCESS_POINTS,
                              indirect=True,
                              ids=VALID_PARALLEL_ACCESS_POINTS_IDS)
-    def test_fetching_parallel(self, mocked_argovisserver, parallel_fetcher):
+    def test_fetching_parallel_thread(self, mocked_argovisserver, parallel_fetcher):
         assert_fetcher(mocked_argovisserver, parallel_fetcher, cacheable=False)

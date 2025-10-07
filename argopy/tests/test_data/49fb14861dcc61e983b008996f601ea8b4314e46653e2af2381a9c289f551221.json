@@ -516,7 +516,7 @@
             ],
             "@type": "skos:Collection",
             "dc:publisher": "Natural Environment Research Council",
-            "dc:description": "Profile sampling schemes and sampling methods. Argo netCDF variable VERTICAL_SAMPLING_SCHEME is populated by R16 altLabel.",
+            "dc:description": "Profile sampling schemes and sampling methods. Argo netCDF variable VERTICAL_SAMPLING_SCHEME is populated by R16 prefLabel, optionally appended by free text in brackets: e.g. \"Primary sampling: averaged [nominal 2 dbar binned data sampled at 0.5 Hz from a SBE41CP]\".",
             "dc:title": "Argo vertical sampling schemes",
             "skos:prefLabel": "Argo vertical sampling schemes",
             "owl:versionInfo": "1",

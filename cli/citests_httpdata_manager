@@ -31,6 +31,8 @@ Use this script to download all possible tests data to be used by the local http
 >>> citests_httpdata_manager -a download -t github
 >>> citests_httpdata_manager -a download -t altim
 
+>>> citests_httpdata_manager -a download -t argofloat
+
 
 If some downloads (eg erddap) are difficult:
 >>> citests_httpdata_manager -t erddap_bgc -a check  # Delete files raising errors
@@ -62,7 +64,7 @@ import glob
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 import argopy
-from argopy import DataFetcher, clear_cache
+from argopy import DataFetcher, clear_cache, ArgoFloat
 from argopy.related import (
     TopoFetcher,
     OceanOPSDeployments,
@@ -114,11 +116,12 @@ DEFAULT_TARGETS = [
     "ifremer_api",
     "github",
     "altim",
+    "argofloat",
 ]
 
 
-start_with = (
-    lambda f, x: f[0 : len(x)] == x if len(x) <= len(f) else False
+start_with = lambda f, x: (
+    f[0 : len(x)] == x if len(x) <= len(f) else False
 )  # noqa: E731
 
 
@@ -186,6 +189,7 @@ def setup_args():
             "ea_dataselection",
             "ifremer_api",
             "github",
+            "argofloat",
         ]
 
     parser.add_argument(
@@ -213,13 +217,14 @@ def setup_args():
         help="Return absolute path to test data storage folder",
         action="store_true",
     )
-    parser.add_argument('--url', nargs='?', help='Url to search in database')
+    parser.add_argument("--url", nargs="?", help="Url to search in database")
     return parser
 
 
 def can_xr_be_opened(src, file):
     try:
-        xr.open_dataset(file)
+        time_coder = xr.coders.CFDatetimeCoder(use_cftime=False)
+        xr.open_dataset(file, decode_cf=1, decode_times=time_coder, mask_and_scale=1, decode_timedelta=True)
         return src
     except:
         # print("This source can't be opened with xarray: %s" % src)
@@ -244,11 +249,11 @@ def log_file_desc(file, data, src):
     # elif "github.com/euroargodev/argopy-data" in src['uri']:
     #     msg.append("🤖 GITHUB ARGOPY-DATA: %s" % parse_qs(src["uri"]))
 
-    elif start_with(src['uri'], "https://www.ocean-ops.org/api/1"):
+    elif start_with(src["uri"], "https://www.ocean-ops.org/api/1"):
         # msg.append("🤖 Ocean-OPS API: %s" % unquote(src["uri"]))
         msg.append("🤖 Ocean-OPS API: %s" % parse_qs(src["uri"]))
 
-    elif start_with(src['uri'], "https://argovis-api.colorado.edu"):
+    elif start_with(src["uri"], "https://argovis-api.colorado.edu"):
         msg.append("🤖 Argovis API: %s" % unquote(src["uri"]))
 
     else:
@@ -327,7 +332,7 @@ class UriRegistry(UserList):
         elif overwrite:
             self.delete(entry)
             super().append(entry)
-        log.debug("commit: %s" % entry['uri'])
+        log.debug("commit: %s" % entry["uri"])
         return self
 
     def delete(self, entry):
@@ -448,8 +453,8 @@ class Lister:
         }
         requests_ref = {
             "region": [
-                [-25, -10, 36, 40, 0, 10.],
-                [-25, -10, 36, 40, 0, 10., '20180101', '20190101'],
+                [-25, -10, 36, 40, 0, 10.0],
+                [-25, -10, 36, 40, 0, 10.0, "20180101", "20190101"],
             ]
         }
         requests_seq = {"phy": requests_phy, "ref": requests_ref}
@@ -494,7 +499,14 @@ class Lister:
                     ]
 
         for mode in ["expert", "standard", "research"]:
-            fetcher = DataFetcher(src="erddap", ds="phy", mode=mode, parallel=True)
+            fetcher = DataFetcher(
+                src="erddap",
+                ds="phy",
+                mode=mode,
+                parallel=True,
+                parallel_method="thread",
+                chunks_maxsize={"lon": 2.5, "lat": 2.5, "wmo": 1},
+            )
             for access_point in requests_par:
                 [
                     add_to_URI(fetcher.profile(*cfg))
@@ -538,12 +550,10 @@ class Lister:
         # This should correspond to all the possible erddap requests made during CI tests.
         # And because of the erddap fetcher N_POINT attribute, we also need to fetch ".ncHeader" on top of ".nc" files
         requests_seq = {
-            # "float": [[6904240]],
-            "float": [[5903248], [6904240], [5903248, 6904241]],
+            "float": [[5903248], [5903248, 6904241]],
             "profile": [
                 [5903248, 34],
                 [5903248, np.arange(12, 14)],
-                [5903248, [1, 12]],
             ],
             "region": [
                 [-55, -47, 55, 57, 0, 10],
@@ -580,93 +590,66 @@ class Lister:
             index_file="argo_synthetic-profile_index.txt",  # corresponds to dataset in the erddap
             cache=True,
         )
+        for mode in ["expert", "standard", "research"]:
+            for measured in [None, "all", "DOXY"]:
+                for params in ["all", "DOXY"]:
+                    fetcher = DataFetcher(
+                        src="erddap",
+                        ds="bgc",
+                        cache=True,
+                        mode=mode,
+                        params=params,
+                        measured=measured,
+                        indexfs=indexfs,
+                    )
+                    for access_point in requests_seq:
+                        [
+                            add_to_URI(fetcher.profile(*cfg))
+                            for cfg in requests_seq[access_point]
+                            if access_point == "profile"
+                        ]
+                        [
+                            add_to_URI(fetcher.float(cfg))
+                            for cfg in requests_seq[access_point]
+                            if access_point == "float"
+                        ]
+                        [
+                            add_to_URI(fetcher.region(cfg))
+                            for cfg in requests_seq[access_point]
+                            if access_point == "region"
+                        ]
+
         measured = None
-        for mode in ['expert', 'standard', 'research']:
+        for mode in ["expert", "standard", "research"]:
             for params in ["all", "DOXY"]:
                 fetcher = DataFetcher(
                     src="erddap",
                     ds="bgc",
                     cache=True,
+                    parallel=True,
+                    parallel_method="thread",
+                    chunks_maxsize={"lon": 2.5, "lat": 2.5, "wmo": 1},
                     mode=mode,
                     params=params,
                     measured=measured,
                     indexfs=indexfs,
                 )
-                for access_point in requests_seq:
+                for access_point in requests_par:
                     [
                         add_to_URI(fetcher.profile(*cfg))
-                        for cfg in requests_seq[access_point]
+                        for cfg in requests_par[access_point]
                         if access_point == "profile"
                     ]
                     [
                         add_to_URI(fetcher.float(cfg))
-                        for cfg in requests_seq[access_point]
+                        for cfg in requests_par[access_point]
                         if access_point == "float"
                     ]
                     [
                         add_to_URI(fetcher.region(cfg))
-                        for cfg in requests_seq[access_point]
+                        for cfg in requests_par[access_point]
                         if access_point == "region"
                     ]
-
-        for measured in [None, "all", "DOXY"]:
-            for params in ["all"]:
-                fetcher = DataFetcher(
-                    src="erddap",
-                    ds="bgc",
-                    cache=True,
-                    mode=mode,
-                    params=params,
-                    measured=measured,
-                    indexfs=indexfs,
-                )
-                for access_point in requests_seq:
-                    [
-                        add_to_URI(fetcher.profile(*cfg))
-                        for cfg in requests_seq[access_point]
-                        if access_point == "profile"
-                    ]
-                    [
-                        add_to_URI(fetcher.float(cfg))
-                        for cfg in requests_seq[access_point]
-                        if access_point == "float"
-                    ]
-                    [
-                        add_to_URI(fetcher.region(cfg))
-                        for cfg in requests_seq[access_point]
-                        if access_point == "region"
-                    ]
-
-        measured = None
-        mode = "expert"
-        for params in ["all", "DOXY"]:
-            fetcher = DataFetcher(
-                src="erddap",
-                ds="bgc",
-                cache=True,
-                parallel=True,
-                parallel_method="erddap",
-                mode=mode,
-                params=params,
-                measured=measured,
-                indexfs=indexfs,
-            )
-            for access_point in requests_par:
-                [
-                    add_to_URI(fetcher.profile(*cfg))
-                    for cfg in requests_par[access_point]
-                    if access_point == "profile"
-                ]
-                [
-                    add_to_URI(fetcher.float(cfg))
-                    for cfg in requests_par[access_point]
-                    if access_point == "float"
-                ]
-                [
-                    add_to_URI(fetcher.region(cfg))
-                    for cfg in requests_par[access_point]
-                    if access_point == "region"
-                ]
 
         # Add more URI from the erddap:
         this_URI.commit(
@@ -782,7 +765,8 @@ class Lister:
         requests_par = {
             "float": [[1900468, 1900117, 1900386]],
             "region": [
-                [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01", "2012-06"],
+                [-70, -65, 35.0, 40.0, 0.0, 10.0, "2012-01", "2012-06"],
+                [-60, -55, 40.0, 45.0, 0.0, 20.0, "2007-08-01", "2007-09-01"],
             ],
         }
 
@@ -809,7 +793,9 @@ class Lister:
                     if access_point == "region"
                 ]
 
-        fetcher = DataFetcher(src="argovis", parallel=True)
+        fetcher = DataFetcher(
+            src="argovis", parallel=True, chunks_maxsize={"lon": 2.5, "lat": 2.5}
+        )
         for access_point in requests_par:
             [
                 add_to_URI(fetcher.profile(*cfg))
@@ -930,7 +916,9 @@ class Lister:
         WMO_list.append(6901929)  # Used by test_related
         WMO_list.append(5904797)  # Used by test_plot_dashboards.py
         WMO_list.append(6902755)  # Used by test_plot_dashboards.py
-        WMO_list.append(2901623)  # Used by test_fetchers_facade_data.py::Test_Facade::test_to_index_coriolis
+        WMO_list.append(
+            2901623
+        )  # Used by test_fetchers_facade_data.py::Test_Facade::test_to_index_coriolis
 
         for uri in [
             "https://dataselection.euro-argo.eu/api/trajectory/%i" % wmo
@@ -966,6 +954,25 @@ class Lister:
         for uri in uris:
             file_extension = uri.split(".")[-1]
             this_URI.commit(self.dfile("%s/%s" % (repo, uri), file_extension))
+
+        return self.respond(this_URI)
+
+    @property
+    def argofloat(self):
+        this_URI = UriRegistry(name="argofloat")
+
+        for wmo in [13857, 3902131]:
+            af = ArgoFloat(wmo, host='https')
+            this_URI.commit(self.dfile(af.path, "html"))
+
+            uri = af.host_sep.join([af.path, "profiles"])
+            this_URI.commit(self.dfile(uri, "html"))
+
+            for key, uri in af.ls_dataset().items():
+                this_URI.commit(self.dfile(uri, "nc"))
+
+            for key, uri in af.api_point.items():
+                this_URI.commit(self.dfile(uri, "json"))
 
         return self.respond(this_URI)
 
@@ -1057,6 +1064,8 @@ def clear_data(target=None):
 def consolidate(target=None):
     """
     Check file content, if not what is expected, or some known errors, delete file and record in DB
+
+    todo: target is not used !
     """
     log.debug("Consolidate ...")
 
@@ -1065,36 +1074,49 @@ def consolidate(target=None):
     else:
         targets = [target]
 
-    L = Lister()
-    for t in targets:
-        n_delete = 0
-        if Path(DB_FILE).exists():
-            with open(DB_FILE, "r") as f:
-                URIs = json.load(f)
-            for item in URIs:
-                file_path = Path(DATA_FOLDER).joinpath(
-                    "%s.%s" % (item["sha"], item["ext"])
-                )
-                with open(file_path, mode="rb") as file:
-                    data = file.read()
-                if data[0:3] in [b"Err", b"<!D"] and item["ext"] in ["nc"]:
-                    print("🚨 Bad %s in %s" % (item["type"], file_path))
-                    print("▶ Record: ", item)
-                    print("▶ Content:", data[0:100])
-                    txt = ""
-                    while txt.lower() not in ["y", "n"]:
-                        txt = input("Do you confirm to suppress this record ? [y]/n")
-                    if txt == "y" or txt == "":
-                        n_delete += 1
-                        file_path.unlink()
-                        URIs.remove(item)
-            if n_delete > 0:
-                with open(DB_FILE, "w") as f:
-                    json.dump(URIs, f, indent=4)
-                print(
-                    "\tCleared %i files on disk and from registry because of bad content"
-                    % n_delete
-                )
+    n_delete = 0
+    if Path(DB_FILE).exists():
+        with open(DB_FILE, "r") as f:
+            URIs = json.load(f)
+        for item in URIs:
+            file_path = Path(DATA_FOLDER).joinpath(
+                "%s.%s" % (item["sha"], item["ext"])
+            )
+            with open(file_path, mode="rb") as file:
+                data = file.read()
+            # if data[0:3] in [b"Err", b"<!D"] and item["ext"] in ["nc"]:
+
+            if item["ext"] in ["nc"] and data[0:3] not in [b"CDF", b"\x89HD"]:
+                recommended = 'r'
+
+                if b"<title>502 Proxy Error</title>" in data:
+                    recommended = 'r'
+
+                if b"Not Found: Your query produced no matching results. (nRows = 0)" in data:
+                    recommended = 'k'
+
+                print("🚨 Unexpected %s content in: %s" % (item["type"], file_path))
+                print("▶ Record: ", item)
+                print("▶ Content[0:100] = ", data[0:100])
+                txt = "?"
+                while txt.lower() not in ["k", "r", ""]:
+                    txt = input("What do you want to do with this record ? [k]eep or [r]emove (we recommend '%s')" % recommended)
+                if txt == "" and recommended == 'r':
+                    txt = "r"
+
+                if txt == 'r':
+                    n_delete += 1
+                    file_path.unlink()
+                    URIs.remove(item)
+
+        if n_delete > 0:
+            with open(DB_FILE, "w") as f:
+                json.dump(URIs, f, indent=4)
+            print(
+                "\tCleared %i files on disk and from registry because of bad content"
+                % n_delete
+            )
+
     if n_delete == 0:
         print("Everything looks good so far !")
 
@@ -1106,7 +1128,7 @@ def search_data(url=None):
         found = False
         results = []
         for item in URIs:
-            if unquote(url) in item['uri'] or url in item['uri']:
+            if unquote(url) in item["uri"] or url in item["uri"]:
                 results.append(item)
                 found = True
         if found:
@@ -1115,7 +1137,6 @@ def search_data(url=None):
                 print("▶ ", r)
         else:
             print("\n❌ No items correspond to your search")
-
 
 
 if __name__ == "__main__":

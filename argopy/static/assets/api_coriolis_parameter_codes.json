@@ -1,12 +1,11 @@
 {
   "name": "parameters",
   "long_name": "All valid requests to https://api-coriolis.ifremer.fr/legacy/parameter?code={code}",
-  "last_update": "2024-09-20T09:27:55.145057+00:00",
+  "last_update": "2025-08-20T06:51:59.232023+00:00",
   "data": {
     "valid_codes": [
       "9",
       "11",
-      "12",
       "13",
       "20",
       "28",
@@ -44,7 +43,6 @@
       "88",
       "89",
       "90",
-      "94",
       "95",
       "96",
       "97",
@@ -68,7 +66,6 @@
       "150",
       "151",
       "153",
-      "154",
       "155",
       "156",
       "157",
@@ -528,12 +525,22 @@
       "780",
       "781",
       "782",
-      "783"
+      "783",
+      "784",
+      "785",
+      "786",
+      "787",
+      "788",
+      "789",
+      "790",
+      "791",
+      "792",
+      "793",
+      "794"
     ],
     "valid_params": [
       "DEPH",
       "DOXY",
-      "UDOX",
       "EWCT",
       "NSCT",
       "PRES",
@@ -571,7 +578,6 @@
       "WDIR",
       "DRYT",
       "RELH",
-      "SWPR",
       "SWHT",
       "TEMP_DOXY",
       "TEMP_DOXY_ADJUSTED",
@@ -595,7 +601,6 @@
       "PRRD",
       "PETD",
       "DEWT",
-      "SWDR",
       "FLU3",
       "LGH4",
       "TRANSMISSIVITY",
@@ -1045,7 +1050,18 @@
       "EXT_780",
       "EXT_781",
       "EXT_782",
-      "EXT_783"
+      "EXT_783",
+      "LEAW",
+      "ZINW",
+      "URAW",
+      "MOLW",
+      "MERW",
+      "MEHG",
+      "PHTX",
+      "CIDA",
+      "NFHW",
+      "CXAP",
+      "CRSW"
     ],
     "codes": {
       "9": {
@@ -1066,16 +1082,6 @@
         "gf3_extended_name": "",
         "parent_code": "0",
         "label": "Dissolved oxygen",
-        "param_type": "P"
-      },
-      "12": {
-        "unit": "unknown",
-        "time_sampling": "",
-        "code": "12",
-        "gf3_strict_name": "",
-        "gf3_extended_name": "UDOX",
-        "parent_code": "0",
-        "label": "Dissolved oxygen (deprecated)",
         "param_type": "P"
       },
       "13": {
@@ -1113,7 +1119,7 @@
         "time_sampling": "",
         "code": "30",
         "gf3_strict_name": "PSAL",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "SSPS",
         "parent_code": "0",
         "label": "Practical salinity",
         "param_type": "P"
@@ -1123,7 +1129,7 @@
         "time_sampling": "",
         "code": "35",
         "gf3_strict_name": "TEMP",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "SSTP",
         "parent_code": "0",
         "label": "Sea temperature",
         "param_type": "P"
@@ -1203,7 +1209,7 @@
         "time_sampling": "",
         "code": "59",
         "gf3_strict_name": "HCSP",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "SCSP",
         "parent_code": "0",
         "label": "Horizontal current speed",
         "param_type": "P"
@@ -1213,7 +1219,7 @@
         "time_sampling": "",
         "code": "60",
         "gf3_strict_name": "HCDT",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "SCDT",
         "parent_code": "0",
         "label": "Current to direction relative true north",
         "param_type": "P"
@@ -1253,7 +1259,7 @@
         "time_sampling": "",
         "code": "65",
         "gf3_strict_name": "CPHL",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "CPH$",
         "parent_code": "0",
         "label": "Chlorophyll-a",
         "param_type": "P"
@@ -1448,16 +1454,6 @@
         "label": "Relative humidity",
         "param_type": "P"
       },
-      "94": {
-        "unit": "second",
-        "time_sampling": "",
-        "code": "94",
-        "gf3_strict_name": "SWPR",
-        "gf3_extended_name": "",
-        "parent_code": "0",
-        "label": "SWELL PERIOD",
-        "param_type": "P"
-      },
       "95": {
         "unit": "meter",
         "time_sampling": "",
@@ -1640,7 +1636,7 @@
       },
       "146": {
         "unit": "meter",
-        "time_sampling": "",
+        "time_sampling": "3",
         "code": "712",
         "gf3_strict_name": "SLEV",
         "gf3_extended_name": "",
@@ -1686,16 +1682,6 @@
         "gf3_extended_name": "",
         "parent_code": "0",
         "label": "Dew point temperature",
-        "param_type": "P"
-      },
-      "154": {
-        "unit": "degree",
-        "time_sampling": "",
-        "code": "154",
-        "gf3_strict_name": "SWDR",
-        "gf3_extended_name": "",
-        "parent_code": "0",
-        "label": "SWELL DIRECTION REL TRUE N.",
         "param_type": "P"
       },
       "155": {
@@ -3263,7 +3249,7 @@
         "time_sampling": "",
         "code": "403",
         "gf3_strict_name": "PHTP",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "PHA$",
         "parent_code": "0",
         "label": "Total Pheophytin",
         "param_type": "P"
@@ -4253,7 +4239,7 @@
         "time_sampling": "",
         "code": "579",
         "gf3_strict_name": "LGHT",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "DOWNWELLING_PAR",
         "parent_code": "0",
         "label": "Immerged incoming photosynthetic active radiation",
         "param_type": "P"
@@ -6197,6 +6183,116 @@
         "parent_code": "0",
         "label": "Biodiversity phytoplankton count",
         "param_type": "E"
+      },
+      "784": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "784",
+        "gf3_strict_name": "LEAW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Total lead",
+        "param_type": "P"
+      },
+      "785": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "785",
+        "gf3_strict_name": "ZINW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Total zinc",
+        "param_type": "P"
+      },
+      "786": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "786",
+        "gf3_strict_name": "URAW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Total uranium",
+        "param_type": "P"
+      },
+      "787": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "787",
+        "gf3_strict_name": "MOLW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Total molybdenum",
+        "param_type": "P"
+      },
+      "788": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "788",
+        "gf3_strict_name": "MERW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Total mercury",
+        "param_type": "P"
+      },
+      "789": {
+        "unit": "microgram/m3",
+        "time_sampling": "",
+        "code": "789",
+        "gf3_strict_name": "MEHG",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Total methylmercury cation",
+        "param_type": "P"
+      },
+      "790": {
+        "unit": "degree_Celsius",
+        "time_sampling": "",
+        "code": "790",
+        "gf3_strict_name": "PHTX",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Temperature of pH measurement",
+        "param_type": "T"
+      },
+      "791": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "791",
+        "gf3_strict_name": "CIDA",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Chlorophyllide-a",
+        "param_type": "P"
+      },
+      "792": {
+        "unit": "10+3/m3",
+        "time_sampling": "",
+        "code": "792",
+        "gf3_strict_name": "NFHW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Abundance of heterotrophic nanoflagellate >2 <20 micrometers",
+        "param_type": "P"
+      },
+      "793": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "793",
+        "gf3_strict_name": "CXAP",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Crocoxanthin",
+        "param_type": "P"
+      },
+      "794": {
+        "unit": "10+3/m3",
+        "time_sampling": "",
+        "code": "794",
+        "gf3_strict_name": "CRSW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Abundance of cryptophyceae (flow cytometry)",
+        "param_type": "P"
       }
     },
     "params": {
@@ -6218,16 +6314,6 @@
         "gf3_extended_name": "",
         "parent_code": "0",
         "label": "Dissolved oxygen",
-        "param_type": "P"
-      },
-      "UDOX": {
-        "unit": "unknown",
-        "time_sampling": "",
-        "code": "12",
-        "gf3_strict_name": "",
-        "gf3_extended_name": "UDOX",
-        "parent_code": "0",
-        "label": "Dissolved oxygen (deprecated)",
         "param_type": "P"
       },
       "EWCT": {
@@ -6265,7 +6351,7 @@
         "time_sampling": "",
         "code": "30",
         "gf3_strict_name": "PSAL",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "SSPS",
         "parent_code": "0",
         "label": "Practical salinity",
         "param_type": "P"
@@ -6275,7 +6361,7 @@
         "time_sampling": "",
         "code": "35",
         "gf3_strict_name": "TEMP",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "SSTP",
         "parent_code": "0",
         "label": "Sea temperature",
         "param_type": "P"
@@ -6355,7 +6441,7 @@
         "time_sampling": "",
         "code": "59",
         "gf3_strict_name": "HCSP",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "SCSP",
         "parent_code": "0",
         "label": "Horizontal current speed",
         "param_type": "P"
@@ -6365,7 +6451,7 @@
         "time_sampling": "",
         "code": "60",
         "gf3_strict_name": "HCDT",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "SCDT",
         "parent_code": "0",
         "label": "Current to direction relative true north",
         "param_type": "P"
@@ -6405,7 +6491,7 @@
         "time_sampling": "",
         "code": "65",
         "gf3_strict_name": "CPHL",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "CPH$",
         "parent_code": "0",
         "label": "Chlorophyll-a",
         "param_type": "P"
@@ -6600,16 +6686,6 @@
         "label": "Relative humidity",
         "param_type": "P"
       },
-      "SWPR": {
-        "unit": "second",
-        "time_sampling": "",
-        "code": "94",
-        "gf3_strict_name": "SWPR",
-        "gf3_extended_name": "",
-        "parent_code": "0",
-        "label": "SWELL PERIOD",
-        "param_type": "P"
-      },
       "SWHT": {
         "unit": "meter",
         "time_sampling": "",
@@ -6792,7 +6868,7 @@
       },
       "SLEV": {
         "unit": "meter",
-        "time_sampling": "",
+        "time_sampling": "3",
         "code": "712",
         "gf3_strict_name": "SLEV",
         "gf3_extended_name": "",
@@ -6838,16 +6914,6 @@
         "gf3_extended_name": "",
         "parent_code": "0",
         "label": "Dew point temperature",
-        "param_type": "P"
-      },
-      "SWDR": {
-        "unit": "degree",
-        "time_sampling": "",
-        "code": "154",
-        "gf3_strict_name": "SWDR",
-        "gf3_extended_name": "",
-        "parent_code": "0",
-        "label": "SWELL DIRECTION REL TRUE N.",
         "param_type": "P"
       },
       "FLU3": {
@@ -8415,7 +8481,7 @@
         "time_sampling": "",
         "code": "403",
         "gf3_strict_name": "PHTP",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "PHA$",
         "parent_code": "0",
         "label": "Total Pheophytin",
         "param_type": "P"
@@ -9405,7 +9471,7 @@
         "time_sampling": "",
         "code": "579",
         "gf3_strict_name": "LGHT",
-        "gf3_extended_name": "",
+        "gf3_extended_name": "DOWNWELLING_PAR",
         "parent_code": "0",
         "label": "Immerged incoming photosynthetic active radiation",
         "param_type": "P"
@@ -11349,6 +11415,116 @@
         "parent_code": "0",
         "label": "Biodiversity phytoplankton count",
         "param_type": "E"
+      },
+      "LEAW": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "784",
+        "gf3_strict_name": "LEAW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Total lead",
+        "param_type": "P"
+      },
+      "ZINW": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "785",
+        "gf3_strict_name": "ZINW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Total zinc",
+        "param_type": "P"
+      },
+      "URAW": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "786",
+        "gf3_strict_name": "URAW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Total uranium",
+        "param_type": "P"
+      },
+      "MOLW": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "787",
+        "gf3_strict_name": "MOLW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Total molybdenum",
+        "param_type": "P"
+      },
+      "MERW": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "788",
+        "gf3_strict_name": "MERW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Total mercury",
+        "param_type": "P"
+      },
+      "MEHG": {
+        "unit": "microgram/m3",
+        "time_sampling": "",
+        "code": "789",
+        "gf3_strict_name": "MEHG",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Total methylmercury cation",
+        "param_type": "P"
+      },
+      "PHTX": {
+        "unit": "degree_Celsius",
+        "time_sampling": "",
+        "code": "790",
+        "gf3_strict_name": "PHTX",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Temperature of pH measurement",
+        "param_type": "T"
+      },
+      "CIDA": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "791",
+        "gf3_strict_name": "CIDA",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Chlorophyllide-a",
+        "param_type": "P"
+      },
+      "NFHW": {
+        "unit": "10+3/m3",
+        "time_sampling": "",
+        "code": "792",
+        "gf3_strict_name": "NFHW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Abundance of heterotrophic nanoflagellate >2 <20 micrometers",
+        "param_type": "P"
+      },
+      "CXAP": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "793",
+        "gf3_strict_name": "CXAP",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Crocoxanthin",
+        "param_type": "P"
+      },
+      "CRSW": {
+        "unit": "10+3/m3",
+        "time_sampling": "",
+        "code": "794",
+        "gf3_strict_name": "CRSW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Abundance of cryptophyceae (flow cytometry)",
+        "param_type": "P"
       }
     }
   }

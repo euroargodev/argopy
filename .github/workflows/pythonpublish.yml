@@ -1,7 +1,7 @@
 name: Build and Upload to PyPI
 on:
   release:
-    types: [created, edited]
+    types: published
   workflow_dispatch:
 
 
@@ -11,13 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository == 'euroargodev/argopy'
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v3
+      - uses: actions/setup-python@v6
         name: Install Python
         with:
-          python-version: 3.8
+          python-version: "3.10"
 
       - name: Install dependencies
         run: |
@@ -49,12 +49,12 @@ jobs:
     needs: build-artifacts
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-python@v3
+      - uses: actions/setup-python@v6
         name: Install Python
         with:
-          python-version: 3.8
+          python-version: "3.10"
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           name: releases
           path: dist
@@ -79,7 +79,7 @@ jobs:
       # IMPORTANT: this permission is mandatory for trusted publishing
       id-token: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           name: releases
           path: dist
@@ -101,7 +101,7 @@ jobs:
       # IMPORTANT: this permission is mandatory for trusted publishing
       id-token: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           name: releases
           path: dist

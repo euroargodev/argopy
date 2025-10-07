@@ -472,40 +472,6 @@
             "owl:versionInfo": "1"
         },
         {
-            "@id": "http://vocab.nerc.ac.uk/collection/R26/current/MICRON/",
-            "pav:authoredOn": "2021-02-11 14:21:39.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R26/current/MICRON/1/"
-            },
-            "dce:identifier": "SDN:R26::MICRON",
-            "pav:version": "1",
-            "skos:notation": "SDN:R26::MICRON",
-            "skos:altLabel": "MICRON",
-            "dc:date": "2021-02-11 14:21:39.0",
-            "skos:narrower": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/MP40_C_2000_G/"
-            },
-            "owl:versionInfo": "1",
-            "skos:prefLabel": {
-                "@language": "en",
-                "@value": "Micron Instruments"
-            },
-            "dc:identifier": "SDN:R26::MICRON",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
-            },
-            "owl:deprecated": "false",
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "skos:definition": {
-                "@language": "en",
-                "@value": "A manufacturing company located in Simi Valley, California (United States of America), specialised in the production and supply of semiconductor strain gages, pressure transducers, temperature sensors and measuring systems."
-            },
-            "@type": "skos:Concept"
-        },
-        {
             "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SEASCAN/",
             "pav:authoredOn": "2021-02-11 14:21:39.0",
             "pav:hasCurrentVersion": {
@@ -853,6 +819,43 @@
             "@type": "skos:Concept"
         },
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R26/current/MICRON/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R26/current/MICRON/1/"
+            },
+            "@type": "skos:Concept",
+            "skos:definition": {
+                "@language": "en",
+                "@value": "A manufacturing company located in Simi Valley, California (United States of America), specialised in the production and supply of semiconductor strain gages, pressure transducers, temperature sensors and measuring systems (also operating as Piezo-metrics)."
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R26::MICRON",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Micron Instruments"
+            },
+            "owl:versionInfo": "2",
+            "skos:narrower": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/MP40_C_2000_G/"
+            },
+            "dc:date": "2025-06-05 09:26:36.0",
+            "skos:altLabel": "MICRON",
+            "skos:notation": "SDN:R26::MICRON",
+            "pav:version": "2",
+            "dce:identifier": "SDN:R26::MICRON",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R26/current/MICRON/2/"
+            },
+            "pav:authoredOn": "2025-06-05 09:26:36.0"
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R26/current/AMETEK/",
             "pav:authoredOn": "2019-10-11 15:08:43.0",
             "@type": "skos:Concept",
@@ -1114,6 +1117,12 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_R10W/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBBCD/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_AP2/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/C_ROVER/"
                 },
                 {
@@ -1130,15 +1139,17 @@
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB2/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_AP2/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBBCD/"
                 }
             ],
             "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A large, global company based in the United States of America that develops and manufactures products for the measurement of salinity, temperature, pressure, dissolved oxygen, fluorescence, nutrients and related oceanographic parameters in marine waters. It is formed from three ocean science companies, Sea-Bird Electronics, WET Labs and Satlantic that were combined in 2011."
@@ -1226,9 +1237,6 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/MICRON/"
-                },
-                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SEASCAN/"
                 },
                 {
@@ -1256,6 +1264,9 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R26/current/MENSOR/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/MICRON/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R26/current/AMETEK/"
                 },
                 {
@@ -1270,8 +1281,8 @@
             "dc:description": "Terms describing developers and manufacturers of sensors mounted on Argo floats. Argo netCDF variable SENSOR_MAKER is populated by R26 altLabel.",
             "dc:title": "Argo sensor manufacturers",
             "skos:prefLabel": "Argo sensor manufacturers",
-            "owl:versionInfo": "4",
-            "dc:date": "2021-09-15 03:00:07.0",
+            "owl:versionInfo": "5",
+            "dc:date": "2025-06-06 03:00:01.0",
             "skos:altLabel": "SENSOR_MAKER",
             "dc:creator": "Argo Data Management Team",
             "dc:alternative": "SENSOR_MAKER",

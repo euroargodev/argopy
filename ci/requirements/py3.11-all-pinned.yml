@@ -1,0 +1,65 @@
+name: argopy-tests
+channels:
+  - conda-forge
+dependencies:
+  - python = 3.11
+
+# CORE:
+  - aiohttp = 3.12.14
+  - decorator = 5.2.1
+  - erddapy = 2.2.4
+  - fsspec = 2025.5.1
+  - h5netcdf = 1.6.3
+  - netCDF4 = 1.7.2
+  - packaging = 25.0
+  - requests = 2.32.4
+  - scipy = 1.16.0
+  - toolz = 1.0.0
+  - xarray = 2025.7.1
+
+# EXT.UTIL:
+  - gsw = 3.6.19
+  - tqdm = 4.67.1
+
+# EXT.FILES:
+  - boto3 = 1.38.27
+  - kerchunk = 0.2.8
+  - numcodecs = 0.16.1
+  - s3fs = 2025.5.1
+  - zarr = 3.0.10
+
+# EXT.PERF:
+  - dask = 2025.5.1
+  - distributed = 2025.5.1
+  - pyarrow = 20.0.0
+
+# EXT.PLOT:
+  - IPython = 9.4.0
+  - cartopy = 0.24.0
+  - ipykernel = 6.29.5
+  - ipywidgets = 8.1.7
+  - matplotlib = 3.10.3
+  - pyproj = 3.7.1
+  - seaborn = 0.13.2
+
+# DEV:
+  - aiofiles = 24.1.0
+  - black = 25.1.0
+  - bottleneck = 1.5.0
+  - cfgrib = 0.9.15.0
+  - cftime = 1.6.4
+  - codespell = 2.4.1
+  - flake8 = 7.3.0
+  - numpy = 2.3.1
+  - pandas = 2.3.1
+  - pip = 25.1.1
+  - pytest = 8.4.1
+  - pytest-cov = 6.2.1
+  - pytest-env = 1.1.5
+  - pytest-localftpserver
+  - setuptools = 80.9.0
+#  - sphinx = -
+
+# PIP:
+  - pip:
+      - pytest-reportlog == 0.4.0

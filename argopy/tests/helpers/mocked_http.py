@@ -15,6 +15,7 @@ Servers covered by this fixture:
             "https://coastwatch.pfeg.noaa.gov/erddap",
             "https://www.ocean-ops.org/api/1",
             "https://dataselection.euro-argo.eu/api",
+            "https://fleetmonitoring.euro-argo.eu",
             "https://vocab.nerc.ac.uk/collection",
             "https://argovis-api.colorado.edu",
             "https://dx.doi.org",
@@ -92,6 +93,7 @@ if DB_FILE.exists():
             "https://coastwatch.pfeg.noaa.gov/erddap",
             "https://www.ocean-ops.org/api/1",
             "https://dataselection.euro-argo.eu/api",
+            "https://fleetmonitoring.euro-argo.eu",
             "https://vocab.nerc.ac.uk/collection",
             "https://argovis-api.colorado.edu",
             # "https://argovisbeta02.colorado.edu",
@@ -162,8 +164,10 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
         # log.debug("Requesting: '%s'" % file_path)
         # log.debug("Found: %s" % (file_path in self.files.keys()))
         # log.debug("Found B: %s" % (file_path in MOCKED_REQUESTS.keys()))
-
         # [log.debug("\t└─ '%s'" % k) for k in self.files.keys()]
+        # [log.debug("\t└─ '%s': %s" % (k, v) for k, v in self.headers.items())]
+        # log.debug("Headers: ")
+        # log.debug("\n".join([f"\t└─ '{k}': {self.headers[k]}" for k in self.headers.keys()]))
 
         file_data = self.files.get(file_path)
         if "give_path" in self.headers:
@@ -189,13 +193,17 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
                 file_data = file_data[-int(end) :]
             if "use_206" in self.headers:
                 status = 206
-        if "give_length" in self.headers:
-            response_headers = {"Content-Length": n}
-            self._respond(status, response_headers, file_data)
-        elif "give_range" in self.headers:
-            self._respond(status, {"Content-Range": content_range}, file_data)
-        else:
-            self._respond(status, data=file_data)
+
+        response_headers = {"Content-Length": n, "Content-Range": content_range}
+        self._respond(status, response_headers, file_data)
+
+        # if "give_length" in self.headers:
+        #     response_headers = {"Content-Length": n}
+        #     self._respond(status, response_headers, file_data)
+        # elif "give_range" in self.headers:
+        #     self._respond(status, {"Content-Range": content_range}, file_data)
+        # else:
+        #     self._respond(status, data=file_data)
 
     def do_POST(self):
         length = self.headers.get("Content-Length")

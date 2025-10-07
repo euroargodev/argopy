@@ -1,0 +1,78 @@
+name: argopy-coiled
+channels:
+  - conda-forge
+dependencies:
+  - python = 3.11
+
+# CORE:
+  - aiohttp
+  - decorator
+  - erddapy
+  - fsspec
+  - h5netcdf
+  - netCDF4
+  - packaging
+  - requests
+  - scipy
+  - toolz
+  - xarray >= 2025.7.0
+
+# EXT.UTIL:
+  - gsw
+  - tqdm
+
+# EXT.FILES:
+  - boto3
+  - kerchunk
+  - numcodecs
+  - s3fs
+  - zarr
+
+# EXT.PERF:
+  - dask
+  - distributed
+  - pyarrow
+
+# EXT.PLOT:
+  - IPython
+  - cartopy
+  - ipykernel
+  - ipywidgets
+  - matplotlib
+  - pyproj
+  - seaborn
+
+# DEV:
+  - aiofiles
+  - black
+  - bottleneck
+  - cfgrib
+  - cftime
+  - codespell
+  - flake8
+  - numpy
+  - pandas
+  - pip
+#  - pytest
+#  - pytest-cov
+#  - pytest-env
+#  - pytest-localftpserver
+  - setuptools
+#  - sphinx
+
+# PIP:
+#  - pip:
+#      - pytest-reportlog
+
+# COILED:
+  - coiled
+  - google-cloud-sdk
+  - gcsfs
+  - intake
+  - intake-xarray
+  - dask-ml
+  - xarrayutils
+
+  - pip:
+      - httpimport
+      - coiled[notebook]

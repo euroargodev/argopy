@@ -1,8 +1,11 @@
 import urllib
-import warnings
 import importlib
 import time
 import threading
+import logging
+
+from .lists import list_available_data_src
+from .checkers import isAPIconnected
 
 try:
     importlib.import_module("matplotlib")  # noqa: E402
@@ -10,8 +13,8 @@ try:
 except ImportError:
     pass
 
-from .lists import list_available_data_src
-from .checkers import isAPIconnected
+
+log = logging.getLogger("argopy.utils.monitors")
 
 
 def badge(label="label", message="message", color="green", insert=False):
@@ -50,11 +53,6 @@ def badge(label="label", message="message", color="green", insert=False):
 
 class fetch_status:
     """Fetch and report web API status"""
-
-    def __init__(self, **kwargs):
-        if "stdout" in kwargs or "insert" in kwargs:
-            warnings.warn("'fetch_status' signature has changed")
-        pass
 
     def fetch(self):
         results = {}

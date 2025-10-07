@@ -1,83 +1,5 @@
-"""
-
-Disclosure
-----------
-The following methods `AccessorRegistrationWarning`, `_CachedAccessor` and `_register_accessor` are
-sourced from https://github.com/pydata/xarray/blob/main/xarray/core/extensions.py
-
-The class `register_argo_accessor` is an adaption of the `register_dataset_accessor` from xarray.
-
-"""
-
-import warnings
 from ..xarray import xr, ArgoAccessor
-
-
-class AccessorRegistrationWarning(Warning):
-    """Warning for conflicts in accessor registration.
-
-    Disclosure
-    ----------
-    This class was copied from [xarray](https://github.com/pydata/xarray/blob/main/xarray/core/extensions.py)
-    under Apache License 2.0
-    """
-
-
-class _CachedAccessor:
-    """Custom property-like object (descriptor) for caching accessors.
-
-    Disclosure
-    ----------
-    This class was copied from [xarray](https://github.com/pydata/xarray/blob/main/xarray/core/extensions.py)
-    under Apache License 2.0
-    """
-
-    def __init__(self, name, accessor):
-        self._name = name
-        self._accessor = accessor
-
-    def __get__(self, obj, cls):
-        if obj is None:
-            # we're accessing the attribute of the class, i.e., Dataset.argo.canyon
-            return self._accessor
-
-        # Use the same dict as @pandas.util.cache_readonly.
-        # It must be explicitly declared in obj.__slots__.
-        try:
-            cache = obj._cache
-        except AttributeError:
-            cache = obj._cache = {}
-
-        try:
-            return cache[self._name]
-        except KeyError:
-            pass
-
-        try:
-            accessor_obj = self._accessor(obj)
-        except AttributeError:
-            # __getattr__ on data object will swallow any AttributeErrors
-            # raised when initializing the accessor, so we need to raise as
-            # something else (GH933):
-            raise RuntimeError(f"error initializing {self._name!r} accessor.")
-
-        cache[self._name] = accessor_obj
-        return accessor_obj
-
-
-def _register_accessor(name, cls):
-    def decorator(accessor):
-        if hasattr(cls, name):
-            warnings.warn(
-                f"registration of accessor {accessor!r} under name {name!r} for type {cls!r} is "
-                "overriding a preexisting attribute with the same name.",
-                AccessorRegistrationWarning,
-                stacklevel=2,
-            )
-        setattr(cls, name, _CachedAccessor(name, accessor))
-        return accessor
-
-    return decorator
+from ..utils import register_accessor
 
 
 def register_argo_accessor(name):
@@ -119,7 +41,7 @@ def register_argo_accessor(name):
     :class:`argopy.extensions.ArgoAccessorExtension`
 
     """
-    return _register_accessor(name, ArgoAccessor)
+    return register_accessor(name, ArgoAccessor)
 
 
 class ArgoAccessorExtension:

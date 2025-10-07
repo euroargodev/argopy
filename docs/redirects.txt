@@ -11,3 +11,7 @@ generated/argopy.utilities.ArgoNVSReferenceTables.rst generated/argopy.related.A
 # generated/argopy.utilities.drop_variables_not_in_all_datasets generated/argopy.utils.drop_variables_not_in_all_datasets.rst
 # generated/argopy.utilities.fill_variables_not_in_all_datasets generated/argopy.utils.fill_variables_not_in_all_datasets.rst
 # generated/argopy.utilities.load_dict generated/argopy.related.load_dict.rst
+generated/argopy.xarray.ArgoAccessor.transform_data_mode.rst generated/argopy.Dataset.argo.datamode.merge.rst
+generated/argopy.xarray.ArgoAccessor.filter_data_mode.rst generated/argopy.Dataset.argo.datamode.filter.rst
+#
+

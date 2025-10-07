@@ -2092,7 +2092,10 @@
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R03/current/MOLAR_DOXY/",
-            "pav:authoredOn": "2020-04-04 15:05:33.0",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R03/current/MOLAR_DOXY/1/"
+            },
+            "pav:authoredOn": "2024-12-11 11:08:38.0",
             "@type": "skos:Concept",
             "skos:related": {
                 "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UPOX/"
@@ -2112,19 +2115,19 @@
             "dc:identifier": "SDN:R03::MOLAR_DOXY",
             "skos:prefLabel": {
                 "@language": "en",
-                "@value": "Uncompensated (pressure and salinity) oxygen concentration reported\nby the oxygen sensor"
+                "@value": "Uncompensated (pressure and salinity) oxygen concentration reported by the oxygen sensor"
             },
-            "owl:versionInfo": "1",
-            "dc:date": "2020-04-04 15:05:33.0",
+            "owl:versionInfo": "2",
+            "dc:date": "2024-12-11 11:08:38.0",
             "skos:altLabel": "MOLAR_DOXY",
             "skos:notation": "SDN:R03::MOLAR_DOXY",
             "owl:sameAs": {
                 "@id": "http://vocab.nerc.ac.uk/collection/P01/current/DOXYMMOP/"
             },
-            "pav:version": "1",
+            "pav:version": "2",
             "dce:identifier": "SDN:R03::MOLAR_DOXY",
             "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R03/current/MOLAR_DOXY/1/"
+                "@id": "http://vocab.nerc.ac.uk/collection/R03/current/MOLAR_DOXY/2/"
             }
         },
         {
@@ -3858,8 +3861,8 @@
             "dc:description": "Terms describing individual measured phenomena, used to mark up sets of data in Argo netCDF arrays. Argo netCDF variables PARAMETER and TRAJECTORY_PARAMETERS are populated by R03 altLabel; R03 altLabel is also used to name netCDF profile files parameter variables <PARAMETER>.",
             "dc:title": "Argo parameter codes",
             "skos:prefLabel": "Argo parameter codes",
-            "owl:versionInfo": "7",
-            "dc:date": "2024-08-21 03:00:01.0",
+            "owl:versionInfo": "8",
+            "dc:date": "2024-12-12 02:00:01.0",
             "skos:altLabel": "PARAMETER",
             "dc:creator": "Argo Data Management Team",
             "dc:alternative": "PARAMETER",

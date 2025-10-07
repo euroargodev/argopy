@@ -287,23 +287,24 @@ We created a short command line script to help manage argopy virtual environment
     $ ./ci/envs_manager -l
 
     Available environments:
-         argopy-py310-all-free
          argopy-docs-rtd
-         argopy-py310-all-pinned
-         argopy-py310-core-pinned
-         argopy-docs-dev
-         argopy-py39-all-free
-         argopy-py39-core-free
-         argopy-py39-all-pinned
-         argopy-py39-core-pinned
-         argopy-py310-core-free
+         argopy-py311-all-free
+         argopy-py311-core-free
+         argopy-py311-all-pinned
+         argopy-py311-core-pinned
+         argopy-py312-all-free
+         argopy-py312-core-free
+         argopy-py312-all-pinned
+         argopy-py312-core-pinned
+
+Some legacy environment files could persist in the ./ci/requirements folder.
 
 Then, you can simply install the default dev environment like this:
 
 .. code-block:: bash
 
-    $ ./ci/envs_manager -i argopy-py38-all-pinned
-    $ conda activate argopy-py38-all-pinned
+    $ ./ci/envs_manager -i argopy-py311-all-pinned
+    $ conda activate argopy-py311-all-pinned
     $ pip install -e .
     $ python -c 'import argopy; argopy.show_versions()'
 
@@ -483,4 +484,3 @@ that whatever the data source set by users, the output xarray or
 dataframe will be formatted and contain the same variables. This will
 also ensure that other argopy features can be used on the new fetcher
 output, like plotting or xarray data manipulation.
-

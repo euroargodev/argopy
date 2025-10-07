@@ -7,26 +7,231 @@ What's New
 
 |pypi dwn| |conda dwn|
 
+Coming up next (unreleased)
+---------------------------
 
-Coming up next in v1.0
-----------------------
+Internals
+---------
 
-.. versionadded:: v1.0
+- **Updated User-Agent header field for HTTP requests**. The default aiottp header field User-Agent is now complemented with Argopy information in order to ease server side log analysis. The User-Agent is now somethink like: ``"User-Agent": Python/3.11 aiohttp/3.12.14 Argopy/1.3.0 (+https://github.com/euroargodev/argopy)``, :issue:`533`. (:pr:`534`) by |gmaze|.
 
-    This new release is a major !
+- **New post method for the** :class:`stores.httpstore` by |gmaze|.
 
-    It comes with improved support for the BGC-Argo dataset but also introduces breaking changes (see below).
+- **Fix upstream compatibility** whereby xarray >= 2025.8 deprecation cycle for changing default keyword arguments in :meth:`xarray.merge` and :meth:`xarray.concat` would make Argopy to fail with internal data processing, :issue:`521`. (:pr:`504`) by |gmaze|.
 
+
+v1.3.0 (22 Aug. 2025)
+---------------------
+
+.. versionadded:: v1.3.0
+
+    This new **argopy** version requires Python 3.11 !
+
+.. _v1.3.0-features:
+
+Features and front-end API
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- :class:`ArgoIndex` **plotting features**: you can now use the new :class:`ArgoIndex.plot` accessor to call on visualizations tool for trajectories or parameters bar plots. See all details on the documentation section about data visualization :ref:`From ArgoIndex instance`. (:pr:`504`) by |gmaze|.
+
+- :class:`ArgoFloat` **plotting features**: you can now use the new :class:`ArgoFloat.plot` accessor to call on visualizations tool for trajectories and parameters. See all details on the documentation section about data visualization :ref:`From ArgoFloat instance`. (:pr:`501`) by |gmaze|.
+
+.. _v1.3.0-internals:
+
+Internals
+^^^^^^^^^
+
+- **Fix bug** whereby depending on the new longitude convention option value, some floats trajectory would not show up on a map correctly. (:pr:`504`) by |gmaze|.
+
+- Refactoring of :class:`ArgoIndex` and :class:`ArgoFloat` to follow the same specs/facade/implementations/extensions design. (:pr:`503`)by |gmaze|.
+
+- **Fix bug** whereby the :class:`ArgoIndex` could not select profiles through the dateline :issue:`494`. (:pr:`495`) by |gmaze|. Modified by :pr:`506`.
+
+- **Fix bug** whereby a :class:`gdacfs` could not return one path info under Windows platform. :issue:`499`. (:pr:`451`) by |gmaze|.
+
+- **Identified incompatible versions of xarray**. Because of `this issue <https://github.com/pydata/xarray/issues/8909>`_ argopy is not compatible with xarray versions from 2024.3.0 to 2025.6.1, included. (:pr:`451`) by |gmaze|.
+
+.. _v1.3.0-breaking:
+
+Breaking changes
+^^^^^^^^^^^^^^^^
+
+- New argopy option `longitude_convention` and improved box region validation with :meth:`argopy.utils.is_box` and :meth:`argopy.utils.is_indexbox` may lead to unexpected breaking changes. You may need to change the longitude convention from the default '180' to '360' to fix your code. (:pr:`506`) by |gmaze|.
+
+- :meth:`argopy.utils.wmo2box` now return domain with longitude values following the new argopy option `longitude_convention`. (:pr:`506`) by |gmaze|.
+
+- :class:`argopy.plot.scatter_map` now return 3 values for the figure, axis and handles, instead of 2 values (:pr:`501`) by |gmaze|.
+
+- Drop support for Python 3.10
+
+.. _v1.3.0-energy:
+
+Energy
+^^^^^^
+
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.3.0%20%5BgCO2eq%5D-TBA-black?style=plastic&labelColor=grey
+
+
+v1.2.0 (9 June 2025)
+--------------------
+
+.. _v1.2.0-features:
 
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. currentmodule:: xarray
 
-- **Improved support for BGC**
-    - **argopy** now support `standard` and `research` user modes for the `erddap` data source with the `bgc` dataset. These new user modes follows the last available ADMT recommendations to bring users a finely tuned set of BGC parameters.
+- **Optical modeling diagnostics for BGC data**. We introduce a preliminary implementation of standard diagnostics from optical modeling. These are available through the new :class:`Dataset.argo.optic` extension. All details are in the dedicated :ref:`complement-optical-modeling` documentation page and on the API reference. (:pr:`463`) by |gmaze|.
 
-    - New BGC method :class:`Dataset.argo.canyon_med` to make CANYON-MED predictions of Water-Column Nutrient Concentrations and Carbonate System Variables in the Mediterranean Sea. This method can be used to predict PO4, NO3, DIC, SiOH4, AT and pHT. (:pr:`364`) by `G. Maze <http://www.github.com/gmaze>`_.
+- **Optimized diagnostic per profile**. If you want to execute your own diagnostic method on a collection of Argo profiles, **argopy** now provides an efficient method to do so: :meth:`Dataset.argo.reduce_profile`. Typical use case would include computation of the mixed layer depth or euphotic layer depth. All details are in the dedicated :ref:`perprofile-diag` documentation page and on the API reference of the method. (:pr:`463`) by |gmaze|.
+
+.. currentmodule:: argopy
+
+- :class:`ArgoIndex` **now support composition of several search criteria**. Thanks to a re-design of the Argo index search engine, it is now easy to use multiple search criteria to query an Argo files index. Checkout the dedicated :ref:`tools-argoindex` documentation page. (:pr:`470`) by |gmaze|.
+ 
+- **Fetch Argo data as** :class:`netCDF4.Dataset`. For the sake of compatibility with legacy codes and to encourage **argopy** adoption for all loading/reading operations, we now support data output as a `netCDF4 Dataset object <https://unidata.github.io/netcdf4-python/#netCDF4.Dataset>`_. This new feature is available at high level with the :class:`DataFetcher` and lower-level with the :class:`ArgoFloat` and :class:`gdacfs` classes. (:pr:`484`) by |gmaze|.
+
+.. _v1.2.0-internals:
+
+Internals
+^^^^^^^^^
+
+- **Open netcdf files lazily from ftp server**. Adding to s3 and http, we now support laziness with ftp using `kerchunk <https://fsspec.github.io/kerchunk/>`_. Checkout the dedicated :ref:`lazy` section of the documentation. (:pr:`460`) by |gmaze|.
+
+.. _v1.2.0-energy:
+
+Energy
+^^^^^^
+
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.2.0%20%5BgCO2eq%5D-1328.99-black?style=plastic&labelColor=grey
+
+
+v1.1.0 (18 March 2025)
+----------------------
+
+.. versionadded:: v1.1.0
+
+    Most new features in this version can be considered *advanced tools*, since they require a more intimate knowledge
+    of the Argo dataset. Therefore, we re-organised and completed the **argopy** documentation to give them more visibility.
+
+.. _v1.1.0-features:
+
+Features and front-end API
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- **New** :class:`ArgoFloat` **store for Argo netcdf file load/read operations**. Whatever the Argo netcdf file location, local or remote, you can now delegate to argopy the burden of transfer protocol and GDAC paths handling. This store is primarily intended to be used by third party libraries or in workflow by operators and experts. Checkout the dedicated :ref:`tools-argofloat` documentation page. (:pr:`429`) by |gmaze|.
+
+- **New generic file system for any GDAC host** :class:`gdacfs`. This class allows to easily creates a file system for any of the possible GDAC paths. This class returns one of the argopy file systems (file, http, ftp or s3) with a prefixed directory, so that you don't have to include the GDAC path in resources to open. The goal of this class is to separate the data source from the data processing in your workflow. Checkout the dedicated :ref:`tools-gdacfs` documentation page. (:pr:`385`, :pr:`440`) by |gmaze|.
+
+- **Experimental new data source: AWS S3 netcdf files**. This support is primarily made available for benchmarking as part of the `ADMT working group on Argo cloud format activities <https://github.com/OneArgo/ADMT/issues/5>`_. (:pr:`385`) by |gmaze|. In order to use the experimental S3 GDAC, you can point the ``gdac`` option to the `appropriate s3 bucket <https://registry.opendata.aws/argo-gdac-marinedata/>`_:
+
+.. code-block:: python
+    :caption: AWS S3 example
+
+    with argopy.set_options(gdac='s3://argo-gdac-sandbox/pub'):
+        ds = DataFetcher(src='gdac').float(6903091).to_xarray()
+
+- :class:`ArgoIndex` **support meta index file**. We now offer support for the index of meta dataset files. This support brings two new methods to search the profiler type index column: one method based on the profiler type number and another method based on a string match in the profile type label, as described in the `Argo Reference table 8 <https://vocab.nerc.ac.uk/collection/R08/current/>`_. Checkout the dedicated :ref:`tools-argoindex` documentation page.
+
+.. code-block:: python
+    :caption: ArgoIndex support for the meta file index
+
+    from argopy import ArgoIndex
+
+    idx = ArgoIndex(index_file='meta').load()
+    idx.search_profiler_type([838, 878])
+    idx.search_profiler_label('ARVOR')
+
+
+- **New class** :class:`utils.GreenCoding` **to compute argopy carbon footprint**. This class makes it easy to use the Green-Coding Solutions API to retrieve argopy energy consumption data. This class is primarily used for reporting. Checkout the dedicated :ref:`energy` documentation page. (:pr:`437`) by |gmaze|.
+
+.. code-block:: python
+    :caption: Argopy carbon footprint metrics
+
+    from argopy.utils import GreenCoding
+
+    GreenCoding().measurements(branch='master', start_date='2025-01-01')
+    GreenCoding().total_measurements(branches=['385/merge', '437/merge'])
+
+    GreenCoding().footprint_since_last_release()
+    GreenCoding().footprint_for_release('v1.0.0')
+    GreenCoding().footprint_all_releases()
+    GreenCoding().footprint_baseline()
+
+.. _v1.1.0-internals:
+
+Internals
+^^^^^^^^^
+
+- **argopy file systems refactoring**. Long due internal refactoring of :ref:`File systems`. The submodule now adopt a more readable specification vs implementation design. This should not break or change high level APIs.(:pr:`425`) by |gmaze|.
+
+- **Support Argo dataset export to zarr**. Provide preliminary support to export Argo datasets to zarr files (local or remote). (:pr:`423`) by |gmaze|.
+
+.. code-block:: python
+    :caption: Export to zarr
+
+    from argopy import DataFetcher
+    ds = DataFetcher(src='gdac').float(6903091).to_xarray()
+    # then:
+    ds.argo.to_zarr("6903091_prof.zarr")
+    # or:
+    ds.argo.to_zarr("s3://argopy/sample-data/6903091_prof.zarr")
+
+- **Open netcdf files lazily**. We provide an experimental low-level support for opening a netcdf Argo dataset lazily using `kerchunk <https://fsspec.github.io/kerchunk/>`_. Checkout the dedicated :ref:`lazy` section of the documentation. (:pr:`385`) by |gmaze|.
+
+- Fix bug raised when the Argo reference table 8 return by the NVS server has a missing altLabel. ID of platform types are now extracted from the NVS url ID property. :issue:`420`, (:pr:`421`) by |gmaze|.
+
+- When argopy is sending a http request to a data server, add a custom http header ``Argopy-Version`` to ease server log analysis. (:pr:`407`) by |gmaze|.
+
+- New :meth:`ArgoIndex.copy` method (:pr:`418`) by |gmaze|. This copy allows for a:
+
+  - deep copy, i.e. a new instance with same parameters (e.g. ``index_file``) and cleared search,
+  - shallow copy, i.e. a new instance with same parameters and search results if any.
+
+- Fix bug raising an error for ``STATION_PARAMETERS`` with a blank entry, with ``bgc`` dataset and ``gdac`` data source (well spotted |quai20|). (:pr:`418`) by |gmaze|.
+
+- Fix bug raising an error when exporting a dataset to netcdf after erddap fetch, :issue:`412`. (:pr:`413`) by |gmaze|.
+
+.. currentmodule:: xarray
+
+- The :class:`Dataset.argo.canyon_med` predictor raises errors if not dealing with a collection of Argo points. (:pr:`450`) by |gmaze|.
+
+.. currentmodule:: argopy
+
+- Make the :class:`Dataset.argo` accessor and its extensions able to work with dataset from a :class:`DataFetcher` and from a :class:`ArgoFloat`. This was necessary because the time variable does not have the same name in these dataset (``TIME`` vs ``JULD``). But this point should be addressed later. (:pr:`450`) by |gmaze|.
+
+.. _v1.1.0-energy:
+
+Energy
+^^^^^^
+
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.1.0%20%5BgCO2eq%5D-1328.99-black?style=plastic&labelColor=grey
+
+
+v1.0.0 (16 Oct. 2024)
+---------------------
+
+.. versionadded:: v1.0.0
+
+    The team proudly assumes that **argopy** is all grown up !
+
+    This version comes with improved performances and support for the BGC-Argo dataset.
+    But since this is a major, we also introduces breaking changes and significant internal refactoring possibly with un-expected side effects ! So don't hesitate to `report issues on the source code repository <https://github.com/euroargodev/argopy/issues>`_.
+	
+.. _v1.0.0-features:
+
+Features and front-end API
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- **Support for AWS S3 data files**. This support is experimental and is primarily made available for benchmarking as part of the `ADMT working group on Argo cloud format activities <https://github.com/OneArgo/ADMT/issues/5>`_.
+
+.. currentmodule:: xarray
+
+- **Improved support for BGC**
+    - **argopy now support `standard` and `research` user modes** with the `bgc` dataset. These new user modes follows the last available ADMT recommendations to bring users a finely tuned set of BGC parameters. Details of the BGC data processing chain for each user modes can be found in the :ref:`user-mode-definition` section.
+
+    - **Predict nutrients and carbonates in the Mediterranean Sea** with the new BGC method :class:`Dataset.argo.canyon_med`. The new method allows to make predictions of the water-Column nutrient concentrations and carbonate system variables in the Mediterranean Sea with the CANYON-MED model. This model can be used to predict PO4, NO3, DIC, SiOH4, AT and pHT. (:pr:`364`) by |gmaze|.
 
     .. currentmodule:: argopy
 
@@ -39,16 +244,38 @@ Features and front-end API
         ds.argo.canyon_med.predict()
         ds.argo.canyon_med.predict('PO4')
 
-    - the :class:`argopy.ArgoIndex` now support the *auxiliary* index file. Simply use the keyword `aux`. (:pr:`356`) by `G. Maze <http://www.github.com/gmaze>`_.
+    - **More BGC expert features** with support for the *auxiliary* index file with :class:`argopy.ArgoIndex`. Simply use the keyword `aux`. (:pr:`356`) by |gmaze|.
 
     .. code-block:: python
 
         from argopy import ArgoIndex
         ArgoIndex(index_file="aux").load()
 
+- **More scalable data fetching using multi-processing or a Dask Cluster**.
+
+It is now possible to use multi-processing with all data fetchers and even possibly a Dask client object. This is set with the ``parallel`` option. In doing so, the Argo data pre-processing steps (download and conformation to internal conventions) will be distributed to all available resources, significantly improving performances for fetching large selection of Argo data. (:pr:`392`) by |gmaze|.
+
+Check the documentation on :ref:`Parallelization methods` for all the details.
+
+.. currentmodule:: argopy
+
+.. code-block:: python
+
+    from dask.distributed import Client
+    client = Client(processes=True)
+
+    from argopy import DataFetcher
+    DataFetcher(parallel=client, src='argovis').region([-75, -65, 25, 40, 0, 250, '2020-01-01', '2021-01-01']).to_xarray()
+
+
+
 .. currentmodule:: xarray
 
-- A xarray argo accessor extensions mechanism with a new decorator :class:`argopy.extensions.register_argo_accessor`. It allows to register a class as a property to the :class:`Dataset.argo` accessor. (:pr:`364`) by `G. Maze <http://www.github.com/gmaze>`_.
+- **Xarray argo accessor extensions mechanism**.
+
+This should allows users to easily develop their own Argo dataset methods. This is possible thanks to a new class decorator :class:`argopy.extensions.register_argo_accessor` that allows to register a class as a property to the :class:`Dataset.argo` accessor. (:pr:`364`) by |gmaze|.
+
+Example:
 
 .. code-block:: python
 
@@ -77,21 +304,30 @@ This makes syntax like this possible:
 
 .. currentmodule:: argopy
 
+.. _v1.0.0-breaking:
+
 Breaking changes
 ^^^^^^^^^^^^^^^^
 
 .. currentmodule:: xarray
 
-- In the :class:`Dataset.argo` accessor (:pr:`356`) by `G. Maze <http://www.github.com/gmaze>`_:
-    - the :meth:`Dataset.argo.filter_data_mode` has been redesigned to actually implement a real filter of data points on data mode values, i.e. to keep points with specific data mode values,
-    - new :meth:`Dataset.argo.transform_data_mode` method must now be used to merge adjusted and non-adjusted measurements according to their data mode and reduce the number of variables in the dataset, which is what was doing in previous versions the poorly named `filter_data_mode`.
+- In the :class:`Dataset.argo` accessor (:pr:`356`) by |gmaze|:
+    - the :meth:`Dataset.argo.filter_data_mode` has been deprecated and replaced by :meth:`Dataset.argo.datamode.merge` method. To actually implement a real filter of data points on data mode values, i.e. to keep points with specific data mode values, use the :meth:`Dataset.argo.datamode.filter` method.
 
 .. currentmodule:: argopy
 
-- The option name "ftp" is now renamed "gdac" (:pr:`389`) by `G. Maze <http://www.github.com/gmaze>`_
+- The option name "ftp" is now renamed "gdac" (:pr:`389`) by |gmaze|.
 
-- The option name "dataset" is now renamed "ds" (:pr:`389`) by `G. Maze <http://www.github.com/gmaze>`_
+- The option name "dataset" is now renamed "ds" (:pr:`389`) by |gmaze|.
 
+- It is highly probable that more changes in this major v1.0.0 lead to breaking changes not listed here. Don't hesitate to `report them on the repository issue section <https://github.com/euroargodev/argopy/issues>`_. 
+
+.. _v1.0.0-energy:
+
+Energy
+^^^^^^
+
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.0.0%20%5BgCO2eq%5D-1328.99-black?style=plastic&labelColor=grey
 
 v0.1.17 (20 Sep. 2024)
 ----------------------
@@ -102,7 +338,7 @@ v0.1.17 (20 Sep. 2024)
 
     Comping up soon by the end of October the first **major argopy release: v1.0.0**
 
-.. important:: List of deprecations before the upcoming major release v1.0.0. (:pr:`389`) by `G. Maze <http://www.github.com/gmaze>`_.
+.. important:: List of deprecations before the upcoming major release v1.0.0. (:pr:`389`) by |gmaze|.
 
     .. currentmodule:: xarray
 
@@ -113,25 +349,31 @@ v0.1.17 (20 Sep. 2024)
     - Refactor option "dataset" into "ds", see :class:`argopy.set_options`
     - Refactor option "ftp" into "gdac", see :class:`argopy.set_options`
 
+.. _v0.1.17-internals:
+
 Internals
 ^^^^^^^^^
 
-- Refactor Argovis CI tests to use mocked http server (:pr:`383`) by `G. Maze <http://www.github.com/gmaze>`_
+- Refactor Argovis CI tests to use mocked http server (:pr:`383`) by |gmaze|
 
-- Improve error and warning messages from mocked http server to address :issue:`381` (:pr:`382`) by `G. Maze <http://www.github.com/gmaze>`_
+- Improve error and warning messages from mocked http server to address :issue:`381` (:pr:`382`) by |gmaze|
+
+.. _v0.1.17-energy:
 
 Energy
 ^^^^^^
 
-Considering `energy used by CI tests <https://argopy.readthedocs.io/en/latest/energy.html>`_, this release has required about 75.4kJ of energy to produce 6h11s39 of computation time.
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v0.1.17%20%5BgCO2eq%5D-234.30-black?style=plastic&labelColor=grey
 
 v0.1.16 (27 Aug. 2024)
 ----------------------
 
+.. _v0.1.16-features:
+
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- **Support for AWS S3 index files**. This support is experimental and is primarily made available for benchmarking as part of the `ADMT working group on Argo cloud format activities <https://github.com/OneArgo/ADMT/issues/5>`_. The `ADMT working group discussion items are listed here <https://github.com/OneArgo/ADMT/discussions/categories/wg-on-best-format-to-serve-argo-data-from-the-cloud>`_. Both CORE and BGC index files are supported. The new :class:`ArgoIndex` not only support access to the AWS S3 index files but also implement improved performances for search methods on WMO and cycle numbers, using :class:`boto3.client.select_object_content` SQL queries. Indeed, the ``https`` and ``ftp`` default GDAC server index files are downloaded and loaded in memory before being searched. But with ``s3``, index files can directly be queried on the server using SQL syntax; the full index is not necessarily downloaded. (:pr:`326`) by `G. Maze <http://www.github.com/gmaze>`_
+- **Support for AWS S3 index files**. This support is experimental and is primarily made available for benchmarking as part of the `ADMT working group on Argo cloud format activities <https://github.com/OneArgo/ADMT/issues/5>`_. The `ADMT working group discussion items are listed here <https://github.com/OneArgo/ADMT/discussions/categories/wg-on-best-format-to-serve-argo-data-from-the-cloud>`_. Both CORE and BGC index files are supported. The new :class:`ArgoIndex` not only support access to the AWS S3 index files but also implement improved performances for search methods on WMO and cycle numbers, using :class:`boto3.client.select_object_content` SQL queries. Indeed, the ``https`` and ``ftp`` default GDAC server index files are downloaded and loaded in memory before being searched. But with ``s3``, index files can directly be queried on the server using SQL syntax; the full index is not necessarily downloaded. (:pr:`326`) by |gmaze|
 
 .. code-block:: python
 
@@ -148,34 +390,44 @@ Features and front-end API
 
 - **argovis** data source now support the new `API server <https://argovis-api.colorado.edu/docs>`_. This upgrade comes with a new option to define the optional API KEY to use. You can `get a free key here <https://argovis-keygen.colorado.edu/>`_. (:pr:`371`) by `Bill Katie-Anne Mills <https://github.com/bkatiemills>`_.
 
-- **argopy** is concerned about its environmental impact and we'd like to understand and optimize the carbon emissions of our digital activities. Starting June 1st 2024, we use `Green Coding <https://www.green-coding.io>`_ tools to assess energy consumption and CO2eq emissions from our activities on Github infrastructure. All results and data are available on the new dedicated web page: :ref:`Carbon emissions`. (:pr:`354`) by `G. Maze <http://www.github.com/gmaze>`_.
+- **argopy** is concerned about its environmental impact and we'd like to understand and optimize the carbon emissions of our digital activities. Starting June 1st 2024, we use `Green Coding <https://www.green-coding.io>`_ tools to assess energy consumption and CO2eq emissions from our activities on Github infrastructure. All results and data are available on the new dedicated web page: :ref:`Carbon emissions`. (:pr:`354`) by |gmaze|.
+
+.. _v0.1.16-internals:
 
 Internals
 ^^^^^^^^^
 
-- Drop support for Python 3.8, add support for Python 3.10. (:pr:`379`) by `G. Maze <http://www.github.com/gmaze>`_
+- Drop support for Python 3.8, add support for Python 3.10. (:pr:`379`) by |gmaze|
 
-- Update :class:`argopy.ArgoNVSReferenceTables` to handle new NVS server output format. (:pr:`378`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Update :class:`argopy.ArgoNVSReferenceTables` to handle new NVS server output format. (:pr:`378`) by |gmaze|.
 
-- Update Ifremer erddap server information. The Argo reference for DMQC (returned by the :class:`DataFetcher` fetcher with ``ds='ref'`` argument ) and Argo CTD-reference for DQMC (returned by the :class:`CTDRefDataFetcher` fetcher) now indicate the dataset version used. (:pr:`344`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Update Ifremer erddap server information. The Argo reference for DMQC (returned by the :class:`DataFetcher` fetcher with ``ds='ref'`` argument ) and Argo CTD-reference for DQMC (returned by the :class:`CTDRefDataFetcher` fetcher) now indicate the dataset version used. (:pr:`344`) by |gmaze|.
 
-- Pin upper bound on xarray < 2024.3 to fix failing upstream tests because of ``AttributeError: 'ScipyArrayWrapper' object has no attribute 'oindex'``, `reported here <https://github.com/pydata/xarray/issues/8909>`_. (:pr:`326`) by `G. Maze <http://www.github.com/gmaze>`_
+- Pin upper bound on xarray < 2024.3 to fix failing upstream tests because of ``AttributeError: 'ScipyArrayWrapper' object has no attribute 'oindex'``, `reported here <https://github.com/pydata/xarray/issues/8909>`_. (:pr:`326`) by |gmaze|
 
-- Fix :class:`argopy.ArgoDocs` that was not working with new Archimer webpage design, :issue:`351`. (:pr:`352`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Fix :class:`argopy.ArgoDocs` that was not working with new Archimer webpage design, :issue:`351`. (:pr:`352`) by |gmaze|.
 
-- Fix bug with ArgoIndex cache, :issue:`345`. (:pr:`346`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Fix bug with ArgoIndex cache, :issue:`345`. (:pr:`346`) by |gmaze|.
 
-- Keep dependencies up to date. (:pr:`333`, :pr:`337`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Keep dependencies up to date. (:pr:`333`, :pr:`337`) by |gmaze|.
 
-- Update :class:`argopy.ArgoDocs` with last BGC cookbooks on pH. (:pr:`321`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Update :class:`argopy.ArgoDocs` with last BGC cookbooks on pH. (:pr:`321`) by |gmaze|.
 
-- Fix for fsspec > 2023.10.0. (:pr:`318`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Fix for fsspec > 2023.10.0. (:pr:`318`) by |gmaze|.
+
+.. _v0.1.16-breaking:
 
 Breaking changes
 ^^^^^^^^^^^^^^^^
 
-- Drop support for erddapy < v0.8.0 (:pr:`344`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Drop support for erddapy < v0.8.0 (:pr:`344`) by |gmaze|.
 
+.. _v0.1.16-energy:
+
+Energy
+^^^^^^
+
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v0.1.16%20%5BgCO2eq%5D-561.76-black?style=plastic&labelColor=grey
 
 v0.1.15 (12 Dec. 2023)
 ----------------------
@@ -183,7 +435,7 @@ v0.1.15 (12 Dec. 2023)
 Internals
 ^^^^^^^^^
 
-- Fix bug whereby user name could not be retrieved using :func:`getpass.getuser`. This closes :issue:`310` and allows argopy to be integrated into the EU Galaxy tools for `ecology <https://github.com/galaxyecology/tools-ecology/pull/81>`_. (:pr:`311`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Fix bug whereby user name could not be retrieved using :func:`getpass.getuser`. This closes :issue:`310` and allows argopy to be integrated into the EU Galaxy tools for `ecology <https://github.com/galaxyecology/tools-ecology/pull/81>`_. (:pr:`311`) by |gmaze|.
 
 
 v0.1.14 (29 Sep. 2023)
@@ -196,7 +448,7 @@ v0.1.14 (29 Sep. 2023)
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- **argopy now support BGC dataset in `expert` user mode for the `erddap` data source**. The BGC-Argo content of synthetic multi-profile files is now available from the Ifremer erddap. Like for the core dataset, you can fetch data for a region, float(s) or profile(s). One novelty with regard to core, is that you can restrict data fetching to some parameters and furthermore impose no-NaNs on some of these parameters. Check out the new documentation page for :ref:`data-set`. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
+- **argopy now support BGC dataset in `expert` user mode for the `erddap` data source**. The BGC-Argo content of synthetic multi-profile files is now available from the Ifremer erddap. Like for the core dataset, you can fetch data for a region, float(s) or profile(s). One novelty with regard to core, is that you can restrict data fetching to some parameters and furthermore impose no-NaNs on some of these parameters. Check out the new documentation page for :ref:`data-set`. (:pr:`278`) by |gmaze|
 
 .. code-block:: python
 
@@ -219,7 +471,7 @@ Features and front-end API
     DataFetcher(ds='bgc', params='all', measured='all')  # Return the smallest possible dataset
     DataFetcher(ds='bgc', params='all', measured=['DOXY', 'BBP700'])  # Return all possible params for points where DOXY and BBP700 are not NaN
 
-- **New methods in the ArgoIndex for BGC**. The :class:`ArgoIndex` has now full support for the BGC profile index files, both bio and synthetic index. In particular it is possible to search for profiles with specific data modes on parameters. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
+- **New methods in the ArgoIndex for BGC**. The :class:`ArgoIndex` has now full support for the BGC profile index files, both bio and synthetic index. In particular it is possible to search for profiles with specific data modes on parameters. (:pr:`278`) by |gmaze|
 
 .. code-block:: python
 
@@ -232,7 +484,7 @@ Features and front-end API
     idx.search_parameter_data_mode({'DOXY': ['R', 'A']})
     idx.search_parameter_data_mode({'DOXY': 'D', 'CDOM': 'D'}, logical='or')
 
-- **New xarray argo accessor features**. Easily retrieve an Argo sample index and domain extent with the ``index`` and ``domain`` properties. Get a list with all possible (PLATFORM_NUMBER, CYCLE_NUMBER) with the ``list_WMO_CYC`` method. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
+- **New xarray argo accessor features**. Easily retrieve an Argo sample index and domain extent with the ``index`` and ``domain`` properties. Get a list with all possible (PLATFORM_NUMBER, CYCLE_NUMBER) with the ``list_WMO_CYC`` method. (:pr:`278`) by |gmaze|
 
 - **New search methods for Argo reference tables**. It is now possible to search for a string in tables title and/or description using the :meth:`related.ArgoNVSReferenceTables.search` method.
 
@@ -251,9 +503,11 @@ Features and front-end API
   :align: center
   :target: _static/argopy-cheatsheet.pdf
 
-- **Our internal Argo index store is promoted as a frontend feature**. The :class:`IndexFetcher` is a user-friendly **fetcher** built on top of our internal Argo index file store. But if you are familiar with Argo index files and/or cares about performances, you may be interested in using directly the Argo index **store**. We thus decided to promote this internal feature as a frontend class :class:`ArgoIndex`. See :ref:`Store: Low-level Argo Index access`. (:pr:`270`) by `G. Maze <http://www.github.com/gmaze>`_
+.. currentmodule:: argopy
 
-- **Easy access to all Argo manuals from the ADMT**. More than 20 pdf manuals have been produced by the Argo Data Management Team. Using the new :class:`ArgoDocs` class, it's now easier to navigate this great database for Argo experts. All details in :ref:`ADMT Documentation`. (:pr:`268`) by `G. Maze <http://www.github.com/gmaze>`_
+- **Our internal Argo index store is promoted as a frontend feature**. The :class:`IndexFetcher` is a user-friendly **fetcher** built on top of our internal Argo index file store. But if you are familiar with Argo index files and/or cares about performances, you may be interested in using directly the Argo index **store**. We thus decided to promote this internal feature as a frontend class :class:`ArgoIndex`. See :ref:`tools-argoindex`. (:pr:`270`) by |gmaze|
+
+- **Easy access to all Argo manuals from the ADMT**. More than 20 pdf manuals have been produced by the Argo Data Management Team. Using the new :class:`ArgoDocs` class, it's now easier to navigate this great database for Argo experts. All details in :ref:`ADMT Documentation`. (:pr:`268`) by |gmaze|
 
 .. code-block:: python
 
@@ -270,16 +524,16 @@ Features and front-end API
 
     ArgoDocs().search("CDOM")
 
-- **New 'research' user mode**. This new feature implements automatic filtering of Argo data following international recommendations for research/climate studies. With this user mode, only Delayed Mode with good QC data are returned. Check out the :ref:`user-mode` section for all the details. (:pr:`265`) by `G. Maze <http://www.github.com/gmaze>`_
+- **New 'research' user mode**. This new feature implements automatic filtering of Argo data following international recommendations for research/climate studies. With this user mode, only Delayed Mode with good QC data are returned. Check out the :ref:`user-mode-definition` section for all the details. (:pr:`265`) by |gmaze|
 
-- **argopy now provides a specific xarray engine to properly read Argo netcdf files**. Using ``engine='argo'`` in :func:`xarray.open_dataset`, all variables will properly be casted, i.e. returned with their expected data types, which is not the case otherwise. This works with *ALL* Argo netcdf file types (as listed in the `Reference table R01 <http://vocab.nerc.ac.uk/collection/R01/current/>`_). Some details in here: :class:`argopy.xarray.ArgoEngine` (:pr:`208`) by `G. Maze <http://www.github.com/gmaze>`_
+- **argopy now provides a specific xarray engine to properly read Argo netcdf files**. Using ``engine='argo'`` in :func:`xarray.open_dataset`, all variables will properly be casted, i.e. returned with their expected data types, which is not the case otherwise. This works with *ALL* Argo netcdf file types (as listed in the `Reference table R01 <http://vocab.nerc.ac.uk/collection/R01/current/>`_). Some details in here: :class:`argopy.xarray.ArgoEngine` (:pr:`208`) by |gmaze|
 
 .. code-block:: python
 
     import xarray as xr
     ds = xr.open_dataset("dac/aoml/1901393/1901393_prof.nc", engine='argo')
 
-- **argopy now can provide authenticated access to the Argo CTD reference database for DMQC**. Using user/password new **argopy** options, it is possible to fetch the `Argo CTD reference database <http://www.argodatamgt.org/DMQC/Reference-data-base/Latest-Argo-Reference-DB>`_, with the :class:`CTDRefDataFetcher` class. (:pr:`256`) by `G. Maze <http://www.github.com/gmaze>`_
+- **argopy now can provide authenticated access to the Argo CTD reference database for DMQC**. Using user/password new **argopy** options, it is possible to fetch the `Argo CTD reference database <http://www.argodatamgt.org/DMQC/Reference-data-base/Latest-Argo-Reference-DB>`_, with the :class:`CTDRefDataFetcher` class. (:pr:`256`) by |gmaze|
 
 .. code-block:: python
 
@@ -298,9 +552,9 @@ Features and front-end API
 Internals
 ^^^^^^^^^
 
-- Utilities refactoring. All classes and functions have been refactored to more appropriate locations like ``argopy.utils`` or ``argopy.related``. A deprecation warning message should be displayed every time utilities are being used from the deprecated locations. (:pr:`290`) by `G. Maze <http://www.github.com/gmaze>`_
+- Utilities refactoring. All classes and functions have been refactored to more appropriate locations like ``argopy.utils`` or ``argopy.related``. A deprecation warning message should be displayed every time utilities are being used from the deprecated locations. (:pr:`290`) by |gmaze|
 
-- Fix bugs due to fsspec new internal cache handling and Windows specifics. (:pr:`293`) by `G. Maze <http://www.github.com/gmaze>`_
+- Fix bugs due to fsspec new internal cache handling and Windows specifics. (:pr:`293`) by |gmaze|
 
 - New utility class :class:`utils.MonitoredThreadPoolExecutor` to handle parallelization with a multi-threading Pool that provide a notebook or terminal computation progress dashboard. This class is used by the httpstore open_mfdataset method for erddap requests.
 
@@ -320,9 +574,9 @@ Internals
 
 - And misc. bug and warning fixes all over the code.
 
-- Update new argovis dashboard links for floats and profiles. (:pr:`271`) by `G. Maze <http://www.github.com/gmaze>`_
+- Update new argovis dashboard links for floats and profiles. (:pr:`271`) by |gmaze|
 
-- **Index store can now export search results to standard Argo index file format**. See all details in :ref:`Store: Low-level Argo Index access`. (:pr:`260`) by `G. Maze <http://www.github.com/gmaze>`_
+- **Index store can now export search results to standard Argo index file format**. See all details in :ref:`tools-argoindex`. (:pr:`260`) by |gmaze|
 
 .. code-block:: python
 
@@ -336,7 +590,7 @@ Internals
     idx.to_indexfile('short_index.txt')  # export search results as standard Argo index csv file
 
 
-- **Index store can now load/search the Argo Bio and Synthetic profile index files**. Simply gives the name of the Bio or Synthetic Profile index file and retrieve the full index. This  store also comes with a new search criteria for BGC: by parameters. See all details in :ref:`Store: Low-level Argo Index access`.  (:pr:`261`) by `G. Maze <http://www.github.com/gmaze>`_
+- **Index store can now load/search the Argo Bio and Synthetic profile index files**. Simply gives the name of the Bio or Synthetic Profile index file and retrieve the full index. This  store also comes with a new search criteria for BGC: by parameters. See all details in :ref:`tools-argoindex`.  (:pr:`261`) by |gmaze|
 
 .. code-block:: python
 
@@ -349,8 +603,8 @@ Internals
     idx = indexstore(index_file="argo_bio-profile_index.txt").load()
     idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])
 
-- Use a mocked server for all http and GDAC ftp requests in CI tests (:pr:`249`, :pr:`252`, :pr:`255`) by `G. Maze <http://www.github.com/gmaze>`_
-- Removed support for minimal dependency requirements and for python 3.7. (:pr:`252`) by `G. Maze <http://www.github.com/gmaze>`_
+- Use a mocked server for all http and GDAC ftp requests in CI tests (:pr:`249`, :pr:`252`, :pr:`255`) by |gmaze|
+- Removed support for minimal dependency requirements and for python 3.7. (:pr:`252`) by |gmaze|
 - Changed License from Apache to `EUPL 1.2 <https://opensource.org/license/eupl-1-2>`_
 
 Breaking changes
@@ -358,7 +612,7 @@ Breaking changes
 
 - Some documentation pages may have moved to new urls.
 
-- The legacy index store is deprecated, now available in argopy.stores.argo_index_deprec.py only (:pr:`270`) by `G. Maze <http://www.github.com/gmaze>`_
+- The legacy index store is deprecated, now available in argopy.stores.argo_index_deprec.py only (:pr:`270`) by |gmaze|
 
 
 v0.1.14rc2 (27 Jul. 2023)
@@ -367,7 +621,7 @@ v0.1.14rc2 (27 Jul. 2023)
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- **argopy now support BGC dataset in `expert` user mode for the `erddap` data source**. The BGC-Argo content of synthetic multi-profile files is now available from the Ifremer erddap. Like for the core dataset, you can fetch data for a region, float(s) or profile(s). One novelty with regard to core, is that you can restrict data fetching to some parameters and furthermore impose no-NaNs on some of these parameters. Check out the new documentation page for :ref:`data-set`. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
+- **argopy now support BGC dataset in `expert` user mode for the `erddap` data source**. The BGC-Argo content of synthetic multi-profile files is now available from the Ifremer erddap. Like for the core dataset, you can fetch data for a region, float(s) or profile(s). One novelty with regard to core, is that you can restrict data fetching to some parameters and furthermore impose no-NaNs on some of these parameters. Check out the new documentation page for :ref:`data-set`. (:pr:`278`) by |gmaze|
 
 .. code-block:: python
 
@@ -391,7 +645,7 @@ Features and front-end API
     DataFetcher(ds='bgc', params='all', measured=['DOXY', 'BBP700'])  # Return all possible params for points where DOXY and BBP700 are not NaN
 
 
-- **New methods in the ArgoIndex for BGC**. The :class:`ArgoIndex` has now full support for the BGC profile index files, both bio and synthetic index. In particular it is possible to search for profiles with specific data modes on parameters. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
+- **New methods in the ArgoIndex for BGC**. The :class:`ArgoIndex` has now full support for the BGC profile index files, both bio and synthetic index. In particular it is possible to search for profiles with specific data modes on parameters. (:pr:`278`) by |gmaze|
 
 .. code-block:: python
 
@@ -405,7 +659,7 @@ Features and front-end API
     idx.search_parameter_data_mode({'DOXY': 'D', 'CDOM': 'D'}, logical='or')
 
 
-- **New xarray argo accessor features**. Easily retrieve an Argo sample index and domain extent with the ``index`` and ``domain`` properties. Get a list with all possible (PLATFORM_NUMBER, CYCLE_NUMBER) with the ``list_WMO_CYC`` method. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
+- **New xarray argo accessor features**. Easily retrieve an Argo sample index and domain extent with the ``index`` and ``domain`` properties. Get a list with all possible (PLATFORM_NUMBER, CYCLE_NUMBER) with the ``list_WMO_CYC`` method. (:pr:`278`) by |gmaze|
 
 - **New search methods for Argo reference tables**. It is now possible to search for a string in tables title and/or description using the :meth:`related.ArgoNVSReferenceTables.search` method.
 
@@ -457,9 +711,9 @@ Features and front-end API
   :align: center
   :target: _static/argopy-cheatsheet.pdf
 
-- **Our internal Argo index store is promoted as a frontend feature**. The :class:`IndexFetcher` is a user-friendly **fetcher** built on top of our internal Argo index file store. But if you are familiar with Argo index files and/or cares about performances, you may be interested in using directly the Argo index **store**. We thus decided to promote this internal feature as a frontend class :class:`ArgoIndex`. See :ref:`Store: Low-level Argo Index access`. (:pr:`270`) by `G. Maze <http://www.github.com/gmaze>`_
+- **Our internal Argo index store is promoted as a frontend feature**. The :class:`IndexFetcher` is a user-friendly **fetcher** built on top of our internal Argo index file store. But if you are familiar with Argo index files and/or cares about performances, you may be interested in using directly the Argo index **store**. We thus decided to promote this internal feature as a frontend class :class:`ArgoIndex`. See :ref:`tools-argoindex`. (:pr:`270`) by |gmaze|
 
-- **Easy access to all Argo manuals from the ADMT**. More than 20 pdf manuals have been produced by the Argo Data Management Team. Using the new :class:`ArgoDocs` class, it's now easier to navigate this great database for Argo experts. All details in :ref:`ADMT Documentation`. (:pr:`268`) by `G. Maze <http://www.github.com/gmaze>`_
+- **Easy access to all Argo manuals from the ADMT**. More than 20 pdf manuals have been produced by the Argo Data Management Team. Using the new :class:`ArgoDocs` class, it's now easier to navigate this great database for Argo experts. All details in :ref:`ADMT Documentation`. (:pr:`268`) by |gmaze|
 
 .. code-block:: python
 
@@ -476,16 +730,16 @@ Features and front-end API
 
     ArgoDocs().search("CDOM")
 
-- **New 'research' user mode**. This new feature implements automatic filtering of Argo data following international recommendations for research/climate studies. With this user mode, only Delayed Mode with good QC data are returned. Check out the :ref:`user-mode` section for all the details. (:pr:`265`) by `G. Maze <http://www.github.com/gmaze>`_
+- **New 'research' user mode**. This new feature implements automatic filtering of Argo data following international recommendations for research/climate studies. With this user mode, only Delayed Mode with good QC data are returned. Check out the :ref:`user-mode-definition` section for all the details. (:pr:`265`) by |gmaze|
 
-- **argopy now provides a specific xarray engine to properly read Argo netcdf files**. Using ``engine='argo'`` in :func:`xarray.open_dataset`, all variables will properly be casted, i.e. returned with their expected data types, which is not the case otherwise. This works with *ALL* Argo netcdf file types (as listed in the `Reference table R01 <http://vocab.nerc.ac.uk/collection/R01/current/>`_). Some details in here: :class:`argopy.xarray.ArgoEngine` (:pr:`208`) by `G. Maze <http://www.github.com/gmaze>`_
+- **argopy now provides a specific xarray engine to properly read Argo netcdf files**. Using ``engine='argo'`` in :func:`xarray.open_dataset`, all variables will properly be casted, i.e. returned with their expected data types, which is not the case otherwise. This works with *ALL* Argo netcdf file types (as listed in the `Reference table R01 <http://vocab.nerc.ac.uk/collection/R01/current/>`_). Some details in here: :class:`argopy.xarray.ArgoEngine` (:pr:`208`) by |gmaze|
 
 .. code-block:: python
 
     import xarray as xr
     ds = xr.open_dataset("dac/aoml/1901393/1901393_prof.nc", engine='argo')
 
-- **argopy now can provide authenticated access to the Argo CTD reference database for DMQC**. Using user/password new **argopy** options, it is possible to fetch the `Argo CTD reference database <http://www.argodatamgt.org/DMQC/Reference-data-base/Latest-Argo-Reference-DB>`_, with the :class:`CTDRefDataFetcher` class. (:pr:`256`) by `G. Maze <http://www.github.com/gmaze>`_
+- **argopy now can provide authenticated access to the Argo CTD reference database for DMQC**. Using user/password new **argopy** options, it is possible to fetch the `Argo CTD reference database <http://www.argodatamgt.org/DMQC/Reference-data-base/Latest-Argo-Reference-DB>`_, with the :class:`CTDRefDataFetcher` class. (:pr:`256`) by |gmaze|
 
 .. code-block:: python
 
@@ -503,9 +757,9 @@ Features and front-end API
 Internals
 ^^^^^^^^^
 
-- Update new argovis dashboard links for floats and profiles. (:pr:`271`) by `G. Maze <http://www.github.com/gmaze>`_
+- Update new argovis dashboard links for floats and profiles. (:pr:`271`) by |gmaze|
 
-- **Index store can now export search results to standard Argo index file format**. See all details in :ref:`Store: Low-level Argo Index access`. (:pr:`260`) by `G. Maze <http://www.github.com/gmaze>`_
+- **Index store can now export search results to standard Argo index file format**. See all details in :ref:`tools-argoindex`. (:pr:`260`) by |gmaze|
 
 .. code-block:: python
 
@@ -519,7 +773,7 @@ Internals
     idx.to_indexfile('short_index.txt')  # export search results as standard Argo index csv file
 
 
-- **Index store can now load/search the Argo Bio and Synthetic profile index files**. Simply gives the name of the Bio or Synthetic Profile index file and retrieve the full index. This  store also comes with a new search criteria for BGC: by parameters. See all details in :ref:`Store: Low-level Argo Index access`.  (:pr:`261`) by `G. Maze <http://www.github.com/gmaze>`_
+- **Index store can now load/search the Argo Bio and Synthetic profile index files**. Simply gives the name of the Bio or Synthetic Profile index file and retrieve the full index. This  store also comes with a new search criteria for BGC: by parameters. See all details in :ref:`tools-argoindex`.  (:pr:`261`) by |gmaze|
 
 .. code-block:: python
 
@@ -532,14 +786,14 @@ Internals
     idx = indexstore(index_file="argo_bio-profile_index.txt").load()
     idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])
 
-- Use a mocked server for all http and GDAC ftp requests in CI tests (:pr:`249`, :pr:`252`, :pr:`255`) by `G. Maze <http://www.github.com/gmaze>`_
-- Removed support for minimal dependency requirements and for python 3.7. (:pr:`252`) by `G. Maze <http://www.github.com/gmaze>`_
+- Use a mocked server for all http and GDAC ftp requests in CI tests (:pr:`249`, :pr:`252`, :pr:`255`) by |gmaze|
+- Removed support for minimal dependency requirements and for python 3.7. (:pr:`252`) by |gmaze|
 - Changed License from Apache to `EUPL 1.2 <https://opensource.org/license/eupl-1-2>`_
 
 Breaking changes
 ^^^^^^^^^^^^^^^^
 
-- The legacy index store is deprecated, now available in argopy.stores.argo_index_deprec.py only (:pr:`270`) by `G. Maze <http://www.github.com/gmaze>`_
+- The legacy index store is deprecated, now available in argopy.stores.argo_index_deprec.py only (:pr:`270`) by |gmaze|
 
 
 v0.1.13 (28 Mar. 2023)
@@ -548,7 +802,7 @@ v0.1.13 (28 Mar. 2023)
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- **New utility class to retrieve the Argo deployment plan from the Ocean-OPS api.** This is the utility class :class:`OceanOPSDeployments`. See the new documentation section on :ref:`Deployment Plan` for more. (:pr:`244`) by `G. Maze <http://www.github.com/gmaze>`_
+- **New utility class to retrieve the Argo deployment plan from the Ocean-OPS api.** This is the utility class :class:`OceanOPSDeployments`. See the new documentation section on :ref:`Deployment Plan` for more. (:pr:`244`) by |gmaze|
 
 
 .. code-block:: python
@@ -565,7 +819,7 @@ Features and front-end API
 
 .. image:: _static/scatter_map_deployment_status.png
 
-- **New scatter map utility for easy Argo-related variables plotting.** The new :meth:`argopy.plot.scatter_map` utility function is dedicated to making maps with Argo profiles positions coloured according to specific variables: a scatter map. Profiles colouring is finely tuned for some variables: QC flags, Data Mode and Deployment Status. By default, floats trajectories are always shown, but this can be changed. See the new documentation section on :ref:`Scatter Maps` for more. (:pr:`245`) by `G. Maze <http://www.github.com/gmaze>`_
+- **New scatter map utility for easy Argo-related variables plotting.** The new :meth:`argopy.plot.scatter_map` utility function is dedicated to making maps with Argo profiles positions coloured according to specific variables: a scatter map. Profiles colouring is finely tuned for some variables: QC flags, Data Mode and Deployment Status. By default, floats trajectories are always shown, but this can be changed. See the new documentation section on :ref:`Scatter Maps` for more. (:pr:`245`) by |gmaze|
 
 .. code-block:: python
 
@@ -577,7 +831,7 @@ Features and front-end API
 
 .. image:: _static/scatter_map_qcflag.png
 
-- **New Argo colors utility to manage segmented colormaps and pre-defined Argo colors set.** The new :class:`argopy.plot.ArgoColors` utility class aims to easily provide colors for Argo-related variables plot. See the new documentation section on :ref:`Argo colors` for more (:pr:`245`) by `G. Maze <http://www.github.com/gmaze>`_
+- **New Argo colors utility to manage segmented colormaps and pre-defined Argo colors set.** The new :class:`argopy.plot.ArgoColors` utility class aims to easily provide colors for Argo-related variables plot. See the new documentation section on :ref:`Argo colors` for more (:pr:`245`) by |gmaze|
 
 .. code-block:: python
 
@@ -596,16 +850,16 @@ Features and front-end API
 Internals
 ^^^^^^^^^
 
-- Because of the new :class:`argopy.plot.ArgoColors`, the `argopy.plot.discrete_coloring` utility is deprecated in 0.1.13. Calling it will raise an error after argopy 0.1.14. (:pr:`245`) by `G. Maze <http://www.github.com/gmaze>`_
+- Because of the new :class:`argopy.plot.ArgoColors`, the `argopy.plot.discrete_coloring` utility is deprecated in 0.1.13. Calling it will raise an error after argopy 0.1.14. (:pr:`245`) by |gmaze|
 
-- New method to check status of web API: now allows for a keyword check rather than a simple url ping. This comes with 2 new utilities functions :meth:`utilities.urlhaskeyword` and :meth:`utilities.isalive`. (:pr:`247`) by `G. Maze <http://www.github.com/gmaze>`_.
+- New method to check status of web API: now allows for a keyword check rather than a simple url ping. This comes with 2 new utilities functions :meth:`utilities.urlhaskeyword` and :meth:`utilities.isalive`. (:pr:`247`) by |gmaze|.
 
-- Removed dependency to Scikit-learn LabelEncoder (:pr:`239`) by `G. Maze <http://www.github.com/gmaze>`_
+- Removed dependency to Scikit-learn LabelEncoder (:pr:`239`) by |gmaze|
 
 Breaking changes
 ^^^^^^^^^^^^^^^^
 
-- Data source ``localftp`` is deprecated and removed from **argopy**. It's been replaced by the ``gdac`` data source with the appropriate ``ftp`` option. See :ref:`Data sources`. (:pr:`240`) by `G. Maze <http://www.github.com/gmaze>`_
+- Data source ``localftp`` is deprecated and removed from **argopy**. It's been replaced by the ``gdac`` data source with the appropriate ``ftp`` option. See :ref:`Data sources`. (:pr:`240`) by |gmaze|
 
 - :class:`argopy.utilities.ArgoNVSReferenceTables` methods ``all_tbl`` and ``all_tbl_name`` are now properties, not methods.
 
@@ -616,7 +870,7 @@ v0.1.12 (16 May 2022)
 Internals
 ^^^^^^^^^
 
-- Update ``erddap`` server from https://www.ifremer.fr/erddap to https://erddap.ifremer.fr/erddap. (:commit:`af5692f9f7b236c5cd62c202252074cccec97c34`) by `G. Maze <http://www.github.com/gmaze>`_
+- Update ``erddap`` server from https://www.ifremer.fr/erddap to https://erddap.ifremer.fr/erddap. (:commit:`af5692f9f7b236c5cd62c202252074cccec97c34`) by |gmaze|
 
 
 v0.1.11 (13 Apr. 2022)
@@ -625,7 +879,7 @@ v0.1.11 (13 Apr. 2022)
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- **New data source ``gdac`` to retrieve data from a GDAC compliant source**, for DataFetcher and IndexFetcher. You can specify the FTP source with the ``ftp`` fetcher option or with the argopy global option ``ftp``. The FTP source support http, ftp or local files protocols. This fetcher is optimised if pyarrow is available, otherwise pandas dataframe are used. See update on :ref:`Data sources`. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
+- **New data source ``gdac`` to retrieve data from a GDAC compliant source**, for DataFetcher and IndexFetcher. You can specify the FTP source with the ``ftp`` fetcher option or with the argopy global option ``ftp``. The FTP source support http, ftp or local files protocols. This fetcher is optimised if pyarrow is available, otherwise pandas dataframe are used. See update on :ref:`Data sources`. (:pr:`157`) by |gmaze|
 
 .. code-block:: python
 
@@ -647,7 +901,7 @@ Features and front-end API
     Since the new ``gdac`` fetcher can use a local copy of the GDAC ftp server, the legacy ``localftp`` fetcher is now deprecated.
     Using it will raise a error up to v0.1.12. It will then be removed in v0.1.13.
 
-- **New dashboard for profiles and new 3rd party dashboards**. Calling on the data fetcher dashboard method will return the Euro-Argo profile page for a single profile. Very useful to look at the data before load. This comes with 2 new utilities functions to get Coriolis ID of profiles (:meth:`utilities.get_coriolis_profile_id`) and to return the list of profile webpages (:meth:`utilities.get_ea_profile_page`). (:pr:`198`) by `G. Maze <http://www.github.com/gmaze>`_.
+- **New dashboard for profiles and new 3rd party dashboards**. Calling on the data fetcher dashboard method will return the Euro-Argo profile page for a single profile. Very useful to look at the data before load. This comes with 2 new utilities functions to get Coriolis ID of profiles (:meth:`utilities.get_coriolis_profile_id`) and to return the list of profile webpages (:meth:`utilities.get_ea_profile_page`). (:pr:`198`) by |gmaze|.
 
 .. code-block:: python
 
@@ -676,7 +930,7 @@ We added the Ocean-OPS (former JCOMMOPS) dashboard for all floats and the BGC-Ar
     # or
     argopy.dashboard(5904797, 12, type='bgc')
 
-- **New utility :class:`argopy.utilities.ArgoNVSReferenceTables` to retrieve Argo Reference Tables**. (:commit:`cc8fdbe132874b71b35203053626cc29ae7d19c4`) by `G. Maze <http://www.github.com/gmaze>`_.
+- **New utility :class:`argopy.utilities.ArgoNVSReferenceTables` to retrieve Argo Reference Tables**. (:commit:`cc8fdbe132874b71b35203053626cc29ae7d19c4`) by |gmaze|.
 
 .. code-block:: python
 
@@ -689,7 +943,7 @@ We added the Ocean-OPS (former JCOMMOPS) dashboard for all floats and the BGC-Ar
 Internals
 ^^^^^^^^^
 
-- ``gdac`` and ``localftp`` data fetchers can return an index without loading the data. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
+- ``gdac`` and ``localftp`` data fetchers can return an index without loading the data. (:pr:`157`) by |gmaze|
 
 .. code-block:: python
 
@@ -708,16 +962,16 @@ Internals
     idx.N_MATCH  # Return number of search results
     idx.to_dataframe()  # Convert search results to a dataframe
 
-- Refactoring of CI tests to use more fixtures and pytest parametrize. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
+- Refactoring of CI tests to use more fixtures and pytest parametrize. (:pr:`157`) by |gmaze|
 
-- Fix bug in erddap fata fetcher that was causing a `profile` request to do not account for cycle numbers. (:commit:`301e557fdec1f2d536841464b383edc3a4c4a62d`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Fix bug in erddap fata fetcher that was causing a `profile` request to do not account for cycle numbers. (:commit:`301e557fdec1f2d536841464b383edc3a4c4a62d`) by |gmaze|.
 
 Breaking changes
 ^^^^^^^^^^^^^^^^
 
-- Index fetcher for local FTP no longer support the option ``index_file``. The name of the file index is internally determined using the dataset requested: ``ar_index_global_prof.txt`` for ``ds='phy'`` and ``argo_synthetic-profile_index.txt`` for ``ds='bgc'``. Using this option will raise a deprecation warning up to v0.1.12 and will then raise an error. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
+- Index fetcher for local FTP no longer support the option ``index_file``. The name of the file index is internally determined using the dataset requested: ``ar_index_global_prof.txt`` for ``ds='phy'`` and ``argo_synthetic-profile_index.txt`` for ``ds='bgc'``. Using this option will raise a deprecation warning up to v0.1.12 and will then raise an error. (:pr:`157`) by |gmaze|
 
-- Complete refactoring of the ``argopy.plotters`` module into ``argopy.plot``. (:pr:`198`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Complete refactoring of the ``argopy.plotters`` module into ``argopy.plot``. (:pr:`198`) by |gmaze|.
 
 - Remove deprecation warnings for: 'plotters.plot_dac', 'plotters.plot_profilerType'. These now raise an error.
 
@@ -737,7 +991,7 @@ v0.1.9 (19 Jan. 2022)
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- **New method to preprocess data for OWC software**. This method can preprocessed Argo data and possibly create float_source/<WMO>.mat files to be used as inputs for OWC implementations in `Matlab <https://github.com/ArgoDMQC/matlab_owc>`_ and `Python <https://github.com/euroargodev/argodmqc_owc>`_. See the :ref:`Salinity calibration` documentation page for more. (:pr:`142`) by `G. Maze <http://www.github.com/gmaze>`_.
+- **New method to preprocess data for OWC software**. This method can preprocessed Argo data and possibly create float_source/<WMO>.mat files to be used as inputs for OWC implementations in `Matlab <https://github.com/ArgoDMQC/matlab_owc>`_ and `Python <https://github.com/euroargodev/argodmqc_owc>`_. See the :ref:`Salinity calibration` documentation page for more. (:pr:`142`) by |gmaze|.
 
 .. code-block:: python
 
@@ -759,7 +1013,7 @@ This new method comes with others methods and improvements:
 
 .. currentmodule:: argopy
 
-- **New dataset properties** accessible from the `argo` xarray accessor: ``N_POINTS``, ``N_LEVELS``, ``N_PROF``. Note that depending on the format of the dataset (a collection of points or of profiles) these values do or do not take into account NaN. These information are also visible by a simple print of the accessor. (:pr:`142`) by `G. Maze <http://www.github.com/gmaze>`_.
+- **New dataset properties** accessible from the `argo` xarray accessor: ``N_POINTS``, ``N_LEVELS``, ``N_PROF``. Note that depending on the format of the dataset (a collection of points or of profiles) these values do or do not take into account NaN. These information are also visible by a simple print of the accessor. (:pr:`142`) by |gmaze|.
 
 .. code-block:: python
 
@@ -771,7 +1025,7 @@ This new method comes with others methods and improvements:
     ds.argo
 
 
-- **New plotter function** :meth:`argopy.plotters.open_sat_altim_report` to insert the CLS Satellite Altimeter Report figure in a notebook cell. (:pr:`159`) by `G. Maze <http://www.github.com/gmaze>`_.
+- **New plotter function** :meth:`argopy.plotters.open_sat_altim_report` to insert the CLS Satellite Altimeter Report figure in a notebook cell. (:pr:`159`) by |gmaze|.
 
 .. code-block:: python
 
@@ -789,7 +1043,7 @@ This new method comes with others methods and improvements:
     IndexFetcher().float([6902745, 6902746]).plot('qc_altimetry')
 
 
-- **New utility method to retrieve topography**. The :class:`argopy.TopoFetcher` will load the `GEBCO topography <https://coastwatch.pfeg.noaa.gov/erddap/griddap/GEBCO_2020.html>`_ for a given region. (:pr:`150`) by `G. Maze <http://www.github.com/gmaze>`_.
+- **New utility method to retrieve topography**. The :class:`argopy.TopoFetcher` will load the `GEBCO topography <https://coastwatch.pfeg.noaa.gov/erddap/griddap/GEBCO_2020.html>`_ for a given region. (:pr:`150`) by |gmaze|.
 
 .. code-block:: python
 
@@ -811,11 +1065,11 @@ For convenience we also added a new property to the data fetcher that return the
 Internals
 ^^^^^^^^^
 
-- Uses a new API endpoint for the ``argovis`` data source when fetching a ``region``. `More on this issue here <https://github.com/donatagiglio/Argovis/issues/3>`_. (:pr:`158`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Uses a new API endpoint for the ``argovis`` data source when fetching a ``region``. `More on this issue here <https://github.com/donatagiglio/Argovis/issues/3>`_. (:pr:`158`) by |gmaze|.
 
-- Update documentation theme, and pages now use the `xarray accessor sphinx extension <https://github.com/xarray-contrib/sphinx-autosummary-accessors>`_. (:pr:`104`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Update documentation theme, and pages now use the `xarray accessor sphinx extension <https://github.com/xarray-contrib/sphinx-autosummary-accessors>`_. (:pr:`104`) by |gmaze|.
 
-- Update Binder links to work without the deprecated Pangeo-Binder service. (:pr:`164`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Update Binder links to work without the deprecated Pangeo-Binder service. (:pr:`164`) by |gmaze|.
 
 
 v0.1.8 (2 Nov. 2021)
@@ -824,7 +1078,7 @@ v0.1.8 (2 Nov. 2021)
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- Improve plotting functions. All functions are now available for both the index and data fetchers. See the :ref:`data-viz` page for more details. Reduced plotting dependencies to `Matplotlib <https://matplotlib.org/>`_ only. **Argopy** will use `Seaborn <seaborn.pydata.org/>`_ and/or `Cartopy <https://scitools.org.uk/cartopy>`_ if available. (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Improve plotting functions. All functions are now available for both the index and data fetchers. See the :ref:`data-viz` page for more details. Reduced plotting dependencies to `Matplotlib <https://matplotlib.org/>`_ only. **Argopy** will use `Seaborn <seaborn.pydata.org/>`_ and/or `Cartopy <https://scitools.org.uk/cartopy>`_ if available. (:pr:`56`) by |gmaze|.
 
 .. code-block:: python
 
@@ -842,7 +1096,7 @@ Features and front-end API
     fig, ax = obj.plot('profiler')
 
 
-- New methods and properties for data and index fetchers. (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_. The :meth:`argopy.DataFetcher.load` and :meth:`argopy.IndexFetcher.load` methods internally call on the `to_xarray()` methods and store results in the fetcher instance. The :meth:`argopy.DataFetcher.to_xarray` will trigger a fetch on every call, while the :meth:`argopy.DataFetcher.load` will not.
+- New methods and properties for data and index fetchers. (:pr:`56`) by |gmaze|. The :meth:`argopy.DataFetcher.load` and :meth:`argopy.IndexFetcher.load` methods internally call on the `to_xarray()` methods and store results in the fetcher instance. The :meth:`argopy.DataFetcher.to_xarray` will trigger a fetch on every call, while the :meth:`argopy.DataFetcher.load` will not.
 
 .. code-block:: python
 
@@ -860,20 +1114,20 @@ Features and front-end API
     indexer.load()
     indexer.index
 
-- Add optional speed of sound computation to xarray accessor teos10 method. (:pr:`90`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Add optional speed of sound computation to xarray accessor teos10 method. (:pr:`90`) by |gmaze|.
 
 - Code spell fixes (:pr:`89`) by `K. Schwehr <https://github.com/schwehr>`_.
 
 Internals
 ^^^^^^^^^
 
-- Check validity of access points options (WMO and box) in the facade, no checks at the fetcher level. (:pr:`92`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Check validity of access points options (WMO and box) in the facade, no checks at the fetcher level. (:pr:`92`) by |gmaze|.
 
-- More general options. Fix :issue:`91`. (:pr:`102`) by `G. Maze <http://www.github.com/gmaze>`_.
+- More general options. Fix :issue:`91`. (:pr:`102`) by |gmaze|.
 
     - ``trust_env`` to allow for local environment variables to be used by fsspec to connect to the internet. Useful for those using a proxy.
 
-- Documentation on `Read The Docs` now uses a pip environment and get rid of memory eager conda. (:pr:`103`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Documentation on `Read The Docs` now uses a pip environment and get rid of memory eager conda. (:pr:`103`) by |gmaze|.
 
 - :class:`xarray.Dataset` argopy accessor ``argo`` has a clean documentation.
 
@@ -882,12 +1136,12 @@ Breaking changes
 
 - Drop support for python 3.6 and older. Lock range of dependencies version support.
 
-- In the plotters module, the ``plot_dac`` and ``plot_profilerType`` functions have been replaced by ``bar_plot``. (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_.
+- In the plotters module, the ``plot_dac`` and ``plot_profilerType`` functions have been replaced by ``bar_plot``. (:pr:`56`) by |gmaze|.
 
 Internals
 ^^^^^^^^^
 
-- Internal logging available and upgrade dependencies version support (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_. To see internal logs, you can set-up your application like this:
+- Internal logging available and upgrade dependencies version support (:pr:`56`) by |gmaze|. To see internal logs, you can set-up your application like this:
 
 .. code-block:: python
 
@@ -909,7 +1163,7 @@ Long due release !
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- Live monitor for the status (availability) of data sources. See documentation page on :ref:`api-status`. (:pr:`36`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Live monitor for the status (availability) of data sources. See documentation page on :ref:`api-status`. (:pr:`36`) by |gmaze|.
 
 .. code-block:: python
 
@@ -921,7 +1175,7 @@ Features and front-end API
 .. image:: _static/status_monitor.png
   :width: 350
 
-- Optimise large data fetching with parallelization, for all data fetchers (erddap, localftp and argovis). See documentation page on :ref:`parallel`. Two parallel methods are available: multi-threading or multi-processing. (:pr:`28`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Optimise large data fetching with parallelization, for all data fetchers (erddap, localftp and argovis). See documentation page on :ref:`parallel`. Two parallel methods are available: multi-threading or multi-processing. (:pr:`28`) by |gmaze|.
 
 .. code-block:: python
 
@@ -943,15 +1197,15 @@ Breaking changes
 Internals
 ^^^^^^^^^
 
-- New ``open_mfdataset`` and ``open_mfjson`` methods in Argo stores. These can be used to open, pre-process and concatenate a collection of paths both in sequential or parallel order. (:pr:`28`) by `G. Maze <http://www.github.com/gmaze>`_.
+- New ``open_mfdataset`` and ``open_mfjson`` methods in Argo stores. These can be used to open, pre-process and concatenate a collection of paths both in sequential or parallel order. (:pr:`28`) by |gmaze|.
 
-- Unit testing is now done on a controlled conda environment. This allows to more easily identify errors coming from development vs errors due to dependencies update. (:pr:`65`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Unit testing is now done on a controlled conda environment. This allows to more easily identify errors coming from development vs errors due to dependencies update. (:pr:`65`) by |gmaze|.
 
 
 v0.1.6 (31 Aug. 2020)
 ---------------------
 
-- **JOSS paper published**. You can now cite argopy with a clean reference. (:pr:`30`) by `G. Maze <http://www.github.com/gmaze>`_ and `K. Balem <http://www.github.com/quai20>`_.
+- **JOSS paper published**. You can now cite argopy with a clean reference. (:pr:`30`) by |gmaze| and |quai20|.
 
 Maze G. and Balem K. (2020). argopy: A Python library for Argo ocean data analysis. *Journal of Open Source Software*, 5(52), 2425 doi: `10.21105/joss.02425 <http://dx.doi.org/10.21105/joss.02425>`_.
 
@@ -962,7 +1216,7 @@ v0.1.5 (10 July 2020)
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- A new data source with the **argovis** data fetcher, all access points available (:pr:`24`). By `T. Tucker <https://github.com/tylertucker202>`_ and `G. Maze <http://www.github.com/gmaze>`_.
+- A new data source with the **argovis** data fetcher, all access points available (:pr:`24`). By `T. Tucker <https://github.com/tylertucker202>`_ and |gmaze|.
 
 .. code-block:: python
 
@@ -972,7 +1226,7 @@ Features and front-end API
     loader.profile(6902746, 12).to_xarray()
     loader.region([-85,-45,10.,20.,0,1000.,'2012-01','2012-02']).to_xarray()
 
-- Easily compute `TEOS-10 <http://teos-10.org/>`_ variables with new argo accessor function **teos10**. This needs `gsw <https://github.com/TEOS-10/GSW-Python>`_ to be installed. (:pr:`37`) By `G. Maze <http://www.github.com/gmaze>`_.
+- Easily compute `TEOS-10 <http://teos-10.org/>`_ variables with new argo accessor function **teos10**. This needs `gsw <https://github.com/TEOS-10/GSW-Python>`_ to be installed. (:pr:`37`) By |gmaze|.
 
 .. code-block:: python
 
@@ -1006,7 +1260,7 @@ v0.1.4 (24 June 2020)
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- Standard levels interpolation method available in **standard** user mode (:pr:`23`). By `K. Balem <http://www.github.com/quai20>`_.
+- Standard levels interpolation method available in **standard** user mode (:pr:`23`). By |quai20|.
 
 .. code-block:: python
 
@@ -1014,7 +1268,7 @@ Features and front-end API
     ds = ds.argo.point2profile()
     ds_interp = ds.argo.interp_std_levels(np.arange(0,900,50))
 
-- Insert in a Jupyter notebook cell the `Euro-Argo fleet monitoring <https://fleetmonitoring.euro-argo.eu>`_ dashboard page, possibly for a specific float (:pr:`20`). By `G. Maze <http://www.github.com/gmaze>`_.
+- Insert in a Jupyter notebook cell the `Euro-Argo fleet monitoring <https://fleetmonitoring.euro-argo.eu>`_ dashboard page, possibly for a specific float (:pr:`20`). By |gmaze|.
 
 .. code-block:: python
 
@@ -1023,7 +1277,7 @@ Features and front-end API
     # or
     argopy.dashboard(wmo=6902746)
 
-- The ``localftp`` index and data fetcher now have the ``region`` and ``profile`` access points available (:pr:`25`). By `G. Maze <http://www.github.com/gmaze>`_.
+- The ``localftp`` index and data fetcher now have the ``region`` and ``profile`` access points available (:pr:`25`). By |gmaze|.
 
 Breaking changes
 ^^^^^^^^^^^^^^^^
@@ -1033,7 +1287,7 @@ Breaking changes
 Internals
 ^^^^^^^^^
 
-- Now uses `fsspec <https://filesystem-spec.readthedocs.io>`_ as file system for caching as well as accessing local and remote files (:pr:`19`). This closes issues :issue:`12`, :issue:`15` and :issue:`17`. **argopy** fetchers must now use (or implement if necessary) one of the internal file systems available in the new module ``argopy.stores``. By `G. Maze <http://www.github.com/gmaze>`_.
+- Now uses `fsspec <https://filesystem-spec.readthedocs.io>`_ as file system for caching as well as accessing local and remote files (:pr:`19`). This closes issues :issue:`12`, :issue:`15` and :issue:`17`. **argopy** fetchers must now use (or implement if necessary) one of the internal file systems available in the new module ``argopy.stores``. By |gmaze|.
 
 - Erddap fetcher now uses netcdf format to retrieve data (:pr:`19`).
 
@@ -1044,7 +1298,7 @@ v0.1.3 (15 May 2020)
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- New ``index`` fetcher to explore and work with meta-data (:pr:`6`). By `K. Balem <http://www.github.com/quai20>`_.
+- New ``index`` fetcher to explore and work with meta-data (:pr:`6`). By |quai20|.
 
 .. code-block:: python
 
@@ -1065,7 +1319,7 @@ The ``index`` fetcher comes with basic plotting functionalities with the :func:`
 
   The design of plotting and visualisation features in ``argopy`` is constantly evolving, so this may change in future releases.
 
-- Real documentation written and published (:pr:`13`). By `G. Maze <http://www.github.com/gmaze>`_.
+- Real documentation written and published (:pr:`13`). By |gmaze|.
 
 - The :class:`argopy.DataFetcher` now has a :func:`argopy.DataFetcher.to_dataframe` method to return a :class:`pandas.DataFrame`.
 
@@ -1173,9 +1427,12 @@ v0.1.0 (17 Mar. 2020)
 
 - Erddap data fetcher
 
+.. |gmaze| replace:: `G. Maze <http://www.github.com/gmaze>`__
+.. |quai20| replace:: `K. Balem <http://www.github.com/quai20>`__
+
 .. |pypi dwn| image:: https://img.shields.io/pypi/dm/argopy?label=Pypi%20downloads
    :target: //pypi.org/project/argopy/
-.. |conda dwn| image:: https://img.shields.io/conda/dn/conda-forge/argopy?label=Conda%20downloads
+.. |conda dwn| image:: https://img.shields.io/conda/d/conda-forge/argopy
    :target: //anaconda.org/conda-forge/argopy
 .. |PyPI| image:: https://img.shields.io/pypi/v/argopy
    :target: //pypi.org/project/argopy/
@@ -1183,4 +1440,5 @@ v0.1.0 (17 Mar. 2020)
    :target: //anaconda.org/conda-forge/argopy
 .. |release date| image:: https://img.shields.io/github/release-date/euroargodev/argopy?display_date=published_at
    :target: //github.com/euroargodev/argopy/releases
-   
+.. |eqco2_since_last_release| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_carbonfootprint_since_last_release.json
+

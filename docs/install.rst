@@ -5,6 +5,11 @@ Installation
 
 |pypi dwn| |conda dwn|
 
+.. admonition:: **argopy** >= 1.3 requires Python 3.11
+
+    Because of a `bug in xarray versions from 2024.3.0 to 2025.6.1 <https://github.com/pydata/xarray/issues/8909>`_ and since xarray >= 2025.7.0 requires python >= 3.11: **argopy** >= 1.3 requires Python 3.11.
+
+
 Instructions
 ------------
 
@@ -20,7 +25,7 @@ or pip:
 
     pip install argopy
 
-you can also work with the latest dev. version:
+you can also work with the ongoing development version:
 
 .. code-block:: text
 
@@ -30,22 +35,24 @@ you can also work with the latest dev. version:
 Required dependencies
 ---------------------
 
-- aiohttp
-- erddapy
-- fsspec
-- netCDF4
+**argopy** >= 1.3 requires Python 3.11
+
+- xarray >= 2025.7.0
 - scipy
+- numpy
+- erddapy
+- netCDF4
+- h5netcdf
+- fsspec >= 2025.5.1
 - toolz
-- xarray < 2024.3.0 (because of `this issue <https://github.com/pydata/xarray/issues/8909>`_)
 - requests
+- aiohttp
 - decorator
 - packaging
 
-Note that Erddapy_ is required because `erddap <https://coastwatch.pfeg.noaa.gov/erddap/information.html>`_ is the default data fetching backend.
+Requirement dependencies details can be found `here <https://github.com/euroargodev/argopy/blob/master/requirements.txt>`_.
 
-Requirement dependencies details can be found `here <https://github.com/euroargodev/argopy/network/dependencies#requirements.txt>`_.
-
-The **argopy** software is `continuously tested <https://github.com/euroargodev/argopy/actions?query=workflow%3Atests>`_ under latest OS (Linux, Mac OS and Windows) and with python versions 3.9 and 3.10
+The **argopy** software is `continuously tested <https://github.com/euroargodev/argopy/actions?query=workflow%3Atests>`_ under latest OS (Linux, Mac OS and Windows) and with python versions 3.11 and 3.12.
 
 Optional dependencies
 ---------------------
@@ -56,7 +63,6 @@ For a complete **argopy** experience, you may also consider to install the follo
 
 - gsw
 - tqdm
-- zarr
 
 **Performances**
 
@@ -64,15 +70,30 @@ For a complete **argopy** experience, you may also consider to install the follo
 - distributed
 - pyarrow
 
+**Files handling**
+
+- boto3 / s3fs
+- zarr
+- numcodecs
+- kerchunk
+
 **Visualisation**
 
-- IPython
 - cartopy
+- IPython
 - ipykernel
 - ipywidgets
 - matplotlib
+- pyproj
 - seaborn
 
+
+Environments
+------------
+
+You can simply use one of the **argopy** testing conda environments listed here: https://github.com/euroargodev/argopy/tree/master/ci/requirements
+
+You can also look at this section of the documentation :ref:`contributing.dev_env`
 
 
 .. _Erddapy: https://github.com/ioos/erddapy

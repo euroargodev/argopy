@@ -1,15 +1,20 @@
 """
 Manipulate Argo formatted string and print/stdout formatters
 """
+
 import os
 from urllib.parse import urlparse, parse_qs
 import logging
 import pandas as pd
 import numpy as np
+import warnings
 from .checkers import check_cyc, check_wmo
 
 
 log = logging.getLogger("argopy.utils.format")
+
+
+redact = lambda s, n: s[:n] + "*" * max(0, len(s) - n)  # noqa: E731
 
 
 def format_oneline(s, max_width=65):
@@ -26,10 +31,39 @@ def format_oneline(s, max_width=65):
         return s
 
 
+def dirfs_relpath(fs, path):
+    print("-" * 40)
+    if isinstance(path, str):
+        if not fs.path:
+            return path
+        # We need to account for S3FileSystem returning paths that do not
+        # start with a '/'
+        if path == fs.path or (fs.path.startswith(fs.fs.sep) and path == fs.path[1:]):
+            return ""
+        prefix = fs.path + fs.fs.sep
+        if fs.path.startswith(fs.fs.sep) and not path.startswith(fs.fs.sep):
+            prefix = prefix[1:]
+
+        print("fs=", fs)
+        print("fs.path=", fs.path)
+        print("prefix=", prefix)
+        print("fs.fs.sep=", fs.fs.sep)
+        print("fs.path.startswith(fs.fs.sep)=", fs.path.startswith(fs.fs.sep))
+        print("path.startswith(fs.fs.sep)=", path.startswith(fs.fs.sep))
+        print("prefix=", prefix)
+        print("path=", path)
+        print("path.startswith(prefix)=", path.startswith(prefix))
+
+        assert path.startswith(prefix)
+        return path[len(prefix) :]
+    print("-" * 40)
+    return [dirfs_relpath(fs, _path) for _path in path]
+
+
 def argo_split_path(this_path):  # noqa C901
     """Split path from a GDAC ftp style Argo netcdf file and return information
 
-    >>> argo_split_path('coriolis/6901035/profiles/D6901035_001D.nc')
+    >>> argo_split_path('/dac/coriolis/6901035/profiles/D6901035_001D.nc')
     >>> argo_split_path('https://data-argo.ifremer.fr/dac/csiro/5903939/profiles/D5903939_103.nc')
 
     Parameters
@@ -49,15 +83,35 @@ def argo_split_path(this_path):  # noqa C901
         "incois",
         "jma",
         "kma",
-        "kordi",
+        "kordi",  # todo: remove this entry after some time, it will not be valid after 2025/06/30
+        "kiost",
         "meds",
         "nmdis",
     ]
     output = {}
 
-    start_with = (
-        lambda f, x: f[0 : len(x)] == x if len(x) <= len(f) else False
-    )  # noqa: E731
+    start_with = lambda f, x: (  # noqa: E731
+        f[0 : len(x)] == x if len(x) <= len(f) else False
+    )
+
+    def detect_path_separator(path):
+        """
+        Determines the file path separator used in a given path string.
+
+        Args:
+            path (str): The path string to analyze.
+
+        Returns:
+            str: The detected file path separator, or None if no valid separator is found.
+        """
+        # Check for the default OS separator
+        if os.sep in path:
+            return os.sep
+        # Check for the alternative separator, if it exists (e.g., '/' on Windows)
+        if os.altsep and os.altsep in path:
+            return os.altsep
+        # No separator detected
+        return None
 
     def split_path(p, sep="/"):
         """Split a pathname.  Returns tuple "(head, tail)" where "tail" is
@@ -80,17 +134,21 @@ def argo_split_path(this_path):  # noqa C901
 
     known_origins = [
         "https://data-argo.ifremer.fr",
+        "https://usgodae.org/pub/outgoing/argo",
         "ftp://ftp.ifremer.fr/ifremer/argo",
         "ftp://usgodae.org/pub/outgoing/argo",
+        "s3://argo-gdac-sandbox/pub",
         fix_localhost(this_path),
         "",
     ]
 
+    # Check if this is a path with a known "origin":
+    # If not, fills value with an empty string ""
     output["origin"] = [
         origin for origin in known_origins if start_with(this_path, origin)
     ][0]
     output["origin"] = "." if output["origin"] == "" else output["origin"] + "/"
-    sep = "/" if output["origin"] != "." else os.path.sep
+    sep = "/" if output["origin"] != "." else detect_path_separator(this_path)
 
     (path, file) = split_path(this_path, sep=sep)
 
@@ -103,6 +161,13 @@ def argo_split_path(this_path):  # noqa C901
     path_parts = path.split(sep)
 
     try:
+        # Adjust origin and path for local files:
+        # This ensures that output['path'] is agnostic to users and can be reused on any gdac compliant architecture
+        output["origin"] = sep.join(path_parts[0 : path_parts.index("dac")])
+        output["origin"] = sep if output["origin"] == "" else output["origin"]
+        output["path"] = sep.join(path_parts[path_parts.index("dac") :])
+
+        # Extract file information
         if path_parts[-1] == "profiles":
             output["type"] = "Mono-cycle profile file"
             output["wmo"] = path_parts[-2]
@@ -130,6 +195,10 @@ def argo_split_path(this_path):  # noqa C901
             "This is not a Argo GDAC compliant file path (invalid DAC name: '%s')"
             % output["dac"]
         )
+    elif output["dac"] == "kordi" and pd.to_datetime("now", utc=True) > pd.to_datetime(
+        "2025-06-30", utc=True
+    ):
+        warnings.warn("DAC 'kordi' has been deprecated by ADMT. Use 'kiost' instead.")
 
     # Deal with the file name:
     filename, file_extension = os.path.splitext(output["name"])
@@ -183,25 +252,6 @@ def argo_split_path(this_path):  # noqa C901
             else:
                 output["data_mode"] = "R, Real-time data (implicit)"
 
-    # Adjust origin and path for local files:
-    # This ensures that output['path'] is agnostic to users and can be reused on any gdac compliant architecture
-    parts = path.split(sep)
-    i, stop = len(parts) - 1, False
-    while not stop:
-        if (
-            parts[i] == "profiles"
-            or parts[i] == output["wmo"]
-            or parts[i] == output["dac"]
-            or parts[i] == "dac"
-        ):
-            i = i - 1
-            if i < 0:
-                stop = True
-        else:
-            stop = True
-    output["origin"] = sep.join(parts[0 : i + 1])
-    output["path"] = output["path"].replace(output["origin"], "")
-
     return dict(sorted(output.items()))
 
 
@@ -224,7 +274,10 @@ def erddapuri2fetchobj(uri: str) -> dict:
             box.append(float(params["pres_adjusted>"][0]))
             box.append(float(params["pres_adjusted<"][0]))
         else:
-            raise ValueError("This erddap uri is invalid, it must have pressure constraints with coordinates constraints: %s" % uri)
+            raise ValueError(
+                "This erddap uri is invalid, it must have pressure constraints with coordinates constraints: %s"
+                % uri
+            )
 
         if "time>" in params.keys():
             box.append(

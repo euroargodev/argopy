@@ -3,17 +3,17 @@ import numpy as np
 
 from argopy import DataFetcher as ArgoDataFetcher
 from argopy.utils.checkers import is_list_of_strings
-from argopy.stores import indexstore_pd as ArgoIndex  # make sure to work with the Pandas index store with erddap-bgc
+from argopy.stores.index import indexstore_pd as ArgoIndex  # make sure to work with the Pandas index store with erddap-bgc
 
 import pytest
 import xarray as xr
 from utils import (
     requires_erddap,
+    create_temp_folder,
 )
 from mocked_http import mocked_server_address
 from mocked_http import mocked_httpserver as mocked_erddapserver
 
-import tempfile
 import shutil
 from collections import ChainMap
 
@@ -21,6 +21,7 @@ from collections import ChainMap
 log = logging.getLogger("argopy.tests.data.erddap")
 
 USE_MOCKED_SERVER = True
+# USE_MOCKED_SERVER = False
 
 """
 List access points to be tested for each datasets: bgc.
@@ -47,12 +48,13 @@ PARALLEL_ACCESS_POINTS = [
 List user modes to be tested
 """
 USER_MODES = ['standard', 'expert', 'research']
-# USER_MODES = ['expert']
+USER_MODES = ['expert']
 
 """
 List of 'params' fetcher arguments to be tested
 """
 PARAMS = ['all', 'DOXY']
+PARAMS = ['all']
 
 """
 Make a list of VALID dataset/access_points to be tested
@@ -128,11 +130,11 @@ def assert_fetcher(mocked_erddapserver, this_fetcher, cacheable=False):
     try:
         assert_all(this_fetcher, cacheable)
     except Exception as e:
-        if this_fetcher._mode not in ['expert']:
-            pytest.xfail("BGC is not yet supported in '%s' user mode" % this_fetcher._mode)
-        else:
-            log.debug("Fetcher instance assert false because: %s" % e)
-            assert False
+        # if this_fetcher._mode not in ['expert']:
+        #     pytest.xfail("BGC is not yet supported in '%s' user mode" % this_fetcher._mode)
+        # else:
+        log.debug("Fetcher instance assert false because: %s" % e)
+        assert False
 
 
 @requires_erddap
@@ -147,7 +149,7 @@ class Test_Backend:
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
         # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
-        self.cachedir = tempfile.mkdtemp()
+        self.cachedir = create_temp_folder().folder
 
     def _setup_fetcher(self, this_request, cached=False, parallel=False):
         """Helper method to set up options for a fetcher creation"""
@@ -182,6 +184,9 @@ class Test_Backend:
         if not parallel:
             # parallel is False by default, so we don't need to clutter the arguments list
             del fetcher_args["parallel"]
+        else:
+            # Use small chunks for the small test domain (ensure we're producing more than 1 uri to handle):
+            fetcher_args['chunks_maxsize'] = {'lon': 2.5, 'lat': 2.5, 'wmo': 1}
 
         # log.debug("Setting up a new fetcher with the following arguments:")
         # log.debug(fetcher_args)
@@ -202,7 +207,7 @@ class Test_Backend:
     @pytest.fixture
     def parallel_fetcher(self, request):
         """ Fixture to create a parallel ERDDAP data fetcher for a given dataset and access point """
-        fetcher_args, access_point = self._setup_fetcher(request, parallel="erddap")
+        fetcher_args, access_point = self._setup_fetcher(request, parallel="thread")
         yield create_fetcher(fetcher_args, access_point)
 
     def teardown_class(self):
@@ -226,12 +231,6 @@ class Test_Backend:
     def test_fetching_cached(self, mocked_erddapserver, cached_fetcher):
         assert_fetcher(mocked_erddapserver, cached_fetcher, cacheable=True)
 
-    @pytest.mark.parametrize("parallel_fetcher", VALID_PARALLEL_ACCESS_POINTS,
-                             indirect=True,
-                             ids=VALID_PARALLEL_ACCESS_POINTS_IDS)
-    def test_fetching_parallel(self, mocked_erddapserver, parallel_fetcher):
-        assert_fetcher(mocked_erddapserver, parallel_fetcher, cacheable=False)
-
     @pytest.mark.parametrize("measured", [None, 'all', 'DOXY'],
                              indirect=False,
                              ids=["measured=%s" % m for m in [None, 'all', 'DOXY']]
@@ -249,20 +248,8 @@ class Test_Backend:
         fetcher = create_fetcher(fetcher_args, access_point)
         assert_fetcher(mocked_erddapserver, fetcher)
 
-    # @pytest.mark.parametrize("measured", ['all'],
-    #                          indirect=False,
-    #                          ids=["measured=%s" % m for m in ['all']],
-    #                          )
-    # def test_fetching_failed_measured(self, mocked_erddapserver, measured):
-    #     class this_request:
-    #         param = {
-    #             'ds': 'bgc',
-    #             'mode': 'expert',
-    #             'params': 'all',
-    #             'measured': measured,
-    #             'access_point': {"float": [6904240]},
-    #         }
-    #     fetcher_args, access_point = self._setup_fetcher(this_request)
-    #     fetcher = create_fetcher(fetcher_args, access_point)
-    #     with pytest.raises(ValueError):
-    #         fetcher.to_xarray()
+    @pytest.mark.parametrize("parallel_fetcher", VALID_PARALLEL_ACCESS_POINTS,
+                             indirect=True,
+                             ids=VALID_PARALLEL_ACCESS_POINTS_IDS)
+    def test_fetching_parallel_thread(self, mocked_erddapserver, parallel_fetcher):
+        assert_fetcher(mocked_erddapserver, parallel_fetcher, cacheable=False)

@@ -6,7 +6,6 @@ import xarray as xr
 from typing import Union
 from fsspec.core import split_protocol
 import fsspec
-from socket import gaierror
 import urllib
 import json
 import logging
@@ -14,15 +13,15 @@ import importlib
 
 from ..options import OPTIONS
 from ..errors import InvalidDatasetStructure, GdacPathError, InvalidFetcher
-from .lists import list_available_data_src, list_available_index_src
+from .lists import list_available_data_src, list_available_index_src, list_gdac_servers
 from .casting import to_list
+from .geo import conv_lon
 
 
 log = logging.getLogger("argopy.utils.checkers")
 
 if importlib.util.find_spec("s3fs") is not None:
     HAS_S3 = True
-    import s3fs
 else:
     HAS_S3 = False
 
@@ -33,7 +32,7 @@ else:
     HAS_BOTO3 = False
 
 
-def is_indexbox(box: list, errors="raise"):
+def is_indexbox(box: list, errors: str = "raise"):
     """Check if this array matches a 2d or 3d index box definition
 
     Argopy expects one of the following 2 format to define an index box:
@@ -46,7 +45,12 @@ def is_indexbox(box: list, errors="raise"):
     Parameters
     ----------
     box: list
-    errors: str, default='raise'
+    errors: str, default: ``raise``
+        Define how to handle box format non-compliance:
+            - ``raise``: Raise ValueError message
+            - ``warn``: Return False and issue warning
+            - ``ignore``: Return False and issue warning in logging console
+            - ``silent``:  Return False
 
     Returns
     -------
@@ -61,13 +65,10 @@ def is_indexbox(box: list, errors="raise"):
             isit = False
         return isit
 
+    # Test object format :
     tests = {}
-
-    # Formats:
     tests["index box must be a list"] = lambda b: isinstance(b, list)
     tests["index box must be a list with 4 or 6 elements"] = lambda b: len(b) in [4, 6]
-
-    # Types:
     tests["lon_min must be numeric"] = lambda b: (
         isinstance(b[0], int) or isinstance(b[0], (np.floating, float))
     )
@@ -81,46 +82,82 @@ def is_indexbox(box: list, errors="raise"):
         isinstance(b[3], int) or isinstance(b[3], (np.floating, float))
     )
     if len(box) > 4:
-        tests[
-            "datetim_min must be a string convertible to a Pandas datetime"
-        ] = lambda b: isinstance(b[-2], str) and is_dateconvertible(b[-2])
-        tests[
-            "datetim_max must be a string convertible to a Pandas datetime"
-        ] = lambda b: isinstance(b[-1], str) and is_dateconvertible(b[-1])
+        tests["datetim_min must be a string convertible to a Pandas datetime"] = (
+            lambda b: isinstance(b[-2], str) and is_dateconvertible(b[-2])
+        )
+        tests["datetim_max must be a string convertible to a Pandas datetime"] = (
+            lambda b: isinstance(b[-1], str) and is_dateconvertible(b[-1])
+        )
 
+    error_msg = None
+    for msg, test in tests.items():
+        if not test(box):
+            error_msg = msg
+            break
+
+    if error_msg:
+        if errors == "raise":
+            raise ValueError("%s: %s" % (box, error_msg))
+        elif errors == "warn":
+            warnings.warn("%s: %s" % (box, error_msg))
+        elif errors == "silent":
+            log.warning("%s: %s" % (box, error_msg))
+        return False
+
+    # Test object content :
+    tests = {}
     # Ranges:
-    tests["lon_min must be in [-180;180] or [0;360]"] = (
-        lambda b: b[0] >= -180.0 and b[0] <= 360.0
-    )
-    tests["lon_max must be in [-180;180] or [0;360]"] = (
-        lambda b: b[1] >= -180.0 and b[1] <= 360.0
-    )
-    tests["lat_min must be in [-90;90]"] = lambda b: b[2] >= -90.0 and b[2] <= 90
-    tests["lat_max must be in [-90;90]"] = lambda b: b[3] >= -90.0 and b[3] <= 90.0
+    if OPTIONS["longitude_convention"] == "360":
+        tests[
+            f"lon_min must be in [0;360]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."
+        ] = (lambda b: 0.0 <= b[0] <= 360.0)
+        tests[
+            f"lon_max must be in [0;360]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."
+        ] = (lambda b: 0.0 <= b[1] <= 360.0)
+    else:  # OPTIONS['longitude_convention'] == '180':
+        tests[
+            f"lon_min must be in [-180;180]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."
+        ] = (lambda b: -180.0 <= b[0] <= 180.0)
+        tests[
+            f"lon_max must be in [-180;180]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."
+        ] = (lambda b: -180.0 <= b[1] <= 180.0)
+    tests["lat_min must be in [-90;90]"] = lambda b: -90.0 <= b[2] <= 90.0
+    tests["lat_max must be in [-90;90]"] = lambda b: -90.0 <= b[3] <= 90.0
 
     # Orders:
-    tests["lon_max must be larger than lon_min"] = lambda b: b[0] < b[1]
+    if OPTIONS["longitude_convention"] == "360":
+        tests[
+            f"lon_max={conv_lon(box[1], '360')} must be larger than lon_min={conv_lon(box[0], '360')}. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."
+        ] = lambda b: conv_lon(b[0], "360") < conv_lon(b[1], "360")
+    elif OPTIONS["longitude_convention"] == "180":
+        tests[
+            f"lon_max={conv_lon(box[1], '180')} must be larger than lon_min={conv_lon(box[0], '180')}. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."
+        ] = lambda b: conv_lon(b[0], "180") < conv_lon(b[1], "180")
     tests["lat_max must be larger than lat_min"] = lambda b: b[2] < b[3]
     if len(box) > 4:
         tests["datetim_max must come after datetim_min"] = lambda b: pd.to_datetime(
             b[-2]
         ) < pd.to_datetime(b[-1])
 
-    error = None
+    error_msg = None
     for msg, test in tests.items():
         if not test(box):
-            error = msg
+            error_msg = msg
             break
 
-    if error and errors == "raise":
-        raise ValueError("%s: %s" % (box, error))
-    elif error:
+    if error_msg:
+        if errors == "raise":
+            raise ValueError("%s: %s" % (box, error_msg))
+        elif errors == "warn":
+            warnings.warn("%s: %s" % (box, error_msg))
+        elif errors == "silent":
+            log.warning("%s: %s" % (box, error_msg))
         return False
-    else:
-        return True
+
+    return True
 
 
-def is_box(box: list, errors="raise"):
+def is_box(box: list, errors: str = "raise"):
     """Check if this array matches a 3d or 4d data box definition
 
     Argopy expects one of the following 2 format to define a box:
@@ -133,7 +170,12 @@ def is_box(box: list, errors="raise"):
     Parameters
     ----------
     box: list
-    errors: 'raise'
+    errors: str, default: ``raise``
+        Define how to handle box format non-compliance:
+            - ``raise``: Raise ValueError message
+            - ``warn``: Return False and issue warning
+            - ``ignore``: Return False and issue warning in logging console
+            - ``silent``:  Return False
 
     Returns
     -------
@@ -148,13 +190,10 @@ def is_box(box: list, errors="raise"):
             isit = False
         return isit
 
+    # Test object format :
     tests = {}
-    #     print(box)
-    # Formats:
     tests["box must be a list"] = lambda b: isinstance(b, list)
     tests["box must be a list with 6 or 8 elements"] = lambda b: len(b) in [6, 8]
-
-    # Types:
     tests["lon_min must be numeric"] = lambda b: (
         isinstance(b[0], int) or isinstance(b[0], (np.floating, float))
     )
@@ -174,27 +213,59 @@ def is_box(box: list, errors="raise"):
         isinstance(b[5], int) or isinstance(b[5], (np.floating, float))
     )
     if len(box) == 8:
-        tests[
-            "datetim_min must be an object convertible to a Pandas datetime"
-        ] = lambda b: is_dateconvertible(b[-2])
-        tests[
-            "datetim_max must be an object convertible to a Pandas datetime"
-        ] = lambda b: is_dateconvertible(b[-1])
+        tests["datetim_min must be an object convertible to a Pandas datetime"] = (
+            lambda b: is_dateconvertible(b[-2])
+        )
+        tests["datetim_max must be an object convertible to a Pandas datetime"] = (
+            lambda b: is_dateconvertible(b[-1])
+        )
 
+    error_msg = None
+    for msg, test in tests.items():
+        if not test(box):
+            error_msg = msg
+            break
+
+    if error_msg:
+        if errors == "raise":
+            raise ValueError("%s: %s" % (box, error_msg))
+        elif errors == "warn":
+            warnings.warn("%s: %s" % (box, error_msg))
+        elif errors == "silent":
+            log.warning("%s: %s" % (box, error_msg))
+        return False
+
+    # Test object content :
+    tests = {}
     # Ranges:
-    tests["lon_min must be in [-180;180] or [0;360]"] = (
-        lambda b: b[0] >= -180.0 and b[0] <= 360.0
-    )
-    tests["lon_max must be in [-180;180] or [0;360]"] = (
-        lambda b: b[1] >= -180.0 and b[1] <= 360.0
-    )
-    tests["lat_min must be in [-90;90]"] = lambda b: b[2] >= -90.0 and b[2] <= 90
-    tests["lat_max must be in [-90;90]"] = lambda b: b[3] >= -90.0 and b[3] <= 90.0
-    tests["pres_min must be in [0;10000]"] = lambda b: b[4] >= 0 and b[4] <= 10000
-    tests["pres_max must be in [0;10000]"] = lambda b: b[5] >= 0 and b[5] <= 10000
+    if OPTIONS["longitude_convention"] == "360":
+        tests[
+            f"lon_min must be in [0;360]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."
+        ] = (lambda b: 0.0 <= b[0] <= 360.0)
+        tests[
+            f"lon_max must be in [0;360]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."
+        ] = (lambda b: 0.0 <= b[1] <= 360.0)
+    else:  # OPTIONS['longitude_convention'] == '180':
+        tests[
+            f"lon_min must be in [-180;180]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."
+        ] = (lambda b: -180.0 <= b[0] <= 180.0)
+        tests[
+            f"lon_max must be in [-180;180]. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."
+        ] = (lambda b: -180.0 <= b[1] <= 180.0)
+    tests["lat_min must be in [-90;90]"] = lambda b: -90.0 <= b[2] <= 90.0
+    tests["lat_max must be in [-90;90]"] = lambda b: -90.0 <= b[3] <= 90.0
+    tests["pres_min must be in [0;10000]"] = lambda b: 0.0 <= b[4] <= 10000.0
+    tests["pres_max must be in [0;10000]"] = lambda b: 0.0 <= b[5] <= 10000.0
 
     # Orders:
-    tests["lon_max must be larger than lon_min"] = lambda b: b[0] <= b[1]
+    if OPTIONS["longitude_convention"] == "360":
+        tests[
+            f"lon_max={conv_lon(box[1], '360')} must be larger than lon_min={conv_lon(box[0], '360')}. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."
+        ] = lambda b: conv_lon(b[0], "360") < conv_lon(b[1], "360")
+    elif OPTIONS["longitude_convention"] == "180":
+        tests[
+            f"lon_max={conv_lon(box[1], '180')} must be larger than lon_min={conv_lon(box[0], '180')}. You can change the argopy option 'longitude_convention' value if you think this is wrong, current setting is '{OPTIONS['longitude_convention']}'."
+        ] = lambda b: conv_lon(b[0], "180") < conv_lon(b[1], "180")
     tests["lat_max must be larger than lat_min"] = lambda b: b[2] <= b[3]
     tests["pres_max must be larger than pres_min"] = lambda b: b[4] <= b[5]
     if len(box) == 8:
@@ -202,18 +273,22 @@ def is_box(box: list, errors="raise"):
             b[-2]
         ) <= pd.to_datetime(b[-1])
 
-    error = None
+    error_msg = None
     for msg, test in tests.items():
         if not test(box):
-            error = msg
+            error_msg = msg
             break
 
-    if error and errors == "raise":
-        raise ValueError("%s: %s" % (box, error))
-    elif error:
+    if error_msg:
+        if errors == "raise":
+            raise ValueError("%s: %s" % (box, error_msg))
+        elif errors == "warn":
+            warnings.warn("%s: %s" % (box, error_msg))
+        elif errors == "silent":
+            log.warning("%s: %s" % (box, error_msg))
         return False
-    else:
-        return True
+
+    return True
 
 
 def is_list_of_strings(lst):
@@ -390,6 +465,11 @@ def check_index_cols(column_names: list, convention: str = "ar_index_global_prof
     argo_bio-profile_index.txt: bgc Argo profiles index file
     The directory file describes all individual bio-profile files of the argo GDAC ftp site.
     file,date,latitude,longitude,ocean,profiler_type,institution,parameters,parameter_data_mode,date_update
+
+    ar_index_global_meta.txt: Index of float meta files
+    Metadata directory file of the Argo Global Data Assembly Center
+    file,profiler_type,institution,date_update
+
     """
     # Default for 'ar_index_global_prof'
     ref = [
@@ -419,9 +499,7 @@ def check_index_cols(column_names: list, convention: str = "ar_index_global_prof
             "date_update",
         ]
 
-    if (
-        convention == "argo_aux-profile_index"
-    ):
+    if convention == "argo_aux-profile_index":
         # ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution', 'parameters', 'date_update']
         ref = [
             "file",
@@ -434,14 +512,29 @@ def check_index_cols(column_names: list, convention: str = "ar_index_global_prof
             "parameters",
             "date_update",
         ]
+
+    if convention == "ar_index_global_meta":
+        # ['file', 'profiler_type', 'institution', 'date_update']
+        ref = [
+            "file",
+            "profiler_type",
+            "institution",
+            "date_update",
+        ]
+
     if not is_list_equal(column_names, ref):
-        log.debug("Expected (convention=%s): %s, got: %s" % (convention, ";".join(ref), ";".join(column_names)))
+        log.debug(
+            "Expected (convention=%s): %s, got: %s"
+            % (convention, ";".join(ref), ";".join(column_names))
+        )
         raise InvalidDatasetStructure("Unexpected column names in this index !")
     else:
         return column_names
 
 
-def check_gdac_path(path, errors="ignore"):  # noqa: C901
+def check_gdac_path(
+    path, errors: str = "ignore", ignore_knowns: bool = False
+):  # noqa: C901
     """Check if a path has the expected GDAC structure
 
     Expected GDAC structure::
@@ -455,14 +548,14 @@ def check_gdac_path(path, errors="ignore"):  # noqa: C901
             ├── meds
             └── nmdis
 
-    This check will return True if at least one DAC sub-folder is found under path/dac/<dac_name>
-
     Examples::
 
     >>> check_gdac_path("https://data-argo.ifremer.fr")  # True
     >>> check_gdac_path("https://usgodae.org/pub/outgoing/argo") # True
     >>> check_gdac_path("ftp://ftp.ifremer.fr/ifremer/argo") # True
     >>> check_gdac_path("/home/ref-argo/gdac") # True
+    >>> check_gdac_path("s3://argo-gdac-sandbox/pub") # True
+
     >>> check_gdac_path("https://www.ifremer.fr") # False
     >>> check_gdac_path("ftp://usgodae.org/pub/outgoing") # False
 
@@ -470,73 +563,60 @@ def check_gdac_path(path, errors="ignore"):  # noqa: C901
     ----------
     path: str
         Path name to check, including access protocol
-    errors: str
-        "ignore" or "raise" (or "warn")
+    errors: str, default="ignore"
+        Determine how check procedure error are handled: "ignore", "raise" or "warn"
+    ignore_knowns: bool, default=False
+        Should the checking procedure be by-passed for the internal list of known GDACs.
+        Set this to True to check if a known GDACs is connected or not.
 
     Returns
     -------
     checked: boolean
-        True if at least one DAC folder is found under path/dac/<dac_name>
-        False otherwise
+
+    See also
+    --------
+    :class:`argopy.stores.gdacfs`, :meth:`argopy.utils.list_gdac_servers`
+
     """
-    # Create a file system for this path
-    if split_protocol(path)[0] is None:
-        fs = fsspec.filesystem("file")
-    elif "https" in split_protocol(path)[0]:
-        fs = fsspec.filesystem("http")
-    elif "ftp" in split_protocol(path)[0]:
+    if path in list_gdac_servers() and ignore_knowns:
+        return True
+    else:
+
+        from ..stores import gdacfs  # import here, otherwise raises circular import
+
         try:
-            host = split_protocol(path)[-1].split("/")[0]
-            fs = fsspec.filesystem("ftp", host=host)
-        except gaierror:
+            fs = gdacfs(path)
+        except GdacPathError:
             if errors == "raise":
-                raise GdacPathError("Can't get address info (GAIerror) on '%s'" % host)
+                raise
             elif errors == "warn":
-                warnings.warn("Can't get address info (GAIerror) on '%s'" % host)
+                warnings.warn("Can't get address info (GAIerror) on '%s'" % path)
                 return False
             else:
                 return False
-    else:
-        raise GdacPathError(
-            "Unknown protocol for an Argo GDAC host: %s" % split_protocol(path)[0]
-        )
 
-    # dacs = [
-    #     "aoml",
-    #     "bodc",
-    #     "coriolis",
-    #     "csio",
-    #     "csiro",
-    #     "incois",
-    #     "jma",
-    #     "kma",
-    #     "kordi",
-    #     "meds",
-    #     "nmdis",
-    # ]
+        check1 = fs.exists("dac")
+        if check1:
+            return True
 
-    # Case 1:
-    check1 = (
-        fs.exists(path)
-        and fs.exists(fs.sep.join([path, "dac"]))
-        # and np.any([fs.exists(fs.sep.join([path, "dac", dac])) for dac in dacs])  # Take too much time on http/ftp GDAC server
-    )
-    if check1:
-        return True
-    elif errors == "raise":
-        raise GdacPathError(
-            "This path is not GDAC compliant (no `dac` folder with legitimate sub-folder):\n%s"
-            % path
-        )
+        elif errors == "raise":
+            raise GdacPathError(
+                "This path is not GDAC compliant (no legitimate sub-folder `dac`):\n%s"
+                % path
+            )
 
-    elif errors == "warn":
-        warnings.warn("This path is not GDAC compliant:\n%s" % path)
-        return False
-    else:
-        return False
+        elif errors == "warn":
+            warnings.warn(
+                "This path is not GDAC compliant (no legitimate sub-folder `dac`):\n%s"
+                % path
+            )
+            return False
+
+        else:
+            return False
 
 
-def isconnected(host: str = "https://www.ifremer.fr", maxtry: int = 10):
+def isconnected(host: str = "https://argopy.statuspage.io", maxtry: int = 10):
     """Check if an URL is alive
 
     Parameters
@@ -550,6 +630,7 @@ def isconnected(host: str = "https://www.ifremer.fr", maxtry: int = 10):
     -------
     bool
     """
+
     def test_retry(host, checker, maxtry):
         it = 0
         while it < maxtry:
@@ -569,7 +650,13 @@ def isconnected(host: str = "https://www.ifremer.fr", maxtry: int = 10):
         )  # nosec B310 because host protocol already checked
 
     def check_s3(host):
-        return s3fs.S3FileSystem(anon=True).info(host)
+        anon = (
+            boto3.client("s3")._request_signer._credentials is None
+            if HAS_BOTO3
+            else True
+        )
+        fs = fsspec.filesystem("s3", anon=anon)
+        return fs.exists(host)
 
     if split_protocol(host)[0] in ["http", "https", "ftp", "sftp"]:
         return test_retry(host, check_remote, maxtry)
@@ -579,7 +666,8 @@ def isconnected(host: str = "https://www.ifremer.fr", maxtry: int = 10):
         else:
             raise ValueError(
                 "Can't check if an S3 server is connected without the 's3fs' library. Please update your environment "
-                "with this dependency.")
+                "with this dependency."
+            )
     else:
         return test_retry(host, check_local, 1)
 
@@ -661,7 +749,10 @@ def isAPIconnected(src="erddap", data=True):
         list_src = list_available_index_src()
 
     if src in list_src and getattr(list_src[src], "api_server_check", None):
-        return isalive(list_src[src].api_server_check)
+        if src == "gdac":
+            return check_gdac_path(list_src[src].api_server_check, ignore_knowns=True)
+        else:
+            return isalive(list_src[src].api_server_check)
     else:
         raise InvalidFetcher
 
@@ -711,7 +802,7 @@ def erddap_ds_exists(
 
 def has_aws_credentials():
     if HAS_BOTO3:
-        client = boto3.client('s3')
+        client = boto3.client("s3")
         return client._request_signer._credentials is not None
     else:
         raise Exception("boto3 is not available !")

@@ -1,8 +1,9 @@
 """ Utilities for tests.
 
 This module contains:
-- all variables and functions used by tests to determine if they should be ran or not
+- all variables and functions used by tests to determine if they should be run or not
 - test wrapper to make safe requests to web APIs
+- generic temporary folder creation function, safe for Windows
 
 """
 import importlib
@@ -23,11 +24,12 @@ import logging
 import stat
 import platform
 import os
-from contextlib import contextmanager
 from enum import Enum
 from subprocess import check_output
+from typing import List
+import tempfile
+import shutil
 from pathlib import Path
-from typing import Generator, List
 
 from argopy.options import set_options
 from argopy.errors import ErddapServerError, ArgovisServerError, DataNotFound, GdacPathError
@@ -40,6 +42,7 @@ from argopy.utils.checkers import (
     erddap_ds_exists,
     isAPIconnected,
 )
+from argopy.options import OPTIONS
 from mocked_http import mocked_server_address, serve_mocked_httpserver
 
 
@@ -371,5 +374,52 @@ def create_read_only_folder(folder_path):
         create_read_only_folder_windows(folder_path)
     else:
         create_read_only_folder_linux(folder_path)
+
+
+class create_temp_folder:
+    """
+
+    # folder is not deleted:
+    folder = create_temp_folder().folder
+
+    # folder is deleted at the end of the "with" statement:
+    with create_temp_folder() as folder:
+        print(folder)
+
+    """
+
+    def __init__(self):
+        """Initialize the class and create a temporary folder."""
+        Path(OPTIONS['cachedir']).mkdir(parents=True, exist_ok=True)
+        self._temp_dir = tempfile.mkdtemp(dir=OPTIONS['cachedir'])
+        os.chmod(self._temp_dir, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
+
+    @property
+    def folder(self):
+        """Provide path to the temporary folder."""
+        return self._temp_dir
+
+    def __enter__(self):
+        """Enter the context manager, returning path to the temporary folder."""
+        return self.folder
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        """Exit the context manager, deleting the temporary folder."""
+        self.cleanup()
+
+    def cleanup(self):
+        """Manually delete the temporary folder and its contents."""
+        if os.path.exists(self.folder):
+            shutil.rmtree(self.folder)
+
+
+def patch_ftp(ftp):
+    """Patch Mocked FTP server keyword"""
+    if ftp == "MOCKFTP":
+        # the MOCKFTP attribute to pytest is defined in mocked_ftp.py
+        return pytest.MOCKFTP + "/."
+    else:
+        return ftp
+
 
 log.debug("%s TESTS UTILS %s" % ("="*50, "="*50))
