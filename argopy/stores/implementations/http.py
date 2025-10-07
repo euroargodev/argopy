@@ -9,12 +9,14 @@ import logging
 from typing import Union, Any, List, Literal
 from collections.abc import Callable
 import aiohttp
+import asyncio
 import fsspec
 import time
 import warnings
 import io
 from functools import lru_cache
 from netCDF4 import Dataset
+from urllib.parse import urlparse
 
 from ...errors import InvalidMethod, DataNotFound
 from ...utils import Registry, UriCName
@@ -300,8 +302,8 @@ class httpstore(ArgoStoreProto):
 
             if "ak" not in kwargs:
                 self.ak = ArgoKerchunker()
-                if self.protocol == 's3':
-                    storage_options = {'anon': not has_aws_credentials()}
+                if self.protocol == "s3":
+                    storage_options = {"anon": not has_aws_credentials()}
                 else:
                     storage_options = {}
                 self.ak.storage_options = storage_options
@@ -314,11 +316,11 @@ class httpstore(ArgoStoreProto):
                     "backend_kwargs": {
                         "consolidated": False,
                         "storage_options": {
-                            "fo": self.ak.to_reference(url,
-                                                       overwrite=akoverwrite,
-                                                       fs=self),  # codespell:ignore
+                            "fo": self.ak.to_reference(
+                                url, overwrite=akoverwrite, fs=self
+                            ),  # codespell:ignore
                             "remote_protocol": fsspec.core.split_protocol(url)[0],
-                            "remote_options": self.ak.storage_options
+                            "remote_options": self.ak.storage_options,
                         },
                     },
                 }
@@ -327,7 +329,10 @@ class httpstore(ArgoStoreProto):
                 warnings.warn(
                     "This url does not support byte range requests so we cannot load it lazily, falling back on loading in memory."
                 )
-                log.debug("This url does not support byte range requests: %s" % self.full_path(url))
+                log.debug(
+                    "This url does not support byte range requests: %s"
+                    % self.full_path(url)
+                )
                 return load_in_memory(
                     url, errors=errors, dwn_opts=dwn_opts, xr_opts=xr_opts
                 )
@@ -363,7 +368,7 @@ class httpstore(ArgoStoreProto):
 
             else:
                 target = target if isinstance(target, bytes) else target.getbuffer()
-                ds = Dataset(None, memory=target, diskless=True, mode='r')
+                ds = Dataset(None, memory=target, diskless=True, mode="r")
 
             self.register(url)
             return ds
@@ -511,9 +516,9 @@ class httpstore(ArgoStoreProto):
                     ds = xr.concat(
                         ds_list,
                         dim=concat_dim,
-                        data_vars="minimal",
-                        coords="minimal",
-                        compat="override",
+                        data_vars="minimal",  # Only data variables in which the dimension already appears are included.
+                        coords="all",
+                        compat="override",    # skip comparing and pick variable from first dataset
                     )
                     log.info("Dataset size after concat: %i" % len(ds[concat_dim]))
                     return ds, True
@@ -859,9 +864,10 @@ class httpstore(ArgoStoreProto):
                 ds = xr.concat(
                     results,
                     dim=concat_dim,
-                    data_vars="minimal",
-                    coords="minimal",
-                    compat="override",
+                    data_vars="minimal",  # Only data variables in which the dimension already appears are included.
+                    coords="all",         # All coordinate variables will be concatenated, except those corresponding
+                                          # to other dimensions.
+                    compat="override",    # skip comparing and pick variable from first dataset
                 )
                 if not compute_details:
                     return ds
@@ -897,7 +903,9 @@ class httpstore(ArgoStoreProto):
         self.register(url)
         return df
 
-    def open_json(self, url: str, errors: Literal['raise', 'silent', 'ignore'] = 'raise', **kwargs) -> Any:
+    def open_json(
+        self, url: str, errors: Literal["raise", "silent", "ignore"] = "raise", **kwargs
+    ) -> Any:
         """Download and process a json document from an url
 
         Steps performed:
@@ -952,10 +960,15 @@ class httpstore(ArgoStoreProto):
         js = json.loads(data, **js_opts)
         if len(js) == 0:
             if errors == "raise":
-                raise DataNotFound("No data loadable from %s, although the url return some data: '%s'" % (url, data))
+                raise DataNotFound(
+                    "No data loadable from %s, although the url return some data: '%s'"
+                    % (url, data)
+                )
 
             elif errors == "ignore":
-                log.debug("No data loaded from %s, although the url return some data" % url)
+                log.debug(
+                    "No data loaded from %s, although the url return some data" % url
+                )
                 return None
 
             else:
@@ -1245,3 +1258,38 @@ class httpstore(ArgoStoreProto):
             return results
         else:
             raise DataNotFound(urls)
+
+    async def _post(self, api, json_data):
+        """Asynchronous post request to a URL with a data payload as a json dict
+
+        Returns
+        -------
+        :class:`coroutine`
+        """
+        p = urlparse(api)
+        root = p.scheme + '://' + p.netloc
+        get_client = lambda api: aiohttp.ClientSession(api)
+        async with get_client(root) as session:
+            async with session.post(p.path, json=json_data) as resp:
+                return await resp.json()
+
+    def post(self, api, json_data) -> Any:
+        """Post request to a URL with a data payload as a json dict
+
+        Parameters
+        ----------
+        api : str
+            The full URL to request. Eg: https://fleetmonitoring.euro-argo.eu/platformCodes/multi-lines-search
+        json_data : dict
+            Json data to post.
+
+        Returns
+        -------
+        Any
+
+        See Also
+        --------
+        :class:`open_json`
+        """
+        future = asyncio.run_coroutine_threadsafe(self._post(api, json_data), self.fs.loop)
+        return future.result()

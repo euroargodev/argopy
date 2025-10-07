@@ -406,7 +406,7 @@ class ArgoDataFetcher:
 
     @property
     def mission(self):
-        if self._dataset_id == "bgc":
+        if "bgc" in self._dataset_id:
             return "BGC"
         else:
             return "core+deep"
