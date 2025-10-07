@@ -153,11 +153,19 @@ Check all the detailed arguments on the API reference :class:`ArgoFloat.plot`.
                 from argopy import ArgoFloat
                 af = ArgoFloat(6903262)
 
-                af.plot.scatter('PSAL')
+                af.plot.scatter('TEMP')
 
-        .. image:: ../../_static/ArgoFloat_PSAL.png
+        .. image:: ../../_static/ArgoFloat_TEMPscatter.png
 
-        By default, variables are loaded from the `prof` netcdf dataset, but variables from other netcdf dataset can also be plotted if the appropriate dataset is indicated with the `ds` argument:
+        Plotting QC will automatically select the appropriate colormap:
+
+        .. code-block:: python
+
+                af.plot.scatter('PSAL_QC')
+
+        .. image:: ../../_static/ArgoFloat_PSAL_QC.png
+
+        Note that by default, variables are loaded from the `prof` netcdf dataset, but variables from other netcdf dataset can also be plotted if the appropriate dataset is indicated with the `ds` argument:
 
         .. code-block:: python
 
@@ -167,5 +175,3 @@ Check all the detailed arguments on the API reference :class:`ArgoFloat.plot`.
                 af.plot.scatter('MEASUREMENT_CODE', ds='Rtraj')
 
         .. image:: ../../_static/ArgoFloat_MEASUREMENT_CODE.png
-
-
