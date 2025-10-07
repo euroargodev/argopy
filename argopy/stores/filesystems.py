@@ -77,6 +77,10 @@ def new_fs(
             "headers": {"User-Agent": USER_AGENT},
         }  # Passed to aiohttp.ClientSession
         if "client_kwargs" in kwargs:
+            if "headers" in kwargs['client_kwargs']:
+                for header_key, header_val in kwargs['client_kwargs']['headers'].items():
+                    client_kwargs['headers'].update({header_key: header_val})
+                kwargs['client_kwargs'].pop("headers")
             client_kwargs = {**client_kwargs, **kwargs["client_kwargs"]}
             kwargs.pop("client_kwargs")
         default_fsspec_kwargs = {
