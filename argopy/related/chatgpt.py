@@ -85,7 +85,7 @@ environment variable 'OPENAI_API_KEY'. If you don't have an API key, you may get
         try:
             l = openai.Model.list()
             for model in l['data']:
-                if model['id'] == 'gpt-3.5-turbo':
+                if model['id'] == 'gpt-4o': #'gpt-3.5-turbo':
                     valid = True
         except:
             warnings.warn("Something is wrong, probably your OpenAI API key ('%s') ..." % self._openai_api_key)
@@ -96,7 +96,7 @@ environment variable 'OPENAI_API_KEY'. If you don't have an API key, you may get
             self.messages.append({"role": "user",
                                   "content": prompt})
         chat = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o",
             messages=self.messages
         )
         reply = chat.choices[0].message.content
