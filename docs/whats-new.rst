@@ -13,6 +13,8 @@ Coming up next (unreleased)
 Internals
 ---------
 
+- **Updated User-Agent header field for HTTP requests**. The default aiottp header field User-Agent is now complemented with Argopy information in order to ease server side log analysis. The User-Agent is now somethink like: ``"User-Agent": Python/3.11 aiohttp/3.12.14 Argopy/1.3.0 (+https://github.com/euroargodev/argopy)``, :issue:`533`. (:pr:`534`) by |gmaze|.
+
 - **New post method for the** :class:`stores.httpstore` by |gmaze|.
 
 - **Fix upstream compatibility** whereby xarray >= 2025.8 deprecation cycle for changing default keyword arguments in :meth:`xarray.merge` and :meth:`xarray.concat` would make Argopy to fail with internal data processing, :issue:`521`. (:pr:`504`) by |gmaze|.
