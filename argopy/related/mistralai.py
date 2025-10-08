@@ -73,20 +73,25 @@ class Assistant:
 
         python -c "from argopy.related.mistralai import Assistant; Assistant().agent_update().chat()"
 
+        python -c "from argopy.related.mistralai import Assistant; Assistant().replay()"
+
         python -c "from argopy.related.mistralai import Assistant; Assistant(name='test', informed_agent=False).agent_update().chat()"
 
         python -c "from argopy.related.mistralai import Assistant; Assistant(name='test', informed_agent=False).agent_update().replay()"
 
+    ⚠️ Limitations
+    Please note that, like any AI, the model may occasionally generate an inaccurate or imprecise answer. Always refer
+    to the provided sources to verify the validity of the information given.
+
+    ⚠️ Limitations
+    Some limitations arise for free account, most notably the limitation to 20 documents.
 
     Notes
     -----
-    Some limitations arise for free account, most notably the limitation to 20 documents.
-
     https://docs.mistral.ai/getting-started/quickstart/#account-setup
     https://console.mistral.ai/api-keys
     https://github.com/mistralai/client-python
     https://docs.mistral.ai/api/
-
     """
 
     def __init__(self, name : str = "argo", model : Literal["mistral-medium-2505", "devstral-small-2507"] = "mistral-medium-2505", informed_agent : bool = True, **kwargs):
@@ -168,7 +173,11 @@ class Assistant:
             display(Markdown(f"<details><summary>{summary}</summary><br><small>{content}</small></details>"))
         else:
             txt = (
-                    f"{PREF}{0};{COLORS.white}"
+                    f"{PREF}{1};{COLORS.yellow}"
+                    + summary
+                    + " "
+                    + RESET
+                    + f"{PREF}{0};{COLORS.red}"
                     + content
                     + " "
                     + RESET
@@ -188,10 +197,12 @@ class Assistant:
                         if chunk.type == 'tool_reference':
                             if chunk.tool == 'web_search':
                                 if self.runner == "notebook":
+                                    title = "Source"
                                     content = f"<a href='{chunk.url}'>{chunk.title}</a><br><small>{chunk.description}</small>"
                                 else:
+                                    title = "Source:"
                                     content = f"{chunk.title}: {chunk.url}\n{chunk.description}"
-                                self.print_source(content, "Source")
+                                self.print_source(content, title)
 
     @property
     def library_id(self):
@@ -408,11 +419,11 @@ class Assistant:
     def agent_update(self):
 
         tools = [{"type": "web_search"}]
-        prompt = "Use the web search tool to access external information."
+        prompt = "Use the web search tool to access external information. you can get preferred information from the following websites: https://argopy.readthedocs.io; https://github.com/euroargodev; https://github.com/OneArgo; https://github.com/ArgoRTQC; https://github.com/ArgoDMQC; https://argo.ucsd.edu; http://www.argodatamgt.org; https://www.ocean-ops.org; http://www.argodatamgt.org/Documentation; https://vocab.nerc.ac.uk."
 
         if self.informed_agent:
             tools.append({"type": "document_library", "library_ids": [self.library_id]})
-            prompt = "Use the library tool to access external documents."
+            prompt += " Also use the library tool to access external documents."
 
         prompt += " If code is requested, just answer code without install instructions and always prefer code examples based on the Argopy library wherever relevant. Assume the role of a research scientist in oceanography working on Argo floats data and programming in Python. For all your answers you will provide a 'Answer reliability scale' from 1 (hypothetic) to 5 (highly reliable) to indicate how confident your are in your answer."
 
@@ -437,7 +448,7 @@ class Assistant:
     def agent_uri(self):
         return f"https://console.mistral.ai/build/agents/{self.agent_id}"
 
-    def tell(self, txt):
+    def _conversation_tell(self, txt):
         new = getattr(self, "_current_conversation_id", False) is False
         # self.print_line(f" This a new conversation: {new}", "🤖")
 
@@ -465,7 +476,7 @@ class Assistant:
         return res.outputs
 
     def chat(self):
-        self.print_line("ℹ **Type in 'stop' or 'bye' to stop chatting**")
+        self.print_line("ℹ **Type in 'stop', 'bye' or 'quit' to stop chatting**")
         while True:
             self.print_line(self.hline)
             prompt = input(f"👤 {self.username} says: ")
