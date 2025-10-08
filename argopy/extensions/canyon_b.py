@@ -1,0 +1,435 @@
+from pathlib import Path
+from typing import Union, List, Dict, Optional
+import matplotlib.path as mpath
+import pandas as pd
+import numpy as np
+#import PyCO2SYS as pyco2
+
+from ..errors import InvalidDatasetStructure, DataNotFound
+from ..utils import path2assets
+from . import register_argo_accessor, ArgoAccessorExtension
+
+
+nan_value = np.nan if not hasattr(np, 'NaN') else np.NaN
+
+
+
+@register_argo_accessor("canyon_b")
+class CanyonB(ArgoAccessorExtension):
+    """
+    Implementation of the CANYON-B method.
+    
+    CANYON-B is a bayesian neural network approach that estimate water-column nutrient concentrations
+    and carbonate system variables ([1]_). CANYON-B is based on the CANYON model ([2]_) and provides 
+    more robust neural networks, that include a local uncertainty estimate for each predicted parameter.
+
+    Examples
+    --------
+    Load data, they must contain oxygen measurements:
+
+    .. code-block:: python
+
+        from argopy import DataFetcher
+        ArgoSet = DataFetcher(ds='bgc', mode='standard', params='DOXY', measured='DOXY').float(1902605)
+        ds = ArgoSet.to_xarray()
+
+    Once input data are loaded, make all or selected parameters predictions:
+
+    .. code-block:: python
+
+        ds.argo.canyon_b.predict()
+        ds.argo.canyon_b.predict('PO4')
+        ds.argo.canyon_b.predict(['PO4', 'NO3'])
+        # add epres, etemp, epsal and edoxy
+
+    Notes
+    -----
+    This Python implementation is largely inspired by work from Raphaël Bajon (https://github.com/RaphaelBajon) 
+    which is available at https://github.com/RaphaelBajon/canyonbpy
+
+    References
+    ----------
+
+    .. [1] Bittig, H. C., Steinhoff, T., Claustre, H., Fiedler, B., Williams, N. L., Sauzède, R., Körtzinger, A., and Gattuso, J. P. (2018). An alternative to static climatologies: Robust estimation of open ocean CO2 variables and nutrient concentrations from T, S, and O2 data using Bayesian neural networks. Frontiers in Marine Science, 5, 328. doi:10.3389/fmars.2018.00328
+
+    .. [2] Sauzède, R., Bittig, H. C., Claustre, H., Pasqueron de Fommervault, O., Gattuso, J. P., Legendre, L., and Johnson, K. S. (2017). Estimates of water-column nutrient concentrations and carbonate system parameters in the global ocean: A novel approach based on neural networks. Frontiers in Marine Science, 4, 128. doi:10.3389/fmars.2017.00128
+
+    """
+ 
+    n_inputs = 7 # Pressure, Temperature, Salinity, Oxygen, Latitude, Longitude, Year
+    """Number of inputs variables for CANYON-B"""
+
+    #output_list = ["NO3", "PO4", "SiOH4", "AT", "DIC", "pHT", "pCO2"] # DIC = CT in the paper and I keep it that way to be consistent with the existing canyon-med extension
+    output_list = ['AT', 'DIC', 'pHT', 'pCO2', 'NO3', 'PO4', 'SiOH4'] # DIC = CT in [1], keep it that way to be consistent with the canyon-med extention. Order of parameters follows https://github.com/RaphaelBajon/canyonbpy/blob/main/canyonbpy/core.py because it is used later in the predict method.
+    """List of all possible output variables for CANYON-B"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if self._argo._type != "point":
+            raise InvalidDatasetStructure(
+                "Method only available for a collection of points"
+            )
+        if self._argo.N_POINTS == 0:
+            raise DataNotFound("Empty dataset, no data to transform !")
+
+        #self.n_list = 5
+        self.path2coef = Path(path2assets).joinpath("canyon-b") # Path to CANYON-B assets
+        #self._input = None  # Private CANYON-MED input dataframe
+
+    def get_param_attrs(self, param: str) -> dict:
+        """Provides attributes to be added to a given predicted parameter"""
+        attrs = {}
+        if param in ["NO3", "PO4", "SiOH4", "AT", "DIC"]:
+            attrs.update({"units": "micromole/kg"})
+
+        if param == "NO3":
+            attrs.update({"long_name": "Nitrate concentration"})
+
+        if param == "PO4":
+            attrs.update({"long_name": "Phosphate concentration"})
+
+        if param == "SiOH4":
+            attrs.update({"long_name": "Silicate concentration"})
+
+        if param == "AT":
+            attrs.update({"long_name": "Total alkalinity"})
+
+        if param == "DIC":
+            attrs.update({"long_name": "Total dissolved inorganic carbon"})
+
+        if param == "pHT":
+            attrs.update({"long_name": "Total pH"})
+            attrs.update({"units": "insitu total scale"})
+
+        if param == "pCO2":
+            attrs.update({"long_name": "Partial pressure of CO2"})
+            attrs.update({"units": "micro atm"})
+
+        attrs.update({"comment": "Synthetic variable predicted using CANYON-B"})
+        attrs.update({"reference": "https://doi.org/10.3389/fmars.2018.00328"})
+
+        return attrs
+    
+    @property
+    def decimal_year(self):
+        """Return the decimal year of the :class:`xr.Dataset` `TIME` variable"""
+        time_array = self._obj[self._argo._TNAME]
+        return time_array.dt.year + (
+            86400 * time_array.dt.dayofyear
+            + 3600 * time_array.dt.hour
+            + time_array.dt.second
+        ) / (365.0 * 24 * 60 * 60)
+    
+    def ds2df(self) -> pd.DataFrame:
+        """Create a CANYON-B input :class:`pd.DataFrame` from :class:`xr.Dataset`"""
+
+        if self._obj.argo.N_POINTS > 1:
+            df = pd.DataFrame(
+                {
+                    "lat": self.adjust_arctic_latitude(self._obj["LATITUDE"], self._obj["LONGITUDE"]),
+                    "lon": self._obj["LONGITUDE"],
+                    "dec_year": self.decimal_year,
+                    "temp": self._obj["TEMP"],
+                    "psal": self._obj["PSAL"],
+                    "doxy": self._obj["DOXY"],
+                    "pres": self._obj["PRES"],
+                }
+            )
+        else:  # Handle single point dataset:
+            df = pd.DataFrame.from_dict(
+                {
+                    "lat": self.adjust_arctic_latitude(self._obj["LATITUDE"].values, self._obj["LONGITUDE"]), # to be checked
+                    "lon": self._obj["LONGITUDE"],
+                    "dec_year": self.decimal_year,
+                    "temp": self._obj["TEMP"],
+                    "psal": self._obj["PSAL"],
+                    "doxy": self._obj["DOXY"],
+                    "pres": self._obj["PRES"],
+                },
+                orient="index",
+            ).T
+
+        # Modify pressure
+        # > The pressure input is transformed according to the combination of a linear
+        # and a logistic curve to limit the degrees of freedom of the ANN in deep
+        # waters and to account for the large range of pressure values (from the
+        # surface to 4000 m depth) and a non-homogeneous distribution of data
+        # within this range
+        # See Eq. 3 in 10.3389/fmars.2020.00620
+        df["pres"] = df["pres"].apply(
+            lambda x: (x / 2e4) + (1 / ((1 + np.exp(-x / 300)) ** 3))
+        )
+
+        return df
+    
+    def create_canyonb_input_matrix(self) -> np.ndarray:
+        """Create CANYON-B input matrix from :class:`xr.Dataset`"""
+        df = self.ds2df()
+    
+        # Create input matrix
+        data = np.column_stack([
+            df["dec_year"],
+            df["lat"] / 90,
+            np.abs(1 - np.mod(df["lon"] - 110, 360) / 180), 
+            np.abs(1 - np.mod(df["lon"] - 20, 360) / 180), 
+            df["temp"], 
+            df["psal"], 
+            df["doxy"], 
+            df["pres"]
+        ])
+
+        return data
+
+    # TODO: think about this method but let's keep it here for the moment
+    def adjust_arctic_latitude(self, lat: np.ndarray, lon: np.ndarray) -> np.ndarray:
+        """
+        Adjust latitude for Arctic basin calculations.
+
+        Args:
+            lat: Latitudes to be adjusted
+            lon: Corresponding longitudes 
+        
+        Returns:
+            np.ndarray: Ajusted latitudes 
+        """
+        # Points for Arctic basin 'West' of Lomonossov ridge
+        plon = np.array([-180, -170, -85, -80, -37, -37, 143, 143, 180, 180, -180, -180])
+        plat = np.array([68, 66.5, 66.5, 80, 80, 90, 90, 68, 68, 90, 90, 68])
+    
+        # Convert longitude to -180 to 180 range (not need with ARGO data)
+        # lon = np.where(lon > 180, lon - 360, lon) 
+    
+        # Create masks for points inside the polygon
+        polygon = mpath.Path(np.column_stack((plon, plat)))
+        points = np.column_stack((lon.flatten(), lat.flatten()))
+        mask = polygon.contains_points(points)
+        mask = mask.reshape(lat.shape)
+    
+        # Adjust latitude
+        adjusted_lat = lat.copy()
+        adjusted_lat[mask] = lat[mask] - np.sin(np.radians(lon[mask] + 37)) * (90 - lat[mask]) * 0.5
+    
+        return adjusted_lat
+    
+    def load_weights(self, param: str):
+        """Load CANYON-B weights from assets folder"""
+        if param != "DIC":
+            weights = pd.read_csv(
+                self.path2coef.joinpath(f"wgts_{param}.txt"), 
+                header=None,
+                sep="\t")
+        else:
+            weights = pd.read_csv(
+                self.path2coef.joinpath(f"wgts_CT.txt"), 
+                header=None,
+                sep="\t")
+        
+        return weights
+
+    
+    def predict(self, param: Optional[List[str]] = None, epres: Optional[float] = 0.5, etemp: Optional[float] = 0.005, epsal: Optional[float] = 0.005, edoxy: Optional[Union[float, np.ndarray]] = None):
+        """Predict CANYON-B parameters and associated uncertainties.
+        
+        Parameters
+        ----------
+    
+        param : list of str, optional
+            Parameters to calculate. Default calculates all.
+        epres, etemp, epsal : float, optional
+            Input errors
+        edoxy : float or array-like, optional
+            Oxygen input error (default: 1% of doxy)
+        """
+        # Get array shape and number of elements
+        shape = self._obj[self._argo._TNAME].shape
+        nol = self._argo.N_POINTS
+
+        # Set default edoxy if not provided
+        if edoxy is None:
+            edoxy = 0.01 * self._obj.DOXY.values # add case when DOXY_ADJUSTED is defined?
+
+        # Expand scalar error values
+        errors = [epres, etemp, epsal, edoxy]
+        errors = [np.full(nol, e) if np.isscalar(e) else np.asarray(e).flatten() 
+                for e in errors]
+        epres, etemp, epsal, edoxy = errors
+
+        # Define parameters and their properties
+        paramnames = ['AT', 'DIC', 'pHT', 'pCO2', 'NO3', 'PO4', 'SiOH4']
+        inputsigma = np.array([6, 4, 0.005, np.nan, 0.02, 0.02, 0.02])
+        betaipCO2 = np.array([-3.114e-05, 1.087e-01, -7.899e+01])
+
+        # Adjust pH uncertainty
+        inputsigma[2] = np.sqrt(0.005**2 + 0.01**2)
+
+        # Set parameters to calculate
+        if param is None:
+            param = paramnames
+        paramflag = np.array([p in param for p in paramnames])
+
+        # Prepare input data
+        data = self.create_canyonb_input_matrix()
+
+        # Output dictionary
+        out = {}
+
+        # Process each parameter
+        for i, param_name in enumerate(paramnames):
+            if not paramflag[i]:
+                continue
+            
+            # Load weights
+            inwgts = self.load_weight(param_name)
+            noparsets = inwgts.shape[1] - 1
+        
+            # Determine input normalization based on parameter type
+            if i > 3:  # nutrients
+                ni = data[:, 1:].shape[1]
+                ioffset = -1
+                mw = inwgts[:ni+1, -1]
+                sw = inwgts[ni+1:2*ni+2, -1]
+                data_N = (data[:, 1:] - mw[:ni]) / sw[:ni]
+            else:  # carbonate system
+                ni = data.shape[1]
+                ioffset = 0
+                mw = inwgts[:ni+1, -1]
+                sw = inwgts[ni+1:2*ni+2, -1]
+                data_N = (data - mw[:ni]) / sw[:ni]
+
+            # Extract weights and prepare arrays
+            wgts = inwgts[3, :noparsets]
+            betaciw = inwgts[2*ni+2:, -1]
+            betaciw = betaciw[~np.isnan(betaciw)]
+        
+            # Preallocate arrays
+            cval = np.full((nol, noparsets), np.nan)
+            cvalcy = np.full(noparsets, np.nan)
+            inval = np.full((nol, ni, noparsets), np.nan)
+
+            # Process each network in committee
+            for l in range(noparsets):
+                nlayerflag = 1 + bool(inwgts[1, l])
+                nl1 = int(inwgts[0, l])
+                nl2 = int(inwgts[1, l])
+                beta = inwgts[2, l]
+            
+                # Extract weights
+                idx = 4
+                w1 = inwgts[idx:idx + nl1 * ni, l].reshape(nl1, ni, order='F') # Here, order='F' is needed to make sure to proper do the calculation as in the Matlab version (https://github.com/HCBScienceProducts/CANYON-B/blob/master/CANYONB.m) !
+                idx += nl1*ni
+                b1 = inwgts[idx:idx + nl1, l] 
+                idx += nl1
+                w2 = inwgts[idx:idx + nl2*nl1, l].reshape(nl2, nl1, order='F')
+                idx += nl2*nl1
+                b2 = inwgts[idx:idx + nl2, l]
+            
+                if nlayerflag == 2:
+                    idx += nl2
+                    w3 = inwgts[idx:idx + nl2, l].reshape(1, nl2, order='F')
+                    idx += nl2
+                    b3 = inwgts[idx:idx + 1, l]
+            
+                # Forward pass
+                a = np.dot(data_N, w1.T) + b1
+                if nlayerflag == 1:
+                    y = np.dot(np.tanh(a), w2.T) + b2
+                else:
+                    b = np.dot(np.tanh(a), w2.T) + b2
+                    y = np.dot(np.tanh(b), w3.T) + b3
+            
+                # Store results
+                cval[:, l] = y.flatten()
+                cvalcy[l] = 1/beta
+
+                # Calculate input effects
+                x1 = w1[None, :, :] * (1 - np.tanh(a)[:, :, None]**2)
+              
+                if nlayerflag == 1:
+                    inx = np.einsum('ij,...jk->...ik', w2, x1)[:, 0, :] 
+                else:
+                    x2 = w2[None, :, :] * (1 - np.tanh(b)[:, :, None]**2)
+                    inx = np.einsum('ij,...jk,...kl->...il', w3, x2, x1)[:, 0, :] 
+                inval[:, :, l] = inx
+
+                # Denormalization
+                cval = cval * sw[ni] + mw[ni]
+                cvalcy = cvalcy * sw[ni]**2
+        
+                # Calculate committee statistics
+                V1 = np.sum(wgts)
+                V2 = np.sum(wgts**2)
+                pred = np.sum(wgts[None, :] * cval, axis=1) / V1
+        
+                # Calculate uncertainties
+                cvalcu = np.sum(wgts[None, :] * (cval - pred[:, None])**2, axis=1) / (V1 - V2/V1)
+                cvalcib = np.sum(wgts * cvalcy) / V1
+                cvalciw = np.polyval(betaciw, np.sqrt(cvalcu))**2
+        
+                # Calculate input effects
+                inx = np.sum(wgts[None, None, :] * inval, axis=2) / V1
+                inx = np.tile((sw[ni] / sw[0:ni].T), (nol, 1)) * inx
+        
+                # Pressure scaling
+                df = self.ds2df()
+                ddp = 1/2e4 + 1/((1 + np.exp(-df["pres"]/300))**4) * np.exp(-df["pres"]/300)/100 # TODO order='F' ?
+                inx[:, 7+ioffset] *= ddp
+        
+                # Calculate input variance
+                error_matrix = np.column_stack([etemp, epsal, edoxy, epres])
+                cvalcin = np.sum(inx[:, 4+ioffset:8+ioffset]**2 * error_matrix**2, axis=1)
+
+                # Calculate measurement uncertainty
+                if i > 3:
+                    cvalcimeas = (inputsigma[i] * pred)**2
+                elif i == 3:
+                    cvalcimeas = np.polyval(betaipCO2, pred)**2
+                else:
+                    cvalcimeas = inputsigma[i]**2
+            
+                # Calculate total uncertainty
+                uncertainty = np.sqrt(cvalcimeas + cvalcib + cvalciw + cvalcu + cvalcin)
+        
+                # Create numpy arrays
+                out[param_name] = np.reshape(pred, shape)
+                out[f'{param_name}_ci'] = np.reshape(uncertainty, shape)
+                out[f'{param_name}_cim'] = np.sqrt(cvalcimeas)
+                out[f'{param_name}_cin'] = np.reshape(np.sqrt(cvalcib + cvalciw + cvalcu), shape)
+                out[f'{param_name}_cii'] = np.reshape(np.sqrt(cvalcin), shape)
+        
+                # pCO2
+                if i == 3:
+                # ipCO2 = 'DIC' / umol kg-1 -> pCO2 / uatm
+                    outcalc = pyco2.sys(
+                        par1=2300, 
+                        par2=out[param_name], 
+                        par1_type=1, 
+                        par2_type=2, 
+                        salinity=35., 
+                        temperature=25., 
+                        temperature_out=np.nan, 
+                        pressure_out=0., 
+                        pressure_atmosphere_out=np.nan, 
+                        total_silicate=0., 
+                        total_phosphate=0., 
+                        opt_pH_scale=1., 
+                        opt_k_carbonic=10., 
+                        opt_k_bisulfate=1.,
+                        grads_of=["pCO2"],
+                        grads_wrt=["par2"],
+                    ) 
+
+                out[f'{paramnames[i]}'] = outcalc['pCO2']
+            
+                # epCO2 = dpCO2/dDIC * e'DIC'
+                for unc in ['_ci', '_cin', '_cii']:
+                    out[param_name + unc] = outcalc['d_pCO2__d_par2'] * out[param_name + unc] 
+
+                out[param_name + '_cim'] = outcalc['d_pCO2__d_par2'] * np.reshape(out[param_name + '_cim'], shape) 
+                
+        return out
+
+
+
+        
+
