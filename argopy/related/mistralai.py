@@ -3,11 +3,16 @@ import os
 import getpass
 import pandas as pd
 from typing import Literal
+import logging
 
-from ..errors import DataNotFound
+from .. import __version__
+from ..errors import DataNotFound, InvalidDataset
 from ..stores import httpstore
 from ..options import OPTIONS
 from .. import ArgoDocs
+
+
+log = logging.getLogger("argopy.related.mistralai")
 
 
 has_ipython = (spec := importlib.util.find_spec("IPython")) is not None
@@ -17,17 +22,61 @@ if has_ipython:
 try:
     importlib.import_module("mistralai")  # noqa: E402
     from mistralai import Mistral
+    from mistralai import models as MistralModels
+
 except ImportError:
+    log.debug("MistralAI not installed, chatbot not available")
     pass
+
+PREF = "\033["
+RESET = f"{PREF}0m"
+
+class COLORS:
+    black = "30m"
+    red = "31m"
+    green = "32m"
+    yellow = "33m"
+    blue = "34m"
+    magenta = "35m"
+    cyan = "36m"
+    white = "37m"
 
 
 class Assistant:
-    """
+    """A chatbot based on MistralAI LLM and informed with the Argo documentation
 
-    With this class we experiment with the MistralAI LLMs, using the `mistralai library <https://docs.mistral.ai/getting-started/clients/>`_
+    With this class, we experiment with the MistralAI LLMs, using the `mistralai library <https://docs.mistral.ai/getting-started/clients/>`_
 
-    The strategy is to upload argopy and Argo manuals to an online library, and then to inform an agent with these documents (with OCR).
+    The strategy is to upload argopy and Argo manuals to an online library, and to inform an agent with these documents (with OCR).
+
     A conversation with the agent can then be initiated to get reliable information about Argo.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        from argopy.related.mistralai import Assistant
+
+        bot = Assistant()
+
+        bot.agent_update()
+
+        bot.library_upload()
+        bot.library_describe()
+        bot.library_to_dataframe()
+
+        bot.chat()
+        bot.replay()
+
+    .. code-block:: bash
+        :caption: Chatbot from the command line
+
+        python -c "from argopy.related.mistralai import Assistant; Assistant().agent_update().chat()"
+
+        python -c "from argopy.related.mistralai import Assistant; Assistant(name='test', informed_agent=False).agent_update().chat()"
+
+        python -c "from argopy.related.mistralai import Assistant; Assistant(name='test', informed_agent=False).agent_update().replay()"
+
 
     Notes
     -----
@@ -40,7 +89,7 @@ class Assistant:
 
     """
 
-    def __init__(self, name : str = "argo", model : Literal["mistral-medium-2505"] = "mistral-medium-2505", **kwargs):
+    def __init__(self, name : str = "argo", model : Literal["mistral-medium-2505", "devstral-small-2507"] = "mistral-medium-2505", informed_agent : bool = True, **kwargs):
         if OPTIONS["mistral_api_key"] is None:
             if os.getenv("MISTRAL_API_KEY") is None:
                 raise ValueError(
@@ -55,19 +104,23 @@ class Assistant:
         self.library_name = f"{name}-library"
         self.agent_name = f"{name}-agent"
         self.username = getpass.getuser()
-
-        # self.model="devstral-small-2507"
         self.model = model
+        self.informed_agent = informed_agent
+
+        self.hline = "<hr>" if self.runner == "notebook" else "-"*os.get_terminal_size().columns
 
     def __repr__(self):
         txt = [f"<argopy.MistralAIAgent.{self.agent_name}>"]
         txt.append(f"🔗 {self.agent_uri}")
-        docs = self.info_library(errors='ignore')
-        if docs is not None:
-            txt.append(f"📚 '{self.library_name}' has {self.info_library().shape[0]} document(s):")
+        try:
+            docs = self.library_to_dataframe()
+            txt.append(f"📚 '{self.library_name}' has {self.library_to_dataframe().shape[0]} document(s):")
             txt.append("\n".join([f"\t- {row}" for row in docs['name']]))
-        else:
-            txt.append(f"No documents in the library '{self.library_name}', please use the 'fill_library()' method to upload content.")
+        except InvalidDataset:
+            txt.append(f"📚 '{self.library_name}' has not been created yet ! You can use the 'library_upload()' method to create and upload content.")
+        except DataNotFound:
+            txt.append(f"No document found in the library '{self.library_name}', please use the 'library_upload()' method to upload content.")
+
         return "\n".join(txt)
 
     @property
@@ -83,43 +136,72 @@ class Assistant:
         except NameError:
             return "standard"  # Probably standard Python interpreter
 
-    def print_line(self, role="", content=""):
+    def print_line(self, content : str = "", role : str = "") -> None:
         if self.runner == "notebook":
-            display(Markdown("**%s**: %s" % (role, content)))
+            if role != "":
+                display(Markdown("**%s** %s" % (role, content)))
+            else:
+                display(Markdown(content))
         else:
-            PREF = "\033["
-            RESET = f"{PREF}0m"
-
-            class COLORS:
-                black = "30m"
-                red = "31m"
-                green = "32m"
-                yellow = "33m"
-                blue = "34m"
-                magenta = "35m"
-                cyan = "36m"
-                white = "37m"
-
-            txt = (
-                f"{PREF}{1};{COLORS.yellow}"
-                + role
-                + ": "
-                + RESET
-                + f"{PREF}{0};{COLORS.cyan}"
-                + content
-                + ":"
-                + RESET
-            )
+            if role != "":
+                txt = (
+                    f"{PREF}{1};{COLORS.yellow}"
+                    + role
+                    + " "
+                    + RESET
+                    + f"{PREF}{0};{COLORS.cyan}"
+                    + content
+                    + " "
+                    + RESET
+                )
+            else:
+                txt = (
+                        f"{PREF}{0};{COLORS.cyan}"
+                        + content
+                        + " "
+                        + RESET
+                )
             print(txt)
+
+    def print_source(self, content : str, summary : str ="Details"):
+        if self.runner == "notebook":
+            display(Markdown(f"<details><summary>{summary}</summary><br><small>{content}</small></details>"))
+        else:
+            txt = (
+                    f"{PREF}{0};{COLORS.white}"
+                    + content
+                    + " "
+                    + RESET
+            )
+            print(f"\n{txt}")
+
+    def print_message_outputs(self, outputs):
+        for message in outputs:
+            if isinstance(message, MistralModels.MessageOutputEntry):
+                if isinstance(message.content, str):
+                    self.print_line(f"\n{message.content}", "🤖")
+
+                if isinstance(message.content, list):
+                    for chunk in message.content:
+                        if chunk.type == 'text':
+                            self.print_line(chunk.text, "🤖")
+                        if chunk.type == 'tool_reference':
+                            if chunk.tool == 'web_search':
+                                if self.runner == "notebook":
+                                    content = f"<a href='{chunk.url}'>{chunk.title}</a><br><small>{chunk.description}</small>"
+                                else:
+                                    content = f"{chunk.title}: {chunk.url}\n{chunk.description}"
+                                self.print_source(content, "Source")
 
     @property
     def library_id(self):
         if getattr(self, "_lib_id", None) is None:
-            self.get_library()
+            self.library_create()
         return self._lib_id
 
-    def get_library(self):
-        """Get a library ID, create if necessary
+    def library_create(self):
+        """Get the library ID, create if necessary
+
         https://github.com/mistralai/client-python/blob/main/docs/sdks/libraries/README.md
 
         Returns
@@ -154,26 +236,35 @@ class Assistant:
         self._lib_id = mylib_id
         return self._lib_id
 
-    def fill_library(self):
+    def library_upload(self, alldocs: bool =False):
         """
         https://github.com/mistralai/client-python/blob/main/docs/sdks/documents/README.md
 
         Parameters
         ----------
-        library_id
+        alldocs: bool, default = False
+            If set to False, the argopy cheatsheet and the Argo user's manual are uploaded.
+
+            If set to True, the argopy cheatsheet and all the Argo documentation are uploaded (28 PDFs, 1042 pages as of Oct.8th 2025).
 
         Returns
         -------
+        None
 
+        Notes
+        -----
+        The full list of Argo documents is obtained from :class:`ArgoDocs`.
         """
 
         list_documents = {
-            "argopy-cheatsheet.pdf": "https://argopy.readthedocs.io/en/latest/_static/argopy-cheatsheet.pdf",
-            # "Argo user's manual": ArgoDocs(29825).pdf.split(';')[-1],
+            f"Argopy {__version__} cheatsheet": "https://argopy.readthedocs.io/en/latest/_static/argopy-cheatsheet.pdf",
         }
-        df = ArgoDocs().list
-        for ii, row in df.iterrows():
-            list_documents.update({row['title']: ArgoDocs(row['id']).pdf.split(';')[-1].strip()})
+        if alldocs:
+            df = ArgoDocs().list
+            for ii, row in df.iterrows():
+                list_documents.update({row['title']: ArgoDocs(row['id']).pdf.split(';')[-1].strip()})
+        else:
+            list_documents.update({"Argo user's manual": ArgoDocs(29825).pdf.split(';')[-1]})
 
         with Mistral(
             api_key=self._api_key,
@@ -200,9 +291,10 @@ class Assistant:
                             library_id=self.library_id,
                             file={"file_name": doc_name, "content": doc.read()},
                         )
-                        print(res)
+                        print(f"{doc_name} uploaded to library {self.library_id} with success. Wait for some time for it to be processed.")
+        return self
 
-    def ls_library(self):
+    def library_describe(self):
 
         with Mistral(
             api_key=self._api_key,
@@ -233,8 +325,8 @@ class Assistant:
                     )
                     print(f"  {doc.summary}")
 
-    def info_library(self, update=False, errors='raise'):
-        if update or getattr(self, '_info_library', None) is None:
+    def library_to_dataframe(self, update=False, errors='raise'):
+        if update or getattr(self, '_library_df', None) is None:
 
             with Mistral(
                 api_key=self._api_key,
@@ -262,22 +354,30 @@ class Assistant:
                     documents = []
                     for doc in res.data:
                         documents.append([doc.name, doc.number_of_pages, doc.size, doc.processing_status, doc.summary])
-                    self._info_library = pd.DataFrame(documents, columns=["name", "number_of_pages", "size", "processing_status", "summary"])
+                    df = pd.DataFrame(documents, columns=["name", "number_of_pages", "size", "processing_status", "summary"])
+                    if df.shape[0] == 0:
+                        if errors == 'raise':
+                            raise DataNotFound("No document in this library")
+                        else:
+                            return None
+                    else:
+                        self._library_df = df
                 elif errors == 'raise':
-                    raise DataNotFound("No documents found for this library.")
+                    raise InvalidDataset("This library does not exist")
                 else:
                     return None
 
-        return self._info_library
+        return self._library_df
 
     @property
     def agent_id(self):
         if getattr(self, "_agent_id", None) is None:
-            self.get_agent()
+            self.agent_create()
         return self._agent_id
 
-    def get_agent(self):
-        """
+    def agent_create(self):
+        """Get the agent ID, create if necessary
+
         https://github.com/mistralai/client-python/blob/main/docs/sdks/mistralagents/README.md
 
         Returns
@@ -299,14 +399,22 @@ class Assistant:
 
             if not exist:
                 res = mistral.beta.agents.create(model=self.model, name=self.agent_name)
-                # print(res)
-                print(f"{self.agent_name} created")
+                log.info(f"MistralAI agent {self.agent_name} created")
                 self._agent_id = res.id
-                self.update_agent()
+                self.agent_update()
 
         return self._agent_id
 
-    def update_agent(self):
+    def agent_update(self):
+
+        tools = [{"type": "web_search"}]
+        prompt = "Use the web search tool to access external information."
+
+        if self.informed_agent:
+            tools.append({"type": "document_library", "library_ids": [self.library_id]})
+            prompt = "Use the library tool to access external documents."
+
+        prompt += " If code is requested, just answer code without install instructions and always prefer code examples based on the Argopy library wherever relevant. Assume the role of a research scientist in oceanography working on Argo floats data and programming in Python. For all your answers you will provide a 'Answer reliability scale' from 1 (hypothetic) to 5 (highly reliable) to indicate how confident your are in your answer."
 
         with Mistral(
             api_key=self._api_key,
@@ -315,28 +423,23 @@ class Assistant:
             res = mistral.beta.agents.update(
                 agent_id=self.agent_id,
                 description="An expert agent fully aware of Argo documents",
-                # instructions=prompt,
-                instructions="Use the library tool to access external documents. If code is requested, just answer code without install instructions and always prefer an example based on the Argopy library wherever relevant. Assume the role of a research scientist in oceanography working on Argo floats data and programming in Python. For all your answers you will provide a reliability scale from 1 (hypothetic) to 5 (highly reliable) to indicate how confident your are in your answer.",
-                tools=[
-                    {"type": "document_library", "library_ids": [self.library_id]},
-                    {"type": "web_search"},
-                ],
+                instructions=prompt,
+                tools=tools,
                 completion_args={
                     "temperature": 0.3,
                     "top_p": 0.95,
                 },
             )
-            # print(res)
-            print(f"{self.agent_name} updated")
+            log.info(f"MistralAI agent {self.agent_name} updated")
+        return self
 
     @property
     def agent_uri(self):
         return f"https://console.mistral.ai/build/agents/{self.agent_id}"
 
     def tell(self, txt):
-        reply = ""
         new = getattr(self, "_current_conversation_id", False) is False
-        # self.print_line("🤖", f" This a new conversation: {new}")
+        # self.print_line(f" This a new conversation: {new}", "🤖")
 
         with Mistral(
             api_key=self._api_key,
@@ -354,33 +457,31 @@ class Assistant:
                     conversation_id=self._current_conversation_id, inputs=txt
                 )
 
-            self.print_line("🤖", res.usage)
-            for output in res.outputs:
-                reply = getattr(output, "content", "")
-        return reply
+            log.info(f"🤖 {res.usage}")
+            # log.info(res)
+            # for output in res.outputs:
+            #     reply = getattr(output, "content", "")
+            #     log.info(output)
+        return res.outputs
 
     def chat(self):
-        self.print_line("ℹ", "*Just type in 'stop' or 'bye' to stop chatting*")
-
+        self.print_line("ℹ **Type in 'stop' or 'bye' to stop chatting**")
         while True:
-            self.print_line("", "<hr>")
-            prompt = input(f"\033[1;33m " + self.username + ": " + f"\033[0m")
+            self.print_line(self.hline)
+            prompt = input(f"👤 {self.username} says: ")
             if prompt.lower() not in ["stop", "bye", "bye-bye", "ciao", "quit"]:
-                reply = self.tell(prompt)
-                self.print_line("", "<hr>")
-                if isinstance(reply, list):
-                    for chunk in reply:
-                        if getattr(chunk, "text", None) is not None:
-                            self.print_line("🤖", chunk.text)
-                else:
-                    self.print_line("🤖", reply)
+                outputs = self._conversation_tell(prompt)
+                self.print_line(self.hline)
+                # print(outputs)
+                self.print_message_outputs(outputs)
             else:
-                reply = self.tell("I am going to stop this conversation, bye bye")
-                self.print_line("🤖", reply)
-                self.print_line("", "<hr>")
+                outputs = self._conversation_tell("I am going to stop this conversation, bye bye")
+                self.print_message_outputs(outputs)
+                self.print_line(self.hline)
                 break
 
-    def ls_conversations(self):
+    def conversations_to_dataframe(self):
+        """List all conversations from this API key"""
 
         with Mistral(
             api_key=self._api_key,
@@ -401,21 +502,80 @@ class Assistant:
         else:
             return None
 
-    def replay(self):
-        df = self.ls_conversations()
+    def replay(self, conversation_id = None):
+        """Replay a conversation
+
+        Parameters
+        ----------
+        conversation_id : int, optional
+            The conversation ID to replay. By default we replay the last one in the history
+
+        See Also
+        --------
+        :class:`Assistant.conversations_to_dataframe`
+        """
+        if conversation_id is None:
+            df = self.conversations_to_dataframe()
+            conversation_id = df.iloc[0]["id"]
 
         with Mistral(
             api_key=self._api_key,
         ) as mistral:
             conversation = mistral.beta.conversations.get_messages(
-                conversation_id=df.iloc[0]["id"]
+                conversation_id=conversation_id
             )
 
-        for message in conversation.messages:
-            if message.type == "message.input":
-                role = "<hr>👤"
-                txt = f"{message.content}"
-            else:
-                role = "🤖"
-                txt = message.content
-            self.print_line(role, txt)
+            for message in conversation.messages:
+                role = "👤" if message.role == 'user' else "🤖"
+
+                if self.runner == "notebook":
+                    if message.role == 'user':
+                        self.print_line(self.hline)
+                        self.print_line(f"<b>{message.content.capitalize()}</b>", role)
+                    elif message.role == 'assistant':
+                        if isinstance(message.content, str):
+                            self.print_line(f"\n{message.content}", role)
+
+                        if isinstance(message.content, list):
+                            for chunk in message.content:
+                                if chunk.type == 'text':
+                                    self.print_line(chunk.text, role)
+                                if chunk.type == 'tool_reference':
+                                    if chunk.tool == 'web_search':
+                                        content = f"<a href='{chunk.url}'>{chunk.title}</a><br><small>{chunk.description}</small>"
+                                        self.print_source(content, "Source")
+
+                else:
+                    if message.role == 'user':
+                        self.print_line("\n")
+                        self.print_line(self.hline)
+                        self.print_line(message.content.capitalize(), role)
+                    elif message.role == 'assistant':
+                        if isinstance(message.content, str):
+                            self.print_line(f"\n{message.content}", role)
+
+                        if isinstance(message.content, list):
+                            for chunk in message.content:
+                                if chunk.type == 'text':
+                                    self.print_line(chunk.text, role)
+                                if chunk.type == 'tool_reference':
+                                    if chunk.tool == 'web_search':
+                                        content = f"Source: {chunk.title} ({chunk.url})\n{chunk.description}"
+                                        self.print_source(content, "Source")
+
+    def clear(self):
+        """Clean up data from MistralAI
+
+        Deletes:
+
+        - library together with all documents that have been uploaded to that library,
+        -
+        """
+        with Mistral(
+            api_key=self._api_key,
+        ) as mistral:
+            # Given a library id, deletes it together with all documents that have been uploaded to that library.
+            res = mistral.beta.libraries.delete(library_id=self.library_id)
+            log.info(res)
+
+        return self
