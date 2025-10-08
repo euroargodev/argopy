@@ -1,12 +1,13 @@
 from pathlib import Path
-from typing import Union, List, Dict, Optional
+from typing import Union, List, Optional
 import matplotlib.path as mpath
 import pandas as pd
 import numpy as np
-#import PyCO2SYS as pyco2
+import xarray as xr
+import PyCO2SYS as pyco2
 
 from ..errors import InvalidDatasetStructure, DataNotFound
-from ..utils import path2assets
+from ..utils import path2assets, to_list
 from . import register_argo_accessor, ArgoAccessorExtension
 
 
@@ -127,7 +128,7 @@ class CanyonB(ArgoAccessorExtension):
         if self._obj.argo.N_POINTS > 1:
             df = pd.DataFrame(
                 {
-                    "lat": self.adjust_arctic_latitude(self._obj["LATITUDE"], self._obj["LONGITUDE"]),
+                    "lat": self.adjust_arctic_latitude(self._obj["LATITUDE"].values, self._obj["LONGITUDE"].values),
                     "lon": self._obj["LONGITUDE"],
                     "dec_year": self.decimal_year,
                     "temp": self._obj["TEMP"],
@@ -139,7 +140,7 @@ class CanyonB(ArgoAccessorExtension):
         else:  # Handle single point dataset:
             df = pd.DataFrame.from_dict(
                 {
-                    "lat": self.adjust_arctic_latitude(self._obj["LATITUDE"].values, self._obj["LONGITUDE"]), # to be checked
+                    "lat": self.adjust_arctic_latitude(self._obj["LATITUDE"].values, self._obj["LONGITUDE"].values), # to be checked
                     "lon": self._obj["LONGITUDE"],
                     "dec_year": self.decimal_year,
                     "temp": self._obj["TEMP"],
@@ -212,30 +213,35 @@ class CanyonB(ArgoAccessorExtension):
     
         return adjusted_lat
     
-    def load_weights(self, param: str):
+    def load_weights(self, param: str) -> pd.DataFrame:
         """Load CANYON-B weights from assets folder"""
-        if param != "DIC":
+        if param in ['AT', 'pCO2', 'NO3', 'PO4', 'SiOH4']:
             weights = pd.read_csv(
                 self.path2coef.joinpath(f"wgts_{param}.txt"), 
                 header=None,
                 sep="\t")
-        else:
+        elif param == 'DIC':
             weights = pd.read_csv(
                 self.path2coef.joinpath(f"wgts_CT.txt"), 
                 header=None,
                 sep="\t")
-        
+        else:
+            weights = pd.read_csv(
+                self.path2coef.joinpath(f"wgts_pH.txt"), 
+                header=None,
+                sep="\t")
+    
         return weights
 
     
-    def predict(self, param: Optional[List[str]] = None, epres: Optional[float] = 0.5, etemp: Optional[float] = 0.005, epsal: Optional[float] = 0.005, edoxy: Optional[Union[float, np.ndarray]] = None):
-        """Predict CANYON-B parameters and associated uncertainties.
+    def _predict(self, param: str, epres: Optional[float] = 0.5, etemp: Optional[float] = 0.005, epsal: Optional[float] = 0.005, edoxy: Optional[Union[float, np.ndarray]] = None):
+        """Private predictor to be used for a single parameter
         
         Parameters
         ----------
     
-        param : list of str, optional
-            Parameters to calculate. Default calculates all.
+        param : str
+            Parameters that will be predicted. Must be one of 'AT', 'DIC', 'pHT', 'pCO2', 'NO3', 'PO4', 'SiOH4'
         epres, etemp, epsal : float, optional
             Input errors
         edoxy : float or array-like, optional
@@ -257,16 +263,12 @@ class CanyonB(ArgoAccessorExtension):
 
         # Define parameters and their properties
         paramnames = ['AT', 'DIC', 'pHT', 'pCO2', 'NO3', 'PO4', 'SiOH4']
+        i_idx = {p: i for i, p in enumerate(paramnames)}
         inputsigma = np.array([6, 4, 0.005, np.nan, 0.02, 0.02, 0.02])
         betaipCO2 = np.array([-3.114e-05, 1.087e-01, -7.899e+01])
 
         # Adjust pH uncertainty
         inputsigma[2] = np.sqrt(0.005**2 + 0.01**2)
-
-        # Set parameters to calculate
-        if param is None:
-            param = paramnames
-        paramflag = np.array([p in param for p in paramnames])
 
         # Prepare input data
         data = self.create_canyonb_input_matrix()
@@ -274,162 +276,250 @@ class CanyonB(ArgoAccessorExtension):
         # Output dictionary
         out = {}
 
-        # Process each parameter
-        for i, param_name in enumerate(paramnames):
-            if not paramflag[i]:
-                continue
-            
-            # Load weights
-            inwgts = self.load_weight(param_name)
-            noparsets = inwgts.shape[1] - 1
+        #                                                        #
+        # Process through neural network for the given parameter #
+        #  
         
-            # Determine input normalization based on parameter type
-            if i > 3:  # nutrients
-                ni = data[:, 1:].shape[1]
-                ioffset = -1
-                mw = inwgts[:ni+1, -1]
-                sw = inwgts[ni+1:2*ni+2, -1]
-                data_N = (data[:, 1:] - mw[:ni]) / sw[:ni]
-            else:  # carbonate system
-                ni = data.shape[1]
-                ioffset = 0
-                mw = inwgts[:ni+1, -1]
-                sw = inwgts[ni+1:2*ni+2, -1]
-                data_N = (data - mw[:ni]) / sw[:ni]
+        # Get index depending on parameter (mostly important to decipher between nutrients and carbonate sytems)
+        i = i_idx[param]
 
-            # Extract weights and prepare arrays
-            wgts = inwgts[3, :noparsets]
-            betaciw = inwgts[2*ni+2:, -1]
-            betaciw = betaciw[~np.isnan(betaciw)]
+        # Load weights
+        inwgts = self.load_weights(param)
+        # Convert to numpy array
+        inwgts = inwgts.to_numpy()
+
+        # Number of networks in committee
+        noparsets = inwgts.shape[1] - 1
         
-            # Preallocate arrays
-            cval = np.full((nol, noparsets), np.nan)
-            cvalcy = np.full(noparsets, np.nan)
-            inval = np.full((nol, ni, noparsets), np.nan)
+        # Determine input normalization based on parameter type
+        if i > 3: # nutrients
+            ni = data[:, 1:].shape[1]
+            ioffset = -1
+            mw = inwgts[:ni+1, -1]
+            sw = inwgts[ni+1:2*ni+2, -1]
+            data_N = (data[:, 1:] - mw[:ni]) / sw[:ni]
+        else: # carbonate system
+            ni = data.shape[1]
+            ioffset = 0
+            mw = inwgts[:ni+1, -1]
+            sw = inwgts[ni+1:2*ni+2, -1]
+            data_N = (data - mw[:ni]) / sw[:ni]
 
-            # Process each network in committee
-            for l in range(noparsets):
-                nlayerflag = 1 + bool(inwgts[1, l])
-                nl1 = int(inwgts[0, l])
-                nl2 = int(inwgts[1, l])
-                beta = inwgts[2, l]
-            
-                # Extract weights
-                idx = 4
-                w1 = inwgts[idx:idx + nl1 * ni, l].reshape(nl1, ni, order='F') # Here, order='F' is needed to make sure to proper do the calculation as in the Matlab version (https://github.com/HCBScienceProducts/CANYON-B/blob/master/CANYONB.m) !
-                idx += nl1*ni
-                b1 = inwgts[idx:idx + nl1, l] 
-                idx += nl1
-                w2 = inwgts[idx:idx + nl2*nl1, l].reshape(nl2, nl1, order='F')
-                idx += nl2*nl1
-                b2 = inwgts[idx:idx + nl2, l]
-            
-                if nlayerflag == 2:
-                    idx += nl2
-                    w3 = inwgts[idx:idx + nl2, l].reshape(1, nl2, order='F')
-                    idx += nl2
-                    b3 = inwgts[idx:idx + 1, l]
-            
-                # Forward pass
-                a = np.dot(data_N, w1.T) + b1
-                if nlayerflag == 1:
-                    y = np.dot(np.tanh(a), w2.T) + b2
-                else:
-                    b = np.dot(np.tanh(a), w2.T) + b2
-                    y = np.dot(np.tanh(b), w3.T) + b3
-            
-                # Store results
-                cval[:, l] = y.flatten()
-                cvalcy[l] = 1/beta
+        # Extract weights and prepare arrays
+        wgts = inwgts[3, :noparsets]
+        betaciw = inwgts[2*ni+2:, -1]
+        betaciw = betaciw[~np.isnan(betaciw)]
+        
+        # Preallocate arrays
+        cval = np.full((nol, noparsets), np.nan)
+        cvalcy = np.full(noparsets, np.nan)
+        inval = np.full((nol, ni, noparsets), np.nan)
 
-                # Calculate input effects
-                x1 = w1[None, :, :] * (1 - np.tanh(a)[:, :, None]**2)
+        # Process each network in committee
+        for l in range(noparsets):
+            nlayerflag = 1 + bool(inwgts[1, l])
+            nl1 = int(inwgts[0, l])
+            nl2 = int(inwgts[1, l])
+            beta = inwgts[2, l]
+            
+            # Extract weights
+            idx = 4
+            w1 = inwgts[idx:idx + nl1 * ni, l].reshape(nl1, ni, order='F') # Here, order='F' is needed to make sure to proper do the calculation as in the Matlab version (https://github.com/HCBScienceProducts/CANYON-B/blob/master/CANYONB.m) !
+            idx += nl1*ni
+            b1 = inwgts[idx:idx + nl1, l] 
+            idx += nl1
+            w2 = inwgts[idx:idx + nl2*nl1, l].reshape(nl2, nl1, order='F')
+            idx += nl2*nl1
+            b2 = inwgts[idx:idx + nl2, l]
+            
+            if nlayerflag == 2:
+                idx += nl2
+                w3 = inwgts[idx:idx + nl2, l].reshape(1, nl2, order='F')
+                idx += nl2
+                b3 = inwgts[idx:idx + 1, l]
+            
+            # Forward pass
+            a = np.dot(data_N, w1.T) + b1
+            if nlayerflag == 1:
+                y = np.dot(np.tanh(a), w2.T) + b2
+            else:
+                b = np.dot(np.tanh(a), w2.T) + b2
+                y = np.dot(np.tanh(b), w3.T) + b3
+            
+            # Store results
+            cval[:, l] = y.flatten()
+            cvalcy[l] = 1/beta
+
+            # Calculate input effects
+            x1 = w1[None, :, :] * (1 - np.tanh(a)[:, :, None]**2)
               
-                if nlayerflag == 1:
-                    inx = np.einsum('ij,...jk->...ik', w2, x1)[:, 0, :] 
-                else:
-                    x2 = w2[None, :, :] * (1 - np.tanh(b)[:, :, None]**2)
-                    inx = np.einsum('ij,...jk,...kl->...il', w3, x2, x1)[:, 0, :] 
-                inval[:, :, l] = inx
+            if nlayerflag == 1:
+                inx = np.einsum('ij,...jk->...ik', w2, x1)[:, 0, :] 
+            else:
+                x2 = w2[None, :, :] * (1 - np.tanh(b)[:, :, None]**2)
+                inx = np.einsum('ij,...jk,...kl->...il', w3, x2, x1)[:, 0, :] 
+            inval[:, :, l] = inx
 
-                # Denormalization
-                cval = cval * sw[ni] + mw[ni]
-                cvalcy = cvalcy * sw[ni]**2
+        # Denormalization
+        cval = cval * sw[ni] + mw[ni]
+        cvalcy = cvalcy * sw[ni]**2
         
-                # Calculate committee statistics
-                V1 = np.sum(wgts)
-                V2 = np.sum(wgts**2)
-                pred = np.sum(wgts[None, :] * cval, axis=1) / V1
+        # Calculate committee statistics
+        V1 = np.sum(wgts)
+        V2 = np.sum(wgts**2)
+        pred = np.sum(wgts[None, :] * cval, axis=1) / V1
         
-                # Calculate uncertainties
-                cvalcu = np.sum(wgts[None, :] * (cval - pred[:, None])**2, axis=1) / (V1 - V2/V1)
-                cvalcib = np.sum(wgts * cvalcy) / V1
-                cvalciw = np.polyval(betaciw, np.sqrt(cvalcu))**2
+        # Calculate uncertainties
+        cvalcu = np.sum(wgts[None, :] * (cval - pred[:, None])**2, axis=1) / (V1 - V2/V1)
+        cvalcib = np.sum(wgts * cvalcy) / V1
+        cvalciw = np.polyval(betaciw, np.sqrt(cvalcu))**2
         
-                # Calculate input effects
-                inx = np.sum(wgts[None, None, :] * inval, axis=2) / V1
-                inx = np.tile((sw[ni] / sw[0:ni].T), (nol, 1)) * inx
+        # Calculate input effects
+        inx = np.sum(wgts[None, None, :] * inval, axis=2) / V1
+        inx = np.tile((sw[ni] / sw[0:ni].T), (nol, 1)) * inx
         
-                # Pressure scaling
-                df = self.ds2df()
-                ddp = 1/2e4 + 1/((1 + np.exp(-df["pres"]/300))**4) * np.exp(-df["pres"]/300)/100 # TODO order='F' ?
-                inx[:, 7+ioffset] *= ddp
-        
-                # Calculate input variance
-                error_matrix = np.column_stack([etemp, epsal, edoxy, epres])
-                cvalcin = np.sum(inx[:, 4+ioffset:8+ioffset]**2 * error_matrix**2, axis=1)
+        # Pressure scaling - TO CHECK
+        pres_original = self._obj["PRES"].values.flatten() # check this line and compare with results from canyonbpy package
+        ddp = 1/2e4 + 1/((1 + np.exp(-pres_original/300))**4) * np.exp(-pres_original/300)/100 # TODO order='F' ?
+        inx[:, 7+ioffset] *= ddp
+    
+        # Calculate input variance
+        error_matrix = np.column_stack([etemp, epsal, edoxy, epres])
+        cvalcin = np.sum(inx[:, 4+ioffset:8+ioffset]**2 * error_matrix**2, axis=1)
 
-                # Calculate measurement uncertainty
-                if i > 3:
-                    cvalcimeas = (inputsigma[i] * pred)**2
-                elif i == 3:
-                    cvalcimeas = np.polyval(betaipCO2, pred)**2
-                else:
-                    cvalcimeas = inputsigma[i]**2
+        # Calculate measurement uncertainty
+        if i > 3:
+            cvalcimeas = (inputsigma[i] * pred)**2
+        elif i == 3:
+            cvalcimeas = np.polyval(betaipCO2, pred)**2
+        else:
+            cvalcimeas = inputsigma[i]**2
             
-                # Calculate total uncertainty
-                uncertainty = np.sqrt(cvalcimeas + cvalcib + cvalciw + cvalcu + cvalcin)
+        # Calculate total uncertainty
+        uncertainty = np.sqrt(cvalcimeas + cvalcib + cvalciw + cvalcu + cvalcin)
         
-                # Create numpy arrays
-                out[param_name] = np.reshape(pred, shape)
-                out[f'{param_name}_ci'] = np.reshape(uncertainty, shape)
-                out[f'{param_name}_cim'] = np.sqrt(cvalcimeas)
-                out[f'{param_name}_cin'] = np.reshape(np.sqrt(cvalcib + cvalciw + cvalcu), shape)
-                out[f'{param_name}_cii'] = np.reshape(np.sqrt(cvalcin), shape)
+        # Create numpy arrays
+        out[param] = np.reshape(pred, shape)
+        out[f'{param}_ci'] = np.reshape(uncertainty, shape)
+        out[f'{param}_cim'] = np.sqrt(cvalcimeas)
+        out[f'{param}_cin'] = np.reshape(np.sqrt(cvalcib + cvalciw + cvalcu), shape)
+        out[f'{param}_cii'] = np.reshape(np.sqrt(cvalcin), shape)
         
-                # pCO2
-                if i == 3:
-                # ipCO2 = 'DIC' / umol kg-1 -> pCO2 / uatm
-                    outcalc = pyco2.sys(
-                        par1=2300, 
-                        par2=out[param_name], 
-                        par1_type=1, 
-                        par2_type=2, 
-                        salinity=35., 
-                        temperature=25., 
-                        temperature_out=np.nan, 
-                        pressure_out=0., 
-                        pressure_atmosphere_out=np.nan, 
-                        total_silicate=0., 
-                        total_phosphate=0., 
-                        opt_pH_scale=1., 
-                        opt_k_carbonic=10., 
-                        opt_k_bisulfate=1.,
-                        grads_of=["pCO2"],
-                        grads_wrt=["par2"],
-                    ) 
+        # pCO2
+        if i == 3:
+        # ipCO2 = 'DIC' / umol kg-1 -> pCO2 / uatm
+            outcalc = pyco2.sys(
+                par1=2300, 
+                par2=out[param], 
+                par1_type=1, 
+                par2_type=2, 
+                salinity=35., 
+                temperature=25., 
+                temperature_out=np.nan, 
+                pressure_out=0., 
+                pressure_atmosphere_out=np.nan, 
+                total_silicate=0., 
+                total_phosphate=0., 
+                opt_pH_scale=1., 
+                opt_k_carbonic=10., 
+                opt_k_bisulfate=1.,
+                grads_of=["pCO2"],
+                grads_wrt=["par2"],
+            ) 
 
-                out[f'{paramnames[i]}'] = outcalc['pCO2']
+            out[f'{paramnames[i]}'] = outcalc['pCO2']
             
-                # epCO2 = dpCO2/dDIC * e'DIC'
-                for unc in ['_ci', '_cin', '_cii']:
-                    out[param_name + unc] = outcalc['d_pCO2__d_par2'] * out[param_name + unc] 
+            # epCO2 = dpCO2/dDIC * e'DIC'
+            for unc in ['_ci', '_cin', '_cii']:
+                out[param + unc] = outcalc['d_pCO2__d_par2'] * out[param + unc] 
 
-                out[param_name + '_cim'] = outcalc['d_pCO2__d_par2'] * np.reshape(out[param_name + '_cim'], shape) 
+            out[param + '_cim'] = outcalc['d_pCO2__d_par2'] * np.reshape(out[param + '_cim'], shape) 
                 
         return out
+    
+    def predict(self, params: Union[str, List[str]] = None) -> xr.Dataset:
+        """
+        Make predictions using the CANYON-B method.
+        
+        Parameters
+        ----------
+        params: str, List[str], optional, default=None
+            List of parameters to predict. If None is specified, all possible parameters will be predicted.
+
+        Returns
+        -------
+        :class:`xr.Dataset`
+        """
+        
+        # Validation of requested parameters to predict:
+        if params is None:
+            params = self.output_list
+        else:
+            params = to_list(params)
+        for p in params:
+            if p not in self.output_list:
+                raise ValueError(
+                    "Invalid parameter ('%s') to predict, must be in [%s]"
+                    % (p, ",".join(self.output_list))
+                )
+
+        # Make predictions of each of the requested parameters
+        for param in params:
+            out = self._predict(param)
+
+            # Add predicted parameter to xr.Dataset
+            self._obj[param] = xr.zeros_like(self._obj["TEMP"])
+            self._obj[param].attrs = self.get_param_attrs(param)
+            self._obj[param].values = out[param].astype(np.float32).squeeze()
+
+            # CI
+            self._obj[f"{param}_CI"] = xr.zeros_like(self._obj[param])
+            self._obj[f"{param}_CI"].attrs = self.get_param_attrs(param)
+            self._obj[f"{param}_CI"].attrs["long_name"] = (
+            f"Uncertainty on {self.get_param_attrs(param)['long_name']}"
+            )
+            self._obj[f"{param}_CI"].values = out[f"{param}_ci"].astype(np.float32).squeeze()
+
+            # CIM
+            cim_value = out[f"{param}_cim"]
+            if np.isscalar(cim_value):
+                self._obj[f"{param}_CIM"] = xr.full_like(
+                    self._obj[param], 
+                    fill_value=float(cim_value),
+                    dtype=np.float32
+                )
+            else:
+                self._obj[f"{param}_CIM"] = xr.zeros_like(self._obj[param])
+                self._obj[f"{param}_CIM"].values = cim_value.astype(np.float32).squeeze()
+                self._obj[f"{param}_CIM"].attrs = self.get_param_attrs(param)
+                self._obj[f"{param}_CIM"].attrs["long_name"] = (
+                f"Measurement uncertainty on {self.get_param_attrs(param)['long_name']}"
+                )
+
+            # CIN 
+            self._obj[f"{param}_CIN"] = xr.zeros_like(self._obj[param])
+            self._obj[f"{param}_CIN"].attrs = self.get_param_attrs(param)
+            self._obj[f"{param}_CIN"].attrs["long_name"] = (
+            f"Uncertainty for Bayesian neural network mapping on {self.get_param_attrs(param)['long_name']}"
+            )
+            self._obj[f"{param}_CIN"].values = out[f"{param}_cin"].astype(np.float32).squeeze()
+
+            # CII
+            self._obj[f"{param}_CII"] = xr.zeros_like(self._obj[param])
+            self._obj[f"{param}_CII"].attrs = self.get_param_attrs(param)
+            self._obj[f"{param}_CII"].attrs["long_name"] = (
+            f"Uncertainty due to input errors on {self.get_param_attrs(param)['long_name']}"
+            )
+            self._obj[f"{param}_CII"].values = out[f"{param}_cii"].astype(np.float32).squeeze()
 
 
+        # Return xr.Dataset with predicted variables:
+        if self._argo:
+            self._argo.add_history(
+                "Added CANYON-B predictions for [%s]" % (",".join(params))
+            )
+
+        return self._obj
 
         
 

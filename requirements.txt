@@ -13,4 +13,4 @@ packaging>=20.4  # Using 'version' to make API compatible with several fsspec re
 
 # additional dependencies for canyon-b extension
 matplotlib>=3.10.6
-PyCO2SYS>=1.8.0 
+PyCO2SYS>=1.8.3
