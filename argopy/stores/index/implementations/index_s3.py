@@ -13,7 +13,7 @@ from ....utils.checkers import (
     HAS_BOTO3,
 )
 from ....utils import redact, to_list
-from ....errors import InvalidDatasetStructure
+from ....errors import InvalidDatasetStructure, OptionValueError
 from ... import s3store
 
 try:
@@ -666,13 +666,53 @@ def search_s3(func, *args, **kwargs):
                     ";".join([str(code) for code in CODEs]),
                 )
             )
-            idx.fs["s3"].search_institution_code(CODEs, nrows=nrows)
-            idx.search_type = {"INST_CODE": CODEs}
+            valid_codes = []
+            for code in CODEs:
+                if idx.valid('institution_code', code):
+                    valid_codes.append(code.upper())
+            if len(valid_codes) == 0:
+                raise OptionValueError(f"No valid codes found for institution in {CODEs}. Valid codes are: {idx.valid.institution_code}")
+
+            idx.fs["s3"].search_institution_code(valid_codes, nrows=nrows)
+            idx.search_type = {"INST_CODE": valid_codes}
             idx.search_filter = idx.fs["s3"].sql_expression
             idx.search = getattr(idx.fs["s3"], idx.ext)
             return idx
         else:
-            log.debug("Argo index searching using boto3 SQL request not available for composition")
+            log.debug("Argo index search using boto3 SQL request not available for composition")
+
+    if (
+        func.__name__ == "institution_name"
+        and not hasattr(idx, "index")
+        and isinstance(idx.fs["src"], s3store)
+    ):
+        NAMEs, nrows, composed = args[1], args[2], args[3]
+        if not composed:
+            NAMEs = to_list(NAMEs)
+            log.debug(
+                "Argo index searching for INSTITUTION NAMEs=[%s] using boto3 SQL request ..."
+                % (
+                    ";".join([str(name) for name in NAMEs]),
+                )
+            )
+            # Get codes matching names:
+            CODEs = []
+            for code, long_name in idx._r4.items():
+                for name in NAMEs:
+                    if name.lower() in long_name.lower():
+                        CODEs.append(code)
+            if len(CODEs) == 0:
+                valid_names = ", ".join(idx.valid.institution_name)
+                raise OptionValueError(f"No valid institution name found in {NAMEs}. Valid names are any string in: '{valid_names}'")
+
+            idx.fs["s3"].search_institution_code(CODEs, nrows=nrows)
+            idx.search_type = {"INST_NAME": NAMEs}
+            idx.search_filter = idx.fs["s3"].sql_expression
+            idx.search = getattr(idx.fs["s3"], idx.ext)
+            return idx
+        else:
+            log.debug("Argo index search using boto3 SQL request not available for composition")
+
 
     if (
         func.__name__ == "dac"

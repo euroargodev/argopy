@@ -24,6 +24,7 @@ from ...utils import isconnected, has_aws_credentials, Registry, Chunker, shortc
 from .. import httpstore, memorystore, filestore, ftpstore, s3store
 from .implementations.index_s3 import get_a_s3index
 from .implementations.plot import ArgoIndexPlot
+from .implementations.valid import ArgoIndexSearchValid
 
 try:
     import pyarrow.csv as csv  # noqa: F401
@@ -499,6 +500,8 @@ class ArgoIndexStoreProto(ABC):
             return self.search.shape[0]
         elif hasattr(self, "index"):
             return self.index.shape[0]
+        elif "s3" in self.host:
+            return np.inf
         else:
             raise InvalidDataset("You must, at least, load the index first !")
 
@@ -1161,3 +1164,4 @@ file,profiler_type,institution,date_update
 
     # Possibly register extensions without specific implementations:
     plot = xr.core.utils.UncachedAccessor(ArgoIndexPlot)
+    valid = xr.core.utils.UncachedAccessor(ArgoIndexSearchValid)

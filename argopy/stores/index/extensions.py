@@ -3,8 +3,9 @@ from typing import NoReturn
 import logging
 
 from ...utils import register_accessor
-from ...errors import InvalidDatasetStructure
+from ...errors import InvalidDatasetStructure, OptionValueError
 from ...utils import to_list
+from .implementations.index_s3 import search_s3
 
 
 log = logging.getLogger("argopy.stores.index.extensions")
@@ -534,6 +535,7 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         """
         raise NotImplementedError("Not implemented")
 
+    @search_s3
     def institution_name(self, institution_name: str, nrows=None, composed=False):
         """Search index for institutions with a given string in their long name
 
@@ -578,7 +580,11 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
                 for label in institution_name:
                     if label.lower() in long_name.lower():
                         institution_code.append(code)
-            return institution_name, institution_code
+            if len(institution_code) == 0:
+                valid_names = ", ".join(self._obj.valid.institution_name)
+                raise OptionValueError(f"No valid institution name found in {institution_name}. Valid names are any string in: '{valid_names}'")
+            else:
+                return institution_name, institution_code
 
         def namer(institution_name):
             self._obj.search_type.pop('INST_CODE')
@@ -670,10 +676,12 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         return self._obj
 
 
-class ArgoIndexPlotProto(ArgoIndexExtension):
-    """Extension providing plot methods
+class ArgoIndexSearchValidProto(ArgoIndexExtension):
+    """Extension providing valid values for search queries and validation methods"""
 
-    """
+
+class ArgoIndexPlotProto(ArgoIndexExtension):
+    """Extension providing plot methods"""
 
     def __call__(self, *args, **kwargs) -> NoReturn:
         raise ValueError(

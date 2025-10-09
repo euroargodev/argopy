@@ -36,7 +36,7 @@ from .lists import (
 from .caching import clear_cache, lscache
 from .monitored_threadpool import MyThreadPoolExecutor as MonitoredThreadPoolExecutor
 from .chunking import Chunker
-from .accessories import Registry, float_wmo
+from .accessories import Registry, float_wmo, ListStrProperty
 from .locals import (  # noqa: F401
     show_versions,
     show_options,
@@ -117,6 +117,7 @@ __all__ = (
     # Accessories classes (specific objects):
     "Registry",
     "float_wmo",
+    "ListStrProperty",
     # Locals (environments, versions, systems):
     "show_versions",
     "show_options",

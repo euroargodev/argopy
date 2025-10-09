@@ -12,7 +12,7 @@ except ModuleNotFoundError:
     pass
 
 from .....options import OPTIONS
-from .....errors import InvalidDatasetStructure
+from .....errors import InvalidDatasetStructure, OptionValueError
 from .....utils import is_indexbox, check_wmo, check_cyc, to_list, conv_lon
 from ...extensions import register_ArgoIndex_accessor, ArgoIndexSearchEngine
 from ..index_s3 import search_s3
@@ -479,7 +479,15 @@ class SearchEngine(ArgoIndexSearchEngine):
             if "institution" not in self._obj.convention_columns:
                 raise InvalidDatasetStructure("Cannot search for institution codes in this index)")
             log.debug("Argo index searching for institution code in %s ..." % institution_code)
-            return to_list(institution_code)
+            institution_code = to_list(institution_code)
+            valid_codes = []
+            for code in institution_code:
+                if self._obj.valid('institution_code', code):
+                    valid_codes.append(code.upper())
+            if len(valid_codes) == 0:
+                raise OptionValueError(f"No valid codes found for institution in {institution_code}. Valid codes are: {self._obj.valid.institution_code}")
+            else:
+                return valid_codes
 
         def namer(institution_code):
             return {"INST_CODE": institution_code}
