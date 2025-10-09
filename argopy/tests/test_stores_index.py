@@ -69,7 +69,7 @@ VALID_SEARCHES = [
     {"institution_code": ['IF']},
     {"institution_code": ['IF', 'JA']},
     {"institution_name": ['canada']},
-    # {"institution_name": ['usa', 'canada']},
+    {"institution_name": ['usa', 'canada']},
     {"dac": ['aoml']},
     {"dac": ['bodc', 'coriolis']},
 ]
