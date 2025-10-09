@@ -4,7 +4,6 @@ Manipulate/transform xarray objects or list of objects
 
 import numpy as np
 import xarray as xr
-import pandas as pd
 import logging
 from typing import List, Union
 
@@ -121,14 +120,12 @@ def fill_variables_not_in_all_datasets(
     for res in ds_collection:
         [vlist.append(v) for v in list(res.variables) if concat_dim in res[v].dims]
     vlist = np.unique(vlist)
-    log.debug("variables: %s" % vlist)
 
     # List all possible coordinates:
     clist = []
     for res in ds_collection:
         [clist.append(c) for c in list(res.coords) if concat_dim in res[c].dims]
     clist = np.unique(clist)
-    log.debug("coordinates: %s" % clist)
 
     # Get the first occurrence of each variable, to be used as a template for attributes and dtype
     meta = {}
@@ -140,7 +137,6 @@ def fill_variables_not_in_all_datasets(
                     "dtype": ds[v].dtype,
                     "fill_value": fillvalue(ds[v]),
                 }
-    [log.debug(meta[m]) for m in meta.keys()]
 
     # Add missing variables to dataset
     datasets = [ds.copy() for ds in ds_collection]
@@ -251,23 +247,25 @@ def merge_param_with_param_adjusted(
             ),
         )
     )
+    copy_adj = np.count_nonzero(ii_measured_adj) > 0
 
     # Copy param_adjusted values onto param indexes where data_mode is in 'a' or 'd':
-    ds["%s" % param].loc[dict(N_POINTS=ii_measured_adj)] = ds[
-        "%s_ADJUSTED" % param
-    ].loc[dict(N_POINTS=ii_measured_adj)]
+    if copy_adj:
+        ds["%s" % param].loc[dict(N_POINTS=ii_measured_adj)] = ds[
+            "%s_ADJUSTED" % param
+        ].loc[dict(N_POINTS=ii_measured_adj)]
     ds = ds.drop_vars(["%s_ADJUSTED" % param])
-
-    if "%s_ADJUSTED_QC" % param in ds and "%s_ADJUSTED_QC" % param in ds:
-        ds["%s_QC" % param].loc[dict(N_POINTS=ii_measured_adj)] = ds[
-            "%s_ADJUSTED_QC" % param
-        ].loc[dict(N_POINTS=ii_measured_adj)]
+    if "%s_ADJUSTED_QC" % param in ds:
+        if copy_adj:
+            ds["%s_QC" % param].loc[dict(N_POINTS=ii_measured_adj)] = ds[
+                "%s_ADJUSTED_QC" % param
+            ].loc[dict(N_POINTS=ii_measured_adj)]
         ds = ds.drop_vars(["%s_ADJUSTED_QC" % param])
-
     if "%s_ERROR" % param in ds and "%s_ADJUSTED_ERROR" % param in ds:
-        ds["%s_ERROR" % param].loc[dict(N_POINTS=ii_measured_adj)] = ds[
-            "%s_ADJUSTED_ERROR" % param
-        ].loc[dict(N_POINTS=ii_measured_adj)]
+        if copy_adj:
+            ds["%s_ERROR" % param].loc[dict(N_POINTS=ii_measured_adj)] = ds[
+                "%s_ADJUSTED_ERROR" % param
+            ].loc[dict(N_POINTS=ii_measured_adj)]
         ds = ds.drop_vars(["%s_ADJUSTED_ERROR" % param])
 
     if core_ds:
@@ -380,26 +378,24 @@ def split_data_mode(ds: xr.Dataset) -> xr.Dataset:
 
         def read_data_mode_for(ds: xr.Dataset, param: str) -> xr.DataArray:
             """Return data mode of a given parameter"""
-            da_masked = ds['PARAMETER_DATA_MODE'].where(ds['STATION_PARAMETERS'] == u64(param))
+            da_masked = ds["PARAMETER_DATA_MODE"].where(
+                ds["STATION_PARAMETERS"] == u64(param), ""
+            )
 
-            def _dropna(x):
-                # x('N_PARAM') is reduced to the first non nan value, a scalar, no dimension
-                y = pd.Series(x).dropna().tolist()
-                if len(y) == 0:
-                    return ""
-                else:
-                    return y[0]
+            _dropna = lambda x: next(
+                (item for item in x if item != ""), ""
+            )  # noqa: E731
 
             kwargs = dict(
                 dask="parallelized",
                 input_core_dims=[["N_PARAM"]],  # Function takes N_PARAM as input
                 output_core_dims=[[]],  # Function reduces to a scalar (no dimension)
-                vectorize=True  # Apply function element-wise along the other dimensions
+                vectorize=True,  # Apply function element-wise along the other dimensions
             )
 
             dm = xr.apply_ufunc(_dropna, da_masked, **kwargs)
             dm = dm.rename("%s_DATA_MODE" % param)
-            dm.attrs = ds['PARAMETER_DATA_MODE'].attrs
+            dm.attrs = ds["PARAMETER_DATA_MODE"].attrs
             return dm
 
         for param in params:
@@ -407,7 +403,9 @@ def split_data_mode(ds: xr.Dataset) -> xr.Dataset:
                 "PARAMETER_", ""
             )
             if name == "_DATA_MODE":
-                log.error("This dataset has an error in 'STATION_PARAMETERS': it contains an empty string")
+                log.error(
+                    "This dataset has an error in 'STATION_PARAMETERS': it contains an empty string"
+                )
             else:
                 ds[name] = read_data_mode_for(ds, param)
 
