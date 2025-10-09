@@ -70,8 +70,8 @@ VALID_SEARCHES = [
     {"institution_code": ['IF', 'JA']},
     {"institution_name": ['canada']},
     # {"institution_name": ['usa', 'canada']},
-    # {"dac": ['aoml']},
-    # {"dac": ['bodc', 'coriolis']},
+    {"dac": ['aoml']},
+    {"dac": ['bodc', 'coriolis']},
 ]
 VALID_SEARCHES_LOGICAL = [
     {"params": ["C1PHASE_DOXY", "DOWNWELLING_PAR"]},
