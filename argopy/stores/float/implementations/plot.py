@@ -143,8 +143,11 @@ class ArgoFloatPlot(ArgoFloatPlotProto):
 
             from argopy import ArgoFloat
             af = ArgoFloat(wmo)
-            af.plot.map('TEMP', pres=450, cmap='Spectral_r')
-            af.plot.map('DATA_MODE', cbar=False, legend=True)
+
+            af.plot.map('TEMP')  # Plot pressure level closest to 0 by default
+            af.plot.map('PSAL', pres=450.)
+            af.plot.map('PROFILE_TEMP_QC')
+            af.plot.map('DATA_MODE')
         """
 
         if ds == "prof" and param not in list_multiprofile_file_variables():
@@ -176,15 +179,9 @@ class ArgoFloatPlot(ArgoFloatPlotProto):
         )
 
         # Check if param will be plotted using a discrete and known Argo colormap
-        discrete = False
-        if param.lower() in ArgoColors().list_valid_known_colormaps:
-            discrete = True
-        elif "qc" in param.lower():
-            discrete = True
-        elif "mode" in param.lower():
-            discrete = True
-        elif "status_code" in param.lower():
-            discrete = True
+        discrete, cmap = False, 'Spectral_r'
+        if "qc" in param.lower() or "mode" in param.lower():
+            discrete, cmap = True, None  # Let scatter_map guess cmap
 
         if "N_LEVELS" in self._obj.dataset(ds)[param].dims:
             legend_title = "%s @ %s PRES level in [%0.1f-%0.1f] db" % (
@@ -200,6 +197,7 @@ class ArgoFloatPlot(ArgoFloatPlotProto):
             "x": "LONGITUDE",
             "y": "LATITUDE",
             "hue": param,
+            "cmap": cmap,
             "legend": True if discrete else False,
             "cbar": False if discrete else True,
             "legend_title": legend_title,
