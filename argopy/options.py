@@ -51,6 +51,9 @@ PARALLEL = "parallel"
 PARALLEL_DEFAULT_METHOD = "parallel_default_method"
 LON = "longitude_convention"
 API_FLEETMONITORING = "fleetmonitoring"
+RBR_API_KEY = "rbr_api_key"
+API_RBR = "rbr_api"
+NVS = "nvs"
 
 # Define the list of available options and default values:
 OPTIONS = {
@@ -71,6 +74,9 @@ OPTIONS = {
     PARALLEL_DEFAULT_METHOD: "thread",
     LON: "180",
     API_FLEETMONITORING: "https://fleetmonitoring.euro-argo.eu",
+    RBR_API_KEY: os.environ.get("RBR_API_KEY"),  # Contact RBR at argo@rbr-global.com if you do not have an authorization key.
+    API_RBR: "https://oem-lookup.rbr-global.com/api/v1",
+    NVS: "https://vocab.nerc.ac.uk/collection",
 }
 DEFAULT = OPTIONS.copy()
 
@@ -124,6 +130,14 @@ def validate_fleetmonitoring(this_path):
         return check_fleetmonitoring_path(this_path, errors="raise")
     else:
         log.debug("OPTIONS['%s'] is not defined" % API_FLEETMONITORING)
+        return False
+
+
+def validate_rbr(this_path):
+    if this_path != "-":
+        return True  # todo: check with RBR how to get the API endpoint for its status
+    else:
+        log.debug("OPTIONS['%s'] is not defined" % API_RBR)
         return False
 
 
@@ -271,10 +285,14 @@ _VALIDATORS = {
     USER: lambda x: isinstance(x, str) or x is None,
     PASSWORD: lambda x: isinstance(x, str) or x is None,
     ARGOVIS_API_KEY: lambda x: isinstance(x, str) or x is None,
+    RBR_API_KEY: lambda x: isinstance(x, str) or x is None,
     PARALLEL: validate_parallel,
     PARALLEL_DEFAULT_METHOD: validate_parallel_method,
     LON: lambda x: x in ['180', '360'],
     API_FLEETMONITORING: validate_fleetmonitoring,
+    API_RBR: validate_rbr,
+    NVS: lambda x: isinstance(x, str) or x is None,
+
 }
 
 
@@ -335,6 +353,13 @@ class set_options:
         The API key to use when fetching data from the `argovis` data source
 
         You can get a free key at https://argovis-keygen.colorado.edu
+
+    rbr_api_key: str, default: None
+        The API key to use when fetching data from the RBR OEM lookup API.
+
+        RBR sensor owners can get a key by contacting RBR at argo@rbr-global.com.
+
+        This key can also be used from: https://oem-lookup.rbr-global.com
 
     parallel: bool, str, :class:`distributed.Client`, default: False
         Set whether to use parallelisation or not, and possibly which method to use.
