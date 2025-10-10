@@ -11,10 +11,6 @@ from ..utils import path2assets, to_list
 from . import register_argo_accessor, ArgoAccessorExtension
 
 
-nan_value = np.nan if not hasattr(np, 'NaN') else np.NaN
-
-
-
 @register_argo_accessor("canyon_b")
 class CanyonB(ArgoAccessorExtension):
     """
@@ -41,12 +37,12 @@ class CanyonB(ArgoAccessorExtension):
         ds.argo.canyon_b.predict()
         ds.argo.canyon_b.predict('PO4')
         ds.argo.canyon_b.predict(['PO4', 'NO3'])
-        # add epres, etemp, epsal and edoxy
+        ds.argo.canyon_b.predict(['PO4', 'NO3'], epres=0.5, etemp=0.005, epsal=0.005, edoxy=0.01)
 
     Notes
     -----
     This Python implementation is largely inspired by work from Raphaël Bajon (https://github.com/RaphaelBajon) 
-    which is available at https://github.com/RaphaelBajon/canyonbpy
+    which is available at https://github.com/RaphaelBajon/canyonbpy and from the EuroGO-SHIP organization (https://github.com/EuroGO-SHIP/AtlantOS_QC/blob/master/atlantos_qc/data_models/extra/pycanyonb.py)
 
     References
     ----------
@@ -57,10 +53,9 @@ class CanyonB(ArgoAccessorExtension):
 
     """
  
-    n_inputs = 7 # Pressure, Temperature, Salinity, Oxygen, Latitude, Longitude, Year
+    n_inputs = 7 # Pressure, Temperature, Salinity, Oxygen, Latitude, Longitude, Decimal Year
     """Number of inputs variables for CANYON-B"""
 
-    #output_list = ["NO3", "PO4", "SiOH4", "AT", "DIC", "pHT", "pCO2"] # DIC = CT in the paper and I keep it that way to be consistent with the existing canyon-med extension
     output_list = ['AT', 'DIC', 'pHT', 'pCO2', 'NO3', 'PO4', 'SiOH4'] # DIC = CT in [1], keep it that way to be consistent with the canyon-med extention. Order of parameters follows https://github.com/RaphaelBajon/canyonbpy/blob/main/canyonbpy/core.py because it is used later in the predict method.
     """List of all possible output variables for CANYON-B"""
 
@@ -140,7 +135,7 @@ class CanyonB(ArgoAccessorExtension):
         else:  # Handle single point dataset:
             df = pd.DataFrame.from_dict(
                 {
-                    "lat": self.adjust_arctic_latitude(self._obj["LATITUDE"].values, self._obj["LONGITUDE"].values), # to be checked
+                    "lat": self.adjust_arctic_latitude(self._obj["LATITUDE"].values, self._obj["LONGITUDE"].values),
                     "lon": self._obj["LONGITUDE"],
                     "dec_year": self.decimal_year,
                     "temp": self._obj["TEMP"],
@@ -182,7 +177,7 @@ class CanyonB(ArgoAccessorExtension):
 
         return data
 
-    # TODO: think about this method but let's keep it here for the moment
+    # Latitude adjustment for Polar shift
     def adjust_arctic_latitude(self, lat: np.ndarray, lon: np.ndarray) -> np.ndarray:
         """
         Adjust latitude for Arctic basin calculations.
@@ -234,7 +229,7 @@ class CanyonB(ArgoAccessorExtension):
         return weights
 
     
-    def _predict(self, param: str, epres: Optional[float] = 0.5, etemp: Optional[float] = 0.005, epsal: Optional[float] = 0.005, edoxy: Optional[Union[float, np.ndarray]] = None):
+    def _predict(self, param: str, epres: Optional[float] = None, etemp: Optional[float] = None, epsal: Optional[float] = None, edoxy: Optional[Union[float, np.ndarray]] = None):
         """Private predictor to be used for a single parameter
         
         Parameters
@@ -251,9 +246,11 @@ class CanyonB(ArgoAccessorExtension):
         shape = self._obj[self._argo._TNAME].shape
         nol = self._argo.N_POINTS
 
-        # Set default edoxy if not provided
-        if edoxy is None:
-            edoxy = 0.01 * self._obj.DOXY.values # add case when DOXY_ADJUSTED is defined?
+        # Setting up default uncertainties if not provided
+        epres = 0.5 if epres is None else epres
+        etemp = 0.005 if etemp is None else etemp
+        epsal = 0.005 if epsal is None else epsal
+        edoxy = 0.01 * self._obj.DOXY.values if edoxy is None else edoxy # add case when DOXY_ADJUSTED is defined?
 
         # Expand scalar error values
         errors = [epres, etemp, epsal, edoxy]
@@ -265,9 +262,9 @@ class CanyonB(ArgoAccessorExtension):
         paramnames = ['AT', 'DIC', 'pHT', 'pCO2', 'NO3', 'PO4', 'SiOH4']
         i_idx = {p: i for i, p in enumerate(paramnames)}
         inputsigma = np.array([6, 4, 0.005, np.nan, 0.02, 0.02, 0.02])
-        betaipCO2 = np.array([-3.114e-05, 1.087e-01, -7.899e+01])
+        betaipCO2 = np.array([-3.114e-05, 1.087e-01, -7.899e+01]) 
 
-        # Adjust pH uncertainty
+        # Adjust pH uncertainty (Orr systematic uncertainty)
         inputsigma[2] = np.sqrt(0.005**2 + 0.01**2)
 
         # Prepare input data
@@ -276,16 +273,15 @@ class CanyonB(ArgoAccessorExtension):
         # Output dictionary
         out = {}
 
-        #                                                        #
-        # Process through neural network for the given parameter #
-        #  
+        #                                                         #
+        # Process through neural networks for the given parameter #
+        #                                                         #  
         
         # Get index depending on parameter (mostly important to decipher between nutrients and carbonate sytems)
         i = i_idx[param]
 
-        # Load weights
+        # Load weights and convert them to numpy array
         inwgts = self.load_weights(param)
-        # Convert to numpy array
         inwgts = inwgts.to_numpy()
 
         # Number of networks in committee
@@ -293,13 +289,13 @@ class CanyonB(ArgoAccessorExtension):
         
         # Determine input normalization based on parameter type
         if i > 3: # nutrients
-            ni = data[:, 1:].shape[1]
+            ni = data[:, 1:].shape[1] # Number of inputs (excluding year)
             ioffset = -1
             mw = inwgts[:ni+1, -1]
             sw = inwgts[ni+1:2*ni+2, -1]
             data_N = (data[:, 1:] - mw[:ni]) / sw[:ni]
         else: # carbonate system
-            ni = data.shape[1]
+            ni = data.shape[1] # Number of inputs
             ioffset = 0
             mw = inwgts[:ni+1, -1]
             sw = inwgts[ni+1:2*ni+2, -1]
@@ -321,18 +317,19 @@ class CanyonB(ArgoAccessorExtension):
             nl1 = int(inwgts[0, l])
             nl2 = int(inwgts[1, l])
             beta = inwgts[2, l]
-            
-            # Extract weights
+            # Weights and biases for the first layer
             idx = 4
             w1 = inwgts[idx:idx + nl1 * ni, l].reshape(nl1, ni, order='F') # Here, order='F' is needed to make sure to proper do the calculation as in the Matlab version (https://github.com/HCBScienceProducts/CANYON-B/blob/master/CANYONB.m) !
             idx += nl1*ni
             b1 = inwgts[idx:idx + nl1, l] 
             idx += nl1
+            # Weights and biases for the second layer
             w2 = inwgts[idx:idx + nl2*nl1, l].reshape(nl2, nl1, order='F')
             idx += nl2*nl1
             b2 = inwgts[idx:idx + nl2, l]
             
             if nlayerflag == 2:
+                # Weights and biases for the third layer (if it exists)
                 idx += nl2
                 w3 = inwgts[idx:idx + nl2, l].reshape(1, nl2, order='F')
                 idx += nl2
@@ -341,21 +338,25 @@ class CanyonB(ArgoAccessorExtension):
             # Forward pass
             a = np.dot(data_N, w1.T) + b1
             if nlayerflag == 1:
+                # One hidden layer
                 y = np.dot(np.tanh(a), w2.T) + b2
             else:
+                # Two hidden layers
                 b = np.dot(np.tanh(a), w2.T) + b2
                 y = np.dot(np.tanh(b), w3.T) + b3
             
             # Store results
             cval[:, l] = y.flatten()
-            cvalcy[l] = 1/beta
+            cvalcy[l] = 1/beta # 'noise' variance
 
             # Calculate input effects
             x1 = w1[None, :, :] * (1 - np.tanh(a)[:, :, None]**2)
               
             if nlayerflag == 1:
+                # One hidden layer
                 inx = np.einsum('ij,...jk->...ik', w2, x1)[:, 0, :] 
             else:
+                # Two hidden layers
                 x2 = w2[None, :, :] * (1 - np.tanh(b)[:, :, None]**2)
                 inx = np.einsum('ij,...jk,...kl->...il', w3, x2, x1)[:, 0, :] 
             inval[:, :, l] = inx
@@ -378,9 +379,9 @@ class CanyonB(ArgoAccessorExtension):
         inx = np.sum(wgts[None, None, :] * inval, axis=2) / V1
         inx = np.tile((sw[ni] / sw[0:ni].T), (nol, 1)) * inx
         
-        # Pressure scaling - TO CHECK
-        pres_original = self._obj["PRES"].values.flatten() # check this line and compare with results from canyonbpy package
-        ddp = 1/2e4 + 1/((1 + np.exp(-pres_original/300))**4) * np.exp(-pres_original/300)/100 # TODO order='F' ?
+        # Pressure scaling
+        pres_original = self._obj["PRES"].values.flatten() 
+        ddp = 1/2e4 + 1/((1 + np.exp(-pres_original/300))**4) * np.exp(-pres_original/300)/100 
         inx[:, 7+ioffset] *= ddp
     
         # Calculate input variance
@@ -437,7 +438,7 @@ class CanyonB(ArgoAccessorExtension):
                 
         return out
     
-    def predict(self, params: Union[str, List[str]] = None) -> xr.Dataset:
+    def predict(self, params: Union[str, List[str]] = None, epres: Optional[float] = None, etemp: Optional[float] = None, epsal: Optional[float] = None, edoxy: Optional[Union[float, np.ndarray]] = None) -> xr.Dataset:
         """
         Make predictions using the CANYON-B method.
         
@@ -445,6 +446,10 @@ class CanyonB(ArgoAccessorExtension):
         ----------
         params: str, List[str], optional, default=None
             List of parameters to predict. If None is specified, all possible parameters will be predicted.
+        epres, etemp, epsal : float, optional
+            Input errors
+        edoxy : float or array-like, optional
+            Oxygen input error (default: 1% of doxy)
 
         Returns
         -------
@@ -465,7 +470,7 @@ class CanyonB(ArgoAccessorExtension):
 
         # Make predictions of each of the requested parameters
         for param in params:
-            out = self._predict(param)
+            out = self._predict(param, epres=epres, etemp=etemp, epsal=epsal, edoxy=edoxy)
 
             # Add predicted parameter to xr.Dataset
             self._obj[param] = xr.zeros_like(self._obj["TEMP"])
