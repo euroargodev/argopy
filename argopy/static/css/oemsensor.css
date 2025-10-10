@@ -1,0 +1,79 @@
+/* CSS stylesheet for displaying OemArgoSensorMetaData object in a Jupyter notebook cell
+*
+*/
+.oemsensor {
+    font-family: Arial, sans-serif;
+    line-height: 1em;
+    overflow: hidden;
+}
+h1.oemsensor {
+    font-size: 0.9em;
+    font-weight: bold;
+    margin-bottom: 0.4em;
+    border-bottom: 1px solid var(--argopy_darkyellow);
+    padding-bottom: 0.2em;
+    color: var(--argopy_darkblue);
+}
+h2.oemsensor {
+    font-size: 0.9em !important;
+    font-weight: bold;
+    margin-top: 0.2em;
+    margin-bottom: 0.2em;
+    color: var(--argopy_darkblue);
+}
+p.oemsensor {
+    font-size: small;
+    color: var(--argopy_darkblue);
+}
+table.oemsensor {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0.8em;
+    font-size: 0.9em;
+    color: var(--argopy_blue);
+}
+table.oemsensor thead{
+    color: var(--argopy_darkblue);
+}
+th.oemsensor, td.oemsensor {
+    padding: 0.4em 0.6em;
+    text-align: left;
+    border: 1px solid #eee;
+}
+th.oemsensor {
+    background-color: #f8f8f8;
+    font-weight: bold;
+}
+tr.parameter-row.oemsensor td.calibration {
+    cursor: pointer;
+}
+tr.parameter-row.oemsensor:hover {
+    background-color: var(--argopy_yellow);
+}
+
+td.oemsensor a:link a:visited a:active{
+    color: var(--argopy_blue);
+}
+
+.parameter-details.oemsensor {
+    display: none;
+    background-color: #f9f9f9;
+}
+.parameter-details.oemsensor td {
+    padding: 0.6em;
+}
+.details-content.oemsensor {
+    margin: 0;
+    padding: 0.4em 0;
+}
+.details-content.oemsensor p {
+    margin: 0.2em 0;
+}
+pre.oemsensor {
+    background-color: #f8f8f8;
+    padding: 0.6em;
+    border-radius: 3px;
+    font-size: 0.85em;
+    overflow-x: auto;
+    color: var(--argopy_blue);
+}

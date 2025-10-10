@@ -1,0 +1,11 @@
+/* CSS stylesheet for argopy style
+*
+*/
+
+:root {
+    --argopy_cyan:rgb(18, 235, 229);
+    --argopy_blue:rgb(16, 137, 182);
+    --argopy_darkblue:rgb(10, 89, 162);
+    --argopy_yellow:rgb(229, 174, 41);
+    --argopy_darkyellow:rgb(224, 158, 37);
+}
