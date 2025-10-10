@@ -4,21 +4,21 @@ from pathlib import Path
 from typing import Literal, Any, Iterator
 import logging
 
-SearchOutputOptions = Literal["wmo", "sn", "wmo_sn", "df"]
-ErrorOptions = Literal["raise", "ignore"]
-
-from ..stores import ArgoFloat, ArgoIndex, httpstore, filestore
-from ..utils import check_wmo, Chunker, to_list, NVSrow
-from ..errors import (
+from ...stores import ArgoFloat, ArgoIndex, httpstore, filestore
+from ...utils import check_wmo, Chunker, to_list, NVSrow
+from ...errors import (
     DataNotFound,
     InvalidDataset,
     InvalidDatasetStructure,
     OptionValueError,
 )
-from ..options import OPTIONS
-from ..utils import path2assets
-from . import ArgoNVSReferenceTables
+from ...options import OPTIONS
+from ...utils import path2assets
+from .. import ArgoNVSReferenceTables
 
+
+SearchOutputOptions = Literal["wmo", "sn", "wmo_sn", "df"]
+ErrorOptions = Literal["raise", "ignore"]
 
 log = logging.getLogger("argopy.related.sensors")
 
@@ -85,16 +85,23 @@ class SensorModel(NVSrow):
         """Create a :class:`SensorModel` from a R27-"Argo sensor models" row"""
         return SensorModel(obj)
 
+    def __contains__(self, string) -> bool:
+        return string.lower() in self.name.lower() or string.lower() in self.long_name.lower()
 
 class ArgoSensor:
     """
     Argo sensors helper class
 
-    The :class:`ArgoSensor` class provides direct access to Argo's sensor metadata through Reference Tables `Sensor Types (R25) <http://vocab.nerc.ac.uk/collection/R25>`_ and `Sensor Models (R27) <http://vocab.nerc.ac.uk/collection/R27>`_, combined with the `Euro-Argo fleet-monitoring API <https://fleetmonitoring.euro-argo.eu/>`_. This enables users to:
+    The :class:`ArgoSensor` class aims to provide direct access to Argo's sensor metadata from:
+
+    - NVS Reference Tables `Sensor Types (R25) <http://vocab.nerc.ac.uk/collection/R25>`_ and `Sensor Models (R27) <http://vocab.nerc.ac.uk/collection/R27>`_
+    - `Euro-Argo fleet-monitoring API <https://fleetmonitoring.euro-argo.eu/>`_
+
+    This enables users to:
 
     - navigate reference tables 25 and 27,
     - search for/iterate over floats equipped with specific sensor models,
-    - retrieve sensor serial numbers across the global array.
+    - retrieve sensor serial numbers across the global array,
 
     """
 
@@ -138,6 +145,10 @@ class ArgoSensor:
             # Reference table R25-"Argo sensor types" with the list of sensor types
             ArgoSensor().reference_sensor
             ArgoSensor().reference_sensor_type # Only the list of types (used to fill 'SENSOR' parameter)
+
+            # Reference table R26-"Argo sensor manufacturers" with the list of sensor maker
+            ArgoSensor().reference_manufaturer
+            ArgoSensor().reference_manufaturer_name # Only the list of makers (used to fill 'SENSOR_MAKER' parameter)
 
             # Search for all referenced sensor models with some string in their name
             ArgoSensor().search_model('RBR')
@@ -213,9 +224,11 @@ class ArgoSensor:
         self._cache = kwargs.get("cache", True)
         self._cachedir = kwargs.get("cachedir", OPTIONS["cachedir"])
         self._timeout = kwargs.get("timeout", OPTIONS["api_timeout"])
-        self.fs = httpstore(cache=self._cache, cachedir=self._cachedir, timeout=self._timeout)
+        fs_kargs = {"cache": self._cache, "cachedir": self._cachedir, "timeout": self._timeout}
+        self.fs = httpstore(**fs_kargs)
 
         self._r25: pd.DataFrame | None = None  # will be loaded when necessary
+        self._r26: pd.DataFrame | None = None  # will be loaded when necessary
         self._r27: pd.DataFrame | None = None  # will be loaded when necessary
         self._load_mappers()  # Load r25 model to r27 type mapping dictionary
 
@@ -232,10 +245,14 @@ class ArgoSensor:
             if df.shape[0] == 1:
                 self._model = SensorModel.from_series(df.iloc[0])
                 self._type = self.model_to_type(self._model, errors="ignore")
+                # if "RBR" in self._model:
+                    # Add the RBR OEM API Authorization key for this sensor:
+                    # fs_kargs.update(client_kwargs={'headers': {'Authorization': OPTIONS.get('rbr_api_key') }})
             else:
                 raise InvalidDatasetStructure(
                     f"Found multiple sensor models with '{model}'. Restrict your sensor model name to only one value in: {to_list(df['altLabel'].values)}"
                 )
+
 
     def _load_mappers(self):
         """Load from static assets file the NVS R25 to R27 key mappings
@@ -512,6 +529,42 @@ class ArgoSensor:
         :attr:`ArgoSensor.reference_sensor`
         """
         return sorted(to_list(self.reference_sensor["altLabel"].values))
+
+    @property
+    def reference_manufacturer(self) -> pd.DataFrame:
+        """Official reference table for Argo sensor manufacturers (R26)
+
+        Returns
+        -------
+        :class:`pandas.DataFrame`
+
+        See Also
+        --------
+        :class:`ArgoNVSReferenceTables`
+        """
+        if self._r26 is None:
+            self._r26 = ArgoNVSReferenceTables(fs=self.fs).tbl("R26")
+        return self._r26
+
+    @property
+    def reference_manufacturer_name(self) -> list[str]:
+        """Official list of Argo sensor maker (R26)
+
+        Return a sorted list of strings with altLabel from Argo Reference table R26 on 'SENSOR_MAKER'.
+
+        Returns
+        -------
+        list[str]
+
+        Notes
+        -----
+        Argo netCDF variable ``SENSOR_MAKER`` is populated with values from this list.
+
+        See Also
+        --------
+        :attr:`ArgoSensor.reference_manufacturer`
+        """
+        return sorted(to_list(self.reference_manufacturer["altLabel"].values))
 
     def search_model(
         self,
