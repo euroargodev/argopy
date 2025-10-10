@@ -60,7 +60,7 @@ from .transform import (
     filter_param_by_data_mode,
     split_data_mode,
 )
-from .format import argo_split_path, format_oneline, UriCName, redact, dirfs_relpath
+from .format import argo_split_path, format_oneline, UriCName, redact, dirfs_relpath, urnparser
 from .loggers import warnUnless, log_argopy_callerstack
 from .carbon import GreenCoding, Github
 from . import optical_modeling

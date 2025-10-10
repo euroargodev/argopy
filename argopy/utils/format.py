@@ -398,3 +398,12 @@ class UriCName:
                 cname = self.dataset_id + ";" + cname
 
         return cname
+
+
+def urnparser(urn):
+    """Parsing RFC 8141 compliant uniform resource names (URN) from NVS"""
+    pp = urn.split(":")
+    if len(pp) == 4 and pp[0] == 'SDN':
+        return {'listid': pp[1], 'version': pp[2], 'termid': pp[3]}
+    else:
+        raise ValueError("NVS URNs must follow the pattern: 'SDN:{listid}:{version}:{termid}' or 'SDN:{listid}::{termid}' for NVS2.0")
