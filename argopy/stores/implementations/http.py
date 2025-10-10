@@ -42,12 +42,23 @@ class httpstore(ArgoStoreProto):
     This store intends to make argopy safer to failures from http requests and to provide higher levels methods to
     work with our datasets. Key methods are:
 
+    - :class:`httpstore.open`
+    - :class:`httpstore.exists`
     - :class:`httpstore.download_url`
     - :class:`httpstore.open_dataset`
-    - :class:`httpstore.open_json`
     - :class:`httpstore.open_mfdataset`
+    - :class:`httpstore.open_json`
     - :class:`httpstore.open_mfjson`
     - :class:`httpstore.read_csv`
+    - :class:`httpstore.post`
+
+    Examples
+    --------
+    .. code-block:: python
+        :caption: How to add a specific header key
+
+        from argopy.stores import httpstore
+        fs = httpstore(client_kwargs={'headers': {'Authorization': 'Token'}})
 
     """
 
