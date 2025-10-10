@@ -547,10 +547,10 @@ class CanyonB(ArgoAccessorExtension):
                 self._obj[f"{param}_CIM"].values = cim_value.astype(
                     np.float32
                 ).squeeze()
-                self._obj[f"{param}_CIM"].attrs = self.get_param_attrs(param)
-                self._obj[f"{param}_CIM"].attrs[
-                    "long_name"
-                ] = f"Measurement uncertainty on {self.get_param_attrs(param)['long_name']}"
+            self._obj[f"{param}_CIM"].attrs = self.get_param_attrs(param)
+            self._obj[f"{param}_CIM"].attrs[
+                "long_name"
+            ] = f"Measurement uncertainty on {self.get_param_attrs(param)['long_name']}"
 
             # CIN
             self._obj[f"{param}_CIN"] = xr.zeros_like(self._obj[param])
