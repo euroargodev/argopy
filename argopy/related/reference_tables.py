@@ -10,17 +10,17 @@ class NVScollection:
 
     def __init__(
         self,
-        nvs="https://vocab.nerc.ac.uk/collection",
         **kwargs,
     ):
         """Reference Tables from NVS collection"""
+        self.nvs = kwargs.get("nvs", OPTIONS["nvs"])
+
         self.fs = kwargs.get("fs", None)
         if self.fs is None:
             self._cache = kwargs.get("cache", True)
             self._cachedir = kwargs.get("cachedir", OPTIONS["cachedir"])
             self._timeout = kwargs.get("timeout", OPTIONS["api_timeout"])
             self.fs = httpstore(cache=self._cache, cachedir=self._cachedir, timeout=self._timeout)
-        self.nvs = nvs
 
     @property
     def valid_ref(self):
