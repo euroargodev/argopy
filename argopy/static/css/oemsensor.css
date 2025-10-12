@@ -47,11 +47,11 @@ th.oemsensor {
 tr.parameter-row.oemsensor td.calibration {
     cursor: pointer;
 }
-tr.parameter-row.oemsensor:hover {
-    background-color: var(--argopy_yellow);
-}
+/*tr.parameter-row.oemsensor:hover {*/
+/*    background-color: var(--argopy_yellow);*/
+/*}*/
 
-td.oemsensor a:link a:visited a:active{
+td.oemsensor a:link a:visited a:active a:hover a:active{
     color: var(--argopy_blue);
 }
 

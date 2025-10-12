@@ -6,7 +6,7 @@ from jsonschema import validate, ValidationError
 from ...stores import httpstore
 from ...options import OPTIONS
 from ...utils import urnparser
-from .oem_metadata_repr import NotebookCellDisplay
+from .oem_metadata_repr import OemMetaDataDisplay, ParameterDisplay
 
 
 @dataclass
@@ -53,6 +53,17 @@ class Sensor:
         urnparts = urnparser(self.SENSOR_MODEL)
         return f"{OPTIONS['nvs']}/{urnparts['listid']}/current/{urnparts['termid']}"
 
+    def __repr__(self):
+        summary = [f"<oemsensor.sensor.{self.SENSOR_SERIAL_NO}>"]
+        summary.append(f"  SENSOR: {self.SENSOR} ({self.SENSOR_uri})")
+        summary.append(f"  SENSOR_MAKER: {self.SENSOR_MAKER} ({self.SENSOR_MAKER_uri})")
+        summary.append(f"  SENSOR_MODEL: {self.SENSOR_MODEL} ({self.SENSOR_MODEL_uri})")
+        summary.append(f"  SENSOR_FIRMWARE_VERSION: {self.SENSOR_FIRMWARE_VERSION}")
+        summary.append(f"  sensor_vendorinfo:")
+        for key in self.sensor_vendorinfo.keys():
+            summary.append(f"    - {key}: {self.sensor_vendorinfo[key]}")
+        return "\n".join(summary)
+
 
 @dataclass
 class Parameter:
@@ -78,42 +89,50 @@ class Parameter:
         urnparts = urnparser(self.PARAMETER_SENSOR)
         return f"{OPTIONS['nvs']}/{urnparts['listid']}/current/{urnparts['termid']}"
 
+    def __repr__(self):
+        summary = [f"<oemsensor.parameter.{self.PARAMETER}>"]
+        summary.append(f"  PARAMETER: {self.PARAMETER} ({self.PARAMETER_uri})")
+        summary.append(f"  PARAMETER_SENSOR: {self.PARAMETER_SENSOR} ({self.PARAMETER_SENSOR_uri})")
+        for key in ['UNITS', 'ACCURACY', 'RESOLUTION']:
+            p = f"PARAMETER_{key}"
+            summary.append(f"  {key}: {getattr(self, p, 'N/A')}")
+        for key in ['EQUATION', 'COEFFICIENT', 'COMMENT', 'DATE']:
+            p = f"PREDEPLOYMENT_CALIB_{key}"
+            summary.append(f"  {key}: {getattr(self, p, 'N/A')}")
+        for key in ['parameter_vendorinfo', 'predeployment_vendorinfo']:
+            summary.append(f"  {key}: {getattr(self, key, 'N/A')}")
+        return "\n".join(summary)
 
-def fetch_rbr_data(sn: str, **kwargs):
-    if kwargs.get("fs", None) is None:
-        _cache = kwargs.get("cache", True)
-        _cachedir = kwargs.get("cachedir", OPTIONS["cachedir"])
-        _timeout = kwargs.get("timeout", OPTIONS["api_timeout"])
-        fs_kargs = {"cache": _cache, "cachedir": _cachedir, "timeout": _timeout}
-        _api_key = kwargs.get("rbr_api_key", OPTIONS["rbr_api_key"])
-        fs_kargs.update(client_kwargs={"headers": {"Authorization": _api_key}})
-        fs = httpstore(**fs_kargs)
-    uri = f"{OPTIONS['rbr_api']}/instruments/{sn}/argometadatajson"
-    return fs.open_json(uri)
+    def _repr_html_(self):
+        return ParameterDisplay(self).html
 
+    def _ipython_display_(self):
+        from IPython.display import display, HTML
+        display(HTML(ParameterDisplay(self).html))
 
-class OemArgoSensorMetaData:
-    """Argo sensor meta-data from OEM
+class ArgoSensorMetaDataOem:
+    """Argo sensor meta-data - from OEM
+
+    A class helper to work with meta-data structure complying to schema from https://github.com/euroargodev/sensor_metadata_json
+
+    Such meta-data structures are expected to come from sensor manufacturer (web-api or file).
 
     OEM : Original Equipment Manufacturer
-
-    Comply to schema from https://github.com/euroargodev/sensor_metadata_json
 
     Examples
     --------
     .. code-block:: python
 
-        OemArgoSensorMetaData()
+        ArgoSensorMetaData()
 
-        OemArgoSensorMetaData(validate=True)  # Run json schema validation compliance automatically
+        ArgoSensorMetaData(validate=True)  # Run json schema validation compliance when necessary
 
-        OemArgoSensorMetaData().from_dict(jsdata)  # Use any compliant json data from OEM
+        ArgoSensorMetaData().from_dict(jsdata)  # Use any compliant json data
 
-        OemArgoSensorMetaData.from_rbr(208380)  # Direct call to the RBR api
+        ArgoSensorMetaData().from_rbr(208380)  # Direct call to the RBR api
 
 
     """
-
     _schema_src = "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/schemas/argo.sensor.schema.json"
     """URI of the argo sensor JSON schema"""
 
@@ -123,16 +142,6 @@ class OemArgoSensorMetaData:
         validate: bool = False,
         **kwargs,
     ):
-        self._run_validation = validate
-        if self._run_validation:
-            self.schema = self._read_schema()
-
-        self.sensor_info: Optional[SensorInfo] = None
-        self.context: Optional[Context] = None
-        self.sensors: List[Sensor] = field(default_factory=list)
-        self.parameters: List[Parameter] = field(default_factory=list)
-        self.instrument_vendorinfo: Optional[Dict[str, Any]] = None
-
         if kwargs.get("fs", None) is not None:
             self._fs = kwargs.get("fs")
         else:
@@ -146,39 +155,69 @@ class OemArgoSensorMetaData:
             }
             self._fs = httpstore(**fs_kargs)
 
+        self._run_validation = validate
+        self.schema = self._read_schema()  # requires a self._fs instance
+
+        self.sensor_info: Optional[SensorInfo] = None
+        self.context: Optional[Context] = None
+        self.sensors: List[Sensor] = field(default_factory=list)
+        self.parameters: List[Parameter] = field(default_factory=list)
+        self.instrument_vendorinfo: Optional[Dict[str, Any]] = None
+
         if json_data:
             self.from_dict(json_data)
 
-    def __repr__(self):
-        sensor_count = len(self.sensors)
-        parameter_count = len(self.parameters)
-        sensor_described = (
-            self.sensor_info.sensor_described if self.sensor_info else "N/A"
-        )
-        created_by = self.sensor_info.created_by if self.sensor_info else "N/A"
-        date_creation = self.sensor_info.date_creation if self.sensor_info else "N/A"
+    def _empty_str(self):
+        summary = [f"<oemsensor>"]
+        summary.append("This object has no sensor info. You can use one of the following methods:")
+        for meth in [
+            "from_rbr(serial_number)",
+            "from_dict(dict_or_json_data)",
+        ]:
+            summary.append(f"  ╰┈➤ ArgoSensorMetaDataOem().{meth}")
+        return summary
 
-        summary = [f"<oemsensor.{sensor_described}>"]
-        summary.append(f"created_by: '{created_by}'")
-        summary.append(f"date_creation: '{date_creation}'")
-        summary.append(f"sensors: {sensor_count} {[urnparser(s.SENSOR)['termid'] for s in self.sensors]}")
-        summary.append(f"parameters: {parameter_count} {[urnparser(s.PARAMETER)['termid'] for s in self.parameters]}")
-        summary.append(
-            f"instrument_vendorinfo: {'Present' if self.instrument_vendorinfo else 'None'}"
-        )
+    def __repr__(self):
+        if self.sensor_info:
+
+            sensor_described = (
+                self.sensor_info.sensor_described if self.sensor_info else "N/A"
+            )
+            created_by = self.sensor_info.created_by if self.sensor_info else "N/A"
+            date_creation = self.sensor_info.date_creation if self.sensor_info else "N/A"
+            sensor_count = len(self.sensors) if self.sensor_info else 0
+            parameter_count = len(self.parameters) if self.sensor_info else 0
+
+            summary = [f"<oemsensor.{sensor_described}>"]
+            summary.append(f"created_by: '{created_by}'")
+            summary.append(f"date_creation: '{date_creation}'")
+            summary.append(f"sensors: {sensor_count} {[urnparser(s.SENSOR)['termid'] for s in self.sensors]}")
+            summary.append(f"parameters: {parameter_count} {[urnparser(s.PARAMETER)['termid'] for s in self.parameters]}")
+            summary.append(f"instrument_vendorinfo: {self.instrument_vendorinfo}")
+
+        else:
+            summary = self._empty_str()
+
         return "\n".join(summary)
 
     def _repr_html_(self):
-        return NotebookCellDisplay(self).html
+        if self.sensor_info:
+            return OemMetaDataDisplay(self).html
+        else:
+            return self._empty_str()
 
     def _ipython_display_(self):
         from IPython.display import display, HTML
 
-        display(HTML(NotebookCellDisplay(self).html))
+        if self.sensor_info:
+            display(HTML(OemMetaDataDisplay(self).html))
+        else:
+            display("\n".join(self._empty_str()))
 
     def _read_schema(self) -> Dict[str, Any]:
         """Load the JSON schema for validation."""
-        schema = httpstore().open_json(self.schema_src)
+        # todo: implement static asset backup to load schema
+        schema = self._fs.open_json(self._schema_src)
         return schema
 
     def from_dict(self, data: Dict[str, Any]):
@@ -252,14 +291,37 @@ class OemArgoSensorMetaData:
             "instrument_vendorinfo": self.instrument_vendorinfo,
         }
 
-    def save_to_json_file(self, file_path: str) -> None:
-        """Save the object to a JSON file."""
+    def to_json_file(self, file_path: str) -> None:
+        """Save meta-data to a JSON file
+
+        Notes
+        -----
+        The output json file is compliant with the Argo sensor meta-data JSON schema :attr:`ArgoSensorMetaDataOem.schema`
+        """
         with open(file_path, "w") as f:
             json.dump(self.to_dict(), f, indent=2)
 
-    @classmethod
-    def from_rbr(cls, serial_number: str, **kwargs):
-        """Fetch sensor metadata from RBR API and return an OemArgoSensorMetaData instance"""
-        # Use your HTTP store or API client to fetch data
-        data = fetch_rbr_data(serial_number, **kwargs)
-        return cls(json_data=data, **kwargs)
+    def from_rbr(self, serial_number: str, **kwargs):
+        """Fetch sensor metadata from RBR API and return an ArgoSensorMetaDataOem instance
+
+        Parameters
+        ----------
+        serial_number : str
+            Sensor serial number from RBR
+        kwargs : dict
+            Additional keyword arguments passed to the constructor of ArgoSensorMetaDataOem
+
+        Notes
+        -----
+        The instance :class:`httpstore` is automatically updated to use the OPTIONS value for ``rbr_api_key``.
+        """
+        # Ensure that the instance httpstore has the appropriate authorization key:
+        fss = self._fs.fs.fs if getattr(self._fs, 'cache') else self._fs.fs
+        headers = fss.client_kwargs.get("headers", {})
+        headers.update({"Authorization": kwargs.get("rbr_api_key", OPTIONS["rbr_api_key"])})
+        fss._session = None  # Reset fsspec aiohttp.ClientSession
+
+        uri = f"{OPTIONS['rbr_api']}/instruments/{serial_number}/argometadatajson"
+        data = self._fs.open_json(uri)
+
+        return self.from_dict(data)

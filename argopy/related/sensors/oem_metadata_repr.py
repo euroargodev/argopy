@@ -27,7 +27,17 @@ def _load_static_files():
         for package, resource in STATIC_FILES
     ]
 
-class NotebookCellDisplay:
+
+def urn_html(this_urn):
+    x = urnparser(this_urn)
+    if x.get('version') is not "":
+        return f"<strong>{x.get('termid', '?')}</strong> ({x.get('listid', '?')}, {x.get('version', 'n/a')})"
+    else:
+        return f"<strong>{x.get('termid', '?')}</strong> ({x.get('listid', '?')})"
+
+
+
+class OemMetaDataDisplay:
 
     def __init__(self, obj):
         self.OEMsensor = obj
@@ -62,12 +72,12 @@ class NotebookCellDisplay:
             <tbody>
         """
 
-        for sensor in self.OEMsensor.sensors:
+        for ii, sensor in enumerate(self.OEMsensor.sensors):
             sensors_html += f"""
                 <tr class='oemsensor'>
-                    <td class='oemsensor'><a href='{sensor.SENSOR_uri}'>{sensor.SENSOR}</a></td>
-                    <td class='oemsensor'><a href='{sensor.SENSOR_MAKER_uri}'>{sensor.SENSOR_MAKER}</a></td>
-                    <td class='oemsensor'><a href='{sensor.SENSOR_MODEL_uri}'>{sensor.SENSOR_MODEL}</a></td>
+                    <td class='oemsensor'><a href='{sensor.SENSOR_uri}'>{urn_html(sensor.SENSOR)}</a></td>
+                    <td class='oemsensor'><a href='{sensor.SENSOR_MAKER_uri}'>{urn_html(sensor.SENSOR_MAKER)}</a></td>
+                    <td class='oemsensor'><a href='{sensor.SENSOR_MODEL_uri}'>{urn_html(sensor.SENSOR_MODEL)}</a></td>
                     <td class='oemsensor'>{getattr(sensor, 'SENSOR_MODEL_FIRMWARE', getattr(sensor, 'SENSOR_FIRMWARE_VERSION', 'N/A'))}</td>
                     <td class='oemsensor'>{sensor.SENSOR_SERIAL_NO}</td>
                 </tr>
@@ -92,15 +102,15 @@ class NotebookCellDisplay:
             <tbody>
         """
 
-        for i, param in enumerate(self.OEMsensor.parameters):
+        for ip, param in enumerate(self.OEMsensor.parameters):
             details_html = f"""
-            <tr class="parameter-details oemsensor" id="details-{i}">
+            <tr class="parameter-details oemsensor" id="details-{ip}">
                 <td colspan="6">
                     <div class="details-content oemsensor">
-                        <p class='oemsensor'><strong>Calibration Equation:</strong> {param.PREDEPLOYMENT_CALIB_EQUATION}</p>
-                        <p class='oemsensor'><strong>Calibration Coefficients:</strong> {param.PREDEPLOYMENT_CALIB_COEFFICIENT_LIST}</p>
-                        <p class='oemsensor'><strong>Calibration Comment:</strong> {param.PREDEPLOYMENT_CALIB_COMMENT}</p>
-                        <p class='oemsensor'><strong>Calibration Date:</strong> {param.PREDEPLOYMENT_CALIB_DATE}</p>
+                        <p class='oemsensor'><strong>Calibration Equation:</strong><br>{param.PREDEPLOYMENT_CALIB_EQUATION}</p>
+                        <p class='oemsensor'><strong>Calibration Coefficients:</strong><br>{param.PREDEPLOYMENT_CALIB_COEFFICIENT_LIST}</p>
+                        <p class='oemsensor'><strong>Calibration Comment:</strong><br>{param.PREDEPLOYMENT_CALIB_COMMENT}</p>
+                        <p class='oemsensor'><strong>Calibration Date:</strong><br>{param.PREDEPLOYMENT_CALIB_DATE}</p>
                     </div>
                 </td>
             </tr>
@@ -108,12 +118,12 @@ class NotebookCellDisplay:
 
             parameters_html += f"""
             <tr class="parameter-row oemsensor">
-                <td class='oemsensor'><a href='{param.PARAMETER_uri}'>{param.PARAMETER}</a></td>
-                <td class='oemsensor'><a href='{param.PARAMETER_SENSOR_uri}'>{param.PARAMETER_SENSOR}</a></td>
+                <td class='oemsensor'><a href='{param.PARAMETER_uri}'>{urn_html(param.PARAMETER)}</a></td>
+                <td class='oemsensor'><a href='{param.PARAMETER_SENSOR_uri}'>{urn_html(param.PARAMETER_SENSOR)}</a></td>
                 <td class='oemsensor'>{param.PARAMETER_UNITS}</td>
                 <td class='oemsensor'>{param.PARAMETER_ACCURACY}</td>
                 <td class='oemsensor'>{param.PARAMETER_RESOLUTION}</td>
-                <td class='oemsensor calibration' onclick="toggleDetails('details-{i}')">Click for more</td>
+                <td class='oemsensor calibration' onclick="toggleDetails('details-{ip}')">Click for more</td>
             </tr>
             {details_html}
             """
@@ -149,6 +159,82 @@ class NotebookCellDisplay:
         {sensors_html}\n
         {parameters_html}\n
         {js}\n
+        {vendor_html}
+        """
+        return full_html
+
+    def _repr_html_(self):
+        return self.html
+
+
+class ParameterDisplay:
+
+    def __init__(self, obj):
+        self.data = obj
+
+    @property
+    def css_style(self):
+        return "\n".join(_load_static_files())
+
+    @property
+    def html(self):
+
+        # --- Header ---
+        header_html = f"<h1 class='oemsensor'>Argo Sensor Metadata for Parameter: <a href='{self.data.PARAMETER_uri}'>{urn_html(self.data.PARAMETER)}</a></h1>"
+
+        info = " | ".join([f"<strong>{p}</strong> {v}" for p, v in self.data.parameter_vendorinfo.items()])
+        header_html += f"<p class='oemsensor'>{info}</p>"
+
+        # --- Parameter details ---
+        html = """
+        <!--<h2 class='oemsensor'>List of parameters:</h2>-->
+        <table class='oemsensor'>
+            <thead>
+                <tr class='oemsensor'>
+                    <th class='oemsensor'>Sensor</th>
+                    <th class='oemsensor'>Units</th>
+                    <th class='oemsensor'>Accuracy</th>
+                    <th class='oemsensor'>Resolution</th>
+                </tr>
+            </thead>
+            <tbody>
+        """
+        html += f"""
+        <tr class="parameter-row oemsensor">
+            <td class='oemsensor'><a href='{self.data.PARAMETER_SENSOR_uri}'>{urn_html(self.data.PARAMETER_SENSOR)}</a></td>
+            <td class='oemsensor'>{self.data.PARAMETER_UNITS}</td>
+            <td class='oemsensor'>{self.data.PARAMETER_ACCURACY}</td>
+            <td class='oemsensor'>{self.data.PARAMETER_RESOLUTION}</td>
+        </tr>
+        """
+
+        html += f"""
+        <tr class="parameter-row oemsensor">
+            <td colspan="4">
+                <div class="calibration-content oemsensor">
+                    <p class='oemsensor'><strong>Calibration Equation:</strong> <br>{self.data.PREDEPLOYMENT_CALIB_EQUATION}</p>
+                    <p class='oemsensor'><strong>Calibration Coefficients:</strong> <br>{self.data.PREDEPLOYMENT_CALIB_COEFFICIENT_LIST}</p>
+                    <p class='oemsensor'><strong>Calibration Comment:</strong> <br>{self.data.PREDEPLOYMENT_CALIB_COMMENT}</p>
+                    <p class='oemsensor'><strong>Calibration Date:</strong> <br>{self.data.PREDEPLOYMENT_CALIB_DATE}</p>
+                </div>
+            </td>
+        </tr>
+        """
+        html += "</tbody></table>"
+
+        # --- Vendor Info ---
+        vendor_html = ""
+        if self.data.predeployment_vendorinfo:
+            vendor_html = f"""
+            <h2 class='oemsensor'>Pre-deployment Vendor Info:</h2>
+            <pre class='oemsensor'>{self.data.predeployment_vendorinfo}</pre>
+            """
+
+        # --- Combine All HTML ---
+        full_html = f"""
+        <style>{self.css_style}</style>\n
+        {header_html}\n
+        {html}\n
         {vendor_html}
         """
         return full_html

@@ -401,7 +401,9 @@ class UriCName:
 
 
 def urnparser(urn):
-    """Parsing RFC 8141 compliant uniform resource names (URN) from NVS"""
+    """Parsing RFC 8141 compliant uniform resource names (URN) from NVS
+    SDN stands for SeaDataNet
+    """
     pp = urn.split(":")
     if len(pp) == 4 and pp[0] == 'SDN':
         return {'listid': pp[1], 'version': pp[2], 'termid': pp[3]}
