@@ -1,13 +1,12 @@
 from pathlib import Path
 from typing import Union, List, Optional
-import matplotlib.path as mpath
 import pandas as pd
 import numpy as np
 import xarray as xr
 import PyCO2SYS as pyco2
 
 from ..errors import InvalidDatasetStructure, DataNotFound
-from ..utils import path2assets, to_list
+from ..utils import path2assets, to_list, point_in_polygon
 from . import register_argo_accessor, ArgoAccessorExtension
 
 
@@ -213,10 +212,14 @@ class CanyonB(ArgoAccessorExtension):
         )
         plat = np.array([68, 66.5, 66.5, 80, 80, 90, 90, 68, 68, 90, 90, 68])
 
-        # Create masks for points inside the polygon
-        polygon = mpath.Path(np.column_stack((plon, plat)))
+        # Create polygon array
+        polygon = np.column_stack((plon, plat))
+
+        # Flatten coordinates and create points array
         points = np.column_stack((lon.flatten(), lat.flatten()))
-        mask = polygon.contains_points(points)
+
+        # Get mask
+        mask = np.array([point_in_polygon(p, polygon) for p in points])
         mask = mask.reshape(lat.shape)
 
         # Adjust latitude
