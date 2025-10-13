@@ -110,6 +110,7 @@ class Parameter:
         from IPython.display import display, HTML
         display(HTML(ParameterDisplay(self).html))
 
+
 class ArgoSensorMetaDataOem:
     """Argo sensor meta-data - from OEM
 
@@ -302,14 +303,12 @@ class ArgoSensorMetaDataOem:
             json.dump(self.to_dict(), f, indent=2)
 
     def from_rbr(self, serial_number: str, **kwargs):
-        """Fetch sensor metadata from RBR API and return an ArgoSensorMetaDataOem instance
+        """Fetch sensor metadata from RBR API
 
         Parameters
         ----------
         serial_number : str
             Sensor serial number from RBR
-        kwargs : dict
-            Additional keyword arguments passed to the constructor of ArgoSensorMetaDataOem
 
         Notes
         -----
