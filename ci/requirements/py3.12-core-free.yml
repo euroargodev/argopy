@@ -12,6 +12,7 @@ dependencies:
   - h5netcdf
   - netCDF4
   - packaging
+  - PyCO2SYS
   - requests
   - scipy
   - toolz

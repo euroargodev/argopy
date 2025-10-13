@@ -12,6 +12,7 @@ dependencies:
   - h5netcdf = 1.6.1
   - netCDF4 = 1.7.2
   - packaging = 24.2
+  - PyCO2SYS = 1.8.3
   - requests = 2.32.3
   - scipy = 1.15.2
   - toolz = 1.0.0
