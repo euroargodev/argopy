@@ -3,6 +3,7 @@ from functools import lru_cache
 import collections
 from ..stores import httpstore
 from ..options import OPTIONS
+from ..utils import urnparser
 
 
 class NVScollection:
@@ -38,16 +39,18 @@ class NVScollection:
             "prefLabel": [],
             "definition": [],
             "deprecated": [],
+            "urn": [],
             "id": [],
         }
         for k in data["@graph"]:
             if k["@type"] == "skos:Collection":
                 Collection_name = k["dc:alternative"]
             elif k["@type"] == "skos:Concept":
-                content["altLabel"].append(k["skos:altLabel"])
+                content["altLabel"].append(urnparser(k['skos:notation'])['termid'])
                 content["prefLabel"].append(k["skos:prefLabel"]["@value"])
                 content["definition"].append(k["skos:definition"]["@value"])
                 content["deprecated"].append(k["owl:deprecated"])
+                content["urn"].append(k['skos:notation'])
                 content["id"].append(k["@id"])
         df = pd.DataFrame.from_dict(content)
         df['deprecated'] = df.apply(lambda x: True if x['deprecated']=='true' else False, axis=1)
