@@ -1,12 +1,21 @@
 import json
 from dataclasses import dataclass, field
-from typing import List, Dict, Optional, Any
-from jsonschema import validate, ValidationError
+from typing import List, Dict, Optional, Any, Literal
+from  pathlib import Path
+from zipfile import ZipFile
+from referencing import Registry, Resource
+import jsonschema
+import logging
+import warnings
 
-from ...stores import httpstore
+from ...stores import httpstore, filestore
 from ...options import OPTIONS
 from ...utils import urnparser
+from ...errors import InvalidDatasetStructure
 from .oem_metadata_repr import OemMetaDataDisplay, ParameterDisplay
+
+
+log = logging.getLogger("argopy.related.sensors")
 
 
 @dataclass
@@ -33,9 +42,13 @@ class Sensor:
     SENSOR: str  # SDN:R25::CTD_PRES
     SENSOR_MAKER: str  # SDN:R26::RBR
     SENSOR_MODEL: str  # SDN:R27::RBR_PRES_A
-    SENSOR_FIRMWARE_VERSION: str  # wrong key used by RBR, https://github.com/euroargodev/sensor_metadata_json/issues/20
-    # SENSOR_MODEL_FIRMWARE: str # Correct schema key
     SENSOR_SERIAL_NO: str
+
+    # FIRMWARE VERSION attributes are temporarily optional to handle the wrong key used by RBR
+    # see https://github.com/euroargodev/sensor_metadata_json/issues/20
+    SENSOR_FIRMWARE_VERSION: str = None  # RBR
+    SENSOR_MODEL_FIRMWARE: str = None  # Correct schema key
+
     sensor_vendorinfo: Optional[Dict[str, Any]] = None
 
     @property
@@ -53,15 +66,37 @@ class Sensor:
         urnparts = urnparser(self.SENSOR_MODEL)
         return f"{OPTIONS['nvs']}/{urnparts['listid']}/current/{urnparts['termid']}"
 
+    def _attr2str(self, x):
+        """Return a class attribute, or 'n/a' if it's None, {} or ""."""
+        value = getattr(self, x, None)
+        if type(value) is str:
+            return value if value and value.strip() else 'n/a'
+        elif type(value) is dict:
+            if len(value.keys()) == 0:
+                return 'n/a'
+            else:
+                return value
+        else:
+            return value
+
     def __repr__(self):
+
+        def key2str(d, x):
+            """Return a dict value as a string, or 'n/a' if it's None or empty."""
+            value = d.get(x, None)
+            return value if value and value.strip() else 'n/a'
+
         summary = [f"<oemsensor.sensor.{self.SENSOR_SERIAL_NO}>"]
         summary.append(f"  SENSOR: {self.SENSOR} ({self.SENSOR_uri})")
         summary.append(f"  SENSOR_MAKER: {self.SENSOR_MAKER} ({self.SENSOR_MAKER_uri})")
         summary.append(f"  SENSOR_MODEL: {self.SENSOR_MODEL} ({self.SENSOR_MODEL_uri})")
-        summary.append(f"  SENSOR_FIRMWARE_VERSION: {self.SENSOR_FIRMWARE_VERSION}")
+        if getattr(self, "SENSOR_MODEL_FIRMWARE", None) is None:
+            summary.append(f"  SENSOR_FIRMWARE_VERSION: {self._attr2str('SENSOR_FIRMWARE_VERSION')} (but should be 'SENSOR_MODEL_FIRMWARE') ")
+        else:
+            summary.append(f"  SENSOR_MODEL_FIRMWARE: {self._attr2str('SENSOR_MODEL_FIRMWARE')}")
         summary.append(f"  sensor_vendorinfo:")
         for key in self.sensor_vendorinfo.keys():
-            summary.append(f"    - {key}: {self.sensor_vendorinfo[key]}")
+            summary.append(f"    - {key}: {key2str(self.sensor_vendorinfo, key)}")
         return "\n".join(summary)
 
 
@@ -89,18 +124,45 @@ class Parameter:
         urnparts = urnparser(self.PARAMETER_SENSOR)
         return f"{OPTIONS['nvs']}/{urnparts['listid']}/current/{urnparts['termid']}"
 
+    def _attr2str(self, x):
+        """Return a class attribute, or 'n/a' if it's None, {} or ""."""
+        value = getattr(self, x, None)
+        if type(value) is str:
+            return value if value and value.strip() else 'n/a'
+        elif type(value) is dict:
+            if len(value.keys()) == 0:
+                return 'n/a'
+            else:
+                return value
+        else:
+            return value
+
+    @property
+    def _has_calibration_data(self):
+        s = "".join([str(self._attr2str(key)) for key in
+                     ['PREDEPLOYMENT_CALIB_EQUATION',
+                      'PREDEPLOYMENT_CALIB_COEFFICIENT_LIST',
+                      'PREDEPLOYMENT_CALIB_COMMENT',
+                      'PREDEPLOYMENT_CALIB_DATE'] if self._attr2str(key) != 'n/a'])
+        return len(s) > 0
+
     def __repr__(self):
+
         summary = [f"<oemsensor.parameter.{self.PARAMETER}>"]
         summary.append(f"  PARAMETER: {self.PARAMETER} ({self.PARAMETER_uri})")
         summary.append(f"  PARAMETER_SENSOR: {self.PARAMETER_SENSOR} ({self.PARAMETER_SENSOR_uri})")
+
         for key in ['UNITS', 'ACCURACY', 'RESOLUTION']:
             p = f"PARAMETER_{key}"
-            summary.append(f"  {key}: {getattr(self, p, 'N/A')}")
+            summary.append(f"  {key}: {self._attr2str(p)}")
+
+        summary.append(f"  PREDEPLOYMENT CALIBRATION:")
         for key in ['EQUATION', 'COEFFICIENT', 'COMMENT', 'DATE']:
             p = f"PREDEPLOYMENT_CALIB_{key}"
-            summary.append(f"  {key}: {getattr(self, p, 'N/A')}")
+            summary.append(f"    - {key}: {self._attr2str(p)}")
+
         for key in ['parameter_vendorinfo', 'predeployment_vendorinfo']:
-            summary.append(f"  {key}: {getattr(self, key, 'N/A')}")
+            summary.append(f"  {key}: {self._attr2str(p)}")
         return "\n".join(summary)
 
     def _repr_html_(self):
@@ -132,15 +194,15 @@ class ArgoSensorMetaDataOem:
 
         ArgoSensorMetaData().from_rbr(208380)  # Direct call to the RBR api
 
-
     """
-    _schema_src = "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/schemas/argo.sensor.schema.json"
-    """URI of the argo sensor JSON schema"""
+    _schema_root = "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/schemas"
+    """URI root to argo JSON schema"""
 
     def __init__(
         self,
         json_data: Optional[Dict[str, Any]] = None,
         validate: bool = False,
+        validation_error: Literal["warn", "raise", "ignore"] = "warn",
         **kwargs,
     ):
         if kwargs.get("fs", None) is not None:
@@ -157,6 +219,7 @@ class ArgoSensorMetaDataOem:
             self._fs = httpstore(**fs_kargs)
 
         self._run_validation = validate
+        self._validation_error = validation_error
         self.schema = self._read_schema()  # requires a self._fs instance
 
         self.sensor_info: Optional[SensorInfo] = None
@@ -164,6 +227,8 @@ class ArgoSensorMetaDataOem:
         self.sensors: List[Sensor] = field(default_factory=list)
         self.parameters: List[Parameter] = field(default_factory=list)
         self.instrument_vendorinfo: Optional[Dict[str, Any]] = None
+        self._serial_number = None
+        self._local_certificates = None
 
         if json_data:
             self.from_dict(json_data)
@@ -182,10 +247,10 @@ class ArgoSensorMetaDataOem:
         if self.sensor_info:
 
             sensor_described = (
-                self.sensor_info.sensor_described if self.sensor_info else "N/A"
+                self.sensor_info.sensor_described if self.sensor_info else "n/a"
             )
-            created_by = self.sensor_info.created_by if self.sensor_info else "N/A"
-            date_creation = self.sensor_info.date_creation if self.sensor_info else "N/A"
+            created_by = self.sensor_info.created_by if self.sensor_info else "n/a"
+            date_creation = self.sensor_info.date_creation if self.sensor_info else "n/a"
             sensor_count = len(self.sensors) if self.sensor_info else 0
             parameter_count = len(self.parameters) if self.sensor_info else 0
 
@@ -215,19 +280,43 @@ class ArgoSensorMetaDataOem:
         else:
             display("\n".join(self._empty_str()))
 
-    def _read_schema(self) -> Dict[str, Any]:
-        """Load the JSON schema for validation."""
-        # todo: implement static asset backup to load schema
-        schema = self._fs.open_json(self._schema_src)
+    def _read_schema(self, ref="argo.sensor.schema.json") -> Dict[str, Any]:
+        """Load a JSON schema for validation."""
+        # todo: implement static asset backup to load schema offline
+        uri = f"{self._schema_root}/{ref}"
+        schema = self._fs.open_json(uri)
         return schema
 
+    def validate(self, data):
+        """Validate meta-data against the Argo sensor json schema"""
+        # Set a method to resolve references to subschemas
+        registry = Registry(retrieve=lambda x: Resource.from_contents(self._read_schema(x)))
+
+        # Select the validator based on $schema property in schema
+        # (validators correspond to various drafts of JSON Schema)
+        validator = jsonschema.validators.validator_for(self.schema)
+
+        # Create the validator using the registry and associated resolver
+        v = validator(self.schema, registry=registry)
+
+        try:
+            v.validate(data)
+        except Exception as error:
+            if self._validation_error == "raise":
+                raise error
+            elif self._validation_error == "warn":
+                warnings.warn(str(error))
+            else:
+                log.error(error)
+
+        # Create a list of errors, if any
+        errors = list(v.evolve(schema=self.schema).iter_errors(v, data))
+        return errors
+
     def from_dict(self, data: Dict[str, Any]):
-        """Load data from a dictionary and validate it."""
+        """Load data from a dictionary and possibly validate"""
         if self._run_validation:
-            try:
-                validate(instance=data, schema=self.schema)
-            except ValidationError as e:
-                raise ValueError(f"Json schema Validation error: {e.message}")
+            self.validate(data)
 
         self.sensor_info = SensorInfo(**data["sensor_info"])
         self.context = Context(
@@ -305,6 +394,8 @@ class ArgoSensorMetaDataOem:
     def from_rbr(self, serial_number: str, **kwargs):
         """Fetch sensor metadata from RBR API
 
+        We also download certificates if available
+
         Parameters
         ----------
         serial_number : str
@@ -314,13 +405,78 @@ class ArgoSensorMetaDataOem:
         -----
         The instance :class:`httpstore` is automatically updated to use the OPTIONS value for ``rbr_api_key``.
         """
+        self._serial_number = serial_number
+
         # Ensure that the instance httpstore has the appropriate authorization key:
         fss = self._fs.fs.fs if getattr(self._fs, 'cache') else self._fs.fs
         headers = fss.client_kwargs.get("headers", {})
         headers.update({"Authorization": kwargs.get("rbr_api_key", OPTIONS["rbr_api_key"])})
         fss._session = None  # Reset fsspec aiohttp.ClientSession
 
-        uri = f"{OPTIONS['rbr_api']}/instruments/{serial_number}/argometadatajson"
+        uri = f"{OPTIONS['rbr_api']}/instruments/{self._serial_number}/argometadatajson"
         data = self._fs.open_json(uri)
+        obj = self.from_dict(data)
 
-        return self.from_dict(data)
+        # Download RBR zip archive with calibration certificates in PDFs:
+        obj = obj.certificates_rbr(action='download', quiet=True)
+
+        return obj
+
+    def certificates_rbr(self, action: Literal["download", "open"] = "download", **kwargs):
+        """Download RBR zip archive with calibration certificates in PDFs
+
+        Certificate PDF files are written to the OPTIONS['cachedir'] folder
+
+        """
+        cdir = Path(OPTIONS['cachedir']).joinpath("RBR_certificates")
+        cdir.mkdir(parents=True, exist_ok=True)
+        local_zip_path = cdir.joinpath(f"RBRcertificates_{self._serial_number}.zip")
+        lfs = filestore()
+        quiet = kwargs.get('quiet', False)
+
+        # Check if we can continue:
+        if self._serial_number is not None:
+            new = False
+
+            # Trigger download if necessary:
+            if not lfs.exists(local_zip_path):
+                new = True
+                certif_uri = f"{OPTIONS['rbr_api']}/instruments/{self._serial_number}/certificates"
+                with open(local_zip_path, 'wb') as local_zip:
+                    with self._fs.open(certif_uri) as remote_zip:
+                        local_zip.write(remote_zip.read())
+
+                # Expand locally:
+                with ZipFile(local_zip_path, "r") as local_zip:
+                    local_zip.testzip()
+                    local_zip.extractall(cdir)
+
+            # List PDF certificates:
+            with ZipFile(local_zip_path, "r") as local_zip:
+                local_zip.testzip()
+                info = local_zip.infolist()
+            certificates = []
+            for doc in info:
+                certificates.append(Path(cdir).joinpath(doc.filename))
+            self.local_certificates = certificates
+
+            if not quiet:
+                for f in self.local_certificates:
+                    if new:
+                        s = f"One RBR certificate file written to: {f}"
+                    else:
+                        s = f"One RBR certificate file already in: {f}"
+                    print(s)
+        else:
+            raise InvalidDatasetStructure(f"You must load meta-data for a given RBR sensor serial number first. Use the 'from_rbr' method.")
+
+        if action == 'download':
+            return self
+        elif action == 'open':
+            subp = []
+            for f in self.local_certificates:
+                subp.append(lfs.open_subprocess(str(f)))
+            if not quiet:
+                return subp
+        else:
+            raise ValueError(f"Unknown action {action}")

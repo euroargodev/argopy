@@ -1,6 +1,6 @@
-from IPython.display import display, HTML
 from functools import lru_cache
 import importlib
+from numpy.random import randint
 
 try:
     from importlib.resources import files  # New in version 3.9
@@ -30,7 +30,7 @@ def _load_static_files():
 
 def urn_html(this_urn):
     x = urnparser(this_urn)
-    if x.get('version') is not "":
+    if x.get('version') != "":
         return f"<strong>{x.get('termid', '?')}</strong> ({x.get('listid', '?')}, {x.get('version', 'n/a')})"
     else:
         return f"<strong>{x.get('termid', '?')}</strong> ({x.get('listid', '?')})"
@@ -48,6 +48,9 @@ class OemMetaDataDisplay:
 
     @property
     def html(self):
+        # Generate a dummy random id to be used in html elements for this output only
+        # This avoids messing up javascript actions between notebook cells
+        uid = f"{randint(low=1e7):8d}".strip()
 
         # --- Header ---
         header_html = f"""
@@ -73,13 +76,19 @@ class OemMetaDataDisplay:
         """
 
         for ii, sensor in enumerate(self.OEMsensor.sensors):
+
+            if getattr(sensor, "SENSOR_MODEL_FIRMWARE", None) is None:
+                firmware = f"{sensor._attr2str('SENSOR_FIRMWARE_VERSION')}"
+            else:
+                firmware = f"{sensor._attr2str('SENSOR_MODEL_FIRMWARE')}"
+
             sensors_html += f"""
                 <tr class='oemsensor'>
                     <td class='oemsensor'><a href='{sensor.SENSOR_uri}'>{urn_html(sensor.SENSOR)}</a></td>
                     <td class='oemsensor'><a href='{sensor.SENSOR_MAKER_uri}'>{urn_html(sensor.SENSOR_MAKER)}</a></td>
                     <td class='oemsensor'><a href='{sensor.SENSOR_MODEL_uri}'>{urn_html(sensor.SENSOR_MODEL)}</a></td>
-                    <td class='oemsensor'>{getattr(sensor, 'SENSOR_MODEL_FIRMWARE', getattr(sensor, 'SENSOR_FIRMWARE_VERSION', 'N/A'))}</td>
-                    <td class='oemsensor'>{sensor.SENSOR_SERIAL_NO}</td>
+                    <td class='oemsensor'>{firmware}</td>
+                    <td class='oemsensor'>{sensor._attr2str('SENSOR_SERIAL_NO')}</td>
                 </tr>
             """
 
@@ -104,26 +113,32 @@ class OemMetaDataDisplay:
 
         for ip, param in enumerate(self.OEMsensor.parameters):
             details_html = f"""
-            <tr class="parameter-details oemsensor" id="details-{ip}">
+            <tr class="parameter-details oemsensor" id="details-{uid}-{ip}">
                 <td colspan="6">
                     <div class="details-content oemsensor">
-                        <p class='oemsensor'><strong>Calibration Equation:</strong><br>{param.PREDEPLOYMENT_CALIB_EQUATION}</p>
-                        <p class='oemsensor'><strong>Calibration Coefficients:</strong><br>{param.PREDEPLOYMENT_CALIB_COEFFICIENT_LIST}</p>
-                        <p class='oemsensor'><strong>Calibration Comment:</strong><br>{param.PREDEPLOYMENT_CALIB_COMMENT}</p>
-                        <p class='oemsensor'><strong>Calibration Date:</strong><br>{param.PREDEPLOYMENT_CALIB_DATE}</p>
+                        <p class='oemsensor'><strong>Calibration Equation:</strong><br>{param._attr2str('PREDEPLOYMENT_CALIB_EQUATION')}</p>
+                        <p class='oemsensor'><strong>Calibration Coefficients:</strong><br>{param._attr2str('PREDEPLOYMENT_CALIB_COEFFICIENT_LIST')}</p>
+                        <p class='oemsensor'><strong>Calibration Comment:</strong><br>{param._attr2str('PREDEPLOYMENT_CALIB_COMMENT')}</p>
+                        <p class='oemsensor'><strong>Calibration Date:</strong><br>{param._attr2str('PREDEPLOYMENT_CALIB_DATE')}</p>
                     </div>
                 </td>
             </tr>
             """
 
+            # param.PREDEPLOYMENT_CALIB_EQUATION
+            if param._has_calibration_data:
+                line = '<td class="oemsensor calibration" onclick="toggleDetails(\'details-%s-%i\')">Click for more</td>' % (uid, ip)
+            else:
+                line = f"<td class='oemsensor calibration'>n/a</td>"
+
             parameters_html += f"""
             <tr class="parameter-row oemsensor">
                 <td class='oemsensor'><a href='{param.PARAMETER_uri}'>{urn_html(param.PARAMETER)}</a></td>
                 <td class='oemsensor'><a href='{param.PARAMETER_SENSOR_uri}'>{urn_html(param.PARAMETER_SENSOR)}</a></td>
-                <td class='oemsensor'>{param.PARAMETER_UNITS}</td>
-                <td class='oemsensor'>{param.PARAMETER_ACCURACY}</td>
-                <td class='oemsensor'>{param.PARAMETER_RESOLUTION}</td>
-                <td class='oemsensor calibration' onclick="toggleDetails('details-{ip}')">Click for more</td>
+                <td class='oemsensor'>{param._attr2str('PARAMETER_UNITS')}</td>
+                <td class='oemsensor'>{param._attr2str('PARAMETER_ACCURACY')}</td>
+                <td class='oemsensor'>{param._attr2str('PARAMETER_RESOLUTION')}</td>
+                {line}
             </tr>
             {details_html}
             """
@@ -182,8 +197,9 @@ class ParameterDisplay:
         # --- Header ---
         header_html = f"<h1 class='oemsensor'>Argo Sensor Metadata for Parameter: <a href='{self.data.PARAMETER_uri}'>{urn_html(self.data.PARAMETER)}</a></h1>"
 
-        info = " | ".join([f"<strong>{p}</strong> {v}" for p, v in self.data.parameter_vendorinfo.items()])
-        header_html += f"<p class='oemsensor'>{info}</p>"
+        if self.data.parameter_vendorinfo is not None:
+            info = " | ".join([f"<strong>{p}</strong> {v}" for p, v in self.data.parameter_vendorinfo.items()])
+            header_html += f"<p class='oemsensor'>{info}</p>"
 
         # --- Parameter details ---
         html = """
@@ -202,9 +218,9 @@ class ParameterDisplay:
         html += f"""
         <tr class="parameter-row oemsensor">
             <td class='oemsensor'><a href='{self.data.PARAMETER_SENSOR_uri}'>{urn_html(self.data.PARAMETER_SENSOR)}</a></td>
-            <td class='oemsensor'>{self.data.PARAMETER_UNITS}</td>
-            <td class='oemsensor'>{self.data.PARAMETER_ACCURACY}</td>
-            <td class='oemsensor'>{self.data.PARAMETER_RESOLUTION}</td>
+            <td class='oemsensor'>{self.data._attr2str('PARAMETER_UNITS')}</td>
+            <td class='oemsensor'>{self.data._attr2str('PARAMETER_ACCURACY')}</td>
+            <td class='oemsensor'>{self.data._attr2str('PARAMETER_RESOLUTION')}</td>
         </tr>
         """
 
@@ -212,10 +228,10 @@ class ParameterDisplay:
         <tr class="parameter-row oemsensor">
             <td colspan="4">
                 <div class="calibration-content oemsensor">
-                    <p class='oemsensor'><strong>Calibration Equation:</strong> <br>{self.data.PREDEPLOYMENT_CALIB_EQUATION}</p>
-                    <p class='oemsensor'><strong>Calibration Coefficients:</strong> <br>{self.data.PREDEPLOYMENT_CALIB_COEFFICIENT_LIST}</p>
-                    <p class='oemsensor'><strong>Calibration Comment:</strong> <br>{self.data.PREDEPLOYMENT_CALIB_COMMENT}</p>
-                    <p class='oemsensor'><strong>Calibration Date:</strong> <br>{self.data.PREDEPLOYMENT_CALIB_DATE}</p>
+                    <p class='oemsensor'><strong>Calibration Equation:</strong><br>{self.data._attr2str('PREDEPLOYMENT_CALIB_EQUATION')}</p>
+                    <p class='oemsensor'><strong>Calibration Coefficients:</strong><br>{self.data._attr2str('PREDEPLOYMENT_CALIB_COEFFICIENT_LIST')}</p>
+                    <p class='oemsensor'><strong>Calibration Comment:</strong><br>{self.data._attr2str('PREDEPLOYMENT_CALIB_COMMENT')}</p>
+                    <p class='oemsensor'><strong>Calibration Date:</strong><br>{self.data._attr2str('PREDEPLOYMENT_CALIB_DATE')}</p>
                 </div>
             </td>
         </tr>

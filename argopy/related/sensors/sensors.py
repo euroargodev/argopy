@@ -105,7 +105,7 @@ class ArgoSensor:
 
     """
 
-    __slots__ = ["_cache", "_cachedir", "_timeout", "fs", "_r25", "_r27", "_r27_to_r25", "_model", "_type"]
+    __slots__ = ["_cache", "_cachedir", "_timeout", "fs", "_r25", "_r26", "_r27", "_r27_to_r25", "_model", "_type"]
 
     def __init__(
         self,
