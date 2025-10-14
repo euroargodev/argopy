@@ -1,22 +1,24 @@
-import json
 from dataclasses import dataclass, field
 from typing import List, Dict, Optional, Any, Literal
 from  pathlib import Path
 from zipfile import ZipFile
 from referencing import Registry, Resource
 import jsonschema
+import json
 import logging
 import warnings
+from fsspec import filesystem
 
 from ...stores import httpstore, filestore
 from ...options import OPTIONS
-from ...utils import urnparser
+from ...utils import urnparser, path2assets
 from ...errors import InvalidDatasetStructure
 from .oem_metadata_repr import OemMetaDataDisplay, ParameterDisplay
 
 
 log = logging.getLogger("argopy.related.sensors")
 
+SENSOR_JS_EXAMPLES = filestore().open_json(Path(path2assets).joinpath("sensor_metadata_examples.json"))['data']['uri']
 
 @dataclass
 class SensorInfo:
@@ -190,9 +192,13 @@ class ArgoSensorMetaDataOem:
 
         ArgoSensorMetaData(validate=True)  # Run json schema validation compliance when necessary
 
-        ArgoSensorMetaData().from_dict(jsdata)  # Use any compliant json data
+        ArgoSensorMetaData().from_rbr(208380)  # Direct call to the RBR api with a serial number
 
-        ArgoSensorMetaData().from_rbr(208380)  # Direct call to the RBR api
+        ArgoSensorMetaData().list_examples
+
+        ArgoSensorMetaData().from_examples('WETLABS-ECO_FLBBAP2-8589')
+
+        ArgoSensorMetaData().from_dict(jsdata)  # Use any compliant json data
 
     """
     _schema_root = "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/schemas"
@@ -201,7 +207,7 @@ class ArgoSensorMetaDataOem:
     def __init__(
         self,
         json_data: Optional[Dict[str, Any]] = None,
-        validate: bool = False,
+        validate: bool = True,
         validation_error: Literal["warn", "raise", "ignore"] = "warn",
         **kwargs,
     ):
@@ -480,3 +486,14 @@ class ArgoSensorMetaDataOem:
                 return subp
         else:
             raise ValueError(f"Unknown action {action}")
+
+    @property
+    def list_examples(self):
+        """List of example names"""
+        return [k for k in SENSOR_JS_EXAMPLES.keys()]
+
+    def from_examples(self, eg: str = None, **kwargs):
+        if eg not in self.list_examples:
+            raise ValueError(f"Unknown sensor example: '{eg}'. \n Use one in: {self.list_examples}")
+        data = self._fs.open_json(SENSOR_JS_EXAMPLES[eg])
+        return self.from_dict(data)
