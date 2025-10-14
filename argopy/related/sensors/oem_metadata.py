@@ -7,7 +7,7 @@ import jsonschema
 import json
 import logging
 import warnings
-from fsspec import filesystem
+import pandas as pd
 
 from ...stores import httpstore, filestore
 from ...options import OPTIONS
@@ -287,10 +287,21 @@ class ArgoSensorMetaDataOem:
             display("\n".join(self._empty_str()))
 
     def _read_schema(self, ref="argo.sensor.schema.json") -> Dict[str, Any]:
-        """Load a JSON schema for validation."""
-        # todo: implement static asset backup to load schema offline
+        """Load a JSON schema for validation
+
+        Fall back on static version if online resource not available
+        """
         uri = f"{self._schema_root}/{ref}"
-        schema = self._fs.open_json(uri)
+        try:
+            schema = self._fs.open_json(uri)
+        except:
+            # Fall back on static assets version
+            local_uri = Path(path2assets).joinpath("schema").joinpath(ref)
+            fs = filestore()
+            updated = pd.Timestamp(fs.info(local_uri)['mtime'], unit='s')
+            warnings.warn(f"\nCan't get '{ref}' schema from the official online resource ({uri}).\nFall back on a static version packaged with this release at {updated}.")
+            schema = fs.open_json(local_uri)
+
         return schema
 
     def validate(self, data):
@@ -311,7 +322,7 @@ class ArgoSensorMetaDataOem:
             if self._validation_error == "raise":
                 raise error
             elif self._validation_error == "warn":
-                warnings.warn(str(error))
+                warnings.warn(f"\nJSON schema validation error: {str(error)}")
             else:
                 log.error(error)
 
