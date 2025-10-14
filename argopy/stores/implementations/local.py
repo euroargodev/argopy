@@ -11,6 +11,8 @@ import fsspec
 from pathlib import Path
 import warnings
 from netCDF4 import Dataset
+from subprocess import Popen, PIPE
+from platform import system
 
 from ...options import OPTIONS
 from ...errors import InvalidMethod, DataNotFound
@@ -30,7 +32,9 @@ class filestore(ArgoStoreProto):
 
     protocol = "file"
 
-    def open_json(self, url, errors: Literal['raise', 'silent', 'ignore'] = 'raise', **kwargs) -> Any:
+    def open_json(
+        self, url, errors: Literal["raise", "silent", "ignore"] = "raise", **kwargs
+    ) -> Any:
         """Open and process a json document from a path
 
         Steps performed:
@@ -88,12 +92,12 @@ class filestore(ArgoStoreProto):
         return js
 
     def open_dataset(
-            self,
-            path,
-            errors: Literal["raise", "ignore", "silent"] = "raise",
-            lazy: bool = False,
-            xr_opts: dict = {},
-            **kwargs,
+        self,
+        path,
+        errors: Literal["raise", "ignore", "silent"] = "raise",
+        lazy: bool = False,
+        xr_opts: dict = {},
+        **kwargs,
     ) -> xr.Dataset:
         """Create a :class:`xarray.Dataset` from a local path pointing to a netcdf file
 
@@ -114,6 +118,7 @@ class filestore(ArgoStoreProto):
         -------
         :class:`xarray.Dataset`
         """
+
         def load_in_memory(path, errors="raise", xr_opts={}):
             """
             Returns
@@ -155,7 +160,9 @@ class filestore(ArgoStoreProto):
                     "backend_kwargs": {
                         "consolidated": False,
                         "storage_options": {
-                            "fo": self.ak.to_kerchunk(path, overwrite=akoverwrite),  # codespell:ignore
+                            "fo": self.ak.to_kerchunk(
+                                path, overwrite=akoverwrite
+                            ),  # codespell:ignore
                             "remote_protocol": fsspec.core.split_protocol(path)[0],
                         },
                     },
@@ -197,7 +204,7 @@ class filestore(ArgoStoreProto):
 
             else:
                 target = target if isinstance(target, bytes) else target.getbuffer()
-                ds = Dataset(None, memory=target, diskless=True, mode='r')
+                ds = Dataset(None, memory=target, diskless=True, mode="r")
 
             self.register(path)
             return ds
@@ -395,9 +402,9 @@ class filestore(ArgoStoreProto):
                     results,
                     dim=concat_dim,
                     data_vars="minimal",  # Only data variables in which the dimension already appears are included.
-                    coords="all",         # All coordinate variables will be concatenated, except those corresponding
-                                          # to other dimensions.
-                    compat="override",    # skip comparing and pick variable from first dataset,
+                    coords="all",  # All coordinate variables will be concatenated, except those corresponding
+                    # to other dimensions.
+                    compat="override",  # skip comparing and pick variable from first dataset,
                 )
                 return ds
             else:
@@ -421,3 +428,69 @@ class filestore(ArgoStoreProto):
         with self.open(path) as of:
             df = pd.read_csv(of, **kwargs)
         return df
+
+    def open_subprocess(self, filepath):
+        """Open file with the default program in a subprocess.
+
+        As being called in a subprocess, it will not block the current one.
+        This method runs the command on a subprocess using the default system shell.
+
+        Parameters
+        ----------
+        filepath: str
+            Path to the file to open
+
+        Returns
+        -------
+        subprocess
+            The pointer the subprocess returned by the Popen call
+
+        Examples
+        --------
+        The subprocess will run in background so you won't be able to bring back
+        the result code, but the current log can be obtained via the Popen's PIPE:
+
+        .. code-block:: python
+
+            from argopy.stores import filestore
+
+            # Run as subprocess
+            subproc = filestore().open_subprocess("sensor_certificate.pdf")
+
+            # Get the stdout for the subprocess
+            print(subproc.stdout)
+
+            # Get the stderr for the subprocess
+            print(subproc.stderr)
+
+        Notes
+        -----
+        Source: https://gist.github.com/ytturi/0c23ad5ab89154d24c340c2b1cc3432b
+        """
+
+        def get_open_command(filepath):
+            """
+            Get the console-like command to open the file
+            for the current platform:
+            - Windows: "start {{ filepath }}"
+            - OS X: "open {{ filepath }}"
+            - Linux based (wdg): "wdg-open {{ filepath }}"
+            :param filepath:    Path to the file to be opened
+            :type filepath:     string
+            :return:            Command to run from a shell
+            :rtype:             string
+            """
+            OSNAME = system().lower()
+            if "windows" in OSNAME:
+                opener = "start"
+            elif "osx" in OSNAME or "darwin" in OSNAME:
+                opener = "open"
+            else:
+                opener = "xdg-open"
+            return "{opener} {filepath}".format(opener=opener, filepath=filepath)
+
+        subproc = Popen(
+            get_open_command(filepath), stdout=PIPE, stderr=PIPE, shell=True
+        )
+        subproc.wait()
+        return subproc
