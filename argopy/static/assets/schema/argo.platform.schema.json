@@ -1,0 +1,224 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "./argo.platform.schema.json",
+  "title": "JSON Schema for Argo Program Platforms",
+  "description": "A JSON Schema used to describe an Argo platform. The platform includes the hull, controller, buoyancy engine, positioning and transmission systems, but not the sensors.  See Argo User's Manual. Metada format Version 3.41.1",
+  "format_version": {
+    "const": "0.4.0"
+  },
+  "type": "object",
+  "properties": {
+    "platform_info": {
+      "type": "object",
+      "properties": {
+        "created_by": {
+          "type": "string"
+        },
+        "date_creation": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "link": {
+          "const": "./argo.platform.schema.json"
+        },
+        "format_version": {
+          "$ref": "#/format_version"
+        },
+        "contents": {
+          "type": "string"
+        },
+        "platform_described": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "created_by",
+        "date_creation",
+        "format_version",
+        "contents",
+        "platform_described"
+      ]
+    },
+    "@context": {
+      "type": "object",
+      "properties": {
+        "SDN:R08::": {
+          "const": "http://vocab.nerc.ac.uk/collection/R08/current/"
+        },
+        "SDN:R09::": {
+          "const": "http://vocab.nerc.ac.uk/collection/R09/current/"
+        },
+        "SDN:R10::": {
+          "const": "http://vocab.nerc.ac.uk/collection/R10/current/"
+        },
+        "SDN:R22::": {
+          "const": "http://vocab.nerc.ac.uk/collection/R22/current/"
+        },
+        "SDN:R23::": {
+          "const": "http://vocab.nerc.ac.uk/collection/R23/current/"
+        },
+        "SDN:R24::": {
+          "const": "http://vocab.nerc.ac.uk/collection/R24/current/"
+        },
+        "SDN:R28::": {
+          "const": "http://vocab.nerc.ac.uk/collection/R28/current/"
+        }
+      },
+      "required": [
+        "SDN:R08::",
+        "SDN:R09::",
+        "SDN:R10::",
+        "SDN:R22::",
+        "SDN:R23::",
+        "SDN:R24::",
+        "SDN:R28::"
+      ],
+      "additionalProperties": false
+    },
+    "PLATFORM": {
+      "type": "object",
+      "properties": {
+        "PLATFORM_FAMILY": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^SDN:R22::",
+          "description": "PLATFORM_FAMILY string must be valid in current Argo reference table R22",
+          "validation-uri": "https://vocab.nerc.ac.uk/collection/R22/current/"
+        },
+        "PLATFORM_TYPE": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^SDN:R23::",
+          "description": "PLATFORM_TYPE string must be valid in current Argo reference table R23",
+          "validation-uri": "https://vocab.nerc.ac.uk/collection/R23/current/"
+        },
+        "PLATFORM_MAKER": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^SDN:R24::",
+          "description": "PLATFORM_MAKER (manufacturer) string must be valid in current Argo reference table R24",
+          "validation-uri": "https://vocab.nerc.ac.uk/collection/R24/current/"
+        },
+        "POSITIONING_SYSTEM": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^SDN:R09::",
+            "description": "POSITIONING_SYSTEM is a list of positioning systems.  Each entry must be valid in current Argo reference table R09",
+            "validation-uri": "https://vocab.nerc.ac.uk/collection/R09/current/"
+          }
+        },
+        "PTT": {
+          "type": "string",
+          "description": "Transmission identifier of the float. Comma separated list for multi-beacon transmission."
+        },
+        "TRANS_SYSTEM": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^SDN:R10::",
+            "description": "TRANS_SYSTEM is a list of telecommunication systems. Each entry must be valid in the current reference table R10",
+            "validation-uri": "https://vocab.nerc.ac.uk/collection/R10/current/"
+          }
+        },
+        "TRANS_SYSTEM_ID": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "TRANS_SYSTEM_ID is the Program identifier of the telecommunication subscription. DACs can use N/A or alternative of their choice when not applicable"
+          }
+        },
+        "TRANS_FREQUENCY": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "Frequency of transmission from the float (hertz)."
+          }
+        },
+        "FIRMWARE_VERSION": {
+          "type": "string",
+          "description": "Firmware version of the platform, defined by the platform_maker. This is specified as per the format on the manufacturer\u2019s manual."
+        },
+        "MANUAL_VERSION": {
+          "type": "string",
+          "description": "The version date or number for the manual for the platform, defined by the platform_maker."
+        },
+        "FLOAT_SERIAL_NO": {
+          "type": "string",
+          "description": "This field should contain only the serial number of the platform, defined by the platform_maker."
+        },
+        "WMO_INST_TYPE": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^SDN:R08::",
+          "description": "WMO_INST_TYPE string is a subset of instrument type codes from the World Meteorological Organization (WMO) Common Code Table C-3 (CCT C-3) 1770. String must be valid in current Argo reference table R08",
+          "validation-uri": "https://vocab.nerc.ac.uk/collection/R08/current/"
+        },
+        "BATTERY_TYPE": {
+          "type": "string",
+          "pattern": "(?i)^(?:\\s*\\w+\\s+)?(?:Alkaline|Lithium)\\s+\\d+(?:\\.\\d+)?\\s*V(?:\\s*\\+\\s*\\w+\\s+(?:Alkaline|Lithium)\\s+\\d+(?:\\.\\d+)?\\s*V)*$",
+          "description": "Describes the type of battery packs in the float. BATTERY_TYPE = 'Manufacturer Alkaline x V' or 'Manufacturer Lithium x V + Manufacturer Alkaline x V, e.g.,ELECTROCHEM Lithium 15 V"
+        },
+        "BATTERY_PACKS": {
+          "type": "string",
+          "pattern": "(?i)^[U]|(\\s*\\d+(?:DD|C|D)\\s+(?:Li|Alk|Hyb)(?:\\s*\\+\\s*\\d+(?:DD|C|D)\\s+(?:Li|Alk|Hyb))*)$",
+          "description": "Describes the configuration of battery packs in the float, number and type. Example: \u201c4DD Li + 1C Alk.  Pattern above enforces rules in reference table 30"
+        },
+        "CONTROLLER_BOARD_TYPE_PRIMARY": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^SDN:R28::\\w+(\\s+\\[.*\\])?$",
+          "description": "Describes the type of primary controller board. first part of string: see reference table 28.0 Free text between optional []",
+          "validation-uri": "https://vocab.nerc.ac.uk/collection/R28/current/"
+        },
+        "CONTROLLER_BOARD_SERIAL_NO_PRIMARY": {
+          "type": "string",
+          "description": "The serial number for the primary controller board."
+        },
+        "CONTROLLER_BOARD_TYPE_SECONDARY": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^SDN:R28::\\w+(\\s+\\[\\w+\\])?$",
+          "description": "Optional: Describes the type of secondary controller board. first part of string: see reference table 28.0.  Free text between optional []",
+          "validation-uri": "https://vocab.nerc.ac.uk/collection/R28/current/"
+        },
+        "CONTROLLER_BOARD_SERIAL_NO_SECONDARY": {
+          "type": "string",
+          "description": "Optional: The serial number for the secondary controller board."
+        },
+        "SPECIAL_FEATURES": {
+          "type": "string",
+          "description": "Additional float features can be specified here such as algorithms used by the float. Indicates there are AUX data files.  See reference table 32."
+        },
+        "platform_vendorinfo": {
+          "$ref": "./argo.vendors.schema.json#/$defs/platform_vendorinfo"
+        }
+      },
+      "required": [
+        "POSITIONING_SYSTEM",
+        "PTT",
+        "TRANS_SYSTEM",
+        "PLATFORM_FAMILY",
+        "PLATFORM_TYPE",
+        "PLATFORM_MAKER",
+        "FLOAT_SERIAL_NO",
+        "FIRMWARE_VERSION",
+        "MANUAL_VERSION",
+        "BATTERY_TYPE",
+        "CONTROLLER_BOARD_TYPE_PRIMARY",
+        "CONTROLLER_BOARD_SERIAL_NO_PRIMARY"
+      ],
+      "additionalProperties": false,
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "@context",
+    "platform_info",
+    "PLATFORM"
+  ],
+  "uniqueItems": true,
+  "additionalProperties": false
+}

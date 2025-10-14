@@ -1,0 +1,206 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "./argo.sensor.schema.json",
+  "title": "JSON Schema for Argo Program Sensors",
+  "description": "A JSON Schema used to populate Argo float sensor and parameter metadata elements.  See Argo User's Manual. Metada format Version 3.41.1",
+  "format_version": {
+    "const": "0.4.0"
+  },
+  "type": "object",
+  "properties": {
+    "sensor_info": {
+      "type": "object",
+      "properties": {
+        "created_by": {
+          "type": "string"
+        },
+        "date_creation": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "link": {
+          "const": "./argo.sensor.schema.json"
+        },
+        "format_version": {
+          "$ref": "#/format_version"
+        },
+        "contents": {
+          "type": "string"
+        },
+        "sensor_described": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "created_by",
+        "date_creation",
+        "link",
+        "format_version",
+        "contents",
+        "sensor_described"
+      ]
+    },
+    "@context": {
+      "type": "object",
+      "properties": {
+        "SDN:R03::": {
+          "const": "http://vocab.nerc.ac.uk/collection/R03/current/"
+        },
+        "SDN:R25::": {
+          "const": "http://vocab.nerc.ac.uk/collection/R25/current/"
+        },
+        "SDN:R26::": {
+          "const": "http://vocab.nerc.ac.uk/collection/R26/current/"
+        },
+        "SDN:R27::": {
+          "const": "http://vocab.nerc.ac.uk/collection/R27/current/"
+        },
+        "SDN:L22::": {
+          "const": "http://vocab.nerc.ac.uk/collection/L22/current/"
+        }
+      },
+      "required": [
+        "SDN:R03::",
+        "SDN:R25::",
+        "SDN:R26::",
+        "SDN:R27::"
+      ],
+      "additionalProperties": false
+    },
+    "SENSORS": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "SENSOR": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^SDN:R25::",
+            "description": "SENSOR string must be valid in current Argo reference table R25",
+            "validation-uri": "https://vocab.nerc.ac.uk/collection/R25/current/"
+          },
+          "SENSOR_MAKER": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^SDN:R26::",
+            "description": "SENSOR_MAKER string must be valid in current Argo reference table R26",
+            "validation-uri": "https://vocab.nerc.ac.uk/collection/R26/current/"
+          },
+          "SENSOR_MODEL": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^SDN:(R27|L22)::",
+            "description": "SENSOR_MODEL string must be valid in current Argo reference table R27 or L22",
+            "validation-uri": "https://vocab.nerc.ac.uk/collection/R27/current/"
+          },
+          "SENSOR_MODEL_FIRMWARE": {
+            "type": "string",
+            "description": "Firmware version of this sensor_model, defined by the sensor_maker"
+          },
+          "SENSOR_SERIAL_NO": {
+            "type": "string",
+            "description": "Serial number of the sensor"
+          },
+          "sensor_vendorinfo": {
+            "$ref": "./argo.vendors.schema.json#/$defs/sensor_vendorinfo"
+          }
+        },
+        "required": [
+          "SENSOR",
+          "SENSOR_MAKER",
+          "SENSOR_MODEL",
+          "SENSOR_SERIAL_NO",
+          "SENSOR_MODEL_FIRMWARE"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "PARAMETERS": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "PARAMETER": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^SDN:R03::",
+            "description": "PARAMETER string must be valid in current Argo reference table R03",
+            "validation_uri": "http://vocab.nerc.ac.uk/collection/R03/current/"
+          },
+          "PARAMETER_SENSOR": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^SDN:R25::",
+            "description": "PARAMETER_SENSOR string must be valid in current Argo reference table R25 and must be listed as a SENSOR in the SENSORS section above",
+            "validation_uri": "http://vocab.nerc.ac.uk/collection/R25/current/"
+          },
+          "PARAMETER_UNITS": {
+            "type": "string"
+          },
+          "PARAMETER_ACCURACY": {
+            "type": "string"
+          },
+          "PARAMETER_RESOLUTION": {
+            "type": "string"
+          },
+          "PREDEPLOYMENT_CALIB_EQUATION": {
+            "type": "string",
+            "description": "Calibration equation for this parameter."
+          },
+          "PREDEPLOYMENT_CALIB_COEFFICIENT_LIST": {
+            "type": "object",
+            "description": "Calibation coefficients are listed individually here, string-encoded to guarantee precision.  They will be compiled to create the Argo PREDEPLOYMENT_CALIB_COEFFCIENT string"
+          },
+          "PREDEPLOYMENT_CALIB_COMMENT": {
+            "type": "string"
+          },
+          "PREDEPLOYMENT_CALIB_DATE": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "string",
+                "const": " "
+              }
+            ]
+          },
+          "parameter_vendorinfo": {
+            "$ref": "./argo.vendors.schema.json#/$defs/parameter_vendorinfo"
+          },
+          "predeployment_vendorinfo": {
+            "$ref": "./argo.vendors.schema.json#/$defs/predeployment_vendorinfo"
+          }
+        },
+        "required": [
+          "PARAMETER",
+          "PARAMETER_SENSOR",
+          "PARAMETER_UNITS",
+          "PARAMETER_ACCURACY",
+          "PARAMETER_RESOLUTION",
+          "PREDEPLOYMENT_CALIB_EQUATION",
+          "PREDEPLOYMENT_CALIB_COEFFICIENT_LIST",
+          "PREDEPLOYMENT_CALIB_COMMENT",
+          "PREDEPLOYMENT_CALIB_DATE"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "instrument_vendorinfo": {
+      "$ref": "./argo.vendors.schema.json#/$defs/instrument_vendorinfo"
+    }
+  },
+  "required": [
+    "@context",
+    "sensor_info",
+    "SENSORS",
+    "PARAMETERS"
+  ],
+  "uniqueItems": true,
+  "additionalProperties": false
+}
