@@ -112,12 +112,23 @@ class OemMetaDataDisplay:
         """
 
         for ip, param in enumerate(self.OEMsensor.parameters):
+            PREDEPLOYMENT_CALIB_EQUATION = param._attr2str('PREDEPLOYMENT_CALIB_EQUATION').split(';')
+            PREDEPLOYMENT_CALIB_EQUATION = [p.replace("=", " = ") for p in PREDEPLOYMENT_CALIB_EQUATION]
+            PREDEPLOYMENT_CALIB_EQUATION = "<br>\t".join(PREDEPLOYMENT_CALIB_EQUATION)
+
+            PREDEPLOYMENT_CALIB_COEFFICIENT_LIST = param._attr2str('PREDEPLOYMENT_CALIB_COEFFICIENT_LIST')
+            s = []
+            if isinstance(PREDEPLOYMENT_CALIB_COEFFICIENT_LIST, dict):
+                for key, value in PREDEPLOYMENT_CALIB_COEFFICIENT_LIST.items():
+                    s.append(f"{key} = {value}")
+                PREDEPLOYMENT_CALIB_COEFFICIENT_LIST = "<br>\t".join(s)
+
             details_html = f"""
             <tr class="parameter-details oemsensor" id="details-{uid}-{ip}">
                 <td colspan="6">
                     <div class="details-content oemsensor">
-                        <p class='oemsensor'><strong>Calibration Equation:</strong><br>{param._attr2str('PREDEPLOYMENT_CALIB_EQUATION')}</p>
-                        <p class='oemsensor'><strong>Calibration Coefficients:</strong><br>{param._attr2str('PREDEPLOYMENT_CALIB_COEFFICIENT_LIST')}</p>
+                        <p class='oemsensor'><strong>Calibration Equation:</strong><br>{PREDEPLOYMENT_CALIB_EQUATION}</p>
+                        <p class='oemsensor'><strong>Calibration Coefficients:</strong><br>{PREDEPLOYMENT_CALIB_COEFFICIENT_LIST}</p>
                         <p class='oemsensor'><strong>Calibration Comment:</strong><br>{param._attr2str('PREDEPLOYMENT_CALIB_COMMENT')}</p>
                         <p class='oemsensor'><strong>Calibration Date:</strong><br>{param._attr2str('PREDEPLOYMENT_CALIB_DATE')}</p>
                     </div>
@@ -193,12 +204,13 @@ class ParameterDisplay:
 
     @property
     def html(self):
+        param = self.data
 
         # --- Header ---
-        header_html = f"<h1 class='oemsensor'>Argo Sensor Metadata for Parameter: <a href='{self.data.PARAMETER_uri}'>{urn_html(self.data.PARAMETER)}</a></h1>"
+        header_html = f"<h1 class='oemsensor'>Argo Sensor Metadata for Parameter: <a href='{param.PARAMETER_uri}'>{urn_html(param.PARAMETER)}</a></h1>"
 
-        if self.data.parameter_vendorinfo is not None:
-            info = " | ".join([f"<strong>{p}</strong> {v}" for p, v in self.data.parameter_vendorinfo.items()])
+        if param.parameter_vendorinfo is not None:
+            info = " | ".join([f"<strong>{p}</strong> {v}" for p, v in param.parameter_vendorinfo.items()])
             header_html += f"<p class='oemsensor'>{info}</p>"
 
         # --- Parameter details ---
@@ -217,21 +229,32 @@ class ParameterDisplay:
         """
         html += f"""
         <tr class="parameter-row oemsensor">
-            <td class='oemsensor'><a href='{self.data.PARAMETER_SENSOR_uri}'>{urn_html(self.data.PARAMETER_SENSOR)}</a></td>
-            <td class='oemsensor'>{self.data._attr2str('PARAMETER_UNITS')}</td>
-            <td class='oemsensor'>{self.data._attr2str('PARAMETER_ACCURACY')}</td>
-            <td class='oemsensor'>{self.data._attr2str('PARAMETER_RESOLUTION')}</td>
+            <td class='oemsensor'><a href='{param.PARAMETER_SENSOR_uri}'>{urn_html(param.PARAMETER_SENSOR)}</a></td>
+            <td class='oemsensor'>{param._attr2str('PARAMETER_UNITS')}</td>
+            <td class='oemsensor'>{param._attr2str('PARAMETER_ACCURACY')}</td>
+            <td class='oemsensor'>{param._attr2str('PARAMETER_RESOLUTION')}</td>
         </tr>
         """
+
+        PREDEPLOYMENT_CALIB_EQUATION = param._attr2str('PREDEPLOYMENT_CALIB_EQUATION').split(';')
+        PREDEPLOYMENT_CALIB_EQUATION = [p.replace("=", " = ") for p in PREDEPLOYMENT_CALIB_EQUATION]
+        PREDEPLOYMENT_CALIB_EQUATION = "<br>\t".join(PREDEPLOYMENT_CALIB_EQUATION)
+
+        PREDEPLOYMENT_CALIB_COEFFICIENT_LIST = param._attr2str('PREDEPLOYMENT_CALIB_COEFFICIENT_LIST')
+        s = []
+        if isinstance(PREDEPLOYMENT_CALIB_COEFFICIENT_LIST, dict):
+            for key, value in PREDEPLOYMENT_CALIB_COEFFICIENT_LIST.items():
+                s.append(f"{key} = {value}")
+            PREDEPLOYMENT_CALIB_COEFFICIENT_LIST = "<br>\t".join(s)
 
         html += f"""
         <tr class="parameter-row oemsensor">
             <td colspan="4">
                 <div class="calibration-content oemsensor">
-                    <p class='oemsensor'><strong>Calibration Equation:</strong><br>{self.data._attr2str('PREDEPLOYMENT_CALIB_EQUATION')}</p>
-                    <p class='oemsensor'><strong>Calibration Coefficients:</strong><br>{self.data._attr2str('PREDEPLOYMENT_CALIB_COEFFICIENT_LIST')}</p>
-                    <p class='oemsensor'><strong>Calibration Comment:</strong><br>{self.data._attr2str('PREDEPLOYMENT_CALIB_COMMENT')}</p>
-                    <p class='oemsensor'><strong>Calibration Date:</strong><br>{self.data._attr2str('PREDEPLOYMENT_CALIB_DATE')}</p>
+                    <p class='oemsensor'><strong>Calibration Equation:</strong><br>{PREDEPLOYMENT_CALIB_EQUATION}</p>
+                    <p class='oemsensor'><strong>Calibration Coefficients:</strong><br>{PREDEPLOYMENT_CALIB_COEFFICIENT_LIST}</p>
+                    <p class='oemsensor'><strong>Calibration Comment:</strong><br>{param._attr2str('PREDEPLOYMENT_CALIB_COMMENT')}</p>
+                    <p class='oemsensor'><strong>Calibration Date:</strong><br>{param._attr2str('PREDEPLOYMENT_CALIB_DATE')}</p>
                 </div>
             </td>
         </tr>
@@ -240,10 +263,10 @@ class ParameterDisplay:
 
         # --- Vendor Info ---
         vendor_html = ""
-        if self.data.predeployment_vendorinfo:
+        if param.predeployment_vendorinfo:
             vendor_html = f"""
             <h2 class='oemsensor'>Pre-deployment Vendor Info:</h2>
-            <pre class='oemsensor'>{self.data.predeployment_vendorinfo}</pre>
+            <pre class='oemsensor'>{param.predeployment_vendorinfo}</pre>
             """
 
         # --- Combine All HTML ---
