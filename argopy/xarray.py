@@ -38,7 +38,7 @@ from .utils import (
 )
 from .utils import list_core_parameters
 from .utils import toYearFraction
-from .errors import InvalidDatasetStructure, OptionValueError, NoData
+from .errors import InvalidDatasetStructure, OptionValueError, NoData, NoDataLeft
 
 log = logging.getLogger("argopy.xarray")
 
@@ -1099,7 +1099,7 @@ class ArgoAccessor:
 
         - ``EasyOneArgoLite``: 107 vertical levels from 2dbar to 6000 decibar.
             The spacings between the vertical levels are:
-            
+
             - 2dbar@0-2dbar,
             - 5dbar@5-250dbar,
             - 10dbar@250-350dbar,
