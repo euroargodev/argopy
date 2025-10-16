@@ -18,7 +18,7 @@ dependencies:
   - xarray = 2025.7.1
 
 # EXT.UTIL:
-  - gsw = 3.6.19
+  - gsw = 3.6.20
   - tqdm = 4.67.1
 
 # EXT.FILES:
