@@ -52,7 +52,7 @@ from .geo import (
     toYearFraction,
     YearFraction_to_datetime,
 )
-from .compute import linear_interpolation_remap, groupby_remap
+from .compute import linear_interpolation_remap, groupby_remap, pchip_interpolation_remap
 from .transform import (
     fill_variables_not_in_all_datasets,
     drop_variables_not_in_all_datasets,
@@ -131,6 +131,7 @@ __all__ = (
     "YearFraction_to_datetime",
     # Computation with datasets:
     "linear_interpolation_remap",
+    "pchip_interpolation_remap",
     "groupby_remap",
     # Transform datasets:
     "fill_variables_not_in_all_datasets",
