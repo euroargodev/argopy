@@ -49,10 +49,10 @@ def test_predict_single_param(fetcher, param, mocked_erddapserver):
     ds = ds.argo.canyon_b.predict(param)
 
     assert param in ds
-    assert f"{param}_CI" in ds
-    assert f"{param}_CIM" in ds
-    assert f"{param}_CIN" in ds
-    assert f"{param}_CII" in ds
+    assert f"{param}_ci" in ds
+    assert f"{param}_cim" in ds
+    assert f"{param}_cin" in ds
+    assert f"{param}_cii" in ds
 
 
 def test_predict_with_custom_errors(fetcher, mocked_erddapserver):
@@ -63,10 +63,10 @@ def test_predict_with_custom_errors(fetcher, mocked_erddapserver):
     )
 
     assert "PO4" in ds
-    assert "PO4_CI" in ds
-    assert "PO4_CIM" in ds
-    assert "PO4_CIN" in ds
-    assert "PO4_CII" in ds
+    assert "PO4_ci" in ds
+    assert "PO4_cim" in ds
+    assert "PO4_cin" in ds
+    assert "PO4_cii" in ds
 
 
 def test_predict_invalid_param(fetcher, mocked_erddapserver):
