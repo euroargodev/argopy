@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 import logging
-from typing import Union
+from typing import Union, LiteralString
 from xarray.backends import BackendEntrypoint  # For xarray > 0.18
 from xarray.backends import ZarrStore
 
@@ -1073,7 +1073,10 @@ class ArgoAccessor:
         return ds_out
 
     def interp_std_levels(
-        self, std_lev: list[list, np.array, str] = "EasyOneArgoLite", axis: str = "PRES"
+        self,
+        std_lev: list[list, np.array, str] = "EasyOneArgoLite", 
+        axis: str = "PRES",
+        method: LiteralString['pchip', 'mrst-pchip', 'linear'] = 'pchip',
     ) -> xr.Dataset:
         """Interpolate measurements to standard pressure levels
 
@@ -1081,13 +1084,25 @@ class ArgoAccessor:
         ----------
         std_lev: list or np.array or str, optional, default = 'EasyOneArgoLite'
             Standard pressure levels used for interpolation. It has to be 1-dimensional and monotonic.
+
             Some pre-defined levels are available with keywords:
 
             - ``EasyOneArgoLite`` (default)
-            See Notes below for details.
+
+            See Notes for details.
 
         axis: str, default: ``PRES``
             The dataset variable to use as pressure axis. This can be ``PRES`` or ``PRES_ADJUSTED``.
+
+        method: str, LiteralString['pchip', 'mrst-pchip', 'linear'], default='pchip
+            The interpolation method:
+
+            - ``pchip``: Apply the Piecewise Cubic Hermite Interpolating Polynomial method on all parameters
+            - ``linear``: Apply :class:`scipy.interpolate.interp1d` on all parameters
+            - ``mrst-pchip``: Apply:
+
+                - Multiply-Rotated Salinity-Temperature PCHIP Method on temperature and salinity (Barker and McDougall, 2020)
+                - Piecewise Cubic Hermite Interpolating Polynomial method on all other parameters
 
         Returns
         -------
@@ -1107,6 +1122,20 @@ class ArgoAccessor:
             - 50dbar@500-1000dbar,
             - 100dbar@1000-2000dbar,
             - 200dbar@2000-6000dbar.
+
+        - ``GLORYS``
+        - ``ISAS``
+        - ``IPRC``
+        - ``ECCO V4``
+        - ``RG``
+        - ``MOAA``
+        - ``CORA5``
+
+        References
+        ----------
+        Barker, P. M., and T. J. McDougall, 2020: Two Interpolation Methods Using Multiply-Rotated 
+        Piecewise Cubic Hermite Interpolating Polynomials. J. Atmos. Oceanic Technol., 37, 605–619, 
+        https://doi.org/10.1175/JTECH-D-19-0211.1.
 
         """
         pTolerance = None
@@ -1196,6 +1225,7 @@ class ArgoAccessor:
                 this_dsp["Z_LEVELS"],
                 z_dim="N_LEVELS",
                 z_regridded_dim="Z_LEVELS",
+                output_dim="remapped",
                 zTolerance=pTolerance,
             )
             ds_out[dv].attrs = this_dsp[dv].attrs  # Preserve attributes

@@ -28,7 +28,6 @@ log = logging.getLogger("argopy.utils.compute")
 
 def linear_interpolation_remap(
     z, data, z_regridded, z_dim=None, z_regridded_dim="regridded", output_dim="remapped"
-):
     # interpolation called in xarray ufunc
     def _regular_interp(x, y, target_values):
         # remove all nans from input x and y
@@ -101,7 +100,7 @@ def pchip_interpolation_remap(
     output_dim="remapped",
     zTolerance=None,
 ):
-    """Vertical interpolation of some variable collection of profiles, using Piecewise Cubic Hermite Interpolating Polynomial
+    """Vertical interpolation of one dataset variable, using Piecewise Cubic Hermite Interpolating Polynomial
 
     Parameters
     ----------
@@ -127,7 +126,9 @@ def pchip_interpolation_remap(
 
         Follows Barker and McDougall (2020) requirements
         """
-        yi_empty = np.full(len(xi), np.nan, dtype=np.float32)  # Output when something fails
+        yi_empty = np.full(
+            len(xi), np.nan, dtype=np.float32
+        )  # Output when something fails
 
         # 'mask' holds array index to keep for interpolation
 
@@ -147,7 +148,9 @@ def pchip_interpolation_remap(
         # todo: add test to remove profile with a density inversions > 0.03kg/m3
         dx = np.diff(x)
         if np.any(dx < 0):
-            log.debug("Encounter profile with unstable pressure, skip profile interpolation")
+            log.debug(
+                "Encounter profile with unstable pressure, skip profile interpolation"
+            )
             return yi_empty
 
         # Apply mask:
@@ -155,7 +158,9 @@ def pchip_interpolation_remap(
         y = y[mask]
 
         if len(x) == 0:
-            log.debug("No data left to interpolate after pre-processing, skip profile interpolation")
+            log.debug(
+                "No data left to interpolate after pre-processing, skip profile interpolation"
+            )
             return yi_empty
 
         # Run interp:
@@ -230,6 +235,25 @@ def pchip_interpolation_remap(
         {z_regridded_dim: output_dim}
     ).coords[output_dim]
     return remapped
+
+
+def mrst_pchip_interpolatation(
+    z,
+    Tdata,
+    Sdata,
+    z_regridded,
+    z_dim=None,
+    z_regridded_dim="regridded",
+    output_dim="remapped",
+    zTolerance=None,
+):
+    """Vertical interpolation of temperature/salinity, using the MRST-PCHIP method
+
+    MRST-PCHIP: Multiply-Rotated Salinity-Temperature PCHIP Method
+
+    """
+    pass
+
 
 
 def groupby_remap(
