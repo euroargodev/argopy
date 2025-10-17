@@ -446,6 +446,7 @@ class CanyonB(ArgoAccessorExtension):
         out[f"{param}_cim"] = np.sqrt(cvalcimeas)
         out[f"{param}_cin"] = np.reshape(np.sqrt(cvalcib + cvalciw + cvalcu), shape)
         out[f"{param}_cii"] = np.reshape(np.sqrt(cvalcin), shape)
+        out[f"{param}_inx"] = inx[:, 4 : 8 + ioffset] # Input effects
 
         # pCO2
         if i == 3:
@@ -478,6 +479,9 @@ class CanyonB(ArgoAccessorExtension):
             out[param + "_cim"] = outcalc["d_pCO2__d_par2"] * np.reshape(
                 out[param + "_cim"], shape
             )
+
+            out[f"{param}_inx"] = outcalc["d_pCO2__d_par2"][:, None] * out[f"{param}_inx"]
+
 
         return out
 
@@ -530,50 +534,51 @@ class CanyonB(ArgoAccessorExtension):
             self._obj[param].values = out[param].astype(np.float32).squeeze()
 
             # CI
-            self._obj[f"{param}_CI"] = xr.zeros_like(self._obj[param])
-            self._obj[f"{param}_CI"].attrs = self.get_param_attrs(param)
-            self._obj[f"{param}_CI"].attrs[
+            self._obj[f"{param}_ci"] = xr.zeros_like(self._obj[param])
+            self._obj[f"{param}_ci"].attrs = self.get_param_attrs(param)
+            self._obj[f"{param}_ci"].attrs[
                 "long_name"
             ] = f"Uncertainty on {self.get_param_attrs(param)['long_name']}"
-            self._obj[f"{param}_CI"].values = (
+            self._obj[f"{param}_ci"].values = (
                 out[f"{param}_ci"].astype(np.float32).squeeze()
             )
 
             # CIM
             cim_value = out[f"{param}_cim"]
             if np.isscalar(cim_value):
-                self._obj[f"{param}_CIM"] = xr.full_like(
+                self._obj[f"{param}_cim"] = xr.full_like(
                     self._obj[param], fill_value=float(cim_value), dtype=np.float32
                 )
             else:
-                self._obj[f"{param}_CIM"] = xr.zeros_like(self._obj[param])
-                self._obj[f"{param}_CIM"].values = cim_value.astype(
+                self._obj[f"{param}_cim"] = xr.zeros_like(self._obj[param])
+                self._obj[f"{param}_cim"].values = cim_value.astype(
                     np.float32
                 ).squeeze()
-            self._obj[f"{param}_CIM"].attrs = self.get_param_attrs(param)
-            self._obj[f"{param}_CIM"].attrs[
+            self._obj[f"{param}_cim"].attrs = self.get_param_attrs(param)
+            self._obj[f"{param}_cim"].attrs[
                 "long_name"
             ] = f"Measurement uncertainty on {self.get_param_attrs(param)['long_name']}"
 
             # CIN
-            self._obj[f"{param}_CIN"] = xr.zeros_like(self._obj[param])
-            self._obj[f"{param}_CIN"].attrs = self.get_param_attrs(param)
-            self._obj[f"{param}_CIN"].attrs[
+            self._obj[f"{param}_cin"] = xr.zeros_like(self._obj[param])
+            self._obj[f"{param}_cin"].attrs = self.get_param_attrs(param)
+            self._obj[f"{param}_cin"].attrs[
                 "long_name"
             ] = f"Uncertainty for Bayesian neural network mapping on {self.get_param_attrs(param)['long_name']}"
-            self._obj[f"{param}_CIN"].values = (
+            self._obj[f"{param}_cin"].values = (
                 out[f"{param}_cin"].astype(np.float32).squeeze()
             )
 
             # CII
-            self._obj[f"{param}_CII"] = xr.zeros_like(self._obj[param])
-            self._obj[f"{param}_CII"].attrs = self.get_param_attrs(param)
-            self._obj[f"{param}_CII"].attrs[
+            self._obj[f"{param}_cii"] = xr.zeros_like(self._obj[param])
+            self._obj[f"{param}_cii"].attrs = self.get_param_attrs(param)
+            self._obj[f"{param}_cii"].attrs[
                 "long_name"
             ] = f"Uncertainty due to input errors on {self.get_param_attrs(param)['long_name']}"
-            self._obj[f"{param}_CII"].values = (
+            self._obj[f"{param}_cii"].values = (
                 out[f"{param}_cii"].astype(np.float32).squeeze()
             )
+
 
         # Return xr.Dataset with predicted variables:
         if self._argo:
