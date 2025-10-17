@@ -1109,17 +1109,32 @@ class ArgoAccessor:
             - 200dbar@2000-6000dbar.
 
         """
+        pTolerance = None
         if isinstance(std_lev, str):
             if std_lev == "EasyOneArgoLite":
-                std = [np.int16(2)]
-                [std.append(z) for z in np.arange(5, 250, 5, dtype=np.int16)]
-                [std.append(z) for z in np.arange(250, 350, 10, dtype=np.int16)]
-                [std.append(z) for z in np.arange(350, 500, 25, dtype=np.int16)]
-                [std.append(z) for z in np.arange(500, 1000, 50, dtype=np.int16)]
-                [std.append(z) for z in np.arange(1000, 2000, 100, dtype=np.int16)]
-                [std.append(z) for z in np.arange(2000, 6000, 200, dtype=np.int16)]
-                std.append(np.int16(6000))
-                std_lev = np.array(std)
+                std = [2.]
+                [std.append(z) for z in np.arange(5, 250, 5.)]
+                [std.append(z) for z in np.arange(250, 350, 10.)]
+                [std.append(z) for z in np.arange(350, 500, 25.)]
+                [std.append(z) for z in np.arange(500, 1000, 50.)]
+                [std.append(z) for z in np.arange(1000, 2000, 100.)]
+                [std.append(z) for z in np.arange(2000, 6000, 200.)]
+
+                # [std.append(z) for z in np.arange(5, 100, 5.)]
+                # [std.append(z) for z in np.arange(100, 350, 10.)]
+                # [std.append(z) for z in np.arange(350, 500, 25.)]
+                # [std.append(z) for z in np.arange(500, 2000, 50.)]
+                # [std.append(z) for z in np.arange(2000, 6000, 200.)]
+
+                std.append(6000.)
+                std_lev = np.array(std, dtype=np.float32)
+
+                scale = 3.
+                pTolerance = [scale * (std_lev[0] - 0.)]  # 1st level near surface
+                for ip, _ in enumerate(std_lev[0:-1]):
+                    local_spacing = std_lev[ip + 1] - std_lev[ip]
+                    pTolerance.append(scale * local_spacing)
+                pTolerance = np.array(pTolerance, dtype=np.float32)
 
         elif (type(std_lev) is np.ndarray) | (type(std_lev) is list):
             std_lev = np.array(std_lev)
@@ -1181,6 +1196,7 @@ class ArgoAccessor:
                 this_dsp["Z_LEVELS"],
                 z_dim="N_LEVELS",
                 z_regridded_dim="Z_LEVELS",
+                zTolerance=pTolerance,
             )
             ds_out[dv].attrs = this_dsp[dv].attrs  # Preserve attributes
             if "long_name" in ds_out[dv].attrs:
@@ -1206,9 +1222,6 @@ class ArgoAccessor:
         ds_out = ds_out.argo.cast_types()
         ds_out.attrs = self.attrs  # Preserve original attributes
         ds_out.argo.add_history("Interpolated on standard %s levels" % axis)
-
-        if to_point:
-            ds_out = ds_out.argo.profile2point()
 
         return ds_out
 

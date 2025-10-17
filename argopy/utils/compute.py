@@ -6,7 +6,6 @@ import numpy as np
 from scipy import interpolate
 import xarray as xr
 from packaging import version
-import warnings
 import logging
 
 try:
@@ -94,7 +93,13 @@ def linear_interpolation_remap(
 
 
 def pchip_interpolation_remap(
-    z, data, z_regridded, z_dim=None, z_regridded_dim="regridded", output_dim="remapped"
+    z,
+    data,
+    z_regridded,
+    z_dim=None,
+    z_regridded_dim="regridded",
+    output_dim="remapped",
+    zTolerance=None,
 ):
     """Vertical interpolation of some variable collection of profiles, using Piecewise Cubic Hermite Interpolating Polynomial
 
@@ -115,26 +120,43 @@ def pchip_interpolation_remap(
     if not with_gsw:
         raise ValueError("The pchip interpolation method requires the gsw librairy")
 
-    def _regular_interp(x, y, xi):
-        """Interpolation method called in xarray ufunc
+    def _regular_interp(x, y, xi, xTolerance=None):
+        """Interpolation method called by xarray ufunc
 
         This consumes one single profile data as low-level structures, like numpy 1D arrays
 
+        Follows Barker and McDougall (2020) requirements
         """
-        # Remove nans from input x and y:
-        idx = np.logical_or(np.isnan(x), np.isnan(y))
-        x = x[~idx]
-        y = y[~idx]
+        yi_empty = np.full(len(xi), np.nan, dtype=np.float32)  # Output when something fails
 
-        # Interpolate
+        # 'mask' holds array index to keep for interpolation
 
-        # Check for BM2020 requirements
-        # - no negative pressures:
-        # todo
-        # - at least 5 points:
-        # todo
-        # - pressure to increase monotonically, exclude density inversions > 0.03kg/m3:
-        # todo
+        # Un-select nans from input x and y:
+        mask = np.logical_and(~np.isnan(x), ~np.isnan(y))
+
+        # Check for Barker and McDougall (2020) requirements:
+        # Un-select negative pressures:
+        mask = np.logical_and(mask, x > 0)
+
+        # At least 5 points:
+        if np.nonzero(mask)[0].shape[0] < 5:
+            log.debug("Not enough points to work with, skip profile interpolation")
+            return yi_empty
+
+        # Skip a profile without monotonically increasing Pressure
+        # todo: add test to remove profile with a density inversions > 0.03kg/m3
+        dx = np.diff(x)
+        if np.any(dx < 0):
+            log.debug("Encounter profile with unstable pressure, skip profile interpolation")
+            return yi_empty
+
+        # Apply mask:
+        x = x[mask]
+        y = y[mask]
+
+        if len(x) == 0:
+            log.debug("No data left to interpolate after pre-processing, skip profile interpolation")
+            return yi_empty
 
         # Run interp:
         yi = gsw.pchip_interp(x, y, xi, axis=0)
@@ -145,24 +167,21 @@ def pchip_interpolation_remap(
         yi[np.argwhere(xi < np.nanmin(x))] = np.nan
         yi[np.argwhere(xi > np.nanmax(x))] = np.nan
 
-        # "Clean up interpolated points where the pressure gap in the input data is greater than a Ptolerance.
-        # The Ptolerance is set to vary with pressure, with larger Ptolerance at deeper pressures because T/S
+        # "Clean up interpolated points where the pressure gap in the input data is greater than Ptolerance.
+        # Ptolerance is set to vary with pressure, with larger values at deeper pressures because T/S
         # gradients are smaller at deeper pressures.
-        # Currently Ptolerance is set as 3 x local vertical spacing.
+        # Ptolerance is set as 3 x local vertical spacing by default by ds.argo.interp_std_levels
         # This means for every two input points, at most 3 interpolated points are allowed."
-        for ii, _ in enumerate(x[0:-1]):
-            # Pressure gap in the input data:
-            gap = x[ii + 1] - x[ii]
-            if gap < 0:
-                warnings.warn(f"Pressure inversion at {x[ii]}")
 
-            # Local spacing from standard depth levels:
-            local_dxi = np.diff(xi[np.logical_and(xi > x[ii], xi <= x[ii + 1])])
-            if len(local_dxi) > 0:
-                local_spacing = local_dxi[0]
-                Ptolerance = 3.0 * local_spacing
-                if gap > Ptolerance:
-                    yi[np.logical_and(xi > x[ii], xi <= x[ii + 1])] = np.nan
+        # Interpolate pressure tolerance values to input pressure levels
+        p_tolerance_lookup = np.interp(x[:-1], xi, xTolerance)
+
+        # Loop through each pressure level:
+        for id_lev in range(len(x) - 1):
+            # Toss out points where input pressure gap is greater than tolerance
+            if dx[id_lev] > p_tolerance_lookup[id_lev]:
+                id_del = np.where((xi > x[id_lev]) & (xi < x[id_lev + 1]))[0]
+                yi[id_del] = np.nan
 
         return yi
 
@@ -175,9 +194,14 @@ def pchip_interpolation_remap(
         dim = z_dim
 
     # Set kwargs for xarray.apply_ufunc miscellaneaous versions:
+    if zTolerance is None:
+        input_core_dims = [[dim], [dim], [z_regridded_dim]]
+    else:
+        input_core_dims = [[dim], [dim], [z_regridded_dim], [z_regridded_dim]]
+
     if version.parse(xr.__version__) > version.parse("0.15.0"):
         kwargs = dict(
-            input_core_dims=[[dim], [dim], [z_regridded_dim]],
+            input_core_dims=input_core_dims,
             output_core_dims=[[output_dim]],
             vectorize=True,
             dask="parallelized",
@@ -188,14 +212,19 @@ def pchip_interpolation_remap(
         )
     else:
         kwargs = dict(
-            input_core_dims=[[dim], [dim], [z_regridded_dim]],
+            input_core_dims=input_core_dims,
             output_core_dims=[[output_dim]],
             vectorize=True,
             dask="parallelized",
             output_dtypes=[data.dtype],
             output_sizes={output_dim: len(z_regridded[z_regridded_dim])},
         )
-    remapped = xr.apply_ufunc(_regular_interp, z, data, z_regridded, **kwargs)
+    if zTolerance is None:
+        remapped = xr.apply_ufunc(_regular_interp, z, data, z_regridded, **kwargs)
+    else:
+        remapped = xr.apply_ufunc(
+            _regular_interp, z, data, z_regridded, zTolerance, **kwargs
+        )
 
     remapped.coords[output_dim] = z_regridded.rename(
         {z_regridded_dim: output_dim}
