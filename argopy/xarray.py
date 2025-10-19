@@ -1134,7 +1134,7 @@ class ArgoAccessor:
         References
         ----------
         Barker, P. M., and T. J. McDougall, 2020: Two Interpolation Methods Using Multiply-Rotated 
-        Piecewise Cubic Hermite Interpolating Polynomials. J. Atmos. Oceanic Technol., 37, 605–619, 
+        Piecewise Cubic Hermite Interpolating Polynomials. J. Atmos. Oceanic Technol., 37, 605-619, 
         https://doi.org/10.1175/JTECH-D-19-0211.1.
 
         """
