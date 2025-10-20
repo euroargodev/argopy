@@ -89,8 +89,10 @@ class SensorModel(NVSrow):
         return string.lower() in self.name.lower() or string.lower() in self.long_name.lower()
 
 class ArgoSensor:
-    """
-    Argo sensors helper class
+    """Argo sensor 'package' helper class
+
+    A :class:`ArgoSensor` class instance shall represent one float sensor 'package'
+
 
     The :class:`ArgoSensor` class aims to provide direct access to Argo's sensor metadata from:
 

@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from typing import List, Dict, Optional, Any, Literal
-from  pathlib import Path
+from pathlib import Path
 from zipfile import ZipFile
 from referencing import Registry, Resource
 import jsonschema
@@ -18,7 +18,10 @@ from .oem_metadata_repr import OemMetaDataDisplay, ParameterDisplay
 
 log = logging.getLogger("argopy.related.sensors")
 
-SENSOR_JS_EXAMPLES = filestore().open_json(Path(path2assets).joinpath("sensor_metadata_examples.json"))['data']['uri']
+SENSOR_JS_EXAMPLES = filestore().open_json(
+    Path(path2assets).joinpath("sensor_metadata_examples.json")
+)["data"]["uri"]
+
 
 @dataclass
 class SensorInfo:
@@ -72,10 +75,10 @@ class Sensor:
         """Return a class attribute, or 'n/a' if it's None, {} or ""."""
         value = getattr(self, x, None)
         if type(value) is str:
-            return value if value and value.strip() else 'n/a'
+            return value if value and value.strip() else "n/a"
         elif type(value) is dict:
             if len(value.keys()) == 0:
-                return 'n/a'
+                return "n/a"
             else:
                 return value
         else:
@@ -86,16 +89,20 @@ class Sensor:
         def key2str(d, x):
             """Return a dict value as a string, or 'n/a' if it's None or empty."""
             value = d.get(x, None)
-            return value if value and value.strip() else 'n/a'
+            return value if value and value.strip() else "n/a"
 
         summary = [f"<oemsensor.sensor.{self.SENSOR_SERIAL_NO}>"]
         summary.append(f"  SENSOR: {self.SENSOR} ({self.SENSOR_uri})")
         summary.append(f"  SENSOR_MAKER: {self.SENSOR_MAKER} ({self.SENSOR_MAKER_uri})")
         summary.append(f"  SENSOR_MODEL: {self.SENSOR_MODEL} ({self.SENSOR_MODEL_uri})")
         if getattr(self, "SENSOR_MODEL_FIRMWARE", None) is None:
-            summary.append(f"  SENSOR_FIRMWARE_VERSION: {self._attr2str('SENSOR_FIRMWARE_VERSION')} (but should be 'SENSOR_MODEL_FIRMWARE') ")
+            summary.append(
+                f"  SENSOR_FIRMWARE_VERSION: {self._attr2str('SENSOR_FIRMWARE_VERSION')} (but should be 'SENSOR_MODEL_FIRMWARE') "
+            )
         else:
-            summary.append(f"  SENSOR_MODEL_FIRMWARE: {self._attr2str('SENSOR_MODEL_FIRMWARE')}")
+            summary.append(
+                f"  SENSOR_MODEL_FIRMWARE: {self._attr2str('SENSOR_MODEL_FIRMWARE')}"
+            )
         summary.append(f"  sensor_vendorinfo:")
         for key in self.sensor_vendorinfo.keys():
             summary.append(f"    - {key}: {key2str(self.sensor_vendorinfo, key)}")
@@ -130,10 +137,10 @@ class Parameter:
         """Return a class attribute, or 'n/a' if it's None, {} or ""."""
         value = getattr(self, x, None)
         if type(value) is str:
-            return value if value and value.strip() else 'n/a'
+            return value if value and value.strip() else "n/a"
         elif type(value) is dict:
             if len(value.keys()) == 0:
-                return 'n/a'
+                return "n/a"
             else:
                 return value
         else:
@@ -141,29 +148,38 @@ class Parameter:
 
     @property
     def _has_calibration_data(self):
-        s = "".join([str(self._attr2str(key)) for key in
-                     ['PREDEPLOYMENT_CALIB_EQUATION',
-                      'PREDEPLOYMENT_CALIB_COEFFICIENT_LIST',
-                      'PREDEPLOYMENT_CALIB_COMMENT',
-                      'PREDEPLOYMENT_CALIB_DATE'] if self._attr2str(key) != 'n/a'])
+        s = "".join(
+            [
+                str(self._attr2str(key))
+                for key in [
+                    "PREDEPLOYMENT_CALIB_EQUATION",
+                    "PREDEPLOYMENT_CALIB_COEFFICIENT_LIST",
+                    "PREDEPLOYMENT_CALIB_COMMENT",
+                    "PREDEPLOYMENT_CALIB_DATE",
+                ]
+                if self._attr2str(key) != "n/a"
+            ]
+        )
         return len(s) > 0
 
     def __repr__(self):
 
         summary = [f"<oemsensor.parameter.{self.PARAMETER}>"]
         summary.append(f"  PARAMETER: {self.PARAMETER} ({self.PARAMETER_uri})")
-        summary.append(f"  PARAMETER_SENSOR: {self.PARAMETER_SENSOR} ({self.PARAMETER_SENSOR_uri})")
+        summary.append(
+            f"  PARAMETER_SENSOR: {self.PARAMETER_SENSOR} ({self.PARAMETER_SENSOR_uri})"
+        )
 
-        for key in ['UNITS', 'ACCURACY', 'RESOLUTION']:
+        for key in ["UNITS", "ACCURACY", "RESOLUTION"]:
             p = f"PARAMETER_{key}"
             summary.append(f"  {key}: {self._attr2str(p)}")
 
         summary.append(f"  PREDEPLOYMENT CALIBRATION:")
-        for key in ['EQUATION', 'COEFFICIENT', 'COMMENT', 'DATE']:
+        for key in ["EQUATION", "COEFFICIENT", "COMMENT", "DATE"]:
             p = f"PREDEPLOYMENT_CALIB_{key}"
             summary.append(f"    - {key}: {self._attr2str(p)}")
 
-        for key in ['parameter_vendorinfo', 'predeployment_vendorinfo']:
+        for key in ["parameter_vendorinfo", "predeployment_vendorinfo"]:
             summary.append(f"  {key}: {self._attr2str(p)}")
         return "\n".join(summary)
 
@@ -172,6 +188,7 @@ class Parameter:
 
     def _ipython_display_(self):
         from IPython.display import display, HTML
+
         display(HTML(ParameterDisplay(self).html))
 
 
@@ -201,6 +218,7 @@ class ArgoSensorMetaDataOem:
         ArgoSensorMetaData().from_dict(jsdata)  # Use any compliant json data
 
     """
+
     _schema_root = "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/schemas"
     """URI root to argo JSON schema"""
 
@@ -241,7 +259,9 @@ class ArgoSensorMetaDataOem:
 
     def _empty_str(self):
         summary = [f"<oemsensor>"]
-        summary.append("This object has no sensor info. You can use one of the following methods:")
+        summary.append(
+            "This object has no sensor info. You can use one of the following methods:"
+        )
         for meth in [
             "from_rbr(serial_number)",
             "from_dict(dict_or_json_data)",
@@ -256,15 +276,21 @@ class ArgoSensorMetaDataOem:
                 self.sensor_info.sensor_described if self.sensor_info else "n/a"
             )
             created_by = self.sensor_info.created_by if self.sensor_info else "n/a"
-            date_creation = self.sensor_info.date_creation if self.sensor_info else "n/a"
+            date_creation = (
+                self.sensor_info.date_creation if self.sensor_info else "n/a"
+            )
             sensor_count = len(self.sensors) if self.sensor_info else 0
             parameter_count = len(self.parameters) if self.sensor_info else 0
 
             summary = [f"<oemsensor.{sensor_described}>"]
             summary.append(f"created_by: '{created_by}'")
             summary.append(f"date_creation: '{date_creation}'")
-            summary.append(f"sensors: {sensor_count} {[urnparser(s.SENSOR)['termid'] for s in self.sensors]}")
-            summary.append(f"parameters: {parameter_count} {[urnparser(s.PARAMETER)['termid'] for s in self.parameters]}")
+            summary.append(
+                f"sensors: {sensor_count} {[urnparser(s.SENSOR)['termid'] for s in self.sensors]}"
+            )
+            summary.append(
+                f"parameters: {parameter_count} {[urnparser(s.PARAMETER)['termid'] for s in self.parameters]}"
+            )
             summary.append(f"instrument_vendorinfo: {self.instrument_vendorinfo}")
 
         else:
@@ -298,8 +324,10 @@ class ArgoSensorMetaDataOem:
             # Fall back on static assets version
             local_uri = Path(path2assets).joinpath("schema").joinpath(ref)
             fs = filestore()
-            updated = pd.Timestamp(fs.info(local_uri)['mtime'], unit='s')
-            warnings.warn(f"\nCan't get '{ref}' schema from the official online resource ({uri}).\nFall back on a static version packaged with this release at {updated}.")
+            updated = pd.Timestamp(fs.info(local_uri)["mtime"], unit="s")
+            warnings.warn(
+                f"\nCan't get '{ref}' schema from the official online resource ({uri}).\nFall back on a static version packaged with this release at {updated}."
+            )
             schema = fs.open_json(local_uri)
 
         return schema
@@ -307,7 +335,9 @@ class ArgoSensorMetaDataOem:
     def validate(self, data):
         """Validate meta-data against the Argo sensor json schema"""
         # Set a method to resolve references to subschemas
-        registry = Registry(retrieve=lambda x: Resource.from_contents(self._read_schema(x)))
+        registry = Registry(
+            retrieve=lambda x: Resource.from_contents(self._read_schema(x))
+        )
 
         # Select the validator based on $schema property in schema
         # (validators correspond to various drafts of JSON Schema)
@@ -425,9 +455,11 @@ class ArgoSensorMetaDataOem:
         self._serial_number = serial_number
 
         # Ensure that the instance httpstore has the appropriate authorization key:
-        fss = self._fs.fs.fs if getattr(self._fs, 'cache') else self._fs.fs
+        fss = self._fs.fs.fs if getattr(self._fs, "cache") else self._fs.fs
         headers = fss.client_kwargs.get("headers", {})
-        headers.update({"Authorization": kwargs.get("rbr_api_key", OPTIONS["rbr_api_key"])})
+        headers.update(
+            {"Authorization": kwargs.get("rbr_api_key", OPTIONS["rbr_api_key"])}
+        )
         fss._session = None  # Reset fsspec aiohttp.ClientSession
 
         uri = f"{OPTIONS['rbr_api']}/instruments/{self._serial_number}/argometadatajson"
@@ -435,21 +467,23 @@ class ArgoSensorMetaDataOem:
         obj = self.from_dict(data)
 
         # Download RBR zip archive with calibration certificates in PDFs:
-        obj = obj.certificates_rbr(action='download', quiet=True)
+        obj = obj.certificates_rbr(action="download", quiet=True)
 
         return obj
 
-    def certificates_rbr(self, action: Literal["download", "open"] = "download", **kwargs):
+    def certificates_rbr(
+        self, action: Literal["download", "open"] = "download", **kwargs
+    ):
         """Download RBR zip archive with calibration certificates in PDFs
 
         Certificate PDF files are written to the OPTIONS['cachedir'] folder
 
         """
-        cdir = Path(OPTIONS['cachedir']).joinpath("RBR_certificates")
+        cdir = Path(OPTIONS["cachedir"]).joinpath("RBR_certificates")
         cdir.mkdir(parents=True, exist_ok=True)
         local_zip_path = cdir.joinpath(f"RBRcertificates_{self._serial_number}.zip")
         lfs = filestore()
-        quiet = kwargs.get('quiet', False)
+        quiet = kwargs.get("quiet", False)
 
         # Check if we can continue:
         if self._serial_number is not None:
@@ -459,7 +493,7 @@ class ArgoSensorMetaDataOem:
             if not lfs.exists(local_zip_path):
                 new = True
                 certif_uri = f"{OPTIONS['rbr_api']}/instruments/{self._serial_number}/certificates"
-                with open(local_zip_path, 'wb') as local_zip:
+                with open(local_zip_path, "wb") as local_zip:
                     with self._fs.open(certif_uri) as remote_zip:
                         local_zip.write(remote_zip.read())
 
@@ -485,11 +519,13 @@ class ArgoSensorMetaDataOem:
                         s = f"One RBR certificate file already in: {f}"
                     print(s)
         else:
-            raise InvalidDatasetStructure(f"You must load meta-data for a given RBR sensor serial number first. Use the 'from_rbr' method.")
+            raise InvalidDatasetStructure(
+                f"You must load meta-data for a given RBR sensor serial number first. Use the 'from_rbr' method."
+            )
 
-        if action == 'download':
+        if action == "download":
             return self
-        elif action == 'open':
+        elif action == "open":
             subp = []
             for f in self.local_certificates:
                 subp.append(lfs.open_subprocess(str(f)))
@@ -505,6 +541,8 @@ class ArgoSensorMetaDataOem:
 
     def from_examples(self, eg: str = None, **kwargs):
         if eg not in self.list_examples:
-            raise ValueError(f"Unknown sensor example: '{eg}'. \n Use one in: {self.list_examples}")
+            raise ValueError(
+                f"Unknown sensor example: '{eg}'. \n Use one in: {self.list_examples}"
+            )
         data = self._fs.open_json(SENSOR_JS_EXAMPLES[eg])
         return self.from_dict(data)

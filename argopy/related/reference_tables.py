@@ -280,7 +280,7 @@ class ArgoNVSReferenceTables(NVScollection):
             rtid = "R%0.2d" % rtid
             if rtid not in self.valid_ref:
                 raise ValueError(
-                    "Invalid Argo Reference Table, should be one in: %s"
+                    "Invalid Argo Reference Table, must be one in: %s"
                     % ", ".join(self.valid_ref)
                 )
         return rtid
