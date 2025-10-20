@@ -13,8 +13,9 @@ from ..utils.carbonate import (
     CalculationOptions,
     Measurements,
     MeasurementErrors,
-    CANYONData
+    CANYONData,
 )
+
 
 @register_argo_accessor("content")
 class CONTENT(ArgoAccessorExtension):
@@ -22,7 +23,7 @@ class CONTENT(ArgoAccessorExtension):
     Implementation of the CONTENT method.
 
     CONTENT is a combination of CANYON-B Bayesian neural network mappings of AT, CT, pH and pCO2
-    made consistent with carbonate chemistry constraints for any set of water column P, T, S, O2, 
+    made consistent with carbonate chemistry constraints for any set of water column P, T, S, O2,
     location data as an alternative to (spatial) climatological interpolation ([1]_)
 
     Examples
@@ -48,7 +49,7 @@ class CONTENT(ArgoAccessorExtension):
     This Python implementation is largely inspired by work from HCBSciencesProducts (https://github.com/HCBScienceProducts)
     which is available at https://github.com/HCBScienceProducts/CONTENT. This implementation relies heavily on the great
     PyCO2SYS package (https://github.com/mvdh7/PyCO2SYS) for carbonate chemistry calculations [2]_ which itself is a Python adaptation
-    of the original CO2SYS software by C. Lewis and D. Wallace [3_] and subsequent Matlab functions CO2SYS.m by Van Heuven et al. [4]_ 
+    of the original CO2SYS software by C. Lewis and D. Wallace [3_] and subsequent Matlab functions CO2SYS.m by Van Heuven et al. [4]_
     and errors.m and derivnum.m by Orr et al. [5]_.
 
     References
@@ -61,7 +62,7 @@ class CONTENT(ArgoAccessorExtension):
     .. [5] Orr, J. C., Epitalon, J. M., Dickson, A. G., & Gattuso, J. P. (2018). Routine uncertainty propagation for the marine carbon dioxide system. Marine Chemistry, 207, 84-107. doi: 10.1016/j.marchem.2018.10.006
     """
 
-    #output_list = [
+    # output_list = [
     #    "AT",
     #    "DIC",
     #    "pHT",
@@ -69,8 +70,8 @@ class CONTENT(ArgoAccessorExtension):
     #    "NO3",
     #    "PO4",
     #    "SiOH4",
-    #]  # DIC = CT in [1], keep it that way to be consistent with the canyon-med and canyon-b extensions.
-    #"""List of all possible output variables for CONTENT"""
+    # ]  # DIC = CT in [1], keep it that way to be consistent with the canyon-med and canyon-b extensions.
+    # """List of all possible output variables for CONTENT"""
 
     # Input parameter pairs for each of 6 calculations (pCO2/AT, pHT/AT, pCO2/pHT, pCO2/DIC, pHT/DIC, AT/DIC)
     _inpar = np.array([[3, 0], [2, 0], [3, 2], [3, 1], [2, 1], [0, 1]])
@@ -82,11 +83,10 @@ class CONTENT(ArgoAccessorExtension):
     _flag_type = dict(AT=1, DIC=2, pHT=3, pCO2=4)
 
     # Parameter names used for CONTENT carbonate calculations
-    _parameters = ['AT', 'DIC', 'pHT', 'pCO2'] 
+    _parameters = ["AT", "DIC", "pHT", "pCO2"]
 
     # Save indices for outpar
     _svi = np.array([[1, 3], [2, 2], [3, 3], [1, 2], [2, 3], [1, 1]])
-
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -97,7 +97,7 @@ class CONTENT(ArgoAccessorExtension):
             )
         if self._argo.N_POINTS == 0:
             raise DataNotFound("Empty dataset, no data to transform !")
-        
+
     def get_param_attrs(self, param: str) -> dict:
         """Provides attributes to be added to a given predicted parameter"""
         attrs = {}
@@ -169,16 +169,15 @@ class CONTENT(ArgoAccessorExtension):
             )
 
         return raw_outputs
-    
-    def setup_pre_carbonate_calculations(
-            self,
-            canyonb_results: dict,
-            epres: Optional[float] = None,
-            etemp: Optional[float] = None,
-            epsal: Optional[float] = None,
-            edoxy: Optional[Union[float, np.ndarray]] = None,
-    ) -> dict:
 
+    def setup_pre_carbonate_calculations(
+        self,
+        canyonb_results: dict,
+        epres: Optional[float] = None,
+        etemp: Optional[float] = None,
+        epsal: Optional[float] = None,
+        edoxy: Optional[Union[float, np.ndarray]] = None,
+    ) -> dict:
         """
         Prepare the results from CANYON-B for carbonate calculations.
 
@@ -202,7 +201,7 @@ class CONTENT(ArgoAccessorExtension):
         errors : MeasurementErrors
           Measurement uncertainties for salinity and temperature
         rawout : dict
-          Raw output arrays for each carbonate parameter 
+          Raw output arrays for each carbonate parameter
         sigma : dict
           Uncertainty arrays for each carbonate parameter
         """
@@ -214,15 +213,10 @@ class CONTENT(ArgoAccessorExtension):
         epres = 0.5 if epres is None else epres
         etemp = 0.005 if etemp is None else etemp
         epsal = 0.005 if epsal is None else epsal
-        edoxy = (
-            0.01 * self._obj.DOXY.values if edoxy is None else edoxy
-        )
-        
+        edoxy = 0.01 * self._obj.DOXY.values if edoxy is None else edoxy
+
         # Create MeasurementErrors object
-        errors = MeasurementErrors(
-            salinity=epsal,
-            temperature=etemp
-        )
+        errors = MeasurementErrors(salinity=epsal, temperature=etemp)
 
         # Start CONTENT-specific calculations
 
@@ -238,24 +232,38 @@ class CONTENT(ArgoAccessorExtension):
             sigma[param] = np.full((nol, 4), np.nan)
 
         # Nutrient uncertainty (variance(inputs) + variance(training data) + variance(MLP)) where MLP is the CANYON-B neural network
-        canyonb_results['SiOH4']['eSiOH4'] = canyonb_results['SiOH4']['SiOH4_ci']
-        canyonb_results['PO4']['ePO4'] = canyonb_results['PO4']['PO4_ci']
+        canyonb_results["SiOH4"]["eSiOH4"] = canyonb_results["SiOH4"]["SiOH4_ci"]
+        canyonb_results["PO4"]["ePO4"] = canyonb_results["PO4"]["PO4_ci"]
 
         # covariance matrix of CANYON-B AT, CT, pH, pCO2 due to common inputs
         canyon_cov = np.full((4, 4, nol), np.nan)
 
-        # Create error array - ensure all errors are arrays of shape 
-        etemp_arr = np.full(nol, etemp) if np.isscalar(etemp) else np.asarray(etemp).flatten()
-        epsal_arr = np.full(nol, epsal) if np.isscalar(epsal) else np.asarray(epsal).flatten()
-        edoxy_arr = np.full(nol, edoxy) if np.isscalar(edoxy) else np.asarray(edoxy).flatten()
-        epres_arr = np.full(nol, epres) if np.isscalar(epres) else np.asarray(epres).flatten()
+        # Create error array - ensure all errors are arrays of shape
+        etemp_arr = (
+            np.full(nol, etemp) if np.isscalar(etemp) else np.asarray(etemp).flatten()
+        )
+        epsal_arr = (
+            np.full(nol, epsal) if np.isscalar(epsal) else np.asarray(epsal).flatten()
+        )
+        edoxy_arr = (
+            np.full(nol, edoxy) if np.isscalar(edoxy) else np.asarray(edoxy).flatten()
+        )
+        epres_arr = (
+            np.full(nol, epres) if np.isscalar(epres) else np.asarray(epres).flatten()
+        )
         # Stack into (nol, 4) matrix and square
-        error_matrix = np.column_stack([etemp_arr, epsal_arr, edoxy_arr, epres_arr])**2 
+        error_matrix = (
+            np.column_stack([etemp_arr, epsal_arr, edoxy_arr, epres_arr]) ** 2
+        )
 
         for i in range(4):
             for j in range(i, 4):
-                inx_i = canyonb_results[self._parameters[i]][f'{self._parameters[i]}_inx']  
-                inx_j = canyonb_results[self._parameters[j]][f'{self._parameters[j]}_inx'] 
+                inx_i = canyonb_results[self._parameters[i]][
+                    f"{self._parameters[i]}_inx"
+                ]
+                inx_j = canyonb_results[self._parameters[j]][
+                    f"{self._parameters[j]}_inx"
+                ]
                 canyon_cov[i, j, :] = np.sum(inx_i * inx_j * error_matrix, axis=1)
                 canyon_cov[j, i, :] = canyon_cov[i, j, :]
 
@@ -263,19 +271,19 @@ class CONTENT(ArgoAccessorExtension):
         # CANYON-B estimation uncertainty
         cyr = canyon_cov * 0
 
-        # Full variance on diagonal: 
+        # Full variance on diagonal:
         # var(inputs)[local] + var(training data)[global] + var(MLP)[local]
-        sigma['AT'][:, 0] = canyonb_results['AT']['AT_ci']
-        canyon_cov[0, 0, :] = canyonb_results['AT']['AT_ci']**2
+        sigma["AT"][:, 0] = canyonb_results["AT"]["AT_ci"]
+        canyon_cov[0, 0, :] = canyonb_results["AT"]["AT_ci"] ** 2
 
-        sigma['DIC'][:, 0] = canyonb_results['DIC']['DIC_ci']
-        canyon_cov[1, 1, :] = canyonb_results['DIC']['DIC_ci']**2
+        sigma["DIC"][:, 0] = canyonb_results["DIC"]["DIC_ci"]
+        canyon_cov[1, 1, :] = canyonb_results["DIC"]["DIC_ci"] ** 2
 
-        sigma['pHT'][:, 0] = canyonb_results['pHT']['pHT_ci']
-        canyon_cov[2, 2, :] = canyonb_results['pHT']['pHT_ci']**2
+        sigma["pHT"][:, 0] = canyonb_results["pHT"]["pHT_ci"]
+        canyon_cov[2, 2, :] = canyonb_results["pHT"]["pHT_ci"] ** 2
 
-        sigma['pCO2'][:, 0] = canyonb_results['pCO2']['pCO2_ci']
-        canyon_cov[3, 3, :] = canyonb_results['pCO2']['pCO2_ci']**2
+        sigma["pCO2"][:, 0] = canyonb_results["pCO2"]["pCO2_ci"]
+        canyon_cov[3, 3, :] = canyonb_results["pCO2"]["pCO2_ci"] ** 2
 
         # Convert covariance matrices to correlation matrices
         for i in range(nol):
@@ -288,18 +296,15 @@ class CONTENT(ArgoAccessorExtension):
 
         # Create structured CANYONData object
         canyon_data = CANYONData(
-            b_raw=canyonb_results,
-            covariance=canyon_cov,
-            correlation=cyr
+            b_raw=canyonb_results, covariance=canyon_cov, correlation=cyr
         )
 
         return canyon_data, errors, rawout, sigma
-    
 
     def compute_derivatives_carbonate_system(
-            self,
-            canyon_data: CANYONData,
-            options: CalculationOptions = None,
+        self,
+        canyon_data: CANYONData,
+        options: CalculationOptions = None,
     ) -> np.ndarray:
         """
         Compute derivatives of carbonate system calculations for all 6 parameter pairs.
@@ -325,9 +330,9 @@ class CONTENT(ArgoAccessorExtension):
             salinity=self._obj.PSAL.values,
             temperature=self._obj.TEMP.values,
             pressure=self._obj.PRES.values,
-            total_silicate=canyon_data.b_raw['SiOH4']['SiOH4'],
-            total_phosphate=canyon_data.b_raw['PO4']['PO4'],
-            total_borate=0.0 # 0 following CONTENT matlab implementation
+            total_silicate=canyon_data.b_raw["SiOH4"]["SiOH4"],
+            total_phosphate=canyon_data.b_raw["PO4"]["PO4"],
+            total_borate=0.0,  # 0 following CONTENT matlab implementation
         )
 
         # Number of observations
@@ -338,10 +343,10 @@ class CONTENT(ArgoAccessorExtension):
 
         # Parameter name mapping for derivatives
         parameters_derived = {
-            'AT': {'par1': 'd_alkalinity__d_par1', 'par2': 'd_alkalinity__d_par2'},
-            'DIC': {'par1': 'd_dic__d_par1', 'par2': 'd_dic__d_par2'},
-            'pHT': {'par1': 'd_pH__d_par1', 'par2': 'd_pH__d_par2'},
-            'pCO2': {'par1': 'd_pCO2__d_par1', 'par2': 'd_pCO2__d_par2'}
+            "AT": {"par1": "d_alkalinity__d_par1", "par2": "d_alkalinity__d_par2"},
+            "DIC": {"par1": "d_dic__d_par1", "par2": "d_dic__d_par2"},
+            "pHT": {"par1": "d_pH__d_par1", "par2": "d_pH__d_par2"},
+            "pCO2": {"par1": "d_pCO2__d_par1", "par2": "d_pCO2__d_par2"},
         }
 
         for p in range(6):
@@ -378,23 +383,23 @@ class CONTENT(ArgoAccessorExtension):
             out_param2 = self._parameters[self._outpar[p, 1]]
 
             # Store derivatives with respect to par1
-            dcout[self._inpar[p, 0], self._inpar[p, 1], 0, :] = (
-                deriv[parameters_derived[out_param1]['par1']]
-            )
-            dcout[self._inpar[p, 0], self._inpar[p, 1], 1, :] = (
-                deriv[parameters_derived[out_param2]['par1']]
-            )
+            dcout[self._inpar[p, 0], self._inpar[p, 1], 0, :] = deriv[
+                parameters_derived[out_param1]["par1"]
+            ]
+            dcout[self._inpar[p, 0], self._inpar[p, 1], 1, :] = deriv[
+                parameters_derived[out_param2]["par1"]
+            ]
 
             # Store derivatives with respect to par2
-            dcout[self._inpar[p, 1], self._inpar[p, 0], 0, :] = (
-                deriv[parameters_derived[out_param1]['par2']]
-            )
-            dcout[self._inpar[p, 1], self._inpar[p, 0], 1, :] = (
-                deriv[parameters_derived[out_param2]['par2']]
-            )
+            dcout[self._inpar[p, 1], self._inpar[p, 0], 0, :] = deriv[
+                parameters_derived[out_param1]["par2"]
+            ]
+            dcout[self._inpar[p, 1], self._inpar[p, 0], 1, :] = deriv[
+                parameters_derived[out_param2]["par2"]
+            ]
 
         return dcout
-    
+
     def compute_uncertainties_carbonate_system(
         self,
         canyon_data: CANYONData,
@@ -405,10 +410,10 @@ class CONTENT(ArgoAccessorExtension):
         options: CalculationOptions = None,
     ) -> tuple[dict, dict]:
         """
-        Compute carbonate system values and uncertainties for all 6 parameter pairs. 
+        Compute carbonate system values and uncertainties for all 6 parameter pairs.
         This function uses the K1K2 constants of Lueker et al, 2000, KSO4 of Dickson 1990 & TB of Uppstrom 1979
         and adds localized error calculations including parameter correlation due to common inputs.
-        
+
         Parameters
         ----------
         canyon_data : CANYONData
@@ -423,7 +428,7 @@ class CONTENT(ArgoAccessorExtension):
             Equilibrium constant uncertainties (uses defaults if None)
         options : CalculationOptions, optional
             PyCO2SYS calculation options (uses defaults if None)
-          
+
         Returns
         -------
         rawout : dict
@@ -443,13 +448,13 @@ class CONTENT(ArgoAccessorExtension):
             salinity=self._obj.PSAL.values,
             temperature=self._obj.TEMP.values,
             pressure=self._obj.PRES.values,
-            total_silicate=canyon_data.b_raw['SiOH4']['SiOH4'],
-            total_phosphate=canyon_data.b_raw['PO4']['PO4'],
-            total_borate=0.0 
+            total_silicate=canyon_data.b_raw["SiOH4"]["SiOH4"],
+            total_phosphate=canyon_data.b_raw["PO4"]["PO4"],
+            total_borate=0.0,
         )
 
         # Parameter name mapping for output
-        parameters_derived = dict(AT='alkalinity', DIC='dic', pHT='pH', pCO2='pCO2')
+        parameters_derived = dict(AT="alkalinity", DIC="dic", pHT="pH", pCO2="pCO2")
 
         # Loop over 6 parameter combinations
         for p in range(6):
@@ -475,7 +480,7 @@ class CONTENT(ArgoAccessorExtension):
                 errors=errors,
                 canyon_data=canyon_data,
                 constants=constants,
-                options=options
+                options=options,
             )
 
             # Get output parameter names
@@ -483,20 +488,28 @@ class CONTENT(ArgoAccessorExtension):
             out_param2 = self._parameters[self._outpar[p, 1]]
 
             # Store output values for the two derived parameters
-            rawout[out_param1][:, self._svi[p, 0]] = deriv[parameters_derived[out_param1]]
-            rawout[out_param2][:, self._svi[p, 1]] = deriv[parameters_derived[out_param2]]
+            rawout[out_param1][:, self._svi[p, 0]] = deriv[
+                parameters_derived[out_param1]
+            ]
+            rawout[out_param2][:, self._svi[p, 1]] = deriv[
+                parameters_derived[out_param2]
+            ]
 
             # Store uncertainty values
-            sigma[out_param1][:, self._svi[p, 0]] = uncertainties[parameters_derived[out_param1]]
-            sigma[out_param2][:, self._svi[p, 1]] = uncertainties[parameters_derived[out_param2]]
+            sigma[out_param1][:, self._svi[p, 0]] = uncertainties[
+                parameters_derived[out_param1]
+            ]
+            sigma[out_param2][:, self._svi[p, 1]] = uncertainties[
+                parameters_derived[out_param2]
+            ]
 
         return rawout, sigma
-    
+
     def compute_weighted_mean_covariance(
-            self,
-            dcout: np.ndarray,
-            canyon_data: CANYONData,
-            sigma: np.ndarray,
+        self,
+        dcout: np.ndarray,
+        canyon_data: CANYONData,
+        sigma: np.ndarray,
     ) -> dict:
         """
         Compute weighted mean and covariance for each carbonate parameter.
@@ -524,78 +537,107 @@ class CONTENT(ArgoAccessorExtension):
 
         for k in range(4):
             cocov[self._parameters[k]] = np.full((4, 4, nol), np.nan)
-            
+
             # Fill diagonal with variances
             for i in range(4):
-                cocov[self._parameters[k]][i, i, :] = sigma[self._parameters[k]][:, i]**2
-            
+                cocov[self._parameters[k]][i, i, :] = (
+                    sigma[self._parameters[k]][:, i] ** 2
+                )
+
             for p in range(6):
                 if k in self._outpar[p, :]:  # find calc (p) that calculated parameter k
                     i = np.where(self._outpar[p, :] == k)[0][0]
-                    
+
                     # Covariance from direct CANYON-B and calc (p): inpar[p,:]
                     cocov[self._parameters[k]][0, self._svi[p, i], :] = (
-                        1 * dcout[self._inpar[p, 0], self._inpar[p, 1], i, :] * canyon_data.covariance[k, self._inpar[p, 0], :] +
-                        1 * dcout[self._inpar[p, 1], self._inpar[p, 0], i, :] * canyon_data.covariance[k, self._inpar[p, 1], :]
+                        1
+                        * dcout[self._inpar[p, 0], self._inpar[p, 1], i, :]
+                        * canyon_data.covariance[k, self._inpar[p, 0], :]
+                        + 1
+                        * dcout[self._inpar[p, 1], self._inpar[p, 0], i, :]
+                        * canyon_data.covariance[k, self._inpar[p, 1], :]
                     )
-                    
+
                     # Mirror the covariance
-                    cocov[self._parameters[k]][self._svi[p, i], 0, :] = cocov[self._parameters[k]][0, self._svi[p, i], :]
-                    
+                    cocov[self._parameters[k]][self._svi[p, i], 0, :] = cocov[
+                        self._parameters[k]
+                    ][0, self._svi[p, i], :]
+
                     # Find second calc (o): inpar[o,:] for covariance term between calc (p) and calc (o)
-                    if p < 5:  
+                    if p < 5:
                         for o in range(p + 1, 6):
-                            if k in self._outpar[o, :]:  # find calc (o) that calculated parameter k
+                            if (
+                                k in self._outpar[o, :]
+                            ):  # find calc (o) that calculated parameter k
                                 j = np.where(self._outpar[o, :] == k)[0][0]
-                                
+
                                 # Covariance from calcs (p) and (o)
-                                cocov[self._parameters[k]][self._svi[p, i], self._svi[o, j], :] = (
-                                    dcout[self._inpar[p, 0], self._inpar[p, 1], i, :] * dcout[self._inpar[o, 0], self._inpar[o, 1], j, :] * canyon_data.covariance[self._inpar[p, 0], self._inpar[o, 0], :] +
-                                    dcout[self._inpar[p, 0], self._inpar[p, 1], i, :] * dcout[self._inpar[o, 1], self._inpar[o, 0], j, :] * canyon_data.covariance[self._inpar[p, 0], self._inpar[o, 1], :] +
-                                    dcout[self._inpar[p, 1], self._inpar[p, 0], i, :] * dcout[self._inpar[o, 0], self._inpar[o, 1], j, :] * canyon_data.covariance[self._inpar[p, 1], self._inpar[o, 0], :] +
-                                    dcout[self._inpar[p, 1], self._inpar[p, 0], i, :] * dcout[self._inpar[o, 1], self._inpar[o, 0], j, :] * canyon_data.covariance[self._inpar[p, 1], self._inpar[o, 1], :]
+                                cocov[self._parameters[k]][
+                                    self._svi[p, i], self._svi[o, j], :
+                                ] = (
+                                    dcout[self._inpar[p, 0], self._inpar[p, 1], i, :]
+                                    * dcout[self._inpar[o, 0], self._inpar[o, 1], j, :]
+                                    * canyon_data.covariance[
+                                        self._inpar[p, 0], self._inpar[o, 0], :
+                                    ]
+                                    + dcout[self._inpar[p, 0], self._inpar[p, 1], i, :]
+                                    * dcout[self._inpar[o, 1], self._inpar[o, 0], j, :]
+                                    * canyon_data.covariance[
+                                        self._inpar[p, 0], self._inpar[o, 1], :
+                                    ]
+                                    + dcout[self._inpar[p, 1], self._inpar[p, 0], i, :]
+                                    * dcout[self._inpar[o, 0], self._inpar[o, 1], j, :]
+                                    * canyon_data.covariance[
+                                        self._inpar[p, 1], self._inpar[o, 0], :
+                                    ]
+                                    + dcout[self._inpar[p, 1], self._inpar[p, 0], i, :]
+                                    * dcout[self._inpar[o, 1], self._inpar[o, 0], j, :]
+                                    * canyon_data.covariance[
+                                        self._inpar[p, 1], self._inpar[o, 1], :
+                                    ]
                                 )
-                                
+
                                 # Mirror the covariance
-                                cocov[self._parameters[k]][self._svi[o, j], self._svi[p, i], :] = cocov[self._parameters[k]][self._svi[p, i], self._svi[o, j], :]
+                                cocov[self._parameters[k]][
+                                    self._svi[o, j], self._svi[p, i], :
+                                ] = cocov[self._parameters[k]][
+                                    self._svi[p, i], self._svi[o, j], :
+                                ]
         return cocov
 
-    def define_weights(
-            self,
-            sigma:dict
-    ) -> dict:
+    def define_weights(self, sigma: dict) -> dict:
         """
         Define weights for each carbonate parameter based on uncertainties.
 
         Parameters
         ----------
         sigma : dict
-            Uncertainty arrays for each carbonate parameter 
+            Uncertainty arrays for each carbonate parameter
 
         Returns
         -------
         weights : dict
-            Weights for each carbonate parameter 
+            Weights for each carbonate parameter
         """
 
         weights = {}
 
         for i in range(4):
-            weights[self._parameters[i]] = 1 / sigma[self._parameters[i]]**2 # weights
-            weights[f"{self._parameters[i]}sum"] = np.sum(weights[self._parameters[i]], axis=1) # sum all to normalize weights to 1
+            weights[self._parameters[i]] = (
+                1 / sigma[self._parameters[i]] ** 2
+            )  # weights
+            weights[f"{self._parameters[i]}sum"] = np.sum(
+                weights[self._parameters[i]], axis=1
+            )  # sum all to normalize weights to 1
 
         return weights
-    
+
     def compute_final_output(
-            self,
-            rawout: dict,
-            sigma: dict,
-            cocov: dict,
-            canyon_data: CANYONData
+        self, rawout: dict, sigma: dict, cocov: dict, canyon_data: CANYONData
     ) -> dict:
         """
         Compute weighted mean outputs and their uncertainties for each carbonate parameter.
-        
+
         Parameters
         ----------
         rawout : dict
@@ -606,14 +648,14 @@ class CONTENT(ArgoAccessorExtension):
             Weighted mean covariance matrices for each carbonate parameter
         canyon_data : CANYONData
             CANYON-B predictions with raw results
-        
+
         Returns
         -------
         out : dict
             Final output dictionary containing:
             - {param}: weighted mean values for each carbonate parameter
             - {param}_sigma: total uncertainty
-            - {param}_sigma_min: minimum uncertainty 
+            - {param}_sigma_min: minimum uncertainty
             - {param}_raw: raw calculation values
             - sigma: record of weight sigmas
             - canyon_b_raw: CANYON-B structure
@@ -633,12 +675,16 @@ class CONTENT(ArgoAccessorExtension):
             param = self._parameters[i]
 
             # Weighted mean
-            out[param] = np.sum(w[param] * rawout[param], axis=1) / w[f"{param}sum"]  # / [param unit]
+            out[param] = (
+                np.sum(w[param] * rawout[param], axis=1) / w[f"{param}sum"]
+            )  # / [param unit]
 
             # Standard deviation about the mean (of weighted mean...; for 4 samples.)
             sigma_delta = np.sqrt(
-                np.sum(w[param] * (rawout[param] - out[param][:, np.newaxis])**2, axis=1) /
-                (w[f"{param}sum"] - np.sum(w[param]**2, axis=1) / w[f"{param}sum"])
+                np.sum(
+                    w[param] * (rawout[param] - out[param][:, np.newaxis]) ** 2, axis=1
+                )
+                / (w[f"{param}sum"] - np.sum(w[param] ** 2, axis=1) / w[f"{param}sum"])
             )  # / [param unit]; is localized
 
             # Std propagation from correlated inputs for weighted mean
@@ -648,7 +694,11 @@ class CONTENT(ArgoAccessorExtension):
             weighted_cov = np.zeros(nol)
             for row in range(4):
                 for col in range(4):
-                    weighted_cov += weight_ratio[:, row] * weight_ratio[:, col] * cocov[param][row, col, :]
+                    weighted_cov += (
+                        weight_ratio[:, row]
+                        * weight_ratio[:, col]
+                        * cocov[param][row, col, :]
+                    )
 
             sigma_propagated = np.sqrt(weighted_cov)  # / [param unit]; is localized
 
@@ -660,42 +710,38 @@ class CONTENT(ArgoAccessorExtension):
             param = self._parameters[i]
             out[f"{param}_raw"] = rawout[param]
 
-        out['sigma'] = sigma  # record of weight sigmas
-        out['canyon_b_raw'] = canyon_data.b_raw  # CANYON-B structure
+        out["sigma"] = sigma  # record of weight sigmas
+        out["canyon_b_raw"] = canyon_data.b_raw  # CANYON-B structure
 
         return out
 
     def _predict(
-            self,
-            epres: Optional[float] = None,
-            etemp: Optional[float] = None,
-            epsal: Optional[float] = None,
-            edoxy: Optional[Union[float, np.ndarray]] = None,
-        ) -> dict:
+        self,
+        epres: Optional[float] = None,
+        etemp: Optional[float] = None,
+        epsal: Optional[float] = None,
+        edoxy: Optional[Union[float, np.ndarray]] = None,
+    ) -> dict:
         """
         Predict CONTENT variables
-        
+
         Parameters
         ----------
         epres, etemp, epsal : float, optional
                 Input errors
         edoxy : float or array-like, optional
                 Oxygen input error (default: 1% of doxy)
-        
+
         Returns
         -------
-        predictions : dict 
+        predictions : dict
             Dictionary containing predicted variables with uncertainties
         """
 
         # Step 1: Get raw CANYON-B predictions for all carbonate parameters + nutrients
-        params_to_predict = ['AT', 'DIC', 'pHT', 'pCO2', 'PO4', 'SiOH4', 'NO3']
+        params_to_predict = ["AT", "DIC", "pHT", "pCO2", "PO4", "SiOH4", "NO3"]
         canyonb_results = self.get_canyon_b_raw_predictions(
-            params=params_to_predict,
-            epres=epres,
-            etemp=etemp,
-            epsal=epsal,
-            edoxy=edoxy
+            params=params_to_predict, epres=epres, etemp=etemp, epsal=epsal, edoxy=edoxy
         )
 
         # Step 2: Setup pre-carbonate calculations (covariance, correlation, etc.)
@@ -704,7 +750,7 @@ class CONTENT(ArgoAccessorExtension):
             epres=epres,
             etemp=etemp,
             epsal=epsal,
-            edoxy=edoxy
+            edoxy=edoxy,
         )
 
         # Step 3: Compute derivatives for carbonate system
@@ -712,38 +758,28 @@ class CONTENT(ArgoAccessorExtension):
 
         # Step 4: Compute uncertainties for carbonate system
         rawout, sigma = self.compute_uncertainties_carbonate_system(
-            canyon_data=canyon_data,
-            errors=errors,
-            rawout=rawout,
-            sigma=sigma
+            canyon_data=canyon_data, errors=errors, rawout=rawout, sigma=sigma
         )
 
         # Step 5: Compute weighted mean covariance
         cocov = self.compute_weighted_mean_covariance(
-            dcout=dcout,
-            canyon_data=canyon_data,
-            sigma=sigma
+            dcout=dcout, canyon_data=canyon_data, sigma=sigma
         )
 
         # Step 6: Compute final outputs
         results = self.compute_final_output(
-            rawout=rawout,
-            sigma=sigma,
-            cocov=cocov,
-            canyon_data=canyon_data
+            rawout=rawout, sigma=sigma, cocov=cocov, canyon_data=canyon_data
         )
 
         return results
 
-
-
     def predict(
-            self,
-            epres: Optional[float] = None,
-            etemp: Optional[float] = None,
-            epsal: Optional[float] = None,
-            edoxy: Optional[Union[float, np.ndarray]] = None,
-        ) -> xr.Dataset:
+        self,
+        epres: Optional[float] = None,
+        etemp: Optional[float] = None,
+        epsal: Optional[float] = None,
+        edoxy: Optional[Union[float, np.ndarray]] = None,
+    ) -> xr.Dataset:
         """
         Make predictions using the CONTENT method.
 
@@ -760,60 +796,61 @@ class CONTENT(ArgoAccessorExtension):
         """
 
         # By default, CONTENT needs all variables (carbonate + nutrients) except NO3 so we predict them all
-        prediction = self._predict(
-            epres=epres,
-            etemp=etemp,
-            epsal=epsal,
-            edoxy=edoxy
-        )
+        prediction = self._predict(epres=epres, etemp=etemp, epsal=epsal, edoxy=edoxy)
 
         for param in self._parameters:
             self._obj[param] = xr.zeros_like(self._obj["TEMP"])
             self._obj[param].attrs = self.get_param_attrs(param)
-            self._obj[param].values = prediction['canyon_b_raw'][param][param].astype(np.float32).squeeze()
+            self._obj[param].values = (
+                prediction["canyon_b_raw"][param][param].astype(np.float32).squeeze()
+            )
 
             # sigma
             self._obj[f"{param}_sigma"] = xr.zeros_like(self._obj[param])
             self._obj[f"{param}_sigma"].attrs = {
                 "long_name": f"Total uncertainty on {param} predicted using CONTENT",
-                "units": self._obj[param].attrs.get("units", "")
+                "units": self._obj[param].attrs.get("units", ""),
             }
-            self._obj[f"{param}_sigma"].values = prediction[f"{param}_sigma"].astype(np.float32).squeeze()
+            self._obj[f"{param}_sigma"].values = (
+                prediction[f"{param}_sigma"].astype(np.float32).squeeze()
+            )
 
             # sigma min
             self._obj[f"{param}_sigma_min"] = xr.zeros_like(self._obj[param])
             self._obj[f"{param}_sigma_min"].attrs = {
                 "long_name": f"Minimum uncertainty on {param} predicted using CONTENT",
-                "units": self._obj[param].attrs.get("units", "")
+                "units": self._obj[param].attrs.get("units", ""),
             }
-            self._obj[f"{param}_sigma_min"].values = prediction[f"{param}_sigma_min"].astype(np.float32).squeeze()
+            self._obj[f"{param}_sigma_min"].values = (
+                prediction[f"{param}_sigma_min"].astype(np.float32).squeeze()
+            )
 
             # raw values
             self._obj[f"{param}_raw"] = xr.DataArray(
                 data=prediction[f"{param}_raw"].astype(np.float32),
-                dims=('N_POINTS', 'N_CALCS'),
+                dims=("N_POINTS", "N_CALCS"),
                 coords={
-                    'N_POINTS': self._obj['N_POINTS'],
-                    'N_CALCS': np.arange(4) # TODO be more specific on N_CALCS
+                    "N_POINTS": self._obj["N_POINTS"],
+                    "N_CALCS": np.arange(4),  # TODO be more specific on N_CALCS
                 },
                 attrs={
                     "long_name": f"Raw calculated {param} TODO ",
-                    "units": self._obj[param].attrs.get("units", "")
-                }
+                    "units": self._obj[param].attrs.get("units", ""),
+                },
             )
 
             # sigma record
             self._obj[f"{param}_sigma_raw"] = xr.DataArray(
-                data=prediction['sigma'][param].astype(np.float32),
-                dims=('N_POINTS', 'N_CALCS'),
+                data=prediction["sigma"][param].astype(np.float32),
+                dims=("N_POINTS", "N_CALCS"),
                 coords={
-                    'N_POINTS': self._obj['N_POINTS'],
-                    'N_CALCS': np.arange(4) # TODO be more specific on N_CALCS
+                    "N_POINTS": self._obj["N_POINTS"],
+                    "N_CALCS": np.arange(4),  # TODO be more specific on N_CALCS
                 },
                 attrs={
                     "long_name": f"Raw calculated {param} TODO ",
-                    "units": self._obj[param].attrs.get("units", "")
-                }
+                    "units": self._obj[param].attrs.get("units", ""),
+                },
             )
 
         # Return xr.Dataset with predicted variables:
