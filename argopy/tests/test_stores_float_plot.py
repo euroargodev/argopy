@@ -61,15 +61,18 @@ class Test_FloatStore_PlotAccessor:
         with pytest.raises(ValueError):
             af.plot.map("NOT_A_BGC_PARAM", ds="Sprof")
         with pytest.raises(ValueError):
-            af.plot.map("DOXY", ds="prof")
+            af.plot.map("NOT_A_TRAJ_PARAM", ds="Rtraj")
 
     @requires_cartopy
     @pytest.mark.parametrize(
         "wmo", [VALID_WMO[0]], indirect=False, ids=[f"wmo={w}" for w in [VALID_WMO[0]]]
     )
-    def test_plot_map(self, wmo):
+    @pytest.mark.parametrize(
+        "pres", [0., 200.], indirect=False, ids=[f"pres={p}" for p in [0., 200.]]
+    )
+    def test_plot_map(self, wmo, pres):
         af = ArgoFloat(wmo, host=VALID_HOST, cache=True)
-        fig, ax, hdl = af.plot.map("TEMP", ds="prof")
+        fig, ax, hdl = af.plot.map("TEMP", pres=pres, ds="prof")
         assert isinstance(fig, mpl.figure.Figure)
         assert isinstance(ax, cartopy.mpl.geoaxes.GeoAxesSubplot)
         mpl.pyplot.close(fig)
@@ -89,13 +92,16 @@ class Test_FloatStore_PlotAccessor:
     @pytest.mark.parametrize(
         "cbar", [True, False], indirect=False, ids=[f"cbar={c}" for c in [True, False]]
     )
-    def test_plot_scatter(self, wmo, cbar):
+    @pytest.mark.parametrize(
+        "param", ["TEMP", "TEMP_QC"], indirect=False, ids=[f"param={p}" for p in ["TEMP", "TEMP_QC"]]
+    )
+    def test_plot_scatter(self, wmo, cbar, param):
         af = ArgoFloat(wmo, host=VALID_HOST, cache=True)
 
         if cbar:
-            fig, ax, m, cbar = af.plot.scatter("TEMP", ds="prof", cbar=cbar)
+            fig, ax, m, cbar = af.plot.scatter(param, ds="prof", cbar=cbar)
         else:
-            fig, ax, m = af.plot.scatter("TEMP", ds="prof", cbar=cbar)
+            fig, ax, m = af.plot.scatter(param, ds="prof", cbar=cbar)
 
         assert isinstance(fig, mpl.figure.Figure)
         assert isinstance(ax, mpl.axes.Axes)

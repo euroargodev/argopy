@@ -46,6 +46,19 @@ class ArgoIndexPlot(ArgoIndexPlotProto):
 
         idx.plot.bar(by='dac')
 
+    .. code-block:: python
+        :caption: Full index vs query results
+
+        from argopy import ArgoIndex
+        idx = ArgoIndex(index_file='bgc-s')
+        idx.query.params('CHLA')
+
+        idx.plot.bar(by='profiler')  # Plot query results (default)
+
+        idx.plot.bar(by='profiler', index=True)  # Force plot of full index
+
+
+
     See Also
     --------
     :class:`ArgoIndex.plot.trajectory`, :class:`ArgoIndex.plot.bar`

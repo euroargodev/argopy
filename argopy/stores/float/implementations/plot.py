@@ -1,8 +1,8 @@
 import numpy as np
 from typing import Any
 
-from ....plot import scatter_plot, scatter_map
-from ....utils.lists import list_multiprofile_file_variables, list_bgc_s_variables
+from ....plot import scatter_plot, scatter_map, ArgoColors
+from ....utils import list_multiprofile_file_variables, list_bgc_s_variables, to_list
 from ..extensions import ArgoFloatPlotProto
 
 
@@ -24,7 +24,7 @@ class ArgoFloatPlot(ArgoFloatPlotProto):
 
         af.plot.map('TEMP', pres=450, cmap='Spectral_r')
 
-        af.plot.map('DATA_MODE', cbar=False, legend=True)
+        af.plot.map('DATA_MODE')
 
         af.plot.scatter('PSAL')
 
@@ -143,8 +143,11 @@ class ArgoFloatPlot(ArgoFloatPlotProto):
 
             from argopy import ArgoFloat
             af = ArgoFloat(wmo)
-            af.plot.map('TEMP', pres=450, cmap='Spectral_r')
-            af.plot.map('DATA_MODE', cbar=False, legend=True)
+
+            af.plot.map('TEMP')  # Plot pressure level closest to 0 by default
+            af.plot.map('PSAL', pres=450.)
+            af.plot.map('PROFILE_TEMP_QC')
+            af.plot.map('DATA_MODE')
         """
 
         if ds == "prof" and param not in list_multiprofile_file_variables():
@@ -175,12 +178,29 @@ class ArgoFloatPlot(ArgoFloatPlotProto):
             N_LEVELS=0
         )
 
+        # Check if param will be plotted using a discrete and known Argo colormap
+        discrete, cmap = False, 'Spectral_r'
+        if "qc" in param.lower() or "mode" in param.lower():
+            discrete, cmap = True, None  # Let scatter_map guess cmap
+
+        if "N_LEVELS" in self._obj.dataset(ds)[param].dims:
+            legend_title = "%s @ %s PRES level in [%0.1f-%0.1f] db" % (
+                param,
+                select,
+                bins[0],
+                bins[1],
+            )
+        else:
+            legend_title = param
+
         default_kwargs = {
             "x": "LONGITUDE",
             "y": "LATITUDE",
             "hue": param,
-            "legend": False,
-            "cbar": True,
+            "cmap": cmap,
+            "legend": True if discrete else False,
+            "cbar": False if discrete else True,
+            "legend_title": legend_title,
         }
         this_kwargs = {**default_kwargs, **kwargs}
 
@@ -189,7 +209,7 @@ class ArgoFloatPlot(ArgoFloatPlotProto):
         return fig, ax, hdl
 
     def scatter(self, param, ds="prof", **kwargs) -> Any:
-        """Scatter plot for one dataset parameter
+        """Scatter plot for a 2-dimensional dataset parameter
 
         This method creates a 2D scatter plot with the :meth:`argopy.plot.scatter_plot` method.
 
@@ -207,6 +227,7 @@ class ArgoFloatPlot(ArgoFloatPlotProto):
                 - :class:`matplotlib.figure.Figure`
                 - :class:`matplotlib.axes.Axes`
                 - list of patches
+                - :class:`matplotlib.colorbar.Colorbar`
 
         Examples
         --------
@@ -214,7 +235,8 @@ class ArgoFloatPlot(ArgoFloatPlotProto):
 
             from argopy import ArgoFloat
             af = ArgoFloat(wmo)
-            af.plot.scatter('PSAL')
+            af.plot.scatter('TEMP')
+            af.plot.scatter('PSAL_QC')  # Appropriate colormap automatically selected
             af.plot.scatter('DOXY', ds='Sprof')
             af.plot.scatter('MEASUREMENT_CODE', ds='Rtraj')
 
@@ -238,9 +260,22 @@ class ArgoFloatPlot(ArgoFloatPlotProto):
         default_kwargs = {"this_x": "JULD", "cbar": True}
         this_kwargs = {**default_kwargs, **kwargs}
 
+        if "_QC" in param:
+            mycolors = ArgoColors('qc', 9)
+            this_kwargs.update({
+                "cmap": mycolors.cmap,
+                "vmin": 0,
+                "vmax": 9+1,
+            })
+
         if this_kwargs["cbar"]:
             fig, ax, m, cbar = scatter_plot(this_ds, param, **this_kwargs)
             ax.set_title(self._default_title)
+
+            if "_QC" in param:
+                cbar.set_ticks(to_list([k + 0.5 for k in mycolors.ticklabels.keys()]))
+                cbar.set_ticklabels(to_list([k for k in mycolors.ticklabels.values()]))
+
             return fig, ax, m, cbar
         else:
             fig, ax, m = scatter_plot(this_ds, param, **this_kwargs)
