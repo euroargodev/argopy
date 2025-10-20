@@ -7,7 +7,6 @@ We try to implement the following policy:
 - Increase *Minor* to highlight one important new feature, a batch of feature improvements, enforce deprecation policy.
 - Increase *Major* for significant refactoring, change in API facade or to highlight software/team milestone.
 
-
 Current versions of Argopy distributed with pypi and conda:
 
 ![argopy-pypi](https://img.shields.io/pypi/v/argopy) ![argopy-conda](https://img.shields.io/conda/vn/conda-forge/argopy?logo=anaconda)
