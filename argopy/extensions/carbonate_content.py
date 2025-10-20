@@ -210,17 +210,14 @@ class CONTENT(ArgoAccessorExtension):
         # covariance matrix of CANYON-B AT, CT, pH, pCO2 due to common inputs
         canyon_cov = np.full((4, 4, nol), np.nan)
 
-        # Create error array 
-        #error_matrix = np.array([etemp, epsal, edoxy, epres])**2                                                                                                                                                                                                      ╎│
-        # Create error array - ensure all errors are arrays of shape (nol,)                                                                                                                                                                                                 ╎│
-        # Then stack them to create (nol, 4) matrix matching Octave's [etemp(:) epsal(:) edoxy(:) epres(:)]                                                                                                                                                                 ╎│
+        # Create error array - ensure all errors are arrays of shape 
         etemp_arr = np.full(nol, etemp) if np.isscalar(etemp) else np.asarray(etemp).flatten()
         epsal_arr = np.full(nol, epsal) if np.isscalar(epsal) else np.asarray(epsal).flatten()
         edoxy_arr = np.full(nol, edoxy) if np.isscalar(edoxy) else np.asarray(edoxy).flatten()
         epres_arr = np.full(nol, epres) if np.isscalar(epres) else np.asarray(epres).flatten()
-        # Stack into (nol, 4) matrix and square: [etemp, epsal, edoxy, epres].^2                                                                                                                                                                                            ╎│
-        error_matrix = np.column_stack([etemp_arr, epsal_arr, edoxy_arr, epres_arr])**2  # shape: (nol, 4) 
-        
+        # Stack into (nol, 4) matrix and square
+        error_matrix = np.column_stack([etemp_arr, epsal_arr, edoxy_arr, epres_arr])**2 
+
         for i in range(4):
             for j in range(i, 4):
                 inx_i = canyonb_results[self._parameters[i]][f'{self._parameters[i]}_inx']  
