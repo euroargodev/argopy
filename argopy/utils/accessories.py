@@ -8,6 +8,7 @@ from typing import ClassVar
 import pandas as pd
 
 from .checkers import check_wmo, is_wmo
+from .format import urnparser
 
 
 log = logging.getLogger("argopy.utils.accessories")
@@ -265,6 +266,8 @@ class Registry(UserList):
 class NVSrow:
     """This proto makes it easier to work with a single NVS table row from a :class:`pd.DataFrame`
 
+    It will turn :class:`pd.DataFrame` columns into class attributes
+
     Examples
     --------
     .. code-block:: python
@@ -303,7 +306,10 @@ class NVSrow:
     """From 'definition' column"""
 
     uri: str = ""
-    """From 'ID' column"""
+    """From 'ID' column, typically a link toward NVS specific row entry"""
+
+    urn: str = ""
+    """From 'urn' column"""
 
     deprecated: bool = None
     """From 'deprecated' column"""
@@ -320,18 +326,25 @@ class NVSrow:
         self.definition = row["definition"]
         self.deprecated = row["deprecated"]
         self.uri = row["id"]
+        self.urn = row["urn"]
 
     @staticmethod
     def from_series(obj: pd.Series) -> "NVSrow":
         return NVSrow(obj)
 
+    @staticmethod
+    def from_df(df: pd.DataFrame, txt: str, column: str = 'altLabel') -> "NVSrow":
+        row = df[df[column].apply(lambda x: str(x) == str(txt))].iloc[0]
+        return NVSrow(row)
+
     def __eq__(self, obj):
         return self.name == obj
 
     def __repr__(self):
-        summary = [f"<{self.reftable}.row>"]
+        summary = [f"<{getattr(self, 'reftable', 'n/a')}.{self.urn}>"]
         summary.append(f"%12s: {self.name}" % "name")
         summary.append(f"%12s: {self.long_name}" % "long_name")
+        summary.append(f"%12s: {self.urn}" % "urn")
         summary.append(f"%12s: {self.uri}" % "uri")
         summary.append(f"%12s: {self.deprecated}" % "deprecated")
         summary.append("%12s: %s" % ("definition", self.definition))
