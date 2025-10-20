@@ -1,7 +1,7 @@
 {
   "name": "data_types",
   "long_name": "Expected data types of Argo variables",
-  "last_update": "2025-08-20T06:50:55.965456+00:00",
+  "last_update": "2025-10-19T19:06:04.934857+00:00",
   "data": {
     "str": [
       "ANOMALY",
@@ -94,6 +94,7 @@
       "NB_SAMPLE_MCOMS_DATA_MODE",
       "NB_SAMPLE_OCR_DATA_MODE",
       "NB_SAMPLE_OPTODE_DATA_MODE",
+      "NB_SAMPLE_SFET_DATA_MODE",
       "NB_SAMPLE_STM_DATA_MODE",
       "NB_SAMPLE_SUNA_DATA_MODE",
       "NITRATE_DATA_MODE",
@@ -170,6 +171,7 @@
       "PROFILE_NB_SAMPLE_OCR_QC",
       "PROFILE_NB_SAMPLE_OPTODE_QC",
       "PROFILE_NB_SAMPLE_QC",
+      "PROFILE_NB_SAMPLE_SFET_QC",
       "PROFILE_NB_SAMPLE_STM_QC",
       "PROFILE_NB_SAMPLE_SUNA_QC",
       "PROFILE_NITRATE_QC",
@@ -287,6 +289,8 @@
     "int": [
       "CONFIG_MISSION_NUMBER",
       "CYCLE_NUMBER",
+      "CYCLE_NUMBER_INDEX",
+      "CYCLE_NUMBER_INDEX_ADJUSTED",
       "JULD_ADJUSTED_STATUS",
       "JULD_ASCENT_END_STATUS",
       "JULD_ASCENT_START_STATUS",
