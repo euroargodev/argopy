@@ -10,8 +10,15 @@ What's New
 Coming up next (unreleased)
 ---------------------------
 
+Features and front-end API
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- **New colormap in** :class:`ArgoColors` **for whole profile QC flags**. See the new documentation section on :ref:`Argo colors` for more. (:pr:`515`) by |gmaze|.
+
+- **Improved** :class:`ArgoFloat.plot` **methods**: now auto-select colormap, colorbar and legend settings depending on the parameter to plot. Check the documentation at: :ref:`argofloat-visu`. (:pr:`515`) by |gmaze|.
+
 Internals
----------
+^^^^^^^^^
 
 - **Fix bug** whereby no static asset subfolders were included in the pypi and conda distribution, thus making the :class:`Dataset.argo.canyon_med` predictor to raise an error when predictions were triggered :issue:`530`. (:pr:`531`) by |gmaze|.
 
