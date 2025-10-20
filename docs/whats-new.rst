@@ -7,8 +7,10 @@ What's New
 
 |pypi dwn| |conda dwn|
 
-Coming up next (unreleased)
----------------------------
+v1.3.1 (xx Oct. 2025)
+---------------------
+
+.. _v1.3.1-features:
 
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -16,6 +18,8 @@ Features and front-end API
 - **New colormap in** :class:`ArgoColors` **for whole profile QC flags**. See the new documentation section on :ref:`Argo colors` for more. (:pr:`515`) by |gmaze|.
 
 - **Improved** :class:`ArgoFloat.plot` **methods**: now auto-select colormap, colorbar and legend settings depending on the parameter to plot. Check the documentation at: :ref:`argofloat-visu`. (:pr:`515`) by |gmaze|.
+
+.. _v1.3.1-internals:
 
 Internals
 ^^^^^^^^^
@@ -26,10 +30,17 @@ Internals
 
 - **Updated User-Agent header field for HTTP requests**. The default aiottp header field User-Agent is now complemented with Argopy information in order to ease server side log analysis. The User-Agent is now somethink like: ``"User-Agent": Python/3.11 aiohttp/3.12.14 Argopy/1.3.0 (+https://github.com/euroargodev/argopy)``, :issue:`533`. (:pr:`534`) by |gmaze|.
 
-- **New post method for the** :class:`stores.httpstore` by |gmaze|.
+- **New post method for the** :class:`stores.httpstore` allowing for HTTP POST methods to web-API, by |gmaze|.
 
 - **Fix upstream compatibility** whereby xarray >= 2025.8 deprecation cycle for changing default keyword arguments in :meth:`xarray.merge` and :meth:`xarray.concat` would make Argopy to fail with internal data processing, :issue:`521`. (:pr:`504`) by |gmaze|.
 
+
+.. _v1.3.1-energy:
+
+Energy
+^^^^^^
+
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.3.1%20%5BgCO2eq%5D-TBA-black?style=plastic&labelColor=grey
 
 v1.3.0 (22 Aug. 2025)
 ---------------------
