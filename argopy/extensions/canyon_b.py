@@ -148,7 +148,14 @@ class CanyonB(ArgoAccessorExtension):
 
     @property
     def decimal_year(self):
-        """Return the decimal year of the :class:`xr.Dataset` `TIME` variable"""
+        """
+        Return the decimal year representation of the dataset `TIME` variable.
+
+        Returns
+        -------
+        float or np.ndarray
+            Decimal year values
+        """
         time_array = self._obj[self._argo._TNAME]
         return time_array.dt.year + (
             86400 * time_array.dt.dayofyear
@@ -626,7 +633,7 @@ class CanyonB(ArgoAccessorExtension):
         Make predictions using the CANYON-B method.
 
         Estimates oceanic nutrients and/or carbonate system variables from
-        hydrographic data (T, S, O₂, P) using Bayesian neural network ensembles.
+        hydrographic data using Bayesian neural network ensembles.
 
         Parameters
         ----------
