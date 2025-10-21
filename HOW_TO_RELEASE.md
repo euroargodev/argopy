@@ -9,7 +9,7 @@ We try to implement the following policy:
 
 Current versions of Argopy distributed with pypi and conda are:
 
-![argopy-pypi](https://img.shields.io/pypi/v/argopy) ![argopy-conda](https://anaconda.org/conda-forge/argopy/badges/version.svg)
+![argopy-pypi](https://img.shields.io/pypi/v/argopy) ![argopy-conda](https://img.shields.io/conda/vn/conda-forge/argopy?logo=anaconda)
 
 # How to release a Patch
 
