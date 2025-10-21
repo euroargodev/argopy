@@ -18,7 +18,7 @@ dependencies:
   - xarray < 2024.3  # latest before xarray >=2025.7.0 requiring python >=3.11
 
 # EXT.UTIL:
-#  - PyCO2SYS
+#  - pyco2sys
 #  - gsw
 #  - tqdm
 
