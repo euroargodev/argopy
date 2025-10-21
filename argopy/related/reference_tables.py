@@ -1,8 +1,14 @@
 import pandas as pd
 from functools import lru_cache
 import collections
-from ..stores import httpstore
+from pathlib import Path
+
+from ..stores import httpstore, filestore
 from ..options import OPTIONS
+from ..utils import path2assets
+
+
+VALID_REF = filestore(cache=True).open_json(Path(path2assets).joinpath("nvs_reference_tables.json"))['data']['valid_ref']
 
 
 class ArgoNVSReferenceTables:
@@ -27,45 +33,13 @@ class ArgoNVSReferenceTables:
     >>> R.all_tbl
     >>> R.valid_ref
 
+    Notes
+    -----
+    This class relies on a list of valid reference table ids that is updated on every argopy release.
+
     """
+    valid_ref = VALID_REF.copy()
 
-    valid_ref = [
-        "R01",
-
-        "R03",
-        "R04",
-        "R05",
-        "R06",
-        "R07",
-        "R08",
-        "R09",
-        "R10",
-        "R11",
-        "R12",
-        "R13",
-        "R15",
-        "R16",
-
-        "R18",
-        "R19",
-        "R20",
-        "R21",
-        "R22",
-        "R23",
-        "R24",
-        "R25",
-        "R26",
-        "R27",
-        "R28",
-
-        "R40",
-
-        "RD2",
-        "RMC",
-        "RP2",
-        "RR2",
-        "RTV",
-    ]
     """List of all available Reference Tables"""
 
     def __init__(
@@ -81,14 +55,14 @@ class ArgoNVSReferenceTables:
         self.nvs = nvs
 
     def _valid_ref(self, rtid):
-        if rtid not in self.valid_ref:
+        if rtid.upper() not in self.valid_ref:
             rtid = "R%0.2d" % rtid
             if rtid not in self.valid_ref:
                 raise ValueError(
                     "Invalid Argo Reference Table, should be one in: %s"
                     % ", ".join(self.valid_ref)
                 )
-        return rtid
+        return rtid.upper()
 
     def _jsConcept2df(self, data):
         """Return all skos:Concept as class:`pandas.DataFrame`"""
