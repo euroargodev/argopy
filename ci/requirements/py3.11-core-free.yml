@@ -2,10 +2,10 @@ name: argopy-tests
 channels:
   - conda-forge
 dependencies:
-  - python = 3.11.14
+  - python = 3.11
 
 # CORE:
-  - aiohttp <= 3.12.15
+  - aiohttp
   - decorator
   - erddapy
   - fsspec
@@ -15,7 +15,7 @@ dependencies:
   - requests
   - scipy
   - toolz
-  - xarray >= 2025.7.0
+  - xarray >= 2025.7.0 <= 2025.9.0
 
 # EXT.UTIL:
 #  - gsw
@@ -43,7 +43,7 @@ dependencies:
 #  - seaborn
 
 # DEV:
-  - aiofiles = 24.1.0
+  - aiofiles
   - black
   - bottleneck
   - cfgrib
