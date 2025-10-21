@@ -7,8 +7,7 @@ We try to implement the following policy:
 - Increase *Minor* to highlight one important new feature, a batch of feature improvements, enforce deprecation policy.
 - Increase *Major* for significant refactoring, change in API facade or to highlight software/team milestone.
 
-
-Current versions of Argopy distributed with pypi and conda:
+Current versions of Argopy distributed with pypi and conda are:
 
 ![argopy-pypi](https://img.shields.io/pypi/v/argopy) ![argopy-conda](https://anaconda.org/conda-forge/argopy/badges/version.svg)
 
@@ -30,8 +29,7 @@ Don't change X Major and Y Minor, increase Z Patch only.
 Does not apply for Patch release. Only consider deprecation policy for Major or Minor releases.
 
 ### Update static content
-- [ ] Update list of valid Reference tables from the [NVS server](https://vocab.nerc.ac.uk/collection/?filter=Argo)
-- [ ] Update [static assets files](https://github.com/euroargodev/argopy/tree/master/argopy/static/assets)
+- [ ] Update [static asset files](https://github.com/euroargodev/argopy/tree/master/argopy/static/assets) using the CLI [update_json_assets](https://github.com/euroargodev/argopy/tree/master/argopy/cli/update_json_assets) command.
 - [ ] Update the [cheatsheet PDF](https://github.com/euroargodev/argopy/blob/master/docs/_static/argopy-cheatsheet.pdf) with all new release features, if any.
 
 ### Code clean-up and update
@@ -39,10 +37,8 @@ Does not apply for Patch release. Only consider deprecation policy for Major or 
 - [ ] Run [flake8](https://github.com/PyCQA/flake8) from repo root and fix errors
 
 ### Software distribution readiness
-- [ ] Manually trigger [upstream CI tests](https://github.com/euroargodev/argopy/actions/workflows/pytests-upstream.yml) for the release branch and ensure they are passed
-
-If this Patch release requires changes to pinned dependencies to fix a bug:
-  - [ ] Update pinned versions in ``./ci/requirements/py*-*-pinned.yml`` environment files using [upstream CI tests](https://github.com/euroargodev/argopy/actions/workflows/pytests-upstream.yml) information
+If this Patch release requires a change in pinned dependencies to fix a bug, then:
+  - [ ] Update pinned versions in ``./ci/requirements/py*-*-pinned.yml`` environment files
   - [ ] Possibly update ``./requirements.txt`` and ``./docs/requirements.txt`` if the oldest dependencies versions were upgraded
   - [ ] Make sure that all CI tests are passed
   - [ ] Make sure the documentation for this release branch is [built on RTD](https://app.readthedocs.org/projects/argopy/builds/)
@@ -62,7 +58,6 @@ Choose a release tag vX.Y.Z, fill in the release title and click on the `Auto-ge
 
 ## CI tests / RTD build results
 [![CI tests](https://github.com/euroargodev/argopy/actions/workflows/pytests.yml/badge.svg?branch=releasevX.Y.Z)](https://github.com/euroargodev/argopy/actions/workflows/pytests.yml) 
-[![CI tests Upstream](https://github.com/euroargodev/argopy/actions/workflows/pytests-upstream.yml/badge.svg?branch=releasevX.Y.Z)](https://github.com/euroargodev/argopy/actions/workflows/pytests-upstream.yml)
 [![Documentation Status](https://readthedocs.org/projects/argopy/badge/?version=releasevX.Y.Z)](https://argopy.readthedocs.io/en/releasevX.Y.Z)
 
 
@@ -74,7 +69,7 @@ Choose a release tag vX.Y.Z, fill in the release title and click on the `Auto-ge
 
 ## Setup
 
-- [ ] Create a new branch for this release: ``git checkout -b releasevX.Y.0``
+- [ ] Create a new branch for this release: ``git checkout -b releasevX.Y.Z``
 - [ ] Update release version in ``./docs/whats-new.rst``
 - [ ] Increase release version in ``./setup.py``
 - [ ] Create a PR to prepare it, copy/paste this section to the PR description.
@@ -87,12 +82,12 @@ Choose a release tag vX.Y.Z, fill in the release title and click on the `Auto-ge
   - [ ] If code is marked as deprecated since version = vX.Y.Z : do nothing (first version with deprecation warning)
   - [ ] If code is marked as deprecated since version = vX.(Y-1).Z : do nothing (2nd and last version with deprecation warning)
   - [ ] If code is marked as deprecated since version = vX.(Y-2).Z : delete code (code will raise an error)
-- [ ] Update the documentation according to new deprecations (eg: "Code marked as deprecated since vX.(Y-2).Z will raise an issue").
+- [ ] Update the documentation file ``whats-new.rst`` section `Internals` of this release with the list of class/methods that have been deleted.
 
 ### Update static content
 
 #### CI tests data
-- [ ] Update CI tests data used by mocked ftp and http servers. Use CLI [citests_httpdata_manager](https://github.com/euroargodev/argopy/blob/master/cli/citests_httpdata_manager):
+- [ ] Update CI tests data used by mocked ftp and http servers. Use the CLI [citests_httpdata_manager](https://github.com/euroargodev/argopy/blob/master/cli/citests_httpdata_manager):
   ```bash
   cd cli
   ./citests_httpdata_manager -a clear --force --refresh
@@ -101,8 +96,7 @@ Choose a release tag vX.Y.Z, fill in the release title and click on the `Auto-ge
   ```
   
 #### Library static assets
-- [ ] Update list of valid Reference tables from the [NVS server](https://vocab.nerc.ac.uk/collection/?filter=Argo)
-- [ ] Update [static assets files](https://github.com/euroargodev/argopy/tree/master/argopy/static/assets)
+- [ ] Update [static asset files](https://github.com/euroargodev/argopy/tree/master/argopy/static/assets) using the CLI [update_json_assets](https://github.com/euroargodev/argopy/tree/master/argopy/cli/update_json_assets) command.
 - [ ] Update [cheatsheet PDF](https://github.com/euroargodev/argopy/blob/master/docs/_static/argopy-cheatsheet.pdf) with all new release features.
 
 ### Code clean-up and update
@@ -110,9 +104,7 @@ Choose a release tag vX.Y.Z, fill in the release title and click on the `Auto-ge
 - [ ] Run [flake8](https://github.com/PyCQA/flake8) from repo root and fix errors
 
 ### Software distribution readiness
-- [ ] Manually trigger [upstream CI tests](https://github.com/euroargodev/argopy/actions/workflows/pytests-upstream.yml) for the release branch and ensure they are passed
-- [ ] Update pinned dependencies versions in ``./ci/requirements/py*-*-pinned.yml`` environment files using [upstream CI tests](https://github.com/euroargodev/argopy/actions/workflows/pytests-upstream.yml) information
-- [ ] Possibly update ``./requirements.txt`` and ``./docs/requirements.txt`` if the oldest dependencies versions were upgraded
+- [ ] Possibly update ``./requirements.txt`` and ``./docs/requirements.txt`` if the dependencies versions were upgraded for a bug fix or new feature.
 - [ ] Make sure that all CI tests are passed
 - [ ] Make sure the documentation for this release branch is [built on RTD](https://app.readthedocs.org/projects/argopy/builds/)
 
@@ -132,5 +124,4 @@ Choose a release tag vX.Y.Z, fill in the release title and click on the `Auto-ge
 
 ## CI tests / RTD build results
 [![CI tests](https://github.com/euroargodev/argopy/actions/workflows/pytests.yml/badge.svg?branch=releasevX.Y.Z)](https://github.com/euroargodev/argopy/actions/workflows/pytests.yml) 
-[![CI tests Upstream](https://github.com/euroargodev/argopy/actions/workflows/pytests-upstream.yml/badge.svg?branch=releasevX.Y.Z)](https://github.com/euroargodev/argopy/actions/workflows/pytests-upstream.yml)
 [![Documentation Status](https://readthedocs.org/projects/argopy/badge/?version=releasevX.Y.Z)](https://argopy.readthedocs.io/en/releasevX.Y.Z)
