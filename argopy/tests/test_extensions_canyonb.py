@@ -49,10 +49,6 @@ def test_predict_single_param(fetcher, param, mocked_erddapserver):
     ds = ds.argo.canyon_b.predict(param)
 
     assert param in ds
-    assert f"{param}_ci" in ds
-    assert f"{param}_cim" in ds
-    assert f"{param}_cin" in ds
-    assert f"{param}_cii" in ds
 
 
 def test_predict_with_custom_errors(fetcher, mocked_erddapserver):
@@ -63,10 +59,16 @@ def test_predict_with_custom_errors(fetcher, mocked_erddapserver):
     )
 
     assert "PO4" in ds
-    assert "PO4_ci" in ds
-    assert "PO4_cim" in ds
-    assert "PO4_cin" in ds
-    assert "PO4_cii" in ds
+
+
+def test_predict_with_array_edoxy(fetcher, mocked_erddapserver):
+    """Test CANYON-B prediction with array oxygen errors"""
+    ds = fetcher.to_xarray()
+    nol = ds.argo.N_POINTS
+    edoxy_array = np.full(nol, 0.01)
+
+    ds = ds.argo.canyon_b.predict('PO4', edoxy=edoxy_array)
+    assert 'PO4' in ds
 
 
 def test_predict_invalid_param(fetcher, mocked_erddapserver):
@@ -75,6 +77,24 @@ def test_predict_invalid_param(fetcher, mocked_erddapserver):
 
     with pytest.raises(ValueError, match="Invalid parameter"):
         ds.argo.canyon_b.predict("INVALID_PARAM")
+
+
+def test_predict_private_uncertainties(fetcher, mocked_erddapserver):
+    """Test that _predict() returns all uncertainty components"""
+    ds = fetcher.to_xarray()
+    result = ds.argo.canyon_b._predict('PO4')
+
+    # Check that all uncertainty components are present
+    assert 'PO4' in result
+    assert 'PO4_ci' in result
+    assert 'PO4_cim' in result
+    assert 'PO4_cin' in result
+    assert 'PO4_cii' in result
+    assert 'PO4_inx' in result
+
+    # Check shapes are correct
+    nol = ds.argo.N_POINTS
+    assert result['PO4'].shape[0] == nol
 
 
 def test_ds2df(fetcher, mocked_erddapserver):
@@ -123,3 +143,34 @@ def test_load_weights(fetcher, mocked_erddapserver):
         assert hasattr(weights, "shape")
         assert weights.shape[0] > 0
         assert weights.shape[1] > 0
+
+
+def test_decimal_year(fetcher, mocked_erddapserver):
+    """Test decimal year calculation"""
+    ds = fetcher.to_xarray()
+    dec_year = ds.argo.canyon_b.decimal_year
+    
+    # Check it has same length as data
+    assert len(dec_year) == len(ds.argo.canyon_b._obj[ds.argo.canyon_b._argo._TNAME])
+
+
+@pytest.mark.parametrize(
+      "param,expected_unit",
+      [
+          ("PO4", "micromole/kg"),
+          ("NO3", "micromole/kg"),
+          ("pHT", "insitu total scale"),
+          ("pCO2", "micro atm"),
+      ],
+  )
+
+def test_get_param_attrs(fetcher, param, expected_unit, mocked_erddapserver):
+    """Test parameter attributes are correctly defined"""
+    ds = fetcher.to_xarray()
+    attrs = ds.argo.canyon_b.get_param_attrs(param)
+
+    assert 'units' in attrs
+    assert 'long_name' in attrs
+    assert 'comment' in attrs
+    assert 'reference' in attrs
+    assert attrs['units'] == expected_unit
