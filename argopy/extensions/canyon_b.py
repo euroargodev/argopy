@@ -3,7 +3,13 @@ from typing import Union, List, Optional
 import pandas as pd
 import numpy as np
 import xarray as xr
-import PyCO2SYS as pyco2
+
+try:
+    import PyCO2SYS as pyco2
+    HAS_PYCO2SYS = True
+except ImportError:
+    HAS_PYCO2SYS = False
+    pyco2 = None
 
 from ..errors import InvalidDatasetStructure, DataNotFound
 from ..utils import path2assets, to_list, point_in_polygon
@@ -29,7 +35,8 @@ class CanyonB(ArgoAccessorExtension):
         ArgoSet = DataFetcher(ds='bgc', mode='standard', params='DOXY', measured='DOXY').float(1902605)
         ds = ArgoSet.to_xarray()
 
-    Once input data are loaded, make all or selected parameters predictions:
+    Once input data are loaded, make all or selected parameters predictions with or without specifying input errors
+    on pressure (epres, in dbar), temperature (etemp, in °C), salinity (epsal, in PSU) and oxygen (edoxy, in micromole/kg):
 
     .. code-block:: python
 
@@ -38,6 +45,12 @@ class CanyonB(ArgoAccessorExtension):
         ds.argo.canyon_b.predict(['PO4', 'NO3'])
         ds.argo.canyon_b.predict(['PO4', 'NO3'], epres=0.5, etemp=0.005, epsal=0.005, edoxy=0.01)
 
+    By default, if no input errors are specified, the following default values are used:
+        - epres = 0.5 dbar
+        - etemp = 0.005 °C
+        - epsal = 0.005 PSU
+        - edoxy = 1% of DOXY value
+
     Notes
     -----
     This Python implementation is largely inspired by work from Raphaël Bajon (https://github.com/RaphaelBajon)
@@ -45,11 +58,9 @@ class CanyonB(ArgoAccessorExtension):
 
     References
     ----------
+    .. [1] Bittig, H. C., Steinhoff, T., Claustre, H., Fiedler, B., Williams, N. L., Sauzède, R., Körtzinger, A., and Gattuso, J. P. (2018). An alternative to static climatologies: Robust estimation of open ocean CO2 variables and nutrient concentrations from T, S, and O2 data using Bayesian neural networks. Frontiers in Marine Science, 5, 328. https://doi.org/10.3389/fmars.2018.00328
 
-    .. [1] Bittig, H. C., Steinhoff, T., Claustre, H., Fiedler, B., Williams, N. L., Sauzède, R., Körtzinger, A., and Gattuso, J. P. (2018). An alternative to static climatologies: Robust estimation of open ocean CO2 variables and nutrient concentrations from T, S, and O2 data using Bayesian neural networks. Frontiers in Marine Science, 5, 328. doi:10.3389/fmars.2018.00328
-
-    .. [2] Sauzède, R., Bittig, H. C., Claustre, H., Pasqueron de Fommervault, O., Gattuso, J. P., Legendre, L., and Johnson, K. S. (2017). Estimates of water-column nutrient concentrations and carbonate system parameters in the global ocean: A novel approach based on neural networks. Frontiers in Marine Science, 4, 128. doi:10.3389/fmars.2017.00128
-
+    .. [2] Sauzède, R., Bittig, H. C., Claustre, H., Pasqueron de Fommervault, O., Gattuso, J. P., Legendre, L., and Johnson, K. S. (2017). Estimates of water-column nutrient concentrations and carbonate system parameters in the global ocean: A novel approach based on neural networks. Frontiers in Marine Science, 4, 128. https://doi.org/10.3389/fmars.2017.00128
     """
 
     n_inputs = (
@@ -69,6 +80,12 @@ class CanyonB(ArgoAccessorExtension):
     """List of all possible output variables for CANYON-B"""
 
     def __init__(self, *args, **kwargs):
+        if not HAS_PYCO2SYS:
+            raise ImportError(
+                "PyCO2SYS is required for the canyon_b extension. "
+                "Install it with: pip install PyCO2SYS"
+            )
+
         super().__init__(*args, **kwargs)
 
         if self._argo._type != "point":
@@ -78,14 +95,37 @@ class CanyonB(ArgoAccessorExtension):
         if self._argo.N_POINTS == 0:
             raise DataNotFound("Empty dataset, no data to transform !")
 
-        # self.n_list = 5
         self.path2coef = Path(path2assets).joinpath(
             "canyon-b"
         )  # Path to CANYON-B assets
-        # self._input = None  # Private CANYON-MED input dataframe
 
     def get_param_attrs(self, param: str) -> dict:
-        """Provides attributes to be added to a given predicted parameter"""
+        """
+        Get attributes for a given predicted parameter.
+
+        Parameters
+        ----------
+        param : str
+            Parameter name. Valid options are:
+
+            - 'NO3': Nitrate
+            - 'PO4': Phosphate
+            - 'SiOH4': Silicate
+            - 'AT': Total alkalinity
+            - 'DIC': Dissolved inorganic carbon
+            - 'pHT': Total pH
+            - 'pCO2': Partial pressure of CO2
+
+        Returns
+        -------
+        dict
+            Attribute dictionary containing:
+
+            - 'units': Measurement units
+            - 'long_name': Descriptive parameter name
+            - 'comment': Data provenance note
+            - 'reference': CANYON-B digital object identifier (DOI)
+        """
         attrs = {}
         if param in ["NO3", "PO4", "SiOH4", "AT", "DIC"]:
             attrs.update({"units": "micromole/kg"})
@@ -120,7 +160,14 @@ class CanyonB(ArgoAccessorExtension):
 
     @property
     def decimal_year(self):
-        """Return the decimal year of the :class:`xr.Dataset` `TIME` variable"""
+        """
+        Return the decimal year representation of the dataset `TIME` variable.
+
+        Returns
+        -------
+        float or np.ndarray
+            Decimal year values
+        """
         time_array = self._obj[self._argo._TNAME]
         return time_array.dt.year + (
             86400 * time_array.dt.dayofyear
@@ -129,8 +176,32 @@ class CanyonB(ArgoAccessorExtension):
         ) / (365.0 * 24 * 60 * 60)
 
     def ds2df(self) -> pd.DataFrame:
-        """Create a CANYON-B input :class:`pd.DataFrame` from :class:`xr.Dataset`"""
+        """
+        Convert xarray Dataset to CANYON-B neural network input format.
 
+        Transforms the Argo xarray Dataset into a pandas DataFrame with
+        the required input variables for the CANYON-B neural network. Applies
+        Arctic latitude adjustments and modifies pressure values to account for
+        the large range of pressure values (from the surface to 4000 m depth) and
+        a non-homogeneous data distribution within this range, according to [1]_.
+
+        Returns
+        -------
+        pd.DataFrame
+            DataFrame with columns:
+
+            - 'lat': Latitude in degrees North (Arctic-adjusted if applicable)
+            - 'lon': Longitude in degrees East
+            - 'dec_year': Decimal year
+            - 'temp': Temperature (°C)
+            - 'psal': Salinity (PSU)
+            - 'doxy': Dissolved oxygen (µmol/kg)
+            - 'pres': Modified pressure for CANYON-B input (dimensionless)
+
+        References
+        ----------
+        .. [1] Fourrier, M., Coppola, L., Claustre, H., D’Ortenzio, F., Sauzède, R., and Gattuso, J.-P. (2020). A Regional Neural Network Approach to Estimate Water-Column Nutrient Concentrations and Carbonate System Variables in the Mediterranean Sea: CANYON-MED. Frontiers in Marine Science 7. https://doi.org/10.3389/fmars.2020.00620
+        """
         if self._obj.argo.N_POINTS > 1:
             df = pd.DataFrame(
                 {
@@ -161,13 +232,7 @@ class CanyonB(ArgoAccessorExtension):
                 orient="index",
             ).T
 
-        # Modify pressure
-        # > The pressure input is transformed according to the combination of a linear
-        # and a logistic curve to limit the degrees of freedom of the ANN in deep
-        # waters and to account for the large range of pressure values (from the
-        # surface to 4000 m depth) and a non-homogeneous distribution of data
-        # within this range
-        # See Eq. 3 in 10.3389/fmars.2020.00620
+        # Modify pressure according to Eq. 3 in 10.3389/fmars.2020.00620
         df["pres"] = df["pres"].apply(
             lambda x: (x / 2e4) + (1 / ((1 + np.exp(-x / 300)) ** 3))
         )
@@ -175,7 +240,29 @@ class CanyonB(ArgoAccessorExtension):
         return df
 
     def create_canyonb_input_matrix(self) -> np.ndarray:
-        """Create CANYON-B input matrix from :class:`xr.Dataset`"""
+        """
+        Create input matrix for CANYON-B neural network predictions.
+
+        Converts the xarray Dataset into a numpy array formatted for CANYON-B
+        neural network input.
+
+        Returns
+        -------
+        np.ndarray
+            Input matrix containing columns:
+
+            - Decimal year
+            - Normalized latitude
+            - Transformed longitude (see eq. (1) in [1]_)
+            - Temperature (°C)
+            - Practical salinity (PSU)
+            - Dissolved oxygen (μmol/kg)
+            - Transformed pressure (dimensionless)
+
+        References
+        ----------
+        .. [1] Bittig, H. C., Steinhoff, T., Claustre, H., Fiedler, B., Williams, N. L., Sauzède, R., Körtzinger, A., and Gattuso, J. P. (2018). An alternative to static climatologies: Robust estimation of open ocean CO2 variables and nutrient concentrations from T, S, and O2 data using Bayesian neural networks. Frontiers in Marine Science, 5, 328. https://doi.org/10.3389/fmars.2018.00328
+        """
         df = self.ds2df()
 
         # Create input matrix
@@ -194,19 +281,31 @@ class CanyonB(ArgoAccessorExtension):
 
         return data
 
-    # Latitude adjustment for polar shift
     def adjust_arctic_latitude(self, lat: np.ndarray, lon: np.ndarray) -> np.ndarray:
         """
         Adjust latitude for Arctic basin calculations.
 
-        Args:
-            lat: Latitudes to be adjusted
-            lon: Corresponding longitudes
+        This methods adjusts the latitude of all points inside the Arctic, west of the
+        Lomonosov ridge. This adjustement improves the predictions in the subpolar North
+        Pacific by artificially increasing the "length" of the Bering Strait (see [1]_ for details).
 
-        Returns:
-            np.ndarray: Ajusted latitudes
+        Parameters
+        ----------
+        lat : np.ndarray
+            Latitudes in degrees North
+        lon : np.ndarray
+            Longitudes in degrees East
+
+        Returns
+        -------
+        np.ndarray
+            Adjusted latitudes in degrees North
+
+        References
+        ----------
+        .. [1] Bittig, H. C., Steinhoff, T., Claustre, H., Fiedler, B., Williams, N. L., Sauzède, R., Körtzinger, A., and Gattuso, J. P. (2018). An alternative to static climatologies: Robust estimation of open ocean CO2 variables and nutrient concentrations from T, S, and O2 data using Bayesian neural networks. Frontiers in Marine Science, 5, 328. https://doi.org/10.3389/fmars.2018.00328
         """
-        # Points for Arctic basin 'West' of Lomonossov ridge
+        # Points for Arctic basin 'West' of Lomonosov ridge
         plon = np.array(
             [-180, -170, -85, -80, -37, -37, 143, 143, 180, 180, -180, -180]
         )
@@ -231,7 +330,28 @@ class CanyonB(ArgoAccessorExtension):
         return adjusted_lat
 
     def load_weights(self, param: str) -> pd.DataFrame:
-        """Load CANYON-B weights from assets folder"""
+        """
+        Load CANYON-B neural network weights for a specific parameter.
+
+        Parameters
+        ----------
+        param : str
+            Parameter name. Valid options are:
+
+            - 'NO3': Nitrate
+            - 'PO4': Phosphate
+            - 'SiOH4': Silicate
+            - 'AT': Total alkalinity
+            - 'DIC': Dissolved inorganic carbon
+            - 'pHT': Total pH
+            - 'pCO2': Partial pressure of CO2
+
+        Returns
+        -------
+        pd.DataFrame
+            DataFrame containing the neural network weights for the specified parameter.
+        """
+
         if param in ["AT", "pCO2", "NO3", "PO4", "SiOH4"]:
             weights = pd.read_csv(
                 self.path2coef.joinpath(f"wgts_{param}.txt"), header=None, sep="\t"
@@ -254,18 +374,47 @@ class CanyonB(ArgoAccessorExtension):
         etemp: Optional[float] = None,
         epsal: Optional[float] = None,
         edoxy: Optional[Union[float, np.ndarray]] = None,
-    ):
-        """Private predictor to be used for a single parameter
+    ) -> dict:
+        """
+        Predict a single biogeochemical parameter using CANYON-B neural networks.
+
+        This private method implements the CANYON-B Bayesian neural network ensemble
+        to estimate oceanic parameters from hydrographic data. It processes input data
+        through multiple neural networks and combines their predictions with uncertainty
+        estimates.
 
         Parameters
         ----------
-
         param : str
-            Parameters that will be predicted. Must be one of 'AT', 'DIC', 'pHT', 'pCO2', 'NO3', 'PO4', 'SiOH4'
-        epres, etemp, epsal : float, optional
-            Input errors
-        edoxy : float or array-like, optional
-            Oxygen input error (default: 1% of doxy)
+            Parameter to predict. Must be one of:
+            - 'AT': Total alkalinity (μmol/kg)
+            - 'DIC': Dissolved inorganic carbon (μmol/kg)
+            - 'pHT': pH on total scale
+            - 'pCO2': Partial pressure of CO₂ (μatm)
+            - 'NO3': Nitrate concentration (μmol/kg)
+            - 'PO4': Phosphate concentration (μmol/kg)
+            - 'SiOH4': Silicate concentration (μmol/kg)
+        epres : float, optional
+            Pressure measurement uncertainty in dbar (default: 0.5 dbar)
+        etemp : float, optional
+            Temperature measurement uncertainty in °C (default: 0.005 °C)
+        epsal : float, optional
+            Salinity measurement uncertainty (PSU, default: 0.005)
+        edoxy : float or np.ndarray, optional
+            Oxygen measurement uncertainty in μmol/kg. If not provided,
+            defaults to 1% of measured oxygen values. Can be a scalar
+            applied to all points or an array matching data dimensions.
+
+        Returns
+        -------
+        dict
+            Dictionary containing predicted parameter and associated uncertainties:
+            - param: Predicted parameter value
+            - param_ci: Predicted parameter value uncertainty
+            - param_cim: Parameter measurement uncertainty
+            - param_cin: Parameter uncertainty for Bayesian neural network mapping
+            - param_cii: Parameter uncertainty due to input errors
+            - param_inx: Input effects on parameter
         """
         # Get array shape and number of elements
         shape = self._obj[self._argo._TNAME].shape
@@ -275,9 +424,7 @@ class CanyonB(ArgoAccessorExtension):
         epres = 0.5 if epres is None else epres
         etemp = 0.005 if etemp is None else etemp
         epsal = 0.005 if epsal is None else epsal
-        edoxy = (
-            0.01 * self._obj.DOXY.values if edoxy is None else edoxy
-        )  # add case when DOXY_ADJUSTED is defined?
+        edoxy = 0.01 * self._obj.DOXY.values if edoxy is None else edoxy
 
         # Expand scalar error values
         errors = [epres, etemp, epsal, edoxy]
@@ -446,7 +593,7 @@ class CanyonB(ArgoAccessorExtension):
         out[f"{param}_cim"] = np.sqrt(cvalcimeas)
         out[f"{param}_cin"] = np.reshape(np.sqrt(cvalcib + cvalciw + cvalcu), shape)
         out[f"{param}_cii"] = np.reshape(np.sqrt(cvalcin), shape)
-        out[f"{param}_inx"] = inx[:, 4 : 8 + ioffset] # Input effects
+        out[f"{param}_inx"] = inx[:, 4 : 8 + ioffset]  # Input effects
 
         # pCO2
         if i == 3:
@@ -480,8 +627,9 @@ class CanyonB(ArgoAccessorExtension):
                 out[param + "_cim"], shape
             )
 
-            out[f"{param}_inx"] = outcalc["d_pCO2__d_par2"][:, None] * out[f"{param}_inx"]
-
+            out[f"{param}_inx"] = (
+                outcalc["d_pCO2__d_par2"][:, None] * out[f"{param}_inx"]
+            )
 
         return out
 
@@ -496,18 +644,39 @@ class CanyonB(ArgoAccessorExtension):
         """
         Make predictions using the CANYON-B method.
 
+        Estimates oceanic nutrients and/or carbonate system variables from
+        hydrographic data using Bayesian neural network ensembles.
+
         Parameters
         ----------
-        params: str, List[str], optional, default=None
-            List of parameters to predict. If None is specified, all possible parameters will be predicted.
-        epres, etemp, epsal : float, optional
-            Input errors
-        edoxy : float or array-like, optional
-            Oxygen input error (default: 1% of doxy)
+        params : str, list of str, or None, optional
+            Parameter(s) to predict. Valid options:
+
+            - 'AT': Total alkalinity (μmol/kg)
+            - 'DIC': Dissolved inorganic carbon (μmol/kg)
+            - 'pHT': pH on total scale
+            - 'pCO2': Partial pressure of CO₂ (μatm)
+            - 'NO3': Nitrate concentration (μmol/kg)
+            - 'PO4': Phosphate concentration (μmol/kg)
+            - 'SiOH4': Silicate concentration (μmol/kg)
+
+            If None (default), all seven parameters are predicted.
+
+        epres : float, optional
+            Pressure measurement uncertainty in dbar (default: 0.5 dbar)
+        etemp : float, optional
+            Temperature measurement uncertainty in °C (default: 0.005 °C)
+        epsal : float, optional
+            Salinity measurement uncertainty in PSU (default: 0.005)
+        edoxy : float or np.ndarray, optional
+            Oxygen measurement uncertainty in μmol/kg. If not provided,
+            defaults to 1% of measured oxygen values. Can be a scalar
+            applied to all points or an array matching data dimensions.
 
         Returns
         -------
-        :class:`xr.Dataset`
+        xr.Dataset
+            Input dataset augmented with predicted parameters.
         """
 
         # Validation of requested parameters to predict:
@@ -532,53 +701,6 @@ class CanyonB(ArgoAccessorExtension):
             self._obj[param] = xr.zeros_like(self._obj["TEMP"])
             self._obj[param].attrs = self.get_param_attrs(param)
             self._obj[param].values = out[param].astype(np.float32).squeeze()
-
-            # CI
-            self._obj[f"{param}_ci"] = xr.zeros_like(self._obj[param])
-            self._obj[f"{param}_ci"].attrs = self.get_param_attrs(param)
-            self._obj[f"{param}_ci"].attrs[
-                "long_name"
-            ] = f"Uncertainty on {self.get_param_attrs(param)['long_name']}"
-            self._obj[f"{param}_ci"].values = (
-                out[f"{param}_ci"].astype(np.float32).squeeze()
-            )
-
-            # CIM
-            cim_value = out[f"{param}_cim"]
-            if np.isscalar(cim_value):
-                self._obj[f"{param}_cim"] = xr.full_like(
-                    self._obj[param], fill_value=float(cim_value), dtype=np.float32
-                )
-            else:
-                self._obj[f"{param}_cim"] = xr.zeros_like(self._obj[param])
-                self._obj[f"{param}_cim"].values = cim_value.astype(
-                    np.float32
-                ).squeeze()
-            self._obj[f"{param}_cim"].attrs = self.get_param_attrs(param)
-            self._obj[f"{param}_cim"].attrs[
-                "long_name"
-            ] = f"Measurement uncertainty on {self.get_param_attrs(param)['long_name']}"
-
-            # CIN
-            self._obj[f"{param}_cin"] = xr.zeros_like(self._obj[param])
-            self._obj[f"{param}_cin"].attrs = self.get_param_attrs(param)
-            self._obj[f"{param}_cin"].attrs[
-                "long_name"
-            ] = f"Uncertainty for Bayesian neural network mapping on {self.get_param_attrs(param)['long_name']}"
-            self._obj[f"{param}_cin"].values = (
-                out[f"{param}_cin"].astype(np.float32).squeeze()
-            )
-
-            # CII
-            self._obj[f"{param}_cii"] = xr.zeros_like(self._obj[param])
-            self._obj[f"{param}_cii"].attrs = self.get_param_attrs(param)
-            self._obj[f"{param}_cii"].attrs[
-                "long_name"
-            ] = f"Uncertainty due to input errors on {self.get_param_attrs(param)['long_name']}"
-            self._obj[f"{param}_cii"].values = (
-                out[f"{param}_cii"].astype(np.float32).squeeze()
-            )
-
 
         # Return xr.Dataset with predicted variables:
         if self._argo:
