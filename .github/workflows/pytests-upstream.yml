@@ -5,10 +5,10 @@ name: CI tests Upstream
 on:
   schedule:
     - cron: "0 0 * * *" # Daily “At 00:00” UTC
-  workflow_dispatch: # allows you to trigger the workflow run manually
+  workflow_dispatch: # allows you to trigger the workflow manually if necessary
   pull_request:
     types: [synchronize]
-    
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -59,8 +59,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     needs: [detect-ci-trigger, detect-ci-skip]
     if: |
-        always()
-        && (
+        never()
+        || (
             (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
             || needs.detect-ci-trigger.outputs.triggered == 'true'
             || needs.detect-ci-skip.outputs.skipped == 'false'
@@ -166,8 +166,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     needs: [detect-ci-trigger, detect-ci-skip]
     if: |
-        always()
-        && (
+        never()
+        || (
             (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
             || needs.detect-ci-trigger.outputs.triggered == 'true'
             || needs.detect-ci-skip.outputs.skipped == 'false'
