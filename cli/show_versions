@@ -245,8 +245,8 @@ def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa
                             print(f"{comment} - {kf} = {stat}",
                                   file=file)  # Format like a conda env line, useful to update ci/requirements
                         else:
-                            # print(f"{comment} - {kf}", file=file)
-                            print(f"{comment} - {kf} <= {stat}", file=file)
+                            print(f"{comment} - {kf}", file=file)
+                            # print(f"{comment} - {kf} <= {stat}", file=file)
             else:
                 #   - pip:
                 #       - aioresponses==0.7.4
@@ -258,8 +258,8 @@ def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa
                         print(f"{comment} - {kf} == {stat}",
                               file=file)  # Format like a conda env line, useful to update ci/requirements
                     else:
-                        # print(f"{comment} - {kf}", file=file)
-                        print(f"{comment} - {kf} <= {stat}", file=file)
+                        print(f"{comment} - {kf}", file=file)
+                        # print(f"{comment} - {kf} <= {stat}", file=file)
 
     else:
 
