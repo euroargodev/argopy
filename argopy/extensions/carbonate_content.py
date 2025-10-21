@@ -1,7 +1,13 @@
 import numpy as np
 import xarray as xr
-import PyCO2SYS as pyco2
 from typing import Optional, Union
+
+try:
+    import PyCO2SYS as pyco2
+    HAS_PYCO2SYS = True
+except ImportError:
+    HAS_PYCO2SYS = False
+    pyco2 = None
 
 from ..errors import InvalidDatasetStructure, DataNotFound
 from . import register_argo_accessor, ArgoAccessorExtension
@@ -89,6 +95,12 @@ class CONTENT(ArgoAccessorExtension):
     _svi = np.array([[1, 3], [2, 2], [3, 3], [1, 2], [2, 3], [1, 1]])
 
     def __init__(self, *args, **kwargs):
+        if not HAS_PYCO2SYS:
+            raise ImportError(
+                "PyCO2SYS is required for the canyon_b extension. "
+                "Install it with: pip install PyCO2SYS"
+            )
+
         super().__init__(*args, **kwargs)
 
         if self._argo._type != "point":

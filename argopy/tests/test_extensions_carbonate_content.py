@@ -6,7 +6,9 @@ import xarray as xr
 from argopy import DataFetcher
 from mocked_http import mocked_server_address
 from mocked_http import mocked_httpserver as mocked_erddapserver
+from utils import requires_pyco2sys
 
+pytestmark = requires_pyco2sys
 
 log = logging.getLogger("argopy.tests.extensions.carbonate_content")
 USE_MOCKED_SERVER = True
