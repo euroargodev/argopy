@@ -3,7 +3,13 @@ from typing import Union, List, Optional
 import pandas as pd
 import numpy as np
 import xarray as xr
-import PyCO2SYS as pyco2
+
+try:
+    import PyCO2SYS as pyco2
+    HAS_PYCO2SYS = True
+except ImportError:
+    HAS_PYCO2SYS = False
+    pyco2 = None
 
 from ..errors import InvalidDatasetStructure, DataNotFound
 from ..utils import path2assets, to_list, point_in_polygon
@@ -74,6 +80,12 @@ class CanyonB(ArgoAccessorExtension):
     """List of all possible output variables for CANYON-B"""
 
     def __init__(self, *args, **kwargs):
+        if not HAS_PYCO2SYS:
+            raise ImportError(
+                "PyCO2SYS is required for the canyon_b extension. "
+                "Install it with: pip install PyCO2SYS"
+            )
+
         super().__init__(*args, **kwargs)
 
         if self._argo._type != "point":

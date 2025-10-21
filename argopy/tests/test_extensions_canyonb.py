@@ -5,6 +5,7 @@ import numpy as np
 from argopy import DataFetcher
 from mocked_http import mocked_server_address
 from mocked_http import mocked_httpserver as mocked_erddapserver
+from utils import requires_pyco2sys
 
 
 log = logging.getLogger("argopy.tests.extensions.canyonb")
@@ -26,6 +27,7 @@ def fetcher():
     return DataFetcher(**defaults_args).profile(5903248, 34)
 
 
+@requires_pyco2sys
 @pytest.mark.parametrize(
     "what",
     [None, "PO4", ["PO4", "pHT"]],
@@ -38,6 +40,7 @@ def test_predict(fetcher, what, mocked_erddapserver):
     assert "CANYON-B" in ds.attrs["Processing_history"]
 
 
+@requires_pyco2sys
 @pytest.mark.parametrize(
     "param",
     ["PO4", "NO3", "SiOH4", "AT", "DIC", "pHT", "pCO2"],
@@ -51,6 +54,7 @@ def test_predict_single_param(fetcher, param, mocked_erddapserver):
     assert param in ds
 
 
+@requires_pyco2sys
 def test_predict_with_custom_errors(fetcher, mocked_erddapserver):
     """Test CANYON-B prediction with custom input errors"""
     ds = fetcher.to_xarray()
@@ -61,6 +65,7 @@ def test_predict_with_custom_errors(fetcher, mocked_erddapserver):
     assert "PO4" in ds
 
 
+@requires_pyco2sys
 def test_predict_with_array_edoxy(fetcher, mocked_erddapserver):
     """Test CANYON-B prediction with array oxygen errors"""
     ds = fetcher.to_xarray()
@@ -71,6 +76,7 @@ def test_predict_with_array_edoxy(fetcher, mocked_erddapserver):
     assert 'PO4' in ds
 
 
+@requires_pyco2sys
 def test_predict_invalid_param(fetcher, mocked_erddapserver):
     """Test that invalid parameter raises ValueError"""
     ds = fetcher.to_xarray()
@@ -79,6 +85,7 @@ def test_predict_invalid_param(fetcher, mocked_erddapserver):
         ds.argo.canyon_b.predict("INVALID_PARAM")
 
 
+@requires_pyco2sys
 def test_predict_private_uncertainties(fetcher, mocked_erddapserver):
     """Test that _predict() returns all uncertainty components"""
     ds = fetcher.to_xarray()
