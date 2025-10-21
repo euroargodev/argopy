@@ -12,13 +12,13 @@ dependencies:
   - h5netcdf = 1.6.1
   - netCDF4 = 1.7.2
   - packaging = 24.2
-  - PyCO2SYS = 1.8.3
   - requests = 2.32.3
   - scipy = 1.15.2
   - toolz = 1.0.0
   - xarray = 2024.2.0
 
 # EXT.UTIL:
+  - PyCO2SYS = 1.8.3
   - gsw = 3.6.19
   - tqdm = 4.67.1
 

@@ -12,13 +12,13 @@ dependencies:
   - h5netcdf
   - netCDF4
   - packaging
-  - PyCO2SYS
   - requests
   - scipy
   - toolz
   - xarray >= 2025.7.0
 
 # EXT.UTIL:
+  - PyCO2SYS
   - gsw
   - tqdm
 
