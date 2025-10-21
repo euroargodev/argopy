@@ -158,13 +158,12 @@ def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa
             ("fsspec", get_version),
             ("aiohttp", get_version),
             ("packaging", get_version),
-            # will come with xarray, Using 'version' to make API compatible with several fsspec releases
             ("requests", get_version),
             ("toolz", get_version),
             ("decorator", get_version),
         ]),
         'ext.util': sorted([
-            ("gsw", get_version),   # Used by xarray accessor to compute new variables
+            ("gsw", get_version),
             ("tqdm", get_version),
         ]),
         "ext.files": sorted(
@@ -229,7 +228,6 @@ def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa
 
     # Print:
     if conda:
-        # print("\nSYSTEM", file=file)
         print("\n------", file=file)
         print(f"  - python = {sys.version.split('|')[0].strip()}", file=file)
 
@@ -247,7 +245,8 @@ def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa
                             print(f"{comment} - {kf} = {stat}",
                                   file=file)  # Format like a conda env line, useful to update ci/requirements
                         else:
-                            print(f"{comment} - {kf}", file=file)
+                            # print(f"{comment} - {kf}", file=file)
+                            print(f"{comment} - {kf} <= {stat}", file=file)
             else:
                 #   - pip:
                 #       - aioresponses==0.7.4
@@ -259,7 +258,8 @@ def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa
                         print(f"{comment} - {kf} == {stat}",
                               file=file)  # Format like a conda env line, useful to update ci/requirements
                     else:
-                        print(f"{comment} - {kf}", file=file)
+                        # print(f"{comment} - {kf}", file=file)
+                        print(f"{comment} - {kf} <= {stat}", file=file)
 
     else:
 
