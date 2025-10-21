@@ -1,0 +1,739 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+"""
+Create json data files for the static/assets folder of the library
+"""
+
+import json
+import pandas as pd
+import numpy as np
+from pathlib import Path
+import os
+from fsspec import filesystem
+
+import argopy
+from argopy import ArgoNVSReferenceTables
+from argopy.stores import httpstore, filestore
+from argopy.options import OPTIONS
+
+# Locate the static/assets folder of the library:
+ASSETS_FOLDER = Path(os.path.dirname(argopy.__file__)).joinpath("static", "assets")
+
+
+def save_data(file: str, name: str, long_name: str, data: dict):
+    """Save assets into a json file"""
+    data = {
+        "name": name,
+        "long_name": long_name,
+        "last_update": pd.to_datetime("now", utc=True).isoformat(),
+        "data": data,
+    }
+    file = file.replace(".json", "")
+    with open(ASSETS_FOLDER.joinpath(f"{file}.json"), "w") as f:
+        json.dump(data, f, indent=2)
+
+    print(f"SAVED: {file}.json with: {long_name}")
+
+
+def asset_data_types():
+    """For all possible Argo variables, give the expected data type"""
+
+    list_str = [
+        "PLATFORM_NUMBER",
+        "DATA_MODE",
+        "DIRECTION",
+        "DATA_CENTRE",
+        "DATA_TYPE",
+        "FORMAT_VERSION",
+        "HANDBOOK_VERSION",
+        "PROJECT_NAME",
+        "PI_NAME",
+        "STATION_PARAMETERS",
+        "DATA_CENTER",
+        "DC_REFERENCE",
+        "DATA_STATE_INDICATOR",
+        "PLATFORM_TYPE",
+        "FIRMWARE_VERSION",
+        "POSITIONING_SYSTEM",
+        "PARAMETER",
+        "SCIENTIFIC_CALIB_EQUATION",
+        "SCIENTIFIC_CALIB_COEFFICIENT",
+        "SCIENTIFIC_CALIB_COMMENT",
+        "HISTORY_INSTITUTION",
+        "HISTORY_STEP",
+        "HISTORY_SOFTWARE",
+        "HISTORY_SOFTWARE_RELEASE",
+        "HISTORY_REFERENCE",
+        "HISTORY_QCTEST",
+        "HISTORY_ACTION",
+        "HISTORY_PARAMETER",
+        "VERTICAL_SAMPLING_SCHEME",
+        "FLOAT_SERIAL_NO",
+        "PARAMETER_DATA_MODE",
+        # Trajectory file variables:
+        "TRAJECTORY_PARAMETERS",
+        "POSITION_ACCURACY",
+        "GROUNDED",
+        "SATELLITE_NAME",
+        "HISTORY_INDEX_DIMENSION",
+        # Technical file variables:
+        "TECHNICAL_PARAMETER_NAME",
+        "TECHNICAL_PARAMETER_VALUE",
+        "PTT",
+        # Metadata file variables:
+        "END_MISSION_STATUS",
+        "TRANS_SYSTEM",
+        "TRANS_SYSTEM_ID",
+        "TRANS_FREQUENCY",
+        "PLATFORM_FAMILY",
+        "PLATFORM_MAKER",
+        "MANUAL_VERSION",
+        "STANDARD_FORMAT_ID",
+        "DAC_FORMAT_ID",
+        "ANOMALY",
+        "BATTERY_TYPE",
+        "BATTERY_PACKS",
+        "CONTROLLER_BOARD_TYPE_PRIMARY",
+        "CONTROLLER_BOARD_TYPE_SECONDARY",
+        "CONTROLLER_BOARD_SERIAL_NO_PRIMARY",
+        "CONTROLLER_BOARD_SERIAL_NO_SECONDARY",
+        "SPECIAL_FEATURES",
+        "FLOAT_OWNER",
+        "OPERATING_INSTITUTION",
+        "CUSTOMISATION",
+        "DEPLOYMENT_PLATFORM",
+        "DEPLOYMENT_CRUISE_ID",
+        "DEPLOYMENT_REFERENCE_STATION_ID",
+        "LAUNCH_CONFIG_PARAMETER_NAME",
+        "CONFIG_PARAMETER_NAME",
+        "CONFIG_MISSION_COMMENT",
+        "SENSOR",
+        "SENSOR_MAKER",
+        "SENSOR_MODEL",
+        "SENSOR_SERIAL_NO",
+        "PARAMETER_SENSOR",
+        "PARAMETER_UNITS",
+        "PARAMETER_ACCURACY",
+        "PARAMETER_RESOLUTION",
+        "PREDEPLOYMENT_CALIB_EQUATION",
+        "PREDEPLOYMENT_CALIB_COEFFICIENT",
+        "PREDEPLOYMENT_CALIB_COMMENT",
+    ]
+    [
+        list_str.append("PROFILE_{}_QC".format(v))
+        for v in list(ArgoNVSReferenceTables().tbl(3)["altLabel"])
+    ]
+    [
+        list_str.append("{}_DATA_MODE".format(v))
+        for v in list(ArgoNVSReferenceTables().tbl(3)["altLabel"])
+    ]
+
+    list_int = [
+        "PLATFORM_NUMBER",
+        "WMO_INST_TYPE",
+        "CYCLE_NUMBER",
+        "CONFIG_MISSION_NUMBER",
+        # Trajectory file variables:
+        "JULD_STATUS",
+        "JULD_ADJUSTED_STATUS",
+        "JULD_DESCENT_START_STATUS",
+        "JULD_FIRST_STABILIZATION_STATUS",
+        "JULD_DESCENT_END_STATUS",
+        "JULD_PARK_START_STATUS",
+        "JULD_PARK_END_STATUS",
+        "JULD_DEEP_DESCENT_END_STATUS",
+        "JULD_DEEP_PARK_START_STATUS",
+        "JULD_DEEP_ASCENT_START_STATUS",
+        "JULD_ASCENT_START_STATUS",
+        "JULD_ASCENT_END_STATUS",
+        "JULD_TRANSMISSION_START_STATUS",
+        "JULD_FIRST_MESSAGE_STATUS",
+        "JULD_FIRST_LOCATION_STATUS",
+        "JULD_LAST_LOCATION_STATUS",
+        "JULD_LAST_MESSAGE_STATUS",
+        "JULD_TRANSMISSION_END_STATUS",
+        "REPRESENTATIVE_PARK_PRESSURE_STATUS",
+    ]
+
+    list_datetime = [
+        "REFERENCE_DATE_TIME",
+        "DATE_CREATION",
+        "DATE_UPDATE",
+        "JULD",
+        "JULD_LOCATION",
+        "SCIENTIFIC_CALIB_DATE",
+        "HISTORY_DATE",
+        "TIME",
+        # Metadata file variables:
+        "LAUNCH_DATE",
+        "START_DATE",
+        "STARTUP_DATE",
+        "END_MISSION_DATE",
+    ]
+
+    data = {
+        "str": list_str,
+        "int": list_int,
+        "datetime": list_datetime,
+    }
+    save_data(
+        file="data_types",
+        name="data_types",
+        long_name="Expected data types of Argo variables",
+        data=data,
+    )
+
+
+def asset_dict_institutions():
+    """Save NVS Reference table 4"""
+    nvs = ArgoNVSReferenceTables(cache=True)
+    institutions = {}
+    for row in nvs.tbl(4).iterrows():
+        institutions.update({row[1]["altLabel"]: row[1]["prefLabel"]})
+
+    save_data(
+        file="institutions",
+        name="institutions",
+        long_name="Institution names from Argo reference table 4",
+        data={
+            "institutions": institutions,
+        },
+    )
+
+
+def asset_dict_profilers():
+    """Save NVS Reference table 8"""
+    nvs = ArgoNVSReferenceTables(cache=True)
+    profilers = {}
+    for row in nvs.tbl(8).iterrows():
+        profilers.update({row[1]["altLabel"]: row[1]["prefLabel"]})
+
+    save_data(
+        file="profilers",
+        name="profilers",
+        long_name="Profiler codes and description from Argo reference table 8",
+        data={
+            "profilers": profilers,
+        },
+    )
+
+
+def asset_API_Coriolis():
+    # # API-Coriolis: parameter codes
+    #
+    # Content to work with https://api-coriolis.ifremer.fr/legacy/parameter?code=%s
+    #
+    # Make dict to work with parameter codes
+
+    fs = argopy.stores.httpstore(cache=True)
+
+    def get_codemeta(x):
+        try:
+            data = fs.open_json(
+                "https://api-coriolis.ifremer.fr/legacy/parameter?code=%s" % str(x)
+            )
+            return data
+        except:
+            return None
+
+    valid_codes = []
+    for code in np.arange(1, 1000):
+        code_meta = get_codemeta(code)
+        if code_meta:
+            # print(code, code_meta['label'])
+            valid_codes.append(int(code))
+    print("Found %i valid codes" % len(valid_codes))
+
+    def get_code_for_param(name):
+        strict = PARAMS.loc[PARAMS["gf3_strict_name"] == name]
+        extended = PARAMS.loc[PARAMS["gf3_extended_name"] == name]
+        if strict.shape[0] >= 1:
+            use = strict
+        else:
+            use = extended
+        return int(use["code"].values[0])
+
+    def get_param_for_code(code):
+        row = PARAMS.loc[PARAMS["code"] == str(code)]
+        if row["gf3_strict_name"].values[0]:
+            return row["gf3_strict_name"].values[0]
+        else:
+            return row["gf3_extended_name"].values[0]
+
+    # Retrieve data:
+    # parameter_codes = [28,35,30, 66,68,70, 67,69,71]  # core-Argo variables P,T,S (PARAM, PARAM_ADJUSTED, PARAM_ERROR)
+    parameter_codes = valid_codes
+    PARAMS = {
+        "unit": [],
+        "time_sampling": [],
+        "code": [],
+        "gf3_strict_name": [],
+        "gf3_extended_name": [],
+        "parent_code": [],
+        "label": [],
+        "param_type": [],
+    }
+    for code in parameter_codes:
+        code_meta = get_codemeta(code)
+        for key, value in code_meta.items():
+            PARAMS[key].append(value)
+    PARAMS = pd.DataFrame(PARAMS)
+
+    # Make useful dict to go from code to param and from param to code:
+    # (we also update the list of valid_codes to retain only those with a non-empty name)
+    code_to_param = {}
+    param_to_code = {}
+    record_valid_codes = []
+    for ii, param in PARAMS.iterrows():
+        param_name = get_param_for_code(param["code"])
+        param_code = get_code_for_param(param_name)
+        if param_name != "":
+            record_valid_codes.append(param_code)
+            code_to_param.update({str(param_code): param.to_dict()})
+            param_to_code.update({param_name: param.to_dict()})
+            # print(ii, param_code, param_name)
+
+    print("We'll record %i parameter data" % len(record_valid_codes))
+
+    save_data(
+        file="api_coriolis_parameter_codes",
+        name="Coriolis_parameters",
+        long_name="All valid requests to https://api-coriolis.ifremer.fr/legacy/parameter?code={code}",
+        data={
+            "valid_codes": [
+                str(v) for v in record_valid_codes
+            ],  # We use str because it's key to use in code_to_param dict
+            "valid_params": list(param_to_code.keys()),
+            "codes": code_to_param,
+            "params": param_to_code,
+        },
+    )
+
+
+def asset_ADMT_documentation():
+    """Catalogue for ArgoDocs"""
+
+    catalogue = [
+        {
+            "category": "Argo data formats",
+            "title": "Argo user's manual",
+            "doi": "10.13155/29825",
+            "id": 29825,
+        },
+        {
+            "category": "Quality control",
+            "title": "Argo Quality Control Manual for CTD and Trajectory Data",
+            "doi": "10.13155/33951",
+            "id": 33951,
+        },
+        {
+            "category": "Quality control",
+            "title": "Argo quality control manual for dissolved oxygen concentration",
+            "doi": "10.13155/46542",
+            "id": 46542,
+        },
+        {
+            "category": "Quality control",
+            "title": "Argo quality control manual for biogeochemical data",
+            "doi": "10.13155/40879",
+            "id": 40879,
+        },
+        {
+            "category": "Quality control",
+            "title": "BGC-Argo quality control manual for the Chlorophyll-A concentration",
+            "doi": "10.13155/35385",
+            "id": 35385,
+        },
+        {
+            "category": "Quality control",
+            "title": "BGC-Argo quality control manual for nitrate concentration",
+            "doi": "10.13155/84370",
+            "id": 84370,
+        },
+        {
+            "category": "Quality control",
+            "title": "Quality control for BGC-Argo radiometry",
+            "doi": "10.13155/62466",
+            "id": 62466,
+        },
+        {
+            "category": "Cookbooks",
+            "title": "Argo DAC profile cookbook",
+            "doi": "10.13155/41151",
+            "id": 41151,
+        },
+        {
+            "category": "Cookbooks",
+            "title": "Argo DAC trajectory cookbook",
+            "doi": "10.13155/29824",
+            "id": 29824,
+        },
+        {
+            "category": "Cookbooks",
+            "title": "DMQC Cookbook for Core Argo parameters",
+            "doi": "10.13155/78994",
+            "id": 78994,
+        },
+        {
+            "category": "Cookbooks",
+            "title": "Processing Argo oxygen data at the DAC level",
+            "doi": "10.13155/39795",
+            "id": 39795,
+        },
+        {
+            "category": "Cookbooks",
+            "title": "Processing Bio-Argo particle backscattering at the DAC level",
+            "doi": "10.13155/39459",
+            "id": 39459,
+        },
+        {
+            "category": "Cookbooks",
+            "title": "Processing BGC-Argo chlorophyll-A concentration at the DAC level",
+            "doi": "10.13155/39468",
+            "id": 39468,
+        },
+        {
+            "category": "Cookbooks",
+            "title": "Processing Argo measurement timing information at the DAC level",
+            "doi": "10.13155/47998",
+            "id": 47998,
+        },
+        {
+            "category": "Cookbooks",
+            "title": "Processing BGC-Argo CDOM concentration at the DAC level",
+            "doi": "10.13155/54541",
+            "id": 54541,
+        },
+        {
+            "category": "Cookbooks",
+            "title": "Processing Bio-Argo nitrate concentration at the DAC Level",
+            "doi": "10.13155/46121",
+            "id": 46121,
+        },
+        {
+            "category": "Cookbooks",
+            "title": "Processing BGC-Argo Radiometric data at the DAC level",
+            "doi": "10.13155/51541",
+            "id": 51541,
+        },
+        {
+            "category": "Cookbooks",
+            "title": "Processing BGC-Argo pH data at the DAC level",
+            "doi": "10.13155/57195",
+            "id": 57195,
+        },
+        {
+            "category": "Cookbooks",
+            "title": "Description of the Argo GDAC File Checks: Data Format and Consistency Checks",
+            "doi": "10.13155/46120",
+            "id": 46120,
+        },
+        {
+            "category": "Cookbooks",
+            "title": "Description of the Argo GDAC File Merge Process",
+            "doi": "10.13155/52154",
+            "id": 52154,
+        },
+        {
+            "category": "Cookbooks",
+            "title": "BGC-Argo synthetic profile file processing and format on Coriolis GDAC",
+            "doi": "10.13155/55637",
+            "id": 55637,
+        },
+        {
+            "category": "Cookbooks",
+            "title": "Argo GDAC cookbook",
+            "doi": "10.13155/46202",
+            "id": 46202,
+        },
+        {
+            "category": "Cookbooks",
+            "title": "Processing BGC-Argo pH data at the DAC level",
+            "doi": "10.13155/57195",
+            "id": 57195,
+        },
+        {
+            "category": "Cookbooks",
+            "title": "Processing BGC-Argo nitrate concentration at the DAC Level",
+            "doi": "10.13155/46121",
+            "id": 46121,
+        },
+        {
+            "category": "Cookbooks",
+            "title": "Processing BGC-Argo pH data at the DAC level",
+            "doi": "10.13155/57195",
+            "id": 57195,
+        },
+        {
+            "category": "Quality Control",
+            "title": "BGC-Argo quality control manual for pH",
+            "doi": "10.13155/97828",
+            "id": 97828,
+        },
+    ]
+
+    save_data(
+        file="admt_documentation_catalogue",
+        name="ADMT documentation catalogue",
+        long_name="Titles and DOIs of all the official ADMT documentation",
+        data={
+            "catalogue": catalogue,
+        },
+    )
+
+
+def asset_bgc_vars():
+    """List of BGC variables"""
+
+    # Synthetic file variables
+
+    # We get the list of variables from the ArgoIndex
+    from argopy import ArgoIndex
+    params = ArgoIndex(index_file='bgc-s').load().read_params()
+
+    # We get the list of variables from the Ifremer Erddap, serving the S files:
+    data = httpstore().open_json(
+        "https://erddap.ifremer.fr/erddap" + "/info/ArgoFloats-synthetic-BGC/index.json"
+    )
+    bgc_vlist_erddap = [
+        row[1].upper() for row in data["table"]["rows"] if row[0] == "variable"
+    ]
+    bgc_vlist_erddap.sort()
+
+    # ID parameters:
+    vlist = bgc_vlist_erddap.copy()
+    plist = []
+    for v in bgc_vlist_erddap:
+        if ("%s_QC" % v) in bgc_vlist_erddap \
+                and ("%s_ADJUSTED" % v) in bgc_vlist_erddap \
+                and ("%s_ADJUSTED_QC" % v) in bgc_vlist_erddap \
+                and ("%s_ADJUSTED_ERROR" % v) in bgc_vlist_erddap:
+            plist.append(v)
+            vlist.remove(v)
+            vlist.remove("%s_QC" % v)
+            # vlist.remove("%s_dPRES" % v)
+            vlist.remove("%s_ADJUSTED" % v)
+            vlist.remove("%s_ADJUSTED_QC" % v)
+            vlist.remove("%s_ADJUSTED_ERROR" % v)
+
+    # Not on the erddap:
+    [p for p in params if p not in plist]
+
+    save_data(
+        file="variables_bgc_synthetic",
+        name="BGC synthetic netcdf files variables",
+        long_name="Variables from the Ifremer Erddap ArgoFloats-synthetic-BGC dataset based on GDAC synthetic netcdf files",
+        data={
+            "variables": bgc_vlist_erddap,
+        },
+    )
+
+
+def asset_GDAC_servers():
+    """" List of valid Argo GDAC servers and shortcut dictionary"""
+
+    # Group by protocols
+    valid_gdac = ["https://data-argo.ifremer.fr",
+                  "https://usgodae.org/pub/outgoing/argo",
+                  "https://argo-gdac-sandbox.s3-eu-west-3.amazonaws.com/pub",
+                  "ftp://ftp.ifremer.fr/ifremer/argo",
+                  "s3://argo-gdac-sandbox/pub",
+                  ]
+
+    gdac_shortcuts = {
+        "http": "https://data-argo.ifremer.fr",
+        "https": "https://data-argo.ifremer.fr",
+        "fr-http": "https://data-argo.ifremer.fr",
+        "fr-https": "https://data-argo.ifremer.fr",
+        "us-http": "https://usgodae.org/pub/outgoing/argo",
+        "us-https": "https://usgodae.org/pub/outgoing/argo",
+        "ftp": "ftp://ftp.ifremer.fr/ifremer/argo",
+        "s3": "s3://argo-gdac-sandbox/pub",
+        "aws": "s3://argo-gdac-sandbox/pub",
+    }
+
+    save_data(file="gdac_servers",
+              name="gdac",
+              long_name="List of official Argo GDAC servers",
+              data={
+            'paths': valid_gdac,
+            'shortcuts': gdac_shortcuts,
+        })
+
+
+def asset_netcdf_json_schema():
+    """Netcdf json schema"""
+
+    class JSONEncoder(json.JSONEncoder):
+        def default(self, obj):
+            if isinstance(obj, pd._libs.tslibs.nattype.NaTType):
+                return None
+            if isinstance(obj, pd.Timestamp):
+                return obj.isoformat()
+            if isinstance(obj, pd.Timedelta):
+                return obj.isoformat()
+            if isinstance(obj, np.float32):
+                return obj.astype(float)
+            # 👇️ otherwise use the default behavior
+            return json.JSONEncoder.default(self, obj)
+
+    # Core / multi-profile
+    # Load a template from a real file:
+    ds = filestore().open_dataset('./jsonschema/src_netcdf/' + "6901929_prof.nc",
+                                  xr_opts={'engine': 'argo'})
+
+    # Make a json dict with the dataset schema
+    ds_schema = {}
+    ds_schema['dims'] = [d for d in ds.dims]
+    # ds_schema['coords'] = [c for c in ds.coords]
+    ds_schema['vars'] = {}
+    ds_schema['attrs'] = {}
+
+    for d in ds.data_vars:
+        dims = ds[d].dims
+        attrs = ds[d].attrs
+        attrs.pop('casted', None)
+        ds_schema['vars'].update({d: {'dims': dims,
+                                      'attrs': attrs,
+                                      'dtype': str(ds[d].dtype),
+                                     }})
+
+    ds_schema['attrs'] = ds.attrs.copy()
+    ds_schema['attrs']['history'] = "%s creation" % pd.to_datetime('now', utc=True).isoformat()
+
+    with open(ASSETS_FOLDER.joinpath("schema", "core-multi-prof.json"), "w") as f:
+        json.dump(ds_schema, f, indent=2, cls=JSONEncoder)
+
+    # BGC / synthetic / multi-profi
+    # Load a template from a real file:
+    ds = filestore().open_dataset('./jsonschema/src_netcdf/' + "3902131_Sprof.nc",
+                                  xr_opts={'engine': 'argo'})
+
+    # Make a json dict with the dataset schema
+    ds_schema = {}
+    ds_schema['dims'] = [d for d in ds.dims]
+    # ds_schema['coords'] = [c for c in ds.coords]
+    ds_schema['vars'] = {}
+    ds_schema['attrs'] = {}
+
+    for d in ds.data_vars:
+        dims = ds[d].dims
+        attrs = ds[d].attrs
+        attrs.pop('casted', None)
+        ds_schema['vars'].update({d: {'dims': dims,
+                                      'attrs': attrs,
+                                      'dtype': str(ds[d].dtype),
+                                     }})
+
+    ds_schema['attrs'] = ds.attrs.copy()
+    ds_schema['attrs']['history'] = "%s creation" % pd.to_datetime('now', utc=True).isoformat()
+
+    with open(ASSETS_FOLDER.joinpath("schema", "bgc-multi-prof.json"), "w") as f:
+        json.dump(ds_schema, f, indent=2, cls=JSONEncoder)
+
+
+def asset_sensor_schema():
+    """Argo sensor schema and json examples
+
+    Data from:
+    https://github.com/euroargodev/sensor_metadata_json
+    """
+    fs = httpstore()
+    _schema_root = "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/schemas"
+    for schema in ['sensor', 'float', 'platform', 'vendors', 'RBR', 'MRV', 'SBE', 'TRIOS']:
+        uri = f"{_schema_root}/argo.{schema}.schema.json"
+        data = fs.open_json(uri)
+
+        file_path = ASSETS_FOLDER.joinpath("schema", f"argo.{schema}.schema.json")
+        with open(file_path, "w") as f:
+            json.dump(data, f, indent=2)
+
+    gitfs = filesystem(
+        "filecache",
+        target_protocol='github',
+        target_options={'org': 'euroargodev',
+                        'repo': 'sensor_metadata_json',
+                        'username': 'gmaze',
+                        'token': os.getenv("GITHUB_TOKEN")
+                        },
+        cache_storage=OPTIONS['cachedir'],
+        expiry_time=OPTIONS["cache_expiration"],
+        cache_check=10,
+    )
+
+    def list_examples():
+        """Get the list of sensor json examples from the repo at https://github.com/euroargodev/sensor_metadata_json"""
+        js_list = gitfs.glob('json_sensors/sensor-*.json')
+        result = {}
+        for s in js_list:
+            key = s.replace('json_sensors/sensor-', '').replace('.json', '')
+            result.update({key: s})
+        return result
+    SENSOR_JS_EXAMPLES = list_examples()
+
+    SENSOR_JS_EXAMPLES_URI = {}
+    for eg in SENSOR_JS_EXAMPLES.keys():
+        p = f"https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/json_sensors/sensor-{eg}.json"
+        SENSOR_JS_EXAMPLES_URI.update({eg: p})
+
+    save_data(
+        file="sensor_metadata_examples",
+        name="Sensor json meta-data examples",
+        long_name="Examples of Argo sensor meta-data following a schema",
+        data={
+            'content': [k for k in SENSOR_JS_EXAMPLES.keys()],
+            'uri': SENSOR_JS_EXAMPLES_URI,
+        },
+    )
+
+
+def asset_nvs_reference_tables_list():
+    fs = httpstore()
+
+    data = fs.open_json('https://vocab.nerc.ac.uk/collection/?_profile=nvs&_mediatype=application/ld+json')
+
+    def is_admt(item):
+        return item['dc:creator'] == 'Argo Data Management Team'
+
+    id_list = [item for item in data['@graph'] if is_admt(item)]
+
+    valid_ref = []
+    for item in id_list:
+        valid_ref.append({
+            'id': item['@id'].replace("http://vocab.nerc.ac.uk/collection/", "").replace("/current/", ""),
+            'altLabel': item['skos:altLabel'],
+            'prefLabel': item['skos:prefLabel'],
+            'description': item['dc:description'],
+            'date': item['dc:date'],
+            'uri': item['@id'],
+        })
+    df = pd.DataFrame(valid_ref).sort_values('id', axis=0).reset_index(drop=1)
+
+    save_data(
+        file="nvs_reference_tables",
+        name="List of Argo NVS reference tables",
+        long_name="List of Argo NVS reference table ids and description",
+        data={
+            'valid_ref': list(df['id'].values),
+            'details': valid_ref,
+        },
+    )
+
+
+def main():
+    argopy.clear_cache()
+
+    asset_data_types()
+    asset_dict_institutions()
+    asset_dict_profilers()
+    asset_API_Coriolis()
+    asset_ADMT_documentation()
+    asset_bgc_vars()
+    asset_GDAC_servers()
+    asset_netcdf_json_schema()
+    asset_sensor_schema()
+    asset_nvs_reference_tables_list()
+
+if __name__ == "__main__":
+    main()
