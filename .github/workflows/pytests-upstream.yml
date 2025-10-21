@@ -59,11 +59,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     needs: [detect-ci-trigger, detect-ci-skip]
     if: |
-        never()
+        !cancelled()
+        || (
+            needs.detect-ci-trigger.outputs.triggered == 'true'
+        )
         || (
             (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
-            || needs.detect-ci-trigger.outputs.triggered == 'true'
-            || needs.detect-ci-skip.outputs.skipped == 'false'
+            && needs.detect-ci-skip.outputs.skipped == 'false'
             || contains(github.event.pull_request.labels.*.name, 'release')
         )
     defaults:
@@ -166,11 +168,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     needs: [detect-ci-trigger, detect-ci-skip]
     if: |
-        never()
+        !cancelled()
+        || (
+            needs.detect-ci-trigger.outputs.triggered == 'true'
+        )
         || (
             (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
-            || needs.detect-ci-trigger.outputs.triggered == 'true'
-            || needs.detect-ci-skip.outputs.skipped == 'false'
+            && needs.detect-ci-skip.outputs.skipped == 'false'
             || contains(github.event.pull_request.labels.*.name, 'release')
         )
     defaults:
