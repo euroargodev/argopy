@@ -7,6 +7,7 @@ import struct
 import importlib
 import locale
 import argparse
+import time
 import setuptools
 from importlib.metadata import version
 import shutil
@@ -289,13 +290,13 @@ def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa
 def setup_args():
     icons_help_string = """This script display argopy dependencies versions of current environment"""
 
-    parser = argparse.ArgumentParser(description='argopy dependencies versions',
+    parser = argparse.ArgumentParser(description='Argopy dependencies versions',
                                      formatter_class=argparse.RawTextHelpFormatter,
-                                     epilog="%s\n(c) Argo-France/Ifremer/LOPS, 2023" % icons_help_string)
+                                     epilog=f"{icons_help_string}\n(c) Argo-France/Ifremer/LOPS, 2023-{time.localtime().tm_year}")
 
     parser.add_argument("-c", "--conda", help="Print package versions for conda yml files", action="store_true")
-    parser.add_argument("--free", help="Just print package lists for FREE conda yml files", action="store_true")
-    parser.add_argument("--core", help="Just print CORE package lists for conda yml files", action="store_true")
+    parser.add_argument("--free", help="Display package versions as upper bounds", action="store_true")
+    parser.add_argument("--core", help="Comment non-core packages", action="store_true")
 
     return parser
 
