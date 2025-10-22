@@ -96,13 +96,13 @@ class Test_ArgoNVSReferenceTables:
     def test_valid_ref(self):
         assert is_list_of_strings(self.nvs.valid_ref)
 
-    opts = [3, 'R09']
+    opts = [3, '12', 'R09']
     opts_ids = ["rtid is a %s" % type(o) for o in opts]
     @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
     def test_tbl(self, opts):
         assert isinstance(self.nvs.tbl(opts), pd.DataFrame)
 
-    opts = [3, 'R09']
+    opts = [3, '12', 'R09']
     opts_ids = ["rtid is a %s" % type(o) for o in opts]
     @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
     def test_tbl_name(self, opts):
