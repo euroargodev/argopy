@@ -42,7 +42,7 @@ This section should basically describe in which python environment Argopy is exp
 Over the last 5 years, Argopy has been maintained to make each new release compatible with the last versions of all its core and extra dependencies. 
 This requires a lot of work, which makes very visible the diverging time scales between fast and slow release cycle of libraries like xarray (once a month or more), numpy/pandas (one minor every 6 months) and Argopy. An obvious consequence of very different dev. community sizes.
 
-But the Argopy team want to **re-allocate ressources** (i.e. time for coding) assigned to dependency support to the development of new features.
+But the Argopy team want to **re-allocate resources** (i.e. time for coding) assigned to dependency support to the development of new features.
 
 Therefore, starting with Argopy version 1.3.1 released on October 2025, we will update requirements and CI tests environment definitions **once a year**, independently of our release cycle.
 
