@@ -118,6 +118,7 @@ __all__ = (
     "Registry",
     "float_wmo",
     # Locals (environments, versions, systems):
+    "path2assets",
     "show_versions",
     "show_options",
     "modified_environ",
