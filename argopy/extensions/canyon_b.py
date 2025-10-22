@@ -21,7 +21,7 @@ class CanyonB(ArgoAccessorExtension):
     """
     Implementation of the CANYON-B method.
 
-    CANYON-B is a bayesian neural network approach that estimate water-column nutrient concentrations
+    CANYON-B is a bayesian neural network approach that estimates water-column nutrient concentrations
     and carbonate system variables ([1]_). CANYON-B is based on the CANYON model ([2]_) and provides
     more robust neural networks, that include a local uncertainty estimate for each predicted parameter.
 
@@ -76,7 +76,7 @@ class CanyonB(ArgoAccessorExtension):
         "NO3",
         "PO4",
         "SiOH4",
-    ]  # DIC = CT in [1], keep it that way to be consistent with the canyon-med extention. Order of parameters follows https://github.com/RaphaelBajon/canyonbpy/blob/main/canyonbpy/core.py because it is used later in the predict method.
+    ]  # DIC = CT in Bittig et al., (2018), keep it that way to be consistent with the canyon-med extention. Order of parameters follows https://github.com/RaphaelBajon/canyonbpy/blob/main/canyonbpy/core.py because it is used later in the predict method.
     """List of all possible output variables for CANYON-B"""
 
     def __init__(self, *args, **kwargs):
@@ -166,7 +166,7 @@ class CanyonB(ArgoAccessorExtension):
         Returns
         -------
         float or np.ndarray
-            Decimal year values
+            Decimal year value(s)
         """
         time_array = self._obj[self._argo._TNAME]
         return time_array.dt.year + (
@@ -389,7 +389,7 @@ class CanyonB(ArgoAccessorExtension):
             Parameter to predict. Must be one of:
             - 'AT': Total alkalinity (μmol/kg)
             - 'DIC': Dissolved inorganic carbon (μmol/kg)
-            - 'pHT': pH on total scale
+            - 'pHT': Total pH
             - 'pCO2': Partial pressure of CO₂ (μatm)
             - 'NO3': Nitrate concentration (μmol/kg)
             - 'PO4': Phosphate concentration (μmol/kg)
@@ -408,7 +408,7 @@ class CanyonB(ArgoAccessorExtension):
         Returns
         -------
         dict
-            Dictionary containing predicted parameter and associated uncertainties:
+            Dictionary containing the predicted parameter and associated uncertainties:
             - param: Predicted parameter value
             - param_ci: Predicted parameter value uncertainty
             - param_cim: Parameter measurement uncertainty
@@ -621,10 +621,10 @@ class CanyonB(ArgoAccessorExtension):
 
             # epCO2 = dpCO2/dDIC * e'DIC'
             for unc in ["_ci", "_cin", "_cii"]:
-                out[param + unc] = outcalc["d_pCO2__d_par2"] * out[param + unc]
+                out[f"{param}{unc}"] = outcalc["d_pCO2__d_par2"] * out[f"{param}{unc}"]
 
-            out[param + "_cim"] = outcalc["d_pCO2__d_par2"] * np.reshape(
-                out[param + "_cim"], shape
+            out[f"{param}_cim"] = outcalc["d_pCO2__d_par2"] * np.reshape(
+                out[f"{param}_cim"], shape
             )
 
             out[f"{param}_inx"] = (
@@ -644,8 +644,8 @@ class CanyonB(ArgoAccessorExtension):
         """
         Make predictions using the CANYON-B method.
 
-        Estimates oceanic nutrients and/or carbonate system variables from
-        hydrographic data using Bayesian neural network ensembles.
+        This method implements the CANYON-B Bayesian neural network ensemble
+        to estimate oceanic parameters from hydrographic data. 
 
         Parameters
         ----------
@@ -654,7 +654,7 @@ class CanyonB(ArgoAccessorExtension):
 
             - 'AT': Total alkalinity (μmol/kg)
             - 'DIC': Dissolved inorganic carbon (μmol/kg)
-            - 'pHT': pH on total scale
+            - 'pHT': Total pH
             - 'pCO2': Partial pressure of CO₂ (μatm)
             - 'NO3': Nitrate concentration (μmol/kg)
             - 'PO4': Phosphate concentration (μmol/kg)
