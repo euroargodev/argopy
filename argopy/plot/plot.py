@@ -496,7 +496,10 @@ def scatter_map(  # noqa: C901
         if hue.lower() in ArgoColors().list_valid_known_colormaps:
             cmap = hue.lower()
         elif "qc" in hue.lower():
-            cmap = "qc"
+            if "profile_" not in hue.lower():
+                cmap = "qc"
+            else:
+                cmap = "pqc"
         elif "mode" in hue.lower():
             cmap = "data_mode"
         elif "status_code" in hue.lower():
@@ -789,7 +792,7 @@ def scatter_plot(
             # ax.set_facecolor(bgcolor)
 
         if cbar:
-            cbar = fig.colorbar(m, shrink=0.9, extend="both", ax=ax)
+            cbar = fig.colorbar(m, shrink=0.9, ax=ax)
             cbar.ax.set_ylabel(get_vlabel(ds, this_param), rotation=90)
 
         ylim = ax.get_ylim()

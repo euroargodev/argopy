@@ -1,9 +1,9 @@
 {
   "name": "Sensor json meta-data examples",
   "long_name": "Examples of Argo sensor meta-data following a schema",
-  "last_update": "2025-10-14T19:59:01.825972+00:00",
+  "last_update": "2025-10-20T16:34:31.923460+00:00",
   "data": {
-    "list": [
+    "content": [
       "AANDERAA-AANDERAA_OPTODE_4330-3901",
       "RBR-RBR_ARGO3-205908",
       "SATLANTIC-SATLANTIC_OCR504_ICSW-42139",

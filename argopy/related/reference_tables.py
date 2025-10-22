@@ -1,9 +1,15 @@
 import pandas as pd
 from functools import lru_cache
 import collections
-from ..stores import httpstore
+from pathlib import Path
+
+from ..stores import httpstore, filestore
 from ..options import OPTIONS
 from ..utils import urnparser
+from ..utils import path2assets
+
+
+VALID_REF = filestore(cache=True).open_json(Path(path2assets).joinpath("nvs_reference_tables.json"))['data']['valid_ref']
 
 
 class NVScollection:
@@ -234,53 +240,53 @@ class ArgoNVSReferenceTables(NVScollection):
     >>> R.all_tbl
     >>> R.valid_ref
 
+    Notes
+    -----
+    This class relies on a list of valid reference table ids that is updated on every argopy release.
+
     """
+    valid_ref = VALID_REF.copy()
 
-    valid_ref = [
-        "R01",
-
-        "R03",
-        "R04",
-        "R05",
-        "R06",
-        "R07",
-        "R08",
-        "R09",
-        "R10",
-        "R11",
-        "R12",
-        "R13",
-        "R15",
-        "R16",
-
-        "R18",
-        "R19",
-        "R20",
-        "R21",
-        "R22",
-        "R23",
-        "R24",
-        "R25",
-        "R26",
-        "R27",
-        "R28",
-
-        "R40",
-
-        "RD2",
-        "RMC",
-        "RP2",
-        "RR2",
-        "RTV",
-    ]
     """List of all available Reference Tables"""
 
     def _valid_ref(self, rtid):
-        if rtid not in self.valid_ref:
-            rtid = "R%0.2d" % rtid
-            if rtid not in self.valid_ref:
-                raise ValueError(
-                    "Invalid Argo Reference Table, must be one in: %s"
-                    % ", ".join(self.valid_ref)
-                )
-        return rtid
+        """
+        Validate any rtid argument and return the corresponding valid ID from the list.
+
+        Parameters
+        ----------
+        rtid: Input reference ID. Can be a string (e.g., "R12", "12", "r12") or a number (e.g., 12).
+
+        Returns:
+            str: Valid reference ID from the list, or None if not found.
+        """
+        # Convert rtid to a string and standardize its format
+        if isinstance(rtid, (int, float)):
+            # If rtid is a number, format it as "RXX"
+            rtid_str = f"R{int(rtid):02d}"
+        else:
+            # If rtid is a string, convert to uppercase and standardize
+            rtid_str = str(rtid).strip().upper()
+            if rtid_str.startswith('R') and len(rtid_str) > 1:
+                # If it starts with 'R', ensure the numeric part is two digits
+                prefix = rtid_str[0]
+                suffix = rtid_str[1:]
+                try:
+                    num = int(suffix)
+                    rtid_str = f"{prefix}{num:02d}"
+                except ValueError:
+                    pass  # Keep the original string if conversion fails
+            elif ~rtid_str.startswith('R'):
+                try:
+                    num = int(rtid_str)
+                    rtid_str = f"R{num}"
+                except ValueError:
+                    pass  # Keep the original string if conversion fails
+
+        # Check if the standardized rtid_str is in the valid_refs list
+        if rtid_str in self.valid_ref:
+            return rtid_str
+        else:
+            raise ValueError(
+                f"Invalid Argo Reference Table '{rtid}', must be one in: {', '.join(self.valid_ref)}"
+            )

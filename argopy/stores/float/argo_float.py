@@ -77,8 +77,9 @@ class ArgoFloat(FloatStore):
         af.plot.trajectory()
         af.plot.trajectory(figsize=(18,18), padding=[1, 5])
         af.plot.map('TEMP', pres=450, cmap='Spectral_r')
-        af.plot.map('DATA_MODE', cbar=False, legend=True)
-        af.plot.scatter('PSAL')
+        af.plot.map('DATA_MODE')
+        af.plot.scatter('TEMP')
+        af.plot.scatter('PSAL_QC')
         af.plot.scatter('DOXY', ds='Sprof')
         af.plot.scatter('MEASUREMENT_CODE', ds='Rtraj')
 
