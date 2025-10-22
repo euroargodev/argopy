@@ -7,7 +7,7 @@ What's New
 
 |pypi dwn| |conda dwn|
 
-v1.3.1 (xx Oct. 2025)
+v1.3.1 (22 Oct. 2025)
 ---------------------
 
 .. _v1.3.1-features:
@@ -24,7 +24,7 @@ Features and front-end API
 Internals
 ^^^^^^^^^
 
-- Add public CLI script ``cli/update_json_assets`` to replace old notebook to be ran by mainteners. (:pr:`540`) by |gmaze|.
+- For mainteners, add a public CLI script ``cli/update_json_assets`` to update static assets. (:pr:`540`) by |gmaze|.
 
 - **Update list of Reference tables** with R14 on "Argo technical parameter names" and R31 on "Argo float ending cause". The :class:`ArgoNVSReferenceTables` internal list of valid reference tables is now taken from a static asset file generated with ``cli/update_json_assets`` on each new release. (:pr:`540`) by |gmaze|.
 
