@@ -5,10 +5,10 @@ name: CI tests Upstream
 on:
   schedule:
     - cron: "0 0 12 * *" # Monthly “At 00:00” UTC on the 12th day
-  workflow_dispatch: # allows you to trigger the workflow run manually
+  workflow_dispatch: # allows you to trigger the workflow manually if necessary
   pull_request:
     types: [synchronize]
-    
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -19,7 +19,7 @@ permissions:
 jobs:
 
   detect-ci-trigger:
-    name: detect upstream ci trigger
+    name: Detect upstream ci tests trigger [test-upstream]
     runs-on: ubuntu-latest
     if: |
       github.repository == 'euroargodev/argopy'
@@ -35,35 +35,19 @@ jobs:
         with:
           keyword: "[test-upstream]"
 
-  detect-ci-skip:
-    name: detect upstream ci skip
-    runs-on: ubuntu-latest
-    if: |
-      github.repository == 'euroargodev/argopy'
-      && (github.event_name == 'push' || github.event_name == 'pull_request')
-    outputs:
-      skipped: ${{ steps.detect-skip.outputs.trigger-found }}
-    steps:
-      - uses: actions/checkout@v5
-        with:
-          fetch-depth: 2
-      - uses: xarray-contrib/ci-trigger@v1.2
-        id: detect-skip
-        with:
-          keyword: "[skip-ci]"
-
   core-free:
     # CI tests for environments with core requirements in free versions
 
     name: Core - Free - Py${{matrix.python-version}} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    needs: [detect-ci-trigger, detect-ci-skip]
+    needs: [detect-ci-trigger]
     if: |
-        always()
-        && (
+        !cancelled()
+        || (
+            needs.detect-ci-trigger.outputs.triggered == 'true'
+        )
+        || (
             (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
-            || needs.detect-ci-trigger.outputs.triggered == 'true'
-            || needs.detect-ci-skip.outputs.skipped == 'false'
             || contains(github.event.pull_request.labels.*.name, 'release')
         )
     defaults:
@@ -164,13 +148,14 @@ jobs:
 
     name: All - Free - Py${{matrix.python-version}} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    needs: [detect-ci-trigger, detect-ci-skip]
+    needs: [detect-ci-trigger]
     if: |
-        always()
-        && (
+        !cancelled()
+        || (
+            needs.detect-ci-trigger.outputs.triggered == 'true'
+        )
+        || (
             (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
-            || needs.detect-ci-trigger.outputs.triggered == 'true'
-            || needs.detect-ci-skip.outputs.skipped == 'false'
             || contains(github.event.pull_request.labels.*.name, 'release')
         )
     defaults:
