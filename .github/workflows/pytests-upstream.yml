@@ -1,10 +1,10 @@
 name: CI tests Upstream
-# Daily tests with all un-pinned dependencies
+# Monthly tests with all un-pinned dependencies
 # Allows to be warned when argopy fail tests due to updates in dependencies
 
 on:
   schedule:
-    - cron: "0 0 * * *" # Daily “At 00:00” UTC
+    - cron: "0 0 12 * *" # Monthly “At 00:00” UTC on the 12th day
   workflow_dispatch: # allows you to trigger the workflow manually if necessary
   pull_request:
     types: [synchronize]
