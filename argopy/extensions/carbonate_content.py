@@ -4,6 +4,7 @@ from typing import Optional, Union
 
 try:
     import PyCO2SYS as pyco2
+
     HAS_PYCO2SYS = True
 except ImportError:
     HAS_PYCO2SYS = False
@@ -42,13 +43,20 @@ class CONTENT(ArgoAccessorExtension):
         ArgoSet = DataFetcher(ds='bgc', mode='standard', params='DOXY', measured='DOXY').float(1902605)
         ds = ArgoSet.to_xarray()
 
-    Once input data are loaded, make all or selected parameters predictions:
+    Once input data are loaded, make parameters predictions with or without specifying input errors
+    on pressure (epres, in dbar), temperature (etemp, in °C), salinity (epsal, in PSU) and oxygen (edoxy, in micromole/kg):
 
     .. code-block:: python
 
         ds.argo.content.predict()
         ds.argo.content.predict(epres=0.5, etemp=0.005, epsal=0.005, edoxy=0.01)
         ds.argo.content.predict(epres=0.5, etemp=0.005, epsal=0.005, edoxy=np.array([...]))
+
+    By default, if no input errors are specified, the following default values are used:
+        - epres = 0.5 dbar
+        - etemp = 0.005 °C
+        - epsal = 0.005 PSU
+        - edoxy = 1% of DOXY value
 
     Notes
     -----
@@ -68,17 +76,6 @@ class CONTENT(ArgoAccessorExtension):
     .. [5] Orr, J. C., Epitalon, J. M., Dickson, A. G., & Gattuso, J. P. (2018). Routine uncertainty propagation for the marine carbon dioxide system. Marine Chemistry, 207, 84-107. doi: 10.1016/j.marchem.2018.10.006
     """
 
-    # output_list = [
-    #    "AT",
-    #    "DIC",
-    #    "pHT",
-    #    "pCO2",
-    #    "NO3",
-    #    "PO4",
-    #    "SiOH4",
-    # ]  # DIC = CT in [1], keep it that way to be consistent with the canyon-med and canyon-b extensions.
-    # """List of all possible output variables for CONTENT"""
-
     # Input parameter pairs for each of 6 calculations (pCO2/AT, pHT/AT, pCO2/pHT, pCO2/DIC, pHT/DIC, AT/DIC)
     _inpar = np.array([[3, 0], [2, 0], [3, 2], [3, 1], [2, 1], [0, 1]])
 
@@ -91,7 +88,7 @@ class CONTENT(ArgoAccessorExtension):
     # Parameter names used for CONTENT carbonate calculations
     _parameters = ["AT", "DIC", "pHT", "pCO2"]
 
-    # Save indices for outpar
+    # Save indices for output parameters (i.e. _outpar)
     _svi = np.array([[1, 3], [2, 2], [3, 3], [1, 2], [2, 3], [1, 1]])
 
     def __init__(self, *args, **kwargs):
@@ -111,35 +108,66 @@ class CONTENT(ArgoAccessorExtension):
             raise DataNotFound("Empty dataset, no data to transform !")
 
     def get_param_attrs(self, param: str) -> dict:
-        """Provides attributes to be added to a given predicted parameter"""
+        """
+        Get attributes for a given predicted parameter.
+
+        Parameters
+        ----------
+        param : str
+            Parameter name. Valid options are:
+
+            - 'NO3': Nitrate
+            - 'PO4': Phosphate
+            - 'SiOH4': Silicate
+            - 'AT': Total alkalinity
+            - 'DIC': Dissolved inorganic carbon
+            - 'pHT': Total pH
+            - 'pCO2': Partial pressure of CO2
+
+        Returns
+        -------
+        dict
+            Attribute dictionary containing:
+
+            - 'units': Measurement units
+            - 'long_name': Descriptive parameter name
+            - 'comment': Data provenance note
+            - 'reference': CANYON-B/CONTENT digital object identifier (DOI)
+        """
         attrs = {}
         if param in ["NO3", "PO4", "SiOH4", "AT", "DIC"]:
             attrs.update({"units": "micromole/kg"})
 
         if param == "NO3":
             attrs.update({"long_name": "Nitrate concentration"})
+            attrs.update({"comment": "Synthetic variable predicted using CANYON-B"})
 
         if param == "PO4":
             attrs.update({"long_name": "Phosphate concentration"})
+            attrs.update({"comment": "Synthetic variable predicted using CANYON-B"})
 
         if param == "SiOH4":
             attrs.update({"long_name": "Silicate concentration"})
+            attrs.update({"comment": "Synthetic variable predicted using CANYON-B"})
 
         if param == "AT":
             attrs.update({"long_name": "Total alkalinity"})
+            attrs.update({"comment": "Synthetic variable predicted using CONTENT"})
 
         if param == "DIC":
             attrs.update({"long_name": "Total dissolved inorganic carbon"})
+            attrs.update({"comment": "Synthetic variable predicted using CONTENT"})
 
         if param == "pHT":
             attrs.update({"long_name": "Total pH"})
             attrs.update({"units": "insitu total scale"})
+            attrs.update({"comment": "Synthetic variable predicted using CONTENT"})
 
         if param == "pCO2":
             attrs.update({"long_name": "Partial pressure of CO2"})
             attrs.update({"units": "micro atm"})
+            attrs.update({"comment": "Synthetic variable predicted using CONTENT"})
 
-        attrs.update({"comment": "Synthetic variable predicted using CANYON-B"})
         attrs.update({"reference": "https://doi.org/10.3389/fmars.2018.00328"})
 
         return attrs
@@ -807,65 +835,29 @@ class CONTENT(ArgoAccessorExtension):
         :class:`xr.Dataset`
         """
 
-        # By default, CONTENT needs all variables (carbonate + nutrients) except NO3 so we predict them all
+        # Get predictions for all 4 carbonate parameters (CONTENT method) and nutrients (CANYON-B method)
         prediction = self._predict(epres=epres, etemp=etemp, epsal=epsal, edoxy=edoxy)
 
-        for param in self._parameters:
+        for param in ["NO3", "PO4", "SiOH4"]:
             self._obj[param] = xr.zeros_like(self._obj["TEMP"])
             self._obj[param].attrs = self.get_param_attrs(param)
             self._obj[param].values = (
                 prediction["canyon_b_raw"][param][param].astype(np.float32).squeeze()
             )
 
-            # sigma
-            self._obj[f"{param}_sigma"] = xr.zeros_like(self._obj[param])
-            self._obj[f"{param}_sigma"].attrs = {
-                "long_name": f"Total uncertainty on {param} predicted using CONTENT",
-                "units": self._obj[param].attrs.get("units", ""),
-            }
-            self._obj[f"{param}_sigma"].values = (
-                prediction[f"{param}_sigma"].astype(np.float32).squeeze()
+        # Update history for nutrients
+        if self._argo:
+            self._argo.add_history(
+                "Added CANYON-B predictions for [%s]"
+                % (",".join(["NO3", "PO4", "SiOH4"]))
             )
 
-            # sigma min
-            self._obj[f"{param}_sigma_min"] = xr.zeros_like(self._obj[param])
-            self._obj[f"{param}_sigma_min"].attrs = {
-                "long_name": f"Minimum uncertainty on {param} predicted using CONTENT",
-                "units": self._obj[param].attrs.get("units", ""),
-            }
-            self._obj[f"{param}_sigma_min"].values = (
-                prediction[f"{param}_sigma_min"].astype(np.float32).squeeze()
-            )
+        for param in self._parameters:
+            self._obj[param] = xr.zeros_like(self._obj["TEMP"])
+            self._obj[param].attrs = self.get_param_attrs(param)
+            self._obj[param].values = prediction[param].astype(np.float32).squeeze()
 
-            # raw values
-            self._obj[f"{param}_raw"] = xr.DataArray(
-                data=prediction[f"{param}_raw"].astype(np.float32),
-                dims=("N_POINTS", "N_CALCS"),
-                coords={
-                    "N_POINTS": self._obj["N_POINTS"],
-                    "N_CALCS": np.arange(4),  # TODO be more specific on N_CALCS
-                },
-                attrs={
-                    "long_name": f"Raw calculated {param} TODO ",
-                    "units": self._obj[param].attrs.get("units", ""),
-                },
-            )
-
-            # sigma record
-            self._obj[f"{param}_sigma_raw"] = xr.DataArray(
-                data=prediction["sigma"][param].astype(np.float32),
-                dims=("N_POINTS", "N_CALCS"),
-                coords={
-                    "N_POINTS": self._obj["N_POINTS"],
-                    "N_CALCS": np.arange(4),  # TODO be more specific on N_CALCS
-                },
-                attrs={
-                    "long_name": f"Raw calculated {param} TODO ",
-                    "units": self._obj[param].attrs.get("units", ""),
-                },
-            )
-
-        # Return xr.Dataset with predicted variables:
+        # Update history for carbonate parameters
         if self._argo:
             self._argo.add_history(
                 "Added CONTENT predictions for [%s]" % (",".join(self._parameters))

@@ -180,9 +180,6 @@ def test_predict_basic(fetcher, mocked_erddapserver):
     # Check that main parameters are present
     for param in ['AT', 'DIC', 'pHT', 'pCO2']:
         assert param in result
-        assert f"{param}_sigma" in result
-        assert f"{param}_sigma_min" in result
-        assert f"{param}_raw" in result
 
 
 def test_predict_with_custom_errors(fetcher, mocked_erddapserver):
