@@ -51,6 +51,7 @@ from .geo import (
     conv_lon,
     toYearFraction,
     YearFraction_to_datetime,
+    point_in_polygon,
 )
 from .compute import linear_interpolation_remap, groupby_remap
 from .transform import (
@@ -130,6 +131,7 @@ __all__ = (
     "conv_lon",
     "toYearFraction",
     "YearFraction_to_datetime",
+    "point_in_polygon",
     # Computation with datasets:
     "linear_interpolation_remap",
     "groupby_remap",
