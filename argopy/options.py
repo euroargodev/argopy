@@ -54,6 +54,7 @@ API_FLEETMONITORING = "fleetmonitoring"
 RBR_API_KEY = "rbr_api_key"
 API_RBR = "rbr_api"
 NVS = "nvs"
+API_SEABIRD = "seabird_api"
 
 # Define the list of available options and default values:
 OPTIONS = {
@@ -77,6 +78,7 @@ OPTIONS = {
     RBR_API_KEY: os.environ.get("RBR_API_KEY"),  # Contact RBR at argo@rbr-global.com if you do not have an authorization key.
     API_RBR: "https://oem-lookup.rbr-global.com/api/v1",
     NVS: "https://vocab.nerc.ac.uk/collection",
+    API_SEABIRD: "https://instrument.seabirdhub.com/api/argo-calibration",
 }
 DEFAULT = OPTIONS.copy()
 
@@ -136,6 +138,14 @@ def validate_fleetmonitoring(this_path):
 def validate_rbr(this_path):
     if this_path != "-":
         return True  # todo: check with RBR how to get the API endpoint for its status
+    else:
+        log.debug("OPTIONS['%s'] is not defined" % API_RBR)
+        return False
+
+
+def validate_seabird(this_path):
+    if this_path != "-":
+        return True  # todo: check with Seabird how to get the API endpoint for its status
     else:
         log.debug("OPTIONS['%s'] is not defined" % API_RBR)
         return False
@@ -291,6 +301,7 @@ _VALIDATORS = {
     LON: lambda x: x in ['180', '360'],
     API_FLEETMONITORING: validate_fleetmonitoring,
     API_RBR: validate_rbr,
+    API_SEABIRD: validate_seabird,
     NVS: lambda x: isinstance(x, str) or x is None,
 
 }
@@ -360,6 +371,12 @@ class set_options:
         RBR sensor owners can get a key by contacting RBR at argo@rbr-global.com.
 
         This key can also be used from: https://oem-lookup.rbr-global.com
+
+    rbr_api: str
+        Server address of the RBR "RBRargo Product Lookup" web-API
+
+    seabird_api: str
+        Server address of the Seabird-Scientific "Instrument Metadata Portal" web-API
 
     parallel: bool, str, :class:`distributed.Client`, default: False
         Set whether to use parallelisation or not, and possibly which method to use.

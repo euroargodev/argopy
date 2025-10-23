@@ -54,9 +54,9 @@ class OemMetaDataDisplay:
 
         # --- Header ---
         header_html = f"""
-        <h1 class='oemsensor'>Argo Sensor Metadata: {getattr(self.OEMsensor.sensor_info, 'sensor_described', 'N/A')}</h1>
-        <p class='oemsensor'><strong>Created by:</strong> {getattr(self.OEMsensor.sensor_info, 'created_by', 'N/A')} |
-           <strong>Date:</strong> {getattr(self.OEMsensor.sensor_info, 'date_creation', 'N/A')}</p>
+        <h1 class='oemsensor'>Argo Sensor Metadata: {self.OEMsensor.sensor_info._attr2str('sensor_described')}</h1>
+        <p class='oemsensor'><strong>Created by:</strong> {self.OEMsensor.sensor_info._attr2str('created_by')} |
+           <strong>Date:</strong> {self.OEMsensor.sensor_info._attr2str('date_creation')}</p>
         """
 
         # --- Sensors ---

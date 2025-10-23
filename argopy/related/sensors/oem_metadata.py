@@ -30,8 +30,19 @@ class SensorInfo:
     link: str
     format_version: str
     contents: str
-    sensor_described: str
 
+    # Made optional to accommodate errors in OEM data
+    sensor_described: str = None
+
+    def _attr2str(self, x):
+        """Return a class attribute, or 'n/a' if it's None or ""."""
+        value = getattr(self, x, None)
+        if value is None:
+            return "n/a"
+        elif type(value) is str:
+            return value if value and value.strip() else "n/a"
+        else:
+            return value
 
 @dataclass
 class Context:
@@ -270,7 +281,7 @@ class ArgoSensorMetaDataOem:
         if json_data:
             self.from_dict(json_data)
 
-    def _empty_str(self):
+    def _repr_hint(self):
         summary = [f"<oemsensor>"]
         summary.append(
             "This object has no sensor info. You can use one of the following methods:"
@@ -285,19 +296,18 @@ class ArgoSensorMetaDataOem:
     def __repr__(self):
         if self.sensor_info:
 
-            sensor_described = (
-                self.sensor_info.sensor_described if self.sensor_info else "n/a"
-            )
-            created_by = self.sensor_info.created_by if self.sensor_info else "n/a"
-            date_creation = (
-                self.sensor_info.date_creation if self.sensor_info else "n/a"
-            )
-            sensor_count = len(self.sensors) if self.sensor_info else 0
-            parameter_count = len(self.parameters) if self.sensor_info else 0
+            sensor_described = self.sensor_info._attr2str('sensor_described')
+            created_by = self.sensor_info._attr2str('created_by')
+            date_creation = self.sensor_info._attr2str('date_creation')
+            link = self.sensor_info._attr2str('link')
 
-            summary = [f"<oemsensor.{sensor_described}>"]
+            sensor_count = len(self.sensors)
+            parameter_count = len(self.parameters)
+
+            summary = [f"<oemsensor><{sensor_described}>"]
             summary.append(f"created_by: '{created_by}'")
             summary.append(f"date_creation: '{date_creation}'")
+            summary.append(f"link: '{link}'")
             summary.append(
                 f"sensors: {sensor_count} {[urnparser(s.SENSOR)['termid'] for s in self.sensors]}"
             )
@@ -307,7 +317,7 @@ class ArgoSensorMetaDataOem:
             summary.append(f"instrument_vendorinfo: {self.instrument_vendorinfo}")
 
         else:
-            summary = self._empty_str()
+            summary = self._repr_hint()
 
         return "\n".join(summary)
 
@@ -315,7 +325,7 @@ class ArgoSensorMetaDataOem:
         if self.sensor_info:
             return OemMetaDataDisplay(self).html
         else:
-            return self._empty_str()
+            return self._repr_hint()
 
     def _ipython_display_(self):
         from IPython.display import display, HTML
@@ -323,7 +333,7 @@ class ArgoSensorMetaDataOem:
         if self.sensor_info:
             display(HTML(OemMetaDataDisplay(self).html))
         else:
-            display("\n".join(self._empty_str()))
+            display("\n".join(self._repr_hint()))
 
     def _read_schema(self, ref="argo.sensor.schema.json") -> Dict[str, Any]:
         """Load a JSON schema for validation
@@ -379,12 +389,15 @@ class ArgoSensorMetaDataOem:
             self.validate(data)
 
         self.sensor_info = SensorInfo(**data["sensor_info"])
-        self.context = Context(
-            **{
-                k.replace("::", "").replace(":", "_"): v
-                for k, v in data["@context"].items()
-            }
-        )
+        if data.get("@context", None) is not None:
+            self.context = Context(
+                **{
+                    k.replace("::", "").replace(":", "_"): v
+                    for k, v in data["@context"].items()
+                }
+            )
+        else:
+            self.context = Context()
         self.sensors = [Sensor(**sensor) for sensor in data["SENSORS"]]
         self.parameters = [Parameter(**param) for param in data["PARAMETERS"]]
         self.instrument_vendorinfo = data.get("instrument_vendorinfo", None)
@@ -451,8 +464,8 @@ class ArgoSensorMetaDataOem:
         with open(file_path, "w") as f:
             json.dump(self.to_dict(), f, indent=2)
 
-    def from_rbr(self, serial_number: str, **kwargs):
-        """Fetch sensor metadata from RBR-GLOBAL API
+    def from_rbr(self, serial_number: str, **kwargs) -> 'ArgoSensorMetaDataOem':
+        """Fetch sensor metadata from "RBRargo Product Lookup" web-API
 
         We also download certificates if available
 
@@ -482,7 +495,7 @@ class ArgoSensorMetaDataOem:
         obj = self.from_dict(data)
 
         # Also download RBR zip archive with calibration certificates in PDFs:
-        obj = obj.__certificates_rbr(action="download", quiet=True)
+        obj = obj._certificates_rbr(action="download", quiet=True)
 
         # Finally reset httpstore parameters:
         headers = fss.client_kwargs.get("headers")
@@ -491,7 +504,7 @@ class ArgoSensorMetaDataOem:
 
         return obj
 
-    def __certificates_rbr(
+    def _certificates_rbr(
         self, action: Literal["download", "open"] = "download", **kwargs
     ):
         """Download RBR zip archive with calibration certificates in PDFs
@@ -500,7 +513,7 @@ class ArgoSensorMetaDataOem:
 
         Notes
         -----
-        We keep this method very private because it is expected to be called only by the self.from_rbr() method.
+        We keep this method private because it is expected to be called only by the self.from_rbr() method.
         This ensures that the httpstore has the appropriate authorization key.
 
         """
@@ -558,6 +571,34 @@ class ArgoSensorMetaDataOem:
                 return subp
         else:
             raise ValueError(f"Unknown action {action}")
+
+    def from_seabird(self, serial_number: str, sensor_model: str, **kwargs) -> 'ArgoSensorMetaDataOem':
+        """Fetch sensor metadata from Seabird-Scientific "Instrument Metadata Portal" web-API
+
+        Parameters
+        ----------
+        serial_number : str
+            Sensor serial number from RBR
+        """
+        # The Seabird api requires a sensor model (R27) with a serial number.
+        # This could easily be done if we get the s/n by searching float metadata.
+        # In other word, it's easy to go from a sensor_model to a serial_number
+        # But it is much more complicated to from a serial_number to a sensor_model.
+        # so, the time being, we'll ask users to specify a sensor_model.
+
+        url = f"{OPTIONS['seabird_api']}?SENSOR_SERIAL_NO={serial_number}&SENSOR_MODEL={sensor_model}"
+        data = self._fs.open_json(url)
+
+        # Temporary fix for errors in SBE api output:
+        data.update({'sensor_info': data['json_info']})
+        data['sensor_info'].update({'link': data['sensor_info']['created_by']})
+        data['sensor_info'].update({'created_by': 'Sea-Bird Instrument Metadata Portal'})
+        data['sensor_info'].update({'sensor_described': f"{sensor_model}-{serial_number}"})
+        data.pop('json_info', None)
+
+        # Create and return an instance
+        obj = self.from_dict(data)
+        return obj
 
     @property
     def list_examples(self):
