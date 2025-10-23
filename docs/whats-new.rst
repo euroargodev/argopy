@@ -31,7 +31,6 @@ Energy
 
 .. images:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_carbonfootprint_baseline.json
 
-
 v1.3.1 (22 Oct. 2025)
 ---------------------
 
@@ -48,9 +47,6 @@ Features and front-end API
 
 Internals
 ^^^^^^^^^
-
-- **Fix upstream compatibility** whereby xarray >= 2025.8 deprecation cycle for changing default keyword arguments in :func:`xarray.merge` and :func:`xarray.concat` would make Argopy to fail with internal data processing, :issue:`521`. (:pr:`504`) by |gmaze|.
-
 - For mainteners, add a public CLI script ``cli/update_json_assets`` to update static assets. (:pr:`540`) by |gmaze|.
 
 - **Update list of Reference tables** with R14 on "Argo technical parameter names" and R31 on "Argo float ending cause". The :class:`ArgoNVSReferenceTables` internal list of valid reference tables is now taken from a static asset file generated with ``cli/update_json_assets`` on each new release. (:pr:`540`) by |gmaze|.
@@ -62,6 +58,8 @@ Internals
 - **Updated User-Agent header field for HTTP requests**. The default aiottp header field User-Agent is now complemented with Argopy information in order to ease server side log analysis. The User-Agent is now somethink like: ``"User-Agent": Python/3.11 aiohttp/3.12.14 Argopy/1.3.0 (+https://github.com/euroargodev/argopy)``, :issue:`533`. (:pr:`534`) by |gmaze|.
 
 - **New post method for the** :class:`stores.httpstore` allowing for HTTP POST methods to web-API, by |gmaze|.
+
+- **Fix upstream compatibility** whereby xarray >= 2025.8 deprecation cycle for changing default keyword arguments in :meth:`xarray.merge` and :meth:`xarray.concat` would make Argopy to fail with internal data processing, :issue:`521`. (:pr:`504`) by |gmaze|.
 
 .. _v1.3.1-energy:
 
