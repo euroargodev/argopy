@@ -112,16 +112,23 @@ class OemMetaDataDisplay:
         """
 
         for ip, param in enumerate(self.OEMsensor.parameters):
-            PREDEPLOYMENT_CALIB_EQUATION = param._attr2str('PREDEPLOYMENT_CALIB_EQUATION').split(';')
-            PREDEPLOYMENT_CALIB_EQUATION = [p.replace("=", " = ") for p in PREDEPLOYMENT_CALIB_EQUATION]
-            PREDEPLOYMENT_CALIB_EQUATION = "<br>\t".join(PREDEPLOYMENT_CALIB_EQUATION)
+            if getattr(param, 'PREDEPLOYMENT_CALIB_EQUATION', None) is not None:
+                PREDEPLOYMENT_CALIB_EQUATION = param._attr2str('PREDEPLOYMENT_CALIB_EQUATION').split(';')
+                PREDEPLOYMENT_CALIB_EQUATION = [p.replace("=", " = ") for p in PREDEPLOYMENT_CALIB_EQUATION]
+                PREDEPLOYMENT_CALIB_EQUATION = "<br>\t".join(PREDEPLOYMENT_CALIB_EQUATION)
+            else:
+                PREDEPLOYMENT_CALIB_EQUATION = "<i>This information is missing, but it should not !</i>"
 
-            PREDEPLOYMENT_CALIB_COEFFICIENT_LIST = param._attr2str('PREDEPLOYMENT_CALIB_COEFFICIENT_LIST')
-            s = []
-            if isinstance(PREDEPLOYMENT_CALIB_COEFFICIENT_LIST, dict):
-                for key, value in PREDEPLOYMENT_CALIB_COEFFICIENT_LIST.items():
-                    s.append(f"{key} = {value}")
-                PREDEPLOYMENT_CALIB_COEFFICIENT_LIST = "<br>\t".join(s)
+            if getattr(param, 'PREDEPLOYMENT_CALIB_COEFFICIENT_LIST', None) is not None:
+                PREDEPLOYMENT_CALIB_COEFFICIENT_LIST = param._attr2str('PREDEPLOYMENT_CALIB_COEFFICIENT_LIST')
+                s = []
+                if isinstance(PREDEPLOYMENT_CALIB_COEFFICIENT_LIST, dict):
+                    for key, value in PREDEPLOYMENT_CALIB_COEFFICIENT_LIST.items():
+                        s.append(f"{key} = {value}")
+                    PREDEPLOYMENT_CALIB_COEFFICIENT_LIST = "<br>\t".join(s)
+            else:
+                PREDEPLOYMENT_CALIB_COEFFICIENT_LIST = "<i>This information is missing, but it should not !</i>"
+
 
             details_html = f"""
             <tr class="parameter-details oemsensor" id="details-{uid}-{ip}">
