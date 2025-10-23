@@ -408,4 +408,4 @@ def urnparser(urn):
     if len(pp) == 4 and pp[0] == 'SDN':
         return {'listid': pp[1], 'version': pp[2], 'termid': pp[3]}
     else:
-        raise ValueError("NVS URNs must follow the pattern: 'SDN:{listid}:{version}:{termid}' or 'SDN:{listid}::{termid}' for NVS2.0")
+        raise ValueError(f"This NVS URN '{urn}' does not follow the pattern: 'SDN:{listid}:{version}:{termid}' or 'SDN:{listid}::{termid}' for NVS2.0")
