@@ -54,12 +54,10 @@ if HAS_S3FS:
 List index searches to be tested.
 """
 VALID_SEARCHES = [
-    # {"wmo": [13857]},
     {"wmo": [3902131]},  # BGC
     {"wmo": [6901929, 2901623]},
     {"cyc": [5]},
     {"cyc": [5, 45]},
-    # {"wmo_cyc": [13857, 2]},
     {"wmo_cyc": [3902131, 2]},  # BGC
     {"date": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
     {"lon": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
@@ -67,7 +65,13 @@ VALID_SEARCHES = [
     {"lon_lat": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
     {"box": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
     {"profiler_type": [845]},
-    {"profiler_label": 'ARVOR'},
+    {"profiler_label": ['ARVOR']},
+    {"institution_code": ['IF']},
+    {"institution_code": ['IF', 'JA']},
+    {"institution_name": ['canada']},
+    {"institution_name": ['usa', 'canada']},
+    {"dac": ['aoml']},
+    {"dac": ['bodc', 'coriolis']},
 ]
 VALID_SEARCHES_LOGICAL = [
     {"params": ["C1PHASE_DOXY", "DOWNWELLING_PAR"]},
@@ -132,6 +136,12 @@ def run_a_search(idx_maker, fetcher_args, search_point, xfail=False, reason="?")
                 idx.query.profiler_type(apts["profiler_type"], nrows=nrows)
             if "profiler_label" in apts:
                 idx.query.profiler_label(apts["profiler_label"], nrows=nrows)
+            if "institution_code" in apts:
+                idx.query.institution_code(apts["institution_code"], nrows=nrows)
+            if "institution_name" in apts:
+                idx.query.institution_name(apts["institution_name"], nrows=nrows)
+            if "dac" in apts:
+                idx.query.dac(apts["dac"], nrows=nrows)
         except:
             if xfail:
                 pytest.xfail(reason)
