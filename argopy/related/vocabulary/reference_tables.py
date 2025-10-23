@@ -3,9 +3,9 @@ from functools import lru_cache
 import collections
 from pathlib import Path
 
-from ..stores import httpstore, filestore
-from ..options import OPTIONS
-from ..utils import path2assets
+from ...stores import httpstore, filestore
+from ...options import OPTIONS
+from ...utils import path2assets
 
 
 VALID_REF = filestore(cache=True).open_json(Path(path2assets).joinpath("nvs_reference_tables.json"))['data']['valid_ref']
@@ -112,7 +112,7 @@ class ArgoNVSReferenceTables:
             elif k["@type"] == "skos:Concept":
                 content["altLabel"].append(k["skos:altLabel"])
                 content["prefLabel"].append(k["skos:prefLabel"]["@value"])
-                content["definition"].append(k["skos:definition"]["@value"])
+                content["definition"].append(k["skos:definition"]["@value"] if isinstance(k["skos:definition"], dict) else k["skos:definition"] )
                 content["deprecated"].append(k["owl:deprecated"])
                 content["id"].append(k["@id"])
         df = pd.DataFrame.from_dict(content)
