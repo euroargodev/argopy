@@ -7,6 +7,7 @@ import struct
 import importlib
 import locale
 import argparse
+import time
 import setuptools
 from importlib.metadata import version
 import shutil
@@ -157,13 +158,12 @@ def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa
             ("fsspec", get_version),
             ("aiohttp", get_version),
             ("packaging", get_version),
-            # will come with xarray, Using 'version' to make API compatible with several fsspec releases
             ("requests", get_version),
             ("toolz", get_version),
             ("decorator", get_version),
         ]),
         'ext.util': sorted([
-            ("gsw", get_version),   # Used by xarray accessor to compute new variables
+            ("gsw", get_version),
             ("tqdm", get_version),
         ]),
         "ext.files": sorted(
@@ -228,7 +228,6 @@ def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa
 
     # Print:
     if conda:
-        # print("\nSYSTEM", file=file)
         print("\n------", file=file)
         print(f"  - python = {sys.version.split('|')[0].strip()}", file=file)
 
@@ -247,6 +246,7 @@ def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa
                                   file=file)  # Format like a conda env line, useful to update ci/requirements
                         else:
                             print(f"{comment} - {kf}", file=file)
+                            # print(f"{comment} - {kf} <= {stat}", file=file)
             else:
                 #   - pip:
                 #       - aioresponses==0.7.4
@@ -259,6 +259,7 @@ def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa
                               file=file)  # Format like a conda env line, useful to update ci/requirements
                     else:
                         print(f"{comment} - {kf}", file=file)
+                        # print(f"{comment} - {kf} <= {stat}", file=file)
 
     else:
 
@@ -289,13 +290,13 @@ def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa
 def setup_args():
     icons_help_string = """This script display argopy dependencies versions of current environment"""
 
-    parser = argparse.ArgumentParser(description='argopy dependencies versions',
+    parser = argparse.ArgumentParser(description='Argopy dependencies versions',
                                      formatter_class=argparse.RawTextHelpFormatter,
-                                     epilog="%s\n(c) Argo-France/Ifremer/LOPS, 2023" % icons_help_string)
+                                     epilog=f"{icons_help_string}\n(c) Argo-France/Ifremer/LOPS, 2023-{time.localtime().tm_year}")
 
     parser.add_argument("-c", "--conda", help="Print package versions for conda yml files", action="store_true")
-    parser.add_argument("--free", help="Just print package lists for FREE conda yml files", action="store_true")
-    parser.add_argument("--core", help="Just print CORE package lists for conda yml files", action="store_true")
+    parser.add_argument("--free", help="Display package versions as upper bounds", action="store_true")
+    parser.add_argument("--core", help="Comment non-core packages", action="store_true")
 
     return parser
 

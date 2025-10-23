@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://schema.nerc.ac.uk/schemas/sensor/0.1.0/argo.MRV.schema.json",
+  "title": "JSON Schema for Argo Program Sensors",
+  "description": "A JSON Schema used to populate Argo float sensor and parameter metadata elements specific to RBR.  ",
+  "version": {
+    "const": "0.1"
+  },
+  "type": "object",
+  "$defs": {
+    "platform_vendorinfo": {
+      "type": "object",
+      "version": {
+        "$ref": "#/version"
+      },
+      "properties": {
+        "vendor_schema": true,
+        "version": {
+          "$ref": "#/version"
+        },
+        "MRV_foo7": {
+          "type": "number"
+        },
+        "MRV_foo8": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "MRV_foo7"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,7 +1,7 @@
 {
-  "name": "parameters",
+  "name": "Coriolis_parameters",
   "long_name": "All valid requests to https://api-coriolis.ifremer.fr/legacy/parameter?code={code}",
-  "last_update": "2025-08-20T06:51:59.232023+00:00",
+  "last_update": "2025-10-20T16:26:39.419881+00:00",
   "data": {
     "valid_codes": [
       "9",
@@ -536,7 +536,8 @@
       "791",
       "792",
       "793",
-      "794"
+      "794",
+      "795"
     ],
     "valid_params": [
       "DEPH",
@@ -1061,7 +1062,8 @@
       "CIDA",
       "NFHW",
       "CXAP",
-      "CRSW"
+      "CRSW",
+      "PH25"
     ],
     "codes": {
       "9": {
@@ -6292,6 +6294,16 @@
         "gf3_extended_name": "",
         "parent_code": "0",
         "label": "Abundance of cryptophyceae (flow cytometry)",
+        "param_type": "P"
+      },
+      "795": {
+        "unit": "none",
+        "time_sampling": "",
+        "code": "795",
+        "gf3_strict_name": "",
+        "gf3_extended_name": "PH25",
+        "parent_code": "0",
+        "label": "Ph (total scale) normalized 25\u00b0C 0dbar",
         "param_type": "P"
       }
     },
@@ -11524,6 +11536,16 @@
         "gf3_extended_name": "",
         "parent_code": "0",
         "label": "Abundance of cryptophyceae (flow cytometry)",
+        "param_type": "P"
+      },
+      "PH25": {
+        "unit": "none",
+        "time_sampling": "",
+        "code": "795",
+        "gf3_strict_name": "",
+        "gf3_extended_name": "PH25",
+        "parent_code": "0",
+        "label": "Ph (total scale) normalized 25\u00b0C 0dbar",
         "param_type": "P"
       }
     }

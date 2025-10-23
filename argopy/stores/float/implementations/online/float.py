@@ -1,7 +1,6 @@
 import pandas as pd
 import logging
 
-from .....errors import DataNotFound
 from .... import httpstore
 from ...spec import FloatStoreProto
 

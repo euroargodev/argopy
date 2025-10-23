@@ -179,7 +179,7 @@ class ArgoFloatPlot(ArgoFloatPlotProto):
         )
 
         # Check if param will be plotted using a discrete and known Argo colormap
-        discrete, cmap = False, 'Spectral_r'
+        discrete, cmap = False, "Spectral_r"
         if "qc" in param.lower() or "mode" in param.lower():
             discrete, cmap = True, None  # Let scatter_map guess cmap
 
@@ -261,12 +261,14 @@ class ArgoFloatPlot(ArgoFloatPlotProto):
         this_kwargs = {**default_kwargs, **kwargs}
 
         if "_QC" in param:
-            mycolors = ArgoColors('qc', 9)
-            this_kwargs.update({
-                "cmap": mycolors.cmap,
-                "vmin": 0,
-                "vmax": 9+1,
-            })
+            mycolors = ArgoColors("qc", 9)
+            this_kwargs.update(
+                {
+                    "cmap": mycolors.cmap,
+                    "vmin": 0,
+                    "vmax": 9 + 1,
+                }
+            )
 
         if this_kwargs["cbar"]:
             fig, ax, m, cbar = scatter_plot(this_ds, param, **this_kwargs)
