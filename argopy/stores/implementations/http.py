@@ -1268,7 +1268,7 @@ class httpstore(ArgoStoreProto):
         """
         p = urlparse(api)
         root = p.scheme + '://' + p.netloc
-        get_client = lambda api: aiohttp.ClientSession(api)
+        get_client = lambda api: aiohttp.ClientSession(api)  # noqa: E731
         async with get_client(root) as session:
             async with session.post(p.path, json=json_data) as resp:
                 return await resp.json()

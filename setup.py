@@ -10,7 +10,7 @@ with open("requirements.txt") as f:
 
 setuptools.setup(
     name="argopy",
-    version="1.3.0",
+    version="1.3.1",
     author="argopy Developers",
     author_email="gmaze@ifremer.fr",
     description="A python library for Argo data beginners and experts",
@@ -20,6 +20,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     package_dir={"argopy": "argopy"},
     package_data={"argopy": ["static/assets/*", "static/css/*"]},
+    include_package_data=True,
     install_requires=requirements,
     classifiers=[
         "Programming Language :: Python :: 3.11",

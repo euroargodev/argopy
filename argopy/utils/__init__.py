@@ -119,6 +119,7 @@ __all__ = (
     "float_wmo",
     "ListStrProperty",
     # Locals (environments, versions, systems):
+    "path2assets",
     "show_versions",
     "show_options",
     "modified_environ",

@@ -1,0 +1,381 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://schema.nerc.ac.uk/schemas/sensor/0.1/argo.SBE.schema.json",
+  "title": "JSON Schema for Argo Program Sensors",
+  "description": "A JSON Schema used to populate Argo float sensor configuration and parameter metadata elements specifice to SBE.  ",
+  "version": {
+    "const": "0.2"
+  },
+  "type": "object",
+  "$defs": {
+    "sensor_vendorinfo": {
+      "type": "object",
+      "properties": {
+        "vendor_schema": true,
+        "version": {
+          "$ref": "#/version"
+        },
+        "SBE_manufacturing_date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "SBE_ISFET_SERIAL_NO": {
+          "type": "string"
+        },
+        "SBE_REFERENCE_SERIAL_NO": {
+          "type": "string"
+        },
+        "SBE_pHType": {
+          "type": "string",
+          "enum": [
+            "Float",
+            "Deep",
+            "LOV",
+            "Stem,",
+            "Glider pH"
+          ]
+        },
+        "CONFIG_EcoCdomFluorescenceExcitationWavelength_nm": {
+          "type": "number",
+          "const": 370
+        },
+        "CONFIG_EcoCdomFluorescenceExcitationBandwidth_nm": {
+          "type": "number",
+          "const": 15
+        },
+        "CONFIG_EcoCdomFluorescenceEmissionWavelength_nm": {
+          "type": "number",
+          "const": 460
+        },
+        "CONFIG_EcoCdomFluorescenceEmissionBandwidth_nm": {
+          "type": "number",
+          "const": 120
+        },
+        "CONFIG_EcoChlaFluorescenceExcitationWavelength_nm": {
+          "type": "number",
+          "enum": [
+            435,
+            470
+          ]
+        },
+        "CONFIG_EcoChlaFluorescenceExcitationBandwidth_nm": {
+          "type": "number",
+          "enum": [
+            23,
+            24
+          ]
+        },
+        "CONFIG_EcoChlaFluorescenceEmissionWavelength_nm": {
+          "type": "number",
+          "const": 695
+        },
+        "CONFIG_EcoChlaFluorescenceEmissionBandwidth_nm": {
+          "type": "number",
+          "const": 70
+        },
+        "CONFIG_EcoChlaFluorescenceExcitationWavelength1_nm": {
+          "type": "number",
+          "const": 470
+        },
+        "CONFIG_EcoChlaFluorescenceExcitationBandwidth1_nm": {
+          "type": "number",
+          "const": 23
+        },
+        "CONFIG_EcoChlaFluorescenceEmissionWavelength1_nm": {
+          "type": "number",
+          "const": 695
+        },
+        "CONFIG_EcoChlaFluorescenceEmissionBandwidth1_nm": {
+          "type": "number",
+          "const": 70
+        },
+        "CONFIG_EcoChlaFluorescenceExcitationWavelength2_nm": {
+          "type": "number",
+          "const": 435
+        },
+        "CONFIG_EcoChlaFluorescenceExcitationBandwidth2_nm": {
+          "type": "number",
+          "const": 15
+        },
+        "CONFIG_EcoChlaFluorescenceEmissionWavelength2_nm": {
+          "type": "number",
+          "const": 695
+        },
+        "CONFIG_EcoChlaFluorescenceEmissionBandwidth2_nm": {
+          "type": "number",
+          "const": 70
+        },
+        "CONFIG_EcoBetaWavelength_nm": {
+          "type": "number",
+          "enum": [
+            412,
+            440,
+            470,
+            488,
+            510,
+            532,
+            595,
+            650,
+            676,
+            700,
+            715
+          ]
+        },
+        "CONFIG_EcoBetaBandwidth_nm": {
+          "type": "number",
+          "enum": [
+            20,
+            25
+          ]
+        },
+        "CONFIG_EcoBetaAngle_angularDeg": {
+          "type": "number",
+          "enum": [
+            124,
+            142,
+            150
+          ]
+        },
+        "CONFIG_EcoBetaWavelength1_nm": {
+          "type": "number",
+          "enum": [
+            412,
+            440,
+            470,
+            488,
+            510,
+            532,
+            595,
+            650,
+            676,
+            700,
+            715
+          ]
+        },
+        "CONFIG_EcoBetaBandwidth1_nm": {
+          "type": "number",
+          "const": 25
+        },
+        "CONFIG_EcoBetaAngle_angularDeg1": {
+          "type": "number",
+          "enum": [
+            124,
+            142,
+            150
+          ]
+        },
+        "CONFIG_EcoBetaWavelength2_nm": {
+          "type": "number",
+          "enum": [
+            412,
+            440,
+            470,
+            488,
+            510,
+            532,
+            595,
+            650,
+            676,
+            700,
+            715
+          ]
+        },
+        "CONFIG_EcoBetaBandwidth2_nm": {
+          "type": "number",
+          "const": 25
+        },
+        "CONFIG_EcoBetaAngle_angularDeg2": {
+          "type": "number",
+          "enum": [
+            124,
+            142,
+            150
+          ]
+        },
+        "CONFIG_OcrDownIrrWavelength1_nm": {
+          "type": "integer",
+          "enum": [
+            380
+          ],
+          "maximum": 900
+        },
+        "CONFIG_OcrDownIrrBandwidth1_nm": {
+          "type": "number",
+          "enum": [
+            10
+          ]
+        },
+        "CONFIG_OcrDownIrrWavelength2_nm": {
+          "type": "number",
+          "enum": [
+            412,
+            443
+          ],
+          "maximum": 900
+        },
+        "CONFIG_OcrDownIrrBandwidth2_nm": {
+          "type": "number",
+          "enum": [
+            10
+          ]
+        },
+        "CONFIG_OcrDownIrrWavelength3_nm": {
+          "type": "number",
+          "enum": [
+            490
+          ],
+          "maximum": 900
+        },
+        "CONFIG_OcrDownIrrBandwidth3_nm": {
+          "type": "number",
+          "enum": [
+            10
+          ]
+        },
+        "CONFIG_OcrDownIrrWavelength4_nm": {
+          "type": "number",
+          "enum": [
+            555
+          ]
+        },
+        "CONFIG_OcrDownIrrBandwidth4_nm": {
+          "type": "number",
+          "enum": [
+            10
+          ]
+        },
+        "CONFIG_SunaApfFrameOutputPixelBegin_NUMBER": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 256
+        },
+        "CONFIG_SunaApfFrameOutputPixelEnd_NUMBER": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 256
+        },
+        "CONFIG_EcoVerticalPressureOffset_dbar": {
+          "type": "number",
+          "minimum": -2.0,
+          "maximum": 2.0
+        },
+        "CONFIG_OcrVerticalPressureOffset_dbar": {
+          "type": "number",
+          "minimum": -2.0,
+          "maximum": 2.0
+        },
+        "CONFIG_OptodeVerticalPressureOffset_dbar": {
+          "type": "number",
+          "minimum": -2.0,
+          "maximum": 2.0
+        },
+        "CONFIG_SunaVerticalPressureOffset_dbar": {
+          "type": "number",
+          "minimum": -2.0,
+          "maximum": 2.0
+        }
+      },
+      "required": [
+        "vendor_schema",
+        "version"
+      ],
+      "additionalProperties": false
+    },
+    "parameter_vendorinfo": {
+      "type": "object",
+      "version": {
+        "$ref": "#/version"
+      },
+      "properties": {
+        "vendor_schema": true,
+        "version": {
+          "$ref": "#/version"
+        },
+        "SBE_calfile": {
+          "type": "string"
+        },
+        "SBE_optional3": {
+          "type": "number"
+        },
+        "SBE_optional4": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "vendor_schema",
+        "version"
+      ],
+      "additionalProperties": false
+    },
+    "predeployment_vendorinfo": {
+      "type": "object",
+      "version": {
+        "$ref": "#/version"
+      },
+      "properties": {
+        "vendor_schema": true,
+        "version": {
+          "$ref": "#/version"
+        },
+        "PREDEPLOYMENT_SEAFET_K0_CALIB_DATE": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "PREDEPLOYMENT_SEAFET_K2_CALIB_DATE": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "vendor_schema",
+        "version"
+      ],
+      "additionalProperties": false
+    },
+    "instrument_vendorinfo": {
+      "type": "object",
+      "version": {
+        "$ref": "#/version"
+      },
+      "properties": {
+        "vendor_schema": true,
+        "version": {
+          "$ref": "#/version"
+        },
+        "SBE_part_number": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "vendor_schema",
+        "version"
+      ],
+      "additionalProperties": false
+    },
+    "platform_vendorinfo": {
+      "type": "object",
+      "version": {
+        "$ref": "#/version"
+      },
+      "properties": {
+        "vendor_schema": true,
+        "version": {
+          "$ref": "#/version"
+        },
+        "SBE_manufacturing_date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "SBE_part_number": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "vendor_schema",
+        "version",
+        "SBE_manufacturing_date"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

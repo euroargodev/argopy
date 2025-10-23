@@ -1,8 +1,10 @@
 import os
 import fsspec
+import aiohttp
 import logging
 import importlib
 from typing import Union
+import sys
 
 from ..options import OPTIONS
 from ..utils.accessories import Registry
@@ -38,6 +40,11 @@ except ModuleNotFoundError:
     distributed = None
 
 
+USER_AGENT: str = "Python/{0[0]}.{0[1]} aiohttp/{1} Argopy/{2} (+https://github.com/euroargodev/argopy)".format(
+    sys.version_info, aiohttp.__version__, __version__
+)
+
+
 def new_fs(
     protocol: str = "",
     cache: bool = False,
@@ -62,15 +69,24 @@ def new_fs(
     (fs, cache_registry)
         A tuple with the fsspec file system and :class:`argopy.Registry` for cache if any
 
+    Notes
+    -----
+    For the specific case of the 'http' file system, the ``client_kwargs`` argument can be used to customise HTTP requests header fields like:
+    ``httpstore(client_kwargs={"headers": {"Some-Header": "a value"}})``
+
     """
     # Merge default FSSPEC kwargs with user defined kwargs:
     default_fsspec_kwargs = {"simple_links": True, "block_size": 0}
     if protocol == "http":
         client_kwargs = {
             "trust_env": OPTIONS["trust_env"],
-            "headers": {"Argopy-Version": __version__},
+            "headers": {"User-Agent": USER_AGENT},
         }  # Passed to aiohttp.ClientSession
         if "client_kwargs" in kwargs:
+            if "headers" in kwargs['client_kwargs']:
+                for header_key, header_val in kwargs['client_kwargs']['headers'].items():
+                    client_kwargs['headers'].update({header_key: header_val})
+                kwargs['client_kwargs'].pop("headers")
             client_kwargs = {**client_kwargs, **kwargs["client_kwargs"]}
             kwargs.pop("client_kwargs")
         default_fsspec_kwargs = {

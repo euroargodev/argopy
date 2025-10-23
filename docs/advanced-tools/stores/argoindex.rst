@@ -345,3 +345,79 @@ Two specific index variables are only available with BGC-Argo index files: ``PAR
                 :okwarning:
 
                 idx.query.parameter_data_mode({'BBP700': ['R', 'A'], 'DOXY': 'D'}, logical='or')
+
+.. _argoindex-visu:
+
+Plotting features
+-----------------
+.. currentmodule:: argopy
+
+The :class:`ArgoIndex` class come with a :class:`ArgoIndex.plot` accessor than can take several methods to quickly visualize data from the float.
+
+Check all the detailed arguments on the API reference :class:`ArgoIndex.plot`.
+
+.. tabs::
+
+    .. tab:: Float index trajectory
+
+        .. code-block:: python
+
+            from argopy import ArgoIndex
+            idx = ArgoIndex(index_file='bgc-s')
+
+            idx.query.wmo('6904240')
+            idx.plot.trajectory()
+
+        .. image:: ../../_static/ArgoIndex_trajectory.png
+
+        Also with much more floats:
+
+        .. code-block:: python
+
+            from argopy import ArgoIndex
+            idx = ArgoIndex(index_file='bgc-s')
+
+            idx.query.params('PH')
+            idx.plot.trajectory(set_global=True,
+                                add_legend=False,
+                                traj=False,
+                                cbar=False,
+                                markersize=12,
+                                markeredgesize=0.1,
+                                dpi=120,
+                                figsize=(20,20));
+
+        .. image:: ../../_static/ArgoIndex_trajectory_ph.png
+
+    .. tab:: Bar plot of index properties
+
+        .. code-block:: python
+
+            from argopy import ArgoIndex
+            idx = ArgoIndex(index_file='bgc-s')
+            idx.query.params('CHLA')
+
+            idx.plot.bar(by='profiler')
+
+        .. image:: ../../_static/ArgoIndex_profiler.png
+
+        .. code-block:: python
+
+            from argopy import ArgoIndex
+            idx = ArgoIndex(index_file='bgc-s')
+            idx.query.params('CHLA')
+
+            idx.plot.bar(by='dac')
+
+        .. image:: ../../_static/ArgoIndex_dac.png
+
+        .. code-block:: python
+
+            from argopy import ArgoIndex
+            idx = ArgoIndex(index_file='bgc-s')
+            idx.query.params('CHLA')
+
+            idx.plot.bar(by='institution')
+
+        .. image:: ../../_static/ArgoIndex_institution.png
+

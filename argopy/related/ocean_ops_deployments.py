@@ -10,7 +10,10 @@ class OceanOPSDeployments:
 
     Use the OceanOPS API for metadata access to retrieve Argo floats deployment information.
 
-    The API is documented here: https://www.ocean-ops.org/api/swagger/?url=https://www.ocean-ops.org/api/1/oceanops-api.yaml
+    The API is documented here:
+
+    - https://www.ocean-ops.org/api/help
+    - https://www.ocean-ops.org/api/swagger/?url=https://www.ocean-ops.org/api/1/oceanops-api-legacy.yaml
 
     Description of deployment status name:
 
@@ -67,7 +70,7 @@ class OceanOPSDeployments:
     """This model represents a Platform entity and is used to retrieve a platform information (schema model
      named 'Ptf')."""
 
-    api_server_check = "https://www.ocean-ops.org/api/1/oceanops-api.yaml"
+    api_server_check = "https://www.ocean-ops.org/api/1/oceanops-api-legacy.yaml"
     """URL to check if the API is alive"""
 
     def __init__(self, box: list = None, deployed_only: bool = False):

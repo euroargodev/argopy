@@ -726,7 +726,7 @@
     "title": "Argo float vertical profile",
     "institution": "FR GDAC",
     "source": "Argo float",
-    "history": "2025-08-20T06:52:07.491624+00:00 creation",
+    "history": "2025-10-20T16:34:27.434788+00:00 creation",
     "references": "http://www.argodatamgt.org/Documentation",
     "user_manual_version": "3.1",
     "Conventions": "Argo-3.1 CF-1.6",

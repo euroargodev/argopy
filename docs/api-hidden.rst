@@ -297,17 +297,6 @@
     argopy.ArgoIndex.read_files
     argopy.ArgoIndex.records_per_wmo
 
-    argopy.ArgoIndex.search_wmo
-    argopy.ArgoIndex.search_cyc
-    argopy.ArgoIndex.search_wmo_cyc
-    argopy.ArgoIndex.search_tim
-    argopy.ArgoIndex.search_lat_lon
-    argopy.ArgoIndex.search_lat_lon_tim
-    argopy.ArgoIndex.search_params
-    argopy.ArgoIndex.search_parameter_data_mode
-    argopy.ArgoIndex.search_profiler_type
-    argopy.ArgoIndex.search_profiler_label
-
     argopy.ArgoIndex.to_dataframe
     argopy.ArgoIndex.to_indexfile
     argopy.ArgoIndex.copy
@@ -389,10 +378,6 @@
 
     argopy.stores.float.spec.ArgoFloatProto
     argopy.stores.ArgoFloat
-    argopy.stores.ArgoFloat.plot
-    argopy.stores.ArgoFloat.plot.trajectory
-    argopy.stores.ArgoFloat.plot.map
-    argopy.stores.ArgoFloat.plot.scatter
     argopy.ArgoFloat.open_dataset
     argopy.ArgoFloat.ls_dataset
     argopy.ArgoFloat.path
@@ -402,6 +387,11 @@
     argopy.ArgoFloat.metadata
     argopy.ArgoFloat.N_CYCLES
     argopy.ArgoFloat.dac
+
+    argopy.stores.ArgoFloat.plot
+    argopy.stores.ArgoFloat.plot.trajectory
+    argopy.stores.ArgoFloat.plot.map
+    argopy.stores.ArgoFloat.plot.scatter
     argopy.ArgoFloat.plot
     argopy.ArgoFloat.plot.trajectory
     argopy.ArgoFloat.plot.scatter

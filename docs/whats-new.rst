@@ -7,6 +7,7 @@ What's New
 
 |pypi dwn| |conda dwn|
 
+
 Coming up next (unreleased)
 ---------------------------
 
@@ -23,19 +24,51 @@ Breaking changes
   - column `institution_code` is renamed `institution`, to preserve the original Argo index file column name,
   - column `institution` is renamed by `institution_name`.
 
-Internals
-^^^^^^^^^
-
-- **Fix upstream compatibility** whereby xarray >= 2025.8 deprecation cycle for changing default keyword arguments in :func:`xarray.merge` and :func:`xarray.concat` would make Argopy to fail with internal data processing, :issue:`521`. (:pr:`504`) by |gmaze|.
-
-- **New post method for the** :class:`stores.httpstore` by |gmaze|.
-
 Energy
 ^^^^^^
 
 .. image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_carbonfootprint_since_last_release.json
 
 .. images:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_carbonfootprint_baseline.json
+
+
+v1.3.1 (22 Oct. 2025)
+---------------------
+
+.. _v1.3.1-features:
+
+Features and front-end API
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- **New colormap in** :class:`ArgoColors` **for whole profile QC flags**. See the new documentation section on :ref:`Argo colors` for more. (:pr:`515`) by |gmaze|.
+
+- **Improved** :class:`ArgoFloat.plot` **methods**: now auto-select colormap, colorbar and legend settings depending on the parameter to plot. Check the documentation at: :ref:`argofloat-visu`. (:pr:`515`) by |gmaze|.
+
+.. _v1.3.1-internals:
+
+Internals
+^^^^^^^^^
+
+- **Fix upstream compatibility** whereby xarray >= 2025.8 deprecation cycle for changing default keyword arguments in :func:`xarray.merge` and :func:`xarray.concat` would make Argopy to fail with internal data processing, :issue:`521`. (:pr:`504`) by |gmaze|.
+
+- For mainteners, add a public CLI script ``cli/update_json_assets`` to update static assets. (:pr:`540`) by |gmaze|.
+
+- **Update list of Reference tables** with R14 on "Argo technical parameter names" and R31 on "Argo float ending cause". The :class:`ArgoNVSReferenceTables` internal list of valid reference tables is now taken from a static asset file generated with ``cli/update_json_assets`` on each new release. (:pr:`540`) by |gmaze|.
+
+- **Fix bug** whereby no static asset subfolders were included in the pypi and conda distribution, thus making the :class:`Dataset.argo.canyon_med` predictor to raise an error when predictions were triggered :issue:`530`. (:pr:`531`) by |gmaze|.
+
+- **Fix bug** whereby profiles with Real time only data mode data failed to pass :meth:`Dataset.argo.datamode.merge` without raising an error, :issue:`517`, :issue:`519`. (:pr:`518`) by |gmaze|.
+
+- **Updated User-Agent header field for HTTP requests**. The default aiottp header field User-Agent is now complemented with Argopy information in order to ease server side log analysis. The User-Agent is now somethink like: ``"User-Agent": Python/3.11 aiohttp/3.12.14 Argopy/1.3.0 (+https://github.com/euroargodev/argopy)``, :issue:`533`. (:pr:`534`) by |gmaze|.
+
+- **New post method for the** :class:`stores.httpstore` allowing for HTTP POST methods to web-API, by |gmaze|.
+
+.. _v1.3.1-energy:
+
+Energy
+^^^^^^
+
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.3.1%20%5BgCO2eq%5D-TBA-black?style=plastic&labelColor=grey
 
 v1.3.0 (22 Aug. 2025)
 ---------------------
