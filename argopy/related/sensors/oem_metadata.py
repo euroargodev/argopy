@@ -74,7 +74,9 @@ class Sensor:
     def _attr2str(self, x):
         """Return a class attribute, or 'n/a' if it's None, {} or ""."""
         value = getattr(self, x, None)
-        if type(value) is str:
+        if value is None:
+            return "n/a"
+        elif type(value) is str:
             return value if value and value.strip() else "n/a"
         elif type(value) is dict:
             if len(value.keys()) == 0:
@@ -91,7 +93,7 @@ class Sensor:
             value = d.get(x, None)
             return value if value and value.strip() else "n/a"
 
-        summary = [f"<oemsensor.sensor.{self.SENSOR_SERIAL_NO}>"]
+        summary = [f"<oemsensor.sensor><{self.SENSOR}><{self.SENSOR_SERIAL_NO}>"]
         summary.append(f"  SENSOR: {self.SENSOR} ({self.SENSOR_uri})")
         summary.append(f"  SENSOR_MAKER: {self.SENSOR_MAKER} ({self.SENSOR_MAKER_uri})")
         summary.append(f"  SENSOR_MODEL: {self.SENSOR_MODEL} ({self.SENSOR_MODEL_uri})")
@@ -103,9 +105,12 @@ class Sensor:
             summary.append(
                 f"  SENSOR_MODEL_FIRMWARE: {self._attr2str('SENSOR_MODEL_FIRMWARE')}"
             )
-        summary.append(f"  sensor_vendorinfo:")
-        for key in self.sensor_vendorinfo.keys():
-            summary.append(f"    - {key}: {key2str(self.sensor_vendorinfo, key)}")
+        if getattr(self, "sensor_vendorinfo", None) is not None:
+            summary.append(f"  sensor_vendorinfo:")
+            for key in self.sensor_vendorinfo.keys():
+                summary.append(f"    - {key}: {key2str(self.sensor_vendorinfo, key)}")
+        else:
+            summary.append(f"  sensor_vendorinfo: None")
         return "\n".join(summary)
 
 
@@ -113,13 +118,16 @@ class Sensor:
 class Parameter:
     PARAMETER: str  # SDN:R03::PRES
     PARAMETER_SENSOR: str  # SDN:R25::CTD_PRES
-    PARAMETER_UNITS: str
     PARAMETER_ACCURACY: str
     PARAMETER_RESOLUTION: str
-    PREDEPLOYMENT_CALIB_EQUATION: str
     PREDEPLOYMENT_CALIB_COEFFICIENT_LIST: Dict[str, str]
-    PREDEPLOYMENT_CALIB_COMMENT: str
-    PREDEPLOYMENT_CALIB_DATE: str
+
+    # Made optional to accommodate errors in OEM data
+    PARAMETER_UNITS: str = None
+    PREDEPLOYMENT_CALIB_EQUATION: str = None
+    PREDEPLOYMENT_CALIB_COMMENT: str = None
+    PREDEPLOYMENT_CALIB_DATE: str = None
+
     parameter_vendorinfo: Optional[Dict[str, Any]] = None
     predeployment_vendorinfo: Optional[Dict[str, Any]] = None
 
@@ -136,7 +144,9 @@ class Parameter:
     def _attr2str(self, x):
         """Return a class attribute, or 'n/a' if it's None, {} or ""."""
         value = getattr(self, x, None)
-        if type(value) is str:
+        if value is None:
+            return "n/a"
+        elif type(value) is str:
             return value if value and value.strip() else "n/a"
         elif type(value) is dict:
             if len(value.keys()) == 0:
@@ -164,7 +174,7 @@ class Parameter:
 
     def __repr__(self):
 
-        summary = [f"<oemsensor.parameter.{self.PARAMETER}>"]
+        summary = [f"<oemsensor.parameter><{self.PARAMETER}>"]
         summary.append(f"  PARAMETER: {self.PARAMETER} ({self.PARAMETER_uri})")
         summary.append(
             f"  PARAMETER_SENSOR: {self.PARAMETER_SENSOR} ({self.PARAMETER_SENSOR_uri})"
@@ -180,7 +190,10 @@ class Parameter:
             summary.append(f"    - {key}: {self._attr2str(p)}")
 
         for key in ["parameter_vendorinfo", "predeployment_vendorinfo"]:
-            summary.append(f"  {key}: {self._attr2str(p)}")
+            if getattr(self, key, None) is not None:
+                summary.append(f"  {key}: {self._attr2str(p)}")
+            else:
+                summary.append(f"  {key}: None")
         return "\n".join(summary)
 
     def _repr_html_(self):
@@ -374,7 +387,7 @@ class ArgoSensorMetaDataOem:
         )
         self.sensors = [Sensor(**sensor) for sensor in data["SENSORS"]]
         self.parameters = [Parameter(**param) for param in data["PARAMETERS"]]
-        self.instrument_vendorinfo = data.get("instrument_vendorinfo")
+        self.instrument_vendorinfo = data.get("instrument_vendorinfo", None)
 
         return self
 
@@ -429,19 +442,21 @@ class ArgoSensorMetaDataOem:
         }
 
     def to_json_file(self, file_path: str) -> None:
-        """Save meta-data to a JSON file
+        """Save meta-data to a JSON file - in dev.
 
         Notes
         -----
-        The output json file is compliant with the Argo sensor meta-data JSON schema :attr:`ArgoSensorMetaDataOem.schema`
+        The output json file should be compliant with the Argo sensor meta-data JSON schema :attr:`ArgoSensorMetaDataOem.schema`
         """
         with open(file_path, "w") as f:
             json.dump(self.to_dict(), f, indent=2)
 
     def from_rbr(self, serial_number: str, **kwargs):
-        """Fetch sensor metadata from RBR API
+        """Fetch sensor metadata from RBR-GLOBAL API
 
         We also download certificates if available
+
+        TODO: Check mark if the sensor is ok with dynamic correction or not
 
         Parameters
         ----------
@@ -466,17 +481,27 @@ class ArgoSensorMetaDataOem:
         data = self._fs.open_json(uri)
         obj = self.from_dict(data)
 
-        # Download RBR zip archive with calibration certificates in PDFs:
-        obj = obj.certificates_rbr(action="download", quiet=True)
+        # Also download RBR zip archive with calibration certificates in PDFs:
+        obj = obj.__certificates_rbr(action="download", quiet=True)
+
+        # Finally reset httpstore parameters:
+        headers = fss.client_kwargs.get("headers")
+        headers.pop("Authorization", None)
+        fss._session = None  # Reset fsspec aiohttp.ClientSession
 
         return obj
 
-    def certificates_rbr(
+    def __certificates_rbr(
         self, action: Literal["download", "open"] = "download", **kwargs
     ):
         """Download RBR zip archive with calibration certificates in PDFs
 
         Certificate PDF files are written to the OPTIONS['cachedir'] folder
+
+        Notes
+        -----
+        We keep this method very private because it is expected to be called only by the self.from_rbr() method.
+        This ensures that the httpstore has the appropriate authorization key.
 
         """
         cdir = Path(OPTIONS["cachedir"]).joinpath("RBR_certificates")
