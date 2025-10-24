@@ -3,8 +3,12 @@ import numpy as np
 from pathlib import Path
 from typing import Literal, Any, Iterator
 import logging
+import concurrent.futures
 
 from ...stores import ArgoFloat, ArgoIndex, httpstore, filestore
+from ...stores.filesystems import (
+    tqdm,
+)  # Safe import, return a lambda if tqdm not available
 from ...utils import check_wmo, Chunker, to_list, NVSrow
 from ...errors import (
     DataNotFound,
@@ -17,8 +21,13 @@ from ...utils import path2assets
 from .. import ArgoNVSReferenceTables
 
 
-SearchOutputOptions = Literal["wmo", "sn", "wmo_sn", "df"]
-ErrorOptions = Literal["raise", "ignore"]
+# Define allowed values as a tuple
+SearchOutput = ("wmo", "sn", "wmo_sn", "df")
+Error = ("raise", "ignore", "silent")
+
+# Define Literal types using tuples
+SearchOutputOptions = Literal[*SearchOutput]
+ErrorOptions = Literal[*Error]
 
 log = logging.getLogger("argopy.related.sensors")
 
@@ -86,7 +95,11 @@ class SensorModel(NVSrow):
         return SensorModel(obj)
 
     def __contains__(self, string) -> bool:
-        return string.lower() in self.name.lower() or string.lower() in self.long_name.lower()
+        return (
+            string.lower() in self.name.lower()
+            or string.lower() in self.long_name.lower()
+        )
+
 
 class ArgoSensor:
     """Argo sensor 'package' helper class
@@ -107,7 +120,18 @@ class ArgoSensor:
 
     """
 
-    __slots__ = ["_cache", "_cachedir", "_timeout", "fs", "_r25", "_r26", "_r27", "_r27_to_r25", "_model", "_type"]
+    __slots__ = [
+        "_cache",
+        "_cachedir",
+        "_timeout",
+        "_fs",
+        "_r25",
+        "_r26",
+        "_r27",
+        "_r27_to_r25",
+        "_model",
+        "_type",
+    ]
 
     def __init__(
         self,
@@ -177,8 +201,12 @@ class ArgoSensor:
             # Search and return a DataFrame with full sensor information from floats equipped
             ArgoSensor().search('RBR', output='df')
 
+            # Search by model, can take a list of string, not necessarily a single value:
+            ArgoSensor().search(['ECO_FLBBCD_AP2', 'ECO_FLBBCD'])
+
+
         .. code-block:: python
-            :caption: Easily loop through `ArgoFloat` instances for each floats equipped with a sensor model
+            :caption: Easily loop through `ArgoFloat` instances for each float equipped with a sensor model
 
             from argopy import ArgoSensor
 
@@ -226,8 +254,12 @@ class ArgoSensor:
         self._cache = kwargs.get("cache", True)
         self._cachedir = kwargs.get("cachedir", OPTIONS["cachedir"])
         self._timeout = kwargs.get("timeout", OPTIONS["api_timeout"])
-        fs_kargs = {"cache": self._cache, "cachedir": self._cachedir, "timeout": self._timeout}
-        self.fs = httpstore(**fs_kargs)
+        fs_kargs = {
+            "cache": self._cache,
+            "cachedir": self._cachedir,
+            "timeout": self._timeout,
+        }
+        self._fs = httpstore(**fs_kargs)
 
         self._r25: pd.DataFrame | None = None  # will be loaded when necessary
         self._r26: pd.DataFrame | None = None  # will be loaded when necessary
@@ -248,13 +280,12 @@ class ArgoSensor:
                 self._model = SensorModel.from_series(df.iloc[0])
                 self._type = self.model_to_type(self._model, errors="ignore")
                 # if "RBR" in self._model:
-                    # Add the RBR OEM API Authorization key for this sensor:
-                    # fs_kargs.update(client_kwargs={'headers': {'Authorization': OPTIONS.get('rbr_api_key') }})
+                # Add the RBR OEM API Authorization key for this sensor:
+                # fs_kargs.update(client_kwargs={'headers': {'Authorization': OPTIONS.get('rbr_api_key') }})
             else:
                 raise InvalidDatasetStructure(
                     f"Found multiple sensor models with '{model}'. Restrict your sensor model name to only one value in: {to_list(df['altLabel'].values)}"
                 )
-
 
     def _load_mappers(self):
         """Load from static assets file the NVS R25 to R27 key mappings
@@ -447,13 +478,14 @@ class ArgoSensor:
                 "reference_model_name",
                 "reference_sensor",
                 "reference_sensor_type",
+                "reference_manufacturer",
+                "reference_manufacture_name",
             ]:
                 summary.append(f"  ╰┈➤ ArgoSensor().{attr}")
 
             summary.append("👉 methods: ")
             for meth in [
                 "search_model",
-                "search_model_name",
                 "search",
                 "iterfloats_with",
             ]:
@@ -473,7 +505,7 @@ class ArgoSensor:
         :class:`ArgoNVSReferenceTables`
         """
         if self._r27 is None:
-            self._r27 = ArgoNVSReferenceTables(fs=self.fs).tbl("R27")
+            self._r27 = ArgoNVSReferenceTables(fs=self._fs).tbl("R27")
         return self._r27
 
     @property
@@ -509,7 +541,7 @@ class ArgoSensor:
         :class:`ArgoNVSReferenceTables`
         """
         if self._r25 is None:
-            self._r25 = ArgoNVSReferenceTables(fs=self.fs).tbl("R25")
+            self._r25 = ArgoNVSReferenceTables(fs=self._fs).tbl("R25")
         return self._r25
 
     @property
@@ -545,7 +577,7 @@ class ArgoSensor:
         :class:`ArgoNVSReferenceTables`
         """
         if self._r26 is None:
-            self._r26 = ArgoNVSReferenceTables(fs=self.fs).tbl("R26")
+            self._r26 = ArgoNVSReferenceTables(fs=self._fs).tbl("R26")
         return self._r26
 
     @property
@@ -618,8 +650,8 @@ class ArgoSensor:
             else:
                 return data.reset_index(drop=True)
 
-    def _search_wmo_with(self, model: str, errors : ErrorOptions = "raise") -> list[int]:
-        """Return the list of WMOs with a given sensor model
+    def _search_wmo_with(self, model: str, errors: ErrorOptions = "raise") -> list[int]:
+        """Return the list of WMOs equipped with a given sensor model
 
         Notes
         -----
@@ -629,32 +661,45 @@ class ArgoSensor:
 
         https://fleetmonitoring.euro-argo.eu/swagger-ui.html#!/platform-code-controller/getPlatformCodesMultiLinesSearchUsingPOST
 
+        Notes
+        -----
+        No option checking, to be done by caller
         """
+        models = to_list(model)
+        # Security Issue: models string should be sanitized ?
         api_point = f"{OPTIONS['fleetmonitoring']}/platformCodes/multi-lines-search"
         payload = [
             {
                 "nested": False,
                 "path": "string",
                 "searchValueType": "Text",
-                "values": [model],
+                "values": models,
                 "field": "sensorModels",
             }
         ]
-        wmos = self.fs.post(api_point, json_data=payload)
+        wmos = self._fs.post(api_point, json_data=payload)
         if wmos is None or len(wmos) == 0:
-            try:
-                search_hint: list[str] = self.search_model(
-                    model, output="name", strict=False
-                )
+            # Handle failed search:
+            search_hint: list[str] = []
+            for model in models:
+                try:
+                    hint: list[str] = self.search_model(
+                        model, output="name", strict=False
+                    )
+                    search_hint.extend(hint)
+                except DataNotFound:
+                    pass
+            if len(search_hint) > 0:
                 msg = (
-                    f"No floats matching this sensor model name '{model}'. Possible hint: %s"
+                    f"No floats matching this sensor model name {models}. Possible hint: %s"
                     % ("; ".join(search_hint))
                 )
-            except DataNotFound:
-                msg = f"No floats matching this sensor model name '{model}'"
+            else:
+                msg = f"Unknown sensor models: {models}"
+
             if errors == "raise":
                 raise DataNotFound(msg)
-            else:
+            elif errors == "ignore":
                 log.error(msg)
         return check_wmo(wmos)
 
@@ -666,7 +711,7 @@ class ArgoSensor:
         postprocess=None,
         postprocess_opts={},
         progress=False,
-        errors="raise",
+        errors: ErrorOptions = "raise",
     ) -> Any:
         """Search floats with a sensor model and then fetch and process JSON data returned from the fleet-monitoring API for each floats
 
@@ -675,6 +720,10 @@ class ArgoSensor:
         Based on a POST request to the fleet-monitoring API requests to `/floats/{wmo}`.
 
         `Endpoint documentation <https://fleetmonitoring.euro-argo.eu/swagger-ui.html#!/autonomous-float-controller/getFullFloatUsingGET>`_.
+
+        Notes
+        -----
+        No option checking, to be done by caller
         """
         wmos = self._search_wmo_with(model)
 
@@ -682,7 +731,7 @@ class ArgoSensor:
         for wmo in wmos:
             URI.append(f"{OPTIONS['fleetmonitoring']}/floats/{wmo}")
 
-        sns = self.fs.open_mfjson(
+        sns = self._fs.open_mfjson(
             URI,
             preprocess=preprocess,
             preprocess_opts=preprocess_opts,
@@ -692,8 +741,14 @@ class ArgoSensor:
 
         return postprocess(sns, **postprocess_opts)
 
-    def _search_sn_with(self, model: str, progress=False, errors : ErrorOptions = "raise") -> list[str]:
-        """Return serial number of sensor models with a given string in name"""
+    def _search_sn_with(
+        self, model: str, progress=False, errors: ErrorOptions = "raise"
+    ) -> list[str]:
+        """Return serial number of sensor models with a given string in name
+        Notes
+        -----
+        No option checking, to be done by caller
+        """
 
         def preprocess(jsdata, model_name: str = ""):
             sn = np.unique(
@@ -719,9 +774,14 @@ class ArgoSensor:
         )
 
     def _search_wmo_sn_with(
-        self, model: str, progress=False, errors="raise"
+        self, model: str, progress=False, errors: ErrorOptions = "raise"
     ) -> dict[int, str]:
-        """Return a dictionary of float WMOs with their sensor serial numbers"""
+        """Return a dictionary of float WMOs with their sensor serial numbers
+
+        Notes
+        -----
+        No option checking, to be done by caller
+        """
 
         def preprocess(jsdata, model_name: str = ""):
             sn = np.unique(
@@ -744,7 +804,9 @@ class ArgoSensor:
             errors=errors,
         )
 
-    def _to_dataframe(self, model: str, progress=False, errors : ErrorOptions = "raise") -> pd.DataFrame:
+    def _to_dataframe(
+        self, model: str, progress=False, errors: ErrorOptions = "raise"
+    ) -> pd.DataFrame:
         """Return a DataFrame with WMO, sensor type, model, maker, sn, units, accuracy and resolution
 
         Parameters
@@ -752,6 +814,9 @@ class ArgoSensor:
         model: str, optional
             A string to search in the `sensorModels` field of the Euro-Argo fleet-monitoring API `platformCodes/multi-lines-search` endpoint.
 
+        Notes
+        -----
+        No option checking, to be done by caller
         """
         if model is None and self.model is not None:
             model = self.model.name
@@ -803,21 +868,112 @@ class ArgoSensor:
             errors=errors,
         )
 
+    def _search_single(
+        self,
+        model: str,
+        output: SearchOutputOptions = "wmo",
+        progress: bool = False,
+        errors: ErrorOptions = "raise",
+    ) -> list[int] | list[str] | dict[int, str] | pd.DataFrame:
+        """Run a single model search"""
+
+        if output == "df":
+            return self._to_dataframe(model=model, progress=progress, errors=errors)
+        elif output == "sn":
+            return self._search_sn_with(model=model, progress=progress, errors=errors)
+        elif output == "wmo_sn":
+            return self._search_wmo_sn_with(
+                model=model, progress=progress, errors=errors
+            )
+        else:
+            return self._search_wmo_with(model=model, errors=errors)
+
+    def _search_multi(
+        self,
+        models: list[str],
+        output: SearchOutputOptions = "wmo",
+        progress: bool = False,
+        errors: ErrorOptions = "raise",
+        max_workers: int | None = None,
+    ) -> list[int] | list[str] | dict[int, str] | pd.DataFrame:
+        """Run a multiple models search in parallel with multithreading"""
+        # Remove duplicates:
+        models = list(set(models))
+
+        ConcurrentExecutor = concurrent.futures.ThreadPoolExecutor(
+            max_workers=max_workers
+        )
+        failed = []
+        if output in ["wmo", "sn", "df"]:
+            results = []
+        elif output == "wmo_sn":
+            results = {}
+
+        with ConcurrentExecutor as executor:
+            future_to_model = {
+                executor.submit(
+                    self._search_single,
+                    model,
+                    output=output,
+                    errors=errors,
+                ): model
+                for model in models
+            }
+            futures = concurrent.futures.as_completed(future_to_model)
+            if progress:
+                futures = tqdm(
+                    futures, total=len(models), disable="disable" in [progress]
+                )
+
+            for future in futures:
+                data = None
+                try:
+                    data = future.result()
+                except Exception:
+                    failed.append(future_to_model[future])
+                    if errors == "ignore":
+                        log.error(
+                            "Ignored error with this url: %s" % future_to_model[future]
+                        )
+                    elif errors == "silent":
+                        pass
+                    else:
+                        raise
+                finally:
+                    # Gather results according to final output format:
+                    if data is not None:
+                        if output in ["wmo", "sn"]:
+                            results.extend(data)
+                        elif output == "df":
+                            results.append(data)
+                        else:
+                            for wmo in data.keys():
+                                results.update({wmo: data[wmo]})
+
+        results = [r for r in results if r is not None]  # Only keep non-empty results
+        if len(results) > 0:
+            if output == "df":
+                return pd.concat(results, axis=0).reset_index(drop=True)
+            else:
+                return results
+        raise DataNotFound(models)
+
     def search(
         self,
-        model: str | None = None,
+        model: str | list[str] | None = None,
         output: SearchOutputOptions = "wmo",
-        progress : bool = False,
-        errors : ErrorOptions = "raise",
+        progress: bool = False,
+        errors: ErrorOptions = "raise",
+        **kwargs,
     ) -> list[int] | list[str] | dict[int, str] | pd.DataFrame:
         """Search for Argo floats equipped with a sensor model name
 
-        All information are retrieved using the `Euro-Argo fleet-monitoring API <https://fleetmonitoring.euro-argo.eu>`_.
+        All information are retrieved with one or more requests to the `Euro-Argo fleet-monitoring API <https://fleetmonitoring.euro-argo.eu>`_.
 
         Parameters
         ----------
-        model: str, optional
-            A string to search in the ``sensorModels`` field of the Euro-Argo fleet-monitoring API ``platformCodes/multi-lines-search`` endpoint.
+        model: str, list[str], optional
+            One or more models string to search.
 
         output: str, Literal["wmo", "sn", "wmo_sn", "df"], default "wmo"
             Define the output to return:
@@ -838,30 +994,49 @@ class ArgoSensor:
 
         Notes
         -----
-        The list of WMOs equipped with a given sensor model is retrieved using the Euro-Argo fleet-monitoring API and a request to the ``platformCodes/multi-lines-search`` endpoint using the ``sensorModels`` search field.
+        Whatever the output format, the first step is to retrieve a list of WMOs equipped with one or more sensor models.
+        This is done using the Euro-Argo fleet-monitoring API and a request to the ``platformCodes/multi-lines-search`` endpoint using the ``sensorModels`` search field.
 
-        Sensor serial numbers are given by float meta-data retrieved using the Euro-Argo fleet-monitoring API and a request to the ``/floats/{wmo}`` endpoint:
+        Then and if necessary (all output format but 'wmo'), the corresponding list of sensor serial numbers are retrieved using one request per float to the Euro-Argo fleet-monitoring API ``/floats/{wmo}`` endpoint.
+
+        Web-api documentation:
 
         - `Documentation for endpoint: platformCodes/multi-lines-search <https://fleetmonitoring.euro-argo.eu/swagger-ui.html#!/platform-code-controller/getPlatformCodesMultiLinesSearchUsingPOST>`_.
-
         - `Documentation for endpoint: /floats/{wmo} <https://fleetmonitoring.euro-argo.eu/swagger-ui.html#!/autonomous-float-controller/getFullFloatUsingGET>`_.
 
         """
-        if model is None and self.model is not None:
-            model = self.model.name
-        if output == "df":
-            return self._to_dataframe(model=model, progress=progress, errors=errors)
-        elif output == "wmo":
-            return self._search_wmo_with(model=model, errors=errors)
-        elif output == "sn":
-            return self._search_sn_with(model=model, progress=progress, errors=errors)
-        elif output == "wmo_sn":
-            return self._search_wmo_sn_with(
-                model=model, progress=progress, errors=errors
+        if output not in SearchOutput:
+            raise OptionValueError(
+                f"Invalid 'output' option value '{output}', must be in: {SearchOutput}"
+            )
+        if errors not in Error:
+            raise OptionValueError(
+                f"Invalid 'errors' option value '{errors}', must be in: {Error}"
+            )
+
+        if model is None:
+            if self.model is not None:
+                return self._search_single(
+                    model=self.model.name,
+                    output=output,
+                    progress=progress,
+                    errors=errors,
+                )
+            else:
+                raise OptionValueError("You must specify at list one model to search !")
+
+        models = to_list(model)
+        if len(models) == 1:
+            return self._search_single(
+                model=model, output=output, progress=progress, errors=errors
             )
         else:
-            raise OptionValueError(
-                "'output' option value must be in: 'wmo', 'sn', 'wmo_sn' or 'df'"
+            return self._search_multi(
+                models=models,
+                output=output,
+                progress=progress,
+                errors=errors,
+                **kwargs,
             )
 
     def iterfloats_with(
