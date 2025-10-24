@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://schema.nerc.ac.uk/schemas/sensor/0.1.0/argo.TRIOS.schema.json",
+  "title": "JSON Schema for TRIOS-specific sensor metadata",
+  "description": "A JSON Schema used to populate Argo sensor and parameter metadata elements specific to RBR.  ",
+  "version": {
+    "const": "0.1"
+  },
+  "type": "object",
+  "$defs": {
+    "sensor_vendorinfo": {
+      "type": "object",
+      "version": {
+        "$ref": "#/version"
+      },
+      "properties": {
+        "vendor_schema": true,
+        "version": {
+          "$ref": "#/version"
+        },
+        "TRIOS_RAMSESType": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "TRIOS_RAMSESType"
+      ],
+      "additionalProperties": false
+    },
+    "parameter_vendorinfo": {
+      "type": "object",
+      "version": {
+        "$ref": "#/version"
+      },
+      "properties": {
+        "vendor_schema": true,
+        "version": {
+          "$ref": "#/version"
+        },
+        "TRIOS_calfile": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "TRIOS_calfile"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

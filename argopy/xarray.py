@@ -37,7 +37,7 @@ from .utils import (
 )
 from .utils import list_core_parameters
 from .utils import toYearFraction
-from .errors import InvalidDatasetStructure, DataNotFound, OptionValueError, NoData
+from .errors import InvalidDatasetStructure, OptionValueError, NoData, NoDataLeft
 
 log = logging.getLogger("argopy.xarray")
 

@@ -382,9 +382,9 @@ def split_data_mode(ds: xr.Dataset) -> xr.Dataset:
                 ds["STATION_PARAMETERS"] == u64(param), ""
             )
 
-            _dropna = lambda x: next(
+            _dropna = lambda x: next(  # noqa: E731
                 (item for item in x if item != ""), ""
-            )  # noqa: E731
+            )
 
             kwargs = dict(
                 dask="parallelized",

@@ -1,0 +1,145 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "./argo.float.schema.json",
+  "title": "JSON Schema for Argo Program float = platform + sensors",
+  "description": "A JSON Schema used to describe an Argo float. A float consists of a single platform and any number of sensors.  See Argo User's Manual. Metada format Version 3.41.1",
+  "format_version": {
+    "const": "0.4.0"
+  },
+  "type": "object",
+  "properties": {
+    "float_info": {
+      "type": "object",
+      "properties": {
+        "created_by": {
+          "type": "string",
+          "description": "The entity primarily responsible for making the content of this JSON metadata resource"
+        },
+        "date_creation": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Date and time of creation of the resource.  RFC 3339 format compliant with ISO 8601"
+        },
+        "link": {
+          "const": "./argo.float.schema.json",
+          "description": "Link to JSON Schema that validates this JSON metadata resource"
+        },
+        "format_version": {
+          "$ref": "#/format_version",
+          "description": "Schema version for this resource. Must match /format_version."
+        },
+        "contents": {
+          "type": "string",
+          "description": "Description of this JSON metadata respirce."
+        },
+        "float_described": {
+          "type": "string",
+          "description": "Identification of float described by this JSON metadata resouce: Ideally: float-<PLATFORM_VENDOR>-<FLOAT_SERIAL_NUMBER>."
+        }
+      },
+      "required": [
+        "created_by",
+        "date_creation",
+        "link",
+        "format_version",
+        "contents",
+        "float_described"
+      ]
+    },
+    "@context": {
+      "type": "object",
+      "properties": {
+        "SDN:R03::": {
+          "const": "http://vocab.nerc.ac.uk/collection/R03/current/"
+        },
+        "SDN:R08::": {
+          "const": "http://vocab.nerc.ac.uk/collection/R08/current/"
+        },
+        "SDN:R09::": {
+          "const": "http://vocab.nerc.ac.uk/collection/R09/current/"
+        },
+        "SDN:R10::": {
+          "const": "http://vocab.nerc.ac.uk/collection/R10/current/"
+        },
+        "SDN:R22::": {
+          "const": "http://vocab.nerc.ac.uk/collection/R22/current/"
+        },
+        "SDN:R23::": {
+          "const": "http://vocab.nerc.ac.uk/collection/R23/current/"
+        },
+        "SDN:R24::": {
+          "const": "http://vocab.nerc.ac.uk/collection/R24/current/"
+        },
+        "SDN:R25::": {
+          "const": "http://vocab.nerc.ac.uk/collection/R25/current/"
+        },
+        "SDN:R26::": {
+          "const": "http://vocab.nerc.ac.uk/collection/R26/current/"
+        },
+        "SDN:R27::": {
+          "const": "http://vocab.nerc.ac.uk/collection/R27/current/"
+        },
+        "SDN:R28::": {
+          "const": "http://vocab.nerc.ac.uk/collection/R28/current/"
+        }
+      },
+      "description": "Mapping from SDN NVS term IDs to validation URL.  Must be present in JSON float metadata resource.",
+      "required": [
+        "SDN:R03::",
+        "SDN:R08::",
+        "SDN:R09::",
+        "SDN:R10::",
+        "SDN:R22::",
+        "SDN:R23::",
+        "SDN:R24::",
+        "SDN:R25::",
+        "SDN:R26::",
+        "SDN:R27::",
+        "SDN:R28::"
+      ],
+      "additionalProperties": false
+    },
+    "files_merged": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of one platform JSON filename and multiple sensors JSON filename merged to create this JSON float metadata resource"
+    },
+    "platform_info": {
+      "$ref": "./argo.platform.schema.json#/properties/platform_info",
+      "description": "Schema-valid platform metadata instance, typically from JSON PLATFORM file"
+    },
+    "sensor_info_list": {
+      "type": "array",
+      "items": {
+        "$ref": "./argo.sensor.schema.json#/properties/sensor_info"
+      },
+      "description": "Array of schema-valid sensor_info metadata instances, typically from JSON SENSOR files."
+    },
+    "PLATFORM": {
+      "$ref": "./argo.platform.schema.json#/properties/PLATFORM",
+      "description": "Schema-valid PLATFORM metadata instance, typically from JSON PLATFORM file."
+    },
+    "SENSORS": {
+      "$ref": "./argo.sensor.schema.json#/properties/SENSORS",
+      "description": "Array of schema-valid SENSOR metadata instances, typically from JSON SENSOR files."
+    },
+    "PARAMETERS": {
+      "$ref": "./argo.sensor.schema.json#/properties/PARAMETERS",
+      "description": "Array of schema-valid PARAMETER metadata instances corresponding to SENSORS above.  Typically from JSON SENSOR files."
+    }
+  },
+  "required": [
+    "@context",
+    "float_info",
+    "files_merged",
+    "platform_info",
+    "sensor_info_list",
+    "PLATFORM",
+    "SENSORS",
+    "PARAMETERS"
+  ],
+  "uniqueItems": true,
+  "additionalProperties": false
+}
