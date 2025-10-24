@@ -184,7 +184,7 @@ class CONTENT(ArgoAccessorExtension):
 
         The raw predicted values contains the predicted parameter values along with their associated uncertainties (ci, cim, cin, cii)
         and input effects (inx). See `CanyonB._predict` for more details.
- 
+
         Parameters
         ----------
         params : list
@@ -285,11 +285,9 @@ class CONTENT(ArgoAccessorExtension):
             for e in error_array
         ]
         etemp, epsal, edoxy, epres = error_array
-        
+
         # Compute error matrix
-        error_matrix = (
-            np.column_stack([etemp, epsal, edoxy, epres]) ** 2
-        )
+        error_matrix = np.column_stack([etemp, epsal, edoxy, epres]) ** 2
 
         # Construct covariance matrix
         for i in range(4):
@@ -386,7 +384,7 @@ class CONTENT(ArgoAccessorExtension):
             "pCO2": {"par1": "d_pCO2__d_par1", "par2": "d_pCO2__d_par2"},
         }
 
-        for p in range(6): 
+        for p in range(6):
             # Get parameter names for this combination
             par1_name = self._parameters[self._inpar[p, 0]]
             par2_name = self._parameters[self._inpar[p, 1]]
@@ -670,11 +668,7 @@ class CONTENT(ArgoAccessorExtension):
         return weights
 
     def compute_weighted_mean_outputs_and_uncertainties(
-        self, 
-        rawout: dict, 
-        sigma: dict, 
-        cocov: dict, 
-        canyon_data: CANYONData
+        self, rawout: dict, sigma: dict, cocov: dict, canyon_data: CANYONData
     ) -> dict:
         """
         Compute weighted mean outputs and their uncertainties for each carbonate parameter.
@@ -786,7 +780,15 @@ class CONTENT(ArgoAccessorExtension):
         """
 
         # Step 1: Get raw CANYON-B predictions for all carbonate parameters + nutrients
-        params_to_predict = ["AT", "DIC", "pHT", "pCO2", "PO4", "SiOH4", "NO3"] # Technically, NO3 is not needed for CONTENT but I included for the final output.
+        params_to_predict = [
+            "AT",
+            "DIC",
+            "pHT",
+            "pCO2",
+            "PO4",
+            "SiOH4",
+            "NO3",
+        ]  # Technically, NO3 is not needed for CONTENT but I included for the final output.
         canyonb_results = self.get_canyon_b_raw_predictions(
             params=params_to_predict, epres=epres, etemp=etemp, epsal=epsal, edoxy=edoxy
         )

@@ -1,5 +1,6 @@
 import pytest
 import logging
+
 import numpy as np
 import xarray as xr
 
@@ -119,9 +120,8 @@ def test_compute_derivatives_carbonate_system(fetcher, mocked_erddapserver):
     # Check that derivatives are not all NaN
     assert not np.all(np.isnan(dcout))
 
-
-def test_define_weights(fetcher, mocked_erddapserver):
-    """Test weight definition based on uncertainties"""
+def test_compute_uncertainties_carbonate_system(fetcher, mocked_erddapserver):
+    """Test computation of carbonate system uncertainties"""
     ds = fetcher.to_xarray()
     params = ['AT', 'DIC', 'pHT', 'pCO2', 'PO4', 'SiOH4']
 
@@ -131,14 +131,17 @@ def test_define_weights(fetcher, mocked_erddapserver):
         canyonb_results=raw_predictions
     )
 
-    # Define weights
-    weights = ds.argo.content.define_weights(sigma=sigma)
+    rawout_updated, sigma_updated = ds.argo.content.compute_uncertainties_carbonate_system(
+        canyon_data=canyon_data, errors=errors, rawout=rawout, sigma=sigma
+    )
 
-    # Check that weights exist for all parameters
+    # Check that all carbonate parameters have updated values and uncertainties
+    nol = ds.argo.N_POINTS
     for param in ['AT', 'DIC', 'pHT', 'pCO2']:
-        assert param in weights
-        assert f"{param}sum" in weights
-        assert weights[param].shape == sigma[param].shape
+        assert rawout_updated[param].shape == (nol, 4)
+        assert sigma_updated[param].shape == (nol, 4)
+        assert not np.all(np.isnan(rawout_updated[param]))
+        assert not np.all(np.isnan(sigma_updated[param]))
 
 
 def test_compute_weighted_mean_covariance(fetcher, mocked_erddapserver):
@@ -169,6 +172,83 @@ def test_compute_weighted_mean_covariance(fetcher, mocked_erddapserver):
         assert cocov[param].shape == (4, 4, nol)
 
 
+def test_define_weights(fetcher, mocked_erddapserver):
+    """Test weight definition based on uncertainties"""
+    ds = fetcher.to_xarray()
+    params = ['AT', 'DIC', 'pHT', 'pCO2', 'PO4', 'SiOH4']
+
+    # Get raw predictions and setup
+    raw_predictions = ds.argo.content.get_canyon_b_raw_predictions(params=params)
+    canyon_data, errors, rawout, sigma = ds.argo.content.setup_pre_carbonate_calculations(
+        canyonb_results=raw_predictions
+    )
+
+    # Define weights
+    weights = ds.argo.content.define_weights(sigma=sigma)
+
+    # Check that weights exist for all parameters
+    nol = ds.argo.N_POINTS
+    for param in ['AT', 'DIC', 'pHT', 'pCO2']:
+        assert param in weights
+        assert f"{param}sum" in weights
+        assert weights[param].shape == (nol, 4)
+
+
+def test_compute_weighted_mean_outputs_and_uncertainties(fetcher, mocked_erddapserver):
+    """Test computation of weighted mean outputs and uncertainties"""
+    ds = fetcher.to_xarray()
+    params = ['AT', 'DIC', 'pHT', 'pCO2', 'PO4', 'SiOH4']
+
+    # Get raw predictions and setup
+    raw_predictions = ds.argo.content.get_canyon_b_raw_predictions(params=params)
+    canyon_data, errors, rawout, sigma = ds.argo.content.setup_pre_carbonate_calculations(
+        canyonb_results=raw_predictions
+    )
+
+    # Compute derivatives
+    dcout = ds.argo.content.compute_derivatives_carbonate_system(canyon_data=canyon_data)
+    rawout, sigma = ds.argo.content.compute_uncertainties_carbonate_system(
+        canyon_data=canyon_data, errors=errors, rawout=rawout, sigma=sigma
+    )
+
+    # Compute weighted mean covariance
+    cocov = ds.argo.content.compute_weighted_mean_covariance(
+        dcout=dcout, canyon_data=canyon_data, sigma=sigma
+    )
+
+    # Compute weighted mean outputs and uncertainties
+    result = ds.argo.content.compute_weighted_mean_outputs_and_uncertainties(
+        rawout=rawout, sigma=sigma, cocov=cocov, canyon_data=canyon_data
+    )
+
+    # Check structure of output
+    nol = ds.argo.N_POINTS
+    for param in ['AT', 'DIC', 'pHT', 'pCO2']:
+        assert param in result
+        assert f"{param}_sigma" in result
+        assert f"{param}_sigma_min" in result
+        assert f"{param}_raw" in result
+        assert result[param].shape == (nol,)
+        assert not np.all(np.isnan(result[param]))
+
+
+def test_predict_internal(fetcher, mocked_erddapserver):
+    """Test the internal _predict method"""
+    ds = fetcher.to_xarray()
+
+    predictions = ds.argo.content._predict(epres=0.5, etemp=0.005, epsal=0.005, edoxy=0.01)
+
+    # Check that all expected outputs are present
+    nol = ds.argo.N_POINTS
+    for param in ['AT', 'DIC', 'pHT', 'pCO2']:
+        assert param in predictions
+        assert f"{param}_sigma" in predictions
+        assert f"{param}_sigma_min" in predictions
+        assert f"{param}_raw" in predictions
+        assert predictions[param].shape == (nol,)
+        assert not np.all(np.isnan(predictions[param]))
+
+
 def test_predict_basic(fetcher, mocked_erddapserver):
     """Test basic CONTENT prediction"""
     ds = fetcher.to_xarray()
@@ -180,6 +260,7 @@ def test_predict_basic(fetcher, mocked_erddapserver):
     # Check that main parameters are present
     for param in ['AT', 'DIC', 'pHT', 'pCO2']:
         assert param in result
+        assert result[param].shape[0] == ds.argo.N_POINTS
 
 
 def test_predict_with_custom_errors(fetcher, mocked_erddapserver):
