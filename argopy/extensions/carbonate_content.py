@@ -76,7 +76,7 @@ class CONTENT(ArgoAccessorExtension):
     .. [5] Orr, J. C., Epitalon, J. M., Dickson, A. G., & Gattuso, J. P. (2018). Routine uncertainty propagation for the marine carbon dioxide system. Marine Chemistry, 207, 84-107. doi: 10.1016/j.marchem.2018.10.006
     """
 
-    # Input parameter pairs for each of 6 calculations (pCO2/AT, pHT/AT, pCO2/pHT, pCO2/DIC, pHT/DIC, AT/DIC)
+    # Input parameter pairs for each of 6 carbonate calculations (pCO2/AT, pHT/AT, pCO2/pHT, pCO2/DIC, pHT/DIC, AT/DIC)
     _inpar = np.array([[3, 0], [2, 0], [3, 2], [3, 1], [2, 1], [0, 1]])
 
     # Output parameters (complement of input parameters)
@@ -180,15 +180,18 @@ class CONTENT(ArgoAccessorExtension):
         epsal: Optional[float] = None,
         edoxy: Optional[Union[float, np.ndarray]] = None,
     ) -> dict:
-        """Get raw CANYON-B predictions including input effects (inx)
+        """Get raw CANYON-B predictions for specified parameters.
 
+        The raw predicted values contains the predicted parameter values along with their associated uncertainties (ci, cim, cin, cii)
+        and input effects (inx). See `CanyonB._predict` for more details.
+ 
         Parameters
         ----------
         params : list
-            Parameters that will be predicted. Must be one of 'AT', 'DIC', 'pHT', 'pCO2', 'NO3', 'PO4', 'SiOH4'
+            Parameters that will be predicted. Must be a list containing one or more parameters from 'AT', 'DIC', 'pHT', 'pCO2', 'NO3', 'PO4', 'SiOH4'
         epres, etemp, epsal : float, optional
             Input errors (defaults: 0.5, 0.005, 0.005)
-        edoxy : float or array-like, optional
+        edoxy : float or np.ndarray, optional
             Oxygen input error (default: 1% of doxy)
 
         Returns
@@ -221,9 +224,8 @@ class CONTENT(ArgoAccessorExtension):
         """
         Prepare the results from CANYON-B for carbonate calculations.
 
-        This function processes the raw results and sets up the necessary
-        matrices for further carbonate chemistry calculations, returning
-        structured data objects
+        This function processes the raw results and sets up the necessary matrices for further carbonate chemistry calculations, returning
+        structured data objects.
 
         Parameters
         ----------
@@ -231,13 +233,13 @@ class CONTENT(ArgoAccessorExtension):
             Raw results from CANYON-B predictions.
         epres, etemp, epsal : float, optional
             Input errors (defaults: 0.5, 0.005, 0.005)
-        edoxy : float or array-like, optional
+        edoxy : float or np.ndarray, optional
             Oxygen input error (default: 1% of doxy)
 
         Returns
         -------
         canyon_data : CANYONData
-          Structured object with raw predictions, covariance, and correlation
+          Object with raw predictions, covariance, and correlation
         errors : MeasurementErrors
           Measurement uncertainties for salinity and temperature
         rawout : dict
@@ -255,10 +257,8 @@ class CONTENT(ArgoAccessorExtension):
         epsal = 0.005 if epsal is None else epsal
         edoxy = 0.01 * self._obj.DOXY.values if edoxy is None else edoxy
 
-        # Create MeasurementErrors object
+        # Create MeasurementErrors object (see utils/carbonate.py)
         errors = MeasurementErrors(salinity=epsal, temperature=etemp)
-
-        # Start CONTENT-specific calculations
 
         # Copy to raw output and start mixing calculations
         rawout = {}
@@ -278,24 +278,20 @@ class CONTENT(ArgoAccessorExtension):
         # covariance matrix of CANYON-B AT, CT, pH, pCO2 due to common inputs
         canyon_cov = np.full((4, 4, nol), np.nan)
 
-        # Create error array - ensure all errors are arrays of shape
-        etemp_arr = (
-            np.full(nol, etemp) if np.isscalar(etemp) else np.asarray(etemp).flatten()
-        )
-        epsal_arr = (
-            np.full(nol, epsal) if np.isscalar(epsal) else np.asarray(epsal).flatten()
-        )
-        edoxy_arr = (
-            np.full(nol, edoxy) if np.isscalar(edoxy) else np.asarray(edoxy).flatten()
-        )
-        epres_arr = (
-            np.full(nol, epres) if np.isscalar(epres) else np.asarray(epres).flatten()
-        )
-        # Stack into (nol, 4) matrix and square
+        # Create error array
+        error_array = [etemp, epsal, edoxy, epres]
+        error_array = [
+            np.full(nol, e) if np.isscalar(e) else np.asarray(e).flatten()
+            for e in error_array
+        ]
+        etemp, epsal, edoxy, epres = error_array
+        
+        # Compute error matrix
         error_matrix = (
-            np.column_stack([etemp_arr, epsal_arr, edoxy_arr, epres_arr]) ** 2
+            np.column_stack([etemp, epsal, edoxy, epres]) ** 2
         )
 
+        # Construct covariance matrix
         for i in range(4):
             for j in range(i, 4):
                 inx_i = canyonb_results[self._parameters[i]][
@@ -311,8 +307,8 @@ class CONTENT(ArgoAccessorExtension):
         # CANYON-B estimation uncertainty
         cyr = canyon_cov * 0
 
-        # Full variance on diagonal:
-        # var(inputs)[local] + var(training data)[global] + var(MLP)[local]
+        # Add full variance on diagonal
+        # variance(inputs)[local] + variance(training data)[global] + variance(MLP)[local]
         sigma["AT"][:, 0] = canyonb_results["AT"]["AT_ci"]
         canyon_cov[0, 0, :] = canyonb_results["AT"]["AT_ci"] ** 2
 
@@ -334,7 +330,7 @@ class CONTENT(ArgoAccessorExtension):
             # Convert covariance to correlation: corr[i,j] = cov[i,j] / (std[i] * std[j])
             cyr[:, :, i] = canyon_cov[:, :, i] / std_outer
 
-        # Create structured CANYONData object
+        # Create CANYONData object
         canyon_data = CANYONData(
             b_raw=canyonb_results, covariance=canyon_cov, correlation=cyr
         )
@@ -347,12 +343,13 @@ class CONTENT(ArgoAccessorExtension):
         options: CalculationOptions = None,
     ) -> np.ndarray:
         """
-        Compute derivatives of carbonate system calculations for all 6 parameter pairs.
+        Compute derivatives of carbonate system calculations for all 6 parameter pairs
+        (pCO2/AT, pHT/AT, pCO2/pHT, pCO2/DIC, pHT/DIC, AT/DIC).
 
         Parameters
         ----------
         canyon_data : CANYONData
-            CANYON-B predictions with covariance and correlation
+            CANYON-B predictions with covariance and correlation matrices
         options : CalculationOptions, optional
             PyCO2SYS calculation options (uses defaults if None)
 
@@ -389,7 +386,7 @@ class CONTENT(ArgoAccessorExtension):
             "pCO2": {"par1": "d_pCO2__d_par1", "par2": "d_pCO2__d_par2"},
         }
 
-        for p in range(6):
+        for p in range(6): 
             # Get parameter names for this combination
             par1_name = self._parameters[self._inpar[p, 0]]
             par2_name = self._parameters[self._inpar[p, 1]]
@@ -451,7 +448,7 @@ class CONTENT(ArgoAccessorExtension):
     ) -> tuple[dict, dict]:
         """
         Compute carbonate system values and uncertainties for all 6 parameter pairs.
-        This function uses the K1K2 constants of Lueker et al, 2000, KSO4 of Dickson 1990 & TB of Uppstrom 1979
+        This function uses the K1K2 constants of Lueker et al., (2000), KSO4 of Dickson 1990 & TB of Uppstrom 1979
         and adds localized error calculations including parameter correlation due to common inputs.
 
         Parameters
@@ -461,9 +458,9 @@ class CONTENT(ArgoAccessorExtension):
         errors : MeasurementErrors
             Measurement uncertainties for salinity and temperature
         rawout : dict
-            Raw output arrays for each parameter (i.e. AT, DIC, pHT, pCO2), initialized from setup
+            Raw output arrays for each parameter (i.e. AT, DIC, pHT, pCO2)
         sigma : dict
-            Uncertainty arrays for each parameter (i.e. AT, DIC, pHT, pCO2), initialized from setup
+            Uncertainty arrays for each parameter (i.e. AT, DIC, pHT, pCO2)
         constants : ChemistryConstants, optional
             Equilibrium constant uncertainties (uses defaults if None)
         options : CalculationOptions, optional
@@ -490,7 +487,7 @@ class CONTENT(ArgoAccessorExtension):
             pressure=self._obj.PRES.values,
             total_silicate=canyon_data.b_raw["SiOH4"]["SiOH4"],
             total_phosphate=canyon_data.b_raw["PO4"]["PO4"],
-            total_borate=0.0,
+            total_borate=0.0,  # 0 following CONTENT matlab implementation
         )
 
         # Parameter name mapping for output
@@ -672,8 +669,12 @@ class CONTENT(ArgoAccessorExtension):
 
         return weights
 
-    def compute_final_output(
-        self, rawout: dict, sigma: dict, cocov: dict, canyon_data: CANYONData
+    def compute_weighted_mean_outputs_and_uncertainties(
+        self, 
+        rawout: dict, 
+        sigma: dict, 
+        cocov: dict, 
+        canyon_data: CANYONData
     ) -> dict:
         """
         Compute weighted mean outputs and their uncertainties for each carbonate parameter.
@@ -694,11 +695,17 @@ class CONTENT(ArgoAccessorExtension):
         out : dict
             Final output dictionary containing:
             - {param}: weighted mean values for each carbonate parameter
-            - {param}_sigma: total uncertainty
-            - {param}_sigma_min: minimum uncertainty
+            - {param}_sigma: total uncertainty, that is the sum of sigma_min and sigma_mean where :
+                - sigma_mean = standard deviation associated with the weighted mean (of the four carbonate system variable estimates)
+                - sigma_min = standard deviation propagated from the uncertainty of the terms of the weighted mean (see Eq. 6 in [1]_)
+            - {param}_sigma_min: standard deviation propagated from the uncertainty of the terms of the weighted mean (see Eq. 6 in [1]_)
             - {param}_raw: raw calculation values
-            - sigma: record of weight sigmas
+            - sigma: record of weighted sigmas
             - canyon_b_raw: CANYON-B structure
+
+        Reference
+        ---------
+        .. [1] Bittig, H. C., Steinhoff, T., Claustre, H., Fiedler, B., Williams, N. L., Sauzède, R., Körtzinger, A., and Gattuso, J. P. (2018). An alternative to static climatologies: Robust estimation of open ocean CO2 variables and nutrient concentrations from T, S, and O2 data using Bayesian neural networks. Frontiers in Marine Science, 5, 328. doi:10.3389/fmars.2018.00328
         """
 
         # Number of observations
@@ -710,7 +717,7 @@ class CONTENT(ArgoAccessorExtension):
         # Output dictionary
         out = {}
 
-        # And output each variable
+        # Output each variable
         for i in range(4):
             param = self._parameters[i]
 
@@ -745,12 +752,12 @@ class CONTENT(ArgoAccessorExtension):
             out[f"{param}_sigma"] = sigma_delta + sigma_propagated  # / [param unit]
             out[f"{param}_sigma_min"] = sigma_propagated  # / [param unit]
 
-        # And raw calcs
+        # Add raw calculations
         for i in range(4):
             param = self._parameters[i]
             out[f"{param}_raw"] = rawout[param]
 
-        out["sigma"] = sigma  # record of weight sigmas
+        out["sigma"] = sigma  # record of weighted sigmas
         out["canyon_b_raw"] = canyon_data.b_raw  # CANYON-B structure
 
         return out
@@ -769,7 +776,7 @@ class CONTENT(ArgoAccessorExtension):
         ----------
         epres, etemp, epsal : float, optional
                 Input errors
-        edoxy : float or array-like, optional
+        edoxy : float or np.ndarray, optional
                 Oxygen input error (default: 1% of doxy)
 
         Returns
@@ -779,7 +786,7 @@ class CONTENT(ArgoAccessorExtension):
         """
 
         # Step 1: Get raw CANYON-B predictions for all carbonate parameters + nutrients
-        params_to_predict = ["AT", "DIC", "pHT", "pCO2", "PO4", "SiOH4", "NO3"]
+        params_to_predict = ["AT", "DIC", "pHT", "pCO2", "PO4", "SiOH4", "NO3"] # Technically, NO3 is not needed for CONTENT but I included for the final output.
         canyonb_results = self.get_canyon_b_raw_predictions(
             params=params_to_predict, epres=epres, etemp=etemp, epsal=epsal, edoxy=edoxy
         )
@@ -806,8 +813,8 @@ class CONTENT(ArgoAccessorExtension):
             dcout=dcout, canyon_data=canyon_data, sigma=sigma
         )
 
-        # Step 6: Compute final outputs
-        results = self.compute_final_output(
+        # Step 6: Compute weighted mean outputs and uncertainties
+        results = self.compute_weighted_mean_outputs_and_uncertainties(
             rawout=rawout, sigma=sigma, cocov=cocov, canyon_data=canyon_data
         )
 
@@ -827,12 +834,13 @@ class CONTENT(ArgoAccessorExtension):
         ----------
         epres, etemp, epsal : float, optional
             Input errors
-        edoxy : float or array-like, optional
+        edoxy : float or np.ndarray, optional
             Oxygen input error (default: 1% of doxy)
 
         Returns
         -------
-        :class:`xr.Dataset`
+        xr.Dataset
+            Input dataset augmented with predicted parameters
         """
 
         # Get predictions for all 4 carbonate parameters (CONTENT method) and nutrients (CANYON-B method)
