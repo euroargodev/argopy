@@ -167,6 +167,7 @@ Argo meta/related data
    OceanOPSDeployments
    CTDRefDataFetcher
    TopoFetcher
+   ArgoSensor
 
 .. _Module Visualisation:
 

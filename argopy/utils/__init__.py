@@ -36,7 +36,7 @@ from .lists import (
 from .caching import clear_cache, lscache
 from .monitored_threadpool import MyThreadPoolExecutor as MonitoredThreadPoolExecutor
 from .chunking import Chunker
-from .accessories import Registry, float_wmo
+from .accessories import Registry, float_wmo, NVSrow
 from .locals import (  # noqa: F401
     show_versions,
     show_options,
@@ -60,7 +60,7 @@ from .transform import (
     filter_param_by_data_mode,
     split_data_mode,
 )
-from .format import argo_split_path, format_oneline, UriCName, redact, dirfs_relpath
+from .format import argo_split_path, format_oneline, UriCName, redact, dirfs_relpath, urnparser
 from .loggers import warnUnless, log_argopy_callerstack
 from .carbon import GreenCoding, Github
 from . import optical_modeling
@@ -117,6 +117,7 @@ __all__ = (
     # Accessories classes (specific objects):
     "Registry",
     "float_wmo",
+    "NVSrow",
     # Locals (environments, versions, systems):
     "path2assets",
     "show_versions",
