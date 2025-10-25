@@ -4,7 +4,6 @@ from typing import Optional, Union
 
 try:
     import PyCO2SYS as pyco2
-
     HAS_PYCO2SYS = True
 except ImportError:
     HAS_PYCO2SYS = False

@@ -6,7 +6,11 @@ import numpy as np
 import logging
 from typing import Dict, List, Union
 from dataclasses import dataclass
-import PyCO2SYS as pyco2
+
+try:
+    import PyCO2SYS as pyco2
+except ImportError:
+    pyco2 = None
 
 log = logging.getLogger("argopy.utils.carbonate")
 
