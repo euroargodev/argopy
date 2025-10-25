@@ -51,6 +51,7 @@ from .geo import (
     conv_lon,
     toYearFraction,
     YearFraction_to_datetime,
+    point_in_polygon,
 )
 from .compute import linear_interpolation_remap, groupby_remap
 from .transform import (
@@ -64,6 +65,7 @@ from .format import argo_split_path, format_oneline, UriCName, redact, dirfs_rel
 from .loggers import warnUnless, log_argopy_callerstack
 from .carbon import GreenCoding, Github
 from . import optical_modeling
+from .carbonate import calculate_uncertainties, error_propagation
 
 import importlib
 path2assets = importlib.util.find_spec('argopy.static.assets').submodule_search_locations[0]
@@ -130,6 +132,7 @@ __all__ = (
     "conv_lon",
     "toYearFraction",
     "YearFraction_to_datetime",
+    "point_in_polygon",
     # Computation with datasets:
     "linear_interpolation_remap",
     "groupby_remap",
@@ -153,4 +156,7 @@ __all__ = (
     "Github",
     # Optical modeling
     "optical_modeling",
+    # Carbonate calculations
+    "calculate_uncertainties",
+    "error_propagation",
 )
