@@ -60,7 +60,7 @@ from .transform import (
     filter_param_by_data_mode,
     split_data_mode,
 )
-from .format import argo_split_path, format_oneline, UriCName, redact, dirfs_relpath, urnparser
+from .format import argo_split_path, format_oneline, UriCName, redact, dirfs_relpath, urnparser, ppliststr
 from .loggers import warnUnless, log_argopy_callerstack
 from .carbon import GreenCoding, Github
 from . import optical_modeling
@@ -146,6 +146,8 @@ __all__ = (
     "dirfs_relpath",
     "UriCName",
     "redact",
+    "urnparser",
+    "ppliststr",
     # Loggers:
     "warnUnless",
     "log_argopy_callerstack",

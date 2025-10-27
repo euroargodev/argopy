@@ -1125,7 +1125,11 @@ class httpstore(ArgoStoreProto):
                 futures = concurrent.futures.as_completed(future_to_url)
                 if progress:
                     futures = tqdm(
-                        futures, total=len(urls), disable="disable" in [progress]
+                        futures,
+                        total=len(urls),
+                        disable="disable" in [progress],
+                        unit = kwargs.pop("progress_unit", "it"),
+                        desc = kwargs.pop("progress_desc", None),
                     )
 
                 for future in futures:

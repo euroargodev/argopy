@@ -408,4 +408,36 @@ def urnparser(urn):
     if len(pp) == 4 and pp[0] == 'SDN':
         return {'listid': pp[1], 'version': pp[2], 'termid': pp[3]}
     else:
-        raise ValueError(f"This NVS URN '{urn}' does not follow the pattern: 'SDN:{listid}:{version}:{termid}' or 'SDN:{listid}::{termid}' for NVS2.0")
+        raise ValueError(f"This NVS URN '{urn}' does not follow the pattern: 'SDN:listid:version:termid' or 'SDN:listid::termid' for NVS2.0")
+
+
+def ppliststr(l: list[str], last : str = 'and', n : int | None = None) -> str:
+    """Pretty print a list of strings
+
+    Examples
+    --------
+    .. code-block:: python
+
+        ppliststr(['a', 'b', 'c', 'd']) -> "'a', 'b', 'c' and 'd'"
+        ppliststr(['a', 'b'], last='or') -> "'a' or 'b'"
+        ppliststr(['a', 'b', 'c', 'd'], n=3) -> "'a', 'b', 'c' and 'd'"
+
+    """
+    n = n if n is not None else len(l)
+    if n == 0:
+        return ""
+
+    s, ii, m = "", 0, len(l)
+    while ii < m:
+        item = l[ii]
+        if ii == n:
+            s += f" {last} more ..."
+            break
+        if ii == 0:
+            s += f"'{item}'"
+        elif ii == len(l) - 1:
+            s += f" {last} '{item}'"
+        else:
+            s += f", '{item}'"
+        ii += 1
+    return s
