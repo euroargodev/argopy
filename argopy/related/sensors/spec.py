@@ -20,21 +20,10 @@ from ...errors import (
 from ...options import OPTIONS
 
 from .references import SensorModel, SensorType
+from .accessories import Error, ErrorOptions, Ds, DsOptions, SearchOutput, SearchOutputOptions
 
 
 log = logging.getLogger("argopy.related.sensors")
-
-# Define some options expected values as tuples
-# (for argument validation)
-SearchOutput = ("wmo", "sn", "wmo_sn", "df")
-Error = ("raise", "ignore", "silent")
-Ds = ("core", "deep", "bgc")
-
-# Define Literal types using tuples
-# (for typing)
-SearchOutputOptions = Literal[*SearchOutput]
-ErrorOptions = Literal[*Error]
-DsOptions = Literal[*Ds]
 
 
 class ArgoSensorSpec:

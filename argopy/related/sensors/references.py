@@ -8,87 +8,14 @@ import fnmatch
 from ...options import OPTIONS
 from ...stores import httpstore, filestore
 from ...related import ArgoNVSReferenceTables
-from ...utils import to_list, NVSrow, path2assets, register_accessor
-from ...errors import DataNotFound
+from ...utils import to_list, path2assets, register_accessor, ppliststr
+from ...errors import DataNotFound, OptionValueError
+
+from .accessories import SensorType, SensorModel
+from .accessories import Error, ErrorOptions
 
 
 log = logging.getLogger("argopy.related.sensors.ref")
-
-
-# Define allowed values as a tuple
-Error = ("raise", "ignore", "silent")
-
-# Define Literal types using tuples
-ErrorOptions = Literal[*Error]
-
-
-class SensorType(NVSrow):
-    """One single sensor type data from a R25-"Argo sensor types" row
-
-    Examples
-    --------
-    .. code-block:: python
-
-        from argopy import ArgoNVSReferenceTables
-
-        sensor_type = 'CTD'
-
-        df = ArgoNVSReferenceTables().tbl(25)
-        df_match = df[df["altLabel"].apply(lambda x: x == sensor_type)].iloc[0]
-
-        st = SensorType.from_series(df_match)
-
-        st.name
-        st.long_name
-        st.definition
-        st.deprecated
-        st.uri
-
-    """
-
-    reftable = "R25"
-
-    @staticmethod
-    def from_series(obj: pd.Series) -> "SensorType":
-        """Create a :class:`SensorType` from a R25-"Argo sensor models" row"""
-        return SensorType(obj)
-
-
-class SensorModel(NVSrow):
-    """One single sensor model data from a R27-"Argo sensor models" row
-
-    Examples
-    --------
-    .. code-block:: python
-
-        from argopy import ArgoNVSReferenceTables
-
-        sensor_model = 'AANDERAA_OPTODE_4330F'
-
-        df = ArgoNVSReferenceTables().tbl(27)
-        df_match = df[df["altLabel"].apply(lambda x: x == sensor_model)].iloc[0]
-
-        sm = SensorModel.from_series(df_match)
-
-        sm.name
-        sm.long_name
-        sm.definition
-        sm.deprecated
-        sm.uri
-    """
-
-    reftable = "R27"
-
-    @staticmethod
-    def from_series(obj: pd.Series) -> "SensorModel":
-        """Create a :class:`SensorModel` from a R27-"Argo sensor models" row"""
-        return SensorModel(obj)
-
-    def __contains__(self, string) -> bool:
-        return (
-            string.lower() in self.name.lower()
-            or string.lower() in self.long_name.lower()
-        )
 
 
 class SensorReferenceHolder(ABC):
@@ -107,13 +34,11 @@ class SensorReferenceHolder(ABC):
     """Dictionary mapping of R27 to R25"""
 
     def __call__(self, *args, **kwargs) -> NoReturn:
-        raise ValueError(
-            "A SensorReference instance cannot be called directly."
-        )
+        raise ValueError("A SensorReference instance cannot be called directly.")
 
     def __init__(self, obj):
         self._obj = obj  # An instance of SensorReferences, possibly with a filesystem
-        if getattr(obj, '_fs', None) is None:
+        if getattr(obj, "_fs", None) is None:
             self._fs = httpstore(
                 cache=True,
                 cachedir=OPTIONS["cachedir"],
@@ -232,18 +157,22 @@ class SensorReferenceR27(SensorReferenceHolder):
         model : str | :class:`SensorModel`
             The model to read the sensor type for.
         errors : Literal["raise", "ignore", "silent"] = "raise"
-            How to handle possible errors. If set to "ignore", the method will return None.
+            How to handle possible errors. If set to "ignore", the method may return None.
 
         Returns
         -------
         :class:`SensorType` | None
         """
+        if errors not in Error:
+            raise OptionValueError(
+                f"Invalid 'errors' option value '{errors}', must be in: {ppliststr(Error, last='or')}"
+            )
         model_name: str = model.name if isinstance(model, SensorModel) else model
         sensor_type = self.r27_to_r25.get(model_name, None)
         if sensor_type is not None:
-            row = self.r25[
-                self.r25["altLabel"].apply(lambda x: x == sensor_type)
-            ].iloc[0]
+            row = self.r25[self.r25["altLabel"].apply(lambda x: x == sensor_type)].iloc[
+                0
+            ]
             return SensorType.from_series(row)
         elif errors == "raise":
             raise DataNotFound(
@@ -346,9 +275,7 @@ class SensorReferenceR25(SensorReferenceHolder):
         result = []
         for key, val in self.r27_to_r25.items():
             if sensor_type.lower() in val.lower():
-                row = self.r27[
-                    self.r27["altLabel"].apply(lambda x: x == key)
-                ].iloc[0]
+                row = self.r27[self.r27["altLabel"].apply(lambda x: x == key)].iloc[0]
                 result.append(SensorModel.from_series(row).name)
         if len(result) == 0:
             if errors == "raise":
@@ -395,7 +322,7 @@ class SensorReferences:
 
     def __init__(self, obj):
         self._obj = obj  # An instance of ArgoSensor, possibly with a filesystem
-        if getattr(obj, '_fs', None) is None:
+        if getattr(obj, "_fs", None) is None:
             self._fs = httpstore(
                 cache=True,
                 cachedir=OPTIONS["cachedir"],
@@ -405,19 +332,19 @@ class SensorReferences:
             self._fs = obj._fs
 
     def __call__(self, *args, **kwargs) -> NoReturn:
-        raise ValueError(
-            "ArgoSensor.ref cannot be called directly."
-        )
+        raise ValueError("ArgoSensor.ref cannot be called directly.")
 
 
-@register_accessor('type', SensorReferences)
+@register_accessor("type", SensorReferences)
 class SensorExtension(SensorReferenceR25):
     _name = "ref.type"
 
-@register_accessor('maker', SensorReferences)
+
+@register_accessor("maker", SensorReferences)
 class MakerExtension(SensorReferenceR26):
     _name = "ref.maker"
 
-@register_accessor('model', SensorReferences)
+
+@register_accessor("model", SensorReferences)
 class ModelExtension(SensorReferenceR27):
     _name = "ref.model"

@@ -126,6 +126,7 @@ class ArgoSensor(ArgoSensorSpec):
         - https://github.com/OneArgo/ArgoVocabs/issues/157
 
     """
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -163,4 +164,5 @@ class References(SensorReferences):
         ArgoSensor().ref.model.search('*Deep*')  # Search is case-insensitive
 
     """
+
     _name = "ref"
