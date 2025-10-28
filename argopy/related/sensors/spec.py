@@ -24,7 +24,7 @@ from ...options import OPTIONS
 from ...utils import path2assets, register_accessor
 from .. import ArgoNVSReferenceTables
 
-from .references import SensorReferences
+from .references import SensorReferences, SensorModel, SensorType
 
 
 log = logging.getLogger("argopy.related.sensors")
@@ -39,7 +39,15 @@ ErrorOptions = Literal[*Error]
 
 
 class ArgoSensor:
-    def __init__(self, *args, **kwargs) -> None:
+
+    __slots__ = [
+        "_fs",
+        "_cache",  # To cache extensions, not the option for filesystems
+        "_model",
+        "_type",
+    ]
+
+    def __init__(self, model: str | None = None, *args, **kwargs) -> None:
         if kwargs.get("fs", None) is None:
             self._fs = httpstore(
                 cache=kwargs.get("cache", True),
@@ -48,6 +56,105 @@ class ArgoSensor:
             )
         else:
             self._fs = kwargs["fs"]
+
+        self._model: SensorModel | None = None
+        self._type: SensorType | None = None
+        if model is not None:
+            try:
+                df = self.ref.model.search(model)
+            except DataNotFound:
+                raise DataNotFound(
+                    f"No sensor model named '{model}', as per ArgoSensor().ref.model.hint() values, based on Ref. Table 27."
+                )
+
+            if df.shape[0] == 1:
+                self._model = SensorModel.from_series(df.iloc[0])
+                self._type = self.ref.model.to_type(self._model, errors="ignore")
+                # if "RBR" in self._model:
+                # Add the RBR OEM API Authorization key for this sensor:
+                # fs_kargs.update(client_kwargs={'headers': {'Authorization': OPTIONS.get('rbr_api_key') }})
+            else:
+                raise InvalidDatasetStructure(
+                    f"Found multiple sensor models with '{model}'. Restrict your sensor model name to only one value in: {to_list(df['altLabel'].values)}"
+                )
+
+    @property
+    def model(self) -> SensorModel:
+        """:class:`SensorModel` of this class instance
+
+        Only available for a class instance created with an explicit sensor model name.
+
+        Returns
+        -------
+        :class:`SensorModel`
+
+        Raises
+        ------
+        :class:`InvalidDataset`
+        """
+        if isinstance(self._model, SensorModel):
+            return self._model
+        else:
+            raise InvalidDataset(
+                "The 'model' property is not available for an ArgoSensor instance not created with a specific sensor model"
+            )
+
+    @property
+    def type(self) -> SensorType:
+        """:class:`SensorType` of this class instance sensor model
+
+        Only available for a class instance created with an explicit sensor model name.
+
+        Returns:
+        -------
+        :class:`SensorType`
+
+        Raises
+        ------
+        :class:`InvalidDataset`
+        """
+        if isinstance(self._type, SensorType):
+            return self._type
+        else:
+            raise InvalidDataset(
+                "The 'type' property is not available for an ArgoSensor instance not created with a specific sensor model"
+            )
+
+    def __repr__(self) -> str:
+        if isinstance(self._model, SensorModel):
+            summary = [f"<argosensor.{self.type.name}.{self.model.name}>"]
+            summary.append(f"TYPE➤ {self.type.long_name}")
+            summary.append(f"MODEL➤ {self.model.long_name}")
+            if self.model.deprecated:
+                summary.append("⛔ This model is deprecated !")
+            else:
+                summary.append("✅ This model is not deprecated.")
+            summary.append(f"🔗 {self.model.uri}")
+            summary.append(f"❝{self.model.definition}❞")
+        else:
+            summary = ["<argosensor>"]
+            summary.append(
+                "This instance was not created with a sensor model name, you still have access to the following:"
+            )
+            summary.append("👉 attributes: ")
+            for attr in [
+                "reference_model",
+                "reference_model_name",
+                "reference_sensor",
+                "reference_sensor_type",
+                "reference_manufacturer",
+                "reference_manufacture_name",
+            ]:
+                summary.append(f"  ╰┈➤ ArgoSensor().{attr}")
+
+            summary.append("👉 methods: ")
+            for meth in [
+                "search_model",
+                "search",
+                "iterfloats_with",
+            ]:
+                summary.append(f"  ╰┈➤ ArgoSensor().{meth}()")
+        return "\n".join(summary)
 
     def _search_wmo_with(
         self, model: str | list[str], errors: ErrorOptions = "raise"
@@ -140,7 +247,11 @@ class ArgoSensor:
             return sns
 
     def _search_sn_with(
-        self, model: str, progress: bool = False, errors: ErrorOptions = "raise", **kwargs
+        self,
+        model: str,
+        progress: bool = False,
+        errors: ErrorOptions = "raise",
+        **kwargs,
     ) -> list[str]:
         """Return serial number of sensor models with a given string in name
 
@@ -173,7 +284,11 @@ class ArgoSensor:
         )
 
     def _search_wmo_sn_with(
-        self, model: str, progress: bool = False, errors: ErrorOptions = "raise", **kwargs
+        self,
+        model: str,
+        progress: bool = False,
+        errors: ErrorOptions = "raise",
+        **kwargs,
     ) -> dict[int, str]:
         """Return a dictionary of float WMOs with their sensor serial numbers
 
@@ -205,7 +320,11 @@ class ArgoSensor:
         return dict(sorted(results.items()))
 
     def _to_dataframe(
-        self, model: str, progress: bool = False, errors: ErrorOptions = "raise", **kwargs
+        self,
+        model: str,
+        progress: bool = False,
+        errors: ErrorOptions = "raise",
+        **kwargs,
     ) -> pd.DataFrame:
         """Return a DataFrame with WMO, sensor type, model, maker, sn, units, accuracy and resolution
 
@@ -251,7 +370,7 @@ class ArgoSensor:
                             "Type": sid,
                             "Model": model,
                             "Maker": maker,
-                            "SerialNumber": sn if sn != 'n/a' else None,
+                            "SerialNumber": sn if sn != "n/a" else None,
                             "Units": units,
                             "Accuracy": accuracy,
                             "Resolution": resolution,
@@ -267,7 +386,7 @@ class ArgoSensor:
             progress=progress,
             errors=errors,
         )
-        return df.sort_values(by='WMO', axis=0).reset_index(drop=True)
+        return df.sort_values(by="WMO", axis=0).reset_index(drop=True)
 
     def _search_single(
         self,
@@ -380,7 +499,6 @@ class ArgoSensor:
                                     # Create new key:
                                     results.update({wmo: data[wmo]})
 
-
         if output != "wmo_sn":
             # Only keep non-empty results:
             results = [r for r in results if r is not None]
@@ -389,8 +507,12 @@ class ArgoSensor:
 
         if len(results) > 0:
             if output == "df":
-                results = [r for r in results if r.shape[0]>0]
-                return pd.concat(results, axis=0).sort_values(by='WMO', axis=0).reset_index(drop=True)
+                results = [r for r in results if r.shape[0] > 0]
+                return (
+                    pd.concat(results, axis=0)
+                    .sort_values(by="WMO", axis=0)
+                    .reset_index(drop=True)
+                )
             else:
                 return results
         raise DataNotFound(ppliststr(models))
