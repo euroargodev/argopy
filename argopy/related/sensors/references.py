@@ -101,7 +101,7 @@ class SensorReferenceHolder(ABC):
     """NVS Reference table for Argo sensor types (R25)"""
 
     _r26: pd.DataFrame | None = None
-    """NVS Reference table for Argo sensor manufacturer (R26)"""
+    """NVS Reference table for Argo sensor maker (R26)"""
 
     _r27: pd.DataFrame | None = None
     """NVS Reference table for Argo sensor models (R27)"""
@@ -134,7 +134,7 @@ class SensorReferenceHolder(ABC):
 
     @property
     def r26(self):
-        """NVS Reference table for Argo sensor manufacturer (R26)"""
+        """NVS Reference table for Argo sensor maker (R26)"""
         if self._r26 is None:
             self._r26 = ArgoNVSReferenceTables(fs=self._fs).tbl("R26")
         return self._r26
@@ -366,10 +366,10 @@ class SensorReferenceR25(SensorReferenceHolder):
 
 
 class SensorReferenceR26(SensorReferenceHolder):
-    """Argo sensor manufacturer"""
+    """Argo sensor maker"""
 
     def to_dataframe(self) -> pd.DataFrame:
-        """Official reference table for Argo sensor manufacturers (R26)
+        """Official reference table for Argo sensor makers (R26)
 
         Returns
         -------
@@ -418,9 +418,9 @@ class SensorReferences:
 class SensorExtension(SensorReferenceR25):
     _name = "ref.type"
 
-@register_accessor('manufacturer', SensorReferences)
-class ManufacturerExtension(SensorReferenceR26):
-    _name = "ref.manufacturer"
+@register_accessor('maker', SensorReferences)
+class MakerExtension(SensorReferenceR26):
+    _name = "ref.maker"
 
 @register_accessor('model', SensorReferences)
 class ModelExtension(SensorReferenceR27):
