@@ -30,10 +30,12 @@ from .references import SensorReferences, SensorModel, SensorType
 log = logging.getLogger("argopy.related.sensors")
 
 # Define allowed values as a tuple
+# (for argument validation)
 SearchOutput = ("wmo", "sn", "wmo_sn", "df")
 Error = ("raise", "ignore", "silent")
 
 # Define Literal types using tuples
+# (for typing)
 SearchOutputOptions = Literal[*SearchOutput]
 ErrorOptions = Literal[*Error]
 
@@ -43,11 +45,128 @@ class ArgoSensor:
     __slots__ = [
         "_fs",
         "_cache",  # To cache extensions, not the option for filesystems
-        "_model",
+        "_vocabulary",
         "_type",
     ]
 
     def __init__(self, model: str | None = None, *args, **kwargs) -> None:
+        """Create an instance of :class:`ArgoSensor`
+
+        Parameters
+        ----------
+        model: str, optional
+            An exact sensor model name, None by default because this is optional.
+
+            Possible values can be obtained from :meth:`ArgoSensor.ref.model.hint`.
+
+        Other Parameters
+        ----------------
+        cache : bool, optional, default: True
+            Use cache or not for fetched data
+        cachedir: str, optional, default: OPTIONS['cachedir']
+            Folder where to store cached files.
+        timeout: int, optional, default: OPTIONS['api_timeout']
+            Time out in seconds to connect to web API.
+
+        Examples
+        --------
+        .. code-block:: python
+            :caption: Access reference tables for 'SENSOR_MODEL'/R27, 'SENSOR'/R25 and 'SENSOR_MAKER'/R26
+
+            from argopy import ArgoSensor
+
+            ArgoSensor().ref.model.to_dataframe() # Return reference table R27 with the list of sensor models as a DataFrame
+            ArgoSensor().ref.model.to_list()      # Return list of sensor model names (possible values for 'SENSOR_MODEL' parameter)
+            ArgoSensor().ref.model.to_type('SBE61') # Return sensor type (R25) of a given model (R27)
+
+            ArgoSensor().ref.type.to_dataframe()  # Return reference table R25 with the list of sensor types as a DataFrame
+            ArgoSensor().ref.type.to_list()       # Return list of sensor types (possible values for 'SENSOR' parameter)
+            ArgoSensor().ref.type.to_model('FLUOROMETER_CDOM') # Return all possible model names (R27) for a given sensor type (R25)
+
+            ArgoSensor().ref.maker.to_dataframe()  # Return reference table R26 with the list of manufacturer as a DataFrame
+            ArgoSensor().ref.maker.to_list()       # Return list of manufacturer names (possible values for 'SENSOR_MAKER' parameter)
+
+        .. code-block:: python
+            :caption: Search in 'SENSOR_MODEL'/R27 reference table
+
+            from argopy import ArgoSensor
+
+            ArgoSensor().ref.model.search('RBR') # Search and return a DataFrame
+            ArgoSensor().ref.model.search('RBR', output='name') # Search and return a list of names instead
+            ArgoSensor().ref.model.search('SBE61*')   # Use of wildcards
+            ArgoSensor().ref.model.search('*Deep*')  # search is case insensitive
+
+        .. code-block:: python
+            :caption: Search for all Argo floats equipped with one or more sensor model
+
+            from argopy import ArgoSensor
+
+            sensors = ArgoSensor()
+
+            # Search and return a list of WMOs equipped
+            sensors.search('SBE61_V5.0.2')
+
+            # Search and return a list of sensor serial numbers in Argo
+            sensors.search('ECO_FLBBCD_AP2', output='sn')
+            sensors.search('ECO_FLBBCD_AP2', output='sn', progress=False)
+
+            # Search and return a list of tuples with WMOs and serial numbers for those equipped with this model
+            ArgoSensor().search('SBE', output='wmo_sn')
+            ArgoSensor().search('SBE', output='wmo_sn', progress=True)
+
+            # Search and return a DataFrame with full sensor information from floats equipped
+            ArgoSensor().search('RBR', output='df')
+
+            # Search by model, can take a list of string, not necessarily a single value:
+            ArgoSensor().search(['ECO_FLBBCD_AP2', 'ECO_FLBBCD'])
+
+
+        .. code-block:: python
+            :caption: Easily loop through `ArgoFloat` instances for each float equipped with a sensor model
+
+            from argopy import ArgoSensor
+
+            model = "RAFOS"
+            for af in ArgoSensor().iterfloats_with(model):
+                print(af.WMO)
+
+            # Example for how to use the metadata attribute of an ArgoFloat instance:
+            model = "RAFOS"
+            for af in ArgoSensor().iterfloats_with(model):
+                models = af.metadata['sensors']
+                for s in models:
+                    if model in s['model']:
+                        print(af.WMO, s['maker'], s['model'], s['serial'])
+
+        .. code-block:: python
+            :caption: Use an exact sensor model name to create an instance
+
+            from argopy import ArgoSensor
+
+            sensor = ArgoSensor('RBR_ARGO3_DEEP6K')
+
+            sensor.vocabulary
+            sensor.type
+
+            sensor.search(output='wmo')
+            sensor.search(output='sn')
+            sensor.search(output='wmo_sn')
+
+        .. code-block:: bash
+            :caption: Get clean search results from the command-line with :class:`ArgoSensor.cli_search`
+
+            python -c "from argopy import ArgoSensor; ArgoSensor().cli_search('RBR', output='wmo')"
+
+            python -c "from argopy import ArgoSensor; ArgoSensor().cli_search('RBR', output='sn')"
+
+
+        Notes
+        -----
+        Related ADMT/AVTT work:
+            - https://github.com/OneArgo/ADMT/issues/112
+            - https://github.com/OneArgo/ArgoVocabs/issues/156
+            - https://github.com/OneArgo/ArgoVocabs/issues/157
+        """
         if kwargs.get("fs", None) is None:
             self._fs = httpstore(
                 cache=kwargs.get("cache", True),
@@ -57,7 +176,7 @@ class ArgoSensor:
         else:
             self._fs = kwargs["fs"]
 
-        self._model: SensorModel | None = None
+        self._vocabulary: SensorModel | None = None
         self._type: SensorType | None = None
         if model is not None:
             try:
@@ -68,9 +187,9 @@ class ArgoSensor:
                 )
 
             if df.shape[0] == 1:
-                self._model = SensorModel.from_series(df.iloc[0])
-                self._type = self.ref.model.to_type(self._model, errors="ignore")
-                # if "RBR" in self._model:
+                self._vocabulary = SensorModel.from_series(df.iloc[0])
+                self._type = self.ref.model.to_type(self._vocabulary, errors="ignore")
+                # if "RBR" in self._vocabulary:
                 # Add the RBR OEM API Authorization key for this sensor:
                 # fs_kargs.update(client_kwargs={'headers': {'Authorization': OPTIONS.get('rbr_api_key') }})
             else:
@@ -79,10 +198,10 @@ class ArgoSensor:
                 )
 
     @property
-    def model(self) -> SensorModel:
-        """:class:`SensorModel` of this class instance
+    def vocabulary(self) -> SensorModel:
+        """Argo reference "SENSOR_MODEL" vocabulary for this sensor model
 
-        Only available for a class instance created with an explicit sensor model name.
+        ! Only available for a class instance created with an explicit sensor model name.
 
         Returns
         -------
@@ -92,18 +211,18 @@ class ArgoSensor:
         ------
         :class:`InvalidDataset`
         """
-        if isinstance(self._model, SensorModel):
-            return self._model
+        if isinstance(self._vocabulary, SensorModel):
+            return self._vocabulary
         else:
             raise InvalidDataset(
-                "The 'model' property is not available for an ArgoSensor instance not created with a specific sensor model"
+                "The 'vocabulary' property is not available for an ArgoSensor instance not created with a specific sensor model"
             )
 
     @property
     def type(self) -> SensorType:
-        """:class:`SensorType` of this class instance sensor model
+        """Argo reference "SENSOR" vocabulary for this sensor model
 
-        Only available for a class instance created with an explicit sensor model name.
+        ! Only available for a class instance created with an explicit sensor model name.
 
         Returns:
         -------
@@ -121,35 +240,36 @@ class ArgoSensor:
             )
 
     def __repr__(self) -> str:
-        if isinstance(self._model, SensorModel):
-            summary = [f"<argosensor.{self.type.name}.{self.model.name}>"]
+        if isinstance(self._vocabulary, SensorModel):
+            summary = [f"<argosensor.{self.type.name}.{self.vocabulary.name}>"]
             summary.append(f"TYPE➤ {self.type.long_name}")
-            summary.append(f"MODEL➤ {self.model.long_name}")
-            if self.model.deprecated:
+            summary.append(f"MODEL➤ {self.vocabulary.long_name}")
+            if self.vocabulary.deprecated:
                 summary.append("⛔ This model is deprecated !")
             else:
                 summary.append("✅ This model is not deprecated.")
-            summary.append(f"🔗 {self.model.uri}")
-            summary.append(f"❝{self.model.definition}❞")
+            summary.append(f"🔗 {self.vocabulary.uri}")
+            summary.append(f"❝{self.vocabulary.definition}❞")
         else:
             summary = ["<argosensor>"]
             summary.append(
                 "This instance was not created with a sensor model name, you still have access to the following:"
             )
-            summary.append("👉 attributes: ")
+            summary.append("👉 extensions: ")
             for attr in [
-                "reference_model",
-                "reference_model_name",
-                "reference_sensor",
-                "reference_sensor_type",
-                "reference_manufacturer",
-                "reference_manufacture_name",
+                "ref.model.to_dataframe()",
+                "ref.model.hint()",
+                "ref.model.search",
+                "ref.type.to_dataframe()",
+                "ref.type.hint()",
+                "ref.maker.to_dataframe()",
+                "ref.maker.hint()",
             ]:
                 summary.append(f"  ╰┈➤ ArgoSensor().{attr}")
 
             summary.append("👉 methods: ")
             for meth in [
-                "search_model",
+                "search_vocabulary",
                 "search",
                 "iterfloats_with",
             ]:
@@ -337,8 +457,8 @@ class ArgoSensor:
         -----
         No option checking, to be done by caller
         """
-        if model is None and self.model is not None:
-            model = self.model.name
+        if model is None and self.vocabulary is not None:
+            model = self.vocabulary.name
 
         def preprocess(jsdata, model_name: str = ""):
             output = []
@@ -582,9 +702,9 @@ class ArgoSensor:
             )
 
         if model is None:
-            if self.model is not None:
+            if self.vocabulary is not None:
                 return self._search_single(
-                    model=self.model.name,
+                    model=self.vocabulary.name,
                     output=output,
                     progress=progress,
                     errors=errors,
@@ -666,8 +786,8 @@ class References(SensorReferences):
         ArgoSensor.ref.sensor.hint()       # Return list of sensor types (possible values for 'SENSOR' parameter)
         ArgoSensor.ref.sensor.to_model('FLUOROMETER_CDOM') # Return all possible model names (R27) for a given sensor type (R25)
 
-        ArgoSensor.ref.manufacturer.to_dataframe()  # Return reference table R26 with the list of manufacturer as a DataFrame
-        ArgoSensor.ref.manufacturer.hint()       # Return list of manufacturer names (possible values for 'SENSOR_MAKER' parameter)
+        ArgoSensor.ref.maker.to_dataframe()  # Return reference table R26 with the list of manufacturer as a DataFrame
+        ArgoSensor.ref.maker.hint()       # Return list of manufacturer names (possible values for 'SENSOR_MAKER' parameter)
 
         ArgoSensor.ref.model.search('RBR') # Search for all (R27) referenced sensor models with some string in their name, return a DataFrame
         ArgoSensor.ref.model.search('RBR', output='name') # Return a list of names instead
