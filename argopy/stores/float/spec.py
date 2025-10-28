@@ -9,7 +9,7 @@ from abc import ABC, abstractmethod
 import logging
 import numpy as np
 
-from ...errors import InvalidOption
+from ...errors import InvalidOption, OptionValueError
 from ...plot import dashboard
 from ...utils import check_wmo, argo_split_path, shortcut2gdac
 from ...options import OPTIONS
@@ -308,7 +308,7 @@ class FloatStoreProto(ABC):
 
         """
         if name not in self.ls_dataset():
-            raise ValueError(
+            raise OptionValueError(
                 "Dataset '%s' not found. Available dataset for this float are: %s"
                 % (name, self.ls_dataset().keys())
             )
