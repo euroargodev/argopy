@@ -1,9 +1,6 @@
 import pandas as pd
-from functools import lru_cache
 from pathlib import Path
-import xarray as xr
-from typing import Any, Callable, Literal, NoReturn
-import inspect
+from typing import Literal, NoReturn
 from abc import ABC, abstractmethod
 import logging
 import fnmatch
@@ -294,7 +291,6 @@ class SensorReferenceR27(SensorReferenceHolder):
                 return sorted(to_list(data["altLabel"].values))
             else:
                 return data.reset_index(drop=True)
-
 
 
 class SensorReferenceR25(SensorReferenceHolder):
