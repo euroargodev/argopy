@@ -11,7 +11,7 @@ except ImportError:
         importlib.util.find_spec(x).submodule_search_locations[0]
     )
 
-from ...utils import urnparser
+from ....utils import urnparser
 
 
 STATIC_FILES = (
@@ -54,7 +54,7 @@ class OemMetaDataDisplay:
 
         # --- Header ---
         header_html = f"""
-        <h1 class='oemsensor'>Argo Sensor Metadata: {self.OEMsensor.sensor_info._attr2str('sensor_described')}</h1>
+        <h1 class='oemsensor'>Argo Sensor OEM Metadata: {self.OEMsensor.sensor_info._attr2str('sensor_described')}</h1>
         <p class='oemsensor'><strong>Created by:</strong> {self.OEMsensor.sensor_info._attr2str('created_by')} |
            <strong>Date:</strong> {self.OEMsensor.sensor_info._attr2str('date_creation')}</p>
         """
@@ -214,7 +214,7 @@ class ParameterDisplay:
         param = self.data
 
         # --- Header ---
-        header_html = f"<h1 class='oemsensor'>Argo Sensor Metadata for Parameter: <a href='{param.PARAMETER_uri}'>{urn_html(param.PARAMETER)}</a></h1>"
+        header_html = f"<h1 class='oemsensor'>Argo Sensor OEM Metadata for Parameter: <a href='{param.PARAMETER_uri}'>{urn_html(param.PARAMETER)}</a></h1>"
 
         if param.parameter_vendorinfo is not None:
             info = " | ".join([f"<strong>{p}</strong> {v}" for p, v in param.parameter_vendorinfo.items()])

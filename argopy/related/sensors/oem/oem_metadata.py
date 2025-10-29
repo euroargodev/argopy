@@ -9,14 +9,15 @@ import logging
 import warnings
 import pandas as pd
 
-from ...stores import httpstore, filestore
-from ...options import OPTIONS
-from ...utils import urnparser, path2assets
-from ...errors import InvalidDatasetStructure
+from ....stores import httpstore, filestore
+from ....options import OPTIONS
+from ....utils import urnparser, path2assets
+from ....errors import InvalidDatasetStructure
+
 from .oem_metadata_repr import OemMetaDataDisplay, ParameterDisplay
 
 
-log = logging.getLogger("argopy.related.sensors")
+log = logging.getLogger("argopy.related.sensors.oem")
 
 SENSOR_JS_EXAMPLES = filestore().open_json(
     Path(path2assets).joinpath("sensor_metadata_examples.json")
@@ -202,7 +203,7 @@ class Parameter:
 
         for key in ["parameter_vendorinfo", "predeployment_vendorinfo"]:
             if getattr(self, key, None) is not None:
-                summary.append(f"  {key}: {self._attr2str(p)}")
+                summary.append(f"  {key}: {self._attr2str(key)}")
             else:
                 summary.append(f"  {key}: None")
         return "\n".join(summary)
@@ -216,30 +217,34 @@ class Parameter:
         display(HTML(ParameterDisplay(self).html))
 
 
-class ArgoSensorMetaDataOem:
-    """Argo sensor meta-data - from OEM
+class OEMSensorMetaData:
+    """OEM sensor meta-data
 
-    A class helper to work with meta-data structure complying to schema from https://github.com/euroargodev/sensor_metadata_json
+    A class helper to work with sensor meta-data complying to schema from https://github.com/euroargodev/sensor_metadata_json
 
     Such meta-data structures are expected to come from sensor manufacturer (web-api or file).
 
-    OEM : Original Equipment Manufacturer
+    .. note::
+    
+        OEM : Original Equipment Manufacturer
 
     Examples
     --------
     .. code-block:: python
 
-        ArgoSensorMetaData()
+        OEMSensorMetaData()
 
-        ArgoSensorMetaData(validate=True)  # Run json schema validation compliance when necessary
+        OEMSensorMetaData(validate=True)  # Run json schema validation compliance when necessary
 
-        ArgoSensorMetaData().from_rbr(208380)  # Direct call to the RBR api with a serial number
+        OEMSensorMetaData().from_rbr(208380)  # Direct call to RBR api with a serial number
 
-        ArgoSensorMetaData().list_examples
+        OEMSensorMetaData().from_seabird(2444, 'SATLANTIC_OCR504_ICSW')  # Direct call to Seabird api with a serial number and model name
 
-        ArgoSensorMetaData().from_examples('WETLABS-ECO_FLBBAP2-8589')
+        OEMSensorMetaData().list_examples
 
-        ArgoSensorMetaData().from_dict(jsdata)  # Use any compliant json data
+        OEMSensorMetaData().from_examples('WETLABS-ECO_FLBBAP2-8589')
+
+        OEMSensorMetaData().from_dict(jsdata)  # Use any compliant json data
 
     """
 
@@ -290,7 +295,7 @@ class ArgoSensorMetaDataOem:
             "from_rbr(serial_number)",
             "from_dict(dict_or_json_data)",
         ]:
-            summary.append(f"  ╰┈➤ ArgoSensorMetaDataOem().{meth}")
+            summary.append(f"  ╰┈➤ OEMSensorMetaData().{meth}")
         return summary
 
     def __repr__(self):
@@ -459,12 +464,12 @@ class ArgoSensorMetaDataOem:
 
         Notes
         -----
-        The output json file should be compliant with the Argo sensor meta-data JSON schema :attr:`ArgoSensorMetaDataOem.schema`
+        The output json file should be compliant with the Argo sensor meta-data JSON schema :attr:`OEMSensorMetaData.schema`
         """
         with open(file_path, "w") as f:
             json.dump(self.to_dict(), f, indent=2)
 
-    def from_rbr(self, serial_number: str, **kwargs) -> 'ArgoSensorMetaDataOem':
+    def from_rbr(self, serial_number: str, **kwargs) -> 'OEMSensorMetaData':
         """Fetch sensor metadata from "RBRargo Product Lookup" web-API
 
         We also download certificates if available
@@ -572,7 +577,7 @@ class ArgoSensorMetaDataOem:
         else:
             raise ValueError(f"Unknown action {action}")
 
-    def from_seabird(self, serial_number: str, sensor_model: str, **kwargs) -> 'ArgoSensorMetaDataOem':
+    def from_seabird(self, serial_number: str, sensor_model: str, **kwargs) -> 'OEMSensorMetaData':
         """Fetch sensor metadata from Seabird-Scientific "Instrument Metadata Portal" web-API
 
         Parameters
@@ -582,9 +587,9 @@ class ArgoSensorMetaDataOem:
         """
         # The Seabird api requires a sensor model (R27) with a serial number.
         # This could easily be done if we get the s/n by searching float metadata.
-        # In other word, it's easy to go from a sensor_model to a serial_number
-        # But it is much more complicated to from a serial_number to a sensor_model.
-        # so, the time being, we'll ask users to specify a sensor_model.
+        # In other word, it's easy to go from a sensor_model to a serial_number.
+        # But it is much more complicated to go from a serial_number to a sensor_model.
+        # so, for the time being, we'll ask users to specify a sensor_model.
 
         url = f"{OPTIONS['seabird_api']}?SENSOR_SERIAL_NO={serial_number}&SENSOR_MODEL={sensor_model}"
         data = self._fs.open_json(url)
@@ -595,6 +600,19 @@ class ArgoSensorMetaDataOem:
         data['sensor_info'].update({'created_by': 'Sea-Bird Instrument Metadata Portal'})
         data['sensor_info'].update({'sensor_described': f"{sensor_model}-{serial_number}"})
         data.pop('json_info', None)
+
+        # Check in vendor info for missing mandatory parameter attributes:
+        for ii, param in enumerate(data['PARAMETERS']):
+            vendorinfo = param['parameter_vendorinfo']
+            if param.get('PARAMETER_UNITS', None) is None:
+                if 'units' in vendorinfo:
+                    data['PARAMETERS'][ii]['PARAMETER_UNITS'] = vendorinfo['units']
+            if param.get('PREDEPLOYMENT_CALIB_COMMENT', None) is None:
+                if 'units' in vendorinfo:
+                    data['PARAMETERS'][ii]['PREDEPLOYMENT_CALIB_COMMENT'] = vendorinfo['comments']
+            if param.get('PREDEPLOYMENT_CALIB_DATE', None) is None:
+                if 'units' in vendorinfo:
+                    data['PARAMETERS'][ii]['PREDEPLOYMENT_CALIB_DATE'] = vendorinfo['calibration_date']
 
         # Create and return an instance
         obj = self.from_dict(data)
