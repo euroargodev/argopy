@@ -181,6 +181,8 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
                 ("s3fs", get_version),
                 ("kerchunk", get_version),
                 ("zarr", get_version),
+                ("pydantic", get_version),
+                ("jsonschema", get_version),
             ]
         ),
         "ext.perf": sorted(

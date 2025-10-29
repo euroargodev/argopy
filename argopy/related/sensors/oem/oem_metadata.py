@@ -2,8 +2,7 @@ from dataclasses import field
 from typing import List, Dict, Optional, Any, Literal
 from pathlib import Path
 from zipfile import ZipFile
-from referencing import Registry, Resource
-import jsonschema
+
 import json
 import logging
 import warnings
@@ -15,8 +14,13 @@ from ....options import OPTIONS
 from ....utils import urnparser, path2assets
 from ....errors import InvalidDatasetStructure
 
+from ..utils import has_jsonschema
 from .oem_metadata_repr import OemMetaDataDisplay
 from .accessories import SensorInfo, Context, Sensor, Parameter
+
+if has_jsonschema:
+    from referencing import Registry, Resource
+    import jsonschema
 
 
 log = logging.getLogger("argopy.related.sensors.oem")
@@ -80,7 +84,12 @@ class OEMSensorMetaData:
             }
             self._fs = httpstore(**fs_kargs)
 
-        self._run_validation = validate
+        if has_jsonschema:
+            self._run_validation = validate
+        else:
+            warnings.warn(f"Cannot run JSON validation without the 'jsonschema' library. Please install it manually. Fall back on setting `validate=False`. ")
+            self._run_validation = False
+
         self._validation_error = validation_error
         self.schema = self._read_schema()  # requires a self._fs instance
 

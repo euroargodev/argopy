@@ -23,8 +23,10 @@ dependencies:
 
 # EXT.FILES:
   - boto3
+  - jsonschema
   - kerchunk
   - numcodecs
+#  - pydantic
   - s3fs
   - zarr
 

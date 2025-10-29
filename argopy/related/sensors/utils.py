@@ -1,4 +1,17 @@
 import pandas as pd
+import importlib
+
+
+def _importorskip(modname):
+    try:
+        importlib.import_module(modname)  # noqa: E402
+        has = True
+    except ImportError:
+        has = False
+    return has
+
+
+has_jsonschema = _importorskip("jsonschema")
 
 
 class APISensorMetaDataProcessing:
@@ -43,3 +56,5 @@ class APISensorMetaDataProcessing:
                     }
                 )
         return pd.DataFrame(d).sort_values(by="WMO").reset_index(drop=True)
+
+
