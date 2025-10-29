@@ -55,6 +55,8 @@ RBR_API_KEY = "rbr_api_key"
 API_RBR = "rbr_api"
 NVS = "nvs"
 API_SEABIRD = "seabird_api"
+DISPLAY_STYLE = "display_style"
+
 
 # Define the list of available options and default values:
 OPTIONS = {
@@ -79,6 +81,7 @@ OPTIONS = {
     API_RBR: "https://oem-lookup.rbr-global.com/api/v1",
     NVS: "https://vocab.nerc.ac.uk/collection",
     API_SEABIRD: "https://instrument.seabirdhub.com/api/argo-calibration",
+    DISPLAY_STYLE: "html",
 }
 DEFAULT = OPTIONS.copy()
 
@@ -86,8 +89,8 @@ DEFAULT = OPTIONS.copy()
 _DATA_SOURCE_LIST = frozenset(["erddap", "argovis", "gdac"])
 _DATASET_LIST = frozenset(["phy", "bgc", "ref", "bgc-s", "bgc-b"])
 _USER_LEVEL_LIST = frozenset(["standard", "expert", "research"])
-
-
+_DISPLAY_STYLE_LIST = frozenset(["html", "text"])
+_LON_LIST = frozenset(['180', '360'])
 
 def _positive_integer(value):
     return isinstance(value, int) and value > 0
@@ -298,11 +301,12 @@ _VALIDATORS = {
     RBR_API_KEY: lambda x: isinstance(x, str) or x is None,
     PARALLEL: validate_parallel,
     PARALLEL_DEFAULT_METHOD: validate_parallel_method,
-    LON: lambda x: x in ['180', '360'],
+    LON: _LON_LIST.__contains__,
     API_FLEETMONITORING: validate_fleetmonitoring,
     API_RBR: validate_rbr,
     API_SEABIRD: validate_seabird,
     NVS: lambda x: isinstance(x, str) or x is None,
+    DISPLAY_STYLE: _DISPLAY_STYLE_LIST.__contains__,
 
 }
 
