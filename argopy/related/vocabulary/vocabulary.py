@@ -1,6 +1,6 @@
 
-class ArgoVocabulary:
-    """A class to work with one Argo reference table, data and meta-data
+class ArgoReferenceTable:
+    """A class to work with one Argo reference table, i.e. a NVS "vocabulary"
 
     Note that following the AVTT and NVS nomenclature, a "vocabulary" refers to a "reference table".
 

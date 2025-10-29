@@ -50,6 +50,7 @@ ARGOVIS_API_KEY = "argovis_api_key"
 PARALLEL = "parallel"
 PARALLEL_DEFAULT_METHOD = "parallel_default_method"
 LON = "longitude_convention"
+NVS = "nvs"
 
 # Define the list of available options and default values:
 OPTIONS = {
@@ -69,6 +70,7 @@ OPTIONS = {
     PARALLEL: False,
     PARALLEL_DEFAULT_METHOD: "thread",
     LON: "180",
+    NVS: "https://vocab.nerc.ac.uk/collection",
 }
 DEFAULT = OPTIONS.copy()
 
@@ -134,6 +136,7 @@ _VALIDATORS = {
     PARALLEL: validate_parallel,
     PARALLEL_DEFAULT_METHOD: validate_parallel_method,
     LON: lambda x: x in ['180', '360'],
+    NVS: lambda x: isinstance(x, str) or x is None,
 }
 
 

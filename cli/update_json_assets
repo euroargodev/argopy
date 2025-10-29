@@ -30,6 +30,11 @@ def save_data(file: str, name: str, long_name: str, data: dict):
         "data": data,
     }
     file = file.replace(".json", "")
+    if ":" in file:
+        subs = file.split(":")[0:-1]
+        ASSETS_FOLDER.joindir()
+        Path("/my/directory").mkdir(parents=True, exist_ok=True)
+
     with open(ASSETS_FOLDER.joinpath(f"{file}.json"), "w") as f:
         json.dump(data, f, indent=2)
 
@@ -688,7 +693,7 @@ def asset_sensor_schema():
     )
 
 
-def asset_nvs_reference_tables_list():
+def asset_vocabulary_description():
     fs = httpstore()
 
     data = fs.open_json('https://vocab.nerc.ac.uk/collection/?_profile=nvs&_mediatype=application/ld+json')
@@ -711,7 +716,7 @@ def asset_nvs_reference_tables_list():
     df = pd.DataFrame(valid_ref).sort_values('id', axis=0).reset_index(drop=1)
 
     save_data(
-        file="nvs_reference_tables",
+        file="vocabulary:description",
         name="List of Argo NVS reference tables",
         long_name="List of Argo NVS reference table ids and description",
         data={
@@ -721,7 +726,7 @@ def asset_nvs_reference_tables_list():
     )
 
 
-def asset_nvs_vocabulary():
+def asset_vocabulary_mapping():
     # Retrieve all reference tables altlabels and create a mapping between Concept and Vocabulary
 
     nvs = ArgoNVSReferenceTables(cache=True)
@@ -736,7 +741,7 @@ def asset_nvs_vocabulary():
     Vocabulary2Concept.keys()
 
     save_data(
-        file="nvs_vocabulary",
+        file="vocabulary:mapping",
         name="Mapping of NVS Vocabulary onto Concept and Parameter",
         long_name="Dictionaries to easily go from reference tables (Vocabulary) to netcdf parameter names and possible values (Concept)",
         data={
@@ -757,8 +762,8 @@ def main():
     # asset_GDAC_servers()
     # asset_netcdf_json_schema()
     # asset_sensor_schema()
-    # asset_nvs_reference_tables_list()
-    asset_nvs_vocabulary()
+    asset_vocabulary_description()
+    asset_vocabulary_mapping()
 
 if __name__ == "__main__":
     main()
