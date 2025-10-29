@@ -316,8 +316,8 @@ class OEMSensorMetaData:
         fss._session = None  # Reset fsspec aiohttp.ClientSession
 
         uri = f"{OPTIONS['rbr_api']}/instruments/{self._serial_number}/argometadatajson"
-        data = self._fs.open_json(uri)
-        obj = self.from_dict(data)
+        self._data = self._fs.open_json(uri)
+        obj = self.from_dict(self._data)
 
         # Also download RBR zip archive with calibration certificates in PDFs:
         obj = obj._certificates_rbr(action="download", quiet=True)
@@ -449,7 +449,8 @@ class OEMSensorMetaData:
                     data['PARAMETERS'][ii]['PREDEPLOYMENT_CALIB_DATE'] = vendorinfo['calibration_date']
 
         # Create and return an instance
-        obj = self.from_dict(data)
+        self._data = data
+        obj = self.from_dict(self._data)
         return obj
 
     @property
