@@ -18,9 +18,11 @@ from ...errors import (
     OptionValueError,
 )
 from ...options import OPTIONS
+from ..euroargo_api import EAfleetmonitoringAPI
 
 from .references import SensorModel, SensorType
 from .accessories import Error, ErrorOptions, Ds, DsOptions, SearchOutput, SearchOutputOptions
+from .utils import APISensorMetaDataProcessing
 
 
 log = logging.getLogger("argopy.related.sensors")
@@ -67,7 +69,9 @@ class ArgoSensorSpec:
             self._fs = kwargs["fs"]
 
         self._vocabulary: SensorModel | None = None
-        self._type: SensorType | None = None
+        self._type: list[SensorType] | None = None
+        self._api = EAfleetmonitoringAPI(fs=self._fs)
+
         if model is not None:
             try:
                 df = self.ref.model.search(model)
@@ -78,7 +82,7 @@ class ArgoSensorSpec:
 
             if df.shape[0] == 1:
                 self._vocabulary = SensorModel.from_series(df.iloc[0])
-                self._type = self.ref.model.to_type(self._vocabulary, errors="ignore")
+                self._type = self.ref.model.to_type(self._vocabulary, errors="ignore", obj=True)
                 # if "RBR" in self._vocabulary:
                 # Add the RBR OEM API Authorization key for this sensor:
                 # fs_kargs.update(client_kwargs={'headers': {'Authorization': OPTIONS.get('rbr_api_key') }})
@@ -122,7 +126,7 @@ class ArgoSensorSpec:
         ------
         :class:`InvalidDataset`
         """
-        if isinstance(self._type, SensorType):
+        if len(self._type) > 0 and isinstance(self._type[0], SensorType):
             return self._type
         else:
             raise InvalidDataset(
@@ -229,33 +233,20 @@ class ArgoSensorSpec:
         -----
         No option checking, to be done by caller
         """
-        if preprocess_opts is None:
-            preprocess_opts = {}
-
         try:
             is_wmo(model_or_wmo)
             WMOs = check_wmo(model_or_wmo)
         except ValueError:
             WMOs = self._search_wmo_with(model_or_wmo)
 
-        URI = []
-        for wmo in WMOs:
-            URI.append(f"{OPTIONS['fleetmonitoring']}/floats/{wmo}")
-
-        sns = self._fs.open_mfjson(
-            URI,
-            preprocess=preprocess,
-            preprocess_opts=preprocess_opts,
-            progress=progress,
-            errors=errors,
-            progress_unit="float",
-            progress_desc="Fetching floats metadata",
-        )
-
-        if postprocess is not None:
-            return postprocess(sns, **postprocess_opts)
-        else:
-            return sns
+        return self._api.floats(WMOs,
+                                preprocess=preprocess,
+                                preprocess_opts=preprocess_opts,
+                                postprocess=postprocess,
+                                postprocess_opts=postprocess_opts,
+                                progress=progress,
+                                errors=errors,
+                                )
 
     def _search_sn_with(
         self,
@@ -309,10 +300,16 @@ class ArgoSensorSpec:
         """
 
         def preprocess(jsdata, model_name: str = ""):
-            sn = np.unique(
-                [s["serial"] for s in jsdata["sensors"] if model_name in s["model"]]
-            )
-            return [jsdata["wmo"], [str(s) for s in sn]]
+            try:
+                x = [s["serial"] for s in jsdata["sensors"] if model_name in s["model"]]
+                x = [x for x in x if x is not None]
+                if len(x) == 0:
+                    sn = ['n/a']
+                else:
+                    sn = np.unique(x).tolist()
+                return [jsdata["wmo"], [str(s) for s in sn]]
+            except:
+                log.error(f"Could not find sensor model {model_name}: {jsdata['sensors']}")
 
         def postprocess(data, **kwargs):
             S = {}
@@ -351,53 +348,14 @@ class ArgoSensorSpec:
         if model is None and self.vocabulary is not None:
             model = self.vocabulary.name
 
-        def preprocess(jsdata, model_name: str = ""):
-            output = []
-            for s in jsdata["sensors"]:
-                if model_name in s["model"]:
-                    this = [jsdata["wmo"]]
-                    [
-                        this.append(s[key])  # type: ignore
-                        for key in [
-                            "id",
-                            "maker",
-                            "model",
-                            "serial",
-                            "units",
-                            "accuracy",
-                            "resolution",
-                        ]
-                    ]
-                    output.append(this)
-            return output
-
-        def postprocess(data, **kwargs):
-            d = []
-            for this in data:
-                for wmo, sid, maker, model, sn, units, accuracy, resolution in this:
-                    d.append(
-                        {
-                            "WMO": wmo,
-                            "Type": sid,
-                            "Model": model,
-                            "Maker": maker,
-                            "SerialNumber": sn if sn != "n/a" else None,
-                            "Units": units,
-                            "Accuracy": accuracy,
-                            "Resolution": resolution,
-                        }
-                    )
-            return pd.DataFrame(d).sort_values(by="WMO").reset_index(drop=True)
-
-        df = self._floats_api(
+        return self._floats_api(
             model if kwargs.get("wmo", None) is None else kwargs["wmo"],
-            preprocess=preprocess,
+            preprocess=APISensorMetaDataProcessing.preprocess_df,
             preprocess_opts={"model_name": model},
-            postprocess=postprocess,
+            postprocess=APISensorMetaDataProcessing.postprocess_df,
             progress=progress,
             errors=errors,
         )
-        return df.sort_values(by="WMO", axis=0).reset_index(drop=True)
 
     def _search_single(
         self,
@@ -778,3 +736,19 @@ class ArgoSensorSpec:
         else:
             for wmo in WMOs:
                 yield ArgoFloat(wmo, idx=idx)
+
+    def from_wmo(self, wmo: int | str) -> pd.DataFrame:
+        """Retrieve sensor metadata from a given float WMO number
+
+        Parameters
+        ----------
+        wmo: int | str
+            Float WMO number, only one value
+
+        Returns
+        -------
+        :class:`pandas.DataFrame`
+        """
+        wmo = check_wmo(wmo)
+        df = self._to_dataframe('', wmo=wmo[0])
+        return df.drop('WMO', axis=1).T

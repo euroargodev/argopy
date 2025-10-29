@@ -85,17 +85,13 @@ class SensorReferenceHolder(ABC):
                 )
             )
         df = pd.concat(df)
+        for col in ['origin', 'destination', 'type', 'model', '?', '??']:
+            df[col] = df[col].apply(lambda x: x.strip())
         df = df.reset_index(drop=True)
-        self._r27_to_r25: dict[str, str] = {}
-        df.apply(
-            lambda row: self._r27_to_r25.update(
-                {row["model"].strip(): row["type"].strip()}
-            ),
-            axis=1,
-        )
+        self._r27_to_r25 : pd.DataFrame | None = df
 
     @property
-    def r27_to_r25(self):
+    def r27_to_r25(self) -> pd.DataFrame:
         """Dictionary mapping of R27 to R25"""
         if self._r27_to_r25 is None:
             self._load_mappers()
@@ -145,35 +141,47 @@ class SensorReferenceR27(SensorReferenceHolder):
         self,
         model: str | SensorModel | None = None,
         errors: ErrorOptions = "raise",
-    ) -> SensorType | None:
-        """Get a sensor type for a given sensor model
+        obj: bool = False,
+    ) -> list[str] | list[SensorType] | None:
+        """Get all sensor types of a given sensor model
 
-        All valid sensor model name can be obtained with :meth:`ArgoSensor.ref.mode.to_list()`.
+        All valid sensor model names can be obtained with :meth:`ArgoSensor.ref.model.hint`.
 
         Mapping between sensor model name (R27) and sensor type (R25) are from AVTT work at https://github.com/OneArgo/ArgoVocabs/issues/156.
 
         Parameters
         ----------
         model : str | :class:`SensorModel`
-            The model to read the sensor type for.
+            The sensor model to read the sensor type for.
         errors : Literal["raise", "ignore", "silent"] = "raise"
             How to handle possible errors. If set to "ignore", the method may return None.
 
         Returns
         -------
-        :class:`SensorType` | None
+        list[str] | list[:class:`SensorType`] | None
+
+        Raises
+        ------
+        :class:`DataNotFound`
         """
         if errors not in Error:
             raise OptionValueError(
                 f"Invalid 'errors' option value '{errors}', must be in: {ppliststr(Error, last='or')}"
             )
         model_name: str = model.name if isinstance(model, SensorModel) else model
-        sensor_type = self.r27_to_r25.get(model_name, None)
-        if sensor_type is not None:
-            row = self.r25[self.r25["altLabel"].apply(lambda x: x == sensor_type)].iloc[
-                0
-            ]
-            return SensorType.from_series(row)
+
+        match = fnmatch.filter(self.r27_to_r25["model"], model_name.upper())
+        types = self.r27_to_r25[self.r27_to_r25["model"].apply(lambda x: x in match)]['type'].tolist()
+
+        if len(types) > 0:
+            # Since 'types' comes from the mapping, we double-check values against the R25 entries:
+            types = [self.r25[self.r25["altLabel"].apply(lambda x: x == this_type)]['altLabel'].item() for this_type in types]
+            if not obj:
+                return types
+            else:
+                rows = [self.r25[self.r25["altLabel"].apply(lambda x: x == this_type)].iloc[0] for this_type in types]
+                return [SensorType.from_series(row) for row in rows]
+
         elif errors == "raise":
             raise DataNotFound(
                 f"Can't determine the type of sensor model '{model_name}' (no matching key in r27_to_r25 mapper)"
@@ -253,10 +261,11 @@ class SensorReferenceR25(SensorReferenceHolder):
         self,
         type: str | SensorType,
         errors: Literal["raise", "ignore"] = "raise",
-    ) -> list[str] | None:
+        obj: bool = False,
+    ) -> list[str] | list[SensorModel] | None:
         """Get all sensor model names of a given sensor type
 
-        All valid sensor types can be obtained with :attr:`ArgoSensor.reference_sensor_type`
+        All valid sensor types can be obtained with :meth:`ArgoSensor.ref.sensor.hint`
 
         Mapping between sensor model name (R27) and sensor type (R25) are from AVTT work at https://github.com/OneArgo/ArgoVocabs/issues/156.
 
@@ -269,14 +278,29 @@ class SensorReferenceR25(SensorReferenceHolder):
 
         Returns
         -------
-        list[str]
+        list[str] | list[:class:`SensorModel`] | None
+
+        Raises
+        ------
+        :class:`DataNotFound`
         """
         sensor_type = type.name if isinstance(type, SensorType) else type
         result = []
-        for key, val in self.r27_to_r25.items():
-            if sensor_type.lower() in val.lower():
-                row = self.r27[self.r27["altLabel"].apply(lambda x: x == key)].iloc[0]
-                result.append(SensorModel.from_series(row).name)
+
+        match = fnmatch.filter(self.r27_to_r25["type"], sensor_type.upper())
+        models = self.r27_to_r25[self.r27_to_r25["type"].apply(lambda x: x in match)]['model'].tolist()
+
+        if len(models) > 0:
+            # Since 'models' comes from the mapping, we double-check values against the R27 entries:
+            models = [self.r27[self.r27["altLabel"].apply(lambda x: x == model)]['altLabel'].item() for
+             model in models]
+            if not obj:
+                return models
+            else:
+                rows = [self.r27[self.r27["altLabel"].apply(lambda x: x == model)].iloc[0] for
+             model in models]
+                return [SensorModel.from_series(row) for row in rows]
+
         if len(result) == 0:
             if errors == "raise":
                 raise DataNotFound(

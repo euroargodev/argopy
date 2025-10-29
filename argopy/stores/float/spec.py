@@ -393,3 +393,17 @@ class FloatStoreProto(ABC):
         )
 
         return "\n".join(summary)
+
+    @property
+    def sensors(self):
+        """Return a :class:`pandas.DataFrame` describing float sensors
+
+        ! This is experimental and may change in the future.
+        """
+        # We can't call on:
+        # >>> ArgoSensor(fs=self.fs).from_wmo(self.WMO)
+        # because ArgoSensor import ArgoFloat for the iterator method and
+        # that would be circular import.
+        # We need to implement here a self.metadata -> dataframe transform
+        # like it's done in ArgoSensor from json data
+        pass

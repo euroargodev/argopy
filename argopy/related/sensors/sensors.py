@@ -126,9 +126,8 @@ class ArgoSensor(ArgoSensorSpec):
         - https://github.com/OneArgo/ArgoVocabs/issues/157
 
     """
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
 @register_accessor("ref", ArgoSensor)

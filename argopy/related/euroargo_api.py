@@ -1,4 +1,6 @@
 import pandas as pd
+from typing import Any, Callable, Literal
+
 from ..options import OPTIONS
 from ..utils.checkers import check_wmo, check_cyc
 from ..stores import httpstore
@@ -100,3 +102,74 @@ def get_ea_profile_page(WMO, CYC=None, **kwargs):
     df = get_coriolis_profile_id(WMO, CYC, **kwargs)
     url = "https://dataselection.euro-argo.eu/cycle/{}"
     return [url.format(this_id) for this_id in sorted(df["ID"])]
+
+
+class EAfleetmonitoringAPI:
+
+    def __init__(self, **kwargs) -> None:
+        """Create an instance of :class:`EAfleetmonitoringAPI`
+
+        Parameters
+        ----------
+        fs: :class:`stores.httpstore`, default: None
+            The http filesystem to use. If None is provided, we instantiate a new one based on `cache`, `cachedir` and `timeout` options.
+        cache : bool, optional, default: True
+            Use cache or not for fetched data. Used only if `fs` is None.
+        cachedir: str, optional, default: OPTIONS['cachedir']
+            Folder where to store cached files. Used only if `fs` is None.
+        timeout: int, optional, default: OPTIONS['api_timeout']
+            Time out in seconds to connect to web API. Used only if `fs` is None.
+
+        """
+        if kwargs.get("fs", None) is None:
+            self._fs = httpstore(
+                cache=kwargs.get("cache", True),
+                cachedir=kwargs.get("cachedir", OPTIONS["cachedir"]),
+                timeout=kwargs.get("timeout", OPTIONS["api_timeout"]),
+            )
+        else:
+            self._fs = kwargs["fs"]
+
+
+    def floats(
+            self,
+            wmo: str | int | list[int] | list[str],
+            preprocess: Callable = None,
+            preprocess_opts: dict = {},
+            postprocess: Callable = None,
+            postprocess_opts: dict = {},
+            errors: Literal["raise", "ignore", "silent"] = "raise",
+            progress: bool = False,
+    ) -> Any:
+        """Call to 'floats' endpoint with one or more WMOs
+
+        Notes
+        -----
+        Based on a POST request to the fleet-monitoring API requests to `/floats/{wmo}`.
+
+        `Endpoint documentation <https://fleetmonitoring.euro-argo.eu/swagger-ui.html#!/autonomous-float-controller/getFullFloatUsingGET>`_.
+
+        Notes
+        -----
+        No option checking, to be done by caller
+        """
+        WMOs = check_wmo(wmo)
+
+        URI = []
+        for wmo in WMOs:
+            URI.append(f"{OPTIONS['fleetmonitoring']}/floats/{wmo}")
+
+        sns = self._fs.open_mfjson(
+            URI,
+            preprocess=preprocess,
+            preprocess_opts=preprocess_opts,
+            progress=progress,
+            errors=errors,
+            progress_unit="float",
+            progress_desc="Fetching floats metadata",
+        )
+
+        if postprocess is not None:
+            return postprocess(sns, **postprocess_opts)
+        else:
+            return sns
