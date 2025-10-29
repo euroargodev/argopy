@@ -42,14 +42,14 @@ class ArgoSensorSpec:
 
         Parameters
         ----------
-        model: str, optional
+        model: str, optional, default: None
             An exact sensor model name, None by default because this is optional.
 
             Otherwise, possible values can be obtained from :meth:`ArgoSensor.ref.model.hint`.
 
         Other Parameters
         ----------------
-        fs: :class:`stores.httpstore`, default: None
+        fs: :class:`stores.httpstore`, optional, default: None
             The http filesystem to use. If None is provided, we instantiate a new one based on `cache`, `cachedir` and `timeout` options.
         cache : bool, optional, default: True
             Use cache or not for fetched data. Used only if `fs` is None.
@@ -95,11 +95,12 @@ class ArgoSensorSpec:
     def vocabulary(self) -> SensorModel:
         """Argo reference "SENSOR_MODEL" vocabulary for this sensor model
 
-        ! Only available for a class instance created with an explicit sensor model name.
+        .. note::
+            Only available for a class instance created with an explicit sensor model name.
 
         Returns
         -------
-        :class:`SensorModel`
+        :class:`argopy.related.SensorModel`
 
         Raises
         ------
@@ -116,11 +117,12 @@ class ArgoSensorSpec:
     def type(self) -> SensorType:
         """Argo reference "SENSOR" vocabulary for this sensor model
 
-        ! Only available for a class instance created with an explicit sensor model name.
+        .. note::
+            Only available for a class instance created with an explicit sensor model name.
 
-        Returns:
+        Returns
         -------
-        :class:`SensorType`
+        :class:`argopy.related.SensorType`
 
         Raises
         ------
@@ -135,8 +137,8 @@ class ArgoSensorSpec:
 
     def __repr__(self) -> str:
         if isinstance(self._vocabulary, SensorModel):
-            summary = [f"<argosensor.{self.type.name}.{self.vocabulary.name}>"]
-            summary.append(f"TYPE➤ {self.type.long_name}")
+            summary = [f"<argosensor.{self.vocabulary.name}>"]
+            summary.append(f"TYPE➤ {ppliststr([t.long_name for t in self.type])}")
             summary.append(f"MODEL➤ {self.vocabulary.long_name}")
             if self.vocabulary.deprecated:
                 summary.append("⛔ This model is deprecated !")
@@ -167,6 +169,7 @@ class ArgoSensorSpec:
             for meth in [
                 "search",
                 "iterfloats_with",
+                "from_wmo",
             ]:
                 summary.append(f"  ╰┈➤ ArgoSensor().{meth}()")
         return "\n".join(summary)
@@ -492,7 +495,7 @@ class ArgoSensorSpec:
         output: SearchOutputOptions = "wmo",
         progress: bool = True,
         errors: ErrorOptions = "raise",
-        serialised: bool = False,
+        serialized: bool = False,
         **kwargs,
     ) -> list[int] | list[str] | dict[int, str] | pd.DataFrame | str:
         """Search for Argo floats equipped with one or more sensor model name(s)
@@ -520,8 +523,8 @@ class ArgoSensorSpec:
         errors: str, Literal["raise", "ignore", "silent"], default: "raise"
             Raise an error, log it or do nothing for no search results.
 
-        serialised: bool, default: False
-            Return a serialised output. This allows for search results to be saved in cross-language, human-readable formats like json.
+        serialized: bool, default: False
+            Return a serialized output. This allows for search results to be saved in cross-language, human-readable formats like json.
 
         Returns
         -------
@@ -618,8 +621,8 @@ class ArgoSensorSpec:
                 errors=errors,
                 **kwargs,
             )
-        if serialised:
-            # Serialise all output format to json
+        if serialized:
+            # Serialize all output format to json
             if output == 'df':
                 return results.to_json(indent=2)
             return json.dumps(results, indent=2)
@@ -630,7 +633,7 @@ class ArgoSensorSpec:
                    output: SearchOutputOptions = "wmo") -> str:  # type: ignore
         """A command-line-friendly search for Argo floats equipped with one or more sensor model name(s)
 
-        This function is intended to call from the command-line and return serialized results for easy piping to other tools.
+        This function is intended to be called from the command-line and return serialized results for easy piping to other tools.
 
         Parameters
         ----------
@@ -643,7 +646,7 @@ class ArgoSensorSpec:
             - ``wmo``: a list of WMO numbers (integers)
             - ``sn``: a list of sensor serial numbers (strings)
             - ``wmo_sn``: a list of dictionary with WMO as key and serial numbers as values
-            - ``df``: a dictionary with 'WMO', 'Type', 'Model', 'Maker', 'SerialNumber', 'Units', 'Accuracy', 'Resolution' keys.
+            - ``df``: a dictionary with all available metadata.
 
         Examples
         --------
@@ -656,7 +659,7 @@ class ArgoSensorSpec:
             python -c "from argopy import ArgoSensor; ArgoSensor().cli_search('RBR', output='df')"
 
         """
-        print(self.search(model, output=output, serialised=True, progress=False), file=sys.stdout)
+        print(self.search(model, output=output, serialized=True, progress=False), file=sys.stdout)
 
     def iterfloats_with(
         self,
@@ -702,6 +705,7 @@ class ArgoSensorSpec:
 
         models = to_list(model)
         WMOs = self.search(model=models, progress=False)
+        WMOs = np.unique(WMOs).tolist()
 
         # 'ds' is a hidden option because I'm not 100% sure this will be needed.
         # ds: str, Literal['core', 'bgc', 'deep'], default='core'

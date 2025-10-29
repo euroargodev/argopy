@@ -110,7 +110,7 @@ class SensorReferenceR27(SensorReferenceHolder):
     """Argo sensor models"""
 
     def to_dataframe(self) -> pd.DataFrame:
-        """Official reference table for Argo sensor models (R27)
+        """Reference Table **Sensor Models (R27)** as a :class:`pandas.DataFrame`
 
         Returns
         -------
@@ -123,7 +123,7 @@ class SensorReferenceR27(SensorReferenceHolder):
         return self.r27
 
     def hint(self) -> list[str]:
-        """Official list of Argo sensor models (R27)
+        """List of Argo sensor models
 
         Return a sorted list of strings with altLabel from Argo Reference table R27 on 'SENSOR_MODEL'.
 
@@ -139,7 +139,7 @@ class SensorReferenceR27(SensorReferenceHolder):
 
     def to_type(
         self,
-        model: str | SensorModel | None = None,
+        model: str | SensorModel,
         errors: ErrorOptions = "raise",
         obj: bool = False,
     ) -> list[str] | list[SensorType] | None:
@@ -151,14 +151,16 @@ class SensorReferenceR27(SensorReferenceHolder):
 
         Parameters
         ----------
-        model : str | :class:`SensorModel`
+        model : str | :class:`argopy.related.SensorModel`
             The sensor model to read the sensor type for.
-        errors : Literal["raise", "ignore", "silent"] = "raise"
+        errors : Literal["raise", "ignore", "silent"], optional, default: "raise"
             How to handle possible errors. If set to "ignore", the method may return None.
+        obj: bool, optional, default: False
+            Return a list of strings (False) or a list of :class:`argopy.related.SensorType`
 
         Returns
         -------
-        list[str] | list[:class:`SensorType`] | None
+        list[str] | list[:class:`argopy.related.SensorType`] | None
 
         Raises
         ------
@@ -199,14 +201,14 @@ class SensorReferenceR27(SensorReferenceHolder):
     ) -> pd.DataFrame | list[str]:
         """Return Argo sensor model references matching a string
 
-        Look for occurrences in Argo Reference table R27 `altLabel` and return a :class:`pandas.DataFrame` with matching row(s).
+        Look for occurrences in Argo Reference table R27 `altLabel` and return a subset of the :class:`pandas.DataFrame` with matching row(s).
 
         Parameters
         ----------
         model : str
             The model to search for. You can use wildcards: "SBE41CP*" "*DEEP*", "RBR*", or an exact name like "RBR_ARGO3_DEEP6".
         output : str, Literal["df", "name"], default "df"
-            Is the output a :class:`pandas.DataFrame` with matching rows from :attr:`ArgoSensor.reference_model`, or a list of string.
+            Is the output a :class:`pandas.DataFrame` with matching rows from R27, or a list of string.
 
         Returns
         -------
@@ -234,7 +236,7 @@ class SensorReferenceR25(SensorReferenceHolder):
     """Argo sensor types"""
 
     def to_dataframe(self) -> pd.DataFrame:
-        """Official reference table for Argo sensor types (R25)
+        """Reference Table **Sensor Types (R25)** as a :class:`pandas.DataFrame`
 
         Returns
         -------
@@ -243,7 +245,7 @@ class SensorReferenceR25(SensorReferenceHolder):
         return self.r25
 
     def hint(self) -> list[str]:
-        """Official list of Argo sensor types (R25)
+        """List of Argo sensor types
 
         Return a sorted list of strings with altLabel from Argo Reference table R25 on 'SENSOR'.
 
@@ -271,14 +273,16 @@ class SensorReferenceR25(SensorReferenceHolder):
 
         Parameters
         ----------
-        type : str, :class:`SensorType`
+        type : str, :class:`argopy.related.SensorType`
             The sensor type to read the sensor model name for.
         errors : Literal["raise", "ignore"] = "raise"
             How to handle possible errors. If set to "ignore", the method will return None.
+        obj: bool, optional, default: False
+            Return a list of strings (False) or a list of :class:`argopy.related.SensorModel`
 
         Returns
         -------
-        list[str] | list[:class:`SensorModel`] | None
+        list[str] | list[:class:`argopy.related.SensorModel`] | None
 
         Raises
         ------
@@ -316,7 +320,7 @@ class SensorReferenceR26(SensorReferenceHolder):
     """Argo sensor maker"""
 
     def to_dataframe(self) -> pd.DataFrame:
-        """Official reference table for Argo sensor makers (R26)
+        """Reference Table **Sensor Makers (R26)** as a :class:`pandas.DataFrame`
 
         Returns
         -------
@@ -325,7 +329,7 @@ class SensorReferenceR26(SensorReferenceHolder):
         return self.r26
 
     def hint(self) -> list[str]:
-        """Official list of Argo sensor maker (R26)
+        """List of Argo sensor makers
 
         Return a sorted list of strings with altLabel from Argo Reference table R26 on 'SENSOR_MAKER'.
 

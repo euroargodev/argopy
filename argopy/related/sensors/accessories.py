@@ -20,6 +20,9 @@ DsOptions = Literal[*Ds]
 class SensorType(NVSrow):
     """One single sensor type data from a R25-"Argo sensor types" row
 
+    .. warning::
+        This class is experimental and may change in a future release.
+
     Examples
     --------
     .. code-block:: python
@@ -52,8 +55,24 @@ class SensorType(NVSrow):
 class SensorModel(NVSrow):
     """One single sensor model data from a R27-"Argo sensor models" row
 
+    .. warning::
+        This class is experimental and may change in a future release.
+
     Examples
     --------
+    .. code-block:: python
+
+        from argopy import ArgoSensor
+
+        sm = ArgoSensor('AANDERAA_OPTODE_4330F').vocabulary
+
+        sm.name
+        sm.long_name
+        sm.definition
+        sm.deprecated
+        sm.urn
+        sm.uri
+
     .. code-block:: python
 
         from argopy import ArgoNVSReferenceTables
@@ -69,6 +88,7 @@ class SensorModel(NVSrow):
         sm.long_name
         sm.definition
         sm.deprecated
+        sm.urn
         sm.uri
     """
 

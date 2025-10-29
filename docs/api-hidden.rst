@@ -178,24 +178,24 @@
     argopy.related.doi_snapshot.DOIrecord
 
     argopy.related.ArgoSensor
-    argopy.related.ArgoSensor.ref.model.to_dataframe
-    argopy.related.ArgoSensor.ref.model.hint
-    argopy.related.ArgoSensor.ref.model.to_type
-    argopy.related.ArgoSensor.ref.model.search
-    argopy.related.ArgoSensor.ref.type.to_dataframe
-    argopy.related.ArgoSensor.ref.type.hint
-    argopy.related.ArgoSensor.ref.type.to_model
-    argopy.related.ArgoSensor.ref.maker.to_dataframe
-    argopy.related.ArgoSensor.ref.maker.hint
+    argopy.ArgoSensor.ref.model.to_dataframe
+    argopy.ArgoSensor.ref.model.hint
+    argopy.ArgoSensor.ref.model.to_type
+    argopy.ArgoSensor.ref.model.search
+    argopy.ArgoSensor.ref.type.to_dataframe
+    argopy.ArgoSensor.ref.type.hint
+    argopy.ArgoSensor.ref.type.to_model
+    argopy.ArgoSensor.ref.maker.to_dataframe
+    argopy.ArgoSensor.ref.maker.hint
 
-    argopy.related.ArgoSensor.vocabulary
-    argopy.related.ArgoSensor.type
-    argopy.related.ArgoSensor.search
-    argopy.related.ArgoSensor.iterfloats_with
-    argopy.related.ArgoSensor.cli_search
+    argopy.ArgoSensor.vocabulary
+    argopy.ArgoSensor.type
+    argopy.ArgoSensor.search
+    argopy.ArgoSensor.iterfloats_with
+    argopy.ArgoSensor.cli_search
 
-    argopy.related.sensors.SensorModel
-    argopy.related.sensors.SensorType
+    argopy.related.SensorModel
+    argopy.related.SensorType
 
     argopy.plot
     argopy.plot.dashboard

@@ -4,47 +4,57 @@ from .references import SensorReferences
 
 
 class ArgoSensor(ArgoSensorSpec):
-    """Argo sensor(s) helper class
+    """Argo sensor(s)
 
     The :class:`ArgoSensor` class aims to provide direct access to Argo's sensor metadata from:
 
-    - NVS Reference Tables `Sensor Models (R27) <http://vocab.nerc.ac.uk/collection/R27>`_, `Sensor Types (R25) <http://vocab.nerc.ac.uk/collection/R25>`_ and `Sensor Manufacturers (R26) <http://vocab.nerc.ac.uk/collection/R26>`_
-    - `Euro-Argo fleet-monitoring API <https://fleetmonitoring.euro-argo.eu/>`_
+    - NVS Reference Tables `Sensor Models (R27) <http://vocab.nerc.ac.uk/collection/R27>`_, `Sensor Types (R25) <http://vocab.nerc.ac.uk/collection/R25>`_ and `Sensor Manufacturers (R26) <http://vocab.nerc.ac.uk/collection/R26>`_,
+    - the `Euro-Argo fleet-monitoring API <https://fleetmonitoring.euro-argo.eu/>`_.
 
     This enables users to:
 
-    - navigate reference tables 27, 25 and 26,
+    - navigate reference tables,
+    - search for floats equipped with specific sensor models,
     - retrieve sensor serial numbers across the global array,
     - search for/iterate over floats equipped with specific sensor models.
-
 
     Examples
     --------
     .. code-block:: python
-        :caption: Access reference tables for 'SENSOR_MODEL'/R27, 'SENSOR'/R25 and 'SENSOR_MAKER'/R26
+        :caption: Access reference tables for SENSOR_MODEL (R27), SENSOR (R25) and SENSOR_MAKER (R26)
 
         from argopy import ArgoSensor
+        sensor = ArgoSensor()
 
-        ArgoSensor().ref.model.to_dataframe() # Return reference table R27 with the list of sensor models as a DataFrame
-        ArgoSensor().ref.model.to_list()      # Return list of sensor model names (possible values for 'SENSOR_MODEL' parameter)
-        ArgoSensor().ref.model.to_type('SBE61') # Return sensor type (R25) of a given model (R27)
+        sensor.ref.model.to_dataframe() # Return reference table R27 with the list of sensor models as a DataFrame
+        sensor.ref.model.hint()      # Return list of sensor model names (possible values for 'SENSOR_MODEL' parameter)
 
-        ArgoSensor().ref.type.to_dataframe()  # Return reference table R25 with the list of sensor types as a DataFrame
-        ArgoSensor().ref.type.to_list()       # Return list of sensor types (possible values for 'SENSOR' parameter)
-        ArgoSensor().ref.type.to_model('FLUOROMETER_CDOM') # Return all possible model names (R27) for a given sensor type (R25)
+        sensor.ref.type.to_dataframe()  # Return reference table R25 with the list of sensor types as a DataFrame
+        sensor.ref.type.hint()       # Return list of sensor types (possible values for 'SENSOR' parameter)
 
-        ArgoSensor().ref.maker.to_dataframe()  # Return reference table R26 with the list of manufacturer as a DataFrame
-        ArgoSensor().ref.maker.to_list()       # Return list of manufacturer names (possible values for 'SENSOR_MAKER' parameter)
+        sensor.ref.maker.to_dataframe()  # Return reference table R26 with the list of manufacturer as a DataFrame
+        sensor.ref.maker.hint()       # Return list of manufacturer names (possible values for 'SENSOR_MAKER' parameter)
 
     .. code-block:: python
-        :caption: Search in 'SENSOR_MODEL'/R27 reference table
+        :caption: Mapping between SENSOR_MODEL (R27) and SENSOR (R25)
 
         from argopy import ArgoSensor
+        sensor = ArgoSensor()
 
-        ArgoSensor().ref.model.search('RBR')  # Search and return a DataFrame
-        ArgoSensor().ref.model.search('RBR', output='name') # Search and return a list of names instead
-        ArgoSensor().ref.model.search('SBE61*')  # Use of wildcards
-        ArgoSensor().ref.model.search('*Deep*')  # Search is case-insensitive
+        sensor.ref.model.to_type('SBE61') # Return sensor type (R25) of a given model (R27)
+
+        sensor.ref.type.to_model('FLUOROMETER_CDOM') # Return all possible model names (R27) for a given sensor type (R25)
+
+    .. code-block:: python
+        :caption: Search in SENSOR_MODEL (R27) reference table
+
+        from argopy import ArgoSensor
+        sensor = ArgoSensor()
+
+        sensor.ref.model.search('RBR')  # Search and return a DataFrame
+        sensor.ref.model.search('RBR', output='name') # Search and return a list of names instead
+        sensor.ref.model.search('SBE61*')  # Use of wildcards
+        sensor.ref.model.search('*Deep*')  # Search is case-insensitive
 
     .. code-block:: python
         :caption: Search for all Argo floats equipped with one or more exact sensor model(s)
@@ -102,15 +112,21 @@ class ArgoSensor(ArgoSensorSpec):
 
         sensor = ArgoSensor('RBR_ARGO3_DEEP6K')
 
-        sensor.vocabulary
-        sensor.type
+        sensor.vocabulary  # R25 concept
+        sensor.type        # R27 concept
 
+        # Retrieve info from floats equipped with this model:
         sensor.search(output='wmo')
         sensor.search(output='sn')
         sensor.search(output='wmo_sn')
+        sensor.search(output='df')
+
+        # Iterator:
+        for af in sensors.iterfloats_with():
+            print(af.WMO)
 
     .. code-block:: bash
-        :caption: Get serialised search results from the command-line with :class:`ArgoSensor.cli_search`
+        :caption: Get serialized search results from the command-line with :class:`ArgoSensor.cli_search`
 
         python -c "from argopy import ArgoSensor; ArgoSensor().cli_search('RBR', output='wmo')"
         python -c "from argopy import ArgoSensor; ArgoSensor().cli_search('RBR', output='sn')"
@@ -120,11 +136,8 @@ class ArgoSensor(ArgoSensorSpec):
 
     Notes
     -----
-    Related ADMT/AVTT work:
-        - https://github.com/OneArgo/ADMT/issues/112
-        - https://github.com/OneArgo/ArgoVocabs/issues/156
-        - https://github.com/OneArgo/ArgoVocabs/issues/157
-
+    Ongoing related ADMT/AVTT work can be found here:
+    https://github.com/OneArgo/ArgoVocabs/issues?q=state%3Aopen%20label%3A%22R25%22%20OR%20label%3AR27%20OR%20label%3AR26
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -137,30 +150,40 @@ class References(SensorReferences):
     Examples
     --------
     .. code-block:: python
-        :caption: Access reference tables for 'SENSOR_MODEL'/R27, 'SENSOR'/R25 and 'SENSOR_MAKER'/R26
+        :caption: Access reference tables for SENSOR_MODEL (R27), SENSOR (R25) and SENSOR_MAKER (R26)
 
         from argopy import ArgoSensor
+        sensor = ArgoSensor()
 
-        ArgoSensor().ref.model.to_dataframe() # Return reference table R27 with the list of sensor models as a DataFrame
-        ArgoSensor().ref.model.to_list()      # Return list of sensor model names (possible values for 'SENSOR_MODEL' parameter)
-        ArgoSensor().ref.model.to_type('SBE61') # Return sensor type (R25) of a given model (R27)
+        sensor.ref.model.to_dataframe() # Return reference table R27 with the list of sensor models as a DataFrame
+        sensor.ref.model.hint()      # Return list of sensor model names (possible values for 'SENSOR_MODEL' parameter)
 
-        ArgoSensor().ref.type.to_dataframe()  # Return reference table R25 with the list of sensor types as a DataFrame
-        ArgoSensor().ref.type.to_list()       # Return list of sensor types (possible values for 'SENSOR' parameter)
-        ArgoSensor().ref.type.to_model('FLUOROMETER_CDOM') # Return all possible model names (R27) for a given sensor type (R25)
+        sensor.ref.type.to_dataframe()  # Return reference table R25 with the list of sensor types as a DataFrame
+        sensor.ref.type.hint()       # Return list of sensor types (possible values for 'SENSOR' parameter)
 
-        ArgoSensor().ref.maker.to_dataframe()  # Return reference table R26 with the list of manufacturer as a DataFrame
-        ArgoSensor().ref.maker.to_list()       # Return list of manufacturer names (possible values for 'SENSOR_MAKER' parameter)
+        sensor.ref.maker.to_dataframe()  # Return reference table R26 with the list of manufacturer as a DataFrame
+        sensor.ref.maker.hint()       # Return list of manufacturer names (possible values for 'SENSOR_MAKER' parameter)
 
     .. code-block:: python
-        :caption: Search in 'SENSOR_MODEL'/R27 reference table
+        :caption: Mapping between SENSOR_MODEL (R27) and SENSOR (R25)
 
         from argopy import ArgoSensor
+        sensor = ArgoSensor()
 
-        ArgoSensor().ref.model.search('RBR')  # Search and return a DataFrame
-        ArgoSensor().ref.model.search('RBR', output='name') # Search and return a list of names instead
-        ArgoSensor().ref.model.search('SBE61*')  # Use of wildcards
-        ArgoSensor().ref.model.search('*Deep*')  # Search is case-insensitive
+        sensor.ref.model.to_type('SBE61') # Return sensor type (R25) of a given model (R27)
+
+        sensor.ref.type.to_model('FLUOROMETER_CDOM') # Return all possible model names (R27) for a given sensor type (R25)
+
+    .. code-block:: python
+        :caption: Search in SENSOR_MODEL (R27) reference table
+
+        from argopy import ArgoSensor
+        sensor = ArgoSensor()
+
+        sensor.ref.model.search('RBR')  # Search and return a DataFrame
+        sensor.ref.model.search('RBR', output='name') # Search and return a list of names instead
+        sensor.ref.model.search('SBE61*')  # Use of wildcards
+        sensor.ref.model.search('*Deep*')  # Search is case-insensitive
 
     """
 
