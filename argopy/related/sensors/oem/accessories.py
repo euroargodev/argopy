@@ -48,8 +48,8 @@ class Sensor:
 
     # FIRMWARE VERSION attributes are temporarily optional to handle the wrong key used by RBR
     # see https://github.com/euroargodev/sensor_metadata_json/issues/20
-    SENSOR_FIRMWARE_VERSION: str = None  # RBR
-    SENSOR_MODEL_FIRMWARE: str = None  # Correct schema key
+    SENSOR_FIRMWARE_VERSION: str = None  # RBR, used in sensor schema 0.2.0
+    SENSOR_MODEL_FIRMWARE: str = None  # Correct schema key, used in sensor schema 0.4.0
 
     sensor_vendorinfo: Optional[Dict[str, Any]] = None
 
