@@ -177,6 +177,33 @@
     argopy.related.ArgoDOI.doi
     argopy.related.doi_snapshot.DOIrecord
 
+    argopy.related.ArgoSensor
+    argopy.ArgoSensor.ref.model.to_dataframe
+    argopy.ArgoSensor.ref.model.hint
+    argopy.ArgoSensor.ref.model.to_type
+    argopy.ArgoSensor.ref.model.search
+    argopy.ArgoSensor.ref.type.to_dataframe
+    argopy.ArgoSensor.ref.type.hint
+    argopy.ArgoSensor.ref.type.to_model
+    argopy.ArgoSensor.ref.maker.to_dataframe
+    argopy.ArgoSensor.ref.maker.hint
+
+    argopy.ArgoSensor.vocabulary
+    argopy.ArgoSensor.type
+    argopy.ArgoSensor.search
+    argopy.ArgoSensor.iterfloats_with
+    argopy.ArgoSensor.cli_search
+
+    argopy.related.OEMSensorMetaData
+    argopy.OEMSensorMetaData.from_rbr
+    argopy.OEMSensorMetaData.from_seabird
+    argopy.OEMSensorMetaData.from_dict
+    argopy.OEMSensorMetaData.from_examples
+    argopy.OEMSensorMetaData.list_examples
+
+    argopy.related.SensorModel
+    argopy.related.SensorType
+
     argopy.plot
     argopy.plot.dashboard
     argopy.plot.bar_plot

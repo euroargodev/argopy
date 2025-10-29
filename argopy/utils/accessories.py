@@ -4,11 +4,14 @@ import warnings
 import logging
 import copy
 from pathlib import Path
-from typing import Any
 import importlib
+from dataclasses import dataclass
+from typing import Any, ClassVar
+import pandas as pd
 
 from ..options import OPTIONS
 from .checkers import check_wmo, is_wmo
+from .format import urnparser
 
 
 
@@ -299,3 +302,90 @@ class Asset:
     @classmethod
     def load(cls, name: str = None) -> 'Asset':
         return cls()._load(name=name)
+
+
+@dataclass
+class NVSrow:
+    """This proto makes it easier to work with a single NVS table row from a :class:`pd.DataFrame`
+
+    It will turn :class:`pd.DataFrame` columns into class attributes
+
+    .. code-block:: python
+        :caption: Use this prototype to create a NVS table row class
+
+        class SensorType(NVSrow):
+            reftable = "R25"
+            @staticmethod
+            def from_series(obj: pd.Series) -> "SensorType":
+                return SensorType(obj)
+
+    .. code-block:: python
+        :caption: Then use the row class
+
+        from argopy import ArgoNVSReferenceTables
+
+        df = ArgoNVSReferenceTables().tbl(25)
+        row = df[df["altLabel"].apply(lambda x: x == 'CTD')].iloc[0]
+
+        st = SensorType.from_series(row)
+
+        st.name
+        st.long_name
+        st.definition
+        st.deprecated
+        st.uri
+
+    """
+    name: str = ""
+    """From 'altLabel' column"""
+
+    long_name: str = ""
+    """From 'prefLabel' column"""
+
+    definition: str = ""
+    """From 'definition' column"""
+
+    uri: str = ""
+    """From 'ID' column, typically a link toward NVS specific row entry"""
+
+    urn: str = ""
+    """From 'urn' column"""
+
+    deprecated: bool = None
+    """From 'deprecated' column"""
+
+    reftable: ClassVar[str]
+    """Reference table this row is based on"""
+
+    def __init__(self, row: pd.Series | pd.DataFrame):
+        if not isinstance(row, pd.Series) and isinstance(row, pd.DataFrame):
+            row = row.iloc[0]
+        row = row.to_dict()
+        self.name = row["altLabel"]
+        self.long_name = row["prefLabel"]
+        self.definition = row["definition"]
+        self.deprecated = row["deprecated"]
+        self.uri = row["id"]
+        self.urn = row["urn"]
+
+    @staticmethod
+    def from_series(obj: pd.Series) -> "NVSrow":
+        return NVSrow(obj)
+
+    @staticmethod
+    def from_df(df: pd.DataFrame, txt: str, column: str = 'altLabel') -> "NVSrow":
+        row = df[df[column].apply(lambda x: str(x) == str(txt))].iloc[0]
+        return NVSrow(row)
+
+    def __eq__(self, obj):
+        return self.name == obj
+
+    def __repr__(self):
+        summary = [f"<{getattr(self, 'reftable', 'n/a')}.{self.urn}>"]
+        summary.append(f"%12s: {self.name}" % "name")
+        summary.append(f"%12s: {self.long_name}" % "long_name")
+        summary.append(f"%12s: {self.urn}" % "urn")
+        summary.append(f"%12s: {self.uri}" % "uri")
+        summary.append(f"%12s: {self.deprecated}" % "deprecated")
+        summary.append("%12s: %s" % ("definition", self.definition))
+        return "\n".join(summary)

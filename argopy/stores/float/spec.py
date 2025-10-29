@@ -9,7 +9,7 @@ from abc import ABC, abstractmethod
 import logging
 import numpy as np
 
-from ...errors import InvalidOption
+from ...errors import InvalidOption, OptionValueError
 from ...plot import dashboard
 from ...utils import check_wmo, argo_split_path, shortcut2gdac
 from ...options import OPTIONS
@@ -308,7 +308,7 @@ class FloatStoreProto(ABC):
 
         """
         if name not in self.ls_dataset():
-            raise ValueError(
+            raise OptionValueError(
                 "Dataset '%s' not found. Available dataset for this float are: %s"
                 % (name, self.ls_dataset().keys())
             )
@@ -393,3 +393,17 @@ class FloatStoreProto(ABC):
         )
 
         return "\n".join(summary)
+
+    @property
+    def sensors(self):
+        """Return a :class:`pandas.DataFrame` describing float sensors
+
+        ! This is experimental and may change in the future.
+        """
+        # We can't call on:
+        # >>> ArgoSensor(fs=self.fs).from_wmo(self.WMO)
+        # because ArgoSensor import ArgoFloat for the iterator method and
+        # that would be circular import.
+        # We need to implement here a self.metadata -> dataframe transform
+        # like it's done in ArgoSensor from json data
+        pass

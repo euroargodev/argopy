@@ -27,7 +27,7 @@ else:
     HAS_BOTO3 = False
 
 
-from .errors import OptionValueError, GdacPathError, ErddapPathError
+from .errors import OptionValueError, GdacPathError, ErddapPathError, APIServerError
 
 
 # Define a logger
@@ -51,6 +51,13 @@ PARALLEL = "parallel"
 PARALLEL_DEFAULT_METHOD = "parallel_default_method"
 LON = "longitude_convention"
 NVS = "nvs"
+API_FLEETMONITORING = "fleetmonitoring"
+RBR_API_KEY = "rbr_api_key"
+API_RBR = "rbr_api"
+NVS = "nvs"
+API_SEABIRD = "seabird_api"
+DISPLAY_STYLE = "display_style"
+
 
 # Define the list of available options and default values:
 OPTIONS = {
@@ -71,6 +78,12 @@ OPTIONS = {
     PARALLEL_DEFAULT_METHOD: "thread",
     LON: "180",
     NVS: "https://vocab.nerc.ac.uk/collection",
+    API_FLEETMONITORING: "https://fleetmonitoring.euro-argo.eu",
+    RBR_API_KEY: os.environ.get("RBR_API_KEY"),  # Contact RBR at argo@rbr-global.com if you do not have an authorization key.
+    API_RBR: "https://oem-lookup.rbr-global.com/api/v1",
+    NVS: "https://vocab.nerc.ac.uk/collection",
+    API_SEABIRD: "https://instrument.seabirdhub.com/api/argo-calibration",
+    DISPLAY_STYLE: "html",
 }
 DEFAULT = OPTIONS.copy()
 
@@ -78,9 +91,9 @@ DEFAULT = OPTIONS.copy()
 _DATA_SOURCE_LIST = frozenset(["erddap", "argovis", "gdac"])
 _DATASET_LIST = frozenset(["phy", "bgc", "ref", "bgc-s", "bgc-b"])
 _USER_LEVEL_LIST = frozenset(["standard", "expert", "research"])
+_DISPLAY_STYLE_LIST = frozenset(["html", "text"])
+_LON_LIST = frozenset(['180', '360'])
 
-
-# Define how to validate options:
 def _positive_integer(value):
     return isinstance(value, int) and value > 0
 
@@ -93,7 +106,7 @@ def validate_gdac(this_path):
         return False
 
 
-def validate_http(this_path):
+def validate_erddap(this_path):
     if this_path != "-":
         return check_erddap_path(this_path, errors="raise")
     else:
@@ -119,36 +132,28 @@ def validate_parallel_method(method):
         return False
 
 
-_VALIDATORS = {
-    DATA_SOURCE: _DATA_SOURCE_LIST.__contains__,
-    GDAC: validate_gdac,
-    ERDDAP: validate_http,
-    DATASET: _DATASET_LIST.__contains__,
-    CACHE_FOLDER: lambda x: os.access(x, os.W_OK),
-    CACHE_EXPIRATION: lambda x: isinstance(x, int) and x > 0,
-    USER_LEVEL: _USER_LEVEL_LIST.__contains__,
-    API_TIMEOUT: lambda x: isinstance(x, int) and x > 0,
-    TRUST_ENV: lambda x: isinstance(x, bool),
-    SERVER: lambda x: True,
-    USER: lambda x: isinstance(x, str) or x is None,
-    PASSWORD: lambda x: isinstance(x, str) or x is None,
-    ARGOVIS_API_KEY: lambda x: isinstance(x, str) or x is None,
-    PARALLEL: validate_parallel,
-    PARALLEL_DEFAULT_METHOD: validate_parallel_method,
-    LON: lambda x: x in ['180', '360'],
-    NVS: lambda x: isinstance(x, str) or x is None,
-}
-
-
-def VALIDATE(key, val):
-    """Return option value if validated otherwise raise an OptionValueError"""
-    if key in _VALIDATORS:
-        if not _VALIDATORS[key](val):
-            raise OptionValueError(f"option '{key}' given an invalid value: '{val}'")
-        else:
-            return val
+def validate_fleetmonitoring(this_path):
+    if this_path != "-":
+        return check_fleetmonitoring_path(this_path, errors="raise")
     else:
-        raise ValueError(f"option '{key}' has no validation method")
+        log.debug("OPTIONS['%s'] is not defined" % API_FLEETMONITORING)
+        return False
+
+
+def validate_rbr(this_path):
+    if this_path != "-":
+        return True  # todo: check with RBR how to get the API endpoint for its status
+    else:
+        log.debug("OPTIONS['%s'] is not defined" % API_RBR)
+        return False
+
+
+def validate_seabird(this_path):
+    if this_path != "-":
+        return True  # todo: check with Seabird how to get the API endpoint for its status
+    else:
+        log.debug("OPTIONS['%s'] is not defined" % API_SEABIRD)
+        return False
 
 
 def PARALLEL_SETUP(parallel):
@@ -162,148 +167,35 @@ def PARALLEL_SETUP(parallel):
         return True, parallel
 
 
-class set_options:
-    """Set options for argopy
-
-    Parameters
-    ----------
-
-    ds: str, default: ``phy``
-        Define the Dataset to work with: ``phy``, ``bgc`` or ``ref``
-
-    src: str, default: ``erddap``
-        Source of fetched data: ``erddap``, ``gdac``, ``argovis``
-
-    mode: str, default: ``standard``
-        User mode: ``standard``, ``expert`` or ``research``
-
-    gdac: str, default: https://data-argo.ifremer.fr
-        Default path to be used by the GDAC fetchers and Argo index stores
-
-    erddap: str, default: https://erddap.ifremer.fr/erddap
-        Default server address to be used by the data and index erddap fetchers
-
-    cachedir: str, default: ``~/.cache/argopy``
-        Absolute path to a local cache directory
-
-    cache_expiration: int, default: 86400
-        Expiration delay of cache files in seconds
-
-    api_timeout: int, default: 60
-        Time out for internet requests to web API, in seconds
-
-    trust_env: bool, default: False
-        Allow for local environment variables to be used to connect to the internet.
-
-        Argopy will get proxies information from HTTP_PROXY / HTTPS_PROXY environment variables if this option is True
-        and it can also get proxy credentials from ~/.netrc file if this file exists
-
-    user: str, default: None
-        Username to use when a simple authentication is required
-
-    password: str, default: None
-        Password to use when a simple authentication is required
-
-    argovis_api_key: str, default: ``guest``
-        The API key to use when fetching data from the `argovis` data source
-
-        You can get a free key at https://argovis-keygen.colorado.edu
-
-    parallel: bool, str, :class:`distributed.Client`, default: False
-        Set whether to use parallelisation or not, and possibly which method to use.
-
-            Possible values:
-                - ``False``: no parallelisation is used
-                - ``True``: use default method specified by the ``parallel_default_method`` option (see below)
-                - any other values accepted by the ``parallel_default_method`` option (see below)
-
-    parallel_default_method: str, :class:`distributed.Client`, default: ``thread``
-        The default parallelisation method to use if the option ``parallel`` is simply set to ``True``.
-
-            Possible values:
-                - ``thread``: use `multi-threading <https://en.wikipedia.org/wiki/Multithreading_(computer_architecture)>`_ with a :class:`concurrent.futures.ThreadPoolExecutor`
-                - ``process``: use `multi-processing <https://en.wikipedia.org/wiki/Multiprocessing>`_ with a :class:`concurrent.futures.ProcessPoolExecutor`
-                -  :class:`distributed.Client`: Use a `Dask Cluster <https://docs.dask.org/en/stable/deploying.html>`_ `client <https://distributed.dask.org/en/latest/client.html>`_.
-
-    longitude_convention: str, default: '180',
-        The longitude convention to use when longitudes are compared.
-
-            Possible values:
-                - '180': longitude goes from -180 to 180
-                - '360': longitude goes from 0 to 360
-
-    Other Parameters
-    ----------------
-    server: : str, default: None
-        Other than expected/default server to be uses by a function/method
-
-        This is mostly intended to be used by unit tests.
-
-    Examples
-    --------
-
-    You can use ``set_options`` either as a context manager for temporary setting:
-
-    >>> import argopy
-    >>> with argopy.set_options(src='gdac'):
-    >>>    ds = argopy.DataFetcher().float(3901530).to_xarray()
-
-    or to set global options (at the beginning of a script for instance):
-
-    >>> argopy.set_options(src='gdac')
-
-    Warns
-    -----
-    A DeprecationWarning can be raised when a deprecated option is set
-
-    """
-
-    def __init__(self, **kwargs):
-        self.old = {}
-        for k, v in kwargs.items():
-            if k not in OPTIONS:
-                raise ValueError(
-                    "argument name %r is not in the set of valid options %r"
-                    % (k, set(OPTIONS))
-                )
-
-            if k == CACHE_FOLDER:
-                os.makedirs(v, exist_ok=True)
-
-            VALIDATE(k, v)
-
-            self.old[k] = OPTIONS[k]
-        self._apply_update(kwargs)
-
-    def _apply_update(self, options_dict):
-        OPTIONS.update(options_dict)
-
-    def __enter__(self):
-        return
-
-    def __exit__(self, type, value, traceback):
-        self._apply_update(self.old)
-
-
-def reset_options():
-    """Reset all options to default values"""
-    set_options(**DEFAULT)
-
-
 def check_erddap_path(path, errors="ignore"):
-    """Check if an url points to an ERDDAP server"""
+    """Check if a url points to a valid ERDDAP server"""
     fs = fsspec.filesystem("http", ssl=False)
     check1 = fs.exists(path + "/info/index.json")
     if check1:
         return True
     elif errors == "raise":
-        raise ErddapPathError("This url is not a valid ERDDAP server:\n%s" % path)
-
+        raise ErddapPathError(f"This url is not a valid ERDDAP server:\n{path}")
     elif errors == "warn":
-        warnings.warn("This url is not a valid ERDDAP server:\n%s" % path)
+        warnings.warn(f"This url is not a valid ERDDAP server:\n{path}")
         return False
     else:
         return False
+
+
+def check_fleetmonitoring_path(path, errors='ignore'):
+    """Check if a url points to a Euro-Argo valid FleetMonitoring server"""
+    fs = fsspec.filesystem("http", ssl=False)
+    try:
+        fs.open_json(path + "/get-version")
+        return True
+    except Exception as e:
+        if errors == "raise":
+            raise APIServerError(f"This url is not a valid Euro-Argo FleetMonitoring server:\n{path}")
+        elif errors == "warn":
+            warnings.warn(f"This url is not a valid Euro-Argo FleetMonitoring server:\n{path}")
+            return False
+        else:
+            return False
 
 
 def check_gdac_option(
@@ -392,3 +284,181 @@ def check_gdac_option(
 
         else:
             return False
+
+
+_VALIDATORS = {
+    DATA_SOURCE: _DATA_SOURCE_LIST.__contains__,
+    GDAC: validate_gdac,
+    ERDDAP: validate_erddap,
+    DATASET: _DATASET_LIST.__contains__,
+    CACHE_FOLDER: lambda x: os.access(x, os.W_OK),
+    CACHE_EXPIRATION: lambda x: isinstance(x, int) and x > 0,
+    USER_LEVEL: _USER_LEVEL_LIST.__contains__,
+    API_TIMEOUT: lambda x: isinstance(x, int) and x > 0,
+    TRUST_ENV: lambda x: isinstance(x, bool),
+    SERVER: lambda x: True,
+    USER: lambda x: isinstance(x, str) or x is None,
+    PASSWORD: lambda x: isinstance(x, str) or x is None,
+    ARGOVIS_API_KEY: lambda x: isinstance(x, str) or x is None,
+    RBR_API_KEY: lambda x: isinstance(x, str) or x is None,
+    PARALLEL: validate_parallel,
+    PARALLEL_DEFAULT_METHOD: validate_parallel_method,
+    LON: _LON_LIST.__contains__,
+    API_FLEETMONITORING: validate_fleetmonitoring,
+    API_RBR: validate_rbr,
+    API_SEABIRD: validate_seabird,
+    NVS: lambda x: isinstance(x, str) or x is None,
+    DISPLAY_STYLE: _DISPLAY_STYLE_LIST.__contains__,
+}
+
+
+def VALIDATE(key, val):
+    """Return option value if validated otherwise raise an OptionValueError"""
+    if key in _VALIDATORS:
+        if not _VALIDATORS[key](val):
+            raise OptionValueError(f"option '{key}' given an invalid value: '{val}'")
+        else:
+            return val
+    else:
+        raise ValueError(f"option '{key}' has no validation method")
+
+
+class set_options:
+    """Set options for argopy
+
+    Parameters
+    ----------
+
+    ds: str, default: ``phy``
+        Define the Dataset to work with: ``phy``, ``bgc`` or ``ref``
+
+    src: str, default: ``erddap``
+        Source of fetched data: ``erddap``, ``gdac``, ``argovis``
+
+    mode: str, default: ``standard``
+        User mode: ``standard``, ``expert`` or ``research``
+
+    gdac: str, default: https://data-argo.ifremer.fr
+        Default path to be used by the GDAC fetchers and Argo index stores
+
+    erddap: str, default: https://erddap.ifremer.fr/erddap
+        Default server address to be used by the data and index erddap fetchers
+
+    cachedir: str, default: ``~/.cache/argopy``
+        Absolute path to a local cache directory
+
+    cache_expiration: int, default: 86400
+        Expiration delay of cache files in seconds
+
+    api_timeout: int, default: 60
+        Time out for internet requests to web API, in seconds
+
+    trust_env: bool, default: False
+        Allow for local environment variables to be used to connect to the internet.
+
+        Argopy will get proxies information from HTTP_PROXY / HTTPS_PROXY environment variables if this option is True
+        and it can also get proxy credentials from ~/.netrc file if this file exists
+
+    user: str, default: None
+        Username to use when a simple authentication is required
+
+    password: str, default: None
+        Password to use when a simple authentication is required
+
+    argovis_api_key: str, default: ``guest``
+        The API key to use when fetching data from the `argovis` data source
+
+        You can get a free key at https://argovis-keygen.colorado.edu
+
+    rbr_api_key: str, default: None
+        The API key to use when fetching data from the RBR OEM lookup API.
+
+        RBR sensor owners can get a key by contacting RBR at argo@rbr-global.com.
+
+        This key can also be used from: https://oem-lookup.rbr-global.com
+
+    rbr_api: str
+        Server address of the RBR "RBRargo Product Lookup" web-API
+
+    seabird_api: str
+        Server address of the Seabird-Scientific "Instrument Metadata Portal" web-API
+
+    parallel: bool, str, :class:`distributed.Client`, default: False
+        Set whether to use parallelisation or not, and possibly which method to use.
+
+            Possible values:
+                - ``False``: no parallelisation is used
+                - ``True``: use default method specified by the ``parallel_default_method`` option (see below)
+                - any other values accepted by the ``parallel_default_method`` option (see below)
+
+    parallel_default_method: str, :class:`distributed.Client`, default: ``thread``
+        The default parallelisation method to use if the option ``parallel`` is simply set to ``True``.
+
+            Possible values:
+                - ``thread``: use `multi-threading <https://en.wikipedia.org/wiki/Multithreading_(computer_architecture)>`_ with a :class:`concurrent.futures.ThreadPoolExecutor`
+                - ``process``: use `multi-processing <https://en.wikipedia.org/wiki/Multiprocessing>`_ with a :class:`concurrent.futures.ProcessPoolExecutor`
+                -  :class:`distributed.Client`: Use a `Dask Cluster <https://docs.dask.org/en/stable/deploying.html>`_ `client <https://distributed.dask.org/en/latest/client.html>`_.
+
+    longitude_convention: str, default: '180',
+        The longitude convention to use when longitudes are compared.
+
+            Possible values:
+                - '180': longitude goes from -180 to 180
+                - '360': longitude goes from 0 to 360
+
+    Other Parameters
+    ----------------
+    server: : str, default: None
+        Other than expected/default server to be uses by a function/method
+
+        This is mostly intended to be used by unit tests.
+
+    Examples
+    --------
+
+    You can use ``set_options`` either as a context manager for temporary setting:
+
+    >>> import argopy
+    >>> with argopy.set_options(src='gdac'):
+    >>>    ds = argopy.DataFetcher().float(3901530).to_xarray()
+
+    or to set global options (at the beginning of a script for instance):
+
+    >>> argopy.set_options(src='gdac')
+
+    Warns
+    -----
+    A DeprecationWarning can be raised when a deprecated option is set
+
+    """
+
+    def __init__(self, **kwargs):
+        self.old = {}
+        for k, v in kwargs.items():
+            if k not in OPTIONS:
+                raise ValueError(
+                    "argument name %r is not in the set of valid options %r"
+                    % (k, set(OPTIONS))
+                )
+
+            if k == CACHE_FOLDER:
+                os.makedirs(v, exist_ok=True)
+
+            VALIDATE(k, v)
+
+            self.old[k] = OPTIONS[k]
+        self._apply_update(kwargs)
+
+    def _apply_update(self, options_dict):
+        OPTIONS.update(options_dict)
+
+    def __enter__(self):
+        return
+
+    def __exit__(self, type, value, traceback):
+        self._apply_update(self.old)
+
+
+def reset_options():
+    """Reset all options to default values"""
+    set_options(**DEFAULT)

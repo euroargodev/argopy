@@ -10,6 +10,7 @@ In **argopy** we consider Argo meta-data any *related* data that can complement 
 Here we document **argopy** tools related to:
 
 * :doc:`Argo reference tables (NVS) <nvs_ref_tables>`
+* :doc:`Argo sensors <sensors>`
 * :doc:`the ADMT collection of documentation manuals <admt_documentation>`
 * :doc:`the global deployment plan from Ocean-OPS <deployment_plan>`
 * :doc:`GDAC snapshot with DOIs <gdac_doi>`
@@ -22,6 +23,6 @@ topography, altimetry, in-situ reference data from Argo float and GOSHIP, etc ..
     :hidden:
 
     Argo reference tables (NVS) <nvs_ref_tables>
+    Argo sensors <sensors>
     admt_documentation
     deployment_plan
-    gdac_doi

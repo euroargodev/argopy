@@ -42,12 +42,23 @@ class httpstore(ArgoStoreProto):
     This store intends to make argopy safer to failures from http requests and to provide higher levels methods to
     work with our datasets. Key methods are:
 
+    - :class:`httpstore.open`
+    - :class:`httpstore.exists`
     - :class:`httpstore.download_url`
     - :class:`httpstore.open_dataset`
-    - :class:`httpstore.open_json`
     - :class:`httpstore.open_mfdataset`
+    - :class:`httpstore.open_json`
     - :class:`httpstore.open_mfjson`
     - :class:`httpstore.read_csv`
+    - :class:`httpstore.post`
+
+    Examples
+    --------
+    .. code-block:: python
+        :caption: How to add a specific header key
+
+        from argopy.stores import httpstore
+        fs = httpstore(client_kwargs={'headers': {'Authorization': 'Token'}})
 
     """
 
@@ -505,14 +516,14 @@ class httpstore(ArgoStoreProto):
                         # log.info('drop_variables_not_in_all_datasets')
                         ds_list = drop_variables_not_in_all_datasets(ds_list)
 
-                    log.info("Nb of dataset to concat: %i" % len(ds_list))
+                    # log.info("Nb of dataset to concat: %i" % len(ds_list))
                     # log.debug(concat_dim)
                     # for ds in ds_list:
                     #     log.debug(ds[concat_dim])
-                    log.info(
-                        "Dataset sizes before concat: %s"
-                        % [len(ds[concat_dim]) for ds in ds_list]
-                    )
+                    # log.info(
+                    #     "Dataset sizes before concat: %s"
+                    #     % [len(ds[concat_dim]) for ds in ds_list]
+                    # )
                     ds = xr.concat(
                         ds_list,
                         dim=concat_dim,
@@ -520,7 +531,7 @@ class httpstore(ArgoStoreProto):
                         coords="all",
                         compat="override",    # skip comparing and pick variable from first dataset
                     )
-                    log.info("Dataset size after concat: %i" % len(ds[concat_dim]))
+                    # log.info("Dataset size after concat: %i" % len(ds[concat_dim]))
                     return ds, True
                 else:
                     ds_list = [v for v in dict(sorted(obj_list.items())).values()]
@@ -1114,7 +1125,11 @@ class httpstore(ArgoStoreProto):
                 futures = concurrent.futures.as_completed(future_to_url)
                 if progress:
                     futures = tqdm(
-                        futures, total=len(urls), disable="disable" in [progress]
+                        futures,
+                        total=len(urls),
+                        disable="disable" in [progress],
+                        unit = kwargs.pop("progress_unit", "it"),
+                        desc = kwargs.pop("progress_desc", None),
                     )
 
                 for future in futures:

@@ -23,8 +23,10 @@ dependencies:
 
 # EXT.FILES:
   - boto3 = 1.38.27
+  - jsonschema
   - kerchunk = 0.2.8
   - numcodecs = 0.16.1
+#  - pydantic
   - s3fs = 2025.5.1
   - zarr = 3.0.10
 
