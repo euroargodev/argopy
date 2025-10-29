@@ -168,6 +168,7 @@ Argo meta/related data
    CTDRefDataFetcher
    TopoFetcher
    ArgoSensor
+   OEMSensorMetaData
 
 .. _Module Visualisation:
 

@@ -194,6 +194,13 @@
     argopy.ArgoSensor.iterfloats_with
     argopy.ArgoSensor.cli_search
 
+    argopy.related.OEMSensorMetaData
+    argopy.OEMSensorMetaData.from_rbr
+    argopy.OEMSensorMetaData.from_seabird
+    argopy.OEMSensorMetaData.from_dict
+    argopy.OEMSensorMetaData.from_examples
+    argopy.OEMSensorMetaData.list_examples
+
     argopy.related.SensorModel
     argopy.related.SensorType
 

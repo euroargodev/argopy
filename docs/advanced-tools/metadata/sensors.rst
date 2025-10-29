@@ -4,28 +4,31 @@
 Argo sensors
 ============
 
-The :class:`ArgoSensor` class aims to provide user-friendly access to Argo's sensor metadata from:
+**Argopy** provides several classes to work with Argo sensors:
 
-- NVS Reference Tables `Sensor Models (R27) <http://vocab.nerc.ac.uk/collection/R27>`_, `Sensor Types (R25) <http://vocab.nerc.ac.uk/collection/R25>`_ and `Sensor Manufacturers (R26) <http://vocab.nerc.ac.uk/collection/R26>`_,
-- the `Euro-Argo fleet-monitoring API <https://fleetmonitoring.euro-argo.eu/>`_.
+- :class:`ArgoSensor`: provides user-friendly access to Argo's sensor metadata with search possibilities,
+- :class:`OEMSensorMetaData`: provides facilitated access to manufacturers web-API and predeployment calibrations information.
 
-This enables users to:
+These should enable users to:
 
-- navigate reference tables,
+- navigate reference tables `Sensor Models (R27) <http://vocab.nerc.ac.uk/collection/R27>`_, `Sensor Types (R25) <http://vocab.nerc.ac.uk/collection/R25>`_ and `Sensor Manufacturers (R26) <http://vocab.nerc.ac.uk/collection/R26>`_,
 - search for floats equipped with specific sensor models,
 - retrieve sensor serial numbers across the global array,
-- search for/iterate over floats equipped with specific sensor models.
+- search for/iterate over floats equipped with specific sensor models,
+- retrieve sensor metadata directly from manufacturers.
 
+.. note::
+
+    The :class:`ArgoSensor` get information using the `Euro-Argo fleet-monitoring API <https://fleetmonitoring.euro-argo.eu/>`_.
 
 .. contents::
    :local:
-   :depth: 1
+   :depth: 3
 
 .. _argosensor-reference-tables:
 
-Working with reference tables
------------------------------
-
+Navigating reference tables
+---------------------------
 
 With the :class:`ArgoSensor` class, you can work with official Argo vocabularies for `Sensor Models (R27) <http://vocab.nerc.ac.uk/collection/R27>`_, `Sensor Types (R25) <http://vocab.nerc.ac.uk/collection/R25>`_ and `Sensor Manufacturers (R26) <http://vocab.nerc.ac.uk/collection/R26>`_. With the following methods, it is easy to look for a specific sensor model name, which can then be used to :ref:`look for floats <argosensor-search-floats>` or :ref:`create a ArgoSensor class <argosensor-exact-sensor>` directly.
 
@@ -100,8 +103,8 @@ Examples
 
 .. _argosensor-search-floats:
 
-Search for Argo floats equipped with a given sensor model
----------------------------------------------------------
+Search for floats equipped with sensor models
+---------------------------------------------
 
 In this section we show how to find WMOs, and possibly more sensor metadata like serial numbers, for floats equipped with a specific sensor model.
 This can be done using the :meth:`ArgoSensor.search` method.
@@ -143,58 +146,8 @@ Examples
 
     ArgoSensor().search("RBR_ARGO3_DEEP6K", output="df")
 
-
-.. _argosensor-exact-sensor:
-
-Use an exact sensor model name to create a specific ArgoSensor
+Advanced data retrieval with iterations on ArgoFloat instances
 --------------------------------------------------------------
-
-You can initialize an :class:`ArgoSensor` instance with a specific model to access more metadata. In this use-case, you will have the following attributes and methods available:
-
-.. currentmodule:: argopy
-
-.. autosummary::
-
-   ArgoSensor.vocabulary
-   ArgoSensor.type
-   ArgoSensor.search
-   ArgoSensor.iterfloats_with
-
-Examples
-^^^^^^^^
-
-As an example, let's create an instance for the "SBE43F_IDO" sensor model:
-
-.. ipython:: python
-    :okwarning:
-
-    sensor = ArgoSensor("SBE43F_IDO")
-    sensor
-
-You can then access this model metadata from the NVS vocabulary (Reference table R27):
-
-.. ipython:: python
-    :okwarning:
-
-    sensor.vocabulary
-
-and from Reference table R25:
-
-.. ipython:: python
-    :okwarning:
-
-    sensor.type
-
-You can also look for floats equipped with it:
-
-.. ipython:: python
-    :okwarning:
-
-    df = sensor.search(output="df")
-    df
-
-Loop through ArgoFloat instances for each float
------------------------------------------------
 
 The :meth:`ArgoSensor.iterfloats_with` will yields :class:`argopy.ArgoFloat` instances for floats with the specified sensor model (use ``chunksize`` to process floats in batches).
 
@@ -232,8 +185,125 @@ Let's try to gather all platform types and WMOs for floats equipped with a list 
      'PROVOR_IV      : 21 floats',
      'SOLO_BGC       : 4 floats']
 
-Quick float and sensor lookups from the command line
-----------------------------------------------------
+.. _argosensor-exact-sensor:
+
+Working with one Sensor model
+-----------------------------
+
+Argo references
+^^^^^^^^^^^^^^^
+
+To acces one sensor model complete list of referenced information, you can initialize a :class:`ArgoSensor` instance with a specific model. In this use-case, you will have the following attributes and methods available:
+
+.. currentmodule:: argopy
+
+.. autosummary::
+
+   ArgoSensor.vocabulary
+   ArgoSensor.type
+   ArgoSensor.search
+   ArgoSensor.iterfloats_with
+
+As an example, let's create an instance for the "SBE43F_IDO" sensor model:
+
+.. ipython:: python
+    :okwarning:
+
+    sensor = ArgoSensor("SBE43F_IDO")
+    sensor
+
+You can then access this model metadata from the NVS vocabulary (Reference table R27):
+
+.. ipython:: python
+    :okwarning:
+
+    sensor.vocabulary
+
+and from Reference table R25:
+
+.. ipython:: python
+    :okwarning:
+
+    sensor.type
+
+You can also look for floats equipped with it:
+
+.. ipython:: python
+    :okwarning:
+
+    df = sensor.search(output="df")
+    df
+
+Manufacturers API
+^^^^^^^^^^^^^^^^^
+
+**Argopy** provides the experimental :class:`OEMSensorMetaData` class to deal with metadata provided by manufacturers. The :class:`OEMSensorMetaData` class provides methods to directly access some manufacturers web-API on your behalf.
+
+Argo sensor makers are encouraged to provide the Argo community with all possible information about a sensor, in particular predeployment calibration metadata.
+
+The ADMT has developed a JSON schema for this at https://github.com/euroargodev/sensor_metadata_json and an library for JSON validation at https://github.com/euroargodev/argo-metadata-validator.
+
+By default **argopy** will validate json data against the reference schema.
+
+Sensor metadata from RBR
+""""""""""""""""""""""""
+
+Thanks to the RBR web-API, you can access sensor metadata from a RBR sensor with the :meth:`OEMSensorMetaData.from_rbr` method and a sensor serial number:
+
+.. ipython:: python
+    :okwarning:
+
+    from argopy import OEMSensorMetaData
+
+    OEMSensorMetaData().from_rbr(208380)
+
+Note that the RBR web-API requires an authentication key (you can contact RBR at argo@rbr-global.com if you do not have an such a key). **Argopy** will try to get the key from the environment variable ``RBR_API_KEY`` or from the option ``rbr_api_key``. You can set the key temporarily in your code with:
+
+.. code-block:: python
+
+    argopy.set_options(rbr_api_key="********")
+
+Sensor metadata from Seabird
+""""""""""""""""""""""""""""
+
+Thanks to the Seabird web-API, you can access sensor metadata from a Seabird sensor with the :meth:`OEMSensorMetaData.from_seabird` method and a sensor serial number and a model name:
+
+.. ipython:: python
+    :okwarning:
+
+    from argopy import OEMSensorMetaData
+
+    OEMSensorMetaData().from_seabird(2444, 'SATLANTIC_OCR504_ICSW')
+
+Sensor metadata from elsewhere
+""""""""""""""""""""""""""""""
+
+If you have your own metadata, you can use :meth:`OEMSensorMetaData.from_dict`:
+
+.. code-block:: python
+
+    from argopy import OEMSensorMetaData
+
+    jsdata = [...]
+
+    OEMSensorMetaData().from_dict(jsdata)
+
+Examples
+""""""""
+
+Last, since this is still in active development on the manufacturer's side, we also added easy access to some examples from https://github.com/euroargodev/sensor_metadata_json:
+
+.. ipython:: python
+    :okwarning:
+
+    OEMSensorMetaData().list_examples
+
+    OEMSensorMetaData().from_examples('WETLABS-ECO_FLBBAP2-8589')
+
+
+
+From the command line
+---------------------
 
 The :meth:`ArgoSensor.cli_search` function is available to search for Argo floats equipped with a given sensor model from the command line and retrieve a `CLI <https://en.wikipedia.org/wiki/Command-line_interface>`_ friendly list of WMOs or serial numbers.
 

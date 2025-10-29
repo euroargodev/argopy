@@ -1,5 +1,5 @@
 from dataclasses import field
-from typing import List, Dict, Optional, Any, Literal
+from typing import List, Dict, Optional, Any, Literal, Self
 from pathlib import Path
 from zipfile import ZipFile
 
@@ -206,7 +206,7 @@ class OEMSensorMetaData:
         errors = list(v.evolve(schema=self.schema).iter_errors(v, data))
         return errors
 
-    def from_dict(self, data: Dict[str, Any]):
+    def from_dict(self, data: Dict[str, Any]) -> Self:
         """Load data from a dictionary and possibly validate"""
         if self._run_validation:
             self.validate(data)
@@ -287,7 +287,7 @@ class OEMSensorMetaData:
         with open(file_path, "w") as f:
             json.dump(self.to_dict(), f, indent=2)
 
-    def from_rbr(self, serial_number: str, **kwargs) -> 'OEMSensorMetaData':
+    def from_rbr(self, serial_number: str, **kwargs) -> Self:
         """Fetch sensor metadata from "RBRargo Product Lookup" web-API
 
         We also download certificates if available
@@ -301,7 +301,9 @@ class OEMSensorMetaData:
 
         Notes
         -----
-        The instance :class:`httpstore` is automatically updated to use the OPTIONS value for ``rbr_api_key``.
+        The instance :class:`httpstore` is automatically updated to use the ``rbr_api_key`` option.
+
+        The "RBRargo Product Lookup" web-API location is set with: ``OPTIONS['rbr_api']``
         """
         self._serial_number = serial_number
 
@@ -395,13 +397,27 @@ class OEMSensorMetaData:
         else:
             raise ValueError(f"Unknown action {action}")
 
-    def from_seabird(self, serial_number: str, sensor_model: str, **kwargs) -> 'OEMSensorMetaData':
+    def from_seabird(self, serial_number: str, sensor_model: str, **kwargs) -> Self:
         """Fetch sensor metadata from Seabird-Scientific "Instrument Metadata Portal" web-API
 
         Parameters
         ----------
         serial_number : str
             Sensor serial number from RBR
+
+        Notes
+        -----
+        The "Instrument Metadata Portal" web-API location is set with: ``OPTIONS['seabird_api']``
+
+        .. warning::
+
+            Since the Seabird web-API does not yet return fully compliant json medatata, we internally fix some format errors to be able to use this source of information. In particular:
+
+            - 'sensor_info' comes from the wrongly named 'json_info' attribute,
+            - If 'PARAMETER_UNITS' is empty, try to get value from the 'parameter_vendorinfo'/'units' attribute,
+            - If 'PREDEPLOYMENT_CALIB_COMMENT' is empty, try to get value from the 'parameter_vendorinfo'/'comments' attribute,
+            - If 'PREDEPLOYMENT_CALIB_DATE' is empty, try to get value from the 'parameter_vendorinfo'/'calibration_date' attribute.
+
         """
         # The Seabird api requires a sensor model (R27) with a serial number.
         # This could easily be done if we get the s/n by searching float metadata.
@@ -441,7 +457,7 @@ class OEMSensorMetaData:
         """List of example names"""
         return [k for k in SENSOR_JS_EXAMPLES.keys()]
 
-    def from_examples(self, eg: str = None, **kwargs):
+    def from_examples(self, eg: str = None, **kwargs) -> Self:
         if eg not in self.list_examples:
             raise ValueError(
                 f"Unknown sensor example: '{eg}'. \n Use one in: {self.list_examples}"
