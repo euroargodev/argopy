@@ -7,6 +7,16 @@ What's New
 
 |pypi dwn| |conda dwn|
 
+
+Coming up next (un-released)
+----------------------------
+
+Features and front-end API
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- **New** :class:`ArgoSensor` class to work with Argo sensor models, types and floats equipped with. Check the new :ref:`Argo sensor: models and types` documentation section. (:pr:`532`) by |gmaze|.
+
+
 v1.3.1 (22 Oct. 2025)
 ---------------------
 
@@ -20,11 +30,6 @@ Features and front-end API
 - **Improved** :class:`ArgoFloat.plot` **methods**: now auto-select colormap, colorbar and legend settings depending on the parameter to plot. Check the documentation at: :ref:`argofloat-visu`. (:pr:`515`) by |gmaze|.
 
 .. _v1.3.1-internals:
-
-Features and front-end API
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-- **New** :class:`ArgoSensor` class to work with Argo sensor models, types and floats equipped with. Check the new :ref:`Argo sensor: models and types` documentation section. (:pr:`532`) by |gmaze|.
 
 Internals
 ^^^^^^^^^
