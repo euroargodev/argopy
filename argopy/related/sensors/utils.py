@@ -11,7 +11,7 @@ def _importorskip(modname):
     return has
 
 
-has_jsonschema = _importorskip("jsonschema")
+has_referencing = _importorskip("referencing")
 
 
 class APISensorMetaDataProcessing:

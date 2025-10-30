@@ -14,11 +14,11 @@ from ....options import OPTIONS
 from ....utils import urnparser, path2assets
 from ....errors import InvalidDatasetStructure
 
-from ..utils import has_jsonschema
+from ..utils import has_referencing
 from .oem_metadata_repr import OemMetaDataDisplay
 from .accessories import SensorInfo, Context, Sensor, Parameter
 
-if has_jsonschema:
+if has_referencing:
     from referencing import Registry, Resource
     import jsonschema
 
