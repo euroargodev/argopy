@@ -1,0 +1,763 @@
+{
+  "name": "PLATFORM_MAKER",
+  "long_name": "Argo platform maker",
+  "last_update": "2025-10-29T19:56:31.163714+00:00",
+  "data": {
+    "@graph": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NOTC/",
+        "pav:authoredOn": "2024-11-11 09:32:23.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NOTC/1/"
+        },
+        "dce:identifier": "SDN:R24::NOTC",
+        "pav:version": "1",
+        "skos:notation": "SDN:R24::NOTC",
+        "skos:altLabel": "",
+        "dc:date": "2024-11-11 09:32:23.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "National Ocean Technology Center"
+        },
+        "dc:identifier": "SDN:R24::NOTC",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "National Ocean Technology Center, China."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R24/current/UNKNOWN/",
+        "pav:authoredOn": "2020-05-03 20:30:12.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R24/current/UNKNOWN/1/"
+        },
+        "dce:identifier": "SDN:R24::UNKNOWN",
+        "pav:version": "1",
+        "skos:notation": "SDN:R24::UNKNOWN",
+        "skos:altLabel": "UNKNOWN",
+        "dc:date": "2020-05-03 20:30:12.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Unknown platform maker"
+        },
+        "dc:identifier": "SDN:R24::UNKNOWN",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Unknown platform maker. The platform maker should not be unknown, the use of this value should be exceptional"
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R24/current/TSK/",
+        "pav:authoredOn": "2020-05-03 20:30:12.0",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/NINJA/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/NINJA_D/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Tsurumi-Seiki Co., Ltd."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R24::TSK",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Tsurumi-Seiki Co., Ltd."
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2020-05-03 20:30:12.0",
+        "skos:altLabel": "TSK",
+        "skos:notation": "SDN:R24::TSK",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R24::TSK",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R24/current/TSK/1/"
+        }
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R24/current/WHOI/",
+        "pav:authoredOn": "2020-05-03 20:30:12.0",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_W/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ITP/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Woods Hole Oceanographic Institution"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R24::WHOI",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Woods Hole Oceanographic Institution"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2020-05-03 20:30:12.0",
+        "skos:altLabel": "WHOI",
+        "skos:notation": "SDN:R24::WHOI",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R24::WHOI",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R24/current/WHOI/1/"
+        }
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R24/current/OPTIMARE/",
+        "pav:authoredOn": "2020-05-03 20:30:12.0",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/NEMO/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/POPS_NEMO/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Optimare"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R24::OPTIMARE",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Optimare"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2020-05-03 20:30:12.0",
+        "skos:altLabel": "OPTIMARE",
+        "skos:notation": "SDN:R24::OPTIMARE",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R24::OPTIMARE",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R24/current/OPTIMARE/1/"
+        }
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R24/current/WRC/",
+        "pav:authoredOn": "2020-05-03 20:30:12.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R24/current/WRC/1/"
+        },
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/APEX/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/APEX_EM/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PALACE/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Webb Research Corporation"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R24::WRC",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Webb Research Corporation"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2020-05-03 20:30:12.0",
+        "skos:altLabel": "WRC",
+        "skos:notation": "SDN:R24::WRC",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R24::WRC"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R24/current/TWR/",
+        "pav:authoredOn": "2020-05-03 20:30:12.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R24/current/TWR/1/"
+        },
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/APEX_D/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/APEX/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/APEX_EM/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Teledyne Webb Research (formerly Webb Research Corporation)"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R24::TWR",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Teledyne Webb Research"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2020-05-03 20:30:12.0",
+        "skos:altLabel": "TWR",
+        "skos:notation": "SDN:R24::TWR",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R24::TWR"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R24/current/MARTEC/",
+        "pav:authoredOn": "2020-05-03 20:30:12.0",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_II/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Martec"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R24::MARTEC",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Martec"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2020-05-03 20:30:12.0",
+        "skos:altLabel": "MARTEC",
+        "skos:notation": "SDN:R24::MARTEC",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R24::MARTEC",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R24/current/MARTEC/1/"
+        }
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R24/current/LaoshanL/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/LaoshanL/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/LaoshanL/2/"
+          }
+        ],
+        "pav:authoredOn": "2024-10-24 14:51:27.0",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/XUANWU/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/HM4000/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Laoshan Laboratory (was named QNLM before May 2023)"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R24::LaoshanL",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "LaoshanLaboratory"
+        },
+        "owl:versionInfo": "3",
+        "dc:date": "2024-10-24 14:51:27.0",
+        "skos:altLabel": "LaoshanLaboratory",
+        "skos:notation": "SDN:R24::LaoshanL",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R24::LaoshanL",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R24/current/LaoshanL/3/"
+        }
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R24/current/QNLM/",
+        "pav:hasVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R24/current/QNLM/1/"
+        },
+        "pav:authoredOn": "2024-10-24 14:51:27.0",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/XUANWU/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/HM4000/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Qingdao National Laboratory for Marine Science and Technology, renamed LaoshanLaboratory since May 2023"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R24::QNLM",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Qingdao National Laboratory for Marine Science and Technology"
+        },
+        "owl:versionInfo": "2",
+        "dc:date": "2024-10-24 14:51:27.0",
+        "skos:altLabel": "QNLM",
+        "skos:notation": "SDN:R24::QNLM",
+        "pav:version": "2",
+        "dce:identifier": "SDN:R24::QNLM",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R24/current/QNLM/2/"
+        }
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R24/current/METOCEAN/",
+        "pav:authoredOn": "2020-05-03 20:30:12.0",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/NOVA/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_MT/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Metocean"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R24::METOCEAN",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Metocean"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2020-05-03 20:30:12.0",
+        "skos:altLabel": "METOCEAN",
+        "skos:notation": "SDN:R24::METOCEAN",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R24::METOCEAN",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R24/current/METOCEAN/1/"
+        }
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R24/current/SIO_IDG/",
+        "pav:authoredOn": "2020-05-03 20:30:12.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R24/current/SIO_IDG/1/"
+        },
+        "dce:identifier": "SDN:R24::SIO_IDG",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_D/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_BGC/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_II/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Scripps Institution of Oceanography - Instrument Development Group"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R24::SIO_IDG",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Scripps Institution of Oceanography - Instrument Development Group"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2020-05-03 20:30:12.0",
+        "skos:altLabel": "SIO_IDG",
+        "skos:notation": "SDN:R24::SIO_IDG",
+        "pav:version": "1"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/",
+        "pav:authoredOn": "2020-05-03 20:30:12.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/1/"
+        },
+        "dce:identifier": "SDN:R24::NKE",
+        "pav:version": "1",
+        "skos:notation": "SDN:R24::NKE",
+        "skos:altLabel": "NKE",
+        "dc:date": "2020-05-03 20:30:12.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "NKE Instrumentation"
+        },
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_II/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/POPS_PROVOR/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_D/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_IV/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_C/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "NKE Instrumentation"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R24::NKE"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R24/current/HSOE/",
+        "pav:authoredOn": "2020-05-03 20:30:12.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R24/current/HSOE/1/"
+        },
+        "dce:identifier": "SDN:R24::HSOE",
+        "pav:version": "1",
+        "skos:notation": "SDN:R24::HSOE",
+        "skos:altLabel": "HSOE",
+        "dc:date": "2020-05-03 20:30:12.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Qingdao Hisun Ocean Equipment Corporation Limited"
+        },
+        "dc:identifier": "SDN:R24::HSOE",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Qingdao Hisun Ocean Equipment Corporation Limited"
+        },
+        "skos:related": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/HM2000/"
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R24/current/SBE/",
+        "pav:authoredOn": "2020-05-03 20:30:12.0",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_EBR/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_A/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Sea-Bird Scientific"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R24::SBE",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Sea-Bird Scientific"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2020-05-03 20:30:12.0",
+        "skos:altLabel": "SBE",
+        "skos:notation": "SDN:R24::SBE",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R24::SBE",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R24/current/SBE/1/"
+        }
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R24/current/MRV/",
+        "pav:authoredOn": "2020-05-03 20:30:12.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R24/current/MRV/1/"
+        },
+        "dce:identifier": "SDN:R24::MRV",
+        "pav:version": "1",
+        "skos:notation": "SDN:R24::MRV",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/S2X/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/S2A/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_BGC_MRV/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_D_MRV/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ALTO/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ALAMO/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "MRV Systems"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R24::MRV",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "MRV Systems"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2020-05-03 20:30:12.0",
+        "skos:altLabel": "MRV"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R24/current/",
+        "skos:member": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NOTC/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/UNKNOWN/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/TSK/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/WHOI/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/OPTIMARE/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/WRC/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/TWR/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/MARTEC/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/LaoshanL/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/QNLM/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/METOCEAN/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/SIO_IDG/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/HSOE/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/MRV/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/SBE/"
+          }
+        ],
+        "@type": "skos:Collection",
+        "dc:publisher": "Natural Environment Research Council",
+        "dc:description": "List of Argo float manufacturers. Argo netCDF variable PLATFORM_MAKER is populated by R24 altLabel.",
+        "dc:title": "Argo platform maker",
+        "skos:prefLabel": "Argo platform maker",
+        "owl:versionInfo": "6",
+        "dc:date": "2024-11-12 02:00:00.0",
+        "skos:altLabel": "PLATFORM_MAKER",
+        "dc:creator": "Argo Data Management Team",
+        "dc:alternative": "PLATFORM_MAKER",
+        "rdfs:comment": "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
+        "grg:RE_RegisterOwner": "Argo Data Management Team",
+        "grg:RE_RegisterManager": "British Oceanographic Data Centre",
+        "rdfs:seeAlso": {
+          "@id": "https://github.com/OneArgo/ArgoVocabs"
+        }
+      }
+    ],
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

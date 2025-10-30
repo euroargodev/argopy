@@ -1,0 +1,304 @@
+{
+  "name": "SBE",
+  "long_name": "Sea-Bird Scientific",
+  "last_update": "2025-10-29T21:00:43.158149+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "pav:hasVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/1/"
+    },
+    "pav:authoredOn": "2021-06-02 23:04:11.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/2/"
+    },
+    "dce:identifier": "SDN:R26::SBE",
+    "pav:version": "2",
+    "skos:notation": "SDN:R26::SBE",
+    "skos:altLabel": "SBE",
+    "dc:date": "2021-06-02 23:04:11.0",
+    "skos:narrower": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE43F_IDO/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.12/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.0.1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0a/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.4/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD_AP2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V4.4.0/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB3/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.3/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSW/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.8/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.4/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.0/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.5/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V2.0/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_R10W/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE63_OPTODE/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SUNA/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9a/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V1.0c/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_2K/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSWR10W/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/FLOATCLOCK/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.3/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE37/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.0/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.6/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE43_IDO/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.5/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE_STS/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V3.0/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.10/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FL/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.3/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBB2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE43I/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.4.0/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0c/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.7/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.0/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.9/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLNTU/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.5/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V3/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_NTU/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3b/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2a/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_R10W/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/C_ROVER/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_PAR/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SEAFET/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SUNA_V2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_AP2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBBCD/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
+      "@language": "en",
+      "@value": "A large, global company based in the United States of America that develops and manufactures products for the measurement of salinity, temperature, pressure, dissolved oxygen, fluorescence, nutrients and related oceanographic parameters in marine waters. It is formed from three ocean science companies, Sea-Bird Electronics, WET Labs and Satlantic that were combined in 2011."
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R26::SBE",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "Sea-Bird Scientific"
+    },
+    "owl:versionInfo": "2",
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

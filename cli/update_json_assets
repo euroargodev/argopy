@@ -16,6 +16,8 @@ import argopy
 from argopy import ArgoNVSReferenceTables
 from argopy.stores import httpstore, filestore
 from argopy.options import OPTIONS
+from argopy.utils import urnparser
+
 
 # Locate the static/assets folder of the library:
 ASSETS_FOLDER = Path(os.path.dirname(argopy.__file__)).joinpath("static", "assets")
@@ -32,10 +34,13 @@ def save_data(file: str, name: str, long_name: str, data: dict):
     file = file.replace(".json", "")
     if ":" in file:
         subs = file.split(":")[0:-1]
-        ASSETS_FOLDER.joindir()
-        Path("/my/directory").mkdir(parents=True, exist_ok=True)
+        ASSETS_FOLDER.joinpath(*subs).mkdir(parents=True, exist_ok=True)
+        root = ASSETS_FOLDER.joinpath(*subs)
+        file = file.split(":")[-1]
+    else:
+        root = ASSETS_FOLDER
 
-    with open(ASSETS_FOLDER.joinpath(f"{file}.json"), "w") as f:
+    with open(root.joinpath(f"{file}.json"), "w") as f:
         json.dump(data, f, indent=2)
 
     print(f"SAVED: {file}.json with: {long_name}")
@@ -738,17 +743,90 @@ def asset_vocabulary_mapping():
         df = nvs.tbl(vocab)
         Vocabulary2Concept.update({vocab: list(df['altLabel'].values)})
         Vocabulary2Parameter.update({vocab: all_vocabulary[vocab][0]})
-    Vocabulary2Concept.keys()
 
     save_data(
         file="vocabulary:mapping",
         name="Mapping of NVS Vocabulary onto Concept and Parameter",
         long_name="Dictionaries to easily go from reference tables (Vocabulary) to netcdf parameter names and possible values (Concept)",
         data={
-            'Vocabulary2Parameter': Vocabulary2Parameter,
-            'Vocabulary2Concept': Vocabulary2Concept,
+            'Vocabulary2Parameter': dict(sorted(Vocabulary2Parameter.items())),
+            'Vocabulary2Concept': dict(sorted(Vocabulary2Concept.items())),
         },
     )
+
+
+def asset_vocabulary_offline_vocabs():
+    fs = httpstore()
+    nvs = "https://vocab.nerc.ac.uk/collection"
+
+    data = fs.open_json(f'{nvs}/?_profile=nvs&_mediatype=application/ld+json')
+
+    def is_admt(item):
+        return item['dc:creator'] == 'Argo Data Management Team'
+
+    id_list = [item for item in data['@graph'] if is_admt(item)]
+
+    for item in id_list:
+        rtid = item['@id'].replace("http://vocab.nerc.ac.uk/collection/", "").replace("/current/", "")
+        name = item['skos:altLabel']
+        long_name = item['skos:prefLabel']
+
+        url = f"{item['@id']}/?_profile=nvs&_mediatype=application/ld+json"
+        js = fs.open_json(url)
+
+        save_data(
+            file = f"vocabulary:offline:{rtid}",
+            name = name,
+            long_name = long_name,
+            data = js,
+        )
+
+
+def asset_vocabulary_offline_concepts():
+    fs = httpstore()
+    nvs = "https://vocab.nerc.ac.uk/collection"
+
+    data = fs.open_json(f'{nvs}/?_profile=nvs&_mediatype=application/ld+json')
+
+    def is_admt(item):
+        return item['dc:creator'] == 'Argo Data Management Team'
+
+    id_list = [item for item in data['@graph'] if is_admt(item)]
+
+    to_retrieve = []
+    # Loop through vocabularies:
+    for item in id_list:
+        url = f"{item['@id']}/?_profile=nvs&_mediatype=application/ld+json"
+        vocab_data = fs.open_json(url)
+
+        # Loop through concepts:
+        for k in vocab_data["@graph"]:
+            if k["@type"] == "skos:Concept":
+                url = f"{k['@id']}?_profile=nvs&_mediatype=application/ld+json"
+                to_retrieve.append(url)
+
+    print(f"Will now retrieve NVS from {len(to_retrieve)} concepts")  # = 2048
+
+    def func(data):
+        urn = urnparser(data['skos:notation'])
+        file = f"vocabulary:offline:{urn['listid']}:{urn['termid']}"
+        name = urn['termid']
+        long_name = data["skos:prefLabel"]["@value"]
+        save_data(
+            file = file,
+            name = name,
+            long_name = long_name,
+            data = data
+        )
+
+    results = fs.open_mfjson(
+        to_retrieve,
+        progress = True,
+        preprocess = func,
+        errors = 'raise',
+    )
+    return None
+
 
 def main():
     argopy.clear_cache()
@@ -762,8 +840,10 @@ def main():
     # asset_GDAC_servers()
     # asset_netcdf_json_schema()
     # asset_sensor_schema()
-    asset_vocabulary_description()
-    asset_vocabulary_mapping()
+    # asset_vocabulary_description()
+    # asset_vocabulary_mapping()
+    # asset_vocabulary_offline_vocabs()
+    asset_vocabulary_offline_concepts()
 
 if __name__ == "__main__":
     main()

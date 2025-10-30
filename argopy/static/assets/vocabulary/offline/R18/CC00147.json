@@ -1,0 +1,59 @@
+{
+  "name": "CC00147",
+  "long_name": "CONFIG_PressureCheckTimeBuoyancyReductionPhase_seconds",
+  "last_update": "2025-10-29T21:00:35.281500+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00147/",
+    "pav:authoredOn": "2023-05-02 16:34:05.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00147/1/"
+    },
+    "dce:identifier": "SDN:R18::CC00147",
+    "pav:version": "1",
+    "skos:notation": "SDN:R18::CC00147",
+    "skos:altLabel": "Core Config 147 - Optional",
+    "dc:date": "2023-05-02 16:34:05.0",
+    "owl:versionInfo": "1",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "CONFIG_PressureCheckTimeBuoyancyReductionPhase_seconds"
+    },
+    "dc:identifier": "SDN:R18::CC00147",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "owl:deprecated": "false",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "skos:definition": {
+      "@language": "en",
+      "@value": "Period of the pressure checks after each valve action before checking the pressure during the buoyancy reduction phase (in seconds)."
+    },
+    "@type": "skos:Concept",
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

@@ -1,0 +1,325 @@
+{
+  "name": "CONTROLLER_BOARD_TYPE",
+  "long_name": "Argo controller board types and generations",
+  "last_update": "2025-10-29T19:56:37.401848+00:00",
+  "data": {
+    "@graph": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0007/",
+        "pav:authoredOn": "2023-06-22 12:52:35.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0007/1/"
+        },
+        "dce:identifier": "SDN:R28::CB0007",
+        "pav:version": "1",
+        "skos:notation": "SDN:R28::CB0007",
+        "skos:altLabel": "USEA",
+        "dc:date": "2023-06-22 12:52:35.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "USEA"
+        },
+        "dc:identifier": "SDN:R28::CB0007",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Used in certain types of NKE Argo floats as secondary controller board. Developed in partnership with LOV. Mentioned in https://www.frontiersin.org/articles/10.3389/fmars.2020.577446/full"
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0001/",
+        "pav:authoredOn": "2023-06-22 12:52:35.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0001/1/"
+        },
+        "dce:identifier": "SDN:R28::CB0001",
+        "pav:version": "1",
+        "skos:notation": "SDN:R28::CB0001",
+        "skos:altLabel": "N1",
+        "dc:date": "2023-06-22 12:52:35.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "N1"
+        },
+        "dc:identifier": "SDN:R28::CB0001",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Seabird Navis 1st generation controller board. Controls functions such as integrating the sensor data streams, operating the buoyancy engine, and passing the telemetry to the iridium transmitter."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0006/",
+        "pav:authoredOn": "2023-06-22 12:52:35.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0006/1/"
+        },
+        "dce:identifier": "SDN:R28::CB0006",
+        "pav:version": "1",
+        "skos:notation": "SDN:R28::CB0006",
+        "skos:altLabel": "OSEAN",
+        "dc:date": "2023-06-22 12:52:35.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "OSEAN"
+        },
+        "dc:identifier": "SDN:R28::CB0006",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Used in certain types of NKE Argo floats as secondary controller board."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0003/",
+        "pav:authoredOn": "2023-06-22 12:52:35.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0003/1/"
+        },
+        "dce:identifier": "SDN:R28::CB0003",
+        "pav:version": "1",
+        "skos:notation": "SDN:R28::CB0003",
+        "skos:altLabel": "GG32",
+        "dc:date": "2023-06-22 12:52:35.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "GG32"
+        },
+        "dc:identifier": "SDN:R28::CB0003",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Controller board fitted to certain types of SOLO Argo floats."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0005/",
+        "pav:authoredOn": "2023-06-22 12:52:35.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0005/1/"
+        },
+        "dce:identifier": "SDN:R28::CB0005",
+        "pav:version": "1",
+        "skos:notation": "SDN:R28::CB0005",
+        "skos:altLabel": "I535",
+        "dc:date": "2023-06-22 12:52:35.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "I535"
+        },
+        "dc:identifier": "SDN:R28::CB0005",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Used in certain types of NKE Argo floats as primary controller board."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0004/",
+        "pav:authoredOn": "2023-06-22 12:52:35.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0004/1/"
+        },
+        "dce:identifier": "SDN:R28::CB0004",
+        "pav:version": "1",
+        "skos:notation": "SDN:R28::CB0004",
+        "skos:altLabel": "HC12",
+        "dc:date": "2023-06-22 12:52:35.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "HC12"
+        },
+        "dc:identifier": "SDN:R28::CB0004",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Controller board fitted to certain types of SOLO Argo floats."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0002/",
+        "pav:authoredOn": "2023-06-22 12:52:35.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0002/1/"
+        },
+        "dce:identifier": "SDN:R28::CB0002",
+        "pav:version": "1",
+        "skos:notation": "SDN:R28::CB0002",
+        "skos:altLabel": "N2",
+        "dc:date": "2023-06-22 12:52:35.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "N2"
+        },
+        "dc:identifier": "SDN:R28::CB0002",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Seabird Navis 2nd generation controller board. Controls functions such as integrating the sensor data streams, operating the buoyancy engine, and passing the telemetry to the iridium transmitter."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0008/",
+        "pav:authoredOn": "2023-06-22 12:52:35.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0008/1/"
+        },
+        "dce:identifier": "SDN:R28::CB0008",
+        "pav:version": "1",
+        "skos:notation": "SDN:R28::CB0008",
+        "skos:altLabel": "APMT",
+        "dc:date": "2023-06-22 12:52:35.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "APMT"
+        },
+        "dc:identifier": "SDN:R28::CB0008",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Used in certain types of NKE Argo floats as primary controller board."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R28/current/",
+        "skos:member": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0007/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0001/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0006/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0003/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0005/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0004/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0008/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0002/"
+          }
+        ],
+        "@type": "skos:Collection",
+        "dc:publisher": "Natural Environment Research Council",
+        "dc:description": "List of Argo floats controller board types and generations. Argo netCDF variables CONTROLLER_BOARD_TYPE_PRIMARY and, when needed, CONTROLLER_BOARD_TYPE_SECONDARY, are populated by R28 altLabel.",
+        "dc:title": "Argo controller board types and generations",
+        "skos:prefLabel": "Argo controller board types and generations",
+        "owl:versionInfo": "1",
+        "dc:date": "2023-06-23 03:00:02.0",
+        "skos:altLabel": "CONTROLLER_BOARD_TYPE",
+        "dc:creator": "Argo Data Management Team",
+        "dc:alternative": "CONTROLLER_BOARD_TYPE",
+        "rdfs:comment": "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
+        "grg:RE_RegisterOwner": "Argo Data Management Team",
+        "grg:RE_RegisterManager": "British Oceanographic Data Centre",
+        "rdfs:seeAlso": {
+          "@id": "https://github.com/OneArgo/ArgoVocabs"
+        }
+      }
+    ],
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

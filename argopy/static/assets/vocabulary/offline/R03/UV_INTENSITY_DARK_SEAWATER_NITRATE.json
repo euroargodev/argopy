@@ -1,0 +1,68 @@
+{
+  "name": "UV_INTENSITY_DARK_SEAWATER_NITRATE",
+  "long_name": "Intensity of ultra-violet flux dark sea water from nitrate sensor",
+  "last_update": "2025-10-29T20:57:41.879558+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UV_INTENSITY_DARK_SEAWATER_NITRATE/",
+    "pav:hasVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UV_INTENSITY_DARK_SEAWATER_NITRATE/1/"
+    },
+    "pav:authoredOn": "2025-09-29 14:51:43.0",
+    "@type": "skos:Concept",
+    "skos:related": {
+      "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UUUU/"
+    },
+    "skos:definition": {
+      "@language": "en",
+      "@value": "Raw ultra-violet (UV) flux signal in seawater and darkness from nitrate sensor. From light absorption on pixels at shortest wavelengths of array, reported by the SUNA sensor. Local_Attributes:{long_name:Intensity of ultra-violet flux dark sea water from nitrate sensor; standard_name:-; units:count; valid_min:-; valid_max:-; category:ib; fill_value:99999.f; data_type:float}."
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R03::UV_INTENSITY_DARK_SEAWATER_NITRATE",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "Intensity of ultra-violet flux dark sea water from nitrate sensor"
+    },
+    "owl:versionInfo": "2",
+    "dc:date": "2025-09-29 14:51:43.0",
+    "skos:altLabel": "UV_INTENSITY_DARK_SEAWATER_NITRATE",
+    "skos:notation": "SDN:R03::UV_INTENSITY_DARK_SEAWATER_NITRATE",
+    "owl:sameAs": {
+      "@id": "http://vocab.nerc.ac.uk/collection/P01/current/UVSDZZ01/"
+    },
+    "pav:version": "2",
+    "dce:identifier": "SDN:R03::UV_INTENSITY_DARK_SEAWATER_NITRATE",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UV_INTENSITY_DARK_SEAWATER_NITRATE/2/"
+    },
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

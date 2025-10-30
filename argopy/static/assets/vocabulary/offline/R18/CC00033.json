@@ -1,0 +1,59 @@
+{
+  "name": "CC00033",
+  "long_name": "CONFIG_CycleTime_hours",
+  "last_update": "2025-10-29T21:00:36.738120+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00033/",
+    "pav:authoredOn": "2023-05-02 16:34:05.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00033/1/"
+    },
+    "dce:identifier": "SDN:R18::CC00033",
+    "pav:version": "1",
+    "skos:notation": "SDN:R18::CC00033",
+    "skos:altLabel": "Core Config 33 - Mandatory (if applies)",
+    "dc:date": "2023-05-02 16:34:05.0",
+    "owl:versionInfo": "1",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "CONFIG_CycleTime_hours"
+    },
+    "dc:identifier": "SDN:R18::CC00033",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "owl:deprecated": "false",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "skos:definition": {
+      "@language": "en",
+      "@value": "For APEX and ARVOR floats this is the total duration of one cycle, usually 240 hours (10 days). For SOLO floats this is the total duration of one cycle, assuming that all float operations reach their full time-out intervals before moving to the next float stage. Typically the actual cycle time will be shorter than this value."
+    },
+    "@type": "skos:Concept",
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}
