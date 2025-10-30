@@ -54,7 +54,7 @@ class NVScollection:
             elif k["@type"] == "skos:Concept":
                 content["altLabel"].append(urnparser(k['skos:notation'])['termid'])
                 content["prefLabel"].append(k["skos:prefLabel"]["@value"])
-                content["definition"].append(k["skos:definition"]["@value"])
+                content["definition"].append(k["skos:definition"]["@value"] if k["skos:definition"] != '' else None)
                 content["deprecated"].append(k["owl:deprecated"])
                 content["urn"].append(k['skos:notation'])
                 content["id"].append(k["@id"])
