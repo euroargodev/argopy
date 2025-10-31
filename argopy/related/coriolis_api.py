@@ -4,6 +4,7 @@ from typing import List, Union
 from pathlib import Path
 import json
 import logging
+from functools import lru_cache
 
 from ..options import OPTIONS
 from ..utils import check_wmo, to_list, path2assets
@@ -36,6 +37,26 @@ class CoriolisAPI:
     https://dev-ops.gitlab-pages.ifremer.fr/documentation/service_datasheet/scientific/oceanography/coriolis/dataAccessAPI/
     https://gitlab.ifremer.fr/coriolis/developpement/bigdata/co054702/coriolis_api
 
+
+    Examples
+    --------
+    .. code-block::python
+
+        from argopy.related import CoriolisAPI
+
+        coapi = CoriolisAPI()
+
+        wmo = 6903091
+        copapi.platform(wmo)  # Get platform meta-data
+        tl = coapi.profiles_timelines(wmo)  # get platform amount of data by date
+
+        coapi.profiles(wmo, start=tl[0]['timestamp']).keys()
+        uid = coapi.observations_id(wmo, start=tl[0]['timestamp'])
+        coapi.profiles_by_id(uid).keys()
+        coapi.profiles_parameters(uid)
+
+        coapi.to_dataframe(wmo, start=tl[0]['timestamp'])
+        coapi.to_xarray(wmo, start=tl[0]['timestamp'])
     """
 
     @property
@@ -90,6 +111,7 @@ class CoriolisAPI:
             self._param2code = d
         return self._param2code
 
+    @lru_cache
     def profiles_timelines(self, wmo: Union[int, List]) -> List:
         """Get timeline of profiles
 
@@ -129,60 +151,7 @@ class CoriolisAPI:
         else:
             return data
 
-    def profiles(
-            self,
-            wmo: int,
-            start: pd.Timestamp,
-            end: pd.Timestamp = None,
-            parameter_code: Union[int, List] = 35,
-    ) -> pd.DataFrame:
-        """Retrieve one or more parameter data for one or more profile
-
-        Returns
-        -------
-        :class:`pd.DataFrame`
-        """
-        data_type = "PF"  # Our use case for Argo profiles
-        end = start + pd.Timedelta("1 days") if end is None else end
-        ts_start, ts_end = int(start.timestamp()), int(end.timestamp())
-
-        parameter_code = to_list(parameter_code)
-        uri = [
-            f"{self.api}/profiles?start={ts_start}&end={ts_end}&data_type={data_type}&parameter={code}&platform={wmo}"
-            for code in parameter_code]
-
-        def castvariables(response):
-            for iprof, _ in enumerate(response["result"]):
-                response["result"][iprof]["data"] = pd.DataFrame(
-                    response["result"][iprof]["data"],
-                    columns=["value", "zvalue", "valueqc", "zlevel", "zqc"],
-                )
-                response["result"][iprof]["parameter"] = int(
-                    response["result"][iprof]["parameter"]
-                )
-            return response
-
-        # Fetch data
-        data = self.fs.open_mfjson(uri, preprocess=castvariables)
-        if len(parameter_code) > 1:
-            return data
-        else:
-            return data[0]
-
-    def profiles_parameters(self, observation_id: Union[int, List] = None):
-        """Retrieve parameter codes for one or more profile ID"""
-        observation_id = to_list(observation_id)
-        uri = [
-            f"{self.api}/profiles_parameters?observation_id={obs}"
-            for obs in observation_id
-        ]
-
-        data = self.fs.open_mfjson(uri)
-        if len(observation_id) == 1:
-            return data[0]
-        else:
-            return data
-
+    @lru_cache
     def platform(self, wmo: int = None) -> pd.DataFrame:
         """Retrieve one float metadata
 
@@ -224,12 +193,70 @@ class CoriolisAPI:
                 response.update({record["platform_code"]: record})
         return response
 
+    @lru_cache
     def observations_id(self,
                         wmo: int,
-            start: pd.Timestamp,):
+                        start: pd.Timestamp,):
         """Retrieve one observation ID"""
         return self.profiles(wmo, start)['result'][0]['observationId']
 
+    @lru_cache
+    def profiles(
+            self,
+            wmo: int,
+            start: pd.Timestamp,
+            end: pd.Timestamp = None,
+            parameter_code: Union[int, List] = 35,
+    ) -> pd.DataFrame:
+        """Retrieve one or more parameter data for one or more profile
+
+        Returns
+        -------
+        :class:`pd.DataFrame`
+        """
+        data_type = "PF"  # Our use case for Argo profiles
+        end = start + pd.Timedelta("1 days") if end is None else end
+        ts_start, ts_end = int(start.timestamp()), int(end.timestamp())
+
+        parameter_code = to_list(parameter_code)
+        uri = [
+            f"{self.api}/profiles?start={ts_start}&end={ts_end}&data_type={data_type}&parameter={code}&platform={wmo}"
+            for code in parameter_code]
+
+        def castvariables(response):
+            for iprof, _ in enumerate(response["result"]):
+                response["result"][iprof]["data"] = pd.DataFrame(
+                    response["result"][iprof]["data"],
+                    columns=["value", "zvalue", "valueqc", "zlevel", "zqc"],
+                )
+                response["result"][iprof]["parameter"] = int(
+                    response["result"][iprof]["parameter"]
+                )
+            return response
+
+        # Fetch data
+        data = self.fs.open_mfjson(uri, preprocess=castvariables)
+        if len(parameter_code) > 1:
+            return data
+        else:
+            return data[0]
+
+    @lru_cache
+    def profiles_parameters(self, observation_id: Union[int, List] = None):
+        """Retrieve parameter codes for one or more profile ID"""
+        observation_id = to_list(observation_id)
+        uri = [
+            f"{self.api}/profiles_parameters?observation_id={obs}"
+            for obs in observation_id
+        ]
+
+        data = self.fs.open_mfjson(uri)
+        if len(observation_id) == 1:
+            return data[0]
+        else:
+            return data
+
+    @lru_cache
     def profiles_by_id(self, observation_id: Union[int, List] = None):
         observation_id = to_list(observation_id)
         uri = [f"{self.api}/profiles_by_id?id={obs}" for obs in observation_id]
