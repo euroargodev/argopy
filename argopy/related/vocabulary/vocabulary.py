@@ -80,12 +80,6 @@ class ArgoReferenceTable:
     """
     __slots__ = ['nvs', 'identifier', 'parameter', 'long_name', 'description', 'version', 'date', 'uri', 'n_values', 'values', '_Vocabulary2Parameter', '_df', '_d']
 
-    # name: str = None
-    # """Name of this Reference Table (eg 'AANDERAA_OPTODE_3835')"""
-    #
-    # nvs: dict = None
-    # """Raw NVS json data"""
-
     def __init__(self, identifier: str | None = None, *args, **kwargs) -> None:
         # Internal placeholders:
         self._Vocabulary2Parameter = Asset.load('vocabulary:mapping')['data']['Vocabulary2Parameter']

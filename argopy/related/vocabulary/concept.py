@@ -50,17 +50,11 @@ class ArgoReferenceValue:
         avc.parameter  # The netcdf parameter this concept applies to (eg 'SENSOR_MODEL')
         avc.reference  # The reference table this concept belongs to, can be used on a ArgoReferenceTable (eg 'R27')
 
+        # Attributes can also be obtained with indexing:
+        avc['definition']
+
     """
     __slots__ = ['nvs', 'name', 'reference', 'long_name', 'definition', 'deprecated', 'version', 'date', 'uri', 'urn', 'parameter']
-
-    # nvs: dict = None
-    # """Raw NVS json data"""
-    #
-    # name: str = None
-    # """Name of this Reference Value (eg 'AANDERAA_OPTODE_3835')"""
-    #
-    # reference: str = None
-    # """Reference Table this concept belongs to (eg 'R25')"""
 
     def __init__(self, name: str | None = None, reference: str | None = None, **kwargs) -> None:
         self.name = name
@@ -108,6 +102,11 @@ class ArgoReferenceValue:
         summary.append(f"reference: table {self.reference}")
         summary.append(f'deprecated: {"True" if self.deprecated else "False"}')
         return "\n".join(summary)
+
+    def __getitem__(self, key):
+        if key in self.__slots__:
+            return getattr(self, key)
+        raise ValueError(f"Unknown attribute '{key}'")
 
     @classmethod
     def from_urn(cls, urn: str = None) -> 'ArgoReferenceValue':

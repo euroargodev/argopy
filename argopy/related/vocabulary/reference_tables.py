@@ -5,8 +5,7 @@ from pathlib import Path
 
 from ...stores import httpstore, filestore
 from ...options import OPTIONS
-from ...utils import urnparser
-from ...utils import Asset
+from ...utils import urnparser, Asset, deprecated
 
 
 VALID_REF = Asset.load('vocabulary:description')['data']['valid_ref']
@@ -218,6 +217,7 @@ class NVScollection:
         return results
 
 
+@deprecated("Replaced by ArgoReference", version='1.3.1')
 class ArgoNVSReferenceTables(NVScollection):
     """Argo Reference Tables
 

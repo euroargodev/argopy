@@ -30,9 +30,11 @@ class NVS(NVSProto):
                 cachedir=kwargs.get("cachedir", OPTIONS["cachedir"]),
                 timeout=kwargs.get("timeout", OPTIONS["api_timeout"]),
             )
+            self.nvs = kwargs.get("nvs", OPTIONS["nvs"])
+            self._vocabulary = self._ls_vocabulary()
             self._initialized = True
         self.uid = id(self)
-        self.nvs = kwargs.get("nvs", OPTIONS["nvs"])
+
 
     def __setattr__(self, attr, value):
         """Set attribute value, with read-only after instantiation policy for public attributes"""
@@ -120,3 +122,25 @@ class NVS(NVSProto):
     def load_concept(self, conceptid: str, rtid: str | None = None) -> dict:
         url = self.concept2url(conceptid, rtid)
         return self._fs.open_json(url)
+
+    def _ls_vocabulary(self):
+        data = self._fs.open_json(f'{self.nvs}/?_profile=nvs&_mediatype=application/ld+json')
+
+        def is_admt(item):
+            return item['dc:creator'] == 'Argo Data Management Team'
+
+        id_list = [item for item in data['@graph'] if is_admt(item)]
+
+        valid_ref = []
+        for item in id_list:
+            valid_ref.append(item['@id'].replace(f"{self.nvs}/", "").replace("/current/", ""))
+        #     valid_ref.append({
+        #         'id': item['@id'].replace("http://vocab.nerc.ac.uk/collection/", "").replace("/current/", ""),
+        #         'altLabel': item['skos:altLabel'],
+        #         'prefLabel': item['skos:prefLabel'],
+        #         'description': item['dc:description'],
+        #         'date': item['dc:date'],
+        #         'uri': item['@id'],
+        #     })
+        # df = pd.DataFrame(valid_ref).sort_values('id', axis=0).reset_index(drop=1)
+        return valid_ref
