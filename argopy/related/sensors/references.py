@@ -75,7 +75,7 @@ class SensorReferenceHolder(ABC):
         """
         df = []
         for p in (
-            Path(path2assets).joinpath("nvs_R25_R27").glob("NVS_R25_R27_mappings_*.txt")
+            Path(path2assets).joinpath("vocabulary", "mapping", "R25_R27").glob("NVS_R25_R27_mappings_*.txt")
         ):
             df.append(
                 filestore().read_csv(

@@ -732,7 +732,7 @@ def asset_vocabulary_description():
 
 
 def asset_vocabulary_mapping():
-    # Retrieve all reference tables altlabels and create a mapping between Concept and Vocabulary
+    # Retrieve all reference tables altlabels and create a mapping between Vocabulary and both Concept and Argo Parameter
 
     nvs = ArgoNVSReferenceTables(cache=True)
     all_vocabulary = nvs.all_tbl_name
@@ -746,8 +746,8 @@ def asset_vocabulary_mapping():
 
     save_data(
         file="vocabulary:mapping",
-        name="Mapping of NVS Vocabulary onto Concept and Parameter",
-        long_name="Dictionaries to easily go from reference tables (Vocabulary) to netcdf parameter names and possible values (Concept)",
+        name="Mapping of NVS Vocabulary onto NVS Concept and Argo Parameter",
+        long_name="Dictionaries to easily go from reference tables (Vocabulary) to netcdf Parameter names and possible values (Concept)",
         data={
             'Vocabulary2Parameter': dict(sorted(Vocabulary2Parameter.items())),
             'Vocabulary2Concept': dict(sorted(Vocabulary2Concept.items())),
@@ -805,7 +805,7 @@ def asset_vocabulary_offline_concepts():
                 url = f"{k['@id']}?_profile=nvs&_mediatype=application/ld+json"
                 to_retrieve.append(url)
 
-    print(f"Will now retrieve NVS from {len(to_retrieve)} concepts")  # = 2048
+    print(f"Will now retrieve NVS for {len(to_retrieve)} concepts")  # = 2048
 
     def func(data):
         urn = urnparser(data['skos:notation'])
