@@ -36,14 +36,17 @@ class CanyonB(ArgoAccessorExtension):
         ds = ArgoSet.to_xarray()
 
     Once input data are loaded, make all or selected parameters predictions with or without specifying input errors
-    on pressure (epres, in dbar), temperature (etemp, in °C), salinity (epsal, in PSU) and oxygen (edoxy, in micromole/kg):
+    on pressure (epres, in dbar), temperature (etemp, in °C), salinity (epsal, in PSU) and oxygen (edoxy, in micromole/kg).
+    For interested users, uncertainties on predicted parameters can also be included.
 
     .. code-block:: python
 
         ds.argo.canyon_b.predict()
         ds.argo.canyon_b.predict('PO4')
         ds.argo.canyon_b.predict(['PO4', 'NO3'])
+        ds.argo.canyon_b.predict(['PO4', 'NO3'], include_uncertainties=True)
         ds.argo.canyon_b.predict(['PO4', 'NO3'], epres=0.5, etemp=0.005, epsal=0.005, edoxy=0.01)
+        ds.argo.canyon_b.predict(['PO4', 'NO3'], epres=0.5, etemp=0.005, epsal=0.005, edoxy=0.01, include_uncertainties=True)
 
     By default, if no input errors are specified, the following default values are used:
         - epres = 0.5 dbar
