@@ -3,6 +3,7 @@ import logging
 
 import numpy as np
 import xarray as xr
+import pandas as pd
 
 from argopy import DataFetcher
 from mocked_http import mocked_server_address
@@ -298,3 +299,158 @@ def test_predict_with_array_edoxy(fetcher, mocked_erddapserver):
     for param in ['AT', 'DIC', 'pHT', 'pCO2']:
         assert param in result
         assert result[param].shape[0] == ds.argo.N_POINTS
+
+
+@pytest.mark.parametrize(
+      "param,expected_unit",
+      [
+          ("PO4", "micromole/kg"),
+          ("NO3", "micromole/kg"),
+          ("pHT", "insitu total scale"),
+          ("pCO2", "micro atm"),
+      ],
+  )
+def test_get_param_attrs(fetcher, param, expected_unit, mocked_erddapserver):
+    """Test parameter attributes are correctly defined"""
+    ds = fetcher.to_xarray()
+    attrs = ds.argo.content.get_param_attrs(param)
+
+    assert 'units' in attrs
+    assert 'long_name' in attrs
+    assert 'comment' in attrs
+    assert 'reference' in attrs
+    assert attrs['units'] == expected_unit
+
+
+@pytest.mark.parametrize(
+    "param",
+    ["AT", "DIC", "pHT", "pCO2"],
+    indirect=False,
+)
+def test_predict_single_point(fetcher, param, mocked_erddapserver):
+    """Test CONTENT prediction for a single-point dataset"""
+    ds = fetcher.to_xarray()
+    # Select a single point
+    ds_single = ds.where(ds['N_POINTS'] == 1, drop=True)
+
+    # Predict
+    ds_result = ds_single.argo.content.predict()
+
+    # Check that prediction was added
+    assert param in ds_result
+    assert ds_result[param].size == 1
+
+
+@pytest.mark.parametrize(
+    "param",
+    ["AT", "pCO2"],
+    indirect=False,
+)
+def test_predict_with_uncertainties(fetcher, param, mocked_erddapserver):
+    """Test CONTENT prediction with include_uncertainties=True"""
+    ds = fetcher.to_xarray()
+
+    # Predict with uncertainties
+    ds_result = ds.argo.content.predict(include_uncertainties=True)
+
+    # Check that prediction and uncertainties were added
+    assert param in ds_result
+    assert f"{param}_SIGMA" in ds_result
+    assert f"{param}_SIGMA_MIN" in ds_result
+
+
+def test_predict_single_point_with_uncertainties(fetcher, mocked_erddapserver):
+    """Test CONTENT prediction for a single-point dataset with uncertainties"""
+    ds = fetcher.to_xarray()
+    # Select a single point
+    ds_single = ds.where(ds['N_POINTS'] == 1, drop=True)
+
+    param = "AT"
+
+    # Predict with uncertainties
+    ds_result = ds_single.argo.content.predict(include_uncertainties=True)
+
+    # Check that prediction and uncertainties were added
+    assert param in ds_result
+    assert f"{param}_SIGMA" in ds_result
+    assert f"{param}_SIGMA_MIN" in ds_result
+
+    # Check all have size 1
+    assert ds_result[param].size == 1
+    assert ds_result[f"{param}_SIGMA"].size == 1
+    assert ds_result[f"{param}_SIGMA_MIN"].size == 1
+
+
+def test_validate_against_matlab():
+    """Validate CONTENT predictions against reference Matlab implementation values
+    
+    This test uses the reference values from the original Matlab implementation:
+    https://github.com/HCBScienceProducts/CONTENT/blob/9b644d1c61209d2d6f7681e9e1e4864ef1289c0c/CO2CONTENT.m#L45
+
+    Reference case:
+    - Date: 09-Dec-2014 08:45
+    - Location: 17.6° N, -24.3° E
+    - Depth: 180 dbar
+    - Temperature: 16 °C
+    - Salinity: 36.1 psu
+    - Oxygen: 104 µmol O2 kg-1
+    """
+
+    def matlab_ref():
+        """Create a dataset with Matlab reference values"""
+        # Input values
+        biblio_input = {
+            'TIME': pd.to_datetime('09-Dec-2014 08:45'),
+            'LATITUDE': 17.6,
+            'LONGITUDE': -24.3,
+            'PRES': 180.0,
+            'TEMP': 16.0,
+            'PSAL': 36.1,
+            'DOXY': 104.0
+        }
+
+        # Reference predictions from Matlab implementation
+        biblio_predict = [
+            {'param': 'AT', 'ref': 2357.817, 'sigma': 10.215},
+            {'param': 'DIC', 'ref': 2199.472, 'sigma': 9.811},
+            {'param': 'pHT', 'ref': 7.870137, 'sigma': 0.021367},
+            {'param': 'pCO2', 'ref': 639.8477, 'sigma': 34.1077}
+        ]
+
+        def da(key, value):
+            return xr.DataArray(np.atleast_1d(value), dims='N_POINTS', name=key)
+        
+        l = []
+        for p in biblio_predict:
+            l.append(da(p['param'], p['ref']))
+            l.append(da(f"{p['param']}_s", p['sigma']))
+        for p in biblio_input:
+            l.append(da(p, biblio_input[p]))
+        ds = xr.merge(l)
+        ds = ds.set_coords(['LATITUDE', 'LONGITUDE', 'TIME'])
+        ds['PLATFORM_NUMBER'] = da('PLATFORM_NUMBER', 100000)
+        ds['CYCLE_NUMBER'] = da('CYCLE_NUMBER', 1)
+        ds['DIRECTION'] = da('DIRECTION', 'A')
+        return ds
+    
+    # Get reference values:
+    dsref = matlab_ref()
+
+    # Make predictions
+    dspredict = matlab_ref().argo.content.predict()
+
+    results = []
+    nsigma_test = 4
+    for key in ['AT', 'DIC', 'pHT', 'pCO2']:
+        vref, vsigma = dsref[key].item(), dsref[f'{key}_s'].item()
+        vpredict = dspredict[key].item()
+        results.append({'param': key,
+                        'ref': f"{vref:0.4f}",
+                        'sigma': f"{vsigma:0.4f}",
+                        'canyon-b': f"{vpredict:0.4f}",
+                        f'diff<sigma/{nsigma_test}': vpredict < vref + vsigma / nsigma_test and vpredict > vref - vsigma / nsigma_test,
+                        'relative diff (%)': 100 * np.abs(vpredict - vref) / vref
+                        })
+    df = pd.DataFrame(results)
+    print(f"CONTENT predictions validation against Matlab implementation:\n{df}")
+    assert np.all(df[f'diff<sigma/{nsigma_test}'])

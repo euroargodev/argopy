@@ -4,6 +4,7 @@ from typing import Optional, Union
 
 try:
     import PyCO2SYS as pyco2
+
     HAS_PYCO2SYS = True
 except ImportError:
     HAS_PYCO2SYS = False
@@ -43,12 +44,15 @@ class CONTENT(ArgoAccessorExtension):
         ds = ArgoSet.to_xarray()
 
     Once input data are loaded, make parameters predictions with or without specifying input errors
-    on pressure (epres, in dbar), temperature (etemp, in °C), salinity (epsal, in PSU) and oxygen (edoxy, in micromole/kg):
+    on pressure (epres, in dbar), temperature (etemp, in °C), salinity (epsal, in PSU) and oxygen (edoxy, in micromole/kg).
+    For interested users, uncertainties on predicted parameters can also be included.
 
     .. code-block:: python
 
         ds.argo.content.predict()
+        ds.argo.content.predict(include_uncertainties=True)
         ds.argo.content.predict(epres=0.5, etemp=0.005, epsal=0.005, edoxy=0.01)
+        ds.argo.content.predict(epres=0.5, etemp=0.005, epsal=0.005, edoxy=0.01, include_uncertainties=True)
         ds.argo.content.predict(epres=0.5, etemp=0.005, epsal=0.005, edoxy=np.array([...]))
 
     By default, if no input errors are specified, the following default values are used:
@@ -688,7 +692,7 @@ class CONTENT(ArgoAccessorExtension):
         out : dict
             Final output dictionary containing:
             - {param}: weighted mean values for each carbonate parameter
-            - {param}_sigma: total uncertainty, that is the sum of sigma_min and sigma_mean where :
+            - {param}_sigma: total uncertainty of the CONTENT estimate, that is the sum of sigma_min and sigma_mean where :
                 - sigma_mean = standard deviation associated with the weighted mean (of the four carbonate system variable estimates)
                 - sigma_min = standard deviation propagated from the uncertainty of the terms of the weighted mean (see Eq. 6 in [1]_)
             - {param}_sigma_min: standard deviation propagated from the uncertainty of the terms of the weighted mean (see Eq. 6 in [1]_)
@@ -787,7 +791,7 @@ class CONTENT(ArgoAccessorExtension):
             "PO4",
             "SiOH4",
             "NO3",
-        ]  # Technically, NO3 is not needed for CONTENT but I included for the final output.
+        ]  # Technically, NO3 is not needed for CONTENT but I included it for the final output.
         canyonb_results = self.get_canyon_b_raw_predictions(
             params=params_to_predict, epres=epres, etemp=etemp, epsal=epsal, edoxy=edoxy
         )
@@ -827,6 +831,7 @@ class CONTENT(ArgoAccessorExtension):
         etemp: Optional[float] = None,
         epsal: Optional[float] = None,
         edoxy: Optional[Union[float, np.ndarray]] = None,
+        include_uncertainties: Optional[bool] = False,
     ) -> xr.Dataset:
         """
         Make predictions using the CONTENT method.
@@ -837,6 +842,8 @@ class CONTENT(ArgoAccessorExtension):
             Input errors
         edoxy : float or np.ndarray, optional
             Oxygen input error (default: 1% of doxy)
+        include_uncertainties : bool, optional
+            If True, include uncertainty estimates for each predicted parameter
 
         Returns
         -------
@@ -850,9 +857,8 @@ class CONTENT(ArgoAccessorExtension):
         for param in ["NO3", "PO4", "SiOH4"]:
             self._obj[param] = xr.zeros_like(self._obj["TEMP"])
             self._obj[param].attrs = self.get_param_attrs(param)
-            self._obj[param].values = (
-                prediction["canyon_b_raw"][param][param].astype(np.float32).squeeze()
-            )
+            values = prediction["canyon_b_raw"][param][param].astype(np.float32).squeeze()
+            self._obj[param].values = np.atleast_1d(values)
 
         # Update history for nutrients
         if self._argo:
@@ -864,7 +870,27 @@ class CONTENT(ArgoAccessorExtension):
         for param in self._parameters:
             self._obj[param] = xr.zeros_like(self._obj["TEMP"])
             self._obj[param].attrs = self.get_param_attrs(param)
-            self._obj[param].values = prediction[param].astype(np.float32).squeeze()
+            values = prediction[param].astype(np.float32).squeeze()
+            self._obj[param].values = np.atleast_1d(values)
+
+            if include_uncertainties:
+                # sigma
+                self._obj[f"{param}_SIGMA"] = xr.zeros_like(self._obj[param])
+                self._obj[f"{param}_SIGMA"].attrs = {
+                    "long_name": f"Total uncertainty on {param} using CONTENT",
+                    "units": self._obj[param].attrs.get("units", ""),
+                }
+                values = prediction[f"{param}_sigma"].astype(np.float32).squeeze()
+                self._obj[f"{param}_SIGMA"].values = np.atleast_1d(values)
+
+                # sigma min
+                self._obj[f"{param}_SIGMA_MIN"] = xr.zeros_like(self._obj[param])
+                self._obj[f"{param}_SIGMA_MIN"].attrs = {
+                    "long_name": f"Uncertainty propagated from the input variables on {param} using CONTENT",
+                    "units": self._obj[param].attrs.get("units", ""),
+                }
+                values = prediction[f"{param}_sigma_min"].astype(np.float32).squeeze()
+                self._obj[f"{param}_SIGMA_MIN"].values = np.atleast_1d(values)
 
         # Update history for carbonate parameters
         if self._argo:
