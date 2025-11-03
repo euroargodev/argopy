@@ -447,7 +447,7 @@ def test_validate_against_matlab():
         results.append({'param': key,
                         'ref': f"{vref:0.4f}",
                         'sigma': f"{vsigma:0.4f}",
-                        'canyon-b': f"{vpredict:0.4f}",
+                        'CONTENT': f"{vpredict:0.4f}",
                         f'diff<sigma/{nsigma_test}': vpredict < vref + vsigma / nsigma_test and vpredict > vref - vsigma / nsigma_test,
                         'relative diff (%)': 100 * np.abs(vpredict - vref) / vref
                         })
