@@ -320,6 +320,5 @@ def test_validate_against_matlab():
                         'relative diff (%)': 100 * np.abs(vpredict - vref) / vref
                         })
     df = pd.DataFrame(results)
-    max_rel_diff = df['relative diff (%)'].max()
     print(f"CANYON-B predictions validation against Matlab implementation:\n{df}")
-    assert max_rel_diff < 0.01 # arbitrary threshold of 0.01% maximum relative difference
+    assert np.all(df[f'diff<sigma/{nsigma_test}'])
