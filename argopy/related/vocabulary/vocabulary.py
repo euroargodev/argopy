@@ -30,8 +30,10 @@ class ArgoReferenceTable:
 
         from argopy import ArgoReferenceTable
 
-        ref = ArgoReferenceTable('R25')     # Use Reference Table identifier
-        ref = ArgoReferenceTable('SENSOR')  # Or use an Argo parameter documented by one of the Argo reference tables
+        # Use an Argo parameter name, documented by one of the Argo reference tables:
+        ref = ArgoReferenceTable('SENSOR')
+        # or a reference table identifier:
+        ref = ArgoReferenceTable('R25')
 
         # Reference Table attributes:
         ref.identifier  # Reference Table ID

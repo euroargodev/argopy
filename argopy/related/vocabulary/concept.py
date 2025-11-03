@@ -24,10 +24,12 @@ class ArgoReferenceValue:
 
         from argopy import ArgoReferenceValue
 
-        avc = ArgoReferenceValue('AANDERAA_OPTODE_3835')  # One possible value for the Argo parameter 'SENSOR_MODEL'
+        # One possible value for the Argo parameter 'SENSOR_MODEL':
+        avc = ArgoReferenceValue('AANDERAA_OPTODE_3835')
+        # For ambiguous value seen in more than one Reference Table
+        avc = ArgoReferenceValue('4', reference='RT_QC_FLAG')
+        # URN jargon:
         avc = ArgoReferenceValue.from_urn('SDN:R27::AANDERAA_OPTODE_3835')
-
-        avc = ArgoReferenceValue('4', reference='RR2')  # For ambiguous value seen in more than one Reference Table
 
         # Reference Value attributes:
         avc.name
@@ -73,7 +75,7 @@ class ArgoReferenceValue:
     def __init_explicit(self, data: Any) -> None:
         self.nvs = data
         self.name = self.nvs['skos:altLabel']
-        self.reference = urnparser(self.nvs['dce:identifier'])['listid'] # eg 'SDN:R27::UNKNOWN'
+        self.reference = urnparser(self.nvs['dce:identifier'])['listid'] # eg 'dce:identifier' = 'SDN:R27::UNKNOWN'
 
     def __init__(self, name: str, reference: str | None = None, **kwargs) -> None:
         if kwargs.get('data', None) is None:
@@ -91,6 +93,15 @@ class ArgoReferenceValue:
         self.urn = self.nvs["skos:notation"]
         self.parameter = Asset().load('vocabulary:mapping')['data']['Vocabulary2Parameter'][self.reference]
         self.context = self.nvs.get('@context', None)
+
+        # todo: support mapping (https://github.com/OneArgo/ArgoVocabs?tab=readme-ov-file#ivb-mappings)
+        # Relation can be:
+        # "narrower/broader" when there is a hierarchy between the subject and the object
+        # "related" when the subject is related to the object without strict hierarchy
+        # Eg: 'AANDERAA_OPTODE_3830' concept:
+        #  'skos:related': {'@id': 'http://vocab.nerc.ac.uk/collection/R25/current/OPTODE_DOXY/'},
+        #  'skos:broader': {'@id': 'http://vocab.nerc.ac.uk/collection/R26/current/AANDERAA/'},
+
 
     def __setattr__(self, attr, value):
         """Set attribute value, with read-only after instantiation policy for public attributes"""
