@@ -41,10 +41,12 @@ class ArgoReference:
         (nvs.all_tbl_name['R08'].name, nvs.all_tbl_name['R08'].description, nvs.all_tbl_name['R08'].uri)  # hint for backward compatibility
 
         nvs.search()  # Deprecated, replaced by new API
-        nvs.search_tables()  # New API
+        ArgoReference.search(key, in='long_name')  # New API, (default)
 
         nvs.search(txt, where='title')  # Deprecated, replaced by new API with key 'parameter'
-        nvs.search_tables(parameter=txt)  # New API
+        ArgoReference.search(key, in='parameter')  # New API
+
+
 
     .. code-block:: python
 
