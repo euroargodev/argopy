@@ -1,6 +1,8 @@
 import pytest
 import logging
 import numpy as np
+import pandas as pd
+import xarray as xr
 
 from argopy import DataFetcher
 from mocked_http import mocked_server_address
@@ -165,7 +167,6 @@ def test_decimal_year(fetcher, mocked_erddapserver):
           ("pCO2", "micro atm"),
       ],
   )
-
 def test_get_param_attrs(fetcher, param, expected_unit, mocked_erddapserver):
     """Test parameter attributes are correctly defined"""
     ds = fetcher.to_xarray()
@@ -176,3 +177,149 @@ def test_get_param_attrs(fetcher, param, expected_unit, mocked_erddapserver):
     assert 'comment' in attrs
     assert 'reference' in attrs
     assert attrs['units'] == expected_unit
+
+
+@pytest.mark.parametrize(
+    "param",
+    ["PO4", "NO3", "SiOH4", "AT", "DIC", "pHT", "pCO2"],
+    indirect=False,
+)
+def test_predict_single_point(fetcher, param, mocked_erddapserver):
+    """Test CANYON-B prediction for a single-point dataset"""
+    ds = fetcher.to_xarray()
+    # Select a single point
+    ds_single = ds.where(ds['N_POINTS'] == 1, drop=True)
+
+    # Predict
+    ds_result = ds_single.argo.canyon_b.predict(param)
+
+    # Check that prediction was added
+    assert param in ds_result
+    assert ds_result[param].size == 1
+
+
+@pytest.mark.parametrize(
+    "param",
+    ["PO4", "AT", "pCO2"],
+    indirect=False,
+)
+def test_predict_with_uncertainties(fetcher, param, mocked_erddapserver):
+    """Test CANYON-B prediction with include_uncertainties=True"""
+    ds = fetcher.to_xarray()
+
+    # Predict with uncertainties
+    ds_result = ds.argo.canyon_b.predict(param, include_uncertainties=True)
+
+    # Check that prediction and uncertainties were added
+    assert param in ds_result
+    assert f"{param}_ci" in ds_result
+    assert f"{param}_cim" in ds_result
+    assert f"{param}_cin" in ds_result
+    assert f"{param}_cii" in ds_result
+
+
+def test_predict_single_point_with_uncertainties(fetcher, mocked_erddapserver):
+    """Test CANYON-B prediction for a single-point dataset with uncertainties"""
+    ds = fetcher.to_xarray()
+    # Select a single point
+    ds_single = ds.where(ds['N_POINTS'] == 1, drop=True)
+
+    param = "PO4"
+
+    # Predict with uncertainties
+    ds_result = ds_single.argo.canyon_b.predict(param, include_uncertainties=True)
+
+    # Check that prediction and uncertainties were added
+    assert param in ds_result
+    assert f"{param}_ci" in ds_result
+    assert f"{param}_cim" in ds_result
+    assert f"{param}_cin" in ds_result
+    assert f"{param}_cii" in ds_result
+
+    # Check all have size 1
+    assert ds_result[param].size == 1
+    assert ds_result[f"{param}_ci"].size == 1
+    assert ds_result[f"{param}_cim"].size == 1
+    assert ds_result[f"{param}_cin"].size == 1
+    assert ds_result[f"{param}_cii"].size == 1
+
+
+def test_validate_against_matlab():
+    """Validate CANYON-B predictions against reference Matlab implementation values
+
+    This test uses the reference values from the original Matlab implementation:
+    https://github.com/HCBScienceProducts/CANYON-B/blob/a5b1efce24fcffc8b9e6dd3a0d1e54fa384a01d5/CANYONB.m#L43
+
+    Reference case:
+    - Date: 09-Dec-2014 08:45
+    - Location: 17.6° N, -24.3° E
+    - Depth: 180 dbar
+    - Temperature: 16 °C
+    - Salinity: 36.1 psu
+    - Oxygen: 104 µmol O2 kg-1
+    """
+
+    def matlab_ref():
+        """Create a dataset with Matlab reference values"""
+        # Input values
+        biblio_input = {
+            'TIME': pd.to_datetime('09-Dec-2014 08:45'),
+            'LATITUDE': 17.6,
+            'LONGITUDE': -24.3,
+            'PRES': 180.0,
+            'TEMP': 16.0,
+            'PSAL': 36.1,
+            'DOXY': 104.0
+        }
+
+        # Reference predictions from Matlab implementation
+        biblio_predict = [
+            {'param': 'NO3', 'ref': 17.91522, 'sigma': 1.32494}, # sigma represents the parameter uncertainty
+            {'param': 'PO4', 'ref': 1.081163, 'sigma': 0.073566},
+            {'param': 'SiOH4', 'ref': 5.969813, 'sigma': 2.485283},
+            {'param': 'AT', 'ref': 2359.331, 'sigma': 9.020},
+            {'param': 'DIC', 'ref': 2197.927, 'sigma': 9.151},
+            {'param': 'pHT', 'ref': 7.866380, 'sigma': 0.022136},
+            {'param': 'pCO2', 'ref': 637.0937, 'sigma': 56.5193}
+        ]
+
+ 
+        def da(key, value):
+            return xr.DataArray(np.atleast_1d(value), dims='N_POINTS', name=key)
+
+        l = []
+        for p in biblio_predict:
+            l.append(da(p['param'], p['ref']))
+            l.append(da(f"{p['param']}_s", p['sigma']))
+        for p in biblio_input:
+            l.append(da(p, biblio_input[p]))
+        ds = xr.merge(l)
+        ds = ds.set_coords(['LATITUDE', 'LONGITUDE', 'TIME'])
+        ds['PLATFORM_NUMBER'] = da('PLATFORM_NUMBER', 100000)
+        ds['CYCLE_NUMBER'] = da('CYCLE_NUMBER', 1)
+        ds['DIRECTION'] = da('DIRECTION', 'A')
+        return ds
+
+
+    # Get reference values:
+    dsref = matlab_ref()
+
+    # Make predictions:
+    dspredict = matlab_ref().argo.canyon_b.predict()
+
+    results = []
+    nsigma_test = 4
+    for key in ['NO3', 'PO4', 'SiOH4', 'AT', 'DIC', 'pHT', 'pCO2']:
+        vref, vsigma = dsref[key].item(), dsref[f'{key}_s'].item()
+        vpredict = dspredict[key].item()
+        results.append({'param': key,
+                        'ref': f"{vref:0.4f}",
+                        'sigma': f"{vsigma:0.4f}",
+                        'canyon-b': f"{vpredict:0.4f}",
+                        f'diff<sigma/{nsigma_test}': vpredict < vref + vsigma / nsigma_test and vpredict > vref - vsigma / nsigma_test,
+                        'relative diff (%)': 100 * np.abs(vpredict - vref) / vref
+                        })
+    df = pd.DataFrame(results)
+    max_rel_diff = df['relative diff (%)'].max()
+    print(f"CANYON-B predictions validation against Matlab implementation:\n{df}")
+    assert max_rel_diff < 0.01 # arbitrary threshold of 0.01% maximum relative difference

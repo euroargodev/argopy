@@ -222,12 +222,12 @@ class CanyonB(ArgoAccessorExtension):
                     "lat": self.adjust_arctic_latitude(
                         self._obj["LATITUDE"].values, self._obj["LONGITUDE"].values
                     ),
-                    "lon": self._obj["LONGITUDE"],
-                    "dec_year": self.decimal_year,
-                    "temp": self._obj["TEMP"],
-                    "psal": self._obj["PSAL"],
-                    "doxy": self._obj["DOXY"],
-                    "pres": self._obj["PRES"],
+                    "lon": self._obj["LONGITUDE"].values,
+                    "dec_year": self.decimal_year.values,
+                    "temp": self._obj["TEMP"].values,
+                    "psal": self._obj["PSAL"].values,
+                    "doxy": self._obj["DOXY"].values,
+                    "pres": self._obj["PRES"].values,
                 },
                 orient="index",
             ).T
@@ -640,12 +640,13 @@ class CanyonB(ArgoAccessorExtension):
         etemp: Optional[float] = None,
         epsal: Optional[float] = None,
         edoxy: Optional[Union[float, np.ndarray]] = None,
+        include_uncertainties: Optional[bool] = False,
     ) -> xr.Dataset:
         """
         Make predictions using the CANYON-B method.
 
         This method implements the CANYON-B Bayesian neural network ensemble
-        to estimate oceanic parameters from hydrographic data. 
+        to estimate oceanic parameters from hydrographic data.
 
         Parameters
         ----------
@@ -672,6 +673,8 @@ class CanyonB(ArgoAccessorExtension):
             Oxygen measurement uncertainty in μmol/kg. If not provided,
             defaults to 1% of measured oxygen values. Can be a scalar
             applied to all points or an array matching data dimensions.
+        include_uncertainties : bool, optional
+            If True, include uncertainty estimates for each predicted parameter
 
         Returns
         -------
@@ -700,7 +703,52 @@ class CanyonB(ArgoAccessorExtension):
             # Add predicted parameter to xr.Dataset
             self._obj[param] = xr.zeros_like(self._obj["TEMP"])
             self._obj[param].attrs = self.get_param_attrs(param)
-            self._obj[param].values = out[param].astype(np.float32).squeeze()
+            values = out[param].astype(np.float32).squeeze()
+            self._obj[param].values = np.atleast_1d(values)
+
+            # Add uncertainties if requested
+            if include_uncertainties:
+                # Uncertainty on parameter (ci)
+                self._obj[f"{param}_ci"] = xr.zeros_like(self._obj[param])
+                self._obj[f"{param}_ci"].attrs = self.get_param_attrs(param)
+                self._obj[f"{param}_ci"].attrs[
+                    "long_name"
+                ] = f"Uncertainty on {self.get_param_attrs(param)['long_name']}"
+                values = out[f"{param}_ci"].astype(np.float32).squeeze()
+                self._obj[f"{param}_ci"].values = np.atleast_1d(values)
+
+                # Measurement uncertainty (cim)
+                cim_value = out[f"{param}_cim"]
+                if np.isscalar(cim_value):
+                    self._obj[f"{param}_cim"] = xr.full_like(
+                        self._obj[param], fill_value=float(cim_value), dtype=np.float32
+                    )
+                else:
+                    self._obj[f"{param}_cim"] = xr.zeros_like(self._obj[param])
+                    values = cim_value.astype(np.float32).squeeze()
+                    self._obj[f"{param}_cim"].values = np.atleast_1d(values)
+                self._obj[f"{param}_cim"].attrs = self.get_param_attrs(param)
+                self._obj[f"{param}_cim"].attrs[
+                    "long_name"
+                ] = f"Measurement uncertainty on {self.get_param_attrs(param)['long_name']}"
+
+                # Uncertainty for Bayesian neural network mapping (cin)
+                self._obj[f"{param}_cin"] = xr.zeros_like(self._obj[param])
+                self._obj[f"{param}_cin"].attrs = self.get_param_attrs(param)
+                self._obj[f"{param}_cin"].attrs[
+                    "long_name"
+                ] = f"Uncertainty for Bayesian neural network mapping on {self.get_param_attrs(param)['long_name']}"
+                values = out[f"{param}_cin"].astype(np.float32).squeeze()
+                self._obj[f"{param}_cin"].values = np.atleast_1d(values)
+
+                # Uncertainty due to input errors (cii)
+                self._obj[f"{param}_cii"] = xr.zeros_like(self._obj[param])
+                self._obj[f"{param}_cii"].attrs = self.get_param_attrs(param)
+                self._obj[f"{param}_cii"].attrs[
+                    "long_name"
+                ] = f"Uncertainty due to input errors on {self.get_param_attrs(param)['long_name']}"
+                values = out[f"{param}_cii"].astype(np.float32).squeeze()
+                self._obj[f"{param}_cii"].values = np.atleast_1d(values)
 
         # Return xr.Dataset with predicted variables:
         if self._argo:
