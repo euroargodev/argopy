@@ -28,6 +28,6 @@ class NVSProto(ABC):
     def load_concept(self):
         raise NotImplementedError
 
-    @property
-    def vocabulary(self):
-        return self._vocabulary
+    # @property
+    # def vocabulary(self):
+    #     return self._vocabulary
