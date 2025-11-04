@@ -214,3 +214,20 @@ def to_list(obj):
         else:
             obj = [obj]
     return obj
+
+
+class Encoder(json.JSONEncoder):
+    """A custom JSON encoder robust to pandas and numpy data types"""
+    def default(self, obj):
+        dtypes = (np.datetime64, np.complexfloating, pd.Timestamp)
+        if isinstance(obj, dtypes):
+            return str(obj)
+        elif isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            if any([np.issubdtype(obj.dtype, i) for i in dtypes]):
+                return obj.astype(str).tolist()
+            return obj.tolist()
+        return super(Encoder, self).default(obj)

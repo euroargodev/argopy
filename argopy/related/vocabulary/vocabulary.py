@@ -2,14 +2,25 @@ import inspect
 import pandas as pd
 import numpy as np
 from pandas import DataFrame
+from typing import Any, Literal
+
 
 from ...errors import NoDataLeft, OptionValueError
-from ...utils import Asset, ppliststr
-from .nvs import NVS
+from ...utils import Asset, ppliststr, urnparser, to_list
+from .nvs import NVS, id2urn
 from .concept import ArgoReferenceValue
 
 
-ArgoReferenceValue_attributes = ArgoReferenceValue.attrs()
+class Props:
+    """ ArgoReferenceTable property holder """
+
+    slots = ('nvs', 'identifier', 'parameter', 'long_name', 'description', 'version', 'date', 'uri', 'n_values', 'values', '_Vocabulary2Parameter', '_df', '_d')
+
+    attrs = ('nvs', 'identifier', 'parameter', 'long_name', 'description', 'version', 'date', 'uri', 'values')
+    """A subset of slots, to be publicly exposed"""
+
+    attrs_export = ('identifier', 'parameter', 'long_name', 'description', 'version', 'date', 'uri')
+    """A subset of attrs, to be used in export methods (columns/keys selection)"""
 
 
 class ArgoReferenceTable:
@@ -20,7 +31,7 @@ class ArgoReferenceTable:
 
     .. note::
         ArgoNVSReferenceTables.tbl('R25')  # Deprecated API
-        ArgoReferenceTable('R25').to_dataframe()  # New API, new column names
+        ArgoReferenceTable('R25').to_dataframe()  # New API, not backward compatible (new column names)
 
 
     Examples
@@ -32,19 +43,23 @@ class ArgoReferenceTable:
 
         # Use an Argo parameter name, documented by one of the Argo reference tables:
         ref = ArgoReferenceTable('SENSOR')
+
         # or a reference table identifier:
         ref = ArgoReferenceTable('R25')
 
-        # Reference Table attributes:
-        ref.identifier  # Reference Table ID
-        ref.description # [data['@graph']['@type']=='skos:Collection']["dc:description"]
-        ref.uri         # [data['@graph']['@type']=='skos:Collection']["@id"]
-        ref.version     # [data['@graph']['@type']=='skos:Collection']['owl:versionInfo']
-        ref.date        # [data['@graph']['@type']=='skos:Collection']['dc:date']
-        ref.nvs         # Raw NVS json data
+        # All possible attributes are listed in:
+        ref.attrs
 
-        # Name of the netcdf dataset parameter filled with values from this table:
-        ref.parameter  # eg 'SENSOR'
+        # Reference Table attributes:
+        ref.parameter   # Name of the netcdf dataset parameter filled with values from this table
+        ref.identifier  # Reference Table ID
+        ref.description # [nvs['@graph']['@type']=='skos:Collection']["dc:description"]
+        ref.uri         # [nvs['@graph']['@type']=='skos:Collection']["@id"]
+        ref.version     # [nvs['@graph']['@type']=='skos:Collection']['owl:versionInfo']
+        ref.date        # [nvs['@graph']['@type']=='skos:Collection']['dc:date']
+
+        # Raw NVS json data:
+        ref.nvs
 
     .. code-block:: python
         :caption: Indexing and values
@@ -53,70 +68,101 @@ class ArgoReferenceTable:
         av = ArgoReferenceTable('SENSOR')
 
         # Values (or concept) within this reference table:
-        ref.n_values    # Number of reference values
-        ref.values      # List of reference value names
-        ref.to_referencevalue() # Return a list of ArgoReferenceValue, for all values
+        ref.values      # List of reference values name
+        len(ref)        # Number of reference values
+        ref.to_referencevalue() # Return a list of :class:`ArgoReferenceValue`, for all values
 
         # Check for values:
         'CTD_TEMP_CNDC' in av  # Return True
 
-        # Index by value key:
-        ref['CTD_TEMP_CNDC']  # Return a ArgoReferenceValue instance
+        # Index by value key, like a simple dictionary:
+        ref['CTD_TEMP_CNDC']  # Return a :class:`ArgoReferenceValue` instance
 
-        # Index by value position in the table ordered list of values:
+        # Index by value position, like a simple list:
         ref[0]  # 1st ArgoReferenceValue instance
         ref[-1] # Last ArgoReferenceValue instance
 
+        # Allows to iterate over all values/concepts:
+        for concept in ref:
+        	print(concept.name, concept.urn)
+
     .. code-block:: python
-        :caption: Methods
+        :caption: Export methods
 
         from argopy import ArgoReferenceTable
         ref = ArgoReferenceTable('SENSOR')
 
         # Export table content to a pd.DataFrame:
         ref.to_dataframe()
+        ref.to_dataframe(columns=['name', 'deprecated'])  # Select attributes to export in columns
 
-        # Search methods (return a list of ArgoReferenceValue match):
+        # Export to json structure:
+        # (basic export of NVS data)
+        ref.to_json()  # In memory
+        ref.to_json('referance_table.json')  # To a json file
+
+        # Export to a dictionary:
+        ref.to_dict()
+        ref.to_dict(keys=['name', 'deprecated'])  # Select attributes to export in dictionary keys
+
+    .. code-block:: python
+        :caption: Search the table
+
+        # Search methods (return a list of :class:`ArgoReferenceValue` with match):
+        # Any of the :class:`ArgoReferenceValue` attribute can be searched
         ref.search(name='RAMSES')         # Search in values name
         ref.search(definition='imaging')  # Search in values definition
         ref.search(long_name='TriOS')     # Search in values long name
 
+        # Possible change to output format:
+        ref.search(deprecated=True, output='df')  # To a :class:`pd.DataFrame`
+
     """
-    __slots__ = ['nvs', 'identifier', 'parameter', 'long_name', 'description', 'version', 'date', 'uri', 'n_values', 'values', '_Vocabulary2Parameter', '_df', '_d']
+    __slots__ = Props.slots
+
+    attrs : tuple[str] = Props.attrs
+    """Public attributes"""
+
+    cols : list[str] = list(Props.attrs_export)
+    """Public attributes allowed in export methods"""
 
     def __init__(self, identifier: str | None = None, *args, **kwargs) -> None:
         # Internal placeholders:
-        self._Vocabulary2Parameter = Asset.load('vocabulary:mapping')['data']['Vocabulary2Parameter']
+        self._Vocabulary2Parameter :dict[str, str] = Asset.load('vocabulary:mapping')['data']['Vocabulary2Parameter']
         self._df : pd.DataFrame | None = None  # Dataframe export
         self._d : dict[str, ArgoReferenceValue] | None = {}  # Dictionary of ArgoReferenceValue for all table concept
 
         if identifier in self._Vocabulary2Parameter:
-            self.identifier = identifier
-            self.parameter = self._Vocabulary2Parameter[identifier]
+            self.identifier : str = identifier
+            self.parameter : str = self._Vocabulary2Parameter[identifier]
         elif identifier in self._Vocabulary2Parameter.values():
-            self.parameter = identifier
-            self.identifier = [k for k, v in self._Vocabulary2Parameter.items() if v == identifier][0]
+            self.parameter : str = identifier
+            self.identifier : str = [k for k, v in self._Vocabulary2Parameter.items() if v == identifier][0]
 
         # Once we have an id in 'name' we can load raw data from NVS
-        self.nvs = NVS().load_vocabulary(self.identifier)
+        self.nvs : dict[str, Any] = NVS().load_vocabulary(self.identifier)
 
         # And populate all attributes:
-        Collection = [item for item in self.nvs['@graph'] if item['@type'] == 'skos:Collection'][0]
+        Collection : dict[str, str] = [item for item in self.nvs['@graph'] if item['@type'] == 'skos:Collection'][0]
+        """The NVS skos collection for this vocabulary"""
 
-        self.long_name = Collection['skos:prefLabel']
-        self.description = Collection["dc:description"]
-        self.version = Collection['owl:versionInfo']
-        self.date = pd.to_datetime(Collection['dc:date'])
-        self.uri = Collection["@id"]
-        self.n_values = len(Collection['skos:member'])
+        self.long_name : str = Collection['skos:prefLabel']
+        self.description : str = Collection["dc:description"]
+        self.version : str = Collection['owl:versionInfo']
+        self.date : pd.Timestamp = pd.to_datetime(Collection['dc:date'])
+        self.uri : str = Collection["@id"]
 
-        # Two methods to retrieve the list of concept names:
-        # From the skos:Collection list of members:
-        # >>> values = [m['@id'].split("/")[-2] for m in Collection['skos:member']]
-        # From skos:Concept in the @graph:
-        # >>> values = [c['skos:altLabel'] for c in [item for item in self['@graph'] if item['@type'] == 'skos:Concept']]
-        # We stick to Collection for consistency with other attributes gathering:
-        self.values = [m['@id'].split("/")[-2] for m in Collection['skos:member']]
+        # Retrieve the list of concept names
+        """
+        Twp methods:
+        1- From the skos:Collection list of members:
+            >>> values = [m['@id'].split("/")[-2] for m in Collection['skos:member']]
+        2- From skos:Concept in the @graph:
+            >>> values = [c['skos:altLabel'] for c in [item for item in self['@graph'] if item['@type'] == 'skos:Concept']]
+        We stick to Collection for consistency with other attributes gathering
+        """
+        self.values : list[str] = [m['@id'].split("/")[-2] for m in Collection['skos:member']]
+        """List of this Reference Table value names, aka list of Concept names"""
         self.values.sort()
 
     def __setattr__(self, attr, value):
@@ -146,8 +192,13 @@ class ArgoReferenceTable:
             yield self[ii]
 
     def __getitem__(self, key):
-        """Get a reference value"""
-        ref_value = None
+        """Get a table reference value object
+
+        Reference Values are internally stored in a dictionary.
+        In a lazy approach, only Reference Values reached with this '__getitem__' progressively populates the dictionary, which is empty at instantiation.
+        Dictionary value is returned if a Reference Value has already been reached.
+        """
+        ref_value : str | None = None
         try:
             ref_value = self.values[key]
         except:
@@ -155,13 +206,20 @@ class ArgoReferenceTable:
                 ref_value = key
         if ref_value is not None:
             if self._d.get(ref_value, None) is None:
-                # The naive method is to call ArgoReferenceValue(name, reference):
-                # self._d.update({ref_value: ArgoReferenceValue(ref_value, reference=self.identifier)})
-                # But this is very slow for large reference tables because it requires one NVS fetch for
-                # each concept.
-                # This naive method is not necessary since all concepts data are already in self.nvs.
-                data = [item for item in self.nvs['@graph'] if item['@type'] == 'skos:Concept' and item['skos:altLabel'] == ref_value]
+                """
+                The naive method is to call here is ArgoReferenceValue(name, reference):
+                >>> self._d.update({ref_value: ArgoReferenceValue(ref_value, reference=self.identifier)})
+                But this is could very slow for large reference tables because it triggers one NVS fetch for
+                each concept.
+                Hopefully this naive method is not necessary since all concepts data are already in `self.nvs`:
+                """
+                data : list[dict] = [item for item in self.nvs['@graph'] if item['@type'] == 'skos:Concept' and item['skos:altLabel'] == ref_value]
                 if len(data) == 1:
+                    self._d.update({ref_value: ArgoReferenceValue.from_dict(data=data[0])})
+                else:
+                    # Temporary fix for https://github.com/OneArgo/ArgoVocabs/issues/186:
+                    data = [item for item in self.nvs['@graph'] if
+                            item['@type'] == 'skos:Concept' and urnparser(id2urn(item['@id']))['termid'] == ref_value]
                     self._d.update({ref_value: ArgoReferenceValue.from_dict(data=data[0])})
             return self._d[ref_value]
         raise ValueError(f"Unknown index '{key}'")
@@ -172,7 +230,7 @@ class ArgoReferenceTable:
     def to_dataframe(self, columns : list[str] | None = None) -> DataFrame | None:
         """Export all reference values to a :class:`pd.DataFrame`
 
-        Default columns are given by :class:`ArgoReferenceValue` attributes.
+        Default column names are given by the :attr:`ArgoReferenceValue.cols` attribute.
 
         Parameters
         ----------
@@ -183,23 +241,24 @@ class ArgoReferenceTable:
         -------
         :class:`pd.DataFrame`
         """
-
-        # Note that we could create a dataframe directly from self.nvs json data
-        # But we want to stick to using ArgoReferenceValue attributes
-        # so that there is only place determining how to map nvs json jargon onto user-friendly facade
-        # i.e. the ArgoReferenceValue.
+        """
+        Also note that we could create a dataframe directly from self.nvs json data
+        But by design, we want to stick to using ArgoReferenceValue attributes,
+        so that there is only place determining how to map nvs json jargon onto a user-friendly facade,
+        and that is the ArgoReferenceValue class.
+        """
         if columns is None:
-            cols = ArgoReferenceValue_attributes
+            cols = ArgoReferenceValue.cols
         else:
             cols = []
-            for c in columns:
-                if c not in ArgoReferenceValue_attributes:
+            for c in to_list(columns):
+                if c not in ArgoReferenceValue.attrs:
                     raise OptionValueError(
-                        f"Invalid columns name '{c}'. Valid values are: {ppliststr(ArgoReferenceValue_attributes)}")
+                        f"Invalid columns name '{c}'. Valid values are: {ppliststr(ArgoReferenceValue.attrs)}")
                 cols.append(c)
             if len(cols) == 0:
                 raise OptionValueError(
-                    f"No valid column names in '{ppliststr(columns)}'. Valid values are: {ppliststr(ArgoReferenceValue_attributes, last='or')}")
+                    f"No valid column names in '{ppliststr(columns)}'. Valid values are: {ppliststr(ArgoReferenceValue.attrs, last='or')}")
 
         def todf(columns: list[str]):
             dict_list = []
@@ -264,7 +323,7 @@ class ArgoReferenceTable:
             kwargs.pop('output')
 
         # Search key validation:
-        keys = [key for key in kwargs if key in ArgoReferenceValue_attributes]
+        keys = [key for key in kwargs if key in ArgoReferenceValue.attrs]
 
         # Search using the dataframe view of this table:
         df = self.to_dataframe()
@@ -285,3 +344,9 @@ class ArgoReferenceTable:
                 return df.reset_index(drop=True)
         else:
             raise NoDataLeft("This search return no data")
+
+    def to_json(self):
+        raise NotImplementedError
+
+    def to_dict(self):
+        raise NotImplementedError

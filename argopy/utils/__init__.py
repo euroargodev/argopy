@@ -18,7 +18,7 @@ from .checkers import (  # noqa: F401
     erddap_ds_exists,
     has_aws_credentials,
 )
-from .casting import DATA_TYPES, cast_Argo_variable_type, to_list
+from .casting import DATA_TYPES, cast_Argo_variable_type, to_list, Encoder
 from .decorators import deprecated, doc_inherit, register_accessor
 from .lists import (
     list_available_data_src,
@@ -92,6 +92,7 @@ __all__ = (
     "DATA_TYPES",
     "cast_Argo_variable_type",
     "to_list",
+    "Encoder",
     # Decorators:
     "deprecated",
     "doc_inherit",

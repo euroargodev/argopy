@@ -72,6 +72,15 @@ class SensorReferenceHolder(ABC):
         """Load from static assets file the NVS R25 to R27 key mappings
 
         These mapping files were download from https://github.com/OneArgo/ArgoVocabs/issues/156.
+
+        Column names: object_NVS_table, object_concept_id, predicate_code, subject_NVS_table, subject_concept_id, modification_type (I for Insertion)
+
+        > A "predicate" indicates the relationship type between the "subject" and the "object"
+        >
+        > For "broader/narrower" relationship, the "BRD" predicate code is used
+        >
+        > For "related" relationship, the "MIN" predicate code is used (minor match)
+
         """
         df = []
         for p in (
@@ -81,11 +90,11 @@ class SensorReferenceHolder(ABC):
                 filestore().read_csv(
                     p,
                     header=None,
-                    names=["origin", "model", "?", "destination", "type", "??"],
+                    names=["origin", "model", "predicate", "destination", "type", "modification"],
                 )
             )
         df = pd.concat(df)
-        for col in ['origin', 'destination', 'type', 'model', '?', '??']:
+        for col in ['origin', 'destination', 'type', 'model', 'predicate', 'modification']:
             df[col] = df[col].apply(lambda x: x.strip())
         df = df.reset_index(drop=True)
         self._r27_to_r25 : pd.DataFrame | None = df
