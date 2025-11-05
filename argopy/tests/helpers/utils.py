@@ -190,6 +190,11 @@ has_cartopy, requires_cartopy = _importorskip("cartopy")
 has_ipython, requires_ipython = _importorskip("IPython")
 has_ipywidgets, requires_ipywidgets = _importorskip("ipywidgets")
 
+##############
+# EXTENSIONS #
+##############
+has_pyco2sys, requires_pyco2sys = _importorskip("PyCO2SYS")
+
 #################
 # Ocean-OPS API #
 #################

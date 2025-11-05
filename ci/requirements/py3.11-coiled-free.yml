@@ -19,6 +19,7 @@ dependencies:
 
 # EXT.UTIL:
   - gsw
+  - pyco2sys
   - tqdm
 
 # EXT.FILES:
