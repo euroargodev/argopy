@@ -20,6 +20,11 @@ The first class allows users to make predictions of the water-column nutrient co
 using the CANYON-B model while the second class provides improved predictions of carbonate system variables using the CONTENT model (see https://doi.org/10.3389/fmars.2018.00328 for details).
 (:pr:`535` and :pr:`542`) by |fricour|.
 
+Internals
+^^^^^^^^^
+
+.. |fricour| replace:: `F. Ricour <https://www.github.com/fricour>`__
+
 v1.3.1 (22 Oct. 2025)
 ---------------------
 
