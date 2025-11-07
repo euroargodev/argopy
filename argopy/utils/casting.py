@@ -128,10 +128,11 @@ def cast_Argo_variable_type(ds, overwrite=True):
                 da = cast_this(da, str)
 
             # Address weird string values:
-            # (replace missing or nan values by a '0' that will be cast as an integer later
+            # (replace missing or nan values by fillvalue that will be cast as an integer later
+            fillvalue = "9"
             if da.dtype == float:
                 val = da.astype(str).values
-                val[np.where(val == "nan")] = "0"
+                val[np.where(val == "nan")] = fillvalue
                 da.values = val
                 da = cast_this(da, float)
 
@@ -139,12 +140,12 @@ def cast_Argo_variable_type(ds, overwrite=True):
                 ii = (
                     da == "   "
                 )  # This should not happen, but still ! That's real world data
-                da = xr.where(ii, "0", da)
+                da = xr.where(ii, fillvalue, da)
 
                 ii = (
                     da == "nan"
                 )  # This should not happen, but still ! That's real world data
-                da = xr.where(ii, "0", da)
+                da = xr.where(ii, fillvalue, da)
 
                 # Get back to regular U1 string
                 da = cast_this(da, np.dtype("U1"))
@@ -153,17 +154,17 @@ def cast_Argo_variable_type(ds, overwrite=True):
                 ii = (
                     da == ""
                 )  # This should not happen, but still ! That's real world data
-                da = xr.where(ii, "0", da)
+                da = xr.where(ii, fillvalue, da)
 
                 ii = (
                     da == " "
                 )  # This should not happen, but still ! That's real world data
-                da = xr.where(ii, "0", da)
+                da = xr.where(ii, fillvalue, da)
 
                 ii = (
                     da == "n"
                 )  # This should not happen, but still ! That's real world data
-                da = xr.where(ii, "0", da)
+                da = xr.where(ii, fillvalue, da)
 
             # finally convert QC strings to integers:
             da = cast_this(da, int)
