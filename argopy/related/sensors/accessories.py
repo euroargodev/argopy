@@ -1,7 +1,7 @@
 from typing import Literal
 import pandas as pd
 
-from ...utils import NVSrow
+from argopy.utils import NVSrow
 
 
 # Define some options expected values as tuples

@@ -126,7 +126,7 @@ class FloatStoreProto(ABC):
         """Method to load float meta-data"""
         data = {}
 
-        ds = self.open_dataset("meta")
+        ds = self.dataset["meta"]
         data.update(
             {
                 "deployment": {

@@ -5,14 +5,14 @@ from abc import ABC, abstractmethod
 import logging
 import fnmatch
 
-from ...options import OPTIONS
-from ...stores import httpstore, filestore
-from ...related import ArgoNVSReferenceTables
-from ...utils import to_list, path2assets, register_accessor, ppliststr
-from ...errors import DataNotFound, OptionValueError
+from argopy.options import OPTIONS
+from argopy.stores import httpstore, filestore
+from argopy.related import ArgoNVSReferenceTables
+from argopy.utils import to_list, path2assets, register_accessor, ppliststr
+from argopy.errors import DataNotFound, OptionValueError
 
-from .accessories import SensorType, SensorModel
-from .accessories import Error, ErrorOptions
+from argopy.related.sensors.accessories import SensorType, SensorModel
+from argopy.related.sensors.accessories import Error, ErrorOptions
 
 
 log = logging.getLogger("argopy.related.sensors.ref")

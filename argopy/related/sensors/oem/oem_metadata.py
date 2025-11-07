@@ -9,14 +9,15 @@ import warnings
 import pandas as pd
 from html import escape
 
-from ....stores import httpstore, filestore
-from ....options import OPTIONS
-from ....utils import urnparser, path2assets
-from ....errors import InvalidDatasetStructure
+from argopy.stores import httpstore, filestore
+from argopy.options import OPTIONS
+from argopy.utils import urnparser, path2assets
+from argopy.utils.schemas.sensors.spec import SensorInfo, Context, Sensor, Parameter
+from argopy.errors import InvalidDatasetStructure
 
-from ..utils import has_jsonschema
-from .oem_metadata_repr import OemMetaDataDisplay
-from .accessories import SensorInfo, Context, Sensor, Parameter
+from argopy.related.sensors.utils import has_jsonschema
+from argopy.related.sensors.oem.oem_metadata_repr import OemMetaDataDisplay
+
 
 if has_jsonschema:
     from referencing import Registry, Resource
