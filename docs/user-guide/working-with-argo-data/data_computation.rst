@@ -102,21 +102,18 @@ or select specific variable(s) to predict:
 
 .. code-block:: python
 
-    ds = ds.argo.canyon_b.predict('PO4')
-    ds = ds.argo.canyon_b.predict(['PO4', 'NO3'])
+    ds.argo.canyon_b.predict(['PO4', 'NO3'])
 
 In addition, the user can provide input errors for pressure (float), temperature (float), salinity (float) and oxygen (float or array):
 
 .. code-block:: python
 
-    ds = ds.argo.canyon_b.predict('PO4', epres = 0.5, etemp = 0.005, epsal = 0.005, edoxy = 0.01)
+    ds.argo.canyon_b.predict('PO4', epres = 0.5, etemp = 0.005, epsal = 0.005, edoxy = 0.01)
 
 and include uncertainty estimates in the output:
 
 .. code-block:: python
 
-    ds = ds.argo.canyon_b.predict(include_uncertainties=True)
-    ds = ds.argo.canyon_b.predict('PO4', include_uncertainties=True)
     ds = ds.argo.canyon_b.predict('PO4', epres = 0.5, etemp = 0.005, epsal = 0.005, edoxy = 0.01, include_uncertainties=True)
     ds['PO4'] # PO4 estimates
     ds['PO4_ci'] # Uncertainty on PO4
@@ -153,14 +150,13 @@ In addition, the user can provide input errors for pressure (float), temperature
 
 .. code-block:: python
 
-    ds = ds.argo.content.predict(epres = 0.5, etemp = 0.005, epsal = 0.005, edoxy = 0.01)
+    ds.argo.content.predict(epres = 0.5, etemp = 0.005, epsal = 0.005, edoxy = 0.01)
 
 and include uncertainty estimates in the output:
 
 .. code-block:: python
 
-    ds = ds.argo.content.predict(include_uncertainties=True)
-    ds = ds.argo.content.predict(epres = 0.5, etemp = 0.005, epsal = 0.005, edoxy = 0.01, include_uncertainties=True)
+    ds.argo.content.predict(epres = 0.5, etemp = 0.005, epsal = 0.005, edoxy = 0.01, include_uncertainties=True)
     ds['AT'] # AT estimates
     ds['AT_SIGMA'] # Total uncertainty on AT
     ds['AT_SIGMA_MIN'] # Uncertainty propagated from the input variables on AT
