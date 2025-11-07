@@ -51,7 +51,7 @@ class ParameterDisplay:
         param = self.data
 
         # --- Header ---
-        header_html = f"<h1 class='oemsensor'>Argo Sensor OEM Metadata for Parameter: <a href='{param.PARAMETER_uri}'>{urn_html(param.PARAMETER)}</a></h1>"
+        header_html = f"<h1 class='oemsensor'>Argo Sensor Metadata for Parameter: <a href='{param.PARAMETER_uri}'>{urn_html(param.PARAMETER)}</a></h1>"
 
         if param.parameter_vendorinfo is not None:
             info = " | ".join(
