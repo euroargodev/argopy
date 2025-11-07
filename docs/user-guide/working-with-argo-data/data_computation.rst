@@ -57,6 +57,7 @@ As an example, let's load one float data with oxygen measurements:
 
 .. code-block:: python
 
+    from argopy import DataFetcher
     ArgoSet = DataFetcher(ds='bgc', mode='standard', params='DOXY', measured='DOXY').float(1902605)
     ds = ArgoSet.to_xarray()
 
@@ -87,6 +88,7 @@ As an example, let's load one float data with oxygen measurements:
 
 .. code-block:: python
 
+    from argopy import DataFetcher
     ArgoSet = DataFetcher(ds='bgc', mode='standard', params='DOXY', measured='DOXY').float(1902605)
     ds = ArgoSet.to_xarray()
 
@@ -137,6 +139,7 @@ As an example, let's load one float data with oxygen measurements:
 
 .. code-block:: python
 
+    from argopy import DataFetcher
     ArgoSet = DataFetcher(ds='bgc', mode='standard', params='DOXY', measured='DOXY').float(1902605)
     ds = ArgoSet.to_xarray()
 
