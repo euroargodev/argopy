@@ -7,6 +7,19 @@ What's New
 
 |pypi dwn| |conda dwn|
 
+v1.3.2 (xx Nov. 2025)
+---------------------
+
+.. _v1.3.2-features:
+
+Features and front-end API
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- **Predict nutrients and carbonates in the global ocean with their uncertainties** with the two new classes :class:`Dataset.argo.canyon_b` and :class:`Dataset.argo.content`. 
+The first class allows users to make predictions of the water-column nutrient concentrations (NO3, PO4, SiOH4) and carbonate system variables (AT, DIC, pHT, pCO2) 
+using the CANYON-B model while the second class provides improved predictions of carbonate system variables using the CONTENT model (see https://doi.org/10.3389/fmars.2018.00328 for details).
+(:pr:`535` and :pr:`542`) by |fricour|.
+
 v1.3.1 (22 Oct. 2025)
 ---------------------
 

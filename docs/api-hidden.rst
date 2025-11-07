@@ -360,6 +360,12 @@
     argopy.extensions.CanyonMED.input
     argopy.extensions.CanyonMED.output_list
 
+    argopy.extensions.CanyonB
+    argopy.extensions.CanyonB.predict
+
+    argopy.extensions.CONTENT
+    argopy.extensions.CONTENT.predict
+
     argopy.extensions.ParamsDataMode.compute
     argopy.extensions.ParamsDataMode.merge
     argopy.extensions.ParamsDataMode.filter
