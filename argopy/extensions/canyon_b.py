@@ -6,6 +6,7 @@ import xarray as xr
 
 try:
     import PyCO2SYS as pyco2
+
     HAS_PYCO2SYS = True
 except ImportError:
     HAS_PYCO2SYS = False
@@ -78,7 +79,43 @@ class CanyonB(ArgoAccessorExtension):
     _input_list = ["LATITUDE", "LONGITUDE", "PRES", "TEMP", "PSAL", "DOXY"]
     """List of parameters required to make predictions"""
 
-    _output_list = ["PO4", "NO3", "DIC", "SiOH4", "AT", "pHT", "pCO2"]
+    _output_list = [
+        "PO4",
+        "PO4_ci",
+        "PO4_cim",
+        "PO4_cin",
+        "PO4_cii",
+        "NO3",
+        "NO3_ci",
+        "NO3_cim",
+        "NO3_cin",
+        "NO3_cii",
+        "SiOH4",
+        "SiOH4_ci",
+        "SiOH4_cim",
+        "SiOH4_cin",
+        "SiOH4_cii",
+        "AT",
+        "AT_ci",
+        "AT_cim",
+        "AT_cin",
+        "AT_cii",
+        "DIC",
+        "DIC_ci",
+        "DIC_cim",
+        "DIC_cin",
+        "DIC_cii",
+        "pHT",
+        "pHT_ci",
+        "pHT_cim",
+        "pHT_cin",
+        "pHT_cii",
+        "pCO2",
+        "pCO2_ci",
+        "pCO2_cim",
+        "pCO2_cin",
+        "pCO2_cii",
+    ]
     # DIC = CT in Bittig et al., (2018), keep it that way to be consistent with the canyon-med extension.
     """List of all possible output variables for CANYON-B"""
 
