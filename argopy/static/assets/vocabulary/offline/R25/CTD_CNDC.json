@@ -1,0 +1,235 @@
+{
+  "name": "CTD_CNDC",
+  "long_name": "Conductivity Temperature Depth (CTD) sensors package measuring conductivity",
+  "last_update": "2025-10-29T21:00:00.204006+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/",
+    "pav:authoredOn": "2019-10-11 15:06:36.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/1/"
+    },
+    "dce:identifier": "SDN:R25::CTD_CNDC",
+    "pav:version": "1",
+    "skos:notation": "SDN:R25::CTD_CNDC",
+    "skos:altLabel": "CTD_CNDC",
+    "dc:date": "2019-10-11 15:06:36.0",
+    "owl:versionInfo": "1",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "Conductivity Temperature Depth (CTD) sensors package measuring conductivity"
+    },
+    "dc:identifier": "SDN:R25::CTD_CNDC",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "owl:deprecated": "false",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "skos:definition": {
+      "@language": "en",
+      "@value": "Conductivity Temperature Depth (CTD) sensors package measuring conductivity"
+    },
+    "skos:related": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/CTD_F01/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/FSI/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP4K/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.12/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.0.1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0a/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.4/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V4.4.0/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.3/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.8/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.4/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.0/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.5/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V2.0/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9a/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V1.0c/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.3/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE37/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.0/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.6/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.5/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V3.0/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.10/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.3/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2a/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3b/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V3/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.5/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.9/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.0/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.7/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0c/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.4.0/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

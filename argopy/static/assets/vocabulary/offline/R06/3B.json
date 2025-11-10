@@ -1,0 +1,59 @@
+{
+  "name": "3B",
+  "long_name": "Level 3, class B processing stage",
+  "last_update": "2025-10-29T20:57:29.424301+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R06/current/3B/",
+    "pav:authoredOn": "2020-04-04 15:05:33.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R06/current/3B/1/"
+    },
+    "dce:identifier": "SDN:R06::3B",
+    "pav:version": "1",
+    "skos:notation": "SDN:R06::3B",
+    "skos:altLabel": "3B",
+    "dc:date": "2020-04-04 15:05:33.0",
+    "owl:versionInfo": "1",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "Level 3, class B processing stage"
+    },
+    "dc:identifier": "SDN:R06::3B",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "owl:deprecated": "false",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "skos:definition": {
+      "@language": "en",
+      "@value": "Data have been processed with assumptions about the scales of variability or thermodynamic relationships; the data are normally reduced to regular space, time intervals with enhanced signal to noise (Level 3). Moreover, the data have been scrutinized and evaluated against a defined and documented set of measures; the process is often automated, and the measures are published and widely available (Class B)."
+    },
+    "@type": "skos:Concept",
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

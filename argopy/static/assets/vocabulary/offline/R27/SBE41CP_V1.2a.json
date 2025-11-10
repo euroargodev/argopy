@@ -1,0 +1,84 @@
+{
+  "name": "SBE41CP_V1.2a",
+  "long_name": "Sea-Bird Scientific SBE 41CP CTD V1.2a",
+  "last_update": "2025-10-29T20:59:05.656064+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2a/",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2a/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2a/1/"
+      }
+    ],
+    "pav:authoredOn": "2025-04-03 11:54:29.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2a/3/"
+    },
+    "dce:identifier": "SDN:R27::SBE41CP_V1.2a",
+    "pav:version": "3",
+    "@type": "skos:Concept",
+    "skos:related": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+      }
+    ],
+    "skos:definition": {
+      "@language": "en",
+      "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 1.2a."
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "true",
+    "skos:note": {
+      "@language": "en",
+      "@value": "deprecated"
+    },
+    "dc:identifier": "SDN:R27::SBE41CP_V1.2a",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "Sea-Bird Scientific SBE 41CP CTD V1.2a"
+    },
+    "owl:versionInfo": "3",
+    "dc:date": "2025-04-03 11:54:29.0",
+    "skos:altLabel": "SBE41CP_V1.2a",
+    "skos:notation": "SDN:R27::SBE41CP_V1.2a",
+    "skos:broader": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+    },
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "name": "CB00036",
+  "long_name": "CONFIG_<short_sensor_name>MaxTransmitted<param>Fluorescence_COUNT",
+  "last_update": "2025-10-29T21:00:11.500944+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00036/",
+    "pav:hasVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00036/1/"
+    },
+    "pav:authoredOn": "2023-05-02 19:58:02.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00036/2/"
+    },
+    "dce:identifier": "SDN:R18::CB00036",
+    "pav:version": "2",
+    "skos:notation": "SDN:R18::CB00036",
+    "skos:altLabel": "BGC Config 36 - Mandatory",
+    "dc:date": "2023-05-02 19:58:02.0",
+    "owl:versionInfo": "2",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "CONFIG_<short_sensor_name>MaxTransmitted<param>Fluorescence_COUNT"
+    },
+    "dc:identifier": "SDN:R18::CB00036",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "owl:deprecated": "false",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "skos:definition": {
+      "@language": "en",
+      "@value": "Minimum value of transmitted <short_sensor_name> Fluorescence of <param> measurements (in counts)."
+    },
+    "@type": "skos:Concept",
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "name": "SBE41_IDO_V1.0c",
+  "long_name": "Sea-Bird Scientific SBE 41 CTD with an Integrated Dissolved Oxygen (IDO) sensor V1.0c",
+  "last_update": "2025-10-29T20:59:03.826572+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V1.0c/",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V1.0c/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V1.0c/2/"
+      }
+    ],
+    "pav:authoredOn": "2025-04-03 11:54:28.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V1.0c/3/"
+    },
+    "dce:identifier": "SDN:R27::SBE41_IDO_V1.0c",
+    "pav:version": "3",
+    "skos:broader": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+    },
+    "@type": "skos:Concept",
+    "skos:related": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/IDO_DOXY/"
+      }
+    ],
+    "skos:definition": {
+      "@language": "en",
+      "@value": "A system comprising temperature, conductivity and pressure sensor, as well as an electrochemical Integrated Dissolved Oxygen sensor with pump-controlled, T-C ducted flow. The unit is designed for deployment on profiling floats. During float ascent, spot samples are taken and transmitted to the float controller. This SBE41 IDO model has firmware version 1.0c."
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "true",
+    "skos:note": {
+      "@language": "en",
+      "@value": "deprecated"
+    },
+    "dc:identifier": "SDN:R27::SBE41_IDO_V1.0c",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "Sea-Bird Scientific SBE 41 CTD with an Integrated Dissolved Oxygen (IDO) sensor V1.0c"
+    },
+    "owl:versionInfo": "3",
+    "dc:date": "2025-04-03 11:54:28.0",
+    "skos:altLabel": "SBE41_IDO_V1.0c",
+    "skos:notation": "SDN:R27::SBE41_IDO_V1.0c",
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

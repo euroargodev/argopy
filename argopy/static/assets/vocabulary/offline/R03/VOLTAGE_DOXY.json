@@ -1,0 +1,68 @@
+{
+  "name": "VOLTAGE_DOXY",
+  "long_name": "Voltage reported by oxygen sensor",
+  "last_update": "2025-10-29T20:57:35.040503+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R03/current/VOLTAGE_DOXY/",
+    "pav:hasVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/VOLTAGE_DOXY/1/"
+    },
+    "pav:authoredOn": "2025-09-29 14:51:43.0",
+    "@type": "skos:Concept",
+    "skos:related": {
+      "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UVLT/"
+    },
+    "skos:definition": {
+      "@language": "en",
+      "@value": "Raw output signal from dissolved oxygen sensor. Local_Attributes:{long_name:Voltage reported by oxygen sensor; standard_name:-; units:volt; valid_min:0.f; valid_max:100.f; category:ib; fill_value:99999.f; data_type:float}."
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R03::VOLTAGE_DOXY",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "Voltage reported by oxygen sensor"
+    },
+    "owl:versionInfo": "2",
+    "dc:date": "2025-09-29 14:51:43.0",
+    "skos:altLabel": "VOLTAGE_DOXY",
+    "skos:notation": "SDN:R03::VOLTAGE_DOXY",
+    "owl:sameAs": {
+      "@id": "http://vocab.nerc.ac.uk/collection/P01/current/OXYOCPVL/"
+    },
+    "pav:version": "2",
+    "dce:identifier": "SDN:R03::VOLTAGE_DOXY",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/VOLTAGE_DOXY/2/"
+    },
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

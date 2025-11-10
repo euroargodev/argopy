@@ -2,6 +2,8 @@ import importlib
 import os
 import json
 import logging
+from typing import Literal
+
 from . import ArgoNVSReferenceTables
 
 
@@ -11,7 +13,21 @@ path2assets = importlib.util.find_spec(
 ).submodule_search_locations[0]
 
 
-def load_dict(ptype):
+def load_dict(ptype : Literal["profilers", "institutions"] | None = None) -> dict:
+    """Load a dictionary from a ArgoNVSReferenceTables instance
+
+    Otherwise, fall back on static JSON asset files.
+
+    List of possible dictionaries:
+
+    - "profilers": key are R08 ID, values are prefLabel
+    - "institutions": key are R04 altLabel, values are prefLabel
+
+    Parameters
+    ----------
+    ptype: str, Literal["profilers", "institutions"], default None
+
+    """
     if ptype == "profilers":
         try:
             nvs = ArgoNVSReferenceTables(cache=True)

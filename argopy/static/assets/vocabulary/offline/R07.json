@@ -1,0 +1,529 @@
+{
+  "name": "HISTORY_ACTION",
+  "long_name": "Argo history action codes",
+  "last_update": "2025-10-29T19:56:35.211191+00:00",
+  "data": {
+    "@graph": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R07/current/QC/",
+        "pav:authoredOn": "2020-04-07 22:59:46.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R07/current/QC/1/"
+        },
+        "dce:identifier": "SDN:R07::QC",
+        "pav:version": "1",
+        "skos:notation": "SDN:R07::QC",
+        "skos:altLabel": "QC",
+        "dc:date": "2020-04-07 22:59:46.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Quality control"
+        },
+        "dc:identifier": "SDN:R07::QC",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Quality control performed."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R07/current/IP/",
+        "pav:authoredOn": "2020-04-07 22:59:46.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R07/current/IP/1/"
+        },
+        "dce:identifier": "SDN:R07::IP",
+        "pav:version": "1",
+        "skos:notation": "SDN:R07::IP",
+        "skos:altLabel": "IP",
+        "dc:date": "2020-04-07 22:59:46.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "History group for complete input record"
+        },
+        "dc:identifier": "SDN:R07::IP",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "This history group operates on the complete input record."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R07/current/DC/",
+        "pav:authoredOn": "2020-04-07 22:59:46.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R07/current/DC/1/"
+        },
+        "dce:identifier": "SDN:R07::DC",
+        "pav:version": "1",
+        "skos:notation": "SDN:R07::DC",
+        "skos:altLabel": "DC",
+        "dc:date": "2020-04-07 22:59:46.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Station check with duplicate checking software"
+        },
+        "dc:identifier": "SDN:R07::DC",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "The station was checked using duplicate checking software."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R07/current/SV/",
+        "pav:authoredOn": "2020-04-07 22:59:46.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R07/current/SV/1/"
+        },
+        "dce:identifier": "SDN:R07::SV",
+        "pav:version": "1",
+        "skos:notation": "SDN:R07::SV",
+        "skos:altLabel": "SV",
+        "dc:date": "2020-04-07 22:59:46.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Value set"
+        },
+        "dc:identifier": "SDN:R07::SV",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Set a value."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R07/current/UP/",
+        "pav:authoredOn": "2020-04-07 22:59:46.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R07/current/UP/1/"
+        },
+        "dce:identifier": "SDN:R07::UP",
+        "pav:version": "1",
+        "skos:notation": "SDN:R07::UP",
+        "skos:altLabel": "UP",
+        "dc:date": "2020-04-07 22:59:46.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Station passed through the update program"
+        },
+        "dc:identifier": "SDN:R07::UP",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "The station passed through the update program."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R07/current/CF/",
+        "pav:authoredOn": "2020-04-07 22:59:46.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R07/current/CF/1/"
+        },
+        "dce:identifier": "SDN:R07::CF",
+        "pav:version": "1",
+        "skos:notation": "SDN:R07::CF",
+        "skos:altLabel": "CF",
+        "dc:date": "2020-04-07 22:59:46.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Quality flag change"
+        },
+        "dc:identifier": "SDN:R07::CF",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "A quality flag was changed."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R07/current/PE/",
+        "pav:authoredOn": "2020-04-07 22:59:46.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R07/current/PE/1/"
+        },
+        "dce:identifier": "SDN:R07::PE",
+        "pav:version": "1",
+        "skos:notation": "SDN:R07::PE",
+        "skos:altLabel": "PE",
+        "dc:date": "2020-04-07 22:59:46.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Position error"
+        },
+        "dc:identifier": "SDN:R07::PE",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Profile position has been erroneously encoded, and has been corrected where possible."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R07/current/NG/",
+        "pav:authoredOn": "2020-04-07 22:59:46.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R07/current/NG/1/"
+        },
+        "dce:identifier": "SDN:R07::NG",
+        "pav:version": "1",
+        "skos:notation": "SDN:R07::NG",
+        "skos:altLabel": "NG",
+        "dc:date": "2020-04-07 22:59:46.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "No good trace"
+        },
+        "dc:identifier": "SDN:R07::NG",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "No good trace."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R07/current/ED/",
+        "pav:authoredOn": "2020-04-07 22:59:46.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R07/current/ED/1/"
+        },
+        "dce:identifier": "SDN:R07::ED",
+        "pav:version": "1",
+        "skos:notation": "SDN:R07::ED",
+        "skos:altLabel": "ED",
+        "dc:date": "2020-04-07 22:59:46.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Parameter value edit"
+        },
+        "dc:identifier": "SDN:R07::ED",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "A parameter value was edited."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R07/current/CR/",
+        "pav:authoredOn": "2020-04-07 22:59:46.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R07/current/CR/1/"
+        },
+        "dce:identifier": "SDN:R07::CR",
+        "pav:version": "1",
+        "skos:notation": "SDN:R07::CR",
+        "skos:altLabel": "CR",
+        "dc:date": "2020-04-07 22:59:46.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Record creation"
+        },
+        "dc:identifier": "SDN:R07::CR",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "A new record was created."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R07/current/TE/",
+        "pav:authoredOn": "2020-04-07 22:59:46.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R07/current/TE/1/"
+        },
+        "dce:identifier": "SDN:R07::TE",
+        "pav:version": "1",
+        "skos:notation": "SDN:R07::TE",
+        "skos:altLabel": "TE",
+        "dc:date": "2020-04-07 22:59:46.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Time error"
+        },
+        "dc:identifier": "SDN:R07::TE",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Profile date and/or time have been erroneously encoded, and have been corrected where possible."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R07/current/CV/",
+        "pav:authoredOn": "2020-04-07 22:59:46.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R07/current/CV/1/"
+        },
+        "dce:identifier": "SDN:R07::CV",
+        "pav:version": "1",
+        "skos:notation": "SDN:R07::CV",
+        "skos:altLabel": "CV",
+        "dc:date": "2020-04-07 22:59:46.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Value change"
+        },
+        "dc:identifier": "SDN:R07::CV",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "A value was changed."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R07/current/QCP/",
+        "pav:authoredOn": "2020-04-07 22:59:46.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R07/current/QCP/1/"
+        },
+        "dce:identifier": "SDN:R07::QCP",
+        "pav:version": "1",
+        "skos:notation": "SDN:R07::QCP",
+        "skos:altLabel": "QCP$",
+        "dc:date": "2020-04-07 22:59:46.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Tests performed"
+        },
+        "dc:identifier": "SDN:R07::QCP",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Tests performed."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R07/current/QCF/",
+        "pav:authoredOn": "2020-04-07 22:59:46.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R07/current/QCF/1/"
+        },
+        "dce:identifier": "SDN:R07::QCF",
+        "pav:version": "1",
+        "skos:notation": "SDN:R07::QCF",
+        "skos:altLabel": "QCF$",
+        "dc:date": "2020-04-07 22:59:46.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Tests failed"
+        },
+        "dc:identifier": "SDN:R07::QCF",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Tests failed."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R07/current/",
+        "skos:member": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R07/current/QC/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R07/current/IP/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R07/current/DC/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R07/current/SV/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R07/current/UP/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R07/current/CF/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R07/current/PE/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R07/current/NG/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R07/current/ED/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R07/current/CR/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R07/current/TE/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R07/current/CV/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R07/current/QCF/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R07/current/QCP/"
+          }
+        ],
+        "@type": "skos:Collection",
+        "dc:publisher": "Natural Environment Research Council",
+        "dc:description": "Coded history information for each action performed on each profile by a data centre. Argo netCDF variable HISTORY_ACTION is populated by R07 altLabel.",
+        "dc:title": "Argo history action codes",
+        "skos:prefLabel": "Argo history action codes",
+        "owl:versionInfo": "1",
+        "dc:date": "2020-04-08 03:00:04.0",
+        "skos:altLabel": "HISTORY_ACTION",
+        "dc:creator": "Argo Data Management Team",
+        "dc:alternative": "HISTORY_ACTION",
+        "rdfs:comment": "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
+        "grg:RE_RegisterOwner": "Argo Data Management Team",
+        "grg:RE_RegisterManager": "British Oceanographic Data Centre",
+        "rdfs:seeAlso": {
+          "@id": "https://github.com/OneArgo/ArgoVocabs"
+        }
+      }
+    ],
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

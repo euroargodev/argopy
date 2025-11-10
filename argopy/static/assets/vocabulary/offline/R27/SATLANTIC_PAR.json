@@ -1,0 +1,70 @@
+{
+  "name": "SATLANTIC_PAR",
+  "long_name": "Satlantic Photosynthetically Active Radiation (PAR) sensor",
+  "last_update": "2025-10-29T20:59:07.352778+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_PAR/",
+    "pav:authoredOn": "2021-07-01 16:48:21.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_PAR/1/"
+    },
+    "@type": "skos:Concept",
+    "skos:related": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_PAR/"
+    },
+    "skos:definition": {
+      "@language": "en",
+      "@value": "A Photosynthetically Active Radiation (PAR) sensor that measures quantum irradiance with near flat spectral response and cosine spatial response. Spectrum: 400 nm - 700 nm; PAR range: 0 umol - 5000 umol photons m^-2 s^-1; cosine error: < 3% (0 deg - 60 deg) and < 10% (60 deg - 85 deg); sample rate up to 100 Hz. The instrument was originally developed and manufactured at Satlantic, and was rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2011."
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R27::SATLANTIC_PAR",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "Satlantic Photosynthetically Active Radiation (PAR) sensor"
+    },
+    "owl:versionInfo": "1",
+    "dc:date": "2021-07-01 16:48:21.0",
+    "skos:altLabel": "SATLANTIC_PAR",
+    "skos:notation": "SDN:R27::SATLANTIC_PAR",
+    "skos:broader": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SATLANTIC/"
+      }
+    ],
+    "pav:version": "1",
+    "dce:identifier": "SDN:R27::SATLANTIC_PAR",
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

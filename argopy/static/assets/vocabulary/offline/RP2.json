@@ -1,0 +1,294 @@
+{
+  "name": "PROF_QC_FLAG",
+  "long_name": "Argo profile quality control flags",
+  "last_update": "2025-10-29T19:56:33.954601+00:00",
+  "data": {
+    "@graph": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/C/",
+        "pav:authoredOn": "2020-04-04 15:05:33.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/C/1/"
+        },
+        "dce:identifier": "SDN:RP2::C",
+        "pav:version": "1",
+        "skos:notation": "SDN:RP2::C",
+        "skos:altLabel": "C",
+        "dc:date": "2020-04-04 15:05:33.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "50% - 75% of profile good"
+        },
+        "dc:identifier": "SDN:RP2::C",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Between 50% (included) and 75% (excluded) of all levels in the profile contain good data. Levels containing good data are associated with quality control flags (QC) flags of 1, 2, 5 or 8. Levels with QC flag values of 9 are excluded form the computation."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/E/",
+        "pav:authoredOn": "2020-04-04 15:05:33.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/E/1/"
+        },
+        "dce:identifier": "SDN:RP2::E",
+        "pav:version": "1",
+        "skos:notation": "SDN:RP2::E",
+        "skos:altLabel": "E",
+        "dc:date": "2020-04-04 15:05:33.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "0% - 25% of profile good"
+        },
+        "dc:identifier": "SDN:RP2::E",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Between 0% (excluded) and 25% (excluded) of all levels in a given profile contain good data. Levels containing good data are associated with quality control flags (QC) flags of 1, 2, 5 or 8. Levels with QC flag values of 9 are excluded form the computation."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/D/",
+        "pav:authoredOn": "2020-04-04 15:05:33.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/D/1/"
+        },
+        "dce:identifier": "SDN:RP2::D",
+        "pav:version": "1",
+        "skos:notation": "SDN:RP2::D",
+        "skos:altLabel": "D",
+        "dc:date": "2020-04-04 15:05:33.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "25% - 50% of profile good"
+        },
+        "dc:identifier": "SDN:RP2::D",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Between 25% (included) and 50% (excluded) of all levels in the profile contain good data. Levels containing good data are associated with quality control flags (QC) flags of 1, 2, 5 or 8. Levels with QC flag values of 9 are excluded form the computation."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/F/",
+        "pav:authoredOn": "2020-04-04 15:05:33.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/F/1/"
+        },
+        "dce:identifier": "SDN:RP2::F",
+        "pav:version": "1",
+        "skos:notation": "SDN:RP2::F",
+        "skos:altLabel": "F",
+        "dc:date": "2020-04-04 15:05:33.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "0% of profile good"
+        },
+        "dc:identifier": "SDN:RP2::F",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "0% of all levels in the profile contain good data. This means that all levels are associated with quality control (QC) flags of 3, 4, 6 or 7. Levels with QC flag values of 9 are excluded form the computation."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/N/",
+        "pav:hasVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/N/1/"
+        },
+        "pav:authoredOn": "2025-08-28 11:45:51.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/N/2/"
+        },
+        "dce:identifier": "SDN:RP2::N",
+        "pav:version": "2",
+        "skos:notation": "SDN:RP2::N",
+        "skos:altLabel": "N",
+        "dc:date": "2025-08-28 11:45:51.0",
+        "owl:versionInfo": "2",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "No QC"
+        },
+        "dc:identifier": "SDN:RP2::N",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "owl:deprecated": "true",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "No quality control (QC) was performed on any of the profile levels."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/B/",
+        "pav:authoredOn": "2020-04-04 15:05:33.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/B/1/"
+        },
+        "dce:identifier": "SDN:RP2::B",
+        "pav:version": "1",
+        "skos:notation": "SDN:RP2::B",
+        "skos:altLabel": "B",
+        "dc:date": "2020-04-04 15:05:33.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "75% - 100% of profile good"
+        },
+        "dc:identifier": "SDN:RP2::B",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Between 75% (included) and 100% (excluded) of all levels in the profile contain good data. Levels containing good data are associated with quality control flags (QC) flags of 1, 2, 5 or 8. Levels with QC flag values of 9 are excluded form the computation."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/A/",
+        "pav:authoredOn": "2020-04-04 15:05:33.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/A/1/"
+        },
+        "dce:identifier": "SDN:RP2::A",
+        "pav:version": "1",
+        "skos:notation": "SDN:RP2::A",
+        "skos:altLabel": "A",
+        "dc:date": "2020-04-04 15:05:33.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "100% of profile good"
+        },
+        "dc:identifier": "SDN:RP2::A",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "100% of all levels in the profile contain good data. This means that all levels are associated with quality control flags (QC) flags of 1, 2, 5 or 8. Levels with QC flag values of 9 are excluded form the computation."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/",
+        "skos:member": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/C/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/E/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/D/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/F/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/N/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/A/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/B/"
+          }
+        ],
+        "@type": "skos:Collection",
+        "dc:publisher": "Natural Environment Research Council",
+        "dc:description": "Quality control flag scale for whole profiles. Argo netCDF variables PROFILE_<PARAMETER>_QC are populated by RP2 altLabel.",
+        "dc:title": "Argo profile quality control flags",
+        "skos:prefLabel": "Argo profile quality control flags",
+        "owl:versionInfo": "1",
+        "dc:date": "2025-08-29 03:00:01.0",
+        "skos:altLabel": "PROF_QC_FLAG",
+        "dc:creator": "Argo Data Management Team",
+        "dc:alternative": "PROF_QC_FLAG",
+        "rdfs:comment": "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
+        "grg:RE_RegisterOwner": "Argo Data Management Team",
+        "grg:RE_RegisterManager": "British Oceanographic Data Centre",
+        "rdfs:seeAlso": {
+          "@id": "https://github.com/OneArgo/ArgoVocabs"
+        }
+      }
+    ],
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

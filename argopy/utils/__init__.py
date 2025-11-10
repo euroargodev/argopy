@@ -18,7 +18,7 @@ from .checkers import (  # noqa: F401
     erddap_ds_exists,
     has_aws_credentials,
 )
-from .casting import DATA_TYPES, cast_Argo_variable_type, to_list
+from .casting import DATA_TYPES, cast_Argo_variable_type, to_list, Encoder
 from .decorators import deprecated, doc_inherit, register_accessor
 from .lists import (
     list_available_data_src,
@@ -36,7 +36,7 @@ from .lists import (
 from .caching import clear_cache, lscache
 from .monitored_threadpool import MyThreadPoolExecutor as MonitoredThreadPoolExecutor
 from .chunking import Chunker
-from .accessories import Registry, float_wmo
+from .accessories import Registry, float_wmo, Asset, NVSrow
 from .locals import (  # noqa: F401
     show_versions,
     show_options,
@@ -61,7 +61,7 @@ from .transform import (
     filter_param_by_data_mode,
     split_data_mode,
 )
-from .format import argo_split_path, format_oneline, UriCName, redact, dirfs_relpath
+from .format import argo_split_path, format_oneline, UriCName, redact, dirfs_relpath, urnparser, ppliststr
 from .loggers import warnUnless, log_argopy_callerstack
 from .carbon import GreenCoding, Github
 from . import optical_modeling
@@ -93,6 +93,7 @@ __all__ = (
     "DATA_TYPES",
     "cast_Argo_variable_type",
     "to_list",
+    "Encoder",
     # Decorators:
     "deprecated",
     "doc_inherit",
@@ -118,6 +119,8 @@ __all__ = (
     # Accessories classes (specific objects):
     "Registry",
     "float_wmo",
+    "Asset",
+    "NVSrow",
     # Locals (environments, versions, systems):
     "path2assets",
     "show_versions",
@@ -147,6 +150,8 @@ __all__ = (
     "dirfs_relpath",
     "UriCName",
     "redact",
+    "urnparser",
+    "ppliststr",
     # Loggers:
     "warnUnless",
     "log_argopy_callerstack",

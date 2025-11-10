@@ -1,0 +1,65 @@
+{
+  "name": "KELLER_PA8",
+  "long_name": "Keller PA-8 pressure transducer",
+  "last_update": "2025-10-29T20:58:56.597289+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/KELLER_PA8/",
+    "pav:authoredOn": "2021-08-18 14:32:12.0",
+    "@type": "skos:Concept",
+    "skos:related": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+    },
+    "skos:definition": {
+      "@language": "en",
+      "@value": "A sealed gauge pressure transducer part of the Series 8 pressure sensors range manufactured by Keller."
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R27::KELLER_PA8",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "Keller PA-8 pressure transducer"
+    },
+    "owl:versionInfo": "1",
+    "dc:date": "2021-08-18 14:32:12.0",
+    "skos:altLabel": "KELLER_PA8",
+    "skos:notation": "SDN:R27::KELLER_PA8",
+    "skos:broader": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R26/current/KELLER/"
+    },
+    "pav:version": "1",
+    "dce:identifier": "SDN:R27::KELLER_PA8",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R27/current/KELLER_PA8/1/"
+    },
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}
