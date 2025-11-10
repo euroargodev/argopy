@@ -76,8 +76,10 @@ or select variables to predict, like PO4:
 
 .. _complement-canyon-b:
 
+.. currentmodule:: xarray
+
 CANYON-B (Global Ocean)
-^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^
 
 CANYON-B is a Bayesian neural network approach that estimates water-column nutrient concentrations (NO3, PO4, SiOH4) and carbonate system variables (AT, DIC, pHT, pCO2) ([3]_).
 It provides more robust neural networks than CANYON-MED and includes a local uncertainty estimate for each predicted parameter.
@@ -122,6 +124,8 @@ and include uncertainty estimates in the output:
     ds['PO4_cii'] # Uncertainty due to input errors on PO4
 
 .. _complement-content:
+
+.. currentmodule:: xarray
 
 CONTENT (Global Ocean)
 ^^^^^^^^^^^^^^^^^^^^^^

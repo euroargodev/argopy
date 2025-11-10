@@ -18,12 +18,16 @@ from . import register_argo_accessor, ArgoAccessorExtension
 
 @register_argo_accessor("canyon_b")
 class CanyonB(ArgoAccessorExtension):
-    """
-    Implementation of the CANYON-B method.
+    """Nutrients and Carbonate System Variables predictor with CANYON-B
 
-    CANYON-B is a bayesian neural network approach that estimates water-column nutrient concentrations
-    and carbonate system variables ([1]_). CANYON-B is based on the CANYON model ([2]_) and provides
-    more robust neural networks, that include a local uncertainty estimate for each predicted parameter.
+    This is an implementation of the CANYON-B method: a bayesian neural network approach that estimates water-column nutrient concentrations and carbonate system variables ([1]_).
+    CANYON-B is based on the CANYON model ([2]_) and provides more robust neural networks, that include a local uncertainty estimate for each predicted parameter.
+
+    When using this method, please cite the papers.
+
+    See Also
+    --------
+    :meth:`canyon_b.predict`, :attr:`canyon_b.input_list`, :attr:`canyon_b.output_list`
 
     Examples
     --------
@@ -71,15 +75,11 @@ class CanyonB(ArgoAccessorExtension):
     )
     """Number of inputs variables for CANYON-B"""
 
-    output_list = [
-        "AT",
-        "DIC",
-        "pHT",
-        "pCO2",
-        "NO3",
-        "PO4",
-        "SiOH4",
-    ]  # DIC = CT in Bittig et al., (2018), keep it that way to be consistent with the canyon-med extention. Order of parameters follows https://github.com/RaphaelBajon/canyonbpy/blob/main/canyonbpy/core.py because it is used later in the predict method.
+    _input_list = ["LATITUDE", "LONGITUDE", "PRES", "TEMP", "PSAL", "DOXY"]
+    """List of parameters required to make predictions"""
+
+    _output_list = ["PO4", "NO3", "DIC", "SiOH4", "AT", "pHT", "pCO2"]
+    # DIC = CT in Bittig et al., (2018), keep it that way to be consistent with the canyon-med extension.
     """List of all possible output variables for CANYON-B"""
 
     def __init__(self, *args, **kwargs):
@@ -160,6 +160,30 @@ class CanyonB(ArgoAccessorExtension):
         attrs.update({"reference": "https://doi.org/10.3389/fmars.2018.00328"})
 
         return attrs
+
+    @property
+    def input_list(self) -> list[str]:
+        """List of parameters required to make predictions with CANYON-B
+
+        Returns
+        -------
+        list[str], default = ["LATITUDE", "LONGITUDE", "PRES", "TEMP", "PSAL", "DOXY"]
+        """
+        return self._input_list.copy()
+
+    @property
+    def output_list(self) -> list[str]:
+        """List of all possible output variables for CANYON-B
+
+        Returns
+        -------
+        list[str], default = ["PO4", "NO3", "DIC", "SiOH4", "AT", "pHT", "pCO2"]
+
+        Notes
+        -----
+        DIC = CT in Bittig et al., (2018), keep it that way to be consistent with the canyon-med extension.
+        """
+        return self._output_list.copy()
 
     @property
     def decimal_year(self):
@@ -438,6 +462,8 @@ class CanyonB(ArgoAccessorExtension):
         epres, etemp, epsal, edoxy = errors
 
         # Define parameters and their properties
+        # ! ORDER MATTERS HERE !
+        # Order of parameters follows https://github.com/RaphaelBajon/canyonbpy/blob/main/canyonbpy/core.py
         paramnames = ["AT", "DIC", "pHT", "pCO2", "NO3", "PO4", "SiOH4"]
         i_idx = {p: i for i, p in enumerate(paramnames)}
         inputsigma = np.array([6, 4, 0.005, np.nan, 0.02, 0.02, 0.02])
@@ -456,7 +482,7 @@ class CanyonB(ArgoAccessorExtension):
         # Process through neural networks for the given parameter #
         #                                                         #
 
-        # Get index depending on parameter (mostly important to decipher between nutrients and carbonate sytems)
+        # Get index depending on parameter (mostly important to decipher between nutrients and carbonate systems)
         i = i_idx[param]
 
         # Load weights and convert them to numpy array
@@ -681,7 +707,7 @@ class CanyonB(ArgoAccessorExtension):
 
         Returns
         -------
-        xr.Dataset
+        :class:`xr.Dataset`
             Input dataset augmented with predicted parameters.
         """
 

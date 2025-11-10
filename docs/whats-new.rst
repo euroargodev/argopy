@@ -16,12 +16,8 @@ Features and front-end API
 
 .. currentmodule:: xarray
 
-- **Predict nutrients and carbonates in the global ocean with their uncertainties** with the two new classes :class:`Dataset.argo.canyon_b` and :class:`Dataset.argo.content`. 
-The first class allows users to make predictions of the water-column nutrient concentrations (NO3, PO4, SiOH4) and carbonate system variables (AT, DIC, pHT, pCO2) 
-using the CANYON-B model while the second class provides improved predictions of carbonate system variables using the CONTENT model (see https://doi.org/10.3389/fmars.2018.00328 for details).
-(:pr:`535` and :pr:`542`) by |fricour|.
+- **Predict nutrients and carbonates in the global ocean with their uncertainties** with the two new classes :class:`Dataset.argo.canyon_b` and :class:`Dataset.argo.content`. The first class allows users to make predictions of the water-column nutrient concentrations (NO3, PO4, SiOH4) and carbonate system variables (AT, DIC, pHT, pCO2) using the :ref:`CANYON-B model (see doc.)<complement-canyon-b>` while the second class provides improved predictions of carbonate system variables using the :ref:`CONTENT (see doc.)<complement-content>` model. (:pr:`535` and :pr:`542`) by |fricour|.
 
-.. |fricour| replace:: `F. Ricour <https://www.github.com/fricour>`__
 
 .. currentmodule:: argopy
 
@@ -1478,6 +1474,7 @@ v0.1.0 (17 Mar. 2020)
 
 .. |gmaze| replace:: `G. Maze <http://www.github.com/gmaze>`__
 .. |quai20| replace:: `K. Balem <http://www.github.com/quai20>`__
+.. |fricour| replace:: `F. Ricour <https://www.github.com/fricour>`__
 
 .. |pypi dwn| image:: https://img.shields.io/pypi/dm/argopy?label=Pypi%20downloads
    :target: //pypi.org/project/argopy/

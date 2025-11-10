@@ -259,6 +259,9 @@ You can create your own extension to an Argo dataset for specific features. It s
 
 **argopy** comes with the following extensions:
 
+General purposes
+^^^^^^^^^^^^^^^^
+
 .. currentmodule:: xarray
 
 .. autosummary::
@@ -266,15 +269,39 @@ You can create your own extension to an Argo dataset for specific features. It s
    :template: autosummary/accessor_method.rst
 
     Dataset.argo.teos10
-    Dataset.argo.create_float_source
-    Dataset.argo.canyon_med
     Dataset.argo.datamode
+    Dataset.argo.create_float_source
+
+
+BGC specifics
+^^^^^^^^^^^^^
+
+.. currentmodule:: xarray
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
+
+    Dataset.argo.canyon_med
+    Dataset.argo.canyon_med.predict
+    Dataset.argo.canyon_med.input_list
+    Dataset.argo.canyon_med.output_list
+
+    Dataset.argo.canyon_b
+    Dataset.argo.canyon_b.predict
+    Dataset.argo.canyon_b.input_list
+    Dataset.argo.canyon_b.output_list
+
+    Dataset.argo.content
+    Dataset.argo.content.predict
+    Dataset.argo.content.input_list
+    Dataset.argo.content.output_list
+
     Dataset.argo.optic
     Dataset.argo.optic.Zeu
     Dataset.argo.optic.Zpd
     Dataset.argo.optic.Z_iPAR_threshold
     Dataset.argo.optic.DCM
-
 
 Misc
 ----
