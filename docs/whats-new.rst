@@ -7,6 +7,15 @@ What's New
 
 |pypi dwn| |conda dwn|
 
+
+Coming up next (unreleased)
+---------------------------
+
+Internals
+^^^^^^^^^
+
+- **Fix bug** whereby missing values in <PARAM>_QC variables of xarray dataset were casted as 0 instead of 9. (:commit:`d7bbc23ab386c88a03ae2e9fca7ad274bb1ebcab`) by |gmaze|.
+
 v1.3.1 (22 Oct. 2025)
 ---------------------
 
