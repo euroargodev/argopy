@@ -4,8 +4,8 @@ import time
 import threading
 import logging
 
-from .lists import list_available_data_src
-from .checkers import isAPIconnected
+from argopy.utils.lists import list_available_data_src
+from argopy.utils.checkers import isAPIconnected
 
 try:
     importlib.import_module("matplotlib")  # noqa: E402

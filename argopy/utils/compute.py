@@ -7,7 +7,8 @@ from scipy import interpolate
 import xarray as xr
 from packaging import version
 import logging
-from ..errors import InvalidOption
+
+from argopy.errors import InvalidOption
 
 log = logging.getLogger("argopy.utils.compute")
 

@@ -7,8 +7,8 @@ import xarray as xr
 import logging
 from typing import List, Union
 
-from ..errors import InvalidDatasetStructure
-from .lists import list_core_parameters
+from argopy.errors import InvalidDatasetStructure
+from argopy.utils.lists import list_core_parameters
 
 
 log = logging.getLogger("argopy.utils.manip")

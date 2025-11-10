@@ -4,7 +4,7 @@ import warnings
 import logging
 import copy
 
-from .checkers import check_wmo, is_wmo
+from argopy.utils.checkers import check_wmo, is_wmo
 
 
 log = logging.getLogger("argopy.utils.accessories")

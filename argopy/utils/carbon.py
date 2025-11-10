@@ -7,8 +7,9 @@ import logging
 from pathlib import Path
 import numpy as np
 
-from ..errors import DataNotFound
-from . import Registry
+from argopy.errors import DataNotFound
+from argopy.utils.accessories import Registry
+
 
 log = logging.getLogger("argopy.utils.monitors")
 
