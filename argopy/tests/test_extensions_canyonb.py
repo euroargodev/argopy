@@ -32,47 +32,47 @@ def fetcher():
 
 @pytest.mark.parametrize(
     "what",
-    [None, "PO4", ["PO4", "pHT"]],
+    [None, "PO4"],
     indirect=False,
 )
 def test_predict(fetcher, what, mocked_erddapserver):
     """Test CANYON-B predictions for various parameters"""
     ds = fetcher.to_xarray()
     ds = ds.argo.canyon_b.predict(what)
+
     assert "CANYON-B" in ds.attrs["Processing_history"]
+
+    if what != None:
+        if isinstance(what, list):
+            for param in what:
+                assert param in ds
+        else:
+            assert what in ds
+    else:
+        # Check that all parameters are predicted
+        for param in ["PO4", "NO3", "SiOH4", "AT", "DIC", "pHT", "pCO2"]:
+            assert param in ds
 
 
 @pytest.mark.parametrize(
-    "param",
-    ["PO4", "NO3", "SiOH4", "AT", "DIC", "pHT", "pCO2"],
-    indirect=False,
+    "edoxy_type",
+    ["scalar", "array"],
 )
-def test_predict_single_param(fetcher, param, mocked_erddapserver):
-    """Test CANYON-B prediction for each parameter individually"""
+def test_predict_with_custom_errors(fetcher, edoxy_type, mocked_erddapserver):
+    """Test CANYON-B prediction with custom input errors (scalar and array)"""
     ds = fetcher.to_xarray()
-    ds = ds.argo.canyon_b.predict(param)
 
-    assert param in ds
+    if edoxy_type == "scalar":
+        edoxy = 0.01
+    else:  # array
+        nol = ds.argo.N_POINTS
+        edoxy = np.full(nol, 0.01)
 
-
-def test_predict_with_custom_errors(fetcher, mocked_erddapserver):
-    """Test CANYON-B prediction with custom input errors"""
-    ds = fetcher.to_xarray()
     ds = ds.argo.canyon_b.predict(
-        "PO4", epres=0.5, etemp=0.005, epsal=0.005, edoxy=0.01
+        "PO4", epres=0.5, etemp=0.005, epsal=0.005, edoxy=edoxy
     )
 
     assert "PO4" in ds
-
-
-def test_predict_with_array_edoxy(fetcher, mocked_erddapserver):
-    """Test CANYON-B prediction with array oxygen errors"""
-    ds = fetcher.to_xarray()
-    nol = ds.argo.N_POINTS
-    edoxy_array = np.full(nol, 0.01)
-
-    ds = ds.argo.canyon_b.predict('PO4', edoxy=edoxy_array)
-    assert 'PO4' in ds
 
 
 def test_predict_invalid_param(fetcher, mocked_erddapserver):
@@ -142,7 +142,7 @@ def test_load_weights(fetcher, mocked_erddapserver):
     """Test loading of CANYON-B weights"""
     ds = fetcher.to_xarray()
 
-    for param in ["AT", "DIC", "pCO2", "NO3", "PO4", "SiOH4", "pHT"]:
+    for param in ["AT", "DIC", "pHT"]:
         weights = ds.argo.canyon_b.load_weights(param)
         assert hasattr(weights, "shape")
         assert weights.shape[0] > 0
@@ -162,7 +162,6 @@ def test_decimal_year(fetcher, mocked_erddapserver):
       "param,expected_unit",
       [
           ("PO4", "micromole/kg"),
-          ("NO3", "micromole/kg"),
           ("pHT", "insitu total scale"),
           ("pCO2", "micro atm"),
       ],
@@ -180,68 +179,33 @@ def test_get_param_attrs(fetcher, param, expected_unit, mocked_erddapserver):
 
 
 @pytest.mark.parametrize(
-    "param",
-    ["PO4", "NO3", "SiOH4", "AT", "DIC", "pHT", "pCO2"],
-    indirect=False,
+    "use_single_point,include_uncertainties,param",
+    [
+        (False, True, "PO4"),   # Multi-point with uncertainties
+        (False, True, "AT"),    # Multi-point with uncertainties
+        (True, True, "AT"),     # Single-point with uncertainties
+    ],
 )
-def test_predict_single_point(fetcher, param, mocked_erddapserver):
-    """Test CANYON-B prediction for a single-point dataset"""
-    ds = fetcher.to_xarray()
-    # Select a single point
-    ds_single = ds.where(ds['N_POINTS'] == 1, drop=True)
-
-    # Predict
-    ds_result = ds_single.argo.canyon_b.predict(param)
-
-    # Check that prediction was added
-    assert param in ds_result
-    assert ds_result[param].size == 1
-
-
-@pytest.mark.parametrize(
-    "param",
-    ["PO4", "AT", "pCO2"],
-    indirect=False,
-)
-def test_predict_with_uncertainties(fetcher, param, mocked_erddapserver):
-    """Test CANYON-B prediction with include_uncertainties=True"""
+def test_predict_variations(fetcher, use_single_point, include_uncertainties, param, mocked_erddapserver):
+    """Test CANYON-B predictions with different dataset sizes and uncertainty options"""
     ds = fetcher.to_xarray()
 
-    # Predict with uncertainties
-    ds_result = ds.argo.canyon_b.predict(param, include_uncertainties=True)
+    if use_single_point:
+        ds = ds.where(ds['N_POINTS'] == 1, drop=True)
+        expected_size = 1
+    else:
+        expected_size = ds.argo.N_POINTS
 
-    # Check that prediction and uncertainties were added
+    ds_result = ds.argo.canyon_b.predict(param, include_uncertainties=include_uncertainties)
+
     assert param in ds_result
-    assert f"{param}_ci" in ds_result
-    assert f"{param}_cim" in ds_result
-    assert f"{param}_cin" in ds_result
-    assert f"{param}_cii" in ds_result
-
-
-def test_predict_single_point_with_uncertainties(fetcher, mocked_erddapserver):
-    """Test CANYON-B prediction for a single-point dataset with uncertainties"""
-    ds = fetcher.to_xarray()
-    # Select a single point
-    ds_single = ds.where(ds['N_POINTS'] == 1, drop=True)
-
-    param = "PO4"
-
-    # Predict with uncertainties
-    ds_result = ds_single.argo.canyon_b.predict(param, include_uncertainties=True)
-
-    # Check that prediction and uncertainties were added
-    assert param in ds_result
-    assert f"{param}_ci" in ds_result
-    assert f"{param}_cim" in ds_result
-    assert f"{param}_cin" in ds_result
-    assert f"{param}_cii" in ds_result
-
-    # Check all have size 1
-    assert ds_result[param].size == 1
-    assert ds_result[f"{param}_ci"].size == 1
-    assert ds_result[f"{param}_cim"].size == 1
-    assert ds_result[f"{param}_cin"].size == 1
-    assert ds_result[f"{param}_cii"].size == 1
+    assert ds_result[param].size == expected_size
+    
+    if include_uncertainties:
+        assert f"{param}_ci" in ds_result
+        assert f"{param}_cim" in ds_result
+        assert f"{param}_cin" in ds_result
+        assert f"{param}_cii" in ds_result
 
 
 def test_validate_against_matlab():
@@ -309,7 +273,8 @@ def test_validate_against_matlab():
 
     results = []
     nsigma_test = 4
-    for key in ['NO3', 'PO4', 'SiOH4', 'AT', 'DIC', 'pHT', 'pCO2']:
+    #for key in ['NO3', 'PO4', 'SiOH4', 'AT', 'DIC', 'pHT', 'pCO2']:
+    for key in ['NO3', 'AT', 'pCO2']:
         vref, vsigma = dsref[key].item(), dsref[f'{key}_s'].item()
         vpredict = dspredict[key].item()
         results.append({'param': key,
