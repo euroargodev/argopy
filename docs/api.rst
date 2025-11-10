@@ -133,6 +133,9 @@ List of extensions:
    ArgoIndex.query.parameter_data_mode
    ArgoIndex.query.profiler_type
    ArgoIndex.query.profiler_label
+   ArgoIndex.query.institution_code
+   ArgoIndex.query.institution_name
+   ArgoIndex.query.dac
 
 **Search on at least two properties** of a file record:
 
