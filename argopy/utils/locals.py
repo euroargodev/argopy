@@ -4,20 +4,26 @@ import subprocess  # nosec B404 only used without user inputs
 import platform
 import locale
 import struct
-import importlib
 from importlib.metadata import version
 import contextlib
 import copy
 import shutil
 import json
-from ..options import OPTIONS
+from typing import Any
+import importlib
+from pathlib import Path
+import pandas as pd
+
+from argopy.options import OPTIONS
 
 
 PIP_INSTALLED = {}
 try:
-    reqs = subprocess.check_output([sys.executable, '-m', 'pip', 'list', '--format', 'json'])
+    reqs = subprocess.check_output(
+        [sys.executable, "-m", "pip", "list", "--format", "json"]
+    )
     reqs = json.loads(reqs.decode())
-    [PIP_INSTALLED.update({mod['name']: mod['version']}) for mod in reqs]
+    [PIP_INSTALLED.update({mod["name"]: mod["version"]}) for mod in reqs]
 except:  # noqa E722
     pass
 
@@ -92,8 +98,8 @@ def netcdf_and_hdf5_versions():
 
 def cli_version(cli_name):
     try:
-        a = subprocess.run([cli_name, '--version'], capture_output=True)
-        return a.stdout.decode().strip("\n").replace(cli_name, '').strip()
+        a = subprocess.run([cli_name, "--version"], capture_output=True)
+        return a.stdout.decode().strip("\n").replace(cli_name, "").strip()
     except:  # noqa E722
         if shutil.which(cli_name):
             return "- # installed"
@@ -102,7 +108,7 @@ def cli_version(cli_name):
 
 
 def pip_version(pip_name):
-    version = '-'
+    version = "-"
     for name in [pip_name, pip_name.replace("_", "-"), pip_name.replace("-", "_")]:
         if name in PIP_INSTALLED:
             version = PIP_INSTALLED[name]
@@ -110,7 +116,7 @@ def pip_version(pip_name):
 
 
 def get_version(module_name):
-    ver = '-'
+    ver = "-"
     try:
         ver = module_name.__version__
     except AttributeError:
@@ -124,8 +130,8 @@ def get_version(module_name):
                     ver = cli_version(module_name)
                 except:  # noqa E722
                     pass
-    if sum([int(v == '0') for v in ver.split(".")]) == len(ver.split(".")):
-        ver = '-'
+    if sum([int(v == "0") for v in ver.split(".")]) == len(ver.split(".")):
+        ver = "-"
     return ver
 
 
@@ -150,7 +156,6 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
         "core": sorted(
             [
                 ("argopy", get_version),
-
                 ("xarray", get_version),
                 ("scipy", get_version),
                 ("netCDF4", get_version),
@@ -312,3 +317,78 @@ def show_options(file=sys.stdout):  # noqa: C901
     opts = dict(sorted(opts.items()))
     for k, v in opts.items():
         print(f"{k}: {v}", file=file)
+
+
+class Asset:
+    """Internal asset loader
+
+    Assets are loaded using an instance of :class:`argopy.stores.filestore`.
+
+    Notes
+    -----
+    This is **single-instance** class, whereby a single instance will be created during a session, whatever the number of calls is made. This avoids to create too many, and unnecessary, instances of file stores.
+
+    Examples
+    --------
+    .. code-block:: python
+        :caption: Examples of asset files loading
+
+        Asset.load('data_types')
+        Asset.load('data_types.json')
+        Asset.load('schema:argo.float.schema')
+        Asset.load('canyon-b:wgts_AT.txt', header=None, sep="\t")
+    """
+
+    _fs: Any = None
+    _instance: "Asset | None" = None
+    _initialized: bool = False
+
+    def __new__(cls, *args: Any, **kwargs: Any) -> "Asset":
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
+    def __init__(self, *args, **kwargs) -> None:
+        if not self._initialized:
+            from argopy.stores import filestore
+
+            self._fs = filestore(cache=True, cachedir=OPTIONS["cachedir"])
+            path2assets = importlib.util.find_spec(
+                "argopy.static.assets"
+            ).submodule_search_locations[0]
+            self._path = Path(path2assets)
+            self._initialized = True
+
+    def _load(self, name: str, **kwargs) -> dict | pd.DataFrame:
+        suffix = Path(name).suffix
+        if suffix in [".csv", ".txt"]:
+            load = self._fs.read_csv
+        else:
+            load = self._fs.open_json
+            if suffix != ".json":  # eg: '.schema'
+                name = f"{name}.json"
+
+        name = name.strip()
+        name = name.split(":")
+        return load(self._path.joinpath(*name), **kwargs)
+
+    @classmethod
+    def load(cls, name: str = None, **kwargs) -> Any:
+        """Load an asset file
+
+        Parameters
+        ----------
+        name: str
+            The *name* of the asset file to load.
+            If no suffix is indicated, it is assumed to be a JSON file with a `.json` extension.
+            If the asset is in sub-folders, use semicolons ':' as separator (eg: 'schema:argo.float.schema')
+        **kwargs:
+            All other arguments are passed down to the loading method.
+
+        Notes
+        -----
+        If the asset `name` has a `.txt` or `.csv` suffix, the :meth:`argopy.stores.filestore.read_csv` is used.
+
+        For all other asset `name`, the :meth:`argopy.stores.filestore.load_json` is used by default.
+        """
+        return cls()._load(name=name, **kwargs)

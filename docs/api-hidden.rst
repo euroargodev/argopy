@@ -80,6 +80,7 @@
 
     argopy.utils.show_versions
     argopy.utils.show_options
+    argopy.utils.Asset
 
     argopy.utils.clear_cache
     argopy.utils.lscache
