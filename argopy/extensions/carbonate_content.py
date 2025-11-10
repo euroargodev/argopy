@@ -26,12 +26,15 @@ from ..utils.carbonate import (
 
 @register_argo_accessor("content")
 class CONTENT(ArgoAccessorExtension):
-    """
-    Implementation of the CONTENT method.
+    """Nutrients and Carbonate System Variables predictor made consistent with chemistry constraints with CONTENT
 
-    CONTENT is a combination of CANYON-B Bayesian neural network mappings of AT, CT, pH and pCO2
-    made consistent with carbonate chemistry constraints for any set of water column P, T, S, O2,
-    location data as an alternative to (spatial) climatological interpolation ([1]_)
+    This is an implementation of the CONTENT method: a combination of CANYON-B Bayesian neural network mappings of AT, CT, pH and pCO2 made consistent with carbonate chemistry constraints for any set of water column P, T, S, O2, location data as an alternative to (spatial) climatological interpolation ([1]_).
+
+    When using this method, please cite the paper.
+
+    See Also
+    --------
+    :meth:`content.predict`, :attr:`content.input_list`, :attr:`content.output_list`
 
     Examples
     --------
@@ -40,7 +43,8 @@ class CONTENT(ArgoAccessorExtension):
     .. code-block:: python
 
         from argopy import DataFetcher
-        ArgoSet = DataFetcher(ds='bgc', mode='standard', params='DOXY', measured='DOXY').float(1902605)
+        # ArgoSet = DataFetcher(ds='bgc', mode='standard', params='DOXY', measured='DOXY').float(1902605)
+        ArgoSet = DataFetcher(ds='bgc', mode='standard', params='DOXY', measured='DOXY').region([-75, -60, 20, 30, 0, 1000, '20250101', '20250201'])
         ds = ArgoSet.to_xarray()
 
     Once input data are loaded, make parameters predictions with or without specifying input errors
@@ -94,6 +98,13 @@ class CONTENT(ArgoAccessorExtension):
     # Save indices for output parameters (i.e. _outpar)
     _svi = np.array([[1, 3], [2, 2], [3, 3], [1, 2], [2, 3], [1, 1]])
 
+    _input_list = ["LATITUDE", "LONGITUDE", "PRES", "TEMP", "PSAL", "DOXY"]
+    """List of parameters required to make predictions"""
+
+    _output_list = ['PO4', 'NO3', 'SiOH4', 'AT', 'AT_SIGMA', 'AT_SIGMA_MIN', 'DIC', 'DIC_SIGMA', 'DIC_SIGMA_MIN', 'pHT', 'pHT_SIGMA', 'pHT_SIGMA_MIN', 'pCO2', 'pCO2_SIGMA', 'pCO2_SIGMA_MIN']
+    """List of all possible output variables for CONTENT"""
+
+
     def __init__(self, *args, **kwargs):
         if not HAS_PYCO2SYS:
             raise ImportError(
@@ -109,6 +120,30 @@ class CONTENT(ArgoAccessorExtension):
             )
         if self._argo.N_POINTS == 0:
             raise DataNotFound("Empty dataset, no data to transform !")
+
+    @property
+    def input_list(self) -> list[str]:
+        """List of parameters required to make predictions with CONTENT
+
+        Returns
+        -------
+        list[str], default = ["LATITUDE", "LONGITUDE", "PRES", "TEMP", "PSAL", "DOXY"]
+        """
+        return self._input_list.copy()
+
+    @property
+    def output_list(self) -> list[str]:
+        """List of all possible output variables for CONTENT
+
+        Returns
+        -------
+        list[str], default = ['PO4', 'NO3', 'SiOH4', 'AT', 'AT_SIGMA', 'AT_SIGMA_MIN', 'DIC', 'DIC_SIGMA', 'DIC_SIGMA_MIN', 'pHT', 'pHT_SIGMA', 'pHT_SIGMA_MIN', 'pCO2', 'pCO2_SIGMA', 'pCO2_SIGMA_MIN']
+
+        Notes
+        -----
+        DIC = CT in Bittig et al., (2018), keep it that way to be consistent with the canyon-b and canyon-med extensions.
+        """
+        return self._output_list.copy()
 
     def get_param_attrs(self, param: str) -> dict:
         """
@@ -185,8 +220,7 @@ class CONTENT(ArgoAccessorExtension):
     ) -> dict:
         """Get raw CANYON-B predictions for specified parameters.
 
-        The raw predicted values contains the predicted parameter values along with their associated uncertainties (ci, cim, cin, cii)
-        and input effects (inx). See `CanyonB._predict` for more details.
+        The raw predicted values contains the predicted parameter values along with their associated uncertainties (ci, cim, cin, cii) and input effects (inx). See `CanyonB._predict` for more details.
 
         Parameters
         ----------
@@ -201,6 +235,10 @@ class CONTENT(ArgoAccessorExtension):
         -------
         dict
             Dictionary with raw CANYON-B outputs for each parameter
+
+        See Also
+        --------
+        :class:`Dataset.argo.canyon-b`
         """
 
         # Get raw predictions for each parameter
@@ -847,7 +885,7 @@ class CONTENT(ArgoAccessorExtension):
 
         Returns
         -------
-        xr.Dataset
+        :class:`xr.Dataset`
             Input dataset augmented with predicted parameters
         """
 

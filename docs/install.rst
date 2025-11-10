@@ -63,6 +63,7 @@ For a complete **argopy** experience, you may also consider to install the follo
 
 - gsw
 - tqdm
+- pyco2sys
 
 **Performances**
 

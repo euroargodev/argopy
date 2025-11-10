@@ -115,33 +115,9 @@ Examples
 Tutorials
 ---------
 
-.. grid:: 1 1 2 2
-    :gutter: 4
+.. important::
 
-    .. grid-item-card:: Core-Argo basic features
-
-        |select_region| |ds_phy| |mode_standard| |src_erddap|
-        ^^^
-        A tutorial to get you started with argopy basic features for core-Argo.
-        +++
-        .. grid:: 2 2 2 2
-
-            .. grid-item::
-
-                .. button-link:: https://nbviewer.org/github/euroargodev/argopy/blob/master/docs/tutorials/basic_features_core_01.ipynb
-                    :color: primary
-                    :outline:
-
-                    :fas:`eye` Online viewer
-
-            .. grid-item::
-
-                .. button-link:: https://github.com/euroargodev/argopy/raw/refs/heads/master/docs/tutorials/basic_features_core_01.ipynb.zip
-                    :color: primary
-                    :outline:
-
-                    :fas:`file-arrow-down` Download notebook
-
+    **For all possible Argopy tutorials, please visit the dedicated repository at:** https://github.com/euroargodev/argopy-training
 
 
 .. dropdown:: Notebook tags Legend

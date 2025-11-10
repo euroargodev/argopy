@@ -357,14 +357,18 @@
 
     argopy.extensions.CanyonMED
     argopy.extensions.CanyonMED.predict
-    argopy.extensions.CanyonMED.input
+    argopy.extensions.CanyonMED.input_list
     argopy.extensions.CanyonMED.output_list
 
     argopy.extensions.CanyonB
     argopy.extensions.CanyonB.predict
+    argopy.extensions.CanyonB.input_list
+    argopy.extensions.CanyonB.output_list
 
     argopy.extensions.CONTENT
     argopy.extensions.CONTENT.predict
+    argopy.extensions.CONTENT.input_list
+    argopy.extensions.CONTENT.output_list
 
     argopy.extensions.ParamsDataMode.compute
     argopy.extensions.ParamsDataMode.merge

@@ -1097,9 +1097,9 @@ file,profiler_type,institution,date_update
 
             Eg: A value of 5 will create chunks with as many as 5 WMOs each.
 
-        Returns
-        -------
-        Iterator of :class:`ArgoFloat`
+        Yields
+        ------
+        :class:`ArgoFloat`
 
         Examples
         --------
