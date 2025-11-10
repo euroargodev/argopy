@@ -85,7 +85,7 @@ class InvalidDataset(ValueError):
 
 
 class InvalidDatasetStructure(ValueError):
-    """Raise when the xarray dataset is not as expected."""
+    """Raise when an internal dataset structure is not as expected."""
 
     pass
 
