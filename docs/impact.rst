@@ -18,6 +18,8 @@ Papers & proceedings mentioning argopy
 
 - Elipot S. , P Miron, M Curcic, K Santana, R Lumpkin (2024). "Clouddrift: a Python package to accelerate the use of Lagrangian data for atmospheric, oceanic, and climate sciences", Journal of Open Source Software, 9(99), 6742,  https://joss.theoj.org/papers/10.21105/joss.06742
 
+- Glaubke, R.H., Sikes, E.L., Sosdian, S.M. et al. (2025). "Elevated shallow water salinity in the deglacial Indian Ocean was sourced from the deep", Nat. Geosci. 18, 893–900, https://doi.org/10.1038/s41561-025-01756-7
+
 - Gonzalez A. (2023). "The Argo Online School: An e-learning tool to get started with Argo", The Journal of Open Source Education, 7(80), 193, https://jose.theoj.org/papers/10.21105/jose.00193
 
 - Huda, Md Nurul  (2023). "Machine Learning for Improvement of Ocean Data Resolution for Weather Forecasting and Climatological Research", Thesis and Dissertations, Virginia Tech, http://hdl.handle.net/10919/116504
