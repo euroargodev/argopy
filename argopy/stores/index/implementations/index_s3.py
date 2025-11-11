@@ -4,7 +4,8 @@ import logging
 from decorator import decorator
 import warnings
 
-from ....utils.checkers import (
+from argopy.errors import InvalidDatasetStructure
+from argopy.utils.checkers import (
     check_index_cols,
     check_wmo,
     check_cyc,
@@ -12,9 +13,8 @@ from ....utils.checkers import (
     has_aws_credentials,
     HAS_BOTO3,
 )
-from ....utils import redact
-from ....errors import InvalidDatasetStructure
-from ... import s3store
+from argopy.utils.format import redact
+from argopy.stores.implementations.s3 import s3store
 
 try:
     import pyarrow.csv as csv  # noqa: F401

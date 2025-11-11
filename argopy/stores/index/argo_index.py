@@ -2,9 +2,9 @@ import importlib
 
 
 if importlib.util.find_spec("pyarrow") is not None:
-    from .implementations.pyarrow.index import indexstore
+    from argopy.stores.index.implementations.pyarrow.index import indexstore
 else:
-    from .implementations.pandas.index import indexstore
+    from argopy.stores.index.implementations.pandas.index import indexstore
 
 
 class ArgoIndex(indexstore):

@@ -1,7 +1,8 @@
 import pandas as pd
-from ..options import OPTIONS
-from ..utils.checkers import check_wmo, check_cyc
-from ..stores import httpstore
+
+from argopy.options import OPTIONS
+from argopy.utils.checkers import check_wmo, check_cyc
+from argopy.stores import httpstore
 
 
 def get_coriolis_profile_id(WMO, CYC=None, **kwargs) -> pd.DataFrame:

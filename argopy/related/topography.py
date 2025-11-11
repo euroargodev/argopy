@@ -1,6 +1,7 @@
 from typing import Union
+
 from argopy.options import OPTIONS
-from argopy.stores import httpstore
+from argopy.stores.implementations.http import httpstore
 from argopy.utils.format import format_oneline
 
 

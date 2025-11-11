@@ -1,8 +1,9 @@
 import pandas as pd
 import numpy as np
-from ..stores import httpstore
-from ..errors import DataNotFound
-from ..plot import scatter_map
+
+from argopy.stores import httpstore
+from argopy.errors import DataNotFound
+from argopy.plot import scatter_map
 
 
 class OceanOPSDeployments:

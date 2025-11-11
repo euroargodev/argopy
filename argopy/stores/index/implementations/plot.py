@@ -1,7 +1,7 @@
 from typing import Any
 
-from ....plot import plot_trajectory, bar_plot
-from ..extensions import ArgoIndexPlotProto
+from argopy.plot.plot import plot_trajectory, bar_plot
+from argopy.stores.index.extensions import ArgoIndexPlotProto
 
 
 class ArgoIndexPlot(ArgoIndexPlotProto):

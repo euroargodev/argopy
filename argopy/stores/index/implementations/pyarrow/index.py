@@ -15,10 +15,10 @@ try:
 except ModuleNotFoundError:
     pass
 
-from .....options import OPTIONS
-from .....errors import DataNotFound, InvalidDatasetStructure
-from .....utils import check_index_cols, conv_lon
-from ...spec import ArgoIndexStoreProto
+from argopy.options import OPTIONS
+from argopy.errors import DataNotFound, InvalidDatasetStructure
+from argopy.utils.checkers import check_index_cols, conv_lon
+from argopy.stores.index.spec import ArgoIndexStoreProto
 
 
 log = logging.getLogger("argopy.stores.index.pa")

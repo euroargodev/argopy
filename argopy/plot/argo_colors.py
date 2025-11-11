@@ -1,7 +1,8 @@
 import numpy as np
 from packaging import version
+
+from argopy.utils.loggers import warnUnless
 from .utils import has_mpl, has_seaborn, ARGOPY_COLORS
-from ..utils.loggers import warnUnless
 
 if has_mpl:
     from .utils import mpl, cm, mcolors, plt

@@ -1,8 +1,8 @@
 import pandas as pd
 import logging
 
-from .... import httpstore
-from ...spec import FloatStoreProto
+from argopy.stores.implementations.http import httpstore
+from argopy.stores.float.spec import FloatStoreProto
 
 
 log = logging.getLogger("argopy.stores.online.FloatStore")

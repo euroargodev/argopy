@@ -1,7 +1,7 @@
 import logging
 
-from argopy.utils import Asset
-from . import ArgoNVSReferenceTables
+from argopy.utils.locals import Asset
+from argopy.related.reference_tables import ArgoNVSReferenceTables
 
 
 log = logging.getLogger("argopy.related.utils")

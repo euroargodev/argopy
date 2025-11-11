@@ -29,19 +29,24 @@ from argopy.xarray import ArgoAccessor  # noqa: E402
 
 # Other Import
 # from . import utils  # noqa: E402
-from argopy import stores  # noqa: E402
-from argopy import errors  # noqa: E402
-from argopy import plot  # noqa: E402
-from argopy import tutorial  # noqa: E402
+# from argopy import errors  # noqa: E402
+# from argopy import plot  # noqa: E402
+import argopy.tutorial  # noqa: E402
 from argopy.plot import dashboard, ArgoColors  # noqa: E402
 from argopy.options import set_options, reset_options  # noqa: E402
 from argopy.data_fetchers import CTDRefDataFetcher  # noqa: E402
-from argopy.stores import ArgoIndex, ArgoFloat, gdacfs  # noqa: E402
-from argopy.utils import show_versions, show_options  # noqa: E402
-from argopy.utils import clear_cache, lscache  # noqa: E402
-from argopy.utils import MonitoredThreadPoolExecutor  # noqa: E402, F401
-from argopy.utils import monitor_status as status  # noqa: E402
-from argopy.related import TopoFetcher, OceanOPSDeployments, ArgoNVSReferenceTables, ArgoDocs, ArgoDOI  # noqa: E402
+from argopy.stores.index.argo_index import ArgoIndex  # noqa: E402
+from argopy.stores.float.argo_float import ArgoFloat  # noqa: E402
+from argopy.stores.implementations.gdac import gdacfs  # noqa: E402
+from argopy.utils.locals import show_versions, show_options  # noqa: E402
+from argopy.utils.caching import clear_cache, lscache  # noqa: E402
+from argopy.utils.monitored_threadpool import MonitoredThreadPoolExecutor  # noqa: E402, F401
+from argopy.utils.monitors import monitor_status as status  # noqa: E402
+from argopy.related.topography import TopoFetcher
+from argopy.related.ocean_ops_deployments import OceanOPSDeployments
+from argopy.related.reference_tables import ArgoNVSReferenceTables
+from argopy.related.argo_documentation import ArgoDocs
+from argopy.related.doi_snapshot import ArgoDOI  # noqa: E402
 from argopy.extensions import CanyonMED  # noqa: E402
 
 
@@ -80,7 +85,6 @@ __all__ = (
     "errors",
     "plot",
     "ArgoColors",  # Class
-    "stores",
     "tutorial",
 
     # Argo xarray accessor extensions

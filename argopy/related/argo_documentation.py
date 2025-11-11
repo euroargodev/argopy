@@ -2,9 +2,9 @@ import pandas as pd
 from functools import lru_cache
 import requests
 
-from ..stores import httpstore, memorystore
-from ..options import OPTIONS
-from argopy.utils import Asset
+from argopy.stores import httpstore, memorystore
+from argopy.options import OPTIONS
+from argopy.utils.locals import Asset
 
 
 # Load the ADMT documentation catalogue:

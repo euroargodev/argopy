@@ -15,6 +15,7 @@ from pathlib import Path
 import pandas as pd
 
 from argopy.options import OPTIONS
+from argopy.stores.implementations.local import filestore
 
 
 PIP_INSTALLED = {}
@@ -350,8 +351,6 @@ class Asset:
 
     def __init__(self, *args, **kwargs) -> None:
         if not self._initialized:
-            from argopy.stores import filestore
-
             self._fs = filestore(cache=True, cachedir=OPTIONS["cachedir"])
             path2assets = importlib.util.find_spec(
                 "argopy.static.assets"

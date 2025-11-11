@@ -1,8 +1,8 @@
 from pathlib import Path
 import logging
 
-from .....errors import InvalidOption
-from ...spec import FloatStoreProto
+from argopy.errors import InvalidOption
+from argopy.stores.float.spec import FloatStoreProto
 
 
 log = logging.getLogger("argopy.stores.offline.FloatStore")

@@ -16,16 +16,22 @@ if sys.version_info >= (3, 11):
 else:
     from typing_extensions import Self
 
-from ...options import OPTIONS
-from ...errors import GdacPathError, S3PathError, InvalidDataset, OptionValueError
-from ...utils import isconnected, has_aws_credentials
-from ...utils import Registry
-from ...utils import Chunker
-from ...utils import shortcut2gdac
+from argopy.options import OPTIONS
+from argopy.errors import GdacPathError, S3PathError, InvalidDataset, OptionValueError
+from argopy.utils.checkers import isconnected, has_aws_credentials
+from argopy.utils.accessories import Registry
+from argopy.utils.chunking import Chunker
+from argopy.utils.lists import shortcut2gdac
 
-from .. import httpstore, memorystore, filestore, ftpstore, s3store
-from .implementations.index_s3 import get_a_s3index
-from .implementations.plot import ArgoIndexPlot
+from argopy.stores.implementations.memory import memorystore
+from argopy.stores.implementations.local import filestore
+from argopy.stores.implementations.http import httpstore
+from argopy.stores.implementations.ftp import ftpstore
+from argopy.stores.implementations.s3 import s3store
+
+
+from argopy.stores.index.implementations.index_s3 import get_a_s3index
+from argopy.stores.index.implementations.plot import ArgoIndexPlot
 
 try:
     import pyarrow.csv as csv  # noqa: F401
@@ -446,7 +452,7 @@ class ArgoIndexStoreProto(ABC):
     def _r4(self):
         """Reference table 4 "Argo data centres and institutions" as a dictionary"""
         if self._load_dict is None:
-            from ...related import load_dict
+            from argopy.related import load_dict
             self._load_dict = load_dict
         return self._load_dict('institutions')
 
@@ -454,7 +460,7 @@ class ArgoIndexStoreProto(ABC):
     def _r8(self):
         """Reference table 8 "Argo instrument types" as a dictionary"""
         if self._load_dict is None:
-            from ...related import load_dict
+            from argopy.related import load_dict
             self._load_dict = load_dict
         return self._load_dict('profilers')
 
@@ -688,7 +694,7 @@ class ArgoIndexStoreProto(ABC):
         else:
             log.debug("Converting [%s] to dataframe from scratch ..." % src)
             # Post-processing for user:
-            from ...related import mapp_dict
+            from argopy.related import mapp_dict
 
             if nrows is not None:
                 df = df.loc[0 : nrows - 1].copy()
@@ -1114,7 +1120,7 @@ file,profiler_type,institution,date_update
                 float # is a ArgoFloat instance
 
         """
-        from .. import ArgoFloat  # Prevent circular import
+        from argopy.stores.float import ArgoFloat  # Prevent circular import
 
         wmos = self.read_wmo(index=index)
 

@@ -2,9 +2,9 @@ from abc import abstractmethod
 from typing import NoReturn
 import logging
 
-from ...utils import register_accessor
-from ...errors import InvalidDatasetStructure
-from ...utils import to_list
+from argopy.errors import InvalidDatasetStructure
+from argopy.utils.decorators import register_accessor
+from argopy.utils.checkers import to_list
 
 
 log = logging.getLogger("argopy.stores.index.extensions")

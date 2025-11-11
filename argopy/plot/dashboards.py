@@ -10,12 +10,12 @@ import os
 import warnings
 from packaging import version
 
-from .utils import has_ipython
-from ..utils.loggers import warnUnless
-from ..related.euroargo_api import get_ea_profile_page
-from ..utils import check_wmo, check_cyc
-from ..errors import InvalidDashboard
-from .. import __version__ as argopy_version
+from argopy import __version__ as argopy_version
+from argopy.errors import InvalidDashboard
+from argopy.utils.loggers import warnUnless
+from argopy.utils.checkers import check_wmo, check_cyc
+from argopy.related.euroargo_api import get_ea_profile_page
+from argopy.plot.utils import has_ipython
 
 
 if has_ipython:

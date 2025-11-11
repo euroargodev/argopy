@@ -1,9 +1,11 @@
 import numpy as np
 from typing import Any
 
-from ....plot import scatter_plot, scatter_map, ArgoColors
-from ....utils import list_multiprofile_file_variables, list_bgc_s_variables, to_list
-from ..extensions import ArgoFloatPlotProto
+from argopy.plot.plot import scatter_plot, scatter_map
+from argopy.plot.argo_colors import ArgoColors
+from argopy.utils.lists import list_multiprofile_file_variables, list_bgc_s_variables
+from argopy.utils.checkers import to_list
+from argopy.stores.float.extensions import ArgoFloatPlotProto
 
 
 class ArgoFloatPlot(ArgoFloatPlotProto):

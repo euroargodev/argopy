@@ -14,18 +14,18 @@ import pandas as pd
 import numpy as np
 from typing import Union
 
-from ..options import OPTIONS
-from ..utils.loggers import warnUnless
-from ..utils.checkers import check_wmo
-from ..utils.geo import conv_lon
-from ..utils.lists import subsample_list
-from ..utils.casting import to_list
-from ..errors import InvalidDatasetStructure
-from argopy.utils import Asset
+from argopy.options import OPTIONS
+from argopy.errors import InvalidDatasetStructure
+from argopy.utils.loggers import warnUnless
+from argopy.utils.checkers import check_wmo
+from argopy.utils.geo import conv_lon
+from argopy.utils.lists import subsample_list
+from argopy.utils.casting import to_list
+from argopy.utils.locals import Asset
 
-from .utils import STYLE, has_seaborn, has_mpl, has_cartopy, has_ipython, has_ipywidgets
-from .utils import axes_style, latlongrid, land_feature
-from .argo_colors import ArgoColors
+from argopy.plot.utils import STYLE, has_seaborn, has_mpl, has_cartopy, has_ipython, has_ipywidgets
+from argopy.plot.utils import axes_style, latlongrid, land_feature
+from argopy.plot.argo_colors import ArgoColors
 
 if has_mpl:
     import matplotlib.pyplot as plt

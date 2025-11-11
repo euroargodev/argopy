@@ -9,10 +9,12 @@ from abc import ABC, abstractmethod
 import logging
 import numpy as np
 
-from ...errors import InvalidOption
-from ...plot import dashboard
-from ...utils import check_wmo, argo_split_path, shortcut2gdac
-from ...options import OPTIONS
+from argopy.options import OPTIONS
+from argopy.errors import InvalidOption
+from argopy.plot import dashboard
+from argopy.utils.checkers import check_wmo
+from argopy.utils.format import argo_split_path
+from argopy.utils.lists import shortcut2gdac
 from .. import ArgoIndex
 
 

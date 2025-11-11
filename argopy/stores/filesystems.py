@@ -6,9 +6,9 @@ import importlib
 from typing import Union
 import sys
 
+from argopy import __version__
 from argopy.options import OPTIONS
 from argopy.utils.accessories import Registry
-from argopy import __version__
 
 
 if importlib.util.find_spec("boto3") is not None:
