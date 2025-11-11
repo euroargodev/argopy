@@ -15,7 +15,7 @@ import logging
 import importlib
 
 import argopy
-from argopy import DataFetcher as ArgoDataFetcher
+from argopy.fetchers import ArgoDataFetcher
 from argopy.errors import (
     CacheFileNotFound,
 )

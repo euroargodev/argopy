@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 import logging
 
 import argopy
-from argopy import IndexFetcher as ArgoIndexFetcher
+from argopy.fetchers import ArgoIndexFetcher
 from argopy.errors import CacheFileNotFound, FileSystemHasNoCache, GdacPathError
 from argopy.utils.checkers import isconnected, is_list_of_strings
 

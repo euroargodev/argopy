@@ -1,9 +1,9 @@
 import logging
 import numpy as np
 
-from argopy import DataFetcher as ArgoDataFetcher
+from argopy.fetchers import ArgoDataFetcher
 from argopy.utils.checkers import is_list_of_strings
-from argopy.stores.index import indexstore_pd as ArgoIndex  # make sure to work with the Pandas index store with erddap-bgc
+from argopy.stores.index.implementations.pandas.index import indexstore as ArgoIndex  # make sure to work with the Pandas index store with erddap-bgc
 
 import pytest
 import xarray as xr

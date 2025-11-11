@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import argopy
 import tempfile
-from argopy import DataFetcher as ArgoDataFetcher
+from argopy.fetchers import ArgoDataFetcher
 from utils import (
     requires_gdac,
 )

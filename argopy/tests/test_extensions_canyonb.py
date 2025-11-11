@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
-from argopy import DataFetcher
+from argopy.fetchers import ArgoDataFetcher
 from mocked_http import mocked_server_address
 from mocked_http import mocked_httpserver as mocked_erddapserver
 from utils import requires_pyco2sys
@@ -27,7 +27,7 @@ def fetcher():
     if USE_MOCKED_SERVER:
         defaults_args["server"] = mocked_server_address
 
-    return DataFetcher(**defaults_args).profile(5903248, 34)
+    return ArgoDataFetcher(**defaults_args).profile(5903248, 34)
 
 
 @pytest.mark.parametrize(

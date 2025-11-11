@@ -1,7 +1,7 @@
 import pytest
 import logging
 
-from argopy import ArgoFloat
+from argopy.stores.float.argo_float import ArgoFloat
 from mocked_http import mocked_server_address
 from mocked_http import mocked_httpserver as mocked_erddapserver
 

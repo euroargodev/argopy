@@ -4,7 +4,7 @@ import pytest
 import tempfile
 
 import argopy
-from argopy import IndexFetcher as ArgoIndexFetcher
+from argopy.fetchers import ArgoIndexFetcher
 from argopy.errors import (
     FileSystemHasNoCache,
     CacheFileNotFound

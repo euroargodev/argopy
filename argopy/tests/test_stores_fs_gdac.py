@@ -7,7 +7,7 @@ import xarray as xr
 import logging
 
 import argopy
-from argopy.stores import gdacfs
+from argopy.stores.implementations.gdac import gdacfs
 from mocked_http import mocked_httpserver, mocked_server_address
 from utils import patch_ftp
 

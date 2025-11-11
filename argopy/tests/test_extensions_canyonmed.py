@@ -1,7 +1,7 @@
 import pytest
 import logging
 
-from argopy import DataFetcher
+from argopy.fetchers import ArgoDataFetcher
 from mocked_http import mocked_server_address
 from mocked_http import mocked_httpserver as mocked_erddapserver
 
@@ -21,7 +21,7 @@ def fetcher():
     if USE_MOCKED_SERVER:
         defaults_args['server'] = mocked_server_address
 
-    return DataFetcher(**defaults_args).profile(5903248, 34)
+    return ArgoDataFetcher(**defaults_args).profile(5903248, 34)
 
 @pytest.mark.parametrize("what", [
     None,
