@@ -13,8 +13,8 @@ import logging
 
 from argopy.utils.format import format_oneline
 from argopy.options import OPTIONS, check_gdac_option
-from argopy.plot import dashboard
-from argopy.stores import ArgoIndex
+from argopy.plot.dashboards import open_dashboard as dashboard
+from argopy.stores.index.argo_index import ArgoIndex
 
 
 log = logging.getLogger("argopy.gdac.index")

@@ -4,8 +4,6 @@ import warnings
 import logging
 import copy
 
-from argopy.utils.checkers import check_wmo, is_wmo
-
 
 log = logging.getLogger("argopy.utils.accessories")
 
@@ -30,75 +28,6 @@ class RegistryItem(ABC):
     @abstractmethod
     def __repr__(self):
         raise NotImplementedError("Not implemented")
-
-
-class float_wmo(RegistryItem):
-    """Argo float WMO number object"""
-
-    def __init__(self, WMO_number, errors="raise"):
-        """Create an Argo float WMO number object
-
-        Parameters
-        ----------
-        WMO_number: object
-            Anything that could be casted as an integer
-        errors: {'raise', 'warn', 'ignore'}
-            Possibly raises a ValueError exception or UserWarning, otherwise fails silently if WMO_number is not valid
-
-        Returns
-        -------
-        :class:`argopy.utilities.float_wmo`
-        """
-        self.errors = errors
-        if isinstance(WMO_number, float_wmo):
-            item = WMO_number.value
-        else:
-            item = check_wmo(WMO_number, errors=self.errors)[
-                0
-            ]  # This will automatically validate item
-        self.item = item
-
-    @property
-    def isvalid(self):
-        """Check if WMO number is valid"""
-        return is_wmo(self.item, errors=self.errors)
-        # return True  # Because it was checked at instantiation
-
-    @property
-    def value(self):
-        """Return WMO number as in integer"""
-        return int(self.item)
-
-    def __str__(self):
-        # return "%s" % check_wmo(self.item)[0]
-        return "%s" % self.item
-
-    def __repr__(self):
-        return f"WMO({self.item})"
-
-    def __check_other__(self, other):
-        return check_wmo(other)[0] if type(other) is not float_wmo else other.item
-
-    def __eq__(self, other):
-        return self.item.__eq__(self.__check_other__(other))
-
-    def __ne__(self, other):
-        return self.item.__ne__(self.__check_other__(other))
-
-    def __gt__(self, other):
-        return self.item.__gt__(self.__check_other__(other))
-
-    def __lt__(self, other):
-        return self.item.__lt__(self.__check_other__(other))
-
-    def __ge__(self, other):
-        return self.item.__ge__(self.__check_other__(other))
-
-    def __le__(self, other):
-        return self.item.__le__(self.__check_other__(other))
-
-    def __hash__(self):
-        return hash(self.item)
 
 
 class Registry(UserList):
@@ -177,14 +106,18 @@ class Registry(UserList):
         """
         self.name = name
         self._invalid = invalid
-        if dtype == float_wmo or str(dtype).lower() == "wmo":
+        if str(dtype).lower() in ["float_wmo", "wmo"]:
+            from argopy.utils.wmo import float_wmo
             self._validator = self._wmo
+            self._dtype = "float_wmo"
             self.dtype = float_wmo
         elif hasattr(dtype, "isvalid"):
             self._validator = dtype.isvalid
+            self._dtype = str(dtype).lower()
             self.dtype = dtype
         else:
             self._validator = self._isinstance
+            self._dtype = str(dtype).lower()
             self.dtype = dtype
         # else:
         #     raise ValueError("Unrecognised Registry data type '%s'" % dtype)
@@ -209,8 +142,8 @@ class Registry(UserList):
     def _process_items(self, items):
         if not isinstance(items, list):
             items = [items]
-        if self.dtype == float_wmo:
-            items = [float_wmo(item, errors=self._invalid) for item in items]
+        if self._dtype == "float_wmo":
+            items = [self.dtype(item, errors=self._invalid) for item in items]
         return items
 
     def commit(self, values):

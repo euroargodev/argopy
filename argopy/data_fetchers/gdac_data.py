@@ -17,7 +17,8 @@ from typing import Literal
 from argopy.utils.format import argo_split_path
 from argopy.options import OPTIONS, check_gdac_option, PARALLEL_SETUP
 from argopy.errors import DataNotFound
-from argopy.stores import ArgoIndex, has_distributed, distributed
+from argopy.stores.index.argo_index import ArgoIndex
+from argopy.stores.filesystems import has_distributed, distributed
 from argopy.data_fetchers.proto import ArgoDataFetcherProto
 from argopy.data_fetchers.gdac_data_processors import pre_process_multiprof
 

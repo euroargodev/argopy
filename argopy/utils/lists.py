@@ -20,7 +20,7 @@ def list_available_data_src() -> dict:
     """List all available data sources"""
     sources = {}
     try:
-        from ..data_fetchers import erddap_data as Erddap_Fetchers
+        from argopy.data_fetchers import erddap_data as Erddap_Fetchers
 
         # Ensure we're loading the erddap data fetcher with the current options:
         Erddap_Fetchers.api_server_check = Erddap_Fetchers.api_server_check.replace(
@@ -38,7 +38,7 @@ def list_available_data_src() -> dict:
         pass
 
     try:
-        from ..data_fetchers import argovis_data as ArgoVis_Fetchers
+        from argopy.data_fetchers import argovis_data as ArgoVis_Fetchers
 
         sources["argovis"] = ArgoVis_Fetchers
     except Exception:
@@ -50,7 +50,7 @@ def list_available_data_src() -> dict:
         pass
 
     try:
-        from ..data_fetchers import gdac_data as GDAC_Fetchers
+        from argopy.data_fetchers import gdac_data as GDAC_Fetchers
 
         # Ensure we're loading the gdac data fetcher with the current options:
         GDAC_Fetchers.api_server_check = OPTIONS["gdac"]
@@ -73,7 +73,7 @@ def list_available_index_src() -> dict:
     """List all available index sources"""
     sources = {}
     try:
-        from ..data_fetchers import erddap_index as Erddap_Fetchers
+        from argopy.data_fetchers import erddap_index as Erddap_Fetchers
 
         # Ensure we're loading the erddap data fetcher with the current options:
         Erddap_Fetchers.api_server_check = Erddap_Fetchers.api_server_check.replace(
@@ -91,7 +91,7 @@ def list_available_index_src() -> dict:
         pass
 
     try:
-        from ..data_fetchers import gdac_index as GDAC_Fetchers
+        from argopy.data_fetchers import gdac_index as GDAC_Fetchers
 
         # Ensure we're loading the gdac data fetcher with the current options:
         GDAC_Fetchers.api_server_check = OPTIONS["gdac"]

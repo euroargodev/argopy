@@ -5,7 +5,8 @@ from typing import List
 
 from argopy.options import OPTIONS
 from argopy.errors import InvalidDatasetStructure
-from argopy.utils.checkers import is_indexbox, check_wmo, check_cyc, to_list, conv_lon
+from argopy.utils.checkers import is_indexbox, check_cyc, to_list, conv_lon
+from argopy.utils.wmo import check_wmo
 from argopy.stores.index.extensions import register_ArgoIndex_accessor, ArgoIndexSearchEngine
 from argopy.stores.index.implementations.index_s3 import search_s3
 from argopy.stores.index.implementations.pandas.index import indexstore

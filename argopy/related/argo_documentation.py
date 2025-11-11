@@ -2,8 +2,9 @@ import pandas as pd
 from functools import lru_cache
 import requests
 
-from argopy.stores import httpstore, memorystore
 from argopy.options import OPTIONS
+from argopy.stores.implementations.http import httpstore
+from argopy.stores.implementations.memory import memorystore
 from argopy.utils.locals import Asset
 
 

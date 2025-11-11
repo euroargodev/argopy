@@ -17,7 +17,7 @@ from typing import Union
 from argopy.options import OPTIONS
 from argopy.errors import InvalidDatasetStructure
 from argopy.utils.loggers import warnUnless
-from argopy.utils.checkers import check_wmo
+from argopy.utils.wmo import check_wmo
 from argopy.utils.geo import conv_lon
 from argopy.utils.lists import subsample_list
 from argopy.utils.casting import to_list

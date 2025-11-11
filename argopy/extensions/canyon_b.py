@@ -11,9 +11,11 @@ except ImportError:
     HAS_PYCO2SYS = False
     pyco2 = None
 
-from ..errors import InvalidDatasetStructure, DataNotFound
-from ..utils import Asset, to_list, point_in_polygon
-from . import register_argo_accessor, ArgoAccessorExtension
+from argopy.errors import InvalidDatasetStructure, DataNotFound
+from argopy.utils.locals import Asset
+from argopy.utils.checkers import to_list
+from argopy.utils.geo import point_in_polygon
+from argopy.extensions.utils import register_argo_accessor, ArgoAccessorExtension
 
 
 @register_argo_accessor("canyon_b")

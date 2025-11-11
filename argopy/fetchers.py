@@ -29,7 +29,8 @@ from argopy.errors import (
 from argopy.related.euroargo_api import (
     get_coriolis_profile_id,
 )
-from argopy.utils.checkers import is_box, is_indexbox, check_wmo, check_cyc
+from argopy.utils.wmo import check_wmo
+from argopy.utils.checkers import is_box, is_indexbox, check_cyc
 from argopy.utils.lists import (
     list_available_data_src,
     list_available_index_src,

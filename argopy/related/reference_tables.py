@@ -2,8 +2,8 @@ import pandas as pd
 from functools import lru_cache
 import collections
 
-from argopy.stores import httpstore
 from argopy.options import OPTIONS
+from argopy.stores.implementations.http import httpstore
 from argopy.utils.locals import Asset
 
 

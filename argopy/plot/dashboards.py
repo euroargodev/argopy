@@ -13,7 +13,8 @@ from packaging import version
 from argopy import __version__ as argopy_version
 from argopy.errors import InvalidDashboard
 from argopy.utils.loggers import warnUnless
-from argopy.utils.checkers import check_wmo, check_cyc
+from argopy.utils.checkers import check_cyc
+from argopy.utils.wmo import check_wmo
 from argopy.related.euroargo_api import get_ea_profile_page
 from argopy.plot.utils import has_ipython
 

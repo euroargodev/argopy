@@ -5,9 +5,9 @@ from decorator import decorator
 import warnings
 
 from argopy.errors import InvalidDatasetStructure
+from argopy.utils.wmo import check_wmo
 from argopy.utils.checkers import (
     check_index_cols,
-    check_wmo,
     check_cyc,
     is_list_of_strings,
     has_aws_credentials,

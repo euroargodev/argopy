@@ -19,9 +19,10 @@ from netCDF4 import Dataset
 from urllib.parse import urlparse
 
 from argopy.errors import InvalidMethod, DataNotFound
-from argopy.utils import Registry, UriCName
-from argopy.utils import has_aws_credentials
-from argopy.utils import (
+from argopy.utils.accessories import Registry
+from argopy.utils.format import UriCName
+from argopy.utils.checkers import has_aws_credentials
+from argopy.utils.transform import (
     drop_variables_not_in_all_datasets,
     fill_variables_not_in_all_datasets,
 )

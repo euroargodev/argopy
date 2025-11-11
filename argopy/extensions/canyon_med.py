@@ -4,9 +4,10 @@ import pandas as pd
 import xarray as xr
 from typing import Union, List
 
-from ..errors import InvalidDatasetStructure, DataNotFound
-from ..utils import to_list, Asset
-from . import register_argo_accessor, ArgoAccessorExtension
+from argopy.errors import InvalidDatasetStructure, DataNotFound
+from argopy.utils.locals import Asset
+from argopy.utils.checkers import to_list
+from argopy.extensions.utils import register_argo_accessor, ArgoAccessorExtension
 
 
 nan_value = np.nan if not hasattr(np, 'NaN') else np.NaN

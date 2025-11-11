@@ -8,7 +8,8 @@ import logging
 import pandas as pd
 import numpy as np
 import warnings
-from argopy.utils.checkers import check_cyc, check_wmo
+from argopy.utils.checkers import check_cyc
+from argopy.utils.wmo import check_wmo
 
 
 log = logging.getLogger("argopy.utils.format")

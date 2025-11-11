@@ -6,7 +6,7 @@ import hashlib
 import warnings
 import logging
 
-from argopy.plot import dashboard
+from argopy.plot.dashboards import open_dashboard as dashboard
 from argopy.utils.lists import list_standard_variables
 from argopy.utils.format import UriCName, format_oneline
 

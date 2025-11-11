@@ -1,8 +1,8 @@
 from typing import Literal, Union
 import xarray as xr
 
-from ..utils import optical_modeling as om
-from . import register_argo_accessor, ArgoAccessorExtension
+import argopy.utils.optical_modeling as om
+from argopy.extensions.utils import register_argo_accessor, ArgoAccessorExtension
 
 
 @register_argo_accessor("optic")

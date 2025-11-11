@@ -6,11 +6,11 @@ import logging
 from abc import abstractmethod
 import warnings
 
-from argopy.stores import httpstore
-from argopy.options import OPTIONS, DEFAULT, PARALLEL_SETUP
-from argopy.utils.chunking import Chunker
-from argopy.errors import DataNotFound
 from argopy import __version__
+from argopy.errors import DataNotFound
+from argopy.options import OPTIONS, DEFAULT, PARALLEL_SETUP
+from argopy.stores.implementations.http import httpstore
+from argopy.utils.chunking import Chunker
 from argopy.data_fetchers.proto import ArgoDataFetcherProto
 from argopy.data_fetchers.argovis_data_processors import pre_process, add_attributes
 

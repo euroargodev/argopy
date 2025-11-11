@@ -11,11 +11,11 @@ import numpy as np
 
 from argopy.options import OPTIONS
 from argopy.errors import InvalidOption
-from argopy.plot import dashboard
-from argopy.utils.checkers import check_wmo
+from argopy.plot.dashboards import open_dashboard as dashboard
+from argopy.utils.wmo import check_wmo
 from argopy.utils.format import argo_split_path
 from argopy.utils.lists import shortcut2gdac
-from .. import ArgoIndex
+from argopy.stores.index.argo_index import ArgoIndex
 
 
 log = logging.getLogger("argopy.stores.ArgoFloat")
