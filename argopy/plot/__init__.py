@@ -7,10 +7,10 @@ See Also
 
 
 """
-from .plot import plot_trajectory, bar_plot, open_sat_altim_report, scatter_map, scatter_plot
-from .argo_colors import ArgoColors
-from .dashboards import open_dashboard as dashboard
-from .utils import latlongrid, ARGOPY_COLORS
+from argopy.plot.plot import plot_trajectory, bar_plot, open_sat_altim_report, scatter_map, scatter_plot
+from argopy.plot.argo_colors import ArgoColors
+from argopy.plot.dashboards import open_dashboard as dashboard
+from argopy.plot.utils import latlongrid, ARGOPY_COLORS
 
 
 __all__ = (

@@ -22,27 +22,27 @@ log = logging.getLogger(__name__)
 log.addHandler(logging.NullHandler())
 
 # Import facades:
-from .fetchers import ArgoDataFetcher as DataFetcher  # noqa: E402
-from .fetchers import ArgoIndexFetcher as IndexFetcher  # noqa: E402
+from argopy.fetchers import ArgoDataFetcher as DataFetcher  # noqa: E402
+from argopy.fetchers import ArgoIndexFetcher as IndexFetcher  # noqa: E402
 
-from .xarray import ArgoAccessor  # noqa: E402
+from argopy.xarray import ArgoAccessor  # noqa: E402
 
 # Other Import
 # from . import utils  # noqa: E402
-from . import stores  # noqa: E402
-from . import errors  # noqa: E402
-from . import plot  # noqa: E402
-from . import tutorial  # noqa: E402
-from .plot import dashboard, ArgoColors  # noqa: E402
-from .options import set_options, reset_options  # noqa: E402
-from .data_fetchers import CTDRefDataFetcher  # noqa: E402
-from .stores import ArgoIndex, ArgoFloat, gdacfs  # noqa: E402
-from .utils import show_versions, show_options  # noqa: E402
-from .utils import clear_cache, lscache  # noqa: E402
-from .utils import MonitoredThreadPoolExecutor  # noqa: E402, F401
-from .utils import monitor_status as status  # noqa: E402
-from .related import TopoFetcher, OceanOPSDeployments, ArgoNVSReferenceTables, ArgoDocs, ArgoDOI  # noqa: E402
-from .extensions import CanyonMED  # noqa: E402
+from argopy import stores  # noqa: E402
+from argopy import errors  # noqa: E402
+from argopy import plot  # noqa: E402
+from argopy import tutorial  # noqa: E402
+from argopy.plot import dashboard, ArgoColors  # noqa: E402
+from argopy.options import set_options, reset_options  # noqa: E402
+from argopy.data_fetchers import CTDRefDataFetcher  # noqa: E402
+from argopy.stores import ArgoIndex, ArgoFloat, gdacfs  # noqa: E402
+from argopy.utils import show_versions, show_options  # noqa: E402
+from argopy.utils import clear_cache, lscache  # noqa: E402
+from argopy.utils import MonitoredThreadPoolExecutor  # noqa: E402, F401
+from argopy.utils import monitor_status as status  # noqa: E402
+from argopy.related import TopoFetcher, OceanOPSDeployments, ArgoNVSReferenceTables, ArgoDocs, ArgoDOI  # noqa: E402
+from argopy.extensions import CanyonMED  # noqa: E402
 
 
 #

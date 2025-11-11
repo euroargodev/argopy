@@ -1,9 +1,9 @@
-from .utils import register_argo_accessor, ArgoAccessorExtension
-from .canyon_med import CanyonMED
-from .canyon_b import CanyonB
-from .carbonate_content import CONTENT
-from .params_data_mode import ParamsDataMode
-from .optical_modeling import OpticalModeling
+from argopy.extensions.utils import register_argo_accessor, ArgoAccessorExtension
+from argopy.extensions.canyon_med import CanyonMED
+from argopy.extensions.canyon_b import CanyonB
+from argopy.extensions.carbonate_content import CONTENT
+from argopy.extensions.params_data_mode import ParamsDataMode
+from argopy.extensions.optical_modeling import OpticalModeling
 
 #
 __all__ = (

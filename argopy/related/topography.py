@@ -1,7 +1,7 @@
 from typing import Union
-from ..options import OPTIONS
-from ..stores import httpstore
-from ..utils.format import format_oneline
+from argopy.options import OPTIONS
+from argopy.stores import httpstore
+from argopy.utils.format import format_oneline
 
 
 class TopoFetcher:
