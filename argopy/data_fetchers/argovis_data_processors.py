@@ -1,7 +1,7 @@
 import pandas as pd
 import xarray as xr
 from typing import Any
-from ..utils import list_bgc_s_parameters
+from argopy.utils.lists import list_bgc_s_parameters
 
 
 def pre_process(profiles: Any, key_map: dict = None) -> pd.DataFrame:

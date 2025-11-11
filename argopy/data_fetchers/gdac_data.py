@@ -14,12 +14,12 @@ import getpass
 import logging
 from typing import Literal
 
-from ..utils.format import argo_split_path
-from ..options import OPTIONS, check_gdac_option, PARALLEL_SETUP
-from ..errors import DataNotFound
-from ..stores import ArgoIndex, has_distributed, distributed
-from .proto import ArgoDataFetcherProto
-from .gdac_data_processors import pre_process_multiprof
+from argopy.utils.format import argo_split_path
+from argopy.options import OPTIONS, check_gdac_option, PARALLEL_SETUP
+from argopy.errors import DataNotFound
+from argopy.stores import ArgoIndex, has_distributed, distributed
+from argopy.data_fetchers.proto import ArgoDataFetcherProto
+from argopy.data_fetchers.gdac_data_processors import pre_process_multiprof
 
 
 log = logging.getLogger("argopy.gdac.data")

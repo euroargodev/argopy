@@ -3,11 +3,11 @@ This package contains implementations for data and index fetchers for specific d
 """
 
 from argopy.data_fetchers.erddap_refdata import Fetch_box as CTDRefDataFetcher
-from argopy.data_fetchers import erddap_data
-from argopy.data_fetchers import erddap_index
-from argopy.data_fetchers import argovis_data
-from argopy.data_fetchers import gdac_data
-from argopy.data_fetchers import gdac_index
+import argopy.data_fetchers.erddap_data
+import argopy.data_fetchers.erddap_index
+import argopy.data_fetchers.argovis_data
+import argopy.data_fetchers.gdac_data
+import argopy.data_fetchers.gdac_index
 
 __all__ = (
     "erddap_data",

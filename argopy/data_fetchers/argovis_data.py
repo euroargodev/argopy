@@ -6,13 +6,14 @@ import logging
 from abc import abstractmethod
 import warnings
 
-from ..stores import httpstore
-from ..options import OPTIONS, DEFAULT, PARALLEL_SETUP
-from ..utils.chunking import Chunker
-from ..errors import DataNotFound
-from .. import __version__
-from .proto import ArgoDataFetcherProto
-from .argovis_data_processors import pre_process, add_attributes
+from argopy.stores import httpstore
+from argopy.options import OPTIONS, DEFAULT, PARALLEL_SETUP
+from argopy.utils.chunking import Chunker
+from argopy.errors import DataNotFound
+from argopy import __version__
+from argopy.data_fetchers.proto import ArgoDataFetcherProto
+from argopy.data_fetchers.argovis_data_processors import pre_process, add_attributes
+
 
 access_points = ["wmo", "box"]
 exit_formats = ["xarray"]

@@ -25,7 +25,8 @@ from ..utils.lists import list_bgc_s_variables, list_core_parameters
 from ..errors import ErddapServerError, DataNotFound
 from ..stores import httpstore, has_distributed, distributed
 from ..stores.index import indexstore_pd as ArgoIndex
-from ..utils import is_list_of_strings, to_list, Chunker
+from argopy.utils.checkers import is_list_of_strings, to_list
+from argopy.utils.chunking import Chunker
 from .proto import ArgoDataFetcherProto
 from .erddap_data_processors import pre_process
 
