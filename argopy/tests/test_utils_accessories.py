@@ -1,31 +1,6 @@
 import pytest
-from argopy.utils.accessories import float_wmo, Registry
-
-
-class Test_float_wmo():
-
-    def test_init(self):
-        assert isinstance(float_wmo(2901746), float_wmo)
-        assert isinstance(float_wmo(float_wmo(2901746)), float_wmo)
-
-    def test_isvalid(self):
-        assert float_wmo(2901746).isvalid
-        assert not float_wmo(12, errors='ignore').isvalid
-
-    def test_ppt(self):
-        assert isinstance(str(float_wmo(2901746)), str)
-        assert isinstance(repr(float_wmo(2901746)), str)
-
-    def test_comparisons(self):
-        assert float_wmo(2901746) == float_wmo(2901746)
-        assert float_wmo(2901746) != float_wmo(2901745)
-        assert float_wmo(2901746) >= float_wmo(2901746)
-        assert float_wmo(2901746) > float_wmo(2901745)
-        assert float_wmo(2901746) <= float_wmo(2901746)
-        assert float_wmo(2901746) < float_wmo(2901747)
-
-    def test_hashable(self):
-        assert isinstance(hash(float_wmo(2901746)), int)
+from argopy.utils.wmo import float_wmo
+from argopy.utils.accessories import Registry
 
 
 class Test_Registry():

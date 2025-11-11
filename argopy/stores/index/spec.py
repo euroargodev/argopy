@@ -22,6 +22,7 @@ from argopy.utils.checkers import isconnected, has_aws_credentials
 from argopy.utils.accessories import Registry
 from argopy.utils.chunking import Chunker
 from argopy.utils.lists import shortcut2gdac
+from argopy.related.utils import load_dict
 
 from argopy.stores.implementations.memory import memorystore
 from argopy.stores.implementations.local import filestore
@@ -452,7 +453,7 @@ class ArgoIndexStoreProto(ABC):
     def _r4(self):
         """Reference table 4 "Argo data centres and institutions" as a dictionary"""
         if self._load_dict is None:
-            from argopy.related import load_dict
+            # from argopy.related import load_dict
             self._load_dict = load_dict
         return self._load_dict('institutions')
 
@@ -460,7 +461,7 @@ class ArgoIndexStoreProto(ABC):
     def _r8(self):
         """Reference table 8 "Argo instrument types" as a dictionary"""
         if self._load_dict is None:
-            from argopy.related import load_dict
+            # from argopy.related import load_dict
             self._load_dict = load_dict
         return self._load_dict('profilers')
 

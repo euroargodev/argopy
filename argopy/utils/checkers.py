@@ -508,7 +508,7 @@ def check_gdac_path(
         return True
     else:
 
-        from ..stores import gdacfs  # import here, otherwise raises circular import
+        from argopy.stores.implementations.gdac import gdacfs  # import here, otherwise raises circular import
 
         try:
             fs = gdacfs(path)
@@ -705,7 +705,7 @@ def erddap_ds_exists(
         erddap = OPTIONS["erddap"]
     # log.debug("from erddap_ds_exists: %s" % erddap)
     if isconnected(erddap, maxtry=maxtry):
-        from ..stores import httpstore  # must import here to avoid circular import
+        from argopy.stores.implementations.http import httpstore  # must import here to avoid circular import
 
         with httpstore(timeout=OPTIONS["api_timeout"]).open(
             "".join([erddap, "/info/index.json"])
