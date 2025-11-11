@@ -6,7 +6,7 @@ from dask.distributed import Client
 
 
 import logging
-from argopy import DataFetcher
+from argopy.fetchers import ArgoDataFetcher
 from collections import ChainMap
 import xarray as xr
 
@@ -72,7 +72,7 @@ def create_fetcher(fetcher_args, access_point):
 
     def core(fargs, apts):
         try:
-            f = DataFetcher(**fargs)
+            f = ArgoDataFetcher(**fargs)
             if "float" in apts:
                 f = f.float(apts["float"])
             elif "profile" in apts:

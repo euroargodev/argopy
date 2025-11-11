@@ -9,7 +9,6 @@ from utils import (
 
 import argopy
 from argopy.errors import GdacPathError
-from argopy.utils.wmo import check_wmo, is_wmo
 from argopy.utils.checkers import (
     is_box, is_indexbox,
     check_cyc, is_cyc,
