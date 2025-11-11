@@ -18,17 +18,17 @@ from functools import lru_cache
 from netCDF4 import Dataset
 from urllib.parse import urlparse
 
-from ...errors import InvalidMethod, DataNotFound
-from ...utils import Registry, UriCName
-from ...utils import has_aws_credentials
-from ...utils import (
+from argopy.errors import InvalidMethod, DataNotFound
+from argopy.utils import Registry, UriCName
+from argopy.utils import has_aws_credentials
+from argopy.utils import (
     drop_variables_not_in_all_datasets,
     fill_variables_not_in_all_datasets,
 )
-from ...utils.monitored_threadpool import MyThreadPoolExecutor as MyExecutor
-from ..spec import ArgoStoreProto
-from ..filesystems import has_distributed, distributed
-from ..filesystems import tqdm
+from argopy.utils.monitored_threadpool import MyThreadPoolExecutor as MyExecutor
+from argopy.stores.spec import ArgoStoreProto
+from argopy.stores.filesystems import has_distributed, distributed
+from argopy.stores.filesystems import tqdm
 
 
 log = logging.getLogger("argopy.stores.implementation.http")

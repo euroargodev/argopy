@@ -3,9 +3,9 @@ import logging
 from urllib.parse import urlparse, parse_qs
 import copy
 
-from ...options import OPTIONS
-from ...errors import ErddapHTTPNotFound, ErddapHTTPUnauthorized
-from .http import httpstore
+from argopy.options import OPTIONS
+from argopy.errors import ErddapHTTPNotFound, ErddapHTTPUnauthorized
+from argopy.stores.implementations.http import httpstore
 
 
 log = logging.getLogger("argopy.stores.implementation.http_erddap")

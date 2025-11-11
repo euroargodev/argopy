@@ -9,11 +9,11 @@ import warnings
 from typing import Literal
 from netCDF4 import Dataset
 
-from ...errors import InvalidMethod, DataNotFound
-from ...utils.transform import drop_variables_not_in_all_datasets
-from ..filesystems import has_distributed, distributed
-from ..filesystems import tqdm
-from .http import httpstore
+from argopy.errors import InvalidMethod, DataNotFound
+from argopy.utils.transform import drop_variables_not_in_all_datasets
+from argopy.stores.filesystems import has_distributed, distributed
+from argopy.stores.filesystems import tqdm
+from argopy.stores.implementations.http import httpstore
 
 
 log = logging.getLogger("argopy.stores.implementation.ftp")

@@ -1,4 +1,4 @@
-from .http import httpstore
+from argopy.stores.implementations.http import httpstore
 
 
 class s3store(httpstore):
