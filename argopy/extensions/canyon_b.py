@@ -12,7 +12,8 @@ except ImportError:
     pyco2 = None
 
 from ..errors import InvalidDatasetStructure, DataNotFound
-from ..utils import Asset, to_list, point_in_polygon
+from ..utils import to_list, point_in_polygon
+from argopy.utils.locals import Asset
 from . import register_argo_accessor, ArgoAccessorExtension
 
 

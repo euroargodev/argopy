@@ -21,7 +21,7 @@ from ..utils.geo import conv_lon
 from ..utils.lists import subsample_list
 from ..utils.casting import to_list
 from ..errors import InvalidDatasetStructure
-from argopy.utils import Asset
+from argopy.utils.locals import Asset
 
 from .utils import STYLE, has_seaborn, has_mpl, has_cartopy, has_ipython, has_ipywidgets
 from .utils import axes_style, latlongrid, land_feature

@@ -5,7 +5,7 @@ import xarray as xr
 import logging
 from copy import deepcopy
 
-from argopy.utils import Asset
+from argopy.utils.locals import Asset
 
 
 log = logging.getLogger("argopy.utils.casting")

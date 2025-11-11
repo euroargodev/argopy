@@ -4,7 +4,7 @@ import requests
 
 from ..stores import httpstore, memorystore
 from ..options import OPTIONS
-from argopy.utils import Asset
+from argopy.utils.locals import Asset
 
 
 # Load the ADMT documentation catalogue:

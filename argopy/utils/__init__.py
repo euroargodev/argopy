@@ -43,7 +43,6 @@ from .locals import (  # noqa: F401
     modified_environ,
     get_sys_info,  # noqa: F401
     netcdf_and_hdf5_versions,  # noqa: F401
-    Asset,
 )
 from .monitors import monitor_status, badge, fetch_status  # noqa: F401
 from .geo import (
@@ -121,7 +120,6 @@ __all__ = (
     "show_versions",
     "show_options",
     "modified_environ",
-    "Asset",
     # Monitors
     "monitor_status",
     # Geo (space/time data utilities)
