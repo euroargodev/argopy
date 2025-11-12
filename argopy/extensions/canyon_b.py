@@ -6,6 +6,7 @@ import xarray as xr
 
 try:
     import PyCO2SYS as pyco2
+
     HAS_PYCO2SYS = True
 except ImportError:
     HAS_PYCO2SYS = False
@@ -13,18 +14,23 @@ except ImportError:
 
 try:
     from numba import jit, prange
+
     HAS_NUMBA = True
 except ImportError:
     HAS_NUMBA = False
+
     # Define dummy decorators (needed for tests when numba is not installed)
     def jit(*args, **kwargs):
         def decorator(func):
             return func
+
         return decorator
+
     prange = range
 
 try:
     from joblib import Parallel, delayed
+
     HAS_JOBLIB = True
 except ImportError:
     HAS_JOBLIB = False
@@ -141,19 +147,19 @@ class CanyonB(ArgoAccessorExtension):
     def __init__(self, *args, **kwargs):
         if not HAS_PYCO2SYS:
             raise ImportError(
-                "PyCO2SYS is required for the canyon_b extension. "
+                "PyCO2SYS is required for the CANYON-B extension."
                 "Install it with: pip install PyCO2SYS"
             )
         if not HAS_NUMBA:
             raise ImportError(
-                "numba is required for the canyon_b extension. "
+                "numba is required for the CANYON-B extension."
                 "Install it with: pip install numba"
-            ) # Note: for performance reasons, numba is required now.
+            )  # Note: for performance reasons, numba is required now.
         if not HAS_JOBLIB:
             raise ImportError(
-                "joblib is required for the canyon_b extension. "
+                "joblib is required for the CANYON-B extension."
                 "Install it with: pip install joblib"
-            ) # Note: for parallelization of predictions, joblib is required now.
+            )  # Note: for parallelization of predictions, joblib is required now.
 
         super().__init__(*args, **kwargs)
 
@@ -465,19 +471,23 @@ class CanyonB(ArgoAccessorExtension):
     def _nn_forward_1layer(data_N, w1, b1, w2, b2):
         """Forward pass for 1-layer neural network (numba optimized with parallelization)"""
         nol = data_N.shape[0]  # Number of data points
-        ni = data_N.shape[1]  # Number of inputs to the neural network 
+        ni = data_N.shape[1]  # Number of inputs to the neural network
         nl1 = w1.shape[0]  # Number of neurons in the hidden layer
 
         # Forward pass
         a = np.zeros((nol, nl1))
-        for i in prange(nol):  # Parallel over data points (needs to be an explicit loop for numba)
+        for i in prange(
+            nol
+        ):  # Parallel over data points (needs to be an explicit loop for numba)
             for j in range(nl1):
                 tmp = b1[j]
                 for k in range(ni):
                     tmp += data_N[i, k] * w1[j, k]
                 a[i, j] = np.tanh(tmp)
 
-        y = a @ w2.T + b2 # @ is matrix multiplication operator in numpy and numba optimizes it well 
+        y = (
+            a @ w2.T + b2
+        )  # @ is matrix multiplication operator in numpy and numba optimizes it well
 
         # Calculate input effects in parallel
         inx = np.zeros((nol, ni))
@@ -532,9 +542,7 @@ class CanyonB(ArgoAccessorExtension):
                 tmp = 0.0
                 for j in range(nl2):
                     for k in range(nl1):
-                        tmp += (
-                            w3[0, j] * dtanh_b[j] * w2[j, k] * dtanh_a[k] * w1[k, m]
-                        )
+                        tmp += w3[0, j] * dtanh_b[j] * w2[j, k] * dtanh_a[k] * w1[k, m]
                 inx[i, m] = tmp
 
         return y.flatten(), inx
@@ -806,7 +814,7 @@ class CanyonB(ArgoAccessorExtension):
         etemp: Optional[float] = None,
         epsal: Optional[float] = None,
         edoxy: Optional[Union[float, np.ndarray]] = None,
-        include_uncertainties: Optional[bool] = False
+        include_uncertainties: Optional[bool] = False,
     ) -> xr.Dataset:
         """
         Make predictions using the CANYON-B method.
@@ -875,7 +883,7 @@ class CanyonB(ArgoAccessorExtension):
         # Make predictions of each of the requested parameters
         if len(params) > 1:
             # Parallel execution
-            results = Parallel(n_jobs=-1, backend='loky')( # all CPUs by default
+            results = Parallel(n_jobs=-1, backend="loky")(  # all CPUs by default
                 delayed(process_param)(param) for param in params
             )
             # Convert results list to dict for processing

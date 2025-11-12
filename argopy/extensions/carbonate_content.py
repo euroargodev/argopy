@@ -10,6 +10,15 @@ except ImportError:
     HAS_PYCO2SYS = False
     pyco2 = None
 
+try:
+    from joblib import Parallel, delayed
+
+    HAS_JOBLIB = True
+except ImportError:
+    HAS_JOBLIB = False
+    Parallel = None
+    delayed = None
+
 from ..errors import InvalidDatasetStructure, DataNotFound
 from . import register_argo_accessor, ArgoAccessorExtension
 
@@ -101,14 +110,29 @@ class CONTENT(ArgoAccessorExtension):
     _input_list = ["LATITUDE", "LONGITUDE", "PRES", "TEMP", "PSAL", "DOXY"]
     """List of parameters required to make predictions"""
 
-    _output_list = ['PO4', 'NO3', 'SiOH4', 'AT', 'AT_SIGMA', 'AT_SIGMA_MIN', 'DIC', 'DIC_SIGMA', 'DIC_SIGMA_MIN', 'pHT', 'pHT_SIGMA', 'pHT_SIGMA_MIN', 'pCO2', 'pCO2_SIGMA', 'pCO2_SIGMA_MIN']
+    _output_list = [
+        "PO4",
+        "NO3",
+        "SiOH4",
+        "AT",
+        "AT_SIGMA",
+        "AT_SIGMA_MIN",
+        "DIC",
+        "DIC_SIGMA",
+        "DIC_SIGMA_MIN",
+        "pHT",
+        "pHT_SIGMA",
+        "pHT_SIGMA_MIN",
+        "pCO2",
+        "pCO2_SIGMA",
+        "pCO2_SIGMA_MIN",
+    ]
     """List of all possible output variables for CONTENT"""
-
 
     def __init__(self, *args, **kwargs):
         if not HAS_PYCO2SYS:
             raise ImportError(
-                "PyCO2SYS is required for the canyon_b extension. "
+                "PyCO2SYS is required for the CONTENT extension. "
                 "Install it with: pip install PyCO2SYS"
             )
 
@@ -238,19 +262,31 @@ class CONTENT(ArgoAccessorExtension):
 
         See Also
         --------
-        :class:`Dataset.argo.canyon-b`
+        :class:`Dataset.argo.canyon_b`
         """
 
-        # Get raw predictions for each parameter
-        raw_outputs = {}
-        for param in params:
-            raw_outputs[param] = self._obj.argo.canyon_b._predict(
+        # Compute input matrix once for all parameters (optimization)
+        data = self._obj.argo.canyon_b.create_canyonb_input_matrix()
+
+        # Helper function to predict a single parameter
+        def predict_param(param):
+            """Process a single parameter prediction"""
+            out = self._obj.argo.canyon_b._predict(
                 param=param,
                 epres=epres,
                 etemp=etemp,
                 epsal=epsal,
                 edoxy=edoxy,
+                data=data,
             )
+            return param, out
+
+        # Get raw predictions for each parameter (in parallel)
+        results = Parallel(n_jobs=-1, backend="loky")(
+            delayed(predict_param)(param) for param in params
+        )
+        # Convert results list to dict
+        raw_outputs = {param: out for param, out in results}
 
         return raw_outputs
 
@@ -425,7 +461,8 @@ class CONTENT(ArgoAccessorExtension):
             "pCO2": {"par1": "d_pCO2__d_par1", "par2": "d_pCO2__d_par2"},
         }
 
-        for p in range(6):
+        # Helper function to compute derivatives for one parameter pair
+        def compute_pair_derivatives(p):
             # Get parameter names for this combination
             par1_name = self._parameters[self._inpar[p, 0]]
             par2_name = self._parameters[self._inpar[p, 1]]
@@ -458,6 +495,16 @@ class CONTENT(ArgoAccessorExtension):
             out_param1 = self._parameters[self._outpar[p, 0]]
             out_param2 = self._parameters[self._outpar[p, 1]]
 
+            # Return derivatives for this pair
+            return (p, deriv, out_param1, out_param2)
+
+        # Compute derivatives for all 6 parameter pairs (in parallel)
+        results = Parallel(n_jobs=-1, backend="loky")(
+            delayed(compute_pair_derivatives)(p) for p in range(6)
+        )
+
+        # Store results in dcout array
+        for p, deriv, out_param1, out_param2 in results:
             # Store derivatives with respect to par1
             dcout[self._inpar[p, 0], self._inpar[p, 1], 0, :] = deriv[
                 parameters_derived[out_param1]["par1"]
@@ -532,8 +579,8 @@ class CONTENT(ArgoAccessorExtension):
         # Parameter name mapping for output
         parameters_derived = dict(AT="alkalinity", DIC="dic", pHT="pH", pCO2="pCO2")
 
-        # Loop over 6 parameter combinations
-        for p in range(6):
+        # Helper function to compute uncertainties for one parameter combination
+        def compute_pair_uncertainties(p):
             # Get parameter types and values for this combination
             par1_name = self._parameters[self._inpar[p, 0]]
             par2_name = self._parameters[self._inpar[p, 1]]
@@ -563,6 +610,15 @@ class CONTENT(ArgoAccessorExtension):
             out_param1 = self._parameters[self._outpar[p, 0]]
             out_param2 = self._parameters[self._outpar[p, 1]]
 
+            return (p, deriv, uncertainties, out_param1, out_param2)
+
+        # Compute uncertainties for all 6 parameter combinations (in parallel)
+        results = Parallel(n_jobs=-1, backend="loky")(
+            delayed(compute_pair_uncertainties)(p) for p in range(6)
+        )
+
+        # Store results
+        for p, deriv, uncertainties, out_param1, out_param2 in results:
             # Store output values for the two derived parameters
             rawout[out_param1][:, self._svi[p, 0]] = deriv[
                 parameters_derived[out_param1]
@@ -895,7 +951,9 @@ class CONTENT(ArgoAccessorExtension):
         for param in ["NO3", "PO4", "SiOH4"]:
             self._obj[param] = xr.zeros_like(self._obj["TEMP"])
             self._obj[param].attrs = self.get_param_attrs(param)
-            values = prediction["canyon_b_raw"][param][param].astype(np.float32).squeeze()
+            values = (
+                prediction["canyon_b_raw"][param][param].astype(np.float32).squeeze()
+            )
             self._obj[param].values = np.atleast_1d(values)
 
         # Update history for nutrients
