@@ -16,7 +16,13 @@ try:
     HAS_NUMBA = True
 except ImportError:
     HAS_NUMBA = False
-    
+
+try:
+    from joblib import Parallel, delayed
+    HAS_JOBLIB = True
+except ImportError:
+    HAS_JOBLIB = False
+
 from ..errors import InvalidDatasetStructure, DataNotFound
 from ..utils import path2assets, to_list, point_in_polygon
 from . import register_argo_accessor, ArgoAccessorExtension
@@ -135,6 +141,11 @@ class CanyonB(ArgoAccessorExtension):
                 "numba is required for the canyon_b extension. "
                 "Install it with: pip install numba"
             ) # Note: for performance reasons, numba is required now.
+        if not HAS_JOBLIB:
+            raise ImportError(
+                "joblib is required for the canyon_b extension. "
+                "Install it with: pip install joblib"
+            ) # Note: for parallelization of predictions, joblib is required now.
 
         super().__init__(*args, **kwargs)
 
@@ -787,7 +798,7 @@ class CanyonB(ArgoAccessorExtension):
         etemp: Optional[float] = None,
         epsal: Optional[float] = None,
         edoxy: Optional[Union[float, np.ndarray]] = None,
-        include_uncertainties: Optional[bool] = False,
+        include_uncertainties: Optional[bool] = False
     ) -> xr.Dataset:
         """
         Make predictions using the CANYON-B method.
@@ -845,11 +856,29 @@ class CanyonB(ArgoAccessorExtension):
         # Compute input matrix once for all parameters (optimization)
         data = self.create_canyonb_input_matrix()
 
-        # Make predictions of each of the requested parameters
-        for param in params:
+        # Helper function to process a single parameter
+        def process_param(param):
+            """Process a single parameter prediction"""
             out = self._predict(
                 param, epres=epres, etemp=etemp, epsal=epsal, edoxy=edoxy, data=data
             )
+            return param, out
+
+        # Make predictions of each of the requested parameters
+        if len(params) > 1:
+            # Parallel execution
+            results = Parallel(n_jobs=-1, backend='loky')( # all CPUs by default
+                delayed(process_param)(param) for param in params
+            )
+            # Convert results list to dict for processing
+            results_dict = {param: out for param, out in results}
+        else:
+            # Sequential execution
+            results_dict = {param: process_param(param)[1] for param in params}
+
+        # Add results to dataset
+        for param in params:
+            out = results_dict[param]
 
             # Add predicted parameter to xr.Dataset
             self._obj[param] = xr.zeros_like(self._obj["TEMP"])
