@@ -16,12 +16,20 @@ try:
     HAS_NUMBA = True
 except ImportError:
     HAS_NUMBA = False
+    # Define dummy decorators (needed for for tests when numba is not installed)
+    def jit(*args, **kwargs):
+        def decorator(func):
+            return func
+        return decorator
+    prange = range
 
 try:
     from joblib import Parallel, delayed
     HAS_JOBLIB = True
 except ImportError:
     HAS_JOBLIB = False
+    Parallel = None
+    delayed = None
 
 from ..errors import InvalidDatasetStructure, DataNotFound
 from ..utils import path2assets, to_list, point_in_polygon
