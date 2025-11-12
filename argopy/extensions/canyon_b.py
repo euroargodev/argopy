@@ -815,6 +815,7 @@ class CanyonB(ArgoAccessorExtension):
         epsal: Optional[float] = None,
         edoxy: Optional[Union[float, np.ndarray]] = None,
         include_uncertainties: Optional[bool] = False,
+        n_jobs: Optional[int] = -1,
     ) -> xr.Dataset:
         """
         Make predictions using the CANYON-B method.
@@ -849,6 +850,8 @@ class CanyonB(ArgoAccessorExtension):
             applied to all points or an array matching data dimensions.
         include_uncertainties : bool, optional
             If True, include uncertainty estimates for each predicted parameter
+        n_jobs : int, optional
+            Number of parallel jobs used for prediction. Default is -1 (use all available CPUs).
 
         Returns
         -------
@@ -883,7 +886,7 @@ class CanyonB(ArgoAccessorExtension):
         # Make predictions of each of the requested parameters
         if len(params) > 1:
             # Parallel execution
-            results = Parallel(n_jobs=-1, backend="loky")(  # all CPUs by default
+            results = Parallel(n_jobs=n_jobs, backend="loky")(  # all CPUs by default
                 delayed(process_param)(param) for param in params
             )
             # Convert results list to dict for processing

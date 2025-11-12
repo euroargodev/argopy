@@ -241,6 +241,7 @@ class CONTENT(ArgoAccessorExtension):
         etemp: Optional[float] = None,
         epsal: Optional[float] = None,
         edoxy: Optional[Union[float, np.ndarray]] = None,
+        n_jobs: Optional[int] = -1,
     ) -> dict:
         """Get raw CANYON-B predictions for specified parameters.
 
@@ -254,6 +255,8 @@ class CONTENT(ArgoAccessorExtension):
             Input errors (defaults: 0.5, 0.005, 0.005)
         edoxy : float or np.ndarray, optional
             Oxygen input error (default: 1% of doxy)
+        n_jobs : int, optional
+            Number of parallel jobs to run (default: -1, use all available cores)
 
         Returns
         -------
@@ -282,7 +285,7 @@ class CONTENT(ArgoAccessorExtension):
             return param, out
 
         # Get raw predictions for each parameter (in parallel)
-        results = Parallel(n_jobs=-1, backend="loky")(
+        results = Parallel(n_jobs=n_jobs, backend="loky")(
             delayed(predict_param)(param) for param in params
         )
         # Convert results list to dict
@@ -416,6 +419,7 @@ class CONTENT(ArgoAccessorExtension):
         self,
         canyon_data: CANYONData,
         options: CalculationOptions = None,
+        n_jobs: Optional[int] = -1,
     ) -> np.ndarray:
         """
         Compute derivatives of carbonate system calculations for all 6 parameter pairs
@@ -427,6 +431,8 @@ class CONTENT(ArgoAccessorExtension):
             CANYON-B predictions with covariance and correlation matrices
         options : CalculationOptions, optional
             PyCO2SYS calculation options (uses defaults if None)
+        n_jobs : int, optional
+            Number of parallel jobs to run (default: -1, use all available cores)
 
         Returns
         -------
@@ -499,7 +505,7 @@ class CONTENT(ArgoAccessorExtension):
             return (p, deriv, out_param1, out_param2)
 
         # Compute derivatives for all 6 parameter pairs (in parallel)
-        results = Parallel(n_jobs=-1, backend="loky")(
+        results = Parallel(n_jobs=n_jobs, backend="loky")(
             delayed(compute_pair_derivatives)(p) for p in range(6)
         )
 
@@ -531,6 +537,7 @@ class CONTENT(ArgoAccessorExtension):
         sigma: dict,
         constants: ChemistryConstants = None,
         options: CalculationOptions = None,
+        n_jobs: Optional[int] = -1,
     ) -> tuple[dict, dict]:
         """
         Compute carbonate system values and uncertainties for all 6 parameter pairs.
@@ -551,6 +558,8 @@ class CONTENT(ArgoAccessorExtension):
             Equilibrium constant uncertainties (uses defaults if None)
         options : CalculationOptions, optional
             PyCO2SYS calculation options (uses defaults if None)
+        n_jobs : int, optional
+            Number of parallel jobs to run (default: -1, use all available cores)
 
         Returns
         -------
@@ -613,7 +622,7 @@ class CONTENT(ArgoAccessorExtension):
             return (p, deriv, uncertainties, out_param1, out_param2)
 
         # Compute uncertainties for all 6 parameter combinations (in parallel)
-        results = Parallel(n_jobs=-1, backend="loky")(
+        results = Parallel(n_jobs=n_jobs, backend="loky")(
             delayed(compute_pair_uncertainties)(p) for p in range(6)
         )
 
