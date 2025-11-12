@@ -19,6 +19,7 @@ dependencies:
 
 # EXT.UTIL:
   - gsw = 3.6.19
+  - joblib = 1.5.2
   - numba = 0.62.1
   - pyco2sys = 1.8.3
   - tqdm = 4.67.1

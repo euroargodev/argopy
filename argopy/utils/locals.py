@@ -171,6 +171,7 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
                     "gsw",
                     get_version,
                 ),  # Used by xarray accessor to compute new variables
+                ("joblib", get_version),
                 ("numba", get_version),
                 ("pyco2sys", get_version),
                 ("tqdm", get_version),

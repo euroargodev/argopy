@@ -193,6 +193,7 @@ has_ipywidgets, requires_ipywidgets = _importorskip("ipywidgets")
 ##############
 # EXTENSIONS #
 ##############
+has_joblib, requires_joblib = _importorskip("joblib")
 has_numba, requires_numba = _importorskip("numba")
 has_pyco2sys, requires_pyco2sys = _importorskip("PyCO2SYS")
 
