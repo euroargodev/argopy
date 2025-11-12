@@ -16,7 +16,7 @@ try:
     HAS_NUMBA = True
 except ImportError:
     HAS_NUMBA = False
-    # Define dummy decorators (needed for for tests when numba is not installed)
+    # Define dummy decorators (needed for tests when numba is not installed)
     def jit(*args, **kwargs):
         def decorator(func):
             return func
