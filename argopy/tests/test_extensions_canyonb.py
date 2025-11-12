@@ -273,8 +273,8 @@ def test_validate_against_matlab():
 
     results = []
     nsigma_test = 4
-    #for key in ['NO3', 'PO4', 'SiOH4', 'AT', 'DIC', 'pHT', 'pCO2']:
-    for key in ['NO3', 'AT', 'pCO2']:
+    for key in ['NO3', 'PO4', 'SiOH4', 'AT', 'DIC', 'pHT', 'pCO2']:
+    #for key in ['NO3', 'AT', 'pCO2']:
         vref, vsigma = dsref[key].item(), dsref[f'{key}_s'].item()
         vpredict = dspredict[key].item()
         results.append({'param': key,
