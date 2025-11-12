@@ -6,12 +6,17 @@ import xarray as xr
 
 try:
     import PyCO2SYS as pyco2
-
     HAS_PYCO2SYS = True
 except ImportError:
     HAS_PYCO2SYS = False
     pyco2 = None
 
+try:
+    from numba import jit, prange
+    HAS_NUMBA = True
+except ImportError:
+    HAS_NUMBA = False
+    
 from ..errors import InvalidDatasetStructure, DataNotFound
 from ..utils import path2assets, to_list, point_in_polygon
 from . import register_argo_accessor, ArgoAccessorExtension
@@ -125,6 +130,11 @@ class CanyonB(ArgoAccessorExtension):
                 "PyCO2SYS is required for the canyon_b extension. "
                 "Install it with: pip install PyCO2SYS"
             )
+        if not HAS_NUMBA:
+            raise ImportError(
+                "numba is required for the canyon_b extension. "
+                "Install it with: pip install numba"
+            ) # Note: for performance reasons, numba is required now.
 
         super().__init__(*args, **kwargs)
 
@@ -431,6 +441,85 @@ class CanyonB(ArgoAccessorExtension):
 
         return weights
 
+    @staticmethod
+    @jit(nopython=True, parallel=True, cache=True, fastmath=True)
+    def _nn_forward_1layer(data_N, w1, b1, w2, b2):
+        """Forward pass for 1-layer neural network (numba optimized with parallelization)"""
+        nol = data_N.shape[0]  # Number of data points
+        ni = data_N.shape[1]  # Number of inputs to the neural network 
+        nl1 = w1.shape[0]  # Number of neurons in the hidden layer
+
+        # Forward pass
+        a = np.zeros((nol, nl1))
+        for i in prange(nol):  # Parallel over data points (needs to be an explicit loop for numba)
+            for j in range(nl1):
+                tmp = b1[j]
+                for k in range(ni):
+                    tmp += data_N[i, k] * w1[j, k]
+                a[i, j] = np.tanh(tmp)
+
+        y = a @ w2.T + b2 # @ is matrix multiplication operator in numpy and numba optimizes it well 
+
+        # Calculate input effects in parallel
+        inx = np.zeros((nol, ni))
+        for i in prange(nol):  # Parallel loop
+            tanh_a = a[i, :]
+            dtanh = 1 - tanh_a * tanh_a
+            for k in range(ni):
+                tmp = 0.0
+                for j in range(nl1):
+                    tmp += w2[0, j] * w1[j, k] * dtanh[j]
+                inx[i, k] = tmp
+
+        return y.flatten(), inx
+
+    @staticmethod
+    @jit(nopython=True, parallel=True, cache=True, fastmath=True)
+    def _nn_forward_2layer(data_N, w1, b1, w2, b2, w3, b3):
+        """Forward pass for 2-layer neural network (numba optimized with parallelization)"""
+        nol = data_N.shape[0]  # Number of data points
+        ni = data_N.shape[1]  # Number of inputs (neural network)
+        nl1 = w1.shape[0]  # Number of neurons in the first hidden layer
+        nl2 = w2.shape[0]  # Number of neurons in the second hidden layer
+
+        # First layer
+        a = np.zeros((nol, nl1))
+        for i in prange(nol):
+            for j in range(nl1):
+                tmp = b1[j]
+                for k in range(ni):
+                    tmp += data_N[i, k] * w1[j, k]
+                a[i, j] = np.tanh(tmp)
+
+        # Second layer
+        b_layer = np.zeros((nol, nl2))
+        for i in prange(nol):
+            for j in range(nl2):
+                tmp = b2[j]
+                for k in range(nl1):
+                    tmp += a[i, k] * w2[j, k]
+                b_layer[i, j] = np.tanh(tmp)
+
+        # Output layer
+        y = b_layer @ w3.T + b3
+
+        # Calculate input effects in parallel
+        inx = np.zeros((nol, ni))
+        for i in prange(nol):
+            dtanh_a = 1 - a[i, :] * a[i, :]
+            dtanh_b = 1 - b_layer[i, :] * b_layer[i, :]
+
+            for m in range(ni):
+                tmp = 0.0
+                for j in range(nl2):
+                    for k in range(nl1):
+                        tmp += (
+                            w3[0, j] * dtanh_b[j] * w2[j, k] * dtanh_a[k] * w1[k, m]
+                        )
+                inx[i, m] = tmp
+
+        return y.flatten(), inx
+
     def _predict(
         self,
         param: str,
@@ -438,6 +527,7 @@ class CanyonB(ArgoAccessorExtension):
         etemp: Optional[float] = None,
         epsal: Optional[float] = None,
         edoxy: Optional[Union[float, np.ndarray]] = None,
+        data: Optional[np.ndarray] = None,
     ) -> dict:
         """
         Predict a single biogeochemical parameter using CANYON-B neural networks.
@@ -468,6 +558,9 @@ class CanyonB(ArgoAccessorExtension):
             Oxygen measurement uncertainty in μmol/kg. If not provided,
             defaults to 1% of measured oxygen values. Can be a scalar
             applied to all points or an array matching data dimensions.
+        data : np.ndarray, optional
+            Precomputed input matrix from create_canyonb_input_matrix().
+            If not provided, it will be computed.
 
         Returns
         -------
@@ -510,7 +603,8 @@ class CanyonB(ArgoAccessorExtension):
         inputsigma[2] = np.sqrt(0.005**2 + 0.01**2)
 
         # Prepare input data
-        data = self.create_canyonb_input_matrix()
+        if data is None:
+            data = self.create_canyonb_input_matrix()
 
         # Output dictionary
         out = {}
@@ -579,30 +673,17 @@ class CanyonB(ArgoAccessorExtension):
                 idx += nl2
                 b3 = inwgts[idx : idx + 1, network]
 
-            # Forward pass
-            a = np.dot(data_N, w1.T) + b1
+            # Forward pass using numba-optimized functions
             if nlayerflag == 1:
                 # One hidden layer
-                y = np.dot(np.tanh(a), w2.T) + b2
+                y, inx = self._nn_forward_1layer(data_N, w1, b1, w2, b2)
             else:
                 # Two hidden layers
-                b = np.dot(np.tanh(a), w2.T) + b2
-                y = np.dot(np.tanh(b), w3.T) + b3
+                y, inx = self._nn_forward_2layer(data_N, w1, b1, w2, b2, w3, b3)
 
             # Store results
-            cval[:, network] = y.flatten()
+            cval[:, network] = y
             cvalcy[network] = 1 / beta  # 'noise' variance
-
-            # Calculate input effects
-            x1 = w1[None, :, :] * (1 - np.tanh(a)[:, :, None] ** 2)
-
-            if nlayerflag == 1:
-                # One hidden layer
-                inx = np.einsum("ij,...jk->...ik", w2, x1)[:, 0, :]
-            else:
-                # Two hidden layers
-                x2 = w2[None, :, :] * (1 - np.tanh(b)[:, :, None] ** 2)
-                inx = np.einsum("ij,...jk,...kl->...il", w3, x2, x1)[:, 0, :]
             inval[:, :, network] = inx
 
         # Denormalization
@@ -749,21 +830,25 @@ class CanyonB(ArgoAccessorExtension):
         """
 
         # Validation of requested parameters to predict:
+        params_list = ["NO3", "PO4", "SiOH4", "AT", "DIC", "pHT", "pCO2"]
         if params is None:
-            params = self.output_list
+            params = params_list
         else:
             params = to_list(params)
         for p in params:
-            if p not in self.output_list:
+            if p not in params_list:
                 raise ValueError(
                     "Invalid parameter ('%s') to predict, must be in [%s]"
-                    % (p, ",".join(self.output_list))
+                    % (p, ",".join(params_list))
                 )
+
+        # Compute input matrix once for all parameters (optimization)
+        data = self.create_canyonb_input_matrix()
 
         # Make predictions of each of the requested parameters
         for param in params:
             out = self._predict(
-                param, epres=epres, etemp=etemp, epsal=epsal, edoxy=edoxy
+                param, epres=epres, etemp=etemp, epsal=epsal, edoxy=edoxy, data=data
             )
 
             # Add predicted parameter to xr.Dataset

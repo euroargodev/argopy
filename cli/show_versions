@@ -164,6 +164,7 @@ def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa
         ]),
         'ext.util': sorted([
             ("gsw", get_version),
+            ("numba", get_version),
             ("pyco2sys", get_version),
             ("tqdm", get_version),
         ]),

@@ -62,8 +62,9 @@ For a complete **argopy** experience, you may also consider to install the follo
 **Utilities**
 
 - gsw
-- tqdm
+- numba
 - pyco2sys
+- tqdm
 
 **Performances**
 
