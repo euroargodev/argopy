@@ -19,8 +19,6 @@ dependencies:
 
 # EXT.UTIL:
 #  - gsw = -
-#  - joblib = -
-#  - numba = -
 #  - pyco2sys = -
 #  - tqdm = -
 
@@ -34,6 +32,8 @@ dependencies:
 # EXT.PERF:
 #  - dask = -
 #  - distributed = -
+#  - joblib = -
+#  - numba = -
 #  - pyarrow = -
 
 # EXT.PLOT:

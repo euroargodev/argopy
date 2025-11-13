@@ -256,7 +256,7 @@ class CONTENT(ArgoAccessorExtension):
         edoxy : float or np.ndarray, optional
             Oxygen input error (default: 1% of doxy)
         n_jobs : int, optional
-            Number of parallel jobs to run (default: -1, use all available cores)
+            Number of parallel jobs to run (default: -1, use all available CPUs)
 
         Returns
         -------
@@ -432,7 +432,7 @@ class CONTENT(ArgoAccessorExtension):
         options : CalculationOptions, optional
             PyCO2SYS calculation options (uses defaults if None)
         n_jobs : int, optional
-            Number of parallel jobs to run (default: -1, use all available cores)
+            Number of parallel jobs to run (default: -1, use all available CPUs)
 
         Returns
         -------
@@ -559,7 +559,7 @@ class CONTENT(ArgoAccessorExtension):
         options : CalculationOptions, optional
             PyCO2SYS calculation options (uses defaults if None)
         n_jobs : int, optional
-            Number of parallel jobs to run (default: -1, use all available cores)
+            Number of parallel jobs to run (default: -1, use all available CPUs)
 
         Returns
         -------

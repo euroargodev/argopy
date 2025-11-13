@@ -851,7 +851,8 @@ class CanyonB(ArgoAccessorExtension):
         include_uncertainties : bool, optional
             If True, include uncertainty estimates for each predicted parameter
         n_jobs : int, optional
-            Number of parallel jobs used for prediction. Default is -1 (use all available CPUs).
+            Number of parallel jobs used for prediction (only used when there is more than one parameter to predict).
+            Default is -1 (use all available CPUs). This option is directly passed to :class:`joblib.Parallel`.
 
         Returns
         -------

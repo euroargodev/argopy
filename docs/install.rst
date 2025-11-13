@@ -62,8 +62,6 @@ For a complete **argopy** experience, you may also consider to install the follo
 **Utilities**
 
 - gsw
-- joblib
-- numba
 - pyco2sys
 - tqdm
 
@@ -71,6 +69,8 @@ For a complete **argopy** experience, you may also consider to install the follo
 
 - dask
 - distributed
+- joblib
+- numba
 - pyarrow
 
 **Files handling**
