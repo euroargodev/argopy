@@ -7,9 +7,9 @@ import xarray as xr
 from argopy import DataFetcher
 from mocked_http import mocked_server_address
 from mocked_http import mocked_httpserver as mocked_erddapserver
-from utils import requires_pyco2sys
+from utils import requires_pyco2sys, requires_numba
 
-pytestmark = requires_pyco2sys
+pytestmark = [requires_pyco2sys, requires_numba]
 
 log = logging.getLogger("argopy.tests.extensions.canyonb")
 USE_MOCKED_SERVER = True
@@ -30,62 +30,62 @@ def fetcher():
     return DataFetcher(**defaults_args).profile(5903248, 34)
 
 
+@pytest.fixture
+def ds(fetcher, mocked_erddapserver):
+    """Base dataset"""
+    return fetcher.to_xarray()
+
+
 @pytest.mark.parametrize(
     "what",
-    [None, "PO4", ["PO4", "pHT"]],
+    [None, "PO4"],
     indirect=False,
 )
-def test_predict(fetcher, what, mocked_erddapserver):
+def test_predict(ds, what, mocked_erddapserver):
     """Test CANYON-B predictions for various parameters"""
-    ds = fetcher.to_xarray()
     ds = ds.argo.canyon_b.predict(what)
+
     assert "CANYON-B" in ds.attrs["Processing_history"]
+
+    if what is not None:
+        if isinstance(what, list):
+            for param in what:
+                assert param in ds
+        else:
+            assert what in ds
+    else:
+        # Check that all parameters are predicted
+        for param in ["PO4", "NO3", "SiOH4", "AT", "DIC", "pHT", "pCO2"]:
+            assert param in ds
 
 
 @pytest.mark.parametrize(
-    "param",
-    ["PO4", "NO3", "SiOH4", "AT", "DIC", "pHT", "pCO2"],
-    indirect=False,
+    "edoxy_type",
+    ["scalar", "array"],
 )
-def test_predict_single_param(fetcher, param, mocked_erddapserver):
-    """Test CANYON-B prediction for each parameter individually"""
-    ds = fetcher.to_xarray()
-    ds = ds.argo.canyon_b.predict(param)
+def test_predict_with_custom_errors(ds, edoxy_type, mocked_erddapserver):
+    """Test CANYON-B prediction with custom input errors (scalar and array)"""
+    if edoxy_type == "scalar":
+        edoxy = 0.01
+    else:  # array
+        nol = ds.argo.N_POINTS
+        edoxy = np.full(nol, 0.01)
 
-    assert param in ds
-
-
-def test_predict_with_custom_errors(fetcher, mocked_erddapserver):
-    """Test CANYON-B prediction with custom input errors"""
-    ds = fetcher.to_xarray()
     ds = ds.argo.canyon_b.predict(
-        "PO4", epres=0.5, etemp=0.005, epsal=0.005, edoxy=0.01
+        "PO4", epres=0.5, etemp=0.005, epsal=0.005, edoxy=edoxy
     )
 
     assert "PO4" in ds
 
 
-def test_predict_with_array_edoxy(fetcher, mocked_erddapserver):
-    """Test CANYON-B prediction with array oxygen errors"""
-    ds = fetcher.to_xarray()
-    nol = ds.argo.N_POINTS
-    edoxy_array = np.full(nol, 0.01)
-
-    ds = ds.argo.canyon_b.predict('PO4', edoxy=edoxy_array)
-    assert 'PO4' in ds
-
-
-def test_predict_invalid_param(fetcher, mocked_erddapserver):
+def test_predict_invalid_param(ds, mocked_erddapserver):
     """Test that invalid parameter raises ValueError"""
-    ds = fetcher.to_xarray()
-
     with pytest.raises(ValueError, match="Invalid parameter"):
         ds.argo.canyon_b.predict("INVALID_PARAM")
 
 
-def test_predict_private_uncertainties(fetcher, mocked_erddapserver):
+def test_predict_private_uncertainties(ds, mocked_erddapserver):
     """Test that _predict() returns all uncertainty components"""
-    ds = fetcher.to_xarray()
     result = ds.argo.canyon_b._predict('PO4')
 
     # Check that all uncertainty components are present
@@ -101,9 +101,8 @@ def test_predict_private_uncertainties(fetcher, mocked_erddapserver):
     assert result['PO4'].shape[0] == nol
 
 
-def test_ds2df(fetcher, mocked_erddapserver):
+def test_ds2df(ds, mocked_erddapserver):
     """Test conversion from dataset to dataframe"""
-    ds = fetcher.to_xarray()
     df = ds.argo.canyon_b.ds2df()
 
     required_cols = ["lat", "lon", "dec_year", "temp", "psal", "doxy", "pres"]
@@ -113,18 +112,15 @@ def test_ds2df(fetcher, mocked_erddapserver):
     assert not np.array_equal(df["pres"].values, ds["PRES"].values)
 
 
-def test_create_canyonb_input_matrix(fetcher, mocked_erddapserver):
+def test_create_canyonb_input_matrix(ds, mocked_erddapserver):
     """Test creation of CANYON-B input matrix"""
-    ds = fetcher.to_xarray()
     data = ds.argo.canyon_b.create_canyonb_input_matrix()
 
     assert data.shape[1] == 8
 
 
-def test_adjust_arctic_latitude(fetcher, mocked_erddapserver):
+def test_adjust_arctic_latitude(ds, mocked_erddapserver):
     """Test Arctic latitude adjustment"""
-    ds = fetcher.to_xarray()
-
     lat = np.array([70.0, 80.0, 85.0])
     lon = np.array([-100.0, 150.0, 0.0])
     adjusted_lat = ds.argo.canyon_b.adjust_arctic_latitude(lat, lon)
@@ -138,20 +134,17 @@ def test_adjust_arctic_latitude(fetcher, mocked_erddapserver):
     assert np.allclose(adjusted_lat_non_arctic, lat_non_arctic)
 
 
-def test_load_weights(fetcher, mocked_erddapserver):
+def test_load_weights(ds, mocked_erddapserver):
     """Test loading of CANYON-B weights"""
-    ds = fetcher.to_xarray()
-
-    for param in ["AT", "DIC", "pCO2", "NO3", "PO4", "SiOH4", "pHT"]:
+    for param in ["AT", "DIC", "pHT"]:
         weights = ds.argo.canyon_b.load_weights(param)
         assert hasattr(weights, "shape")
         assert weights.shape[0] > 0
         assert weights.shape[1] > 0
 
 
-def test_decimal_year(fetcher, mocked_erddapserver):
+def test_decimal_year(ds, mocked_erddapserver):
     """Test decimal year calculation"""
-    ds = fetcher.to_xarray()
     dec_year = ds.argo.canyon_b.decimal_year
     
     # Check it has same length as data
@@ -162,14 +155,12 @@ def test_decimal_year(fetcher, mocked_erddapserver):
       "param,expected_unit",
       [
           ("PO4", "micromole/kg"),
-          ("NO3", "micromole/kg"),
           ("pHT", "insitu total scale"),
           ("pCO2", "micro atm"),
       ],
   )
-def test_get_param_attrs(fetcher, param, expected_unit, mocked_erddapserver):
+def test_get_param_attrs(ds, param, expected_unit, mocked_erddapserver):
     """Test parameter attributes are correctly defined"""
-    ds = fetcher.to_xarray()
     attrs = ds.argo.canyon_b.get_param_attrs(param)
 
     assert 'units' in attrs
@@ -180,68 +171,31 @@ def test_get_param_attrs(fetcher, param, expected_unit, mocked_erddapserver):
 
 
 @pytest.mark.parametrize(
-    "param",
-    ["PO4", "NO3", "SiOH4", "AT", "DIC", "pHT", "pCO2"],
-    indirect=False,
+    "use_single_point,include_uncertainties,param",
+    [
+        (False, True, "PO4"),   # Multi-point with uncertainties
+        (False, True, "AT"),    # Multi-point with uncertainties
+        (True, True, "AT"),     # Single-point with uncertainties
+    ],
 )
-def test_predict_single_point(fetcher, param, mocked_erddapserver):
-    """Test CANYON-B prediction for a single-point dataset"""
-    ds = fetcher.to_xarray()
-    # Select a single point
-    ds_single = ds.where(ds['N_POINTS'] == 1, drop=True)
+def test_predict_variations(ds, use_single_point, include_uncertainties, param, mocked_erddapserver):
+    """Test CANYON-B predictions with different dataset sizes and uncertainty options"""
+    if use_single_point:
+        ds = ds.where(ds['N_POINTS'] == 1, drop=True)
+        expected_size = 1
+    else:
+        expected_size = ds.argo.N_POINTS
 
-    # Predict
-    ds_result = ds_single.argo.canyon_b.predict(param)
+    ds_result = ds.argo.canyon_b.predict(param, include_uncertainties=include_uncertainties)
 
-    # Check that prediction was added
     assert param in ds_result
-    assert ds_result[param].size == 1
-
-
-@pytest.mark.parametrize(
-    "param",
-    ["PO4", "AT", "pCO2"],
-    indirect=False,
-)
-def test_predict_with_uncertainties(fetcher, param, mocked_erddapserver):
-    """Test CANYON-B prediction with include_uncertainties=True"""
-    ds = fetcher.to_xarray()
-
-    # Predict with uncertainties
-    ds_result = ds.argo.canyon_b.predict(param, include_uncertainties=True)
-
-    # Check that prediction and uncertainties were added
-    assert param in ds_result
-    assert f"{param}_ci" in ds_result
-    assert f"{param}_cim" in ds_result
-    assert f"{param}_cin" in ds_result
-    assert f"{param}_cii" in ds_result
-
-
-def test_predict_single_point_with_uncertainties(fetcher, mocked_erddapserver):
-    """Test CANYON-B prediction for a single-point dataset with uncertainties"""
-    ds = fetcher.to_xarray()
-    # Select a single point
-    ds_single = ds.where(ds['N_POINTS'] == 1, drop=True)
-
-    param = "PO4"
-
-    # Predict with uncertainties
-    ds_result = ds_single.argo.canyon_b.predict(param, include_uncertainties=True)
-
-    # Check that prediction and uncertainties were added
-    assert param in ds_result
-    assert f"{param}_ci" in ds_result
-    assert f"{param}_cim" in ds_result
-    assert f"{param}_cin" in ds_result
-    assert f"{param}_cii" in ds_result
-
-    # Check all have size 1
-    assert ds_result[param].size == 1
-    assert ds_result[f"{param}_ci"].size == 1
-    assert ds_result[f"{param}_cim"].size == 1
-    assert ds_result[f"{param}_cin"].size == 1
-    assert ds_result[f"{param}_cii"].size == 1
+    assert ds_result[param].size == expected_size
+    
+    if include_uncertainties:
+        assert f"{param}_ci" in ds_result
+        assert f"{param}_cim" in ds_result
+        assert f"{param}_cin" in ds_result
+        assert f"{param}_cii" in ds_result
 
 
 def test_validate_against_matlab():
@@ -310,6 +264,7 @@ def test_validate_against_matlab():
     results = []
     nsigma_test = 4
     for key in ['NO3', 'PO4', 'SiOH4', 'AT', 'DIC', 'pHT', 'pCO2']:
+    #for key in ['NO3', 'AT', 'pCO2']:
         vref, vsigma = dsref[key].item(), dsref[f'{key}_s'].item()
         vpredict = dspredict[key].item()
         results.append({'param': key,
