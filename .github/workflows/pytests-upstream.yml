@@ -6,8 +6,7 @@ on:
   schedule:
     - cron: "0 0 12 * *" # Monthly “At 00:00” UTC on the 12th day
   workflow_dispatch: # allows you to trigger the workflow manually if necessary
-  pull_request:
-    types: [synchronize]
+
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
