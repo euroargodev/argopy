@@ -110,7 +110,7 @@ Some other important things to know about the docs:
 - The docstrings follow the **Numpy Docstring Standard**, which is used widely
   in the Scientific Python community. This standard specifies the format of
   the different sections of the docstring. See `this document
-  <https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt>`_
+  <https://numpydoc.readthedocs.io/en/latest/format.html#docstring-standard>`_
   for a detailed explanation, or look at some of the existing functions to
   extend it in a similar manner.
 
@@ -137,9 +137,9 @@ Some other important things to know about the docs:
   doc build. This approach means that code examples will always be up to date,
   but it does make the doc building a bit more complex.
 
-- Our API documentation in ``docs/api.rst`` houses the auto-generated
-  documentation from the docstrings. For classes, there are a few subtleties
-  around controlling which methods and attributes have pages auto-generated.
+- Our API documentation in ``docs/api.rst`` houses an organised collection of all
+  auto-generated documentation from the docstrings. For classes, there are a few
+  subtleties around controlling which methods and attributes have pages auto-generated.
 
   Every method should be included in a ``toctree`` in ``api.rst``, else Sphinx
   will emit a warning.
@@ -158,7 +158,6 @@ the specific environment ``argopy-docs``:
     $ ./ci/envs_manager -i argopy-docs
     $ conda activate argopy-docs
     $ pip install -e .
-    $ pip install -r docs/requirements.txt
 
 Building the documentation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -185,8 +184,8 @@ If you want to do a full clean build, do:
 
 .. _working.code:
 
-Working with the code
-=====================
+Contributing to the code base
+=============================
 
 Development workflow
 --------------------
@@ -261,8 +260,10 @@ incorporated into argopy.
 
 .. _contributing.dev_env:
 
-Virtual environment
--------------------
+Conda environment
+-----------------
+
+We use `conda <https://docs.conda.io/projects/conda/en/stable/user-guide/install/index.html>`_/`mamba <https://mamba.readthedocs.io/>`_ to manage Python environments for developments and CI tests.
 
 We created a short command line script to help manage argopy virtual environments. It's available in the "ci" folder of the repository.
 
@@ -287,6 +288,7 @@ We created a short command line script to help manage argopy virtual environment
     $ ./ci/envs_manager -l
 
     Available environments:
+         argopy-base
          argopy-docs-rtd
          argopy-py311-all-free
          argopy-py311-core-free
@@ -308,6 +310,9 @@ Then, you can simply install the default dev environment like this:
     $ pip install -e .
     $ python -c 'import argopy; argopy.show_versions()'
 
+.. note::
+
+    ``./ci/envs_manager`` is based on `mamba <https://mamba.readthedocs.io/>`_, much faster than `conda <https://docs.conda.io/projects/conda/en/stable/user-guide/install/index.html>`_.
 
 Code standards
 --------------
@@ -336,12 +341,30 @@ and then run from the root of the argopy repository::
 to qualify your code.
 
 
+Test-driven development/code writing
+------------------------------------
+
+[TBD]
+
+
+Backwards Compatibility
+-----------------------
+
+[TBD]
+
+
+Testing With Continuous Integration
+-----------------------------------
+
+[TBD]
+
+
 .. _contributing.code:
 
-Contributing to the code base
-=============================
+Specific contributions to the codebase
+======================================
 
-.. contents:: Code Base:
+.. contents:: Specific contributions
    :local:
 
 .. _data_fetchers:
@@ -484,3 +507,11 @@ that whatever the data source set by users, the output xarray or
 dataframe will be formatted and contain the same variables. This will
 also ensure that other argopy features can be used on the new fetcher
 output, like plotting or xarray data manipulation.
+
+
+.. _dataset_extensions:
+
+Dataset extensions
+------------------
+
+[TBD]
