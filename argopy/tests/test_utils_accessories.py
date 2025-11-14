@@ -83,4 +83,3 @@ class Test_Registry():
             Registry(opts[0][0], dtype=opts[1], invalid='warn').commit(opts[0][-1])
         # Raise nothing:
         Registry(opts[0][0], dtype=opts[1], invalid='ignore').commit(opts[0][-1])
-

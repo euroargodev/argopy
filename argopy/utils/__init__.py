@@ -43,6 +43,7 @@ from .locals import (  # noqa: F401
     modified_environ,
     get_sys_info,  # noqa: F401
     netcdf_and_hdf5_versions,  # noqa: F401
+    Asset,
 )
 from .monitors import monitor_status, badge, fetch_status  # noqa: F401
 from .geo import (
@@ -66,9 +67,6 @@ from .loggers import warnUnless, log_argopy_callerstack
 from .carbon import GreenCoding, Github
 from . import optical_modeling
 from .carbonate import calculate_uncertainties, error_propagation
-
-import importlib
-path2assets = importlib.util.find_spec('argopy.static.assets').submodule_search_locations[0]
 
 
 __all__ = (
@@ -119,11 +117,11 @@ __all__ = (
     # Accessories classes (specific objects):
     "Registry",
     "float_wmo",
-    # Locals (environments, versions, systems):
-    "path2assets",
+    # Locals (environments, versions, systems, assets):
     "show_versions",
     "show_options",
     "modified_environ",
+    "Asset",
     # Monitors
     "monitor_status",
     # Geo (space/time data utilities)
