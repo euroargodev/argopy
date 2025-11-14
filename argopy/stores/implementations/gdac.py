@@ -6,10 +6,13 @@ from urllib.parse import urlparse
 from socket import gaierror
 import fsspec
 
-from ...options import OPTIONS
-from ...errors import GdacPathError
-from ...utils.lists import shortcut2gdac
-from .. import filestore, httpstore, ftpstore, s3store
+from argopy.options import OPTIONS
+from argopy.errors import GdacPathError
+from argopy.utils.lists import shortcut2gdac
+from argopy.stores.implementations.local import filestore
+from argopy.stores.implementations.http import httpstore
+from argopy.stores.implementations.ftp import ftpstore
+from argopy.stores.implementations.s3 import s3store
 
 
 log = logging.getLogger("argopy.stores.gdac")

@@ -5,9 +5,10 @@ import xarray
 import hashlib
 import warnings
 import logging
-from ..plot import dashboard
-from ..utils.lists import list_standard_variables
-from ..utils.format import UriCName, format_oneline
+
+from argopy.plot.dashboards import open_dashboard as dashboard
+from argopy.utils.lists import list_standard_variables
+from argopy.utils.format import UriCName, format_oneline
 
 
 log = logging.getLogger("argopy.fetcher.proto")

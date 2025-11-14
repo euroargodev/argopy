@@ -6,7 +6,7 @@ import tempfile
 import xarray as xr
 
 import argopy
-from argopy import DataFetcher as ArgoDataFetcher
+from argopy.fetchers import ArgoDataFetcher
 from argopy.errors import InvalidDatasetStructure, OptionValueError
 from utils import requires_gdac, _importorskip, _connectskip
 from mocked_http import mocked_server_address

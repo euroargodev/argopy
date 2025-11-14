@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from ..options import OPTIONS
+from argopy.options import OPTIONS
 
 
 def wrap_longitude(grid_long):

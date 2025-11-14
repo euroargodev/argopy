@@ -1,8 +1,9 @@
 import pandas as pd
 import numpy as np
-from ..stores import httpstore
-from ..errors import DataNotFound
-from ..plot import scatter_map
+
+from argopy.errors import DataNotFound
+from argopy.stores.implementations.http import httpstore
+from argopy.plot.plot import scatter_map
 
 
 class OceanOPSDeployments:
@@ -33,7 +34,6 @@ class OceanOPSDeployments:
 
     Import the class:
 
-    >>> from argopy.related import OceanOPSDeployments
     >>> from argopy import OceanOPSDeployments
 
     Possibly define the space/time box to work with:

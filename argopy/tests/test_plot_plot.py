@@ -19,9 +19,9 @@ from utils import (
     has_ipywidgets,
 )
 
-from argopy.plot import bar_plot, plot_trajectory, open_sat_altim_report, scatter_map
+from argopy.plot.plot import bar_plot, plot_trajectory, open_sat_altim_report, scatter_map
 from argopy.errors import InvalidDatasetStructure
-from argopy import DataFetcher as ArgoDataFetcher
+from argopy.fetchers import ArgoDataFetcher
 from mocked_http import mocked_server_address
 
 if has_matplotlib:

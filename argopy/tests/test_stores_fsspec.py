@@ -16,13 +16,11 @@ import ftplib
 import netCDF4
 
 import argopy
-from argopy.stores import (
-    filestore,
-    httpstore,
-    memorystore,
-    ftpstore,
-)
 from argopy.stores.filesystems import new_fs
+from argopy.stores.implementations.local import filestore
+from argopy.stores.implementations.http import httpstore
+from argopy.stores.implementations.memory import memorystore
+from argopy.stores.implementations.ftp import ftpstore
 from argopy.options import OPTIONS
 from argopy.errors import (
     FileSystemHasNoCache,

@@ -1,5 +1,5 @@
-from .local import filestore
-from ...errors import CacheFileNotFound, FileSystemHasNoCache
+from argopy.errors import CacheFileNotFound, FileSystemHasNoCache
+from argopy.stores.implementations.local import filestore
 
 
 class memorystore(filestore):

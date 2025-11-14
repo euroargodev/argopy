@@ -6,7 +6,7 @@ from typing import Union
 # from matplotlib.colors import to_hex
 # from IPython.display import IFrame
 
-from ..stores import httpstore
+from argopy.stores.implementations.http import httpstore
 
 
 class DOIrecord:

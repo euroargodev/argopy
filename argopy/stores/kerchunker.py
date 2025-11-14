@@ -5,8 +5,10 @@ import json
 import logging
 from packaging import version
 
-from ..utils import to_list
-from . import memorystore, filestore
+from argopy.utils.checkers import to_list
+from argopy.stores.implementations.memory import memorystore
+from argopy.stores.implementations.local import filestore
+
 
 log = logging.getLogger("argopy.stores.kerchunk")
 

@@ -11,11 +11,11 @@ import json
 import logging
 import importlib
 
-from ..options import OPTIONS
-from ..errors import InvalidDatasetStructure, GdacPathError, InvalidFetcher
-from .lists import list_available_data_src, list_available_index_src, list_gdac_servers
-from .casting import to_list
-from .geo import conv_lon
+from argopy.options import OPTIONS
+from argopy.errors import InvalidDatasetStructure, GdacPathError, InvalidFetcher
+from argopy.utils.lists import list_available_data_src, list_available_index_src, list_gdac_servers
+from argopy.utils.casting import to_list
+from argopy.utils.geo import conv_lon
 
 
 log = logging.getLogger("argopy.utils.checkers")
@@ -310,80 +310,6 @@ def is_list_equal(lst1, lst2):
     )
 
 
-def check_wmo(lst, errors="raise"):
-    """Validate a WMO option and returned it as a list of integers
-
-    Parameters
-    ----------
-    wmo: int
-        WMO must be an integer or an iterable with elements that can be casted as integers
-    errors: {'raise', 'warn', 'ignore'}
-        Possibly raises a ValueError exception or UserWarning, otherwise fails silently.
-
-    Returns
-    -------
-    list(int)
-    """
-    is_wmo(lst, errors=errors)
-
-    # Make sure we deal with a list
-    lst = to_list(lst)
-
-    # Then cast list elements as integers
-    return [abs(int(x)) for x in lst]
-
-
-def is_wmo(lst, errors="raise"):  # noqa: C901
-    """Check if a WMO is valid
-
-    Parameters
-    ----------
-    wmo: int, list(int), array(int)
-        WMO must be a single or a list of 5/7 digit positive numbers
-    errors: {'raise', 'warn', 'ignore'}
-        Possibly raises a ValueError exception or UserWarning, otherwise fails silently.
-
-    Returns
-    -------
-    bool
-        True if wmo is indeed a list of integers
-    """
-
-    # Make sure we deal with a list
-    lst = to_list(lst)
-
-    # Error message:
-    # msg = "WMO must be an integer or an iterable with elements that can be casted as integers"
-    msg = "WMO must be a single or a list of 5/7 digit positive numbers. Invalid: '{}'".format
-
-    # Then try to cast list elements as integers, return True if ok
-    result = True
-    try:
-        for x in lst:
-            if not str(x).isdigit():
-                result = False
-
-            if (len(str(x)) != 5) and (len(str(x)) != 7):
-                result = False
-
-            if int(x) <= 0:
-                result = False
-
-    except Exception:
-        result = False
-        if errors == "raise":
-            raise ValueError(msg(x))
-        elif errors == "warn":
-            warnings.warn(msg(x))
-
-    if not result:
-        if errors == "raise":
-            raise ValueError(msg(x))
-        elif errors == "warn":
-            warnings.warn(msg(x))
-    else:
-        return result
-
 
 def check_cyc(lst, errors="raise"):
     """Validate a CYC option and returned it as a list of integers
@@ -582,7 +508,7 @@ def check_gdac_path(
         return True
     else:
 
-        from ..stores import gdacfs  # import here, otherwise raises circular import
+        from argopy.stores.implementations.gdac import gdacfs  # import here, otherwise raises circular import
 
         try:
             fs = gdacfs(path)
@@ -779,7 +705,7 @@ def erddap_ds_exists(
         erddap = OPTIONS["erddap"]
     # log.debug("from erddap_ds_exists: %s" % erddap)
     if isconnected(erddap, maxtry=maxtry):
-        from ..stores import httpstore  # must import here to avoid circular import
+        from argopy.stores.implementations.http import httpstore  # must import here to avoid circular import
 
         with httpstore(timeout=OPTIONS["api_timeout"]).open(
             "".join([erddap, "/info/index.json"])

@@ -12,12 +12,12 @@ from pathlib import Path
 import logging
 
 
-from ..options import OPTIONS
-from ..errors import (
+from argopy.options import OPTIONS
+from argopy.errors import (
     FileSystemHasNoCache,
     CacheFileNotFound,
 )
-from .filesystems import new_fs
+from argopy.stores.filesystems import new_fs
 
 
 log = logging.getLogger("argopy.stores.spec")

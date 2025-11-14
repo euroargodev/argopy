@@ -2,7 +2,7 @@ import pytest
 import importlib
 
 import argopy
-from argopy import IndexFetcher as ArgoIndexFetcher
+from argopy.fetchers import ArgoIndexFetcher
 from argopy.errors import InvalidFetcherAccessPoint, OptionValueError
 from utils import (
     # AVAILABLE_INDEX_SOURCES,

@@ -3,8 +3,9 @@ import pandas as pd
 import xarray as xr
 import getpass
 from urllib.parse import urlparse
-from ..utils import to_list, UriCName
-from ..utils import list_bgc_s_parameters
+from argopy.utils.format import UriCName
+from argopy.utils.checkers import to_list
+from argopy.utils.lists import list_bgc_s_parameters
 
 
 def pre_process(

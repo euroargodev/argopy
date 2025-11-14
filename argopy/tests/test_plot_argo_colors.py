@@ -11,7 +11,7 @@ from utils import (
     has_matplotlib,
     has_seaborn,
 )
-from argopy.plot import ArgoColors
+from argopy.plot.argo_colors import ArgoColors
 
 if has_matplotlib:
     import matplotlib as mpl

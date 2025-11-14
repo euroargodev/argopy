@@ -12,9 +12,11 @@ except ImportError:
     HAS_PYCO2SYS = False
     pyco2 = None
 
-from ..errors import InvalidDatasetStructure, DataNotFound
-from ..utils import path2assets, to_list, point_in_polygon
-from . import register_argo_accessor, ArgoAccessorExtension
+from argopy.errors import InvalidDatasetStructure, DataNotFound
+from argopy.utils.locals import Asset
+from argopy.utils.checkers import to_list
+from argopy.utils.geo import point_in_polygon
+from argopy.extensions.utils import register_argo_accessor, ArgoAccessorExtension
 
 
 @register_argo_accessor("canyon_b")
@@ -135,9 +137,6 @@ class CanyonB(ArgoAccessorExtension):
         if self._argo.N_POINTS == 0:
             raise DataNotFound("Empty dataset, no data to transform !")
 
-        self.path2coef = Path(path2assets).joinpath(
-            "canyon-b"
-        )  # Path to CANYON-B assets
 
     def get_param_attrs(self, param: str) -> dict:
         """
@@ -412,22 +411,16 @@ class CanyonB(ArgoAccessorExtension):
 
         Returns
         -------
-        pd.DataFrame
+        :class:`pd.DataFrame`
             DataFrame containing the neural network weights for the specified parameter.
         """
 
         if param in ["AT", "pCO2", "NO3", "PO4", "SiOH4"]:
-            weights = pd.read_csv(
-                self.path2coef.joinpath(f"wgts_{param}.txt"), header=None, sep="\t"
-            )
+            weights = Asset.load(f"wgts_{param}.txt", header=None, sep="\t")
         elif param == "DIC":
-            weights = pd.read_csv(
-                self.path2coef.joinpath("wgts_CT.txt"), header=None, sep="\t"
-            )
+            weights = Asset.load("wgts_CT.txt", header=None, sep="\t")
         else:
-            weights = pd.read_csv(
-                self.path2coef.joinpath("wgts_pH.txt"), header=None, sep="\t"
-            )
+            weights = Asset.load("wgts_pH.txt", header=None, sep="\t")
 
         return weights
 

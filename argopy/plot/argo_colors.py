@@ -1,14 +1,15 @@
 import numpy as np
 from packaging import version
-from .utils import has_mpl, has_seaborn, ARGOPY_COLORS
-from ..utils.loggers import warnUnless
+
+from argopy.utils.loggers import warnUnless
+from argopy.plot.utils import has_mpl, has_seaborn, ARGOPY_COLORS
 
 if has_mpl:
-    from .utils import mpl, cm, mcolors, plt
+    from argopy.plot.utils import mpl, cm, mcolors, plt
     from matplotlib.colors import to_hex
 
 if has_seaborn:
-    from .utils import sns
+    from argopy.plot.utils import sns
 
 
 class ArgoColors:

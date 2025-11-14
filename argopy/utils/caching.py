@@ -6,8 +6,10 @@ import json
 import fsspec
 import pandas as pd
 from packaging import version
-from ..options import OPTIONS
-from ..errors import FileSystemHasNoCache
+
+from argopy.options import OPTIONS
+from argopy.errors import FileSystemHasNoCache
+
 
 log = logging.getLogger("argopy.utils.caching")
 

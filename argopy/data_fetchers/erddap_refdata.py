@@ -1,15 +1,15 @@
 """
 Fetcher to retrieve ship-based CTD reference data from Ifremer erddap
 """
-
 import xarray as xr
 import logging
-from ..options import OPTIONS
-from ..utils.chunking import Chunker
-from ..utils.geo import conv_lon
-from ..stores import httpstore_erddap_auth
-from .erddap_data import ErddapArgoDataFetcher
-from .erddap_data_processors import _add_attributes
+
+from argopy.options import OPTIONS
+from argopy.utils.chunking import Chunker
+from argopy.utils.geo import conv_lon
+from argopy.stores.implementations.http_erddap import httpstore_erddap_auth
+from argopy.data_fetchers.erddap_data import ErddapArgoDataFetcher
+from argopy.data_fetchers.erddap_data_processors import _add_attributes
 
 # Load erddapy according to available version (breaking changes in v0.8.0)
 try:

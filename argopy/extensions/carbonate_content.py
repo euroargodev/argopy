@@ -10,11 +10,11 @@ except ImportError:
     HAS_PYCO2SYS = False
     pyco2 = None
 
-from ..errors import InvalidDatasetStructure, DataNotFound
-from . import register_argo_accessor, ArgoAccessorExtension
+from argopy.errors import InvalidDatasetStructure, DataNotFound
+from argopy.extensions.utils import register_argo_accessor, ArgoAccessorExtension
 
 # import carbonate utilities
-from ..utils.carbonate import (
+from argopy.utils.carbonate import (
     error_propagation,
     ChemistryConstants,
     CalculationOptions,

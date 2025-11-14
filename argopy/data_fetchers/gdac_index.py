@@ -11,10 +11,10 @@ from abc import ABC, abstractmethod
 import warnings
 import logging
 
-from ..utils.format import format_oneline
-from ..options import OPTIONS, check_gdac_option
-from ..plot import dashboard
-from ..stores import ArgoIndex
+from argopy.utils.format import format_oneline
+from argopy.options import OPTIONS, check_gdac_option
+from argopy.plot.dashboards import open_dashboard as dashboard
+from argopy.stores.index.argo_index import ArgoIndex
 
 
 log = logging.getLogger("argopy.gdac.index")

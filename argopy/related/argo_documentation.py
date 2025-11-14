@@ -1,17 +1,15 @@
-import os
-import json
 import pandas as pd
 from functools import lru_cache
 import requests
 
-from ..stores import httpstore, memorystore
-from ..options import OPTIONS
-from .utils import path2assets
+from argopy.options import OPTIONS
+from argopy.stores.implementations.http import httpstore
+from argopy.stores.implementations.memory import memorystore
+from argopy.utils.locals import Asset
 
 
 # Load the ADMT documentation catalogue:
-with open(os.path.join(path2assets, "admt_documentation_catalogue.json"), "rb") as f:
-    ADMT_CATALOGUE = json.load(f)['data']['catalogue']
+ADMT_CATALOGUE = Asset.load('admt_documentation_catalogue')['data']['catalogue']
 
 
 class ArgoDocs:

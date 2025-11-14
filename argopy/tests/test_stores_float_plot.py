@@ -2,7 +2,7 @@ import pytest
 import logging
 
 import argopy
-from argopy.stores import ArgoFloat
+from argopy.stores.float.argo_float import ArgoFloat
 
 from utils import (
     requires_gdac,

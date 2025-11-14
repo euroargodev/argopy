@@ -1,6 +1,6 @@
 import logging
 
-from argopy import DataFetcher as ArgoDataFetcher
+from argopy.fetchers import ArgoDataFetcher
 from argopy.utils.checkers import is_list_of_strings
 
 import pytest

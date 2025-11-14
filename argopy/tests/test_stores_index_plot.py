@@ -1,9 +1,8 @@
 import pytest
 import logging
-import importlib
 
 import argopy
-from argopy.stores import ArgoIndex
+from argopy.stores.index.argo_index import ArgoIndex
 
 from utils import (
     requires_gdac,

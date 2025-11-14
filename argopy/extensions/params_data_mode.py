@@ -4,16 +4,17 @@ import logging
 import time
 from typing import Union, List
 
-from ..utils import to_list, list_core_parameters
-from ..utils import (
+from argopy.errors import InvalidDatasetStructure
+from argopy.utils.lists import list_core_parameters
+from argopy.utils.checkers import to_list
+from argopy.utils.transform import (
     split_data_mode,
     merge_param_with_param_adjusted,
     filter_param_by_data_mode,
 )
-from ..stores import ArgoIndex
-from ..stores.index.spec import ArgoIndexStoreProto
-from ..errors import InvalidDatasetStructure
-from . import register_argo_accessor, ArgoAccessorExtension
+from argopy.stores.index.argo_index import ArgoIndex
+from argopy.stores.index.spec import ArgoIndexStoreProto
+from argopy.extensions.utils import register_argo_accessor, ArgoAccessorExtension
 
 
 log = logging.getLogger("argopy.xtensions.datamode")

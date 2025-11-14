@@ -19,25 +19,26 @@ import pandas as pd
 import numpy as np
 import logging
 
-from .options import OPTIONS, VALIDATE, PARALLEL_SETUP
-from .errors import (
+from argopy.options import OPTIONS, VALIDATE, PARALLEL_SETUP
+from argopy.errors import (
     InvalidFetcherAccessPoint,
     InvalidFetcher,
     OptionValueError,
     DataNotFound,
 )
-from .related import (
+from argopy.related.euroargo_api import (
     get_coriolis_profile_id,
 )
-from .utils.checkers import is_box, is_indexbox, check_wmo, check_cyc
-from .utils.lists import (
+from argopy.utils.wmo import check_wmo
+from argopy.utils.checkers import is_box, is_indexbox, check_cyc
+from argopy.utils.lists import (
     list_available_data_src,
     list_available_index_src,
     list_core_parameters,
     list_radiometry_parameters,
     list_bgc_s_parameters,
 )
-from .plot import plot_trajectory, bar_plot, open_sat_altim_report, scatter_plot
+from argopy.plot.plot import plot_trajectory, bar_plot, open_sat_altim_report, scatter_plot
 
 
 AVAILABLE_DATA_SOURCES = list_available_data_src()

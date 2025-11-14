@@ -1,5 +1,5 @@
-from ..xarray import xr, ArgoAccessor
-from ..utils import register_accessor
+from argopy.xarray import xr, ArgoAccessor
+from argopy.utils.decorators import register_accessor
 
 
 def register_argo_accessor(name):

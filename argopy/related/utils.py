@@ -1,14 +1,10 @@
-import importlib
-import os
-import json
 import logging
-from . import ArgoNVSReferenceTables
+
+from argopy.utils.locals import Asset
+from argopy.related.reference_tables import ArgoNVSReferenceTables
 
 
 log = logging.getLogger("argopy.related.utils")
-path2assets = importlib.util.find_spec(
-    "argopy.static.assets"
-).submodule_search_locations[0]
 
 
 def load_dict(ptype):
@@ -21,8 +17,7 @@ def load_dict(ptype):
             profilers = dict(sorted(profilers.items()))
             return profilers
         except Exception:
-            with open(os.path.join(path2assets, "profilers.json"), "rb") as f:
-                jsdata = json.load(f)
+            jsdata = Asset.load('profilers')
             log.debug(
                 "Failed to load the ArgoNVSReferenceTables R08 for profiler types, fall back on static assets last updated on %s"
                 % jsdata["last_update"]
@@ -37,8 +32,7 @@ def load_dict(ptype):
             institutions = dict(sorted(institutions.items()))
             return institutions
         except Exception:
-            with open(os.path.join(path2assets, "institutions.json"), "rb") as f:
-                jsdata = json.load(f)
+            jsdata = Asset.load('institutions')
             log.debug(
                 "Failed to load the ArgoNVSReferenceTables R04 for institutions name, fall back on static assets last updated on %s"
                 % jsdata["last_update"]

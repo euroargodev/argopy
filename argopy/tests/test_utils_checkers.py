@@ -11,7 +11,6 @@ import argopy
 from argopy.errors import GdacPathError
 from argopy.utils.checkers import (
     is_box, is_indexbox,
-    check_wmo, is_wmo,
     check_cyc, is_cyc,
     check_gdac_path,
     isconnected, urlhaskeyword, isAPIconnected, erddap_ds_exists, isalive
@@ -116,42 +115,6 @@ class Test_is_indexbox:
             with pytest.raises(ValueError):
                 is_indexbox(box, errors="raise")
             assert not is_indexbox(box, errors="ignore")
-
-
-def test_is_wmo():
-    assert is_wmo(12345)
-    assert is_wmo([12345])
-    assert is_wmo([12345, 1234567])
-
-    with pytest.raises(ValueError):
-        is_wmo(1234, errors="raise")
-    with pytest.raises(ValueError):
-        is_wmo(-1234, errors="raise")
-    with pytest.raises(ValueError):
-        is_wmo(1234.12, errors="raise")
-    with pytest.raises(ValueError):
-        is_wmo(12345.7, errors="raise")
-
-    with pytest.warns(UserWarning):
-        is_wmo(1234, errors="warn")
-    with pytest.warns(UserWarning):
-        is_wmo(-1234, errors="warn")
-    with pytest.warns(UserWarning):
-        is_wmo(1234.12, errors="warn")
-    with pytest.warns(UserWarning):
-        is_wmo(12345.7, errors="warn")
-
-    assert not is_wmo(12, errors="ignore")
-    assert not is_wmo(-12, errors="ignore")
-    assert not is_wmo(1234.12, errors="ignore")
-    assert not is_wmo(12345.7, errors="ignore")
-
-
-def test_check_wmo():
-    assert check_wmo(12345) == [12345]
-    assert check_wmo([1234567]) == [1234567]
-    assert check_wmo([12345, 1234567]) == [12345, 1234567]
-    assert check_wmo(np.array((12345, 1234567), dtype='int')) == [12345, 1234567]
 
 
 def test_is_cyc():

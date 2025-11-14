@@ -4,13 +4,13 @@ import xarray as xr
 import pytest
 
 import argopy
-from argopy import DataFetcher as ArgoDataFetcher
+from argopy.fetchers import ArgoDataFetcher
 from argopy.errors import (
     InvalidFetcherAccessPoint,
     InvalidFetcher,
     OptionValueError,
 )
-from argopy.utils import is_list_of_strings
+from argopy.utils.checkers import is_list_of_strings
 from utils import (
     requires_fetcher,
     requires_connection,

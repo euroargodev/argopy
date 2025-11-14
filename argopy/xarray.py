@@ -24,20 +24,19 @@ except ModuleNotFoundError:
     with_dask = False
     Delayed = lambda x: x  # noqa: E731
 
-
-from .utils import is_list_of_strings
-from .utils import (
+from argopy.errors import InvalidDatasetStructure, OptionValueError, NoData, NoDataLeft
+from argopy.utils.checkers import is_list_of_strings
+from argopy.utils.casting import (
     cast_Argo_variable_type,
     DATA_TYPES,
     to_list,
 )
-from .utils import (
+from argopy.utils.compute import (
     linear_interpolation_remap,
     groupby_remap,
 )
-from .utils import list_core_parameters
-from .utils import toYearFraction
-from .errors import InvalidDatasetStructure, OptionValueError, NoData, NoDataLeft
+from argopy.utils.lists import list_core_parameters
+from argopy.utils.geo import toYearFraction
 
 log = logging.getLogger("argopy.xarray")
 

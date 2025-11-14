@@ -9,11 +9,13 @@ from abc import ABC, abstractmethod
 import logging
 import numpy as np
 
-from ...errors import InvalidOption
-from ...plot import dashboard
-from ...utils import check_wmo, argo_split_path, shortcut2gdac
-from ...options import OPTIONS
-from .. import ArgoIndex
+from argopy.options import OPTIONS
+from argopy.errors import InvalidOption
+from argopy.plot.dashboards import open_dashboard as dashboard
+from argopy.utils.wmo import check_wmo
+from argopy.utils.format import argo_split_path
+from argopy.utils.lists import shortcut2gdac
+from argopy.stores.index.argo_index import ArgoIndex
 
 
 log = logging.getLogger("argopy.stores.ArgoFloat")

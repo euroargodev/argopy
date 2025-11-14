@@ -2,12 +2,12 @@ import os
 import pytest
 import platform
 import argopy
-from argopy.options import OPTIONS
-from argopy.errors import OptionValueError, GdacPathError, ErddapPathError
 from utils import requires_gdac, create_read_only_folder
 from mocked_http import mocked_httpserver, mocked_server_address
 import logging
 
+from argopy.options import OPTIONS
+from argopy.errors import OptionValueError, GdacPathError, ErddapPathError
 
 log = logging.getLogger("argopy.tests.options")
 

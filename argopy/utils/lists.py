@@ -1,14 +1,9 @@
 import sys
 import warnings
-import importlib
-import os
-import json
-from ..options import OPTIONS
 from typing import List, Union
 
-path2assets = importlib.util.find_spec(
-    "argopy.static.assets"
-).submodule_search_locations[0]
+from argopy.options import OPTIONS
+from argopy.utils.locals import Asset
 
 
 def subsample_list(original_list, N):
@@ -25,7 +20,7 @@ def list_available_data_src() -> dict:
     """List all available data sources"""
     sources = {}
     try:
-        from ..data_fetchers import erddap_data as Erddap_Fetchers
+        from argopy.data_fetchers import erddap_data as Erddap_Fetchers
 
         # Ensure we're loading the erddap data fetcher with the current options:
         Erddap_Fetchers.api_server_check = Erddap_Fetchers.api_server_check.replace(
@@ -43,7 +38,7 @@ def list_available_data_src() -> dict:
         pass
 
     try:
-        from ..data_fetchers import argovis_data as ArgoVis_Fetchers
+        from argopy.data_fetchers import argovis_data as ArgoVis_Fetchers
 
         sources["argovis"] = ArgoVis_Fetchers
     except Exception:
@@ -55,7 +50,7 @@ def list_available_data_src() -> dict:
         pass
 
     try:
-        from ..data_fetchers import gdac_data as GDAC_Fetchers
+        from argopy.data_fetchers import gdac_data as GDAC_Fetchers
 
         # Ensure we're loading the gdac data fetcher with the current options:
         GDAC_Fetchers.api_server_check = OPTIONS["gdac"]
@@ -78,7 +73,7 @@ def list_available_index_src() -> dict:
     """List all available index sources"""
     sources = {}
     try:
-        from ..data_fetchers import erddap_index as Erddap_Fetchers
+        from argopy.data_fetchers import erddap_index as Erddap_Fetchers
 
         # Ensure we're loading the erddap data fetcher with the current options:
         Erddap_Fetchers.api_server_check = Erddap_Fetchers.api_server_check.replace(
@@ -96,7 +91,7 @@ def list_available_index_src() -> dict:
         pass
 
     try:
-        from ..data_fetchers import gdac_index as GDAC_Fetchers
+        from argopy.data_fetchers import gdac_index as GDAC_Fetchers
 
         # Ensure we're loading the gdac data fetcher with the current options:
         GDAC_Fetchers.api_server_check = OPTIONS["gdac"]
@@ -284,9 +279,7 @@ def list_bgc_s_variables() -> List[str]:
     :meth:`argopy.utils.list_radiometry_variables`
     :meth:`argopy.utils.list_radiometry_parameters`,
     """
-    with open(os.path.join(path2assets, "variables_bgc_synthetic.json"), "r") as f:
-        vlist = json.load(f)
-    return vlist["data"]["variables"]
+    return Asset.load('variables_bgc_synthetic')["data"]["variables"]
 
 
 def list_bgc_s_parameters() -> List[str]:
@@ -414,9 +407,7 @@ def list_gdac_servers() -> List[str]:
     :class:`argopy.gdacfs`, :meth:`argopy.utils.check_gdac_path`, :meth:`argopy.utils.shortcut2gdac`
 
     """
-    with open(os.path.join(path2assets, "gdac_servers.json"), "r") as f:
-        vlist = json.load(f)
-    return vlist["data"]["paths"]
+    return Asset.load('gdac_servers')["data"]["paths"]
 
 
 def shortcut2gdac(short: str = None) -> Union[str, dict]:
@@ -437,9 +428,7 @@ def shortcut2gdac(short: str = None) -> Union[str, dict]:
     :func:`argopy.utils.list_gdac_servers`, :class:`argopy.gdacfs`, :meth:`argopy.utils.check_gdac_path`
 
     """
-    with open(os.path.join(path2assets, "gdac_servers.json"), "r") as f:
-        vlist = json.load(f)
-    shortcuts = vlist["data"]["shortcuts"]
+    shortcuts = Asset.load('gdac_servers')["data"]["shortcuts"]
 
     if short is not None:
         if short.lower().strip() in shortcuts.keys():

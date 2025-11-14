@@ -16,14 +16,13 @@ from utils import (
     create_temp_folder,
 )
 import argopy
-from argopy.related import (
-    TopoFetcher,
-    ArgoNVSReferenceTables,
-    OceanOPSDeployments,
-    ArgoDocs,
-    load_dict, mapp_dict,
-    get_coriolis_profile_id, get_ea_profile_page
-)
+from argopy.related.topography import TopoFetcher
+from argopy.related.reference_tables import ArgoNVSReferenceTables
+from argopy.related.ocean_ops_deployments import OceanOPSDeployments
+from argopy.related.argo_documentation import ArgoDocs
+from argopy.related.utils import load_dict, mapp_dict
+from argopy.related.euroargo_api import get_ea_profile_page, get_coriolis_profile_id
+
 from argopy.utils.checkers import (
     is_list_of_strings,
 )

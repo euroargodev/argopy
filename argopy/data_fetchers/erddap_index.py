@@ -18,10 +18,10 @@ from abc import ABC, abstractmethod
 from erddapy.erddapy import ERDDAP, parse_dates
 from erddapy.erddapy import _quote_string_constraints as quote_string_constraints
 
-from ..utils.format import format_oneline
-from ..related import load_dict, mapp_dict
-from ..stores import httpstore
-from ..options import OPTIONS
+from argopy.options import OPTIONS
+from argopy.utils.format import format_oneline
+from argopy.related.utils import load_dict, mapp_dict
+from argopy.stores.implementations.http import httpstore
 
 log = logging.getLogger("argopy.fetchers.erddap_index")
 

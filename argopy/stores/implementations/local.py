@@ -12,12 +12,12 @@ from pathlib import Path
 import warnings
 from netCDF4 import Dataset
 
-from ...options import OPTIONS
-from ...errors import InvalidMethod, DataNotFound
+from argopy.options import OPTIONS
+from argopy.errors import InvalidMethod, DataNotFound
 
-from ..spec import ArgoStoreProto
-from ..filesystems import has_distributed, distributed
-from ..filesystems import tqdm
+from argopy.stores.spec import ArgoStoreProto
+from argopy.stores.filesystems import has_distributed, distributed
+from argopy.stores.filesystems import tqdm
 
 log = logging.getLogger("argopy.stores.implementation.local")
 

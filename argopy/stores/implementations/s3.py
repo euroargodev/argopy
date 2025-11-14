@@ -1,4 +1,4 @@
-from .http import httpstore
+from argopy.stores.implementations.http import httpstore
 
 
 class s3store(httpstore):
@@ -13,7 +13,7 @@ class s3store(httpstore):
 
     In order to avoid a *no credentials found error*, you can use:
 
-    >>> from argopy.utils import has_aws_credentials
+    >>> from argopy.utils.checkers import has_aws_credentials
     >>> fs = s3store(anon=not has_aws_credentials())
 
     """

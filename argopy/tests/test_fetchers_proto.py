@@ -1,9 +1,9 @@
 import pytest
 import logging
-
 import xarray
+
 from argopy.data_fetchers.proto import ArgoDataFetcherProto
-from argopy.utils import to_list
+from argopy.utils.checkers import to_list
 from mocked_http import mocked_httpserver, mocked_server_address
 
 log = logging.getLogger("argopy.tests.fetchers.proto")
