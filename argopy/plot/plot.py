@@ -57,6 +57,28 @@ with open(os.path.join(path2assets, "data_types.json"), "r") as f:
     DATA_TYPES = json.load(f)
 
 
+def guess_cmap(hue: str) -> str | None:
+    """Try to guess the colormap to use as a function of the variable to plot
+
+    If not custom colormap is identified, return None and let the caller decide on which one to use.
+
+    """
+    if hue.lower() in ArgoColors().list_valid_known_colormaps:
+        cmap = hue.lower()
+    elif "qc" in hue.lower():
+        if "profile_" not in hue.lower():
+            cmap = "qc"
+        else:
+            cmap = "pqc"
+    elif "mode" in hue.lower():
+        cmap = "data_mode"
+    elif "status_code" in hue.lower():
+        cmap = "deployment_status"
+    else:
+        cmap = None
+    return cmap
+
+
 def open_sat_altim_report(
     WMO: Union[str, list] = None, embed: Union[str, None] = "dropdown", **kwargs
 ):
@@ -491,24 +513,7 @@ def scatter_map(  # noqa: C901
         )
         data = data.isel(N_LEVELS=0)
 
-    # Try to guess the colormap to use as a function of the 'hue' variable:
-    def guess_cmap(hue):
-        if hue.lower() in ArgoColors().list_valid_known_colormaps:
-            cmap = hue.lower()
-        elif "qc" in hue.lower():
-            if "profile_" not in hue.lower():
-                cmap = "qc"
-            else:
-                cmap = "pqc"
-        elif "mode" in hue.lower():
-            cmap = "data_mode"
-        elif "status_code" in hue.lower():
-            cmap = "deployment_status"
-        else:
-            cmap = STYLE["palette"]
-        return cmap
-
-    cmap = guess_cmap(hue) if cmap is None else cmap
+    cmap = cmap or guess_cmap(hue) or STYLE["palette"]
 
     # Try to guess the x and y variables:
     def guess_xvar(data):
@@ -726,10 +731,10 @@ def scatter_map(  # noqa: C901
 
 
 def scatter_plot(
-    ds: xr.Dataset,
-    this_param,
-    this_x="TIME",
-    this_y="PRES",
+    ds : xr.Dataset,
+    this_param : str,
+    x : str = "TIME",
+    y : str = "PRES",
     figsize=(18, 6),
     cmap=None,
     vmin=None,
@@ -737,18 +742,39 @@ def scatter_plot(
     s=4,
     cbar: bool = False,
     style: str = STYLE["axes"],
+    **kwargs,
 ):
     """A quick-and-dirty parameter scatter plot for one variable"""
     warnUnless(has_mpl, "requires matplotlib installed")
+
+    #deprecation
+    if 'this_x' in kwargs:
+        warnings.warn(
+            f"The argument 'this_x' is deprecated since version 1.4.0. Please use update your code to use 'x' instead.",
+            category=DeprecationWarning,
+            stacklevel=2,
+        )
+        x = kwargs['this_x']  # Safe fallback on new argument
+    if 'this_y' in kwargs:
+        warnings.warn(
+            f"The argument 'this_y' is deprecated since version 1.4.0. Please use update your code to use 'y' instead.",
+            category=DeprecationWarning,
+            stacklevel=2,
+        )
+        y = kwargs['this_y']  # Safe fallback on new argument
 
     if this_param in DATA_TYPES["data"]["str"]:
         raise ValueError("scatter_plot does not support string data type (yet !)")
 
     if cmap is None:
-        cmap = mpl.colormaps["gist_ncar"]
+        cmap = guess_cmap(this_param)
+        if cmap is None:
+            cmap = mpl.colormaps["gist_ncar"]
+        else:
+            cmap = ArgoColors(cmap).cmap
 
-    def get_vlabel(this_ds, this_v):
-        attrs = this_ds[this_v].attrs
+    def get_vlabel(this_v):
+        attrs = this_v.attrs
         if "standard_name" in attrs:
             name = attrs["standard_name"]
         elif "long_name" in attrs:
@@ -759,17 +785,17 @@ def scatter_plot(
         return "%s\n[%s]" % (name, units) if units else name
 
     # Read variables for the plot:
-    x, y = ds[this_x], ds[this_y]
-    if "INTERPOLATED" in this_y:
-        x_bounds, y_bounds = np.meshgrid(x, y, indexing="ij")
-    c = ds[this_param]
+    x_da, y_da = ds[x], ds[y]
+    if "INTERPOLATED" in y_da:
+        x_bounds, y_bounds = np.meshgrid(x_da, y_da, indexing="ij")
+    c_da = ds[this_param]
 
-    # Possibly broadcast x, y on c dimensions:
-    if not x.shape == y.shape or not x.shape == c.shape or not y.shape == c.shape:
-        x = x.broadcast_like(c)
-        y = y.broadcast_like(c)
-        assert x.shape == y.shape
-        assert y.shape == c.shape
+    # Possibly broadcast x_da, y_da on c dimensions:
+    if not x_da.shape == y_da.shape or not x_da.shape == c_da.shape or not y_da.shape == c_da.shape:
+        x_da = x_da.broadcast_like(c_da)
+        y_da = y_da.broadcast_like(c_da)
+        assert x_da.shape == y_da.shape
+        assert y_da.shape == c_da.shape
 
     #
     with axes_style(style):
@@ -777,41 +803,45 @@ def scatter_plot(
         fig, ax = plt.subplots(dpi=90, figsize=figsize)
 
         if vmin == "attrs":
-            vmin = c.attrs["valid_min"] if "valid_min" in c.attrs else None
+            vmin = c_da.attrs["valid_min"] if "valid_min" in c_da.attrs else None
         if vmax == "attrs":
-            vmax = c.attrs["valid_max"] if "valid_max" in c.attrs else None
+            vmax = c_da.attrs["valid_max"] if "valid_max" in c_da.attrs else None
         if vmin is None:
-            vmin = np.nanpercentile(c, 10)
+            vmin = np.nanpercentile(c_da, 10)
         if vmax is None:
-            vmax = np.nanpercentile(c, 90)
+            vmax = np.nanpercentile(c_da, 90)
 
-        if "INTERPOLATED" in this_y:
-            m = ax.pcolormesh(x_bounds, y_bounds, c, cmap=cmap, vmin=vmin, vmax=vmax)
+        if "_QC" in this_param.upper():
+            cbar.set_ticks(to_list([k + 0.5 for k in mycolors.ticklabels.keys()]))
+            cbar.set_ticklabels(to_list([k for k in mycolors.ticklabels.values()]))
+
+        if "INTERPOLATED" in y:
+            m = ax.pcolormesh(x_bounds, y_bounds, c_da, cmap=cmap, vmin=vmin, vmax=vmax)
         else:
-            m = ax.scatter(x, y, c=c, cmap=cmap, s=s, vmin=vmin, vmax=vmax)
+            m = ax.scatter(x_da, y_da, c=c_da, cmap=cmap, s=s, vmin=vmin, vmax=vmax)
             # ax.set_facecolor(bgcolor)
 
         if cbar:
             cbar = fig.colorbar(m, shrink=0.9, ax=ax)
-            cbar.ax.set_ylabel(get_vlabel(ds, this_param), rotation=90)
+            cbar.ax.set_ylabel(get_vlabel(c_da), rotation=90)
 
         ylim = ax.get_ylim()
-        if "PRES" in this_y:
+        if "PRES" in y:
             ax.invert_yaxis()
             y_bottom, y_top = np.max(ylim), np.min(ylim)
         else:
             y_bottom, y_top = ylim
 
-        if this_x == "CYCLE_NUMBER":
-            ax.set_xlim([np.min(ds[this_x]) - 1, np.max(ds[this_x]) + 1])
-        elif this_x == "TIME":
-            ax.set_xlim([np.min(ds[this_x]), np.max(ds[this_x])])
-        if "PRES" in this_y:
+        if x == "CYCLE_NUMBER":
+            ax.set_xlim([np.min(x_da) - 1, np.max(x_da) + 1])
+        elif x == "TIME":
+            ax.set_xlim([np.min(x_da), np.max(x_da)])
+        if "PRES" in y:
             ax.set_ylim([y_bottom, 0])
 
         #
-        ax.set_xlabel(get_vlabel(ds, this_x))
-        ax.set_ylabel(get_vlabel(ds, this_y))
+        ax.set_xlabel(get_vlabel(x_da))
+        ax.set_ylabel(get_vlabel(y_da))
 
     if cbar:
         return fig, ax, m, cbar

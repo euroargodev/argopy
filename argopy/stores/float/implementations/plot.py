@@ -257,7 +257,7 @@ class ArgoFloatPlot(ArgoFloatPlotProto):
                 % (param, ds, self._obj.ls_dataset()[ds])
             )
 
-        default_kwargs = {"this_x": "JULD", "cbar": True}
+        default_kwargs = {"x": "JULD", "cbar": True}
         this_kwargs = {**default_kwargs, **kwargs}
 
         if "_QC" in param:
