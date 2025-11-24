@@ -1,7 +1,7 @@
 {
   "name": "data_types",
   "long_name": "Expected data types of Argo variables",
-  "last_update": "2025-10-20T16:34:14.606570+00:00",
+  "last_update": "2025-11-11T20:51:33.505007+00:00",
   "data": {
     "str": [
       "PLATFORM_NUMBER",
@@ -73,6 +73,7 @@
       "SENSOR_MAKER",
       "SENSOR_MODEL",
       "SENSOR_SERIAL_NO",
+      "SENSOR_FIRMWARE_VERSION",
       "PARAMETER_SENSOR",
       "PARAMETER_UNITS",
       "PARAMETER_ACCURACY",
@@ -285,8 +286,6 @@
       "PLATFORM_NUMBER",
       "WMO_INST_TYPE",
       "CYCLE_NUMBER",
-      "CYCLE_NUMBER_INDEX",
-      "CYCLE_NUMBER_INDEX_ADJUSTED",
       "CONFIG_MISSION_NUMBER",
       "JULD_STATUS",
       "JULD_ADJUSTED_STATUS",

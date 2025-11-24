@@ -420,7 +420,7 @@ def ppliststr(l: list[str], last : str = 'and', n : int | None = None) -> str:
 
         ppliststr(['a', 'b', 'c', 'd']) -> "'a', 'b', 'c' and 'd'"
         ppliststr(['a', 'b'], last='or') -> "'a' or 'b'"
-        ppliststr(['a', 'b', 'c', 'd'], n=3) -> "'a', 'b', 'c' and 'd'"
+        ppliststr(['a', 'b', 'c', 'd'], n=3) -> "'a', 'b', 'c' and more ..."
 
     """
     n = n if n is not None else len(l)

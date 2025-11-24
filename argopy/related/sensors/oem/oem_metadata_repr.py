@@ -54,7 +54,7 @@ class OemMetaDataDisplay:
 
         # --- Header ---
         header_html = f"""
-        <h1 class='oemsensor'>Argo Sensor OEM Metadata: {self.OEMsensor.sensor_info._attr2str('sensor_described')}</h1>
+        <h1 class='oemsensor'>Argo Sensor Metadata: {self.OEMsensor.sensor_info._attr2str('sensor_described')}</h1>
         <p class='oemsensor'><strong>Created by:</strong> {self.OEMsensor.sensor_info._attr2str('created_by')} |
            <strong>Date:</strong> {self.OEMsensor.sensor_info._attr2str('date_creation')}</p>
         """
