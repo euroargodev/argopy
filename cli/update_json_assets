@@ -112,6 +112,7 @@ def asset_data_types():
         "SENSOR_MAKER",
         "SENSOR_MODEL",
         "SENSOR_SERIAL_NO",
+        "SENSOR_FIRMWARE_VERSION",
         "PARAMETER_SENSOR",
         "PARAMETER_UNITS",
         "PARAMETER_ACCURACY",
