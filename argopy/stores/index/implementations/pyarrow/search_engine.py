@@ -493,15 +493,11 @@ class SearchEngine(ArgoIndexSearchEngine):
 
         def composer(PARAMs, logical):
             filt = []
-            # def filt_profile_qc(this_param, this_qc):
-            #     return pa.compute.is_in(
-            #         self._obj.index[f"profile_{this_param.lower()}_qc"], pa.array(this_qc)
-            #     )
 
             for param in PARAMs:
-                qcflag = PARAMs[param]
+                qcflags = PARAMs[param]
                 filt.append(pa.compute.is_in(
-                    self._obj.index[f"profile_{param.lower()}_qc"], pa.array(qcflag)
+                    self._obj.index[f"profile_{param.lower()}_qc"], pa.array(qcflags)
                 ))
 
             return self._obj._reduce_a_filter_list(filt, op=logical)
