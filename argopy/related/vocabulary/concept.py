@@ -3,28 +3,34 @@ import pandas as pd
 from typing import Any, TypeAlias
 from os import PathLike
 from pathlib import Path
+import json
+from dataclasses import dataclass
 
-from ...errors import OptionValueError
-from ...utils import urnparser, Asset, ppliststr, to_list, Encoder
-from .nvs import concept2vocabulary, check_vocabulary, id2urn, NVS
+from argopy.errors import OptionValueError
+from argopy.utils.accessories import Asset
+from argopy.utils.format import urnparser, ppliststr
+from argopy.utils.checkers import to_list
+from argopy.utils.casting import Encoder
+from argopy.stores.nvs import concept2vocabulary, check_vocabulary, id2urn, NVS
 
 
 FilePath: TypeAlias = str | PathLike[str]
 
 
+@dataclass(frozen=True)
 class Props:
     """ :class:`ArgoReferenceValue` property holder
 
     This should allow to make the difference between the class logic/attributes and the meta-data to expose.
     """
 
-    slots = ('name', 'reference', 'long_name', 'definition', 'deprecated', 'version', 'date', 'uri', 'urn', 'parameter', 'related', 'broader', 'narrower', '_nvs', '_context', '_from')
+    slots = ('name', 'reference', 'long_name', 'definition', 'deprecated', 'version', 'date', 'uri', 'urn', 'parameter', 'related', 'broader', 'narrower', 'sameas', '_nvs', '_context', '_from')
     """All possible class attributes"""
 
-    attrs = ('nvs', 'name', 'reference', 'long_name', 'definition', 'deprecated', 'version', 'date', 'uri', 'urn', 'parameter', 'related', 'broader', 'narrower', 'context')
+    attrs = ('nvs', 'name', 'reference', 'long_name', 'definition', 'deprecated', 'version', 'date', 'uri', 'urn', 'parameter', 'related', 'broader', 'narrower', 'sameas', 'context')
     """Attributes to be publicly exposed (and are read-only)"""
 
-    cols = ('name', 'reference', 'long_name', 'definition', 'deprecated', 'version', 'date', 'uri', 'urn', 'parameter', 'related', 'broader', 'narrower', 'context')
+    keys = ('name', 'reference', 'long_name', 'definition', 'deprecated', 'version', 'date', 'uri', 'urn', 'parameter', 'related', 'broader', 'narrower', 'sameas', 'context')
     """Attributes to be used to validate export/search possible values"""
 
 
@@ -78,9 +84,10 @@ class ArgoReferenceValue:
         val.urn        # nvs["skos:notation"]
 
         # Relationships with other Reference Values or Context:
-        val.related    # nvs["skos:related"]
         val.broader    # nvs["skos:broader"]
         val.narrower   # nvs["skos:narrower"]
+        val.related    # nvs["skos:related"]
+        val.sameas     # nvs["owl:sameAs"]
         val.context    # nvs["@context"]
 
         # Raw NVS json data:
@@ -113,6 +120,7 @@ class ArgoReferenceValue:
         # (basic export of NVS data)
         val.to_json()  # In memory
         val.to_json('reference_value.json')  # To a json file
+        val.to_json('reference_value.json', keys=['name', 'deprecated'])  # Select attributes to export
 
         # Export relationships with other concept as :class:`pd.DataFrame`
         val.to_mapping(predicate=['related'])
@@ -125,10 +133,14 @@ class ArgoReferenceValue:
     attrs : tuple[str] = Props.attrs
     """Public attributes"""
 
+    keys : tuple[str] = Props.keys
+    """Public attributes allowed in export/search methods"""
+
     def __init_implicit(self, name: str | None = None, reference: str | None = None, **kwargs) -> None:
+        """Create instance with JSON fetched from NVS using name and reference"""
         self._from = 'nvs'
         self.name = name
-        reftable = concept2vocabulary(name)  # Return IDs
+        reftable : list[str] | None = concept2vocabulary(name)  # Return vocabulary IDs with this concept
         if reftable is None:
             raise ValueError('Invalid Reference Value')
         if reference is not None:
@@ -149,6 +161,7 @@ class ArgoReferenceValue:
         self._nvs = NVS().load_concept(self.name, self.reference)
 
     def __init_explicit(self, data: Any) -> None:
+        """Create instance with JSON data provided, typically using ArgoReferenceValue.from_dict()"""
         self._from = 'json'
         self._nvs = data
         self.name = self.nvs['skos:altLabel']
@@ -189,6 +202,9 @@ class ArgoReferenceValue:
         self.narrower = None
         if self.nvs.get('skos:narrower', None) is not None:
             self.narrower = to_list(self.nvs.get('skos:narrower', None))
+        self.sameas = None
+        if self.nvs.get('owl:sameAs', None) is not None:
+            self.sameas = to_list(self.nvs.get('owl:sameAs', None))
 
     def __setattr__(self, attr, value):
         """Set attribute value, with read-only after instantiation policy for public attributes"""
@@ -197,16 +213,17 @@ class ArgoReferenceValue:
         ArgoReferenceValue.__dict__[attr].__set__(self, value)
 
     def __repr__(self):
-        summary = [f"<argo.reference.value><{self.parameter}.{self.name}>"]
+        summary = [f"<argo.reference.table.value> '{self.name}'"]
         summary.append(f'long_name: "{self.long_name}"')
-        summary.append(f"version: {self.version} ({self.date})")
-        summary.append(f"uri: {self.uri}")
         summary.append(f'definition: "{self.definition}"')
         summary.append(f'urn: "{self.urn}"')
+        summary.append(f"uri: {self.uri}")
+        summary.append(f"version: {self.version} ({self.date})")
         summary.append(f'deprecated: {"True" if self.deprecated else "False"}')
         summary.append(f"reference/parameter: {self.reference}/{self.parameter}")
 
-        for relation in ['related', 'broader', 'narrower']:
+        summary.append(f"relations:")
+        for relation in ['broader', 'narrower', 'related', 'sameas']:
             if getattr(self, relation, None) is not None:
                 # list of items like: {'@id': 'http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_II/'}
                 rels = getattr(self, relation)
@@ -214,29 +231,36 @@ class ArgoReferenceValue:
                 urns = [urnparser(id2urn(r['@id'])) for r in rels]
                 urns = [f"{u['listid']}/{u['termid']}" for u in urns]
                 # Final print:
-                summary.append(f"{relation}[{len(urns)}]: {ppliststr(urns)}")
-            else:
-                summary.append(f"{relation}: n/a")
+                if relation == 'related':
+                    summary.append(f"  - '{relation}' to {len(urns)} value{'s' if len(urns) > 1 else ''} : {ppliststr(urns)}")
+                elif relation == 'sameas':
+                    summary.append(f"  - '{relation}' {len(urns)} value{'s' if len(urns) > 1 else ''} : {ppliststr(urns)}")
+                else:
+                    summary.append(f"  - {len(urns)} '{relation}' value{'s' if len(urns)>1 else ''}: {ppliststr(urns)}")
+            # else:
+            #     summary.append(f"  {relation}: -")
+        if summary[-1] == f"relations:":
+            summary[-1] = f"relations[{ppliststr(['broader', 'narrower', 'related', 'sameas'], last='or')}]: -"
 
         if getattr(self, 'context', None) is not None:
             keys = list(self.context.keys())
             summary.append(f"context[{len(keys)}]: {ppliststr(keys)}")
         else:
-            summary.append(f"context: {'(not loaded yet, use key indexing to load)' if self._from == 'json' else 'n/a'}")
+            summary.append(f"context: {'(not loaded yet, use key indexing to load)' if self._from == 'json' else '-'}")
         return "\n".join(summary)
 
     def __getitem__(self, key):
         if key == 'context':
             """ 'context' requires a special treatment because this is the only attribute that is not filled
             when the ArgoReferenceValue instance is created using json data from a Reference Table graph 
-            concept and the from_dict method, typically in this case:
+            concept and the from_dict method, typically in this use-case:
             >>> val = ArgoReferenceTable('PLATFORM_FAMILY')['FLOAT_COASTAL']
             This 'val' instance has no 'context' attribute.            
             So, when we call on "val['context']" we need to trigger full NVS data fetching of the concept, which also update the internal nvs object.            
             """
             if self.nvs.get('@context', None) is None:
                 # Update NVS data:
-                self._nvs : dict[str, str] = NVS().load_concept(self.name, self.reference)
+                self._nvs : dict[str, str] = NVS().load_concept(urnparser(self.urn)['termid'], self.reference)
                 # Fill in context attribute:
                 self._context : str | None = self.nvs.get('@context', None)
             return getattr(self, 'context')
@@ -285,45 +309,55 @@ class ArgoReferenceValue:
         """
         return cls('', data = data)
 
-    def to_dict(self, columns : list[str] | None = None) -> dict[str, Any]:
-        """Export reference value attributes to a dictionary"""
-        if columns is None:
-            cols = Props.cols
+    def to_dict(self, keys : list[str] | None = None) -> dict[str, Any]:
+        """Export reference value attributes to a dictionary
+
+        Parameters
+        ----------
+        keys: list[str], optional, default = None
+            List of attributes to output as keys in the dictionary. All by default if set to None.
+
+        Returns
+        -------
+        dict[str, Any]
+        """
+        if keys is None:
+            validated_keys = self.keys
         else:
-            cols = []
-            for c in to_list(columns):
-                if c not in Props.cols:
+            validated_keys = []
+            for k in to_list(keys):
+                if k not in self.keys:
                     raise OptionValueError(
-                        f"Invalid columns name '{c}'. Valid values are: {ppliststr(Props.cols)}")
-                cols.append(c)
-            if len(cols) == 0:
+                        f"Invalid key name '{k}'. Valid values are: {ppliststr(self.keys)}")
+                validated_keys.append(k)
+            if len(validated_keys) == 0:
                 raise OptionValueError(
-                    f"No valid column names in '{ppliststr(columns)}'. Valid values are: {ppliststr(Props.cols, last='or')}")
+                    f"No valid keys in '{ppliststr(validated_keys)}'. Valid values are: {ppliststr(self.keys, last='or')}")
 
         d = {}
-        for key in cols:
+        for key in validated_keys:
             d.update({key: getattr(self, key)})
         return d
 
-    def to_json(self, path: FilePath | None = None, **kwargs):
+    def to_json(self, path: FilePath | None = None, keys : list[str] | None = None, **kwargs):
         """Export to a JSON string or path
 
         Parameters
         ----------
         path: str, path object, file-like object, or None, default None
             String, path object (implementing os.PathLike[str]), or file-like object implementing a write() function. If None, the result is returned as a string.
+        keys: list[str], optional, default = None
+            List of attributes to output as keys in the JSON structure. All by default if set to None.
         **kwargs
             All other arguments are passed to :class:`json.dumps` or :class:`json.dump`
 
         Returns
         -------
         None or str
-            If path is None, returns the resulting json format as a string. Otherwise returns None.
+            If path is None, returns the resulting json format as a string. Otherwise, returns None.
         """
-        import json
-
         # Get data to export:
-        data = self.to_dict()
+        data = self.to_dict(keys=keys)
 
         # Make sure we have an appropriate JSON encoder for pandas data types
         if kwargs.get('cls', None) is None:

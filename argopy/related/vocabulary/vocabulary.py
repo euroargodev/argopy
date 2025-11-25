@@ -1,25 +1,33 @@
 import inspect
+import warnings
+
 import pandas as pd
 import numpy as np
 from pandas import DataFrame
-from typing import Any, Literal
+from typing import Any
+from dataclasses import dataclass
+
+from argopy.errors import NoDataLeft, OptionValueError
+from argopy.utils.accessories import Asset, Registry
+from argopy.utils.format import ppliststr, urnparser
+from argopy.utils.checkers import to_list
+from argopy.stores.nvs import NVS, id2urn
+from argopy.related.vocabulary.concept import ArgoReferenceValue
 
 
-from ...errors import NoDataLeft, OptionValueError
-from ...utils import Asset, ppliststr, urnparser, to_list
-from .nvs import NVS, id2urn
-from .concept import ArgoReferenceValue
+AccessedVocabularies = Registry(name='AccessedVocabularies', dtype=pd.DataFrame)
 
 
+@dataclass(frozen=True)
 class Props:
     """ ArgoReferenceTable property holder """
 
-    slots = ('nvs', 'identifier', 'parameter', 'long_name', 'description', 'version', 'date', 'uri', 'n_values', 'values', '_Vocabulary2Parameter', '_df', '_d')
+    slots = ('nvs', 'identifier', 'parameter', 'long_name', 'description', 'version', 'date', 'uri', 'values', '_Vocabulary2Parameter', '_df', '_d')
 
     attrs = ('nvs', 'identifier', 'parameter', 'long_name', 'description', 'version', 'date', 'uri', 'values')
     """A subset of slots, to be publicly exposed"""
 
-    attrs_export = ('identifier', 'parameter', 'long_name', 'description', 'version', 'date', 'uri')
+    keys = ('identifier', 'parameter', 'long_name', 'description', 'version', 'date', 'uri')
     """A subset of attrs, to be used in export methods (columns/keys selection)"""
 
 
@@ -123,8 +131,8 @@ class ArgoReferenceTable:
     attrs : tuple[str] = Props.attrs
     """Public attributes"""
 
-    cols : list[str] = list(Props.attrs_export)
-    """Public attributes allowed in export methods"""
+    keys : list[str] = list(Props.keys)
+    """Public attributes allowed in export methods to_dict, to_json"""
 
     def __init__(self, identifier: str | None = None, *args, **kwargs) -> None:
         # Internal placeholders:
@@ -172,20 +180,19 @@ class ArgoReferenceTable:
         ArgoReferenceTable.__dict__[attr].__set__(self, value)
 
     def __repr__(self):
-        summary = [f"<argo.reference.table><{self.parameter}>"]
-        summary.append(f'identifier: "{self.identifier}"')
+        summary = [f"<argo.reference.table> '{self.identifier}'/'{self.parameter}'"]
         summary.append(f'long_name: "{self.long_name}"')
-        summary.append(f"version: {self.version} ({self.date})")
-        summary.append(f"uri: {self.uri}")
         summary.append(f'description: "{self.description}"')
-        summary.append(f"values[{self.n_values}]: {ppliststr(self.values, n=10)}")
+        summary.append(f"uri: {self.uri}")
+        summary.append(f"version: {self.version} ({self.date})")
+        summary.append(f"values[{len(self.values)}]: {ppliststr(self.values, n=10)}")
         return "\n".join(summary)
 
     def __contains__(self, item):
         return item in self.values
 
     def __len__(self):
-        return self.n_values
+        return len(self.values)
 
     def __iter__(self):
         for ii, v in enumerate(self.values):
@@ -207,9 +214,9 @@ class ArgoReferenceTable:
         if ref_value is not None:
             if self._d.get(ref_value, None) is None:
                 """
-                The naive method is to call here is ArgoReferenceValue(name, reference):
+                The naive method to call here is ArgoReferenceValue(name, reference):
                 >>> self._d.update({ref_value: ArgoReferenceValue(ref_value, reference=self.identifier)})
-                But this is could very slow for large reference tables because it triggers one NVS fetch for
+                But this is could be very slow for large reference tables because it triggers one NVS fetch for
                 each concept.
                 Hopefully this naive method is not necessary since all concepts data are already in `self.nvs`:
                 """
@@ -228,14 +235,14 @@ class ArgoReferenceTable:
         return [self[ii] for ii, v in enumerate(self.values)]
 
     def to_dataframe(self, columns : list[str] | None = None) -> DataFrame | None:
-        """Export all reference values to a :class:`pd.DataFrame`
+        """Export all reference values attributes to a :class:`pd.DataFrame`
 
-        Default column names are given by the :attr:`ArgoReferenceValue.cols` attribute.
+        Default column names are given by the :attr:`ArgoReferenceValue.keys` attribute.
 
         Parameters
         ----------
         columns: list[str] | None, optional, default=None
-            Column names to insert into the output. By default, None, will include all available :class:`ArgoReferenceValue` attributes.
+            Column names to insert into the output. By default, None, will include all available :attr:`ArgoReferenceValue.keys` attributes.
 
         Returns
         -------
@@ -243,22 +250,22 @@ class ArgoReferenceTable:
         """
         """
         Also note that we could create a dataframe directly from self.nvs json data
-        But by design, we want to stick to using ArgoReferenceValue attributes,
+        But by design, we want to stick to using keys return by ArgoReferenceValue attributes,
         so that there is only place determining how to map nvs json jargon onto a user-friendly facade,
         and that is the ArgoReferenceValue class.
         """
         if columns is None:
-            cols = ArgoReferenceValue.cols
+            cols = ArgoReferenceValue.keys
         else:
             cols = []
             for c in to_list(columns):
-                if c not in ArgoReferenceValue.attrs:
+                if c not in ArgoReferenceValue.keys:
                     raise OptionValueError(
-                        f"Invalid columns name '{c}'. Valid values are: {ppliststr(ArgoReferenceValue.attrs)}")
+                        f"Invalid columns name '{c}'. Valid values are: {ppliststr(ArgoReferenceValue.keys)}")
                 cols.append(c)
             if len(cols) == 0:
                 raise OptionValueError(
-                    f"No valid column names in '{ppliststr(columns)}'. Valid values are: {ppliststr(ArgoReferenceValue.attrs, last='or')}")
+                    f"No valid column names in '{ppliststr(columns)}'. Valid values are: {ppliststr(ArgoReferenceValue.keys, last='or')}")
 
         def todf(columns: list[str]):
             dict_list = []
@@ -274,15 +281,15 @@ class ArgoReferenceTable:
             self._df = todf(cols)
         return self._df
 
-    def search(self, **kwargs):
+    def search(self, **kwargs) -> list[ArgoReferenceValue] | pd.DataFrame:
         """Search in table list of :class:`ArgoReferenceValue` attributes
 
         Parameters
         ----------
         tuple(str, str)
-            Attributes to search.
+            Attributes to search among :attr:`ArgoReferenceValue.keys`.
 
-            Using the specific argument `output='df'` to return a :class:`pd.DataFrame`.
+            Use the specific argument `output='df'` to return a :class:`pd.DataFrame`.
 
         Returns
         -------
@@ -312,7 +319,7 @@ class ArgoReferenceTable:
 
         """
         # Note that we could implement search on self.nvs json data
-        # But we want to stick to using ArgoReferenceValue attributes
+        # But we want to stick to using keys from ArgoReferenceValue attributes
         # so that there is only place determining how to map nvs json jargon onto user-friendly facade
         # i.e. the ArgoReferenceValue.
 
@@ -323,16 +330,16 @@ class ArgoReferenceTable:
             kwargs.pop('output')
 
         # Search key validation:
-        keys = [key for key in kwargs if key in ArgoReferenceValue.attrs]
+        keys = [key for key in kwargs if key in ArgoReferenceValue.keys]
 
-        # Search using the dataframe view of this table:
+        # Search using the dataframe view of this reference table:
         df = self.to_dataframe()
         filters = []
         for key in keys:
             if df[key].dtype in ['str', 'object']:
                 filters.append(df[key].str.contains(str(kwargs[key]), regex=True, case=False))
             elif df[key].dtype == 'datetime64[ns]':
-                print("No search method implemented for datetime")
+                warnings.warn("No search method implemented for datetime")
             elif df[key].dtype == 'bool':
                 filters.append(df[key] == kwargs[key])
         mask = np.logical_and.reduce(filters)
@@ -345,8 +352,25 @@ class ArgoReferenceTable:
         else:
             raise NoDataLeft("This search return no data")
 
-    def to_json(self):
-        raise NotImplementedError
+    def to_dict(self, keys : list[str] | None = None) -> dict[str, Any]:
+        """Export reference table attributes to a dictionary"""
+        if keys is None:
+            validated_keys = Props.keys
+        else:
+            validated_keys = []
+            for k in to_list(keys):
+                if k not in Props.keys:
+                    raise OptionValueError(
+                        f"Invalid keys name '{k}'. Valid values are: {ppliststr(Props.keys)}")
+                validated_keys.append(k)
+            if len(validated_keys) == 0:
+                raise OptionValueError(
+                    f"No valid key names in '{ppliststr(keys)}'. Valid values are: {ppliststr(Props.keys, last='or')}")
 
-    def to_dict(self):
+        d = {}
+        for key in validated_keys:
+            d.update({key: getattr(self, key)})
+        return d
+
+    def to_json(self):
         raise NotImplementedError

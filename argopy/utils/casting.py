@@ -217,7 +217,7 @@ def to_list(obj):
 
 
 class Encoder(json.JSONEncoder):
-    """A custom JSON encoder robust to pandas and numpy data types"""
+    """A custom JSON encoder that is robust to pandas and numpy data types"""
     def default(self, obj):
         dtypes = (np.datetime64, np.complexfloating, pd.Timestamp)
         if isinstance(obj, dtypes):

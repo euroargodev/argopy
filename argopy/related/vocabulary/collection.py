@@ -1,6 +1,6 @@
-from .vocabulary import ArgoReferenceTable
-from .concept import ArgoReferenceValue
-from .nvs import NVS
+from argopy.stores.nvs import NVS
+from argopy.related.vocabulary.vocabulary import ArgoReferenceTable
+from argopy.related.vocabulary.concept import ArgoReferenceValue
 
 
 class ArgoReference:

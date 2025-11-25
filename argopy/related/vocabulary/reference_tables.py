@@ -1,9 +1,8 @@
 import pandas as pd
 from functools import lru_cache
 import collections
-from pathlib import Path
 
-from ...stores import httpstore, filestore
+from ...stores import httpstore
 from ...options import OPTIONS
 from ...utils import urnparser, Asset, deprecated
 

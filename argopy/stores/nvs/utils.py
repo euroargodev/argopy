@@ -5,7 +5,7 @@ These NVS/Vocabulary utilities should be moved up to the argopy sub-module utils
 from functools import lru_cache
 from urllib.parse import urlparse
 
-from ....utils import Asset
+from argopy.utils.accessories import Asset
 
 
 Vocabulary2Concept = Asset.load('vocabulary:mapping')['data']['Vocabulary2Concept']
@@ -27,7 +27,7 @@ def concept2vocabulary(name: str) -> str | None:
     Returns
     -------
     str | None
-        No error is raised, None is returned if the concept is not found in any of the vocabulary
+        No error is raised, None is returned if the concept is not found in any of the vocabularies
     """
     name = name.strip().upper()
     found = []

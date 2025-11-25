@@ -1,11 +1,11 @@
-from typing import Any, Callable
+from typing import Any
 from functools import lru_cache
 import inspect
 
-from ......options import OPTIONS
-from ......stores import httpstore
-from ...spec import NVSProto
-from ...utils import concept2vocabulary
+from argopy.options import OPTIONS
+from argopy.stores.implementations.http import httpstore
+from argopy.stores.nvs.spec import NVSProto
+from argopy.stores.nvs.utils import concept2vocabulary
 
 
 class NVS(NVSProto):

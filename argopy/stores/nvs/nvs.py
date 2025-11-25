@@ -1,5 +1,5 @@
 import logging
-from ....utils import isconnected
+from argopy.utils.checkers import isconnected
 
 
 log = logging.getLogger("argopy.related.vocabulary.nvs")

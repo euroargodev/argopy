@@ -1,8 +1,8 @@
 from typing import Any
 
-from ......utils import Asset
-from ...spec import NVSProto
-from ...utils import concept2vocabulary
+from argopy.utils.accessories import Asset
+from argopy.stores.nvs.spec import NVSProto
+from argopy.stores.nvs.utils import concept2vocabulary
 
 
 class NVS(NVSProto):

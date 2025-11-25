@@ -4,11 +4,10 @@ from typing import Callable
 
 class NVSProto(ABC):
     online : bool | None = None
-    """Are we getting data from NVS server (True) or static assets (False"""
+    """Are we getting data from NVS server (True) or static assets (False)"""
 
     uid: str = None
     """Unique instance ID"""
-
 
     def __repr__(self):
         props = [
