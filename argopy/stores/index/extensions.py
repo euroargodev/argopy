@@ -480,6 +480,37 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
             self._obj.search_type.update(namer(profiler_label))
             return search_filter
 
+    @abstractmethod
+    def profile_qc(self, param):
+        """Search index for parameter profile QCs with a specific value
+
+        Parameters
+        ----------
+        PARAMs: dict
+            A dictionary with parameters as keys, and profile QC as a string or a list of strings
+        logical: str, default='and'
+            Indicate to search for all (``and``) or any (``or``) of the parameters profile QC. This operator applies
+            between each parameter.
+
+        Returns
+        -------
+        :class:`ArgoIndex`
+
+        Examples
+        --------
+        .. code-block:: python
+
+            from argopy import ArgoIndex
+            idx = ArgoIndex(index_file='core+')
+
+            idx.query.profile_qc({'TEMP': 'A'})
+            idx.query.profile_qc({'PSAL': 'A'})
+            idx.query.profile_qc({'DOXY': ['A', 'B']})
+            idx.query.profile_qc({'PSAL': 'A', 'DOXY': 'A'}, logical='or')
+
+        """
+        raise NotImplementedError("Not implemented")
+
     def compose(self, query: dict, nrows=None):
         """Compose query with multiple search methods
 

@@ -461,11 +461,11 @@ class indexstore(ArgoIndexStoreProto):
         str
         """
 
-        def convert_a_date(row):
-            try:
-                return row.strftime("%Y%m%d%H%M%S")
-            except Exception:
-                return ""
+        # def convert_a_date(row):
+        #     try:
+        #         return row.strftime("%Y%m%d%H%M%S")
+        #     except Exception:
+        #         return ""
 
         s = self.search
 
@@ -473,31 +473,31 @@ class indexstore(ArgoIndexStoreProto):
         if "longitude_360" in s.column_names:
             s = s.drop_columns("longitude_360")
 
-        if self.convention not in [
-            "ar_index_global_meta",
-        ]:
-            new_date = pa.array(self.search["date"].to_pandas().apply(convert_a_date))
-
-        new_date_update = pa.array(
-            self.search["date_update"].to_pandas().apply(convert_a_date)
-        )
-
-        if self.convention not in [
-            "ar_index_global_meta",
-        ]:
-            s = s.set_column(1, "date", new_date)
-
-        if self.convention == "ar_index_global_prof":
-            s = s.set_column(7, "date_update", new_date_update)
-        elif self.convention in [
-            "argo_bio-profile_index",
-            "argo_synthetic-profile_index",
-        ]:
-            s = s.set_column(9, "date_update", new_date_update)
-        elif self.convention in ["argo_aux-profile_index"]:
-            s = s.set_column(8, "date_update", new_date_update)
-        elif self.convention in ["ar_index_global_meta"]:
-            s = s.set_column(3, "date_update", new_date_update)
+        # if self.convention not in [
+        #     "ar_index_global_meta",
+        # ]:
+        #     new_date = pa.array(self.search["date"].to_pandas().apply(convert_a_date))
+        #
+        # new_date_update = pa.array(
+        #     self.search["date_update"].to_pandas().apply(convert_a_date)
+        # )
+        #
+        # if self.convention not in [
+        #     "ar_index_global_meta",
+        # ]:
+        #     s = s.set_column(1, "date", new_date)
+        #
+        # if self.convention in ["ar_index_global_prof", "argo_profile_detailled_index"]:
+        #     s = s.set_column(7, "date_update", new_date_update)
+        # elif self.convention in [
+        #     "argo_bio-profile_index",
+        #     "argo_synthetic-profile_index",
+        # ]:
+        #     s = s.set_column(9, "date_update", new_date_update)
+        # elif self.convention in ["argo_aux-profile_index"]:
+        #     s = s.set_column(8, "date_update", new_date_update)
+        # elif self.convention in ["ar_index_global_meta"]:
+        #     s = s.set_column(3, "date_update", new_date_update)
 
         write_options = csv.WriteOptions(
             delimiter=",", include_header=False, quoting_style="none"

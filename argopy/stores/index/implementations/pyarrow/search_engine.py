@@ -472,3 +472,48 @@ class SearchEngine(ArgoIndexSearchEngine):
         else:
             self._obj.search_type.update(namer(profiler_type))
             return search_filter
+
+    def profile_qc(self, PARAMs: dict, logical="and", nrows=None, composed=False):
+        def checker(PARAMs):
+            if "profile_temp_qc" not in self._obj.convention_columns:
+                raise InvalidDatasetStructure("Cannot search for profile QC in this index)")
+            # Validate PARAMs
+            [
+                PARAMs.update({p: to_list(PARAMs[p])}) for p in PARAMs
+            ]
+            if not np.all(
+                [v in ['', ' ', '1', 'A', 'B', 'C', 'D', 'E', 'F'] for vals in PARAMs.values() for v in vals]
+            ):
+                raise ValueError("Profile QC must be a value in '', 'A', 'B', 'C', 'D', 'E', 'F'")
+            log.debug("Argo index searching for profile QC: %s ..." % PARAMs)
+            return PARAMs
+
+        def namer(PARAMs, logical):
+            return {"PROFQC": (PARAMs, logical)}
+
+        def composer(PARAMs, logical):
+            filt = []
+            # def filt_profile_qc(this_param, this_qc):
+            #     return pa.compute.is_in(
+            #         self._obj.index[f"profile_{this_param.lower()}_qc"], pa.array(this_qc)
+            #     )
+
+            for param in PARAMs:
+                qcflag = PARAMs[param]
+                filt.append(pa.compute.is_in(
+                    self._obj.index[f"profile_{param.lower()}_qc"], pa.array(qcflag)
+                ))
+
+            return self._obj._reduce_a_filter_list(filt, op=logical)
+
+        PARAMs = checker(PARAMs)
+        self._obj.load(nrows=self._obj._nrows_index)
+        search_filter = composer(PARAMs, logical)
+        if not composed:
+            self._obj.search_type = namer(PARAMs, logical)
+            self._obj.search_filter = search_filter
+            self._obj.run(nrows=nrows)
+            return self._obj
+        else:
+            self._obj.search_type.update(namer(PARAMs, logical))
+            return search_filter

@@ -470,6 +470,10 @@ def check_index_cols(column_names: list, convention: str = "ar_index_global_prof
     Metadata directory file of the Argo Global Data Assembly Center
     file,profiler_type,institution,date_update
 
+    argo_profile_detailled_index.txt: Detailed index of profile files
+    The directory file describes all individual profile files of the argo GDAC ftp site
+    file,date,latitude,longitude,ocean,profiler_type,institution,date_update,profile_temp_qc,profile_psal_qc,profile_doxy_qc,ad_psal_adjustment_mean,ad_psal_adjustment_deviation,gdac_date_creation,gdac_date_update,n_levels
+
     """
     # Default for 'ar_index_global_prof'
     ref = [
@@ -521,6 +525,13 @@ def check_index_cols(column_names: list, convention: str = "ar_index_global_prof
             "institution",
             "date_update",
         ]
+
+    if convention == "argo_profile_detailled_index":
+        ref = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution', 'date_update',
+                       'profile_temp_qc', 'profile_psal_qc','profile_doxy_qc',
+                       'ad_psal_adjustment_mean','ad_psal_adjustment_deviation',
+                       'gdac_date_creation','gdac_date_update','n_levels',
+                       ]
 
     if not is_list_equal(column_names, ref):
         log.debug(
