@@ -26,7 +26,7 @@ except ModuleNotFoundError:
 
 
 from argopy.errors import InvalidDatasetStructure, OptionValueError, NoData, NoDataLeft
-from argopy.utils.compute import (
+from argopy.utils.computers import (
     linear_interpolation_remap,
     groupby_remap,
 )
