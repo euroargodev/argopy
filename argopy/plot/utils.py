@@ -3,6 +3,9 @@ from contextlib import contextmanager
 import importlib
 
 
+from argopy.plot.argo_colors import ArgoColors
+
+
 def _importorskip(modname):
     try:
         importlib.import_module(modname)  # noqa: E402
@@ -160,3 +163,20 @@ def latlongrid(
     gl.xlabel_style = {**label_style_arg_defaults, **label_style_arg}
     gl.ylabel_style = {**label_style_arg_defaults, **label_style_arg}
     return gl
+
+def guess_cmap(hue: str):
+    """Try to guess the colormap to use as a function of the variable to plot"""
+    if hue.lower() in ArgoColors().list_valid_known_colormaps:
+        cmap = hue.lower()
+    elif "qc" in hue.lower():
+        if "profile_" not in hue.lower():
+            cmap = "qc"
+        else:
+            cmap = "pqc"
+    elif "mode" in hue.lower():
+        cmap = "data_mode"
+    elif "status_code" in hue.lower():
+        cmap = "deployment_status"
+    else:
+        cmap = STYLE["palette"]
+    return cmap

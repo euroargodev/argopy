@@ -491,22 +491,7 @@ def scatter_map(  # noqa: C901
         )
         data = data.isel(N_LEVELS=0)
 
-    # Try to guess the colormap to use as a function of the 'hue' variable:
-    def guess_cmap(hue):
-        if hue.lower() in ArgoColors().list_valid_known_colormaps:
-            cmap = hue.lower()
-        elif "qc" in hue.lower():
-            if "profile_" not in hue.lower():
-                cmap = "qc"
-            else:
-                cmap = "pqc"
-        elif "mode" in hue.lower():
-            cmap = "data_mode"
-        elif "status_code" in hue.lower():
-            cmap = "deployment_status"
-        else:
-            cmap = STYLE["palette"]
-        return cmap
+
 
     cmap = guess_cmap(hue) if cmap is None else cmap
 
