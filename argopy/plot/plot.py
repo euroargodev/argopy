@@ -750,14 +750,14 @@ def scatter_plot(
     #deprecation
     if 'this_x' in kwargs:
         warnings.warn(
-            f"The argument 'this_x' is deprecated since version 1.4.0. Please use update your code to use 'x' instead.",
+            f"The argument 'this_x' is deprecated since version 1.4.0. Please update your code to use 'x' instead.",
             category=DeprecationWarning,
             stacklevel=2,
         )
         x = kwargs['this_x']  # Safe fallback on new argument
     if 'this_y' in kwargs:
         warnings.warn(
-            f"The argument 'this_y' is deprecated since version 1.4.0. Please use update your code to use 'y' instead.",
+            f"The argument 'this_y' is deprecated since version 1.4.0. Please update your code to use 'y' instead.",
             category=DeprecationWarning,
             stacklevel=2,
         )
