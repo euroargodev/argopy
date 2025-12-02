@@ -8,14 +8,11 @@
 #
 import warnings
 import logging
-import os
-import json
 
 import xarray as xr
 import pandas as pd
 import numpy as np
 from typing import Union
-import importlib
 
 from ..options import OPTIONS
 from ..utils.loggers import warnUnless
@@ -24,6 +21,7 @@ from ..utils.geo import conv_lon
 from ..utils.lists import subsample_list
 from ..utils.casting import to_list
 from ..errors import InvalidDatasetStructure
+from argopy.utils import Asset
 
 from .utils import STYLE, has_seaborn, has_mpl, has_cartopy, has_ipython, has_ipywidgets
 from .utils import axes_style, latlongrid, land_feature
@@ -48,13 +46,6 @@ if has_ipywidgets:
 
 
 log = logging.getLogger("argopy.plot.plot")
-
-path2assets = importlib.util.find_spec(
-    "argopy.static.assets"
-).submodule_search_locations[0]
-
-with open(os.path.join(path2assets, "data_types.json"), "r") as f:
-    DATA_TYPES = json.load(f)
 
 
 def open_sat_altim_report(
@@ -741,7 +732,7 @@ def scatter_plot(
     """A quick-and-dirty parameter scatter plot for one variable"""
     warnUnless(has_mpl, "requires matplotlib installed")
 
-    if this_param in DATA_TYPES["data"]["str"]:
+    if this_param in Asset.load('data_types')["data"]["str"]:
         raise ValueError("scatter_plot does not support string data type (yet !)")
 
     if cmap is None:

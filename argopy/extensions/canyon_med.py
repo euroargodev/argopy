@@ -5,7 +5,7 @@ import xarray as xr
 from typing import Union, List
 
 from ..errors import InvalidDatasetStructure, DataNotFound
-from ..utils import path2assets, to_list
+from ..utils import to_list, Asset
 from . import register_argo_accessor, ArgoAccessorExtension
 
 
@@ -78,7 +78,6 @@ class CanyonMED(ArgoAccessorExtension):
             raise DataNotFound("Empty dataset, no data to transform !")
 
         self.n_list = 5
-        self.path2coef = Path(path2assets).joinpath("canyon-med")
         self._input = None  # Private CANYON-MED input dataframe
 
     @property
@@ -186,50 +185,21 @@ class CanyonMED(ArgoAccessorExtension):
     def load_normalisation_factors(self, param, subset="F"):
         suff = self.param2suff(param)
 
-        moy_sub = pd.read_table(
-            self.path2coef.joinpath("moy_%s_%s.txt" % (suff, subset)),
-            sep=" {3}",
-            header=None,
-            engine="python",
-        ).values
-        std_sub = pd.read_table(
-            self.path2coef.joinpath("std_%s_%s.txt" % (suff, subset)),
-            sep=" {3}",
-            header=None,
-            engine="python",
-        ).values
+        moy_sub = Asset.load(f"canyon-med:moy_{suff}_{subset}.txt", sep=" {3}", header=None, engine="python").values
+        std_sub = Asset.load(f"canyon-med:std_{suff}_{subset}.txt", sep=" {3}", header=None, engine="python").values
+
         return moy_sub, std_sub
 
     def load_weights(self, param, subset, i):
         suff = self.param2suff(param)
 
-        b1 = pd.read_csv(
-            self.path2coef.joinpath("poids_%s_b1_%s_%i.txt" % (suff, subset, i)),
-            header=None,
-        )
-        b2 = pd.read_csv(
-            self.path2coef.joinpath("poids_%s_b2_%s_%i.txt" % (suff, subset, i)),
-            header=None,
-        )
-        b3 = pd.read_csv(
-            self.path2coef.joinpath("poids_%s_b3_%s_%i.txt" % (suff, subset, i)),
-            header=None,
-        )
-        IW = pd.read_csv(
-            self.path2coef.joinpath("poids_%s_IW_%s_%i.txt" % (suff, subset, i)),
-            sep=r"\s+",
-            header=None,
-        )
-        LW1 = pd.read_csv(
-            self.path2coef.joinpath("poids_%s_LW1_%s_%i.txt" % (suff, subset, i)),
-            sep=r"\s+",
-            header=None,
-        )
-        LW2 = pd.read_csv(
-            self.path2coef.joinpath("poids_%s_LW2_%s_%i.txt" % (suff, subset, i)),
-            sep=r"\s+",
-            header=None,
-        )
+        b1 = Asset.load(f"canyon-med:poids_{suff}_b1_{subset}_{i}.txt", header=None)
+        b2 = Asset.load(f"canyon-med:poids_{suff}_b2_{subset}_{i}.txt", header=None)
+        b3 = Asset.load(f"canyon-med:poids_{suff}_b3_{subset}_{i}.txt", header=None)
+
+        IW = Asset.load(f"canyon-med:poids_{suff}_IW_{subset}_{i}.txt", header=None, sep=r"\s+")
+        LW1 = Asset.load(f"canyon-med:poids_{suff}_LW1_{subset}_{i}.txt", header=None, sep=r"\s+")
+        LW2 = Asset.load(f"canyon-med:poids_{suff}_LW2_{subset}_{i}.txt", header=None, sep=r"\s+")
 
         # Using float128 arrays avoid the error or warning "overflow encountered in exp" raised by the
         # activation function
