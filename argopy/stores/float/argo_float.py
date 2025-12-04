@@ -10,14 +10,14 @@ we don't know if client intends to be online or offline, so we check and impleme
 import logging
 import xarray as xr
 
-from ...utils import isconnected
+from argopy.options import OPTIONS
+from argopy.utils.checkers import isconnected
 from .implementations.plot import ArgoFloatPlot
-
 
 log = logging.getLogger("argopy.stores.ArgoFloat")
 
 
-if isconnected():
+if isconnected() and not OPTIONS['offline']:
     from .implementations.online.float import FloatStore
 
     log.info("Using ONLINE Argo Float implementation")
