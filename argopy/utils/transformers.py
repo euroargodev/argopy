@@ -1,14 +1,27 @@
 """
-Manipulate/transform xarray objects or list of objects
+Functions to manipulate and/or transform Argo xarray objects
+
+Parameters
+----------
+xarray objects or list of xarray objects
+
+Returns
+-------
+xarray objects or list of xarray objects
+
+
+See Also
+--------
+casters, computers, mappers
 """
 
 import numpy as np
 import xarray as xr
 import logging
-from typing import List, Union
+from typing import List, Union, Any
 
-from ..errors import InvalidDatasetStructure
-from .lists import list_core_parameters
+from argopy.errors import InvalidDatasetStructure
+from argopy.utils.lists import list_core_parameters
 
 
 log = logging.getLogger("argopy.utils.manip")

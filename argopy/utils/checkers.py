@@ -658,6 +658,9 @@ def isconnected(host: str = "https://argopy.statuspage.io", maxtry: int = 10):
         fs = fsspec.filesystem("s3", anon=anon)
         return fs.exists(host)
 
+    if OPTIONS['offline']:
+        return False
+
     if split_protocol(host)[0] in ["http", "https", "ftp", "sftp"]:
         return test_retry(host, check_remote, maxtry)
     elif split_protocol(host)[0] == "s3":

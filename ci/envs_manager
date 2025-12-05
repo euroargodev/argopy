@@ -3,17 +3,19 @@
 # Script to (re)install argopy related Conda environments and handle associated Jupyter kernels
 # Use mamba, not conda
 #
-# manager -h
-# manager -l
+# Examples:
+# envs_manager -h
+# envs_manager -l
 #
-# manager -r py37-all-free
-# manager -i py37-all-free
-# manager -k py37-all-free
+# envs_manager -r argopy-py311-all-pinned
+# envs_manager -i argopy-py311-all-pinned
+# envs_manager -k argopy-py311-all-pinned
 #
-# manager -d -i all-free
+# envs_manager -i all-free -d
 #
 
 source ~/miniconda3/etc/profile.d/conda.sh
+#conda activate argopy-base
 
 #########################
 # LIST ALL  AVAILABLE ENVIRONMENTS AND THE ASSOCIATED YAML FILE
@@ -23,12 +25,6 @@ declare -A ENV_LIST=(
 
 ['argopy-coiled']="requirements/py3.11-coiled-free.yml"
 ['argopy-docs-rtd']="requirements/py3.11-docs-rtd.yml"
-
-['argopy-py310-all-free']="requirements/py3.10-all-free.yml"
-['argopy-py310-all-pinned']="requirements/py3.10-all-pinned.yml"
-
-['argopy-py310-core-free']="requirements/py3.10-core-free.yml"
-['argopy-py310-core-pinned']="requirements/py3.10-core-pinned.yml"
 
 ['argopy-py311-all-pinned']="requirements/py3.11-all-pinned.yml"
 ['argopy-py311-all-free']="requirements/py3.11-all-free.yml"
@@ -43,12 +39,6 @@ declare -A ENV_LIST=(
 ['argopy-py312-core-pinned']="requirements/py3.12-core-pinned.yml"
 
 )
-
-#for k in "${!ENV_LIST[@]}"
-#do
-#    echo $k ' - ' ${ENV_LIST["$k"]}
-#done |
-#sort | xargs -n3
 
 #########################
 # FUNCTIONS
@@ -146,16 +136,16 @@ install_conda_env () {
 	# Eventually remove environment if exists:
 	if conda env list | grep $1; then
 	    printf "$1 already exists, removing this environment...\n"
-		  mamba remove --quiet --name $1 --all --yes --json > /dev/null 2>&1
+		mamba remove --quiet --name $1 --all --yes --json > /dev/null 2>&1
 	fi
 
 	# Create the environment from file
-  printf "Creating conda environment $1 ...\n"
-	mamba env create --file temp_env.yml --quiet --json > /dev/null 2>&1
+    printf "Creating conda environment $1 ...\n"
+	mamba env create --file temp_env.yml
 
 	# Clean-up
-	/bin/rm tmp.json > /dev/null 2>&1
-	/bin/rm temp_env.yml > /dev/null 2>&1
+	 /bin/rm tmp.json > /dev/null 2>&1
+	 /bin/rm temp_env.yml > /dev/null 2>&1
 
 	# Activate the new environment
 	conda activate $1
