@@ -19,7 +19,7 @@ with open(os.path.join(path2assets, "data_types.json"), "r") as f:
     DATA_TYPES = json.load(f)
 
 
-def cast_Argo_variable_type(ds, overwrite=True):
+def cast_Argo_variable_type(ds: xr.Dataset, overwrite=True) -> xr.Dataset:
     """Ensure that all dataset variables are of the appropriate types according to Argo references
 
     Parameter

@@ -26,6 +26,14 @@ Internals
 
 - **Fix bug** whereby missing values in <PARAM>_QC variables of xarray dataset were casted as 0 instead of 9. (:commit:`d7bbc23ab386c88a03ae2e9fca7ad274bb1ebcab`) by |gmaze|.
 
+- Removed python 3.10 environments from `ci/env_managers` CLI utility. (:pr:`557`) by |gmaze|.
+
+Breaking changes
+^^^^^^^^^^^^^^^^
+
+- Deprecation warning for :func:`plot.scatter_plot` arguments ``this_x`` and ``this_y`` that are replaced by ``x`` and ``y``. (:pr:`557`) by |gmaze|.
+- Internal refactoring, former `argopy.utils.transform` now `argopy.utils.transformers`, former `argopy.utils.compute` now `argopy.utils.computers`. (:pr:`557`) by |gmaze|.
+
 v1.3.1 (22 Oct. 2025)
 ---------------------
 
