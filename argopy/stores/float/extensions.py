@@ -110,8 +110,37 @@ class ArgoFloatAnyConfigParametersProto(ArgoFloatExtension):
 
 
 class ArgoFloatLaunchConfigParametersProto(ArgoFloatAnyConfigParametersProto):
-    """Extension providing easy access to LAUNCH configuration parameters"""
+    """Extension providing access to LAUNCH configuration parameters
 
+    Pre-deployment or launch configuration parameters are the ‘configured’ start settings of the float and the initial mission configuration parameters for the first cycle.
+
+    Warnings
+    --------
+    Configuration parameters are float settings selected by the PI, not measurements reported by the float.
+
+    Examples
+    --------
+    ..code-block: python
+
+        from argopy import ArgoFloat
+        af = ArgoFloat(6903091)
+
+        # Number of launch parameters:
+        af.launchconfig.n_params
+
+        # List of launch parameters:
+        af.launchconfig.parameters
+
+        # Read one parameter value, with explicit or implicit parameter name:
+        # ('CONFIG_' is not mandatory, but string is case-sensitive)
+        af.launchconfig['CONFIG_CycleTime_hours']
+        af.launchconfig['CycleTime_hours']
+
+        # Export to a DataFrame:
+        af.launchconfig.to_dataframe()
+        af.launchconfig.to_dataframe(implicit=False)  # Use raw Argo code from R18
+
+    """
     def __call__(self, *args, **kwargs) -> NoReturn:
         raise ValueError(
             "ArgoFloat.launchconfig cannot be called directly. Use "
@@ -139,7 +168,53 @@ class ArgoFloatLaunchConfigParametersProto(ArgoFloatAnyConfigParametersProto):
 
 
 class ArgoFloatConfigParametersProto(ArgoFloatAnyConfigParametersProto):
-    """Extension providing easy access to configuration parameters"""
+    """Extension providing access to configuration parameters
+
+    Warnings
+    --------
+    Configuration parameters are float settings selected by the PI, not measurements reported by the float.
+
+    Examples
+    --------
+    ..code-block: python
+
+        from argopy import ArgoFloat
+        af = ArgoFloat(6903091)
+
+        af.config.n_missions
+        af.config.n_params
+
+        # Read the list of configuration parameters:
+        af.config.parameters
+
+        # Read the list of missions:
+        af.config.missions
+
+        # Read one parameter value, with explicit or implicit parameter name:
+        # ('CONFIG_' is not mandatory, but string is case-sensitive)
+        af.config['CONFIG_CycleTime_hours']
+        af.config['CycleTime_hours']
+
+        # Read parameter value for one or more mission numbers:
+        # (! 2nd index is not 0-based, it's an integer key to look for in mission numbers)
+        af.config['CycleTime_hours', 1]
+        af.config['CycleTime_hours', 1:3]
+
+        # Read parameter value for one or more cycle numbers:
+        af.config.for_cyc('CycleTime_hours', 1)
+        af.config.for_cyc('CycleTime_hours', [10, 11])
+
+        # Export to a DataFrame:
+        af.config.to_dataframe()
+        af.config.to_dataframe(implicit=False)  # Use raw Argo code from R18
+
+    References
+    ----------
+    ..code-block: python
+
+        import argopy
+        argopy.ArgoDocs(29825).open_pdf(55)  # User manual section on "Configuration parameters"
+    """
 
     def __call__(self, *args, **kwargs) -> NoReturn:
         raise ValueError(
