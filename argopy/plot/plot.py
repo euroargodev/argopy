@@ -57,6 +57,24 @@ with open(os.path.join(path2assets, "data_types.json"), "r") as f:
     DATA_TYPES = json.load(f)
 
 
+def guess_cmap(hue: str):
+    """Try to guess the colormap to use as a function of the variable to plot"""
+    if hue.lower() in ArgoColors().list_valid_known_colormaps:
+        cmap = hue.lower()
+    elif "qc" in hue.lower():
+        if "profile_" not in hue.lower():
+            cmap = "qc"
+        else:
+            cmap = "pqc"
+    elif "mode" in hue.lower():
+        cmap = "data_mode"
+    elif "status_code" in hue.lower():
+        cmap = "deployment_status"
+    else:
+        cmap = STYLE["palette"]
+    return cmap
+
+
 def open_sat_altim_report(
     WMO: Union[str, list] = None, embed: Union[str, None] = "dropdown", **kwargs
 ):
@@ -490,8 +508,6 @@ def scatter_map(  # noqa: C901
             "More than one N_LEVELS found in this dataset, scatter_map will use the first level only"
         )
         data = data.isel(N_LEVELS=0)
-
-
 
     cmap = guess_cmap(hue) if cmap is None else cmap
 
