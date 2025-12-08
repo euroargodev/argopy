@@ -811,10 +811,6 @@ def scatter_plot(
         if vmax is None:
             vmax = np.nanpercentile(c_da, 90)
 
-        if "_QC" in this_param.upper():
-            cbar.set_ticks(to_list([k + 0.5 for k in mycolors.ticklabels.keys()]))
-            cbar.set_ticklabels(to_list([k for k in mycolors.ticklabels.values()]))
-
         if "INTERPOLATED" in y:
             m = ax.pcolormesh(x_bounds, y_bounds, c_da, cmap=cmap, vmin=vmin, vmax=vmax)
         else:
@@ -824,7 +820,10 @@ def scatter_plot(
         if cbar:
             cbar = fig.colorbar(m, shrink=0.9, ax=ax)
             cbar.ax.set_ylabel(get_vlabel(c_da), rotation=90)
-
+            if "_QC" in this_param.upper():
+                cbar.set_ticks(to_list([k + 0.5 for k in mycolors.ticklabels.keys()]))
+                cbar.set_ticklabels(to_list([k for k in mycolors.ticklabels.values()]))
+            
         ylim = ax.get_ylim()
         if "PRES" in y:
             ax.invert_yaxis()
