@@ -324,7 +324,7 @@
             "grg:RE_RegisterOwner": "Argo Data Management Team",
             "grg:RE_RegisterManager": "British Oceanographic Data Centre",
             "rdfs:seeAlso": {
-                "@id": "https://github.com/nvs-vocabs/R12"
+                "@id": "https://github.com/OneArgo/ArgoVocabs"
             }
         }
     ],

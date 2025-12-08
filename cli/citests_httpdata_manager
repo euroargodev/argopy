@@ -120,11 +120,6 @@ DEFAULT_TARGETS = [
 ]
 
 
-start_with = lambda f, x: (
-    f[0 : len(x)] == x if len(x) <= len(f) else False
-)  # noqa: E731
-
-
 def setup_args():
     icons_help_string = """CI Tests data manager for the http mocked server"""
 
@@ -249,11 +244,11 @@ def log_file_desc(file, data, src):
     # elif "github.com/euroargodev/argopy-data" in src['uri']:
     #     msg.append("🤖 GITHUB ARGOPY-DATA: %s" % parse_qs(src["uri"]))
 
-    elif start_with(src["uri"], "https://www.ocean-ops.org/api/1"):
+    elif src["uri"].startswith("https://www.ocean-ops.org/api/1"):
         # msg.append("🤖 Ocean-OPS API: %s" % unquote(src["uri"]))
         msg.append("🤖 Ocean-OPS API: %s" % parse_qs(src["uri"]))
 
-    elif start_with(src["uri"], "https://argovis-api.colorado.edu"):
+    elif src["uri"].startswith("https://argovis-api.colorado.edu"):
         msg.append("🤖 Argovis API: %s" % unquote(src["uri"]))
 
     else:
