@@ -678,7 +678,7 @@
     "title": "Argo float vertical profile",
     "institution": "CORIOLIS",
     "source": "Argo float",
-    "history": "2025-10-20T16:34:28.811967+00:00 creation",
+    "history": "2025-12-09T16:47:14.533298+00:00 creation",
     "references": "http://www.argodatamgt.org/Documentation",
     "user_manual_version": "1.0",
     "Conventions": "Argo-3.1 CF-1.6",
