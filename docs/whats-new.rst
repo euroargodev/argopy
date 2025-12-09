@@ -16,7 +16,16 @@ Features and front-end API
 
 .. currentmodule:: xarray
 
-- **Predict nutrients and carbonates in the global ocean with their uncertainties** with the two new classes :class:`Dataset.argo.canyon_b` and :class:`Dataset.argo.content`. The first class allows users to make predictions of the water-column nutrient concentrations (NO3, PO4, SiOH4) and carbonate system variables (AT, DIC, pHT, pCO2) using the :ref:`CANYON-B model (see doc.)<complement-canyon-b>` while the second class provides improved predictions of carbonate system variables using the :ref:`CONTENT (see doc.)<complement-content>` model. (:pr:`535` and :pr:`542`) by |fricour|.
+- **Predict nutrients and carbonates in the global ocean with their uncertainties** with the two new classes :class:`Dataset.argo.canyon_b` and :class:`Dataset.argo.content`. The first class allows users to make predictions of the water-column nutrient concentrations (NO3, PO4, SiOH4) and carbonate system variables (AT, DIC, pHT, pCO2) using the :ref:`CANYON-B model (see doc.)<complement-canyon-b>` while the second class provides improved predictions of carbonate system variables using the :ref:`CONTENT (see doc.)<complement-content>` model. (:pr:`535` and :pr:`542`) by |fricour|. It goes as simply as:
+
+.. code-block:: python
+
+    from argopy import DataFetcher
+    ArgoSet = DataFetcher(ds='bgc', params='DOXY', measured='DOXY').float(1902605)
+    ds = ArgoSet.to_xarray()
+    ds.argo.canyon_b.predict()
+    # or
+    ds.argo.content.predict()
 
 
 .. currentmodule:: argopy
@@ -25,6 +34,8 @@ Internals
 ^^^^^^^^^
 
 - **Fix bug** whereby missing values in <PARAM>_QC variables of xarray dataset were casted as 0 instead of 9. (:commit:`d7bbc23ab386c88a03ae2e9fca7ad274bb1ebcab`) by |gmaze|.
+
+- **Fix upstream compatibility** and imposes xarray >=2025.7 and <=2025.9.0. (:issue:`539`).
 
 v1.3.1 (22 Oct. 2025)
 ---------------------
