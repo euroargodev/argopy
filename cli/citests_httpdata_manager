@@ -119,6 +119,8 @@ DEFAULT_TARGETS = [
     "argofloat",
 ]
 
+# Http requests time out in seconds:
+TIMEOUT = 60 * 10
 
 def setup_args():
     icons_help_string = """CI Tests data manager for the http mocked server"""
@@ -371,7 +373,7 @@ async def place_file(session: aiohttp.ClientSession, source: dict) -> None:
     """Download remote file and save it locally"""
     test_data_file = os.path.join(DATA_FOLDER, "%s.%s" % (source["sha"], source["ext"]))
     if OVERWRITE or not os.path.exists(test_data_file):
-        async with session.get(source["uri"], ssl=False, timeout=60 * 10) as r:
+        async with session.get(source["uri"], ssl=False, timeout=TIMEOUT) as r:
             if r.content_type not in CONTENT_TYPE.values():
                 print(
                     "Unexpected content type (%s) with this GET request: %s (%s extension)"
@@ -1000,7 +1002,7 @@ async def fetch_download_links(session: aiohttp.ClientSession, target=None):
 async def download(target=None):
     connector = aiohttp.TCPConnector(limit=1, force_close=True)
     async with aiohttp.ClientSession(
-        connector=connector, timeout=aiohttp.ClientTimeout(total=60 * 10)
+        connector=connector, timeout=aiohttp.ClientTimeout(total=TIMEOUT)
     ) as session:
         urls = await fetch_download_links(session, target=target)
         return await asyncio.gather(*[place_file(session, url) for url in urls])
@@ -1009,7 +1011,7 @@ async def download(target=None):
 async def dry_download(target=None):
     connector = aiohttp.TCPConnector(limit=1, force_close=True)
     async with aiohttp.ClientSession(
-        connector=connector, timeout=aiohttp.ClientTimeout(total=60 * 10)
+        connector=connector, timeout=aiohttp.ClientTimeout(total=TIMEOUT)
     ) as session:
         return await fetch_download_links(session, target=target)
 
