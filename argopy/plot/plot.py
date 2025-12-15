@@ -784,7 +784,15 @@ def scatter_plot(
 
     # Transform the 'cmap' argument into a mpl.colors.Colormap instance
     a_color = None
-    if isinstance(cmap, str):
+    if cmap is None:
+        cmap = guess_cmap(param)
+        if cmap is not None:
+            a_color = ArgoColors(cmap, N=kwargs.get('N', None))
+            cmap: mpl.colors.Colormap = a_color.cmap
+        else:
+            a_color = ArgoColors('gist_ncar', N=kwargs.get('N', None))
+            cmap: mpl.colors.Colormap = a_color.cmap
+    elif isinstance(cmap, str):
         try:
             a_color = ArgoColors(cmap, N=kwargs.get('N', None))
             cmap : mpl.colors.Colormap = a_color.cmap
@@ -793,9 +801,6 @@ def scatter_plot(
     elif isinstance(cmap, ArgoColors):
         a_color : ArgoColors = copy(cmap)
         cmap : mpl.colors.Colormap = a_color.cmap
-    elif cmap is None:
-        a_color = ArgoColors('gist_ncar', N=kwargs.get('N', None))
-        cmap : mpl.colors.Colormap = a_color.cmap
 
     if not isinstance(cmap, mpl.colors.Colormap):
         raise ValueError("'cmap' argument must be a str or `ArgoColors` or `~matplotlib.colors.Colormap` or None")
@@ -803,7 +808,7 @@ def scatter_plot(
     cbticklabels = 'auto'
     if a_color and a_color.registered:
         cbticklabels = a_color.ticklabels
-        vmin, vmax = a_color.ticks[0], a_color.ticks[-1]
+        vmin, vmax = a_color.definition['ticks'][0], a_color.definition['ticks'][-1]+1
 
     def get_vlabel(this_v):
         attrs = this_v.attrs
@@ -836,11 +841,12 @@ def scatter_plot(
 
         if vmin == "attrs":
             vmin = c_da.attrs["valid_min"] if "valid_min" in c_da.attrs else None
+        elif vmin is None:
+            vmin = np.nanpercentile(c_da, 10)
+
         if vmax == "attrs":
             vmax = c_da.attrs["valid_max"] if "valid_max" in c_da.attrs else None
-        if vmin is None:
-            vmin = np.nanpercentile(c_da, 10)
-        if vmax is None:
+        elif vmax is None:
             vmax = np.nanpercentile(c_da, 90)
 
         if "INTERPOLATED" in y:
@@ -851,7 +857,7 @@ def scatter_plot(
         if cbar:
             cbar = fig.colorbar(m, shrink=0.9, ax=ax)
             cbar.ax.set_ylabel(get_vlabel(c_da), rotation=90)
-            if cbticklabels is not 'auto':
+            if isinstance(cbticklabels, dict):
                 cbar.set_ticks(to_list([k + 0.5 for k in cbticklabels.keys()]))
                 cbar.set_ticklabels(to_list([k for k in cbticklabels.values()]))
             
