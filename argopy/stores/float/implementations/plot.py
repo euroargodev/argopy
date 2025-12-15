@@ -273,6 +273,7 @@ class ArgoFloatPlot(ArgoFloatPlotProto):
             af = ArgoFloat(wmo)
             af.plot.scatter('TEMP')
             af.plot.scatter('PSAL_QC')  # Appropriate colormap automatically selected
+            af.plot.scatter('PRES', x='PSAL', y='TEMP')
             af.plot.scatter('DOXY', ds='Sprof')
             af.plot.scatter('MEASUREMENT_CODE', ds='Rtraj')
 
@@ -296,24 +297,9 @@ class ArgoFloatPlot(ArgoFloatPlotProto):
         default_kwargs = {"x": "JULD", "cbar": True}
         this_kwargs = {**default_kwargs, **kwargs}
 
-        if "_QC" in param:
-            mycolors = ArgoColors("qc", 9)
-            this_kwargs.update(
-                {
-                    "cmap": mycolors.cmap,
-                    "vmin": 0,
-                    "vmax": 9 + 1,
-                }
-            )
-
         if this_kwargs["cbar"]:
             fig, ax, m, cbar = scatter_plot(this_ds, param, **this_kwargs)
             ax.set_title(self._default_title)
-
-            if "_QC" in param:
-                cbar.set_ticks(to_list([k + 0.5 for k in mycolors.ticklabels.keys()]))
-                cbar.set_ticklabels(to_list([k for k in mycolors.ticklabels.values()]))
-
             return fig, ax, m, cbar
         else:
             fig, ax, m = scatter_plot(this_ds, param, **this_kwargs)
