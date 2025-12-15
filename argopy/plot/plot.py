@@ -10,7 +10,7 @@ import warnings
 import logging
 import os
 import json
-import copy
+from copy import copy
 
 import xarray as xr
 import pandas as pd
@@ -737,7 +737,7 @@ def scatter_plot(
     x : str = "TIME",
     y : str = "PRES",
     figsize : tuple =(18, 6),
-    cmap : str | mpl.colors.Colormap | ArgoColors | None = None,
+    cmap : 'str | mpl.colors.Colormap | ArgoColors | None' = None,
     vmin : int | float | None = None,
     vmax : int | float | None = None,
     s : int = 4,
@@ -788,22 +788,21 @@ def scatter_plot(
         cmap = guess_cmap(param)
         if cmap is not None:
             a_color = ArgoColors(cmap, N=kwargs.get('N', None))
-            cmap: mpl.colors.Colormap = a_color.cmap
+            cmap: 'mpl.colors.Colormap' = a_color.cmap
         else:
             a_color = ArgoColors('gist_ncar', N=kwargs.get('N', None))
-            cmap: mpl.colors.Colormap = a_color.cmap
+            cmap: 'mpl.colors.Colormap' = a_color.cmap
+
     elif isinstance(cmap, str):
-        try:
-            a_color = ArgoColors(cmap, N=kwargs.get('N', None))
-            cmap : mpl.colors.Colormap = a_color.cmap
-        except ValueError:
-            cmap = mpl.colormaps.get_cmap(cmap)
+        a_color = ArgoColors(cmap, N=kwargs.get('N', None))
+        cmap: 'mpl.colors.Colormap' = a_color.cmap
+
     elif isinstance(cmap, ArgoColors):
         a_color : ArgoColors = copy(cmap)
-        cmap : mpl.colors.Colormap = a_color.cmap
+        cmap: 'mpl.colors.Colormap' = a_color.cmap
 
-    if not isinstance(cmap, mpl.colors.Colormap):
-        raise ValueError("'cmap' argument must be a str or `ArgoColors` or `~matplotlib.colors.Colormap` or None")
+    if has_mpl and not isinstance(cmap, mpl.colors.Colormap):
+        raise ValueError(f"'cmap' argument must be a str or `ArgoColors` or `~matplotlib.colors.Colormap` or None. Got '{type(cmap)}' instead.")
 
     cbticklabels = 'auto'
     if a_color and a_color.registered:
@@ -823,7 +822,7 @@ def scatter_plot(
 
     # Read variables for the plot:
     x_da, y_da = ds[x], ds[y]
-    if "INTERPOLATED" in y_da:
+    if "INTERPOLATED" in y:
         x_bounds, y_bounds = np.meshgrid(x_da, y_da, indexing="ij")
     c_da = ds[param]
 
@@ -841,12 +840,12 @@ def scatter_plot(
 
         if vmin == "attrs":
             vmin = c_da.attrs["valid_min"] if "valid_min" in c_da.attrs else None
-        elif vmin is None:
+        if vmin is None:
             vmin = np.nanpercentile(c_da, 10)
 
         if vmax == "attrs":
             vmax = c_da.attrs["valid_max"] if "valid_max" in c_da.attrs else None
-        elif vmax is None:
+        if vmax is None:
             vmax = np.nanpercentile(c_da, 90)
 
         if "INTERPOLATED" in y:
