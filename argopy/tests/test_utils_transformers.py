@@ -6,7 +6,7 @@ from pathlib import Path
 
 from argopy import tutorial
 from argopy.errors import InvalidDatasetStructure
-from argopy.utils import (
+from argopy.utils.transformers import (
     fill_variables_not_in_all_datasets,
     drop_variables_not_in_all_datasets,
     merge_param_with_param_adjusted,

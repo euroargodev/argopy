@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 import xarray as xr
 
-from argopy.utils.compute import linear_interpolation_remap
+from argopy.utils.computers import linear_interpolation_remap
 
 
 class Test_linear_interpolation_remap:
