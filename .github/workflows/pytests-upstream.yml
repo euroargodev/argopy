@@ -131,7 +131,7 @@ jobs:
           label: 'pytest core-free'
         continue-on-error: true
       - name: Save tests log as artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: Argopy-Tests-Core-${{matrix.python-version}}-${{matrix.os}}
           path: output-${{ matrix.python-version }}-log.jsonl
@@ -240,7 +240,7 @@ jobs:
           label: 'pytest all-free'
         continue-on-error: true
       - name: Save tests log as artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: Argopy-Tests-All-${{matrix.python-version}}-${{matrix.os}}
           path: output-${{ matrix.python-version }}-log.jsonl
