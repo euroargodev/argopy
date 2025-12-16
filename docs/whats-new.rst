@@ -11,6 +11,8 @@ What's New
 v1.4.0 (xx Dec. 2025)
 ---------------------
 
+.. _v1.4.0-features:
+
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -30,12 +32,30 @@ Features and front-end API
 
 .. currentmodule:: argopy
 
+.. _v1.4.0-internals:
+
 Internals
 ^^^^^^^^^
 
 - **Fix bug** whereby missing values in <PARAM>_QC variables of xarray dataset were casted as 0 instead of 9. (:commit:`d7bbc23ab386c88a03ae2e9fca7ad274bb1ebcab`) by |gmaze|.
-
 - **Fix upstream compatibility** and imposes xarray >=2025.7 and <=2025.9.0. (:issue:`539`).
+- Removed python 3.10 environments from `ci/env_managers` CLI utility. (:pr:`557`) by |gmaze|.
+
+.. _v1.4.0-breaking:
+
+Breaking changes
+^^^^^^^^^^^^^^^^
+
+- Deprecation warning for :func:`plot.scatter_plot` arguments ``this_x`` and ``this_y`` that are replaced by ``x`` and ``y``. (:pr:`557`) by |gmaze|.
+- Internal refactoring, former `argopy.utils.transform` now `argopy.utils.transformers`, former `argopy.utils.compute` now `argopy.utils.computers`. (:pr:`557`) by |gmaze|.
+
+.. _v1.4.0-energy:
+
+Energy
+^^^^^^
+
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.4.0%20%5BgCO2eq%5D-TBA-black?style=plastic&labelColor=grey
+
 
 v1.3.1 (22 Oct. 2025)
 ---------------------

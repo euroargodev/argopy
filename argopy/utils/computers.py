@@ -1,5 +1,16 @@
 """
-Mathematically or statistically compute something out of xarray objects
+Generic Functions to mathematically or statistically compute something out of Argo xarray objects
+
+Rq: For thematic computations, use a dedicated module.
+
+Parameters
+----------
+xarray objects or list of xarray objects
+
+Returns
+-------
+xarray objects or list of xarray objects
+
 """
 
 import numpy as np
@@ -19,7 +30,7 @@ log = logging.getLogger("argopy.utils.compute")
 
 def linear_interpolation_remap(
     z, data, z_regridded, z_dim=None, z_regridded_dim="regridded", output_dim="remapped"
-):
+) -> xr.Dataset:
     # interpolation called in xarray ufunc
     def _regular_interp(x, y, target_values):
         # remove all nans from input x and y
@@ -92,7 +103,7 @@ def groupby_remap(
     output_dim="remapped",
     select="deep",
     right=False,
-):
+) -> xr.Dataset:
     """todo: Need a docstring here !"""
 
     # sub-sampling called in xarray ufunc
