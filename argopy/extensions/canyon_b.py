@@ -385,7 +385,7 @@ class CanyonB(ArgoAccessorExtension):
         Adjust latitude for Arctic basin calculations.
 
         This methods adjusts the latitude of all points inside the Arctic, west of the
-        Lomonosov ridge. This adjustement improves the predictions in the subpolar North
+        Lomonosov ridge. This adjustment improves the predictions in the subpolar North
         Pacific by artificially increasing the "length" of the Bering Strait (see [1]_ for details).
 
         Parameters

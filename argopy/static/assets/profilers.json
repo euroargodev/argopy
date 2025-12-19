@@ -1,7 +1,7 @@
 {
   "name": "profilers",
   "long_name": "Profiler codes and description from Argo reference table 8",
-  "last_update": "2025-10-20T16:34:15.210843+00:00",
+  "last_update": "2025-12-09T16:46:27.346755+00:00",
   "data": {
     "profilers": {
       "890": "PROVOR_III - Jumbo, SBE",

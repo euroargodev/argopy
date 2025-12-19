@@ -267,13 +267,13 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0005/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0004/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0008/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0002/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0004/"
                 }
             ],
             "@type": "skos:Collection",
@@ -288,7 +288,10 @@
             "dc:alternative": "CONTROLLER_BOARD_TYPE",
             "rdfs:comment": "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
             "grg:RE_RegisterOwner": "Argo Data Management Team",
-            "grg:RE_RegisterManager": "British Oceanographic Data Centre"
+            "grg:RE_RegisterManager": "British Oceanographic Data Centre",
+            "rdfs:seeAlso": {
+                "@id": "https://github.com/OneArgo/ArgoVocabs"
+            }
         }
     ],
     "@context": {

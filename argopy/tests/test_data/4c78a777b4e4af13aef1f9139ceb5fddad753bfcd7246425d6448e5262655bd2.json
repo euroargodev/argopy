@@ -590,6 +590,37 @@
             "@type": "skos:Concept"
         },
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R15/current/110/",
+            "pav:authoredOn": "2025-09-02 12:51:44.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R15/current/110/1/"
+            },
+            "dce:identifier": "SDN:R15::110",
+            "pav:version": "1",
+            "skos:notation": "SDN:R15::110",
+            "skos:altLabel": "110",
+            "dc:date": "2025-09-02 12:51:44.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "DST+10"
+            },
+            "dc:identifier": "SDN:R15::110",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Any in-water samples taken as part of a surface sequence (e.g. O2 samples taken prior to air-bladder inflation or max buoyancy as part of in-air measurement sequence)."
+            },
+            "@type": "skos:Concept"
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R15/current/146/",
             "pav:authoredOn": "2021-11-30 09:53:34.0",
             "pav:hasCurrentVersion": {
@@ -1582,6 +1613,37 @@
             "@type": "skos:Concept"
         },
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R15/current/111/",
+            "pav:authoredOn": "2025-09-02 12:51:44.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R15/current/111/1/"
+            },
+            "dce:identifier": "SDN:R15::111",
+            "pav:version": "1",
+            "skos:notation": "SDN:R15::111",
+            "skos:altLabel": "111",
+            "dc:date": "2025-09-02 12:51:44.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "DST+11"
+            },
+            "dc:identifier": "SDN:R15::111",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Any in-air samples taken as part of a surface sequence (e.g. O2 samples taken after in air-bladder inflation or max buoyancy as part of in-air measurement sequence)."
+            },
+            "@type": "skos:Concept"
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R15/current/249/",
             "pav:authoredOn": "2021-11-30 09:53:34.0",
             "pav:hasCurrentVersion": {
@@ -2353,6 +2415,37 @@
             "skos:definition": {
                 "@language": "en",
                 "@value": "Any supporting measurements for the maximum value (DPST-2)."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R15/current/293/",
+            "pav:authoredOn": "2025-09-02 12:51:44.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R15/current/293/1/"
+            },
+            "dce:identifier": "SDN:R15::293",
+            "pav:version": "1",
+            "skos:notation": "SDN:R15::293",
+            "skos:altLabel": "293",
+            "dc:date": "2025-09-02 12:51:44.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "PET-7"
+            },
+            "dc:identifier": "SDN:R15::293",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Used to report PMEAN (Mean of pressure differences of park-level PT samples)."
             },
             "@type": "skos:Concept"
         },
@@ -4620,6 +4713,40 @@
             "@type": "skos:Concept"
         },
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R15/current/1100/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R15/current/1100/1/"
+            },
+            "pav:authoredOn": "2025-09-29 14:51:43.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R15/current/1100/2/"
+            },
+            "dce:identifier": "SDN:R15::1100",
+            "pav:version": "2",
+            "skos:notation": "SDN:R15::1100",
+            "skos:altLabel": "1100",
+            "dc:date": "2025-09-29 14:51:43.0",
+            "owl:versionInfo": "2",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "1100"
+            },
+            "dc:identifier": "SDN:R15::1100",
+            "skos:note": {
+                "@language": "en",
+                "@value": "deprecated"
+            },
+            "owl:deprecated": "true",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "This is a deprecated MC concerning DO measures, in air or near surface. It was replaced and should be updated to 599, 710 or 711 depending on the parameter and the in-air/near-surface status."
+            },
+            "@type": "skos:Concept"
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R15/current/590/",
             "pav:authoredOn": "2021-11-30 09:53:34.0",
             "pav:hasCurrentVersion": {
@@ -4744,6 +4871,37 @@
             "@type": "skos:Concept"
         },
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R15/current/593/",
+            "pav:authoredOn": "2025-09-02 12:51:44.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R15/current/593/1/"
+            },
+            "dce:identifier": "SDN:R15::593",
+            "pav:version": "1",
+            "skos:notation": "SDN:R15::593",
+            "skos:altLabel": "593",
+            "dc:date": "2025-09-02 12:51:44.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "AET-7"
+            },
+            "dc:identifier": "SDN:R15::593",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Ascent aborted time due to the ICE algorithm (with pressure if available, with shallowest PRES measurement if not)."
+            },
+            "@type": "skos:Concept"
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R15/current/99/",
             "pav:authoredOn": "2021-11-30 09:53:34.0",
             "pav:hasCurrentVersion": {
@@ -4864,6 +5022,37 @@
             "skos:definition": {
                 "@language": "en",
                 "@value": "Any single measurement transitioning towards AET (see AET-10 for a 'series' of measurements)."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R15/current/602/",
+            "pav:authoredOn": "2025-09-02 12:51:44.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R15/current/602/1/"
+            },
+            "dce:identifier": "SDN:R15::602",
+            "pav:version": "1",
+            "skos:notation": "SDN:R15::602",
+            "skos:altLabel": "602",
+            "dc:date": "2025-09-02 12:51:44.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "AET+2"
+            },
+            "dc:identifier": "SDN:R15::602",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Time of MC=701 minus 10 minutes."
             },
             "@type": "skos:Concept"
         },
@@ -5548,6 +5737,9 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R15/current/494/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R15/current/110/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R15/current/146/"
                 },
                 {
@@ -5644,6 +5836,9 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R15/current/586/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R15/current/111/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R15/current/249/"
                 },
                 {
@@ -5717,6 +5912,9 @@
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R15/current/438/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R15/current/293/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R15/current/797/"
@@ -5938,6 +6136,9 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R15/current/95/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R15/current/1100/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R15/current/590/"
                 },
                 {
@@ -5950,6 +6151,9 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R15/current/98/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R15/current/593/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R15/current/99/"
                 },
                 {
@@ -5960,6 +6164,9 @@
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R15/current/599/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R15/current/602/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R15/current/594/"
@@ -6013,13 +6220,13 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R15/current/585/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R15/current/498/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R15/current/145/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R15/current/301/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R15/current/498/"
                 }
             ],
             "@type": "skos:Collection",
@@ -6027,14 +6234,17 @@
             "dc:description": "Measurement code IDs used in Argo Trajectory netCDF files. Argo netCDF variable MEASUREMENT_CODE is populated by R15 altLabel.",
             "dc:title": "Argo trajectory measurement code identifiers",
             "skos:prefLabel": "Argo trajectory measurement code identifiers",
-            "owl:versionInfo": "1",
-            "dc:date": "2021-12-01 02:00:02.0",
+            "owl:versionInfo": "3",
+            "dc:date": "2025-09-30 03:00:01.0",
             "skos:altLabel": "MEASUREMENT_CODE_ID",
             "dc:creator": "Argo Data Management Team",
             "dc:alternative": "MEASUREMENT_CODE_ID",
             "rdfs:comment": "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
             "grg:RE_RegisterOwner": "Argo Data Management Team",
-            "grg:RE_RegisterManager": "British Oceanographic Data Centre"
+            "grg:RE_RegisterManager": "British Oceanographic Data Centre",
+            "rdfs:seeAlso": {
+                "@id": "https://github.com/OneArgo/ArgoVocabs"
+            }
         }
     ],
     "@context": {

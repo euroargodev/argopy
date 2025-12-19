@@ -1,7 +1,7 @@
 {
   "name": "List of Argo NVS reference tables",
   "long_name": "List of Argo NVS reference table ids and description",
-  "last_update": "2025-10-21T13:00:31.288927+00:00",
+  "last_update": "2025-12-09T16:47:17.939027+00:00",
   "data": {
     "valid_ref": [
       "R01",
@@ -60,7 +60,7 @@
         "altLabel": "PLATFORM_MAKER",
         "prefLabel": "Argo platform maker",
         "description": "List of Argo float manufacturers. Argo netCDF variable PLATFORM_MAKER is populated by R24 altLabel.",
-        "date": "2024-11-12 02:00:00.0",
+        "date": "2025-11-26 02:00:00.0",
         "uri": "http://vocab.nerc.ac.uk/collection/R24/current/"
       },
       {
@@ -172,7 +172,7 @@
         "altLabel": "PARAMETER",
         "prefLabel": "Argo parameter codes",
         "description": "Terms describing individual measured phenomena, used to mark up sets of data in Argo netCDF arrays. Argo netCDF variables PARAMETER and TRAJECTORY_PARAMETERS are populated by R03 altLabel; R03 altLabel is also used to name netCDF profile files parameter variables <PARAMETER>.",
-        "date": "2025-10-09 03:00:01.0",
+        "date": "2025-11-27 02:00:01.0",
         "uri": "http://vocab.nerc.ac.uk/collection/R03/current/"
       },
       {
@@ -204,7 +204,7 @@
         "altLabel": "SENSOR_MODEL",
         "prefLabel": "Argo sensor models",
         "description": "Terms listing models of sensors mounted on Argo floats. Note: avoid using the manufacturer name and sensor firmware version in new entries when possible. Argo netCDF variable SENSOR_MODEL is populated by R27 altLabel.",
-        "date": "2025-10-09 03:00:01.0",
+        "date": "2025-11-19 02:00:00.0",
         "uri": "http://vocab.nerc.ac.uk/collection/R27/current/"
       },
       {

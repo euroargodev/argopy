@@ -1,7 +1,7 @@
 {
   "name": "institutions",
   "long_name": "Institution names from Argo reference table 4",
-  "last_update": "2025-10-20T16:34:14.885741+00:00",
+  "last_update": "2025-12-09T16:46:26.727079+00:00",
   "data": {
     "institutions": {
       "PL": "IOPAN, Institute of Oceanology Polish Academy of Science",

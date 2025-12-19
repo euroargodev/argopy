@@ -652,6 +652,37 @@
             "@type": "skos:Concept"
         },
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R04/current/EA/",
+            "pav:authoredOn": "2025-10-08 10:58:28.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R04/current/EA/1/"
+            },
+            "dce:identifier": "SDN:R04::EA",
+            "pav:version": "1",
+            "skos:notation": "SDN:R04::EA",
+            "skos:altLabel": "EA",
+            "dc:date": "2025-10-08 10:58:28.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Euro-Argo, Europe"
+            },
+            "dc:identifier": "SDN:R04::EA",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Euro-Argo European Research Infrastructure Consortium (Euro-Argo ERIC), hosted in France."
+            },
+            "@type": "skos:Concept"
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R04/current/IN/",
             "pav:authoredOn": "2020-04-04 15:05:33.0",
             "pav:hasCurrentVersion": {
@@ -873,6 +904,9 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R04/current/GE/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R04/current/EA/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R04/current/IN/"
                 },
                 {
@@ -893,8 +927,8 @@
             "dc:description": "Codes for data centres and institutions handling or managing Argo data. Argo netCDF variable DATA_CENTRE is populated by R04 altLabel.",
             "dc:title": "Argo data centres and institutions",
             "skos:prefLabel": "Argo data centres and institutions",
-            "owl:versionInfo": "1",
-            "dc:date": "2021-01-08 14:00:02.0",
+            "owl:versionInfo": "2",
+            "dc:date": "2025-10-09 03:00:01.0",
             "skos:altLabel": "DATA_CENTRE_CODES",
             "dc:creator": "Argo Data Management Team",
             "dc:alternative": "DATA_CENTRE_CODES",
@@ -902,7 +936,7 @@
             "grg:RE_RegisterOwner": "Argo Data Management Team",
             "grg:RE_RegisterManager": "British Oceanographic Data Centre",
             "rdfs:seeAlso": {
-                "@id": "https://github.com/nvs-vocabs/R04"
+                "@id": "https://github.com/OneArgo/ArgoVocabs"
             }
         }
     ],
