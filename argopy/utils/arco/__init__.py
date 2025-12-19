@@ -5,9 +5,8 @@ This is an experimental submodule based on previous work from the EA-RISE projec
 This submodule is adapted from the original OSnet codebase developped by Sean Tokunaga and Guillaume Maze, but never published before.
 https://github.com/euroargodev/argopy-osnet
 
-
 API may change anytime, not all files may be necessary in here and shall be removed/refactored without notice.
 """
-from argopy.utils.arco.fetcher import MassFetcher
+from argopy.utils.arco.fetcher import BigFetcher
 
-__all__ = ('MassFetcher')
+__all__ = ('BigFetcher')

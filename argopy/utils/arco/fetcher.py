@@ -1,10 +1,11 @@
-import os
 import xarray as xr
 
 # import gsw
 import pandas as pd
 import numpy as np
+import datetime as dt
 
+from argopy.errors import OptionValueError
 from argopy.stores.filesystems import distributed
 
 from argopy.stores.implementations.gdac import gdacfs
@@ -12,42 +13,180 @@ from argopy.utils.format import argo_split_path
 from argopy.utils.arco.argo_multiprof import ArgoMultiProf
 
 
-class MassFetcher(object):
-    def __init__(self, idx: 'ArgoIndex', sdl=None):
+class BigFetcher(object):
+    """Fetch Argo data massively
+
+    This class implements a naive approach to fetch Argo data massively, i.e. to fetch a very large selection of measurements, as fast as possible.
+
+    Warnings
+    --------
+    This class is highly experimental and API can change without further notice
+
+    Notes
+    -----
+    This class should work as long as data fit in memory, so check out your RAM levels.
+
+    This class use a :class:`distributed.client.Client` to scale Argo data fetching from a large collection of floats.
+
+    Examples
+    --------
+    ..code-block:: python
+        :caption: Fetch and load global Argo dataset for a given month
+
+        from dask.distributed import Client
+        from argopy import ArgoIndex
+        from argopy.utils.arco import BigFetcher
+
+        # Create the Dask cluster to work with:
+        client = Client(processes=True)
+        print(client)
+
+        # Select October 2025 global data:
+        # This is about 8_184_913 points (12_287 prof,  3578 floats)
+        idx = ArgoIndex(index_file='core')
+        idx.query.box([-180, 180, -90, 90, '20251001', '20251101'])
+
+        # Fetch and load data in memory:
+        # (~6 mins on laptop with 4 cores and 32Gb of RAM)
+        dsp = BigFetcher(idx).to_xarray()
+
+    ..code-block:: python
+        :caption: Fetch and save global Argo dataset for a given month
+
+        from dask.distributed import Client
+        from argopy import ArgoIndex
+        from argopy.utils.arco import BigFetcher
+
+        # Create the Dask cluster to work with:
+        client = Client(processes=True)
+        print(client)
+
+        # Select October 2025 global data:
+        # This is about 8_184_913 points (12_287 prof,  3578 floats)
+        idx = ArgoIndex(index_file='core')
+        idx.query.box([-180, 180, -90, 90, '20251001', '20251101'])
+
+        # Fetch and load data in memory:
+        # (~6 mins on laptop with 4 cores and 32Gb of RAM)
+        zarr_archive = f"zarr/{idx.search_type['BOX'][-2]}_ARGO_STANDARD_POINTS.zarr"
+        BigFetcher(idx).to_zarr(zarr_archive)
+
+    ..code-block:: python
+        :caption: Work with interpolated data
+
+        from dask.distributed import Client
+        import numpy as np
+        from argopy import ArgoIndex
+        from argopy.utils.arco import BigFetcher
+
+        # Create the Dask cluster to work with:
+        client = Client(processes=True)
+        print(client)
+
+        # Select October 2025 global data:
+        # This is about 8_184_913 points (12_287 prof,  3578 floats)
+        idx = ArgoIndex(index_file='core')
+        idx.query.box([-180, 180, -90, 90, '20251001', '20251101'])
+
+        # Define standard pressure levels:
+        sdl = np.arange(0, 2005., 5)
+
+        # Fetch, interpolate and load data in memory:
+        dsp = BigFetcher(idx, sdl=sdl).to_xarray()
+
+        # Fetch, interpolate and save data to zarr:
+        zarr_archive = f"zarr/{idx.search_type['BOX'][-2]}_ARGO_STANDARD_POINTS.zarr"
+        dsp = BigFetcher(idx, sdl=sdl).to_zarr(zarr_archive)
+
+    ..code-block:: python
+        :caption: Load time series of global Argo dataset as points
+
+        # Considering the above example where monthly data have been saved in several zarr archives
+        # one can load back everything like this:
+
+        import xarray as xr
+
+        bigds = xr.open_mfdataset(["./zarr/20250901_ARGO_STANDARD_POINTS.zarr",
+                                   "./zarr/20251001_ARGO_STANDARD_POINTS.zarr",
+                                   "./zarr/20251101_ARGO_STANDARD_POINTS.zarr"],
+                                   combine='nested', concat_dim='N_POINTS')
+        bigds
+
+    ..code-block:: python
+        :caption: Load time series of global Argo dataset as interpolated profiles
+
+        # Considering the above example where monthly data have been saved in several zarr archives
+        # one can load back everything like this:
+
+        import xarray as xr
+
+        bigds = xr.open_mfdataset(["./zarr/20250901_ARGO_STANDARD_SDLPROF.zarr",
+                                   "./zarr/20251001_ARGO_STANDARD_SDLPROF.zarr",
+                                   "./zarr/20251101_ARGO_STANDARD_SDLPROF.zarr"],
+                                   combine='nested', concat_dim='N_PROF')
+        bigds
+
+
+    """
+
+    def __init__(self, idx: "ArgoIndex", sdl=None):
+        """
+        Parameters
+        ----------
+        idx: :class:`ArgoIndex`
+            An instance of :class:`ArgoIndex` for which a 'box' query has been performed.
+        sdl: list, optional, default=None
+            Standard pressure levels to interpolate T/S profiles on.
+        """
+
+        if "BOX" not in idx.search_type.keys():
+            raise OptionValueError(
+                f"Argo data mass fetching is only available for an ArgoIndex that was search with a 'box' !"
+            )
+        self.domain = idx.domain
+        self.cname = idx.cname
+        self.box = idx.search_type["BOX"]
+
+        # Possibly read Standard Pressure Levels:
         self.sdl_axis = sdl
 
-        # self.client = client
-        self.protocol = idx.fs['src'].protocol
+        # Handle other options related to file access:
+        self.protocol = idx.fs["src"].protocol
         self.fs = gdacfs(cache=idx.cache, cachedir=idx.cachedir)
         self.host = self.fs.fs.path
-        self.cname = idx.cname
 
         # List netcdf files available for processing:
         self.argo_files = idx.read_files(multi=True)
         self.N_RECORDS = len(self.argo_files)
 
-        self.argo_wmos = [
-            int(os.path.basename(x).split("_")[0]) for x in self.argo_files
-        ]
-        self.argo_dacs = [x.split("/")[-3] for x in self.argo_files]
+        # self.argo_wmos = [
+        #     int(os.path.basename(x).split("_")[0]) for x in self.argo_files
+        # ]
+        # self.argo_dacs = [x.split("/")[-3] for x in self.argo_files]
 
     def __repr__(self):
-        summary = [f"<argopy.massfetcher.{self.protocol}>"]
+        summary = [f"<argopy.BigFetcher.{self.protocol}>"]
         summary.append(f"Host: {self.host}")
         summary.append(f"Domain: {self.cname}")
         summary.append(f"Number of floats: {self.N_RECORDS}")
-        sdl_str = '-' if str(self.sdl_axis) == 'None' else f"{len(self.sdl_axis)} levels from {min(self.sdl_axis)} to {max(self.sdl_axis)}"
+        sdl_str = (
+            "-"
+            if str(self.sdl_axis) == "None"
+            else f"{len(self.sdl_axis)} levels from {min(self.sdl_axis)} to {max(self.sdl_axis)}"
+        )
         summary.append(f"Standard pressure levels: {sdl_str}")
         return "\n".join(summary)
 
-    def _to_sdl(self, sdl, var, var_prs, mask, lat=45., name='var'):
-        """Interpolate a 2D variable onto standard pressure levels, abusively called 'depth' levels """
+    def _to_sdl(self, sdl, var, var_prs, mask, lat=45.0, name="var"):
+        """Interpolate a 2D variable onto standard pressure levels, abusively called 'depth' levels"""
 
         def VI(zi, z, c):
-            zi, z = np.abs(zi), np.abs(z)  # abs ensure depths are sorted for the interpolation to work
+            zi, z = np.abs(zi), np.abs(
+                z
+            )  # abs ensure depths are sorted for the interpolation to work
             if c.shape[0] > 0:
-                ci = np.interp(zi, z, c, left=c[0], right=9999.)
-                if np.any(ci >= 9999.):
+                ci = np.interp(zi, z, c, left=c[0], right=9999.0)
+                if np.any(ci >= 9999.0):
                     return np.array(())
                 else:
                     return ci
@@ -71,7 +210,12 @@ class MassFetcher(object):
                 var_sdl.append(ci)
                 ip.append(i)
         if len(var_sdl) > 0:
-            return xr.DataArray(var_sdl, dims=['N_PROF', 'PRES_INTERPOLATED'], coords={'PRES_INTERPOLATED': sdl, 'N_PROF': ip}, name=name)
+            return xr.DataArray(
+                var_sdl,
+                dims=["N_PROF", "PRES_INTERPOLATED"],
+                coords={"PRES_INTERPOLATED": sdl, "N_PROF": ip},
+                name=name,
+            )
         else:
             return None
 
@@ -170,12 +314,29 @@ class MassFetcher(object):
 
         return ds
 
-    def _xload_multiprof(self, ds):
-        """Load an Argo multi-profile file as a collection of points or sdl profiles"""
+    def _xload_multiprof(
+        self, ds: xr.Dataset | None, domain: list
+    ) -> xr.Dataset | None:
+        """Load a core-Argo multi-profile file as a collection of points or sdl profiles
+
+        Parameters
+        ----------
+        ds: :class:`xr.Dataset`
+            A raw loaded Xarray dataset to work with
+        domain: list[float | datetime]
+            The `box` domain to select. Contains: [lon_min, lon_max, lat_min, lat_max, date_min, date_max]
+
+        Returns
+        -------
+        :class:`xr.Dataset`
+        """
+        if ds is None:
+            return None
+
         try:
             argo = ArgoMultiProf(ds)
-        except ValueError:
-            print("Value error on", ds.attrs)
+        except Exception as e:
+            print("Error with", ds.attrs)
             return None
 
         if argo.psal_qc is None:
@@ -193,22 +354,45 @@ class MassFetcher(object):
         # juld_good = ~(np.isin(argo.juld_qc, [3, 4]))
         pos_good = np.isin(argo.position_qc, [1, 5, 8])
         juld_good = np.isin(argo.juld_qc, [1, 5, 8])
-
-        good_profiles = np.logical_and.reduce([metas_finite, juld_good, pos_good])
+        in_domain = np.logical_and.reduce(
+            [
+                argo.lon >= domain[0],
+                argo.lon <= domain[1],
+                argo.lat >= domain[2],
+                argo.lat <= domain[3],
+                argo.datetime >= dt.datetime.utcfromtimestamp(domain[4].tolist() / 1e9),
+                argo.datetime < dt.datetime.utcfromtimestamp(domain[5].tolist() / 1e9),
+            ]
+        )
+        good_profiles = np.logical_and.reduce(
+            [metas_finite, juld_good, pos_good, in_domain]
+        )
 
         if (~good_profiles).all():
             return None
 
-        temps = argo.temp[good_profiles]
-        psals = argo.psal[good_profiles]
-        pres = argo.pres[good_profiles]
+        temps = argo.temp[
+            good_profiles
+        ]  # R/A/D measurements have been merged according to DATA_MODE
+        psals = argo.psal[
+            good_profiles
+        ]  # R/A/D measurements have been merged according to DATA_MODE
+        pres = argo.pres[
+            good_profiles
+        ]  # R/A/D measurements have been merged according to DATA_MODE
+        lons, lats, dats = (
+            argo.lon[good_profiles],
+            argo.lat[good_profiles],
+            argo.datetime[good_profiles],
+        )
+        cycs = argo.cycle[good_profiles]
 
         # Assign an id for each good profile
         meta = argo_split_path(ds.encoding["source"])
         dac_wmo = meta["dac"], meta["wmo"]
-        profile_id = np.array(
-            [str(dac_wmo[1]) + "_" + x for x in np.arange(pres.shape[0]).astype(str)]
-        )
+        # profile_id = np.array(
+        #     [str(dac_wmo[1]) + "_" + x for x in np.arange(pres.shape[0]).astype(str)]
+        # )
 
         assert temps.shape == psals.shape
         assert temps.shape == pres.shape
@@ -244,6 +428,10 @@ class MassFetcher(object):
         assert pres_in_range.shape == temps.shape
         assert psal_in_range.shape == temps.shape
         assert temp_in_range.shape == temps.shape
+        assert lons.shape == temps[:, 0].shape
+        assert lats.shape == temps[:, 0].shape
+        assert dats.shape == temps[:, 0].shape
+        assert cycs.shape == temps[:, 0].shape
 
         # good points?
         good = np.logical_and.reduce(
@@ -261,34 +449,57 @@ class MassFetcher(object):
         assert good.shape == temps.shape
 
         if np.sum(good) > 0:
+            lons = lons[good[:, 0]]
+            lats = lats[good[:, 0]]
+            dats = dats[good[:, 0]]
+            cycs = cycs[good[:, 0]]
+
             sdl = self.sdl_axis
 
             if sdl is not None:
                 # Return data interpolated onto Standard Depth Levels:
-                temps = self._to_sdl(sdl, temps, pres, good, argo.lat, name='TEMP')
-                psals = self._to_sdl(sdl, psals, pres, good, argo.lat, name='PSAL')
+                temps = self._to_sdl(sdl, temps, pres, good, lats, name="TEMP")
+                psals = self._to_sdl(sdl, psals, pres, good, lats, name="PSAL")
                 if temps is not None and psals is not None:
-                    assert np.all(temps['N_PROF'] == psals['N_PROF']) == True
+                    assert np.all(temps["N_PROF"] == psals["N_PROF"]) == True
+                    ip = temps["N_PROF"].values
                     try:
                         # Create dataset:
-                        ds = xr.merge((
-                            xr.DataArray(argo.lon[temps['N_PROF']], name='LONGITUDE', dims='N_PROF'),
-                            xr.DataArray(argo.lat[temps['N_PROF']], name='LATITUDE', dims='N_PROF'),
-                            xr.DataArray(argo.datetime[temps['N_PROF']], name='TIME', dims='N_PROF'),
-                            xr.DataArray(1000 * argo.wmo[temps['N_PROF']] + argo.cycle[temps['N_PROF']],
-                                         name='id', dims='N_PROF'),
-                            temps, psals))
+                        ds = xr.merge(
+                            (
+                                xr.DataArray(lons[ip], name="LONGITUDE", dims="N_PROF"),
+                                xr.DataArray(lats[ip], name="LATITUDE", dims="N_PROF"),
+                                xr.DataArray(dats[ip], name="TIME", dims="N_PROF"),
+                                xr.DataArray(
+                                    1000 * argo.wmo[0] + cycs[ip],
+                                    name="id",
+                                    dims="N_PROF",
+                                ),
+                                temps,
+                                psals,
+                            )
+                        )
                     except:
-                        print("Error while merging SDL:\n", temps['N_PROF'], "\n", argo.lon.shape)
+                        print(
+                            "Error while merging SDL:\n",
+                            temps["N_PROF"],
+                            "\n",
+                            min(ip),
+                            max(ip),
+                            "\n",
+                            good[ip, 0].shape,
+                        )
                         return None
 
                     # Preserve Argo attributes:
-                    ds = self._add_dsattributes(ds,
-                                                title='Argo float profiles interpolated onto Standard Pressure Levels')
+                    ds = self._add_dsattributes(
+                        ds,
+                        title="Argo float profiles interpolated onto Standard Pressure Levels",
+                    )
                     ds.attrs["DAC"] = dac_wmo[0]
                     ds.attrs["PLATFORM_NUMBER"] = int(dac_wmo[1])
-                    ds.attrs['Method'] = 'Vertical linear interpolation'
-                    ds['N_PROF'].attrs = {'long_name': "Profile samples"}
+                    ds.attrs["Method"] = "Vertical linear interpolation"
+                    ds["N_PROF"].attrs = {"long_name": "Profile samples"}
                     return ds
                 else:
                     return None
@@ -353,14 +564,44 @@ class MassFetcher(object):
         else:
             return None
 
-    def fetch(self, client : distributed.client.Client, n: int | None = None):
-        """Massively Fetch data using a dask distributed client"""
+    def to_xarray(
+        self,
+        client: distributed.client.Client | None = None,
+        nfloats: int | None = None,
+    ) -> xr.Dataset | None:
+        """Massively Fetch data using a :class:`distributed.client.Client`
+
+        Parameters
+        ----------
+        client: :class:`distributed.client.Client`, optional, default=None
+            A Dask client to use. If set to None, we fall back on a possibly existing client otherwise raise an `OptionValueError` if no client is found.
+        nfloats: int, optional, default=None
+            A number of floats to randomly select a subsample of the dataset for test purposes.
+
+        Returns
+        -------
+        xr.Dataset
+
+        Notes
+        -----
+        Selected Argo measurements include:
+        - QC=[1,5,8] on position and date
+        - QC=1 on pres/temp/psal
+        - Real-time, adjusted or delayed, according to data_mode
+
+        """
+
+        if client is None:
+            try:
+                client = distributed.Client.current()
+            except ValueError:
+                raise OptionValueError(f"No Distributed client running nor provided !")
 
         ncfiles = self.argo_files
-        if n is not None:  # Sub-sample for test purposes
+        if nfloats is not None:
             ncfiles = [
                 self.argo_files[f]
-                for f in np.random.choice(range(0, len(self.argo_files) - 1), n)
+                for f in np.random.choice(range(0, len(self.argo_files) - 1), nfloats)
             ]
         concat_dim = "N_PROF" if self.sdl_axis is not None else "N_POINTS"
 
@@ -370,12 +611,42 @@ class MassFetcher(object):
             concat=True,
             concat_dim=concat_dim,
             preprocess=self._xload_multiprof,
+            preprocess_opts={"domain": self.domain},
+            open_dataset_opts={"errors": "ignore"},
+            errors="ignore",
         )
         ds.attrs.pop("DAC")
         ds.attrs.pop("PLATFORM_NUMBER")
         ds.attrs["domain"] = self.cname
-        # ds.attrs["nb_floats"] = len(np.unique((ds["id"] / 1000).astype(int)))
-        # ds.attrs["nb_profiles"] = len(np.unique((ds["id"])))
+        ds.attrs["nb_floats"] = len(np.unique((ds["id"] / 1000).astype(int)))
+        ds.attrs["nb_profiles"] = len(np.unique((ds["id"])))
         ds = ds.sortby("TIME")
         ds[concat_dim] = np.arange(0, len(ds[concat_dim]))
         return ds
+
+    def to_zarr(
+        self,
+        store : str | None = None,
+        chunks : dict[str, int] | None = None,
+        client: distributed.client.Client | None = None,
+        nfloats: int | None = None,
+    ):
+
+        ds = self.to_xarray(client, nfloats)
+
+        from zarr.codecs import BloscCodec
+
+        compressor = BloscCodec(cname="zstd", clevel=3, shuffle="shuffle")
+        encoding = {}
+        for v in ds:
+            encoding.update({v: {"compressors": [compressor]}})
+
+        if chunks is None:
+            if self.sdl_axis is None:
+                ds = ds.chunk({"N_POINTS": len(ds["N_POINTS"])})
+            else:
+                ds = ds.chunk({"N_PROF": len(ds["N_PROF"]), "PRES_INTERPOLATED": len(ds["PRES_INTERPOLATED"])})
+        else:
+            ds = ds.chunk(chunks)
+
+        return ds.to_zarr(store, encoding=encoding)
