@@ -6,8 +6,7 @@ on:
   schedule:
     - cron: "0 0 12 * *" # Monthly “At 00:00” UTC on the 12th day
   workflow_dispatch: # allows you to trigger the workflow manually if necessary
-  pull_request:
-    types: [synchronize]
+
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -27,7 +26,7 @@ jobs:
     outputs:
       triggered: ${{ steps.detect-trigger.outputs.trigger-found }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 2
       - uses: xarray-contrib/ci-trigger@v1
@@ -71,14 +70,15 @@ jobs:
           co2-grid-intensity-api-token: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
           send-data: true
         continue-on-error: true
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0 # Fetch all history for all branches and tags.
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v5.1.0
+        uses: aws-actions/configure-aws-credentials@v5.1.1
         with:
           aws-region: us-west-1
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ga-ci-tests-argopy-01
+          role-duration-seconds: 7200
       - name: Set environment variables
         run: |
           echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-core-free.yml" >> $GITHUB_ENV
@@ -131,7 +131,7 @@ jobs:
           label: 'pytest core-free'
         continue-on-error: true
       - name: Save tests log as artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: Argopy-Tests-Core-${{matrix.python-version}}-${{matrix.os}}
           path: output-${{ matrix.python-version }}-log.jsonl
@@ -179,14 +179,15 @@ jobs:
           co2-grid-intensity-api-token: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
           send-data: true
         continue-on-error: true
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0 # Fetch all history for all branches and tags.
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v5.1.0
+        uses: aws-actions/configure-aws-credentials@v5.1.1
         with:
           aws-region: us-west-1
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ga-ci-tests-argopy-01
+          role-duration-seconds: 7200
       - name: Set environment variables
         run: |
           echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-all-free.yml" >> $GITHUB_ENV
@@ -239,7 +240,7 @@ jobs:
           label: 'pytest all-free'
         continue-on-error: true
       - name: Save tests log as artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: Argopy-Tests-All-${{matrix.python-version}}-${{matrix.os}}
           path: output-${{ matrix.python-version }}-log.jsonl

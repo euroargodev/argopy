@@ -12,7 +12,7 @@ log = logging.getLogger("argopy.utils.casting")
 DATA_TYPES = Asset.load('data_types')['data']
 
 
-def cast_Argo_variable_type(ds, overwrite=True):
+def cast_Argo_variable_type(ds: xr.Dataset, overwrite=True) -> xr.Dataset:
     """Ensure that all dataset variables are of the appropriate types according to Argo references
 
     Parameter

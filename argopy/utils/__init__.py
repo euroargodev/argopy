@@ -53,14 +53,15 @@ from .geo import (
     YearFraction_to_datetime,
     point_in_polygon,
 )
-from .compute import linear_interpolation_remap, groupby_remap
-from .transform import (
+from .computers import linear_interpolation_remap, groupby_remap
+from .transformers import (
     fill_variables_not_in_all_datasets,
     drop_variables_not_in_all_datasets,
     merge_param_with_param_adjusted,
     filter_param_by_data_mode,
     split_data_mode,
 )
+from .mappers import map_vars_to_dict
 from .format import argo_split_path, format_oneline, UriCName, redact, dirfs_relpath
 from .loggers import warnUnless, log_argopy_callerstack
 from .carbon import GreenCoding, Github
@@ -138,6 +139,8 @@ __all__ = (
     "merge_param_with_param_adjusted",
     "filter_param_by_data_mode",
     "split_data_mode",
+    # Mapping out of datasets:
+    "map_vars_to_dict",
     # Formatters:
     "format_oneline",
     "argo_split_path",
