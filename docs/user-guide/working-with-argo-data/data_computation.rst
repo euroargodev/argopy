@@ -32,7 +32,8 @@ This can be done using the :meth:`Dataset.argo.teos10` method and indicating the
 
     ds['SA']
 
-.. _complement-canyon-med:
+
+.. _complement-nutrients-carbonate:
 
 Nutrient and carbonate system variables
 ---------------------------------------
@@ -41,7 +42,14 @@ Nutrient and carbonate system variables
 
 For BGC, it may be possible to complement a dataset with predictions of the water-column nutrient concentrations and carbonate system variables.
 
-This is currently possible for data located in the Mediterranean Sea using the the CANYON-MED model. CANYON-MED is a Regional Neural Network Approach to Estimate Water-Column Nutrient Concentrations and Carbonate System Variables in the Mediterranean Sea [1]_ [2]_. When using this method, please cite the paper [1]_.
+**argopy** provides three models to perform such predictions:
+
+.. _complement-canyon-med:
+
+CANYON-MED (Mediterranean Sea)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+CANYON-MED is a model that was developed for data located in the Mediterranean Sea. CANYON-MED is a Regional Neural Network Approach to Estimate Water-Column Nutrient Concentrations and Carbonate System Variables in the Mediterranean Sea [1]_ [2]_. When using this method, please cite the paper [1]_.
 
 This model is available in **argopy** as an extension to the ``argo`` accessor: :class:`Dataset.argo.canyon_med`. It can be used to predict PO4, NO3, DIC, SiOH4, AT and pHT.
 
@@ -49,6 +57,7 @@ As an example, let's load one float data with oxygen measurements:
 
 .. code-block:: python
 
+    from argopy import DataFetcher
     ArgoSet = DataFetcher(ds='bgc', mode='standard', params='DOXY', measured='DOXY').float(1902605)
     ds = ArgoSet.to_xarray()
 
@@ -64,6 +73,97 @@ or select variables to predict, like PO4:
 
     ds = ds.argo.canyon_med.predict('PO4')
     ds['PO4']
+
+.. _complement-canyon-b:
+
+.. currentmodule:: xarray
+
+CANYON-B (Global Ocean)
+^^^^^^^^^^^^^^^^^^^^^^^
+
+CANYON-B is a Bayesian neural network approach that estimates water-column nutrient concentrations (NO3, PO4, SiOH4) and carbonate system variables (AT, DIC, pHT, pCO2) ([3]_).
+It provides more robust neural networks than CANYON-MED and includes a local uncertainty estimate for each predicted parameter.
+
+This model is available in **argopy** as an extension to the ``argo`` accessor: :class:`Dataset.argo.canyon_b`. It can be used to predict NO3, PO4, SiOH4, AT, DIC, pHT and pCO2 with uncertainty estimates.
+
+As an example, let's load one float data with oxygen measurements:
+
+.. code-block:: python
+
+    from argopy import DataFetcher
+    ArgoSet = DataFetcher(ds='bgc', mode='standard', params='DOXY', measured='DOXY').float(1902605)
+    ds = ArgoSet.to_xarray()
+
+We can then predict all possible variables:
+
+.. code-block:: python
+
+    ds.argo.canyon_b.predict()
+
+or select specific variable(s) to predict:
+
+.. code-block:: python
+
+    ds.argo.canyon_b.predict(['PO4', 'NO3'])
+
+In addition, the user can provide input errors for pressure (float), temperature (float), salinity (float) and oxygen (float or array):
+
+.. code-block:: python
+
+    ds.argo.canyon_b.predict('PO4', epres = 0.5, etemp = 0.005, epsal = 0.005, edoxy = 0.01)
+
+and include uncertainty estimates in the output:
+
+.. code-block:: python
+
+    ds = ds.argo.canyon_b.predict('PO4', epres = 0.5, etemp = 0.005, epsal = 0.005, edoxy = 0.01, include_uncertainties=True)
+    ds['PO4'] # PO4 estimates
+    ds['PO4_ci'] # Uncertainty on PO4
+    ds['PO4_cim'] # Measurement uncertainty on PO4
+    ds['PO4_cin'] # Uncertainty for Bayesian neural network mapping on PO4
+    ds['PO4_cii'] # Uncertainty due to input errors on PO4
+
+.. _complement-content:
+
+.. currentmodule:: xarray
+
+CONTENT (Global Ocean)
+^^^^^^^^^^^^^^^^^^^^^^
+
+CONTENT is a combination of CANYON-B Bayesian neural network mappings of AT, CT, pH and pCO2 made consistent with carbonate chemistry constraints 
+for any set of water column P, T, S, O2 location data as an alternative to (spatial) climatological interpolation ([3]_)
+
+This model is available in **argopy** as an extension to the ``argo`` accessor: :class:`Dataset.argo.content`. This model refines CANYON-B's estimates of AT, DIC, pHT and pCO2 and provides uncertainty estimates.
+Note that CANYON-B's estimates of NO3, PO4 and SiOH4 are also returned by default and are unchanged when using CONTENT.
+
+As an example, let's load one float data with oxygen measurements:
+
+.. code-block:: python
+
+    from argopy import DataFetcher
+    ArgoSet = DataFetcher(ds='bgc', mode='standard', params='DOXY', measured='DOXY').float(1902605)
+    ds = ArgoSet.to_xarray()
+
+We predict all carbonate system variables (with CONTENT, it is not possible to predict one variable only):
+
+.. code-block:: python
+
+    ds.argo.content.predict()
+
+In addition, the user can provide input errors for pressure (float), temperature (float), salinity (float) and oxygen (float or array):
+
+.. code-block:: python
+
+    ds.argo.content.predict(epres = 0.5, etemp = 0.005, epsal = 0.005, edoxy = 0.01)
+
+and include uncertainty estimates in the output:
+
+.. code-block:: python
+
+    ds.argo.content.predict(epres = 0.5, etemp = 0.005, epsal = 0.005, edoxy = 0.01, include_uncertainties=True)
+    ds['AT'] # AT estimates
+    ds['AT_SIGMA'] # Total uncertainty on AT
+    ds['AT_SIGMA_MIN'] # Uncertainty propagated from the input variables on AT
 
 
 .. _complement-optical-modeling:
@@ -214,3 +314,5 @@ References
 .. [1] Fourrier, M., Coppola, L., Claustre, H., D’Ortenzio, F., Sauzède, R., and Gattuso, J.-P. (2020). A Regional Neural Network Approach to Estimate Water-Column Nutrient Concentrations and Carbonate System Variables in the Mediterranean Sea: CANYON-MED. Frontiers in Marine Science 7. doi:10.3389/fmars.2020.00620.
 
 .. [2] Fourrier, M., Coppola, L., Claustre, H., D’Ortenzio, F., Sauzède, R., and Gattuso, J.-P. (2021). Corrigendum: A Regional Neural Network Approach to Estimate Water-Column Nutrient Concentrations and Carbonate System Variables in the Mediterranean Sea: CANYON-MED. Frontiers in Marine Science 8. doi:10.3389/fmars.2021.650509.
+
+.. [3] Bittig, H. C., Steinhoff, T., Claustre, H., Fiedler, B., Williams, N. L., Sauzède, R., Körtzinger, A., and Gattuso, J. P. (2018). An alternative to static climatologies: Robust estimation of open ocean CO2 variables and nutrient concentrations from T, S, and O2 data using Bayesian neural networks. Frontiers in Marine Science, 5, 328. https://doi.org/10.3389/fmars.2018.00328
