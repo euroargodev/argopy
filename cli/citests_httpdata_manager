@@ -1089,6 +1089,9 @@ def consolidate(target=None):
                 if b"<title>502 Proxy Error</title>" in data:
                     recommended = 'r'
 
+                if b"The proxy server could not handle the request" in data:
+                    recommended = 'r'
+
                 if b"Not Found: Your query produced no matching results. (nRows = 0)" in data:
                     recommended = 'k'
 
