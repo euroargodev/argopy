@@ -56,5 +56,3 @@ class APISensorMetaDataProcessing:
                     }
                 )
         return pd.DataFrame(d).sort_values(by="WMO").reset_index(drop=True)
-
-

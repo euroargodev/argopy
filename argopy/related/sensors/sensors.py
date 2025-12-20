@@ -1,6 +1,6 @@
-from ...utils import register_accessor
-from .spec import ArgoSensorSpec
-from .references import SensorReferences
+from argopy.utils import register_accessor
+from argopy.related.sensors.spec import ArgoSensorSpec
+from argopy.related.sensors.references import SensorReferences
 
 
 class ArgoSensor(ArgoSensorSpec):

@@ -6,23 +6,23 @@ import logging
 import json
 import sys
 
-from ...stores import ArgoFloat, ArgoIndex, httpstore
-from ...stores.filesystems import (
+from argopy.stores import ArgoFloat, ArgoIndex, httpstore
+from argopy.stores.filesystems import (
     tqdm,
 )  # Safe import, return a lambda if tqdm not available
-from ...utils import check_wmo, Chunker, to_list, ppliststr, is_wmo
-from ...errors import (
+from argopy.utils import check_wmo, Chunker, to_list, ppliststr, is_wmo
+from argopy.errors import (
     DataNotFound,
     InvalidDataset,
     InvalidDatasetStructure,
     OptionValueError,
 )
-from ...options import OPTIONS
-from ..euroargo_api import EAfleetmonitoringAPI
+from argopy.options import OPTIONS
+from argopy.related.euroargo_api import EAfleetmonitoringAPI
 
-from .references import SensorModel, SensorType
-from .accessories import Error, ErrorOptions, Ds, DsOptions, SearchOutput, SearchOutputOptions
-from .utils import APISensorMetaDataProcessing
+from argopy.related.sensors.references import SensorModel, SensorType
+from argopy.related.sensors.accessories import Error, ErrorOptions, Ds, DsOptions, SearchOutput, SearchOutputOptions
+from argopy.related.sensors.utils import APISensorMetaDataProcessing
 
 
 log = logging.getLogger("argopy.related.sensors")
