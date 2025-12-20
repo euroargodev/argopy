@@ -37,6 +37,8 @@ Features and front-end API
 Internals
 ^^^^^^^^^
 
+- **Fix bug** whereby an error was raise when interpolating on SDL a dataset loaded from an :class:`ArgoFloat` instance. (:pr:`564`) by |gmaze|.
+- **Fix bug** whereby a scatter_plot would fail for a parameter with only N_PROF as dimensions. (:pr:`564`) by |gmaze|.
 - **Fix bug** whereby missing values in <PARAM>_QC variables of xarray dataset were casted as 0 instead of 9. (:commit:`d7bbc23ab386c88a03ae2e9fca7ad274bb1ebcab`) by |gmaze|.
 - **Fix upstream compatibility** and imposes xarray >=2025.7 and <=2025.9.0. (:issue:`539`).
 - Removed python 3.10 environments from `ci/env_managers` CLI utility. (:pr:`557`) by |gmaze|.
@@ -46,7 +48,7 @@ Internals
 Breaking changes
 ^^^^^^^^^^^^^^^^
 
-- Deprecation warning for :func:`plot.scatter_plot` arguments ``this_x`` and ``this_y`` that are replaced by ``x`` and ``y``. (:pr:`557`) by |gmaze|.
+- Deprecation warning for :func:`plot.scatter_plot` arguments ``this_x``, ``this_y`` and ``param`` that are replaced by ``x``, ``y`` and ``param``. (:pr:`557`) by |gmaze|.
 - Internal refactoring, former `argopy.utils.transform` now `argopy.utils.transformers`, former `argopy.utils.compute` now `argopy.utils.computers`. (:pr:`557`) by |gmaze|.
 
 .. _v1.4.0-energy:
