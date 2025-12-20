@@ -10,6 +10,7 @@ import warnings
 import logging
 import os
 import json
+from copy import copy
 
 import xarray as xr
 import pandas as pd
@@ -58,9 +59,9 @@ with open(os.path.join(path2assets, "data_types.json"), "r") as f:
 
 
 def guess_cmap(hue: str) -> str | None:
-    """Try to guess the colormap to use as a function of the variable to plot
+    """Try to guess the ArgoColors colormap name to use as a function of the variable to plot
 
-    If not custom colormap is identified, return None and let the caller decide on which one to use.
+    If no custom colormap is identified, return None and let the caller decide on which one to use.
 
     """
     if hue.lower() in ArgoColors().list_valid_known_colormaps:
@@ -507,9 +508,9 @@ def scatter_map(  # noqa: C901
 
     hue = guess_trajvar(data) if hue is None else hue
 
-    if isinstance(data, xr.Dataset) and data.argo.N_LEVELS > 1:
+    if isinstance(data, xr.Dataset) and data.argo.N_LEVELS > 1 and 'N_LEVELS' in data[hue].dims:
         warnings.warn(
-            "More than one N_LEVELS found in this dataset, scatter_map will use the first level only"
+            f"More than one N_LEVELS found in this dataset for '{hue}', scatter_map will use the first level only"
         )
         data = data.isel(N_LEVELS=0)
 
@@ -732,22 +733,37 @@ def scatter_map(  # noqa: C901
 
 def scatter_plot(
     ds : xr.Dataset,
-    this_param : str,
+    param : str,
     x : str = "TIME",
     y : str = "PRES",
-    figsize=(18, 6),
-    cmap=None,
-    vmin=None,
-    vmax=None,
-    s=4,
+    figsize : tuple =(18, 6),
+    cmap : 'str | mpl.colors.Colormap | ArgoColors | None' = None,
+    vmin : int | float | None = None,
+    vmax : int | float | None = None,
+    s : int = 4,
     cbar: bool = False,
     style: str = STYLE["axes"],
     **kwargs,
 ):
-    """A quick-and-dirty parameter scatter plot for one variable"""
+    """Argo parameter scatter plot
+
+    Parameters
+    ----------
+    cmap : str or `ArgoColors` or `~matplotlib.colors.Colormap` or None
+        The Colormap instance or registered colormap name used to map scalar data
+        to colors.
+
+    """
     warnUnless(has_mpl, "requires matplotlib installed")
 
     #deprecation
+    if 'this_param' in kwargs:
+        warnings.warn(
+            f"The argument 'this_param' is deprecated since version 1.4.0. Please update your code to use 'param' instead.",
+            category=DeprecationWarning,
+            stacklevel=2,
+        )
+        param = kwargs['this_param']  # Safe fallback on new argument
     if 'this_x' in kwargs:
         warnings.warn(
             f"The argument 'this_x' is deprecated since version 1.4.0. Please update your code to use 'x' instead.",
@@ -763,15 +779,35 @@ def scatter_plot(
         )
         y = kwargs['this_y']  # Safe fallback on new argument
 
-    if this_param in DATA_TYPES["data"]["str"]:
-        raise ValueError("scatter_plot does not support string data type (yet !)")
+    if param in DATA_TYPES["data"]["str"]:
+        raise ValueError("scatter_plot does not support parameter of string type (yet !)")
 
+    # Transform the 'cmap' argument into a mpl.colors.Colormap instance
+    a_color = None
     if cmap is None:
-        cmap = guess_cmap(this_param)
-        if cmap is None:
-            cmap = mpl.colormaps["gist_ncar"]
+        cmap = guess_cmap(param)
+        if cmap is not None:
+            a_color = ArgoColors(cmap, N=kwargs.get('N', None))
+            cmap: 'mpl.colors.Colormap' = a_color.cmap
         else:
-            cmap = ArgoColors(cmap).cmap
+            a_color = ArgoColors('gist_ncar', N=kwargs.get('N', None))
+            cmap: 'mpl.colors.Colormap' = a_color.cmap
+
+    elif isinstance(cmap, str):
+        a_color = ArgoColors(cmap, N=kwargs.get('N', None))
+        cmap: 'mpl.colors.Colormap' = a_color.cmap
+
+    elif isinstance(cmap, ArgoColors):
+        a_color : ArgoColors = copy(cmap)
+        cmap: 'mpl.colors.Colormap' = a_color.cmap
+
+    if has_mpl and not isinstance(cmap, mpl.colors.Colormap):
+        raise ValueError(f"'cmap' argument must be a str or `ArgoColors` or `~matplotlib.colors.Colormap` or None. Got '{type(cmap)}' instead.")
+
+    cbticklabels = 'auto'
+    if a_color and a_color.registered:
+        cbticklabels = a_color.ticklabels
+        vmin, vmax = a_color.definition['ticks'][0], a_color.definition['ticks'][-1]+1
 
     def get_vlabel(this_v):
         attrs = this_v.attrs
@@ -786,9 +822,9 @@ def scatter_plot(
 
     # Read variables for the plot:
     x_da, y_da = ds[x], ds[y]
-    if "INTERPOLATED" in y_da:
+    if "INTERPOLATED" in y:
         x_bounds, y_bounds = np.meshgrid(x_da, y_da, indexing="ij")
-    c_da = ds[this_param]
+    c_da = ds[param]
 
     # Possibly broadcast x_da, y_da on c dimensions:
     if not x_da.shape == y_da.shape or not x_da.shape == c_da.shape or not y_da.shape == c_da.shape:
@@ -804,27 +840,26 @@ def scatter_plot(
 
         if vmin == "attrs":
             vmin = c_da.attrs["valid_min"] if "valid_min" in c_da.attrs else None
-        if vmax == "attrs":
-            vmax = c_da.attrs["valid_max"] if "valid_max" in c_da.attrs else None
         if vmin is None:
             vmin = np.nanpercentile(c_da, 10)
+
+        if vmax == "attrs":
+            vmax = c_da.attrs["valid_max"] if "valid_max" in c_da.attrs else None
         if vmax is None:
             vmax = np.nanpercentile(c_da, 90)
-
-        if "_QC" in this_param.upper():
-            cbar.set_ticks(to_list([k + 0.5 for k in mycolors.ticklabels.keys()]))
-            cbar.set_ticklabels(to_list([k for k in mycolors.ticklabels.values()]))
 
         if "INTERPOLATED" in y:
             m = ax.pcolormesh(x_bounds, y_bounds, c_da, cmap=cmap, vmin=vmin, vmax=vmax)
         else:
             m = ax.scatter(x_da, y_da, c=c_da, cmap=cmap, s=s, vmin=vmin, vmax=vmax)
-            # ax.set_facecolor(bgcolor)
 
         if cbar:
             cbar = fig.colorbar(m, shrink=0.9, ax=ax)
             cbar.ax.set_ylabel(get_vlabel(c_da), rotation=90)
-
+            if isinstance(cbticklabels, dict):
+                cbar.set_ticks(to_list([k + 0.5 for k in cbticklabels.keys()]))
+                cbar.set_ticklabels(to_list([k for k in cbticklabels.values()]))
+            
         ylim = ax.get_ylim()
         if "PRES" in y:
             ax.invert_yaxis()
