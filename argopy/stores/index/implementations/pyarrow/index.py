@@ -15,10 +15,12 @@ try:
 except ModuleNotFoundError:
     pass
 
-from .....options import OPTIONS
-from .....errors import DataNotFound, InvalidDatasetStructure
-from .....utils import check_index_cols, conv_lon
-from ...spec import ArgoIndexStoreProto
+from argopy.options import OPTIONS
+from argopy.errors import DataNotFound, InvalidDatasetStructure
+from argopy.utils.checkers import check_index_cols
+from argopy.utils.geo import conv_lon
+from argopy.utils.format import mono2multi
+from argopy.stores.index.spec import ArgoIndexStoreProto
 
 
 log = logging.getLogger("argopy.stores.index.pa")
@@ -413,18 +415,22 @@ class indexstore(ArgoIndexStoreProto):
                 tmax(self.index["date"]),
             ]
 
-    def read_files(self, index=False) -> List[str]:
+    def read_files(self, index : bool = False, multi : bool = False) -> List[str]:
         sep = self.fs["src"].fs.sep
         if hasattr(self, "search") and not index:
-            return [
+            flist = [
                 sep.join(["dac", f.as_py().replace("/", sep)])
                 for f in self.search["file"]
             ]
         else:
-            return [
+            flist = [
                 sep.join(["dac", f.as_py().replace("/", sep)])
                 for f in self.index["file"]
             ]
+        if not multi:
+            return flist
+        else:
+            return mono2multi(flist, convention=self.convention, sep=sep)
 
     def records_per_wmo(self, index=False):
         """Return the number of records per unique WMOs in search results

@@ -473,3 +473,54 @@ def group_cycles_by_missions(cycles: dict[int, int], output: Literal['group', 'l
                 txt = ",".join(summary)
             results.update({int(mis): txt})
         return results
+
+
+def mono2multi(flist : list[str], convention : str = 'core', sep :str = '/') -> list[str]:
+    """Convert a list of mono-profile files to a list of multi-profile files
+
+    The multi-profile file name is based on an :class:`ArgoIndex` convention.
+
+    Parameters
+    ----------
+    flist: list[str]
+        A list of mono-profile files (relative GDAC paths), as output for :meth:`ArgoIndex.read_files`.
+    convention: str, optional, default = 'ar_index_global_prof'
+        The Argo index convention from which `flist` was extracted. Can be 'ar_index_global_prof' or 'argo_synthetic-profile_index'.
+    sep: str, optional, default = '/'
+        GDAC file system separator used in flist
+
+    Returns
+    -------
+    list(str)
+    """
+    def _mono2multi(mono_path):
+        meta = argo_split_path(mono_path)
+
+        if convention == "ar_index_global_prof":
+            return sep.join(
+                [
+                    meta["origin"],
+                    "dac",
+                    meta["dac"],
+                    meta["wmo"],
+                    "%s_prof.nc" % meta["wmo"],
+                ]
+            )
+
+        elif convention in ["argo_synthetic-profile_index"]:
+            return sep.join(
+                [
+                    meta["origin"],
+                    "dac",
+                    meta["dac"],
+                    meta["wmo"],
+                    "%s_Sprof.nc" % meta["wmo"],
+                ]
+            )
+
+        else:
+            raise ValueError("Method not available for this index (only 'ar_index_global_prof' and 'argo_synthetic-profile_index' allowed).")
+
+    new_uri = [_mono2multi(uri)[2:] for uri in flist]
+    new_uri = list(set(new_uri))
+    return new_uri

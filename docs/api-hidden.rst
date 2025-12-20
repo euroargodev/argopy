@@ -317,6 +317,9 @@
     argopy.ArgoIndex.query.parameter_data_mode
     argopy.ArgoIndex.query.profiler_type
     argopy.ArgoIndex.query.profiler_label
+    argopy.ArgoIndex.query.institution_code
+    argopy.ArgoIndex.query.institution_name
+    argopy.ArgoIndex.query.dac
 
     argopy.ArgoIndex.query.wmo_cyc
     argopy.ArgoIndex.query.lon_lat

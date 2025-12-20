@@ -256,3 +256,46 @@ class Registry(UserList):
     def copy(self):
         """Return a shallow copy of the registry"""
         return self.__copy__()
+
+
+class ListStrProperty:
+    """
+    Descriptor for a list of strings that is able to handle:
+
+    - getting possible values,
+    - validating a value and
+    - print
+
+    Examples
+    --------
+    .. code-block:: python
+
+        st = ListStrProperty(['a', 'b', 'c'])
+        st.values  # ['a', 'b', 'c']
+        'a' in st  # True
+        'B' in st  # True, validation is case-insensitive
+        'z' in st  # False
+        print(st)  # 'a, b, c'
+
+    """
+    def __init__(self, possible_values: list[str]):
+        self.possible_values = possible_values
+
+    @property
+    def values(self) -> list[str]:
+        """Return the list of possible values."""
+        return self.possible_values
+
+    def __contains__(self, value):
+        return self._is_valid(value)
+
+    def _is_valid(self, value: str) -> bool:
+        """Check if the given value is in the list of possible values."""
+        result = False
+        for txt in self.possible_values:
+            if value.lower() in txt.lower():
+                result = True
+        return result
+
+    def __repr__(self):
+        return ", ".join(self.possible_values)
