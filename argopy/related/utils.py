@@ -1,6 +1,6 @@
 import logging
 
-from argopy.utils import Asset
+from argopy.utils.assets import Asset
 from . import ArgoNVSReferenceTables
 
 

@@ -4,7 +4,7 @@ import collections
 
 from ..stores import httpstore
 from ..options import OPTIONS
-from argopy.utils.locals import Asset
+from argopy.utils.assets import Asset
 
 
 VALID_REF = Asset.load('nvs_reference_tables')['data']['valid_ref']

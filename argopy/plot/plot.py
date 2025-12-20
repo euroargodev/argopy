@@ -8,8 +8,6 @@
 #
 import warnings
 import logging
-import os
-import json
 from copy import copy
 
 import xarray as xr
@@ -24,7 +22,7 @@ from ..utils.geo import conv_lon
 from ..utils.lists import subsample_list
 from ..utils.casting import to_list
 from ..errors import InvalidDatasetStructure
-from argopy.utils.locals import Asset
+from argopy.utils.assets import Asset
 
 from .utils import STYLE, has_seaborn, has_mpl, has_cartopy, has_ipython, has_ipywidgets
 from .utils import axes_style, latlongrid, land_feature

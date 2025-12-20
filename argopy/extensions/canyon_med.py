@@ -6,7 +6,7 @@ from typing import Union, List
 
 from ..errors import InvalidDatasetStructure, DataNotFound
 from ..utils import to_list
-from argopy.utils.locals import Asset
+from argopy.utils.assets import Asset
 from . import register_argo_accessor, ArgoAccessorExtension
 
 

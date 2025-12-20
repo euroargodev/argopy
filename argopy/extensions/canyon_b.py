@@ -39,7 +39,7 @@ except ImportError:
 
 from ..errors import InvalidDatasetStructure, DataNotFound
 from ..utils import to_list, point_in_polygon
-from argopy.utils.locals import Asset
+from argopy.utils.assets import Asset
 from . import register_argo_accessor, ArgoAccessorExtension
 
 

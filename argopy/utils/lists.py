@@ -3,7 +3,7 @@ import warnings
 from typing import List, Union
 
 from argopy.options import OPTIONS
-from argopy.utils.locals import Asset
+from argopy.utils.assets import Asset
 
 
 def subsample_list(original_list, N):
