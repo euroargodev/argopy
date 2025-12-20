@@ -7,6 +7,7 @@ import importlib
 import json
 import logging
 from copy import deepcopy
+from typing import Any
 
 
 log = logging.getLogger("argopy.utils.casting")
@@ -208,10 +209,27 @@ def cast_Argo_variable_type(ds: xr.Dataset, overwrite=True) -> xr.Dataset:
 def to_list(obj):
     """Make sure that an expected list is indeed a list"""
     if not isinstance(obj, list):
-        if isinstance(obj, np.ndarray):
+        if isinstance(obj, np.ndarray) or str(type(obj)).endswith("'dict_keys'>"):
             obj = list(obj)
         elif isinstance(obj, tuple):
             obj = [o for o in obj]
         else:
             obj = [obj]
     return obj
+
+
+def to_bool(obj: Any) -> bool:
+    """Make sure that an expected boolean is indeed a boolean
+
+    Parameters
+    ----------
+    obj: Any
+        Any type but boolean is expected.
+
+    Returns
+    -------
+    bool
+        Any value in [True, False, 1 , 0, 'True', 'False', '1', '0'] will return a boolean. Everything else will return False.
+    """
+    return bool(eval(str(obj)) if str(obj) in ['True', 'False', '1', '0'] else None)
+

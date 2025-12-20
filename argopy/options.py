@@ -50,6 +50,7 @@ ARGOVIS_API_KEY = "argovis_api_key"
 PARALLEL = "parallel"
 PARALLEL_DEFAULT_METHOD = "parallel_default_method"
 LON = "longitude_convention"
+OFFLINE = "offline"
 
 # Define the list of available options and default values:
 OPTIONS = {
@@ -69,6 +70,7 @@ OPTIONS = {
     PARALLEL: False,
     PARALLEL_DEFAULT_METHOD: "thread",
     LON: "180",
+    OFFLINE: eval(str(os.environ.get("ARGOPY_OFFLINE", False))),
 }
 DEFAULT = OPTIONS.copy()
 
@@ -134,6 +136,7 @@ _VALIDATORS = {
     PARALLEL: validate_parallel,
     PARALLEL_DEFAULT_METHOD: validate_parallel_method,
     LON: lambda x: x in ['180', '360'],
+    OFFLINE: lambda x: isinstance(x, bool),
 }
 
 
@@ -228,6 +231,9 @@ class set_options:
             Possible values:
                 - '180': longitude goes from -180 to 180
                 - '360': longitude goes from 0 to 360
+
+    offline: bool, default: False
+        Force Argopy to run in offline mode.
 
     Other Parameters
     ----------------
