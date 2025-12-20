@@ -10,7 +10,6 @@ from copy import deepcopy
 from typing import Any
 
 
-
 log = logging.getLogger("argopy.utils.casting")
 
 path2assets = importlib.util.find_spec(
