@@ -820,9 +820,11 @@ def scatter_plot(
         units = attrs["units"] if "units" in attrs else None
         return "%s\n[%s]" % (name, units) if units else name
 
-    # Read variables for the plot:
+    # Read/reshape variables for the plot:
     x_da, y_da = ds[x], ds[y]
     if "INTERPOLATED" in y:
+        # "PRES_INTERPOLATED" or "PRES_ADJUSTED_INTERPOLATED"
+        # We'll be using pcolormesh instead of scatter
         x_bounds, y_bounds = np.meshgrid(x_da, y_da, indexing="ij")
     c_da = ds[param]
 
@@ -830,6 +832,10 @@ def scatter_plot(
     if not x_da.shape == y_da.shape or not x_da.shape == c_da.shape or not y_da.shape == c_da.shape:
         x_da = x_da.broadcast_like(c_da)
         y_da = y_da.broadcast_like(c_da)
+
+        if x_da.shape == y_da.shape and not y_da.shape == c_da.shape:
+            c_da = c_da.broadcast_like(x_da)
+
         assert x_da.shape == y_da.shape
         assert y_da.shape == c_da.shape
 

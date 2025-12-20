@@ -875,10 +875,17 @@ class ArgoIndexStoreProto(ABC):
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
-    def read_files(self, index=False):
+    def read_files(self, index : bool = False, multi : bool = False):
         """Return file paths listed in index or search results
 
         Fall back on full index if search not triggered
+
+        Parameters
+        ----------
+        index: bool, optional, default = False
+            Use search results (False, default) or full index (True)
+        multi: bool, optional, default = False
+            Transform the list of mono-profile files to multi-profile files. Only available for 'core' and 'bgc-s' index conventions.
 
         Returns
         -------

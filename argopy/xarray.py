@@ -1053,7 +1053,7 @@ class ArgoAccessor:
         for co in coords:
             ds_out.coords[co] = this_dsp[co]
 
-        ds_out = ds_out.drop_vars(["N_LEVELS", "Z_LEVELS"])
+        ds_out = ds_out.drop_vars(["N_LEVELS", "Z_LEVELS"], errors='ignore')
         ds_out = ds_out[np.sort(ds_out.data_vars)]
         ds_out = ds_out.argo.cast_types()
         ds_out.attrs = self.attrs  # Preserve original attributes
