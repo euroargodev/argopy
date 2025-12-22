@@ -7,6 +7,6 @@ h5netcdf>=1.4.0
 fsspec>=2025.5.1
 toolz>=0.8.2
 requests>=2.28
-aiohttp>=3.7,<=3.12.15
+aiohttp>=3.7,<=3.13.2
 decorator>=5.1
 packaging>=20.4
