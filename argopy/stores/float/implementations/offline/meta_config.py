@@ -24,7 +24,6 @@ class LaunchParameters(ArgoFloatLaunchConfigParametersProto):
 
     @property
     def parameters(self) -> list[str]:
-        """List of launch configuration parameter names"""
         return [
             pname.item().strip()
             for pname in self._metadata["LAUNCH_CONFIG_PARAMETER_NAME"]
@@ -61,13 +60,6 @@ class ConfigParameters(ArgoFloatConfigParametersProto):
 
     @property
     def cycles(self) -> dict[int, int]:
-        """A dictionary mapping cycle on mission numbers
-
-        Returns
-        -------
-        dict[int, int]:
-            Keys are cycle numbers, Values are mission numbers
-        """
         if not self._cycles:
             prof = self._obj.dataset("prof")
             self._cycles = map_vars_to_dict(

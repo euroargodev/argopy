@@ -79,7 +79,9 @@ ArgoFloat
 
     ArgoFloat
 
-List of extensions:
+Extensions:
+
+**Plot**
 
 .. currentmodule:: argopy
 
@@ -89,8 +91,6 @@ List of extensions:
 
    ArgoFloat.plot
 
-This extension provides the following **plotting methods** for one Argo float data:
-
 .. autosummary::
    :toctree: generated/
    :template: autosummary/accessor_method.rst
@@ -98,6 +98,44 @@ This extension provides the following **plotting methods** for one Argo float da
    ArgoFloat.plot.trajectory
    ArgoFloat.plot.map
    ArgoFloat.plot.scatter
+
+**Configuration and launch configuration parameters**
+
+.. currentmodule:: argopy
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor.rst
+
+   ArgoFloat.config
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
+
+   ArgoFloat.config.n_params
+   ArgoFloat.config.parameters
+   ArgoFloat.config.n_missions
+   ArgoFloat.config.missions
+   ArgoFloat.config.cycles
+   ArgoFloat.config.for_cyc
+   ArgoFloat.config.to_dataframe
+
+.. currentmodule:: argopy
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor.rst
+
+   ArgoFloat.launchconfig
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
+
+   ArgoFloat.launchconfig.n_params
+   ArgoFloat.launchconfig.parameters
+   ArgoFloat.launchconfig.to_dataframe
 
 ArgoIndex
 ---------
