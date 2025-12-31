@@ -77,7 +77,6 @@ class ArgoFloatPlotProto(ArgoFloatExtension):
 
 
 class ArgoFloatAnyConfigParametersProto(ArgoFloatExtension):
-
     @property
     def n_missions(self) -> int:
         """Total number of missions"""
@@ -146,6 +145,18 @@ class ArgoFloatLaunchConfigParametersProto(ArgoFloatAnyConfigParametersProto):
         # Export to a DataFrame:
         af.launchconfig.to_dataframe()
 
+    Notes
+    -----
+    - When called *online*, data are retrieved from the Euro-Argo Fleet-Monitoring web-API.
+    - When called *offline*, data are retrieved from a local meta data netcdf file and variables ``N_LAUNCH_CONFIG_PARAM``, ``LAUNCH_CONFIG_PARAMETER_NAME`` and ``LAUNCH_CONFIG_PARAMETER_VALUE``.
+
+    References
+    ----------
+    .. code-block:: python
+
+        import argopy
+        # User manual section on "Configuration parameters"
+        argopy.ArgoDocs(29825).open_pdf(55)  # as of Version 3.44.0
     """
     def __call__(self, *args, **kwargs) -> NoReturn:
         raise ValueError(
@@ -229,13 +240,18 @@ class ArgoFloatConfigParametersProto(ArgoFloatAnyConfigParametersProto):
         af.config.to_dataframe(missions=1)
         af.config.to_dataframe(missions=[1, 2])
 
+    Notes
+    -----
+    - When called *online*, data are retrieved from the Euro-Argo Fleet-Monitoring web-API.
+    - When called *offline*, data are retrieved from local meta-data and prof-data netcdf files and variables ``N_MISSIONS``, ``CONFIG_PARAMETER_NAME``, ``CONFIG_PARAMETER_VALUE``, ``CONFIG_MISSION_NUMBER`` and ``CYCLE_NUMBER``.
+
     References
     ----------
     .. code-block:: python
 
         import argopy
         # User manual section on "Configuration parameters"
-        argopy.ArgoDocs(29825).open_pdf(55)
+        argopy.ArgoDocs(29825).open_pdf(55)  # as of Version 3.44.0
     """
 
     def __call__(self, *args, **kwargs) -> NoReturn:
@@ -287,7 +303,7 @@ class ArgoFloatConfigParametersProto(ArgoFloatAnyConfigParametersProto):
         return results
 
     def to_dataframe(self, missions: None | int | list[int] = None) -> pd.DataFrame:
-        """Export configuration parameters to a class:`pd.DataFrame`
+        """Export configuration parameters to a class:`pandas.DataFrame`
 
         Parameters
         ----------

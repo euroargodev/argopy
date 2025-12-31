@@ -8,32 +8,6 @@ What's New
 |pypi dwn| |conda dwn|
 
 
-Coming up next (unreleased)
----------------------------
-
-Features and front-end API
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-- **New extensions `config` and `launchconfig` for** :class:`ArgoFloat` to easily access one float configuration parameter values. (:pr:`558`) by |gmaze|.
-
-- **New queries to search institution**-related entries in an :class:`ArgoIndex`: :meth:`ArgoIndex.query.institution_code`, :meth:`ArgoIndex.query.institution_name` and :meth:`ArgoIndex.query.dac`, :issue:`527`. (:pr:`528`) by |gmaze|.
-
-Breaking changes
-^^^^^^^^^^^^^^^^
-
-- In the :class:`pandas.DataFrame` output of the :meth:`ArgoIndex.to_dataframe` method (:pr:`528`) by |gmaze|:
-
-  - column `institution_code` is renamed `institution`, to preserve the original Argo index file column name,
-  - column `institution` is renamed by `institution_name`.
-
-Energy
-^^^^^^
-
-.. image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_carbonfootprint_since_last_release.json
-
-.. images:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_carbonfootprint_baseline.json
-
-
 v1.4.0 (xx Dec. 2025)
 ---------------------
 
@@ -58,6 +32,10 @@ Features and front-end API
 
 .. currentmodule:: argopy
 
+- **New extensions** :class:`ArgoFloat.config` **and** :class:`ArgoFloat.launchconfig` to easily access one float configuration parameter values. (:pr:`558`) by |gmaze|.
+
+- **New queries to search institution**-related entries in an :class:`ArgoIndex`: :meth:`ArgoIndex.query.institution_code`, :meth:`ArgoIndex.query.institution_name` and :meth:`ArgoIndex.query.dac`, :issue:`527`. (:pr:`528`) by |gmaze|.
+
 .. _v1.4.0-internals:
 
 Internals
@@ -73,6 +51,11 @@ Internals
 
 Breaking changes
 ^^^^^^^^^^^^^^^^
+
+- In the :class:`pandas.DataFrame` output of the :meth:`ArgoIndex.to_dataframe` method (:pr:`528`) by |gmaze|:
+
+  - column `institution_code` is renamed `institution`, to preserve the original Argo index file column name,
+  - column `institution` is renamed by `institution_name`.
 
 - Deprecation warning for :func:`plot.scatter_plot` arguments ``this_x``, ``this_y`` and ``param`` that are replaced by ``x``, ``y`` and ``param``. (:pr:`557`) by |gmaze|.
 - Internal refactoring, former `argopy.utils.transform` now `argopy.utils.transformers`, former `argopy.utils.compute` now `argopy.utils.computers`. (:pr:`557`) by |gmaze|.
