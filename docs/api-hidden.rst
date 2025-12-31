@@ -387,7 +387,7 @@
 
     argopy.errors.InvalidDatasetStructure
 
-    argopy.stores.float.spec.ArgoFloatProto
+    argopy.stores.float.spec.FloatStoreProto
     argopy.stores.ArgoFloat
     argopy.ArgoFloat.open_dataset
     argopy.ArgoFloat.ls_dataset
@@ -414,7 +414,7 @@
     argopy.stores.ArgoFloat.config.n_missions
     argopy.stores.ArgoFloat.config.missions
     argopy.stores.ArgoFloat.config.cycles
-    argopy.stores.ArgoFloat.config.for_cyc
+    argopy.stores.ArgoFloat.config.for_cycles
     argopy.stores.ArgoFloat.config.to_dataframe
     argopy.ArgoFloat.config
     argopy.ArgoFloat.config.n_params
@@ -422,7 +422,7 @@
     argopy.ArgoFloat.config.n_missions
     argopy.ArgoFloat.config.missions
     argopy.ArgoFloat.config.cycles
-    argopy.ArgoFloat.config.for_cyc
+    argopy.ArgoFloat.config.for_cycles
     argopy.ArgoFloat.config.to_dataframe
 
     argopy.stores.ArgoFloat.launchconfig
