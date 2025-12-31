@@ -5,14 +5,13 @@ from argopy.utils.casting import to_bool
 
 
 def cast_config_parameter(param: str, pvalue: Any) -> float | int | bool:
-    """Cast a float configuration parameter
-
+    """Cast one float configuration parameter
 
     Parameters
     ----------
     param: str
         Name of the configuration parameter.
-        Name is used to infer unit, hence dtype.
+        Name is used to infer unit and dtype.
         Valid parameters are taken from R18.
 
     Returns
@@ -22,6 +21,8 @@ def cast_config_parameter(param: str, pvalue: Any) -> float | int | bool:
     """
     if not param.startswith("CONFIG_"):
         param = f"CONFIG_{param}"
+    if pvalue is None:
+        return None
     unit = cfgnameparser(param)["unit"]
     if unit in [
         "angulardeg",
