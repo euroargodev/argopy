@@ -19,7 +19,6 @@ class LaunchParameters(ArgoFloatLaunchConfigParametersProto):
 
     @property
     def parameters(self) -> list[str]:
-        """List of launch configuration parameter names"""
         return [param["argoCode"] for param in self._metadata["configDataList"]]
 
     def __getitem__(self, param: str) -> int | float | str | bool:
@@ -42,34 +41,17 @@ class ConfigParameters(ArgoFloatConfigParametersProto):
         self._metadata: dict[Any, Any] = (
             self._obj.metadata
         )  # JSON data from the EAfleetmonitoring web-API
-        self._n_missions: list[int] = [
+        self._missions: list[int] = sorted([
             int(m)
             for m in list(self._metadata["configurations"]["missionCycles"].keys())
-        ]
+        ])
         self._c2m: dict[int, str] = self._map_cycs2missions()
         self._cycles: dict[int, int] | None = None  # Lazy attribute
         self._parameters: list[str] | None = None  # Lazy attribute
 
     @property
     def missions(self) -> list[int]:
-        return self._n_missions
-
-    @property
-    def cycles(self) -> dict[int, int]:
-        """A dictionary mapping cycle on mission numbers
-
-        Returns
-        -------
-        dict[int, int]:
-            Keys are cycle numbers, Values are mission numbers
-        """
-        if not self._cycles:
-            result = {}
-            for key, val in self._metadata["configurations"]["missionCycles"].items():
-                for cyc in [int(v) for v in val]:
-                    result.update({cyc: int(key)})
-            self._cycles = dict(sorted(result.items()))
-        return self._cycles
+        return self._missions
 
     @property
     def parameters(self) -> list[str]:
@@ -84,6 +66,16 @@ class ConfigParameters(ArgoFloatConfigParametersProto):
             sorted(plist)
             self._parameters = plist
         return self._parameters
+
+    @property
+    def cycles(self) -> dict[int, int]:
+        if not self._cycles:
+            result = {}
+            for key, val in self._metadata["configurations"]["missionCycles"].items():
+                for cyc in [int(v) for v in val]:
+                    result.update({cyc: int(key)})
+            self._cycles = dict(sorted(result.items()))
+        return self._cycles
 
     def _map_cycs2missions(self) -> dict[int, str]:
         result = {}
