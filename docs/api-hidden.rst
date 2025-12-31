@@ -387,7 +387,7 @@
 
     argopy.errors.InvalidDatasetStructure
 
-    argopy.stores.float.spec.ArgoFloatProto
+    argopy.stores.float.spec.FloatStoreProto
     argopy.stores.ArgoFloat
     argopy.ArgoFloat.open_dataset
     argopy.ArgoFloat.ls_dataset
