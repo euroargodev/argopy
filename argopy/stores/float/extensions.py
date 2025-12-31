@@ -145,7 +145,6 @@ class ArgoFloatLaunchConfigParametersProto(ArgoFloatAnyConfigParametersProto):
 
         # Export to a DataFrame:
         af.launchconfig.to_dataframe()
-        af.launchconfig.to_dataframe(implicit=False)  # Use raw Argo code from R18
 
     """
     def __call__(self, *args, **kwargs) -> NoReturn:
@@ -216,8 +215,8 @@ class ArgoFloatConfigParametersProto(ArgoFloatAnyConfigParametersProto):
 
         # Read parameter value for one or more cycle numbers:
         # (! 2nd index is not 0-based, it's an integer key to look for in cycle numbers)
-        af.config.for_cyc('CycleTime_hours', 1)
-        af.config.for_cyc('CycleTime_hours', [10, 11])
+        af.config.for_cycles('CycleTime_hours', 1)
+        af.config.for_cycles('CycleTime_hours', [10, 11])
 
     .. code-block:: python
         :caption: Export configuration parameters
@@ -227,7 +226,8 @@ class ArgoFloatConfigParametersProto(ArgoFloatAnyConfigParametersProto):
 
         # Export to a DataFrame:
         af.config.to_dataframe()
-        af.config.to_dataframe(implicit=False)  # Use raw Argo code from R18
+        af.config.to_dataframe(missions=1)
+        af.config.to_dataframe(missions=[1, 2])
 
     References
     ----------
@@ -262,15 +262,15 @@ class ArgoFloatConfigParametersProto(ArgoFloatAnyConfigParametersProto):
         """
         raise NotImplementedError
 
-    def for_cycle(self, param: str, cycle_numbers: int | list[int]) -> int | float | str | bool | list[int | float | str | bool]:
-        """Retrieve a configuration parameter for a given cycle number
+    def for_cycles(self, param: str, cycle_numbers: int | list[int]) -> int | float | str | bool | list[int | float | str | bool]:
+        """Retrieve a configuration parameter for cycle number(s)
 
         Parameters
         ----------
         param: str
             Name of the configuration parameter to retrieve. Can be any string from :attr:`Argofloat.config.parameters`.
         cycle_numbers: int | list[int]
-            Cycle numbers to retrieve parameter for.
+            Cycle number(s) to retrieve parameter for.
 
         Returns
         -------
