@@ -1,6 +1,7 @@
 | <img src="https://raw.githubusercontent.com/euroargodev/argopy/master/docs/_static/argopy_logo_long.png" alt="argopy logo" width="200"/><br>``argopy`` is a python library dedicated to Argo data access, visualisation and manipulation for regular users as well as Argo experts and operators |
 |:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-|                                                                            [![DOI][joss-badge]][joss-link] [![Documentation][rtd-badge]][rtd-link] [![Pypi][pip-badge]][pip-link] [![Conda][conda-badge]][conda-link]                                                                            |
+|                                                                            [![DOI][joss-badge]][joss-link] [![Documentation][rtd-badge]][rtd-link] [![Pypi][pip-badge]][pip-link] [![Conda][conda-badge]][conda-link] [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Feuroargodev%2Fargopy.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Feuroargodev%2Fargopy?ref=badge_shield)
+                                                                           |
 |                                                                                             [![codecov][cov-badge]][conda-link]  ![CI][ci-badge] [![CI Energy][ci-energy-badge-co2]][ci-energy-link]                                                                                             |
 |                                                                                                                               [![Open-SSF][ossf-badge]][ossf-link]                                                                                                                               |
 
@@ -106,3 +107,6 @@ And if you want to get involved and help maintain or develop ``argopy``, please 
 Some tutorials, as jupyter notebooks, are available to get you started:
 
 - https://github.com/euroargodev/argopy/blob/master/docs/tutorials/basic_features_core_01.ipynb
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Feuroargodev%2Fargopy.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Feuroargodev%2Fargopy?ref=badge_large)
