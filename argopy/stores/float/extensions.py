@@ -80,11 +80,19 @@ class ArgoFloatAnyConfigParametersProto(ArgoFloatExtension):
 
     @property
     def n_missions(self) -> int:
+        """Total number of missions"""
         return len(self.missions)
 
     @property
     def n_params(self) -> int:
+        """Total number of parameters"""
         return len(self.parameters)
+
+    @property
+    @abstractmethod
+    def parameters(self):
+        """List of configuration parameter names"""
+        raise NotImplementedError
 
     def __len__(self):
         return self.n_params
@@ -105,7 +113,7 @@ class ArgoFloatAnyConfigParametersProto(ArgoFloatExtension):
         return cast_config_parameter(param, pvalue)
 
     def _ipython_key_completions_(self):
-        """Provide method for the key-autocompletions in IPython."""
+        """Provide method for key-autocompletions in IPython."""
         return [p.replace('CONFIG_','') for p in self.parameters]
 
 
@@ -120,15 +128,14 @@ class ArgoFloatLaunchConfigParametersProto(ArgoFloatAnyConfigParametersProto):
 
     Examples
     --------
-    ..code-block: python
+    .. code-block:: python
+        :caption: Launch configuration parameters
 
         from argopy import ArgoFloat
         af = ArgoFloat(6903091)
 
-        # Number of launch parameters:
+        # Total number and list of launch parameters:
         af.launchconfig.n_params
-
-        # List of launch parameters:
         af.launchconfig.parameters
 
         # Read one parameter value, with explicit or implicit parameter name:
@@ -147,24 +154,22 @@ class ArgoFloatLaunchConfigParametersProto(ArgoFloatAnyConfigParametersProto):
             "direct indexing or an explicit method."
         )
 
-    def to_dataframe(self, implicit: bool = True) -> pd.DataFrame:
-        """Export launch configuration parameters to a class:`pd.DataFrame`
+    def to_dataframe(self) -> pd.DataFrame:
+        """Export launch configuration parameters to a class:`pandas.DataFrame`
 
-        Parameters
-        ----------
-        implicit: bool, default = True
-            Use implicit parameter's label and unit from the raw 'CONFIG_PARAMETER_NAME' name.
+        Returns
+        -------
+        :class:`pandas.DataFrame`
         """
         data = []
         for param in self.parameters:
-            if implicit:
-                pname = cfgnameparser(param)
-                this = {'CONFIG_PARAMETER_NAME': f"{pname['label']} ({pname['unit']})"}
-            else:
-                this = {'CONFIG_PARAMETER_NAME': f"{param}"}
-            this.update({f"Launch": self[param]})
+            pname = cfgnameparser(param)
+            this = {'Name': f"{pname['label']}"}
+            this.update({'Unit': f"{pname['unit']}"})
+            this.update({f"Value": self[param]})
+            this.update({'CONFIG_PARAMETER_NAME': f"{param}"})
             data.append(this)
-        return pd.DataFrame(data, dtype=object).sort_values(by='CONFIG_PARAMETER_NAME').reset_index(drop=True)
+        return pd.DataFrame(data, dtype=object).sort_values(by='Name').reset_index(drop=True)
 
 
 class ArgoFloatConfigParametersProto(ArgoFloatAnyConfigParametersProto):
@@ -176,18 +181,18 @@ class ArgoFloatConfigParametersProto(ArgoFloatAnyConfigParametersProto):
 
     Examples
     --------
-    ..code-block: python
+    .. code-block:: python
+        :caption: Configuration parameters and missions
 
         from argopy import ArgoFloat
         af = ArgoFloat(6903091)
 
-        af.config.n_missions
+        # Total number and list of configuration parameters:
         af.config.n_params
-
-        # Read the list of configuration parameters:
         af.config.parameters
 
-        # Read the list of missions:
+        # Total number and list of missions:
+        af.config.n_missions
         af.config.missions
 
         # Read one parameter value, with explicit or implicit parameter name:
@@ -200,9 +205,25 @@ class ArgoFloatConfigParametersProto(ArgoFloatAnyConfigParametersProto):
         af.config['CycleTime_hours', 1]
         af.config['CycleTime_hours', 1:3]
 
+    .. code-block:: python
+        :caption: Configuration parameters and cycle numbers
+
+        from argopy import ArgoFloat
+        af = ArgoFloat(6903091)
+
+        # Get a dictionary mapping cycle on mission numbers:
+        af.config.cycles
+
         # Read parameter value for one or more cycle numbers:
+        # (! 2nd index is not 0-based, it's an integer key to look for in cycle numbers)
         af.config.for_cyc('CycleTime_hours', 1)
         af.config.for_cyc('CycleTime_hours', [10, 11])
+
+    .. code-block:: python
+        :caption: Export configuration parameters
+
+        from argopy import ArgoFloat
+        af = ArgoFloat(6903091)
 
         # Export to a DataFrame:
         af.config.to_dataframe()
@@ -210,10 +231,11 @@ class ArgoFloatConfigParametersProto(ArgoFloatAnyConfigParametersProto):
 
     References
     ----------
-    ..code-block: python
+    .. code-block:: python
 
         import argopy
-        argopy.ArgoDocs(29825).open_pdf(55)  # User manual section on "Configuration parameters"
+        # User manual section on "Configuration parameters"
+        argopy.ArgoDocs(29825).open_pdf(55)
     """
 
     def __call__(self, *args, **kwargs) -> NoReturn:
@@ -222,8 +244,39 @@ class ArgoFloatConfigParametersProto(ArgoFloatAnyConfigParametersProto):
             "direct indexing or an explicit method."
         )
 
+    @property
+    @abstractmethod
+    def missions(self) -> list[int]:
+        """List of mission numbers"""
+        raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def cycles(self) -> dict[int, int]:
+        """A dictionary mapping cycle on mission numbers
+
+        Returns
+        -------
+        dict[int, int]:
+            Keys are cycle numbers, values are mission numbers.
+        """
+        raise NotImplementedError
+
     def for_cycle(self, param: str, cycle_numbers: int | list[int]) -> int | float | str | bool | list[int | float | str | bool]:
-        """Retrieve a configuration parameter for a given cycle number"""
+        """Retrieve a configuration parameter for a given cycle number
+
+        Parameters
+        ----------
+        param: str
+            Name of the configuration parameter to retrieve. Can be any string from :attr:`Argofloat.config.parameters`.
+        cycle_numbers: int | list[int]
+            Cycle numbers to retrieve parameter for.
+
+        Returns
+        -------
+        int | float | str | bool | list[int | float | str | bool]
+            One or a list of configuration parameter values.
+        """
         cycle_numbers = to_list(cycle_numbers)
         results = []
         for cyc in cycle_numbers:
@@ -233,27 +286,34 @@ class ArgoFloatConfigParametersProto(ArgoFloatAnyConfigParametersProto):
             return results[0]
         return results
 
-    def to_dataframe(self, implicit: bool = True) -> pd.DataFrame:
+    def to_dataframe(self, missions: None | int | list[int] = None) -> pd.DataFrame:
         """Export configuration parameters to a class:`pd.DataFrame`
 
         Parameters
         ----------
-        implicit: bool, default = True
-            Use implicit parameter's label and unit from the raw 'CONFIG_PARAMETER_NAME' name.
+        missions: None | int | list[int], optional, default=None
+            Possible export parameters for one or a list of mission numbers. By default, export all missions.
+
+        Returns
+        -------
+        :class:`pandas.DataFrame`
         """
-        implicit = to_bool(implicit)
+        if missions is None:
+            mlist = self.missions
+        else:
+            mlist = [m for m in to_list(missions) if m in self.missions]
+        if len(mlist) == 0:
+            raise ValueError(f"Invalid list of mission numbers. Valid values are: {self.missions}")
+
         columns = group_cycles_by_missions(self.cycles, output='group')
         data = []
         for param in self.parameters:
-            if implicit:
-                pname = cfgnameparser(param)
-                this = {'CONFIG_PARAMETER_NAME': f"{pname['label']} ({pname['unit']})"}
-            else:
-                this = {'CONFIG_PARAMETER_NAME': f"{param}"}
-
-            for m in self.missions:
+            pname = cfgnameparser(param)
+            this = {'Name': f"{pname['label']}"}
+            this.update({'Unit': f"{pname['unit']}"})
+            for m in mlist:
                 this.update({f"Mission # {m} / Cycles # {columns[m]}": self[param, m]})
+            this.update({'CONFIG_PARAMETER_NAME': f"{param}"})
             data.append(this)
-        return pd.DataFrame(data, dtype=object).sort_values(by='CONFIG_PARAMETER_NAME').reset_index(drop=True)
-
+        return pd.DataFrame(data, dtype=object).sort_values(by='Name').reset_index(drop=True)
 
