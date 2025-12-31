@@ -123,19 +123,24 @@ jobs:
           label: 'pytest core-pinned'
         continue-on-error: true
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5.5.2
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./cov.xml
-          flags: unittests, core, pinned, py${{matrix.python-version}}
+          report_type: coverage
+          flags: core, pinned, py${{matrix.python-version}}
           name: codecov-github
           fail_ci_if_error: false
           env_vars: RUNNER_OS,PYTHON_VERSION
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
-        uses: codecov/test-results-action@v1
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          report_type: test_results
+          flags: core, pinned, py${{matrix.python-version}}
+          fail_ci_if_error: false
+          env_vars: RUNNER_OS,PYTHON_VERSION
       - name: Save tests log as artifact
         uses: actions/upload-artifact@v6
         with:
@@ -239,19 +244,24 @@ jobs:
           label: 'pytest all-pinned'
         continue-on-error: true
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5.5.2
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./cov.xml
-          flags: unittests, all, pinned, py${{matrix.python-version}}
+          report_type: coverage
+          flags: all, pinned, py${{matrix.python-version}}
           name: codecov-github
           fail_ci_if_error: false
           env_vars: RUNNER_OS,PYTHON_VERSION
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
-        uses: codecov/test-results-action@v1
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          report_type: test_results
+          flags: all, pinned, py${{matrix.python-version}}
+          fail_ci_if_error: false
+          env_vars: RUNNER_OS,PYTHON_VERSION
       - name: Upload tests log to GA
         uses: actions/upload-artifact@v6
         with:
