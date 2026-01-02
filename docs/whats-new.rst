@@ -24,6 +24,11 @@ Breaking changes
   - column `institution_code` is renamed `institution`, to preserve the original Argo index file column name,
   - column `institution` is renamed by `institution_name`.
 
+Internals
+^^^^^^^^^
+
+- Add llms.txt generation, a file to provide information to help LLMs use **Argopy** documentation. See https://llmstxt.org for more.
+
 Energy
 ^^^^^^
 
