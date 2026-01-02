@@ -7,8 +7,7 @@ What's New
 
 |pypi dwn| |conda dwn|
 
-
-v1.4.0 (xx Dec. 2025)
+v1.4.0 (xx Jan. 2026)
 ---------------------
 
 .. _v1.4.0-features:
@@ -40,7 +39,7 @@ Features and front-end API
 
 Internals
 ^^^^^^^^^
-
+- **Add llms.txt generation**, a file to provide information to help LLMs use **Argopy** documentation. See https://llmstxt.org for more.
 - **Fix bug** whereby an error was raise when interpolating on SDL a dataset loaded from an :class:`ArgoFloat` instance. (:pr:`564`) by |gmaze|.
 - **Fix bug** whereby a scatter_plot would fail for a parameter with only N_PROF as dimensions. (:pr:`564`) by |gmaze|.
 - **Fix bug** whereby missing values in <PARAM>_QC variables of xarray dataset were casted as 0 instead of 9. (:commit:`d7bbc23ab386c88a03ae2e9fca7ad274bb1ebcab`) by |gmaze|.
@@ -55,7 +54,7 @@ Breaking changes
 - In the :class:`pandas.DataFrame` output of the :meth:`ArgoIndex.to_dataframe` method (:pr:`528`) by |gmaze|:
 
   - column `institution_code` is renamed `institution`, to preserve the original Argo index file column name,
-  - column `institution` is renamed by `institution_name`.
+  - column `institution` is renamed by `institution_name`, to make explicit this is an **Argopy** addition.
 
 - Deprecation warning for :func:`plot.scatter_plot` arguments ``this_x``, ``this_y`` and ``param`` that are replaced by ``x``, ``y`` and ``param``. (:pr:`557`) by |gmaze|.
 - Internal refactoring, former `argopy.utils.transform` now `argopy.utils.transformers`, former `argopy.utils.compute` now `argopy.utils.computers`. (:pr:`557`) by |gmaze|.

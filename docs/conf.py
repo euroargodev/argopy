@@ -96,6 +96,7 @@ extensions = [
     'sphinxext.rediraffe',
     'sphinx_copybutton',
     'sphinx_design',
+    'sphinx_llms_txt',
 ]
 
 # sphinx_gallery_conf = {
