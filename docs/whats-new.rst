@@ -7,37 +7,7 @@ What's New
 
 |pypi dwn| |conda dwn|
 
-
-Coming up next (unreleased)
----------------------------
-
-Features and front-end API
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-- **New queries to search institution**-related entries in an :class:`ArgoIndex`: :meth:`ArgoIndex.query.institution_code`, :meth:`ArgoIndex.query.institution_name` and :meth:`ArgoIndex.query.dac`, :issue:`527`. (:pr:`528`) by |gmaze|.
-
-Breaking changes
-^^^^^^^^^^^^^^^^
-
-- In the :class:`pandas.DataFrame` output of the :meth:`ArgoIndex.to_dataframe` method (:pr:`528`) by |gmaze|:
-
-  - column `institution_code` is renamed `institution`, to preserve the original Argo index file column name,
-  - column `institution` is renamed by `institution_name`.
-
-Internals
-^^^^^^^^^
-
-- Add llms.txt generation, a file to provide information to help LLMs use **Argopy** documentation. See https://llmstxt.org for more.
-
-Energy
-^^^^^^
-
-.. image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_carbonfootprint_since_last_release.json
-
-.. images:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_carbonfootprint_baseline.json
-
-
-v1.4.0 (xx Dec. 2025)
+v1.4.0 (xx Jan. 2026)
 ---------------------
 
 .. _v1.4.0-features:
@@ -61,11 +31,15 @@ Features and front-end API
 
 .. currentmodule:: argopy
 
+- **New extensions** :class:`ArgoFloat.config` **and** :class:`ArgoFloat.launchconfig` to easily access one float configuration parameter values. (:pr:`558`) by |gmaze|.
+
+- **New queries to search institution**-related entries in an :class:`ArgoIndex`: :meth:`ArgoIndex.query.institution_code`, :meth:`ArgoIndex.query.institution_name` and :meth:`ArgoIndex.query.dac`, :issue:`527`. (:pr:`528`) by |gmaze|.
+
 .. _v1.4.0-internals:
 
 Internals
 ^^^^^^^^^
-
+- **Add llms.txt generation**, a file to provide information to help LLMs use **Argopy** documentation. See https://llmstxt.org for more.
 - **Fix bug** whereby an error was raise when interpolating on SDL a dataset loaded from an :class:`ArgoFloat` instance. (:pr:`564`) by |gmaze|.
 - **Fix bug** whereby a scatter_plot would fail for a parameter with only N_PROF as dimensions. (:pr:`564`) by |gmaze|.
 - **Fix bug** whereby missing values in <PARAM>_QC variables of xarray dataset were casted as 0 instead of 9. (:commit:`d7bbc23ab386c88a03ae2e9fca7ad274bb1ebcab`) by |gmaze|.
@@ -76,6 +50,11 @@ Internals
 
 Breaking changes
 ^^^^^^^^^^^^^^^^
+
+- In the :class:`pandas.DataFrame` output of the :meth:`ArgoIndex.to_dataframe` method (:pr:`528`) by |gmaze|:
+
+  - column `institution_code` is renamed `institution`, to preserve the original Argo index file column name,
+  - column `institution` is renamed by `institution_name`, to make explicit this is an **Argopy** addition.
 
 - Deprecation warning for :func:`plot.scatter_plot` arguments ``this_x``, ``this_y`` and ``param`` that are replaced by ``x``, ``y`` and ``param``. (:pr:`557`) by |gmaze|.
 - Internal refactoring, former `argopy.utils.transform` now `argopy.utils.transformers`, former `argopy.utils.compute` now `argopy.utils.computers`. (:pr:`557`) by |gmaze|.
