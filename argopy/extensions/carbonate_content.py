@@ -285,9 +285,9 @@ class CONTENT(ArgoAccessorExtension):
             return param, out
 
         # Get raw predictions for each parameter (in parallel)
-        results = Parallel(n_jobs=n_jobs, backend="loky")(
-            delayed(predict_param)(param) for param in params
-        )
+        with Parallel(n_jobs=n_jobs, prefer=None) as parallel:
+            results = parallel(delayed(predict_param)(param) for param in params)
+
         # Convert results list to dict
         raw_outputs = {param: out for param, out in results}
 
@@ -505,9 +505,8 @@ class CONTENT(ArgoAccessorExtension):
             return (p, deriv, out_param1, out_param2)
 
         # Compute derivatives for all 6 parameter pairs (in parallel)
-        results = Parallel(n_jobs=n_jobs, backend="loky")(
-            delayed(compute_pair_derivatives)(p) for p in range(6)
-        )
+        with Parallel(n_jobs=n_jobs, prefer=None) as parallel:
+            results = parallel(delayed(compute_pair_derivatives)(p) for p in range(6))
 
         # Store results in dcout array
         for p, deriv, out_param1, out_param2 in results:
@@ -622,9 +621,8 @@ class CONTENT(ArgoAccessorExtension):
             return (p, deriv, uncertainties, out_param1, out_param2)
 
         # Compute uncertainties for all 6 parameter combinations (in parallel)
-        results = Parallel(n_jobs=n_jobs, backend="loky")(
-            delayed(compute_pair_uncertainties)(p) for p in range(6)
-        )
+        with Parallel(n_jobs=n_jobs, prefer=None) as parallel:
+            results = parallel(delayed(compute_pair_uncertainties)(p) for p in range(6))
 
         # Store results
         for p, deriv, uncertainties, out_param1, out_param2 in results:
