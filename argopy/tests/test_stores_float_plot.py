@@ -26,7 +26,7 @@ skip_offline = pytest.mark.skipif(0, reason="Skipped tests for offline implement
 
 
 """
-Select GDAC host to be use for plot accessor test 
+Select GDAC host to be use for plot extension tests 
 """
 VALID_HOST = argopy.tutorial.open_dataset("gdac")[0]  # Use local files
 # 'http1': mocked_server_address,  # Use the mocked http server
