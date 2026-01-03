@@ -7,8 +7,7 @@ What's New
 
 |pypi dwn| |conda dwn|
 
-
-v1.4.0 (xx Dec. 2025)
+v1.4.0 (xx Jan. 2026)
 ---------------------
 
 .. _v1.4.0-features:
@@ -32,11 +31,17 @@ Features and front-end API
 
 .. currentmodule:: argopy
 
+- **New extensions** :class:`ArgoFloat.config` **and** :class:`ArgoFloat.launchconfig` to easily access one float configuration parameter values. (:pr:`558`) by |gmaze|.
+
+- **New queries to search institution**-related entries in an :class:`ArgoIndex`: :meth:`ArgoIndex.query.institution_code`, :meth:`ArgoIndex.query.institution_name` and :meth:`ArgoIndex.query.dac`, :issue:`527`. (:pr:`528`) by |gmaze|.
+
 .. _v1.4.0-internals:
 
 Internals
 ^^^^^^^^^
-
+- **Add llms.txt generation**, a file to provide information to help LLMs use **Argopy** documentation. See https://llmstxt.org for more.
+- **Fix bug** whereby an error was raise when interpolating on SDL a dataset loaded from an :class:`ArgoFloat` instance. (:pr:`564`) by |gmaze|.
+- **Fix bug** whereby a scatter_plot would fail for a parameter with only N_PROF as dimensions. (:pr:`564`) by |gmaze|.
 - **Fix bug** whereby missing values in <PARAM>_QC variables of xarray dataset were casted as 0 instead of 9. (:commit:`d7bbc23ab386c88a03ae2e9fca7ad274bb1ebcab`) by |gmaze|.
 - **Fix upstream compatibility** and imposes xarray >=2025.7 and <=2025.9.0. (:issue:`539`).
 - Removed python 3.10 environments from `ci/env_managers` CLI utility. (:pr:`557`) by |gmaze|.
@@ -46,7 +51,12 @@ Internals
 Breaking changes
 ^^^^^^^^^^^^^^^^
 
-- Deprecation warning for :func:`plot.scatter_plot` arguments ``this_x`` and ``this_y`` that are replaced by ``x`` and ``y``. (:pr:`557`) by |gmaze|.
+- In the :class:`pandas.DataFrame` output of the :meth:`ArgoIndex.to_dataframe` method (:pr:`528`) by |gmaze|:
+
+  - column `institution_code` is renamed `institution`, to preserve the original Argo index file column name,
+  - column `institution` is renamed by `institution_name`, to make explicit this is an **Argopy** addition.
+
+- Deprecation warning for :func:`plot.scatter_plot` arguments ``this_x``, ``this_y`` and ``param`` that are replaced by ``x``, ``y`` and ``param``. (:pr:`557`) by |gmaze|.
 - Internal refactoring, former `argopy.utils.transform` now `argopy.utils.transformers`, former `argopy.utils.compute` now `argopy.utils.computers`. (:pr:`557`) by |gmaze|.
 
 .. _v1.4.0-energy:
@@ -73,7 +83,6 @@ Features and front-end API
 
 Internals
 ^^^^^^^^^
-
 - For mainteners, add a public CLI script ``cli/update_json_assets`` to update static assets. (:pr:`540`) by |gmaze|.
 
 - **Update list of Reference tables** with R14 on "Argo technical parameter names" and R31 on "Argo float ending cause". The :class:`ArgoNVSReferenceTables` internal list of valid reference tables is now taken from a static asset file generated with ``cli/update_json_assets`` on each new release. (:pr:`540`) by |gmaze|.
@@ -87,7 +96,6 @@ Internals
 - **New post method for the** :class:`stores.httpstore` allowing for HTTP POST methods to web-API, by |gmaze|.
 
 - **Fix upstream compatibility** whereby xarray >= 2025.8 deprecation cycle for changing default keyword arguments in :meth:`xarray.merge` and :meth:`xarray.concat` would make Argopy to fail with internal data processing, :issue:`521`. (:pr:`504`) by |gmaze|.
-
 
 .. _v1.3.1-energy:
 

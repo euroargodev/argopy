@@ -887,9 +887,9 @@ class CanyonB(ArgoAccessorExtension):
         # Make predictions of each of the requested parameters
         if len(params) > 1:
             # Parallel execution
-            results = Parallel(n_jobs=n_jobs, backend="loky")(  # all CPUs by default
-                delayed(process_param)(param) for param in params
-            )
+            with Parallel(n_jobs=n_jobs, prefer=None) as parallel:
+                results = parallel(delayed(process_param)(param) for param in params)
+
             # Convert results list to dict for processing
             results_dict = {param: out for param, out in results}
         else:

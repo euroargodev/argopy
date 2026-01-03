@@ -317,6 +317,9 @@
     argopy.ArgoIndex.query.parameter_data_mode
     argopy.ArgoIndex.query.profiler_type
     argopy.ArgoIndex.query.profiler_label
+    argopy.ArgoIndex.query.institution_code
+    argopy.ArgoIndex.query.institution_name
+    argopy.ArgoIndex.query.dac
 
     argopy.ArgoIndex.query.wmo_cyc
     argopy.ArgoIndex.query.lon_lat
@@ -384,7 +387,7 @@
 
     argopy.errors.InvalidDatasetStructure
 
-    argopy.stores.float.spec.ArgoFloatProto
+    argopy.stores.float.spec.FloatStoreProto
     argopy.stores.ArgoFloat
     argopy.ArgoFloat.open_dataset
     argopy.ArgoFloat.ls_dataset
@@ -404,3 +407,29 @@
     argopy.ArgoFloat.plot.trajectory
     argopy.ArgoFloat.plot.scatter
     argopy.ArgoFloat.plot.map
+
+    argopy.stores.ArgoFloat.config
+    argopy.stores.ArgoFloat.config.n_params
+    argopy.stores.ArgoFloat.config.parameters
+    argopy.stores.ArgoFloat.config.n_missions
+    argopy.stores.ArgoFloat.config.missions
+    argopy.stores.ArgoFloat.config.cycles
+    argopy.stores.ArgoFloat.config.for_cycles
+    argopy.stores.ArgoFloat.config.to_dataframe
+    argopy.ArgoFloat.config
+    argopy.ArgoFloat.config.n_params
+    argopy.ArgoFloat.config.parameters
+    argopy.ArgoFloat.config.n_missions
+    argopy.ArgoFloat.config.missions
+    argopy.ArgoFloat.config.cycles
+    argopy.ArgoFloat.config.for_cycles
+    argopy.ArgoFloat.config.to_dataframe
+
+    argopy.stores.ArgoFloat.launchconfig
+    argopy.stores.ArgoFloat.launchconfig.n_params
+    argopy.stores.ArgoFloat.launchconfig.parameters
+    argopy.stores.ArgoFloat.launchconfig.to_dataframe
+    argopy.ArgoFloat.launchconfig
+    argopy.ArgoFloat.launchconfig.n_params
+    argopy.ArgoFloat.launchconfig.parameters
+    argopy.ArgoFloat.launchconfig.to_dataframe

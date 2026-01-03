@@ -67,6 +67,7 @@ dependencies:
   - nbsphinx
   - jinja2
   - sphinx-issues
+  - sphinx-llms-txt
   - sphinx_rtd_theme
   - sphinx-book-theme
   - pydata-sphinx-theme
