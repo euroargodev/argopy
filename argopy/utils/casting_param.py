@@ -53,7 +53,7 @@ def cast_config_parameter(param: str, pvalue: Any) -> float | int | bool:
         "yyyy",
     ]:
         return float(pvalue)
-    elif unit in ["count", "number"]:
+    elif unit in ["count", "number", "days"]:
         return int(pvalue)
     elif unit in ["logical"]:
         return to_bool(pvalue)
