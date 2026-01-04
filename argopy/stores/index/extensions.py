@@ -524,7 +524,7 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
             idx.query.institution_code(['IF', 'JA'])
 
         .. code-block:: python
-            :captio: List valid codes
+            :caption: List valid codes
 
             from argopy import ArgoNVSReferenceTables
             valid_codes = ArgoNVSReferenceTables().tbl(4)['altLabel']
@@ -561,7 +561,7 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
             idx.query.institution_name(['Canada', 'germany'])
 
         .. code-block:: python
-            :captio: List valid names
+            :caption: List valid names
 
             from argopy import ArgoNVSReferenceTables
             valid_names = ArgoNVSReferenceTables().tbl(4)['prefLabel']
