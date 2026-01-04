@@ -64,8 +64,8 @@ Breaking changes
 Energy
 ^^^^^^
 
-.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.4.0%20%5BgCO2eq%5D-TBA-black?style=plastic&labelColor=grey
-
+|eqco2_since_last_release|
+|eqco2_baseline|
 
 v1.3.1 (22 Oct. 2025)
 ---------------------
@@ -1526,4 +1526,5 @@ v0.1.0 (17 Mar. 2020)
 .. |release date| image:: https://img.shields.io/github/release-date/euroargodev/argopy?display_date=published_at
    :target: //github.com/euroargodev/argopy/releases
 .. |eqco2_since_last_release| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_carbonfootprint_since_last_release.json
+.. |eqco2_baseline| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_carbonfootprint_baseline.json
 
