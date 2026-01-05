@@ -16,6 +16,68 @@ Features and front-end API
 
 - **New** :class:`ArgoSensor` class to work with Argo sensor models, types and floats equipped with. Check the new :ref:`Argo sensors` documentation section. (:pr:`532`) by |gmaze|.
 
+Energy
+^^^^^^
+
+|eqco2_since_last_release|
+|eqco2_baseline|
+
+
+v1.4.0 (5 Jan. 2026)
+--------------------
+
+.. _v1.4.0-features:
+
+.. currentmodule:: xarray
+
+- **Predict nutrients and carbonates in the global ocean with their uncertainties** with the two new classes :class:`Dataset.argo.canyon_b` and :class:`Dataset.argo.content`. The first class allows users to make predictions of the water-column nutrient concentrations (NO3, PO4, SiOH4) and carbonate system variables (AT, DIC, pHT, pCO2) using the :ref:`CANYON-B model (see doc.)<complement-canyon-b>` while the second class provides improved predictions of carbonate system variables using the :ref:`CONTENT (see doc.)<complement-content>` model. (:pr:`535` and :pr:`542`) by |fricour|. It goes as simply as:
+
+.. code-block:: python
+
+    from argopy import DataFetcher
+    ArgoSet = DataFetcher(ds='bgc', params='DOXY', measured='DOXY').float(1902605)
+    ds = ArgoSet.to_xarray()
+    ds.argo.canyon_b.predict()
+    # or
+    ds.argo.content.predict()
+
+
+.. currentmodule:: argopy
+
+- **New extensions** :class:`ArgoFloat.config` **and** :class:`ArgoFloat.launchconfig` to easily access one float configuration parameter values. (:pr:`558`) by |gmaze|.
+
+- **New queries to search institution**-related entries in an :class:`ArgoIndex`: :meth:`ArgoIndex.query.institution_code`, :meth:`ArgoIndex.query.institution_name` and :meth:`ArgoIndex.query.dac`, :issue:`527`. (:pr:`528`) by |gmaze|.
+
+.. _v1.4.0-internals:
+
+Internals
+^^^^^^^^^
+- **Add llms.txt generation**, a file to provide information to help LLMs use **Argopy** documentation. See https://llmstxt.org for more.
+- **Fix bug** whereby an error was raise when interpolating on SDL a dataset loaded from an :class:`ArgoFloat` instance. (:pr:`564`) by |gmaze|.
+- **Fix bug** whereby a scatter_plot would fail for a parameter with only N_PROF as dimensions. (:pr:`564`) by |gmaze|.
+- **Fix bug** whereby missing values in <PARAM>_QC variables of xarray dataset were casted as 0 instead of 9. (:commit:`d7bbc23ab386c88a03ae2e9fca7ad274bb1ebcab`) by |gmaze|.
+- **Fix upstream compatibility** and imposes xarray >=2025.7 and <=2025.9.0. (:issue:`539`).
+- Removed python 3.10 environments from `ci/env_managers` CLI utility. (:pr:`557`) by |gmaze|.
+
+.. _v1.4.0-breaking:
+
+Breaking changes
+^^^^^^^^^^^^^^^^
+
+- In the :class:`pandas.DataFrame` output of the :meth:`ArgoIndex.to_dataframe` method (:pr:`528`) by |gmaze|:
+
+  - column `institution_code` is renamed `institution`, to preserve the original Argo index file column name,
+  - column `institution` is renamed by `institution_name`, to make explicit this is an **Argopy** addition.
+
+- Deprecation warning for :func:`plot.scatter_plot` arguments ``this_x``, ``this_y`` and ``param`` that are replaced by ``x``, ``y`` and ``param``. (:pr:`557`) by |gmaze|.
+- Internal refactoring, former `argopy.utils.transform` now `argopy.utils.transformers`, former `argopy.utils.compute` now `argopy.utils.computers`. (:pr:`557`) by |gmaze|.
+
+.. _v1.4.0-energy:
+
+Energy
+^^^^^^
+
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.4.0%20%5BgCO2eq%5D-TBA-black?style=plastic&labelColor=grey
 
 v1.3.1 (22 Oct. 2025)
 ---------------------
@@ -33,7 +95,6 @@ Features and front-end API
 
 Internals
 ^^^^^^^^^
-
 - For mainteners, add a public CLI script ``cli/update_json_assets`` to update static assets. (:pr:`540`) by |gmaze|.
 
 - **Update list of Reference tables** with R14 on "Argo technical parameter names" and R31 on "Argo float ending cause". The :class:`ArgoNVSReferenceTables` internal list of valid reference tables is now taken from a static asset file generated with ``cli/update_json_assets`` on each new release. (:pr:`540`) by |gmaze|.
@@ -48,13 +109,12 @@ Internals
 
 - **Fix upstream compatibility** whereby xarray >= 2025.8 deprecation cycle for changing default keyword arguments in :meth:`xarray.merge` and :meth:`xarray.concat` would make Argopy to fail with internal data processing, :issue:`521`. (:pr:`504`) by |gmaze|.
 
-
 .. _v1.3.1-energy:
 
 Energy
 ^^^^^^
 
-.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.3.1%20%5BgCO2eq%5D-TBA-black?style=plastic&labelColor=grey
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.3.1%20%5BgCO2eq%5D-1186-black?style=plastic&labelColor=grey
 
 v1.3.0 (22 Aug. 2025)
 ---------------------
@@ -105,7 +165,7 @@ Breaking changes
 Energy
 ^^^^^^
 
-.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.3.0%20%5BgCO2eq%5D-TBA-black?style=plastic&labelColor=grey
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.3.0%20%5BgCO2eq%5D-1258-black?style=plastic&labelColor=grey
 
 
 v1.2.0 (9 June 2025)
@@ -140,7 +200,7 @@ Internals
 Energy
 ^^^^^^
 
-.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.2.0%20%5BgCO2eq%5D-1328.99-black?style=plastic&labelColor=grey
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.2.0%20%5BgCO2eq%5D-0.27-black?style=plastic&labelColor=grey
 
 
 v1.1.0 (18 March 2025)
@@ -242,7 +302,7 @@ Internals
 Energy
 ^^^^^^
 
-.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.1.0%20%5BgCO2eq%5D-1328.99-black?style=plastic&labelColor=grey
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.1.0%20%5BgCO2eq%5D-4302.71-black?style=plastic&labelColor=grey
 
 
 v1.0.0 (16 Oct. 2024)
@@ -1465,6 +1525,7 @@ v0.1.0 (17 Mar. 2020)
 
 .. |gmaze| replace:: `G. Maze <http://www.github.com/gmaze>`__
 .. |quai20| replace:: `K. Balem <http://www.github.com/quai20>`__
+.. |fricour| replace:: `F. Ricour <https://www.github.com/fricour>`__
 
 .. |pypi dwn| image:: https://img.shields.io/pypi/dm/argopy?label=Pypi%20downloads
    :target: //pypi.org/project/argopy/
@@ -1477,4 +1538,5 @@ v0.1.0 (17 Mar. 2020)
 .. |release date| image:: https://img.shields.io/github/release-date/euroargodev/argopy?display_date=published_at
    :target: //github.com/euroargodev/argopy/releases
 .. |eqco2_since_last_release| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_carbonfootprint_since_last_release.json
+.. |eqco2_baseline| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_carbonfootprint_baseline.json
 

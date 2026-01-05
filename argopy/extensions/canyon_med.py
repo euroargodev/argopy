@@ -14,13 +14,15 @@ nan_value = np.nan if not hasattr(np, 'NaN') else np.NaN
 
 @register_argo_accessor("canyon_med")
 class CanyonMED(ArgoAccessorExtension):
-    """
-    Implementation of the CANYON-MED method.
+    """Nutrients and Carbonate System Variables predictor with CANYON-MED
 
-    CANYON-MED is a Regional Neural Network Approach to Estimate Water-Column Nutrient Concentrations
-    and Carbonate System Variables in the Mediterranean Sea ([1]_, [2]_).
+    This is an implementation of the CANYON-MED method: a Regional Neural Network Approach to Estimate Water-Column Nutrient Concentrations and Carbonate System Variables in the Mediterranean Sea ([1]_, [2]_).
 
     When using this method, please cite the papers.
+
+    See Also
+    --------
+    :meth:`canyon_med.predict`, :attr:`canyon_med.input_list`, :attr:`canyon_med.output_list`
 
     Examples
     --------
@@ -59,8 +61,11 @@ class CanyonMED(ArgoAccessorExtension):
     ne = 7
     """Number of inputs"""
 
-    output_list = ["PO4", "NO3", "DIC", "SiOH4", "AT", "pHT"]
+    _output_list = ["PO4", "NO3", "DIC", "SiOH4", "AT", "pHT"]
     """List of parameters that can be predicted with this Neural Network"""
+
+    _input_list = ["LATITUDE", "LONGITUDE", "PRES", "TEMP", "PSAL", "DOXY"]
+    """List of parameters required to make predictions"""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -75,6 +80,30 @@ class CanyonMED(ArgoAccessorExtension):
         self.n_list = 5
         self.path2coef = Path(path2assets).joinpath("canyon-med")
         self._input = None  # Private CANYON-MED input dataframe
+
+    @property
+    def input_list(self) -> list[str]:
+        """List of parameters required to make predictions with CANYON-MED
+
+        Returns
+        -------
+        list[str], default = ["LATITUDE", "LONGITUDE", "PRES", "TEMP", "PSAL", "DOXY"]
+        """
+        return self._input_list.copy()
+
+    @property
+    def output_list(self) -> list[str]:
+        """List of all possible output variables for CANYON-MED
+
+        Returns
+        -------
+        list[str], default = ["PO4", "NO3", "DIC", "SiOH4", "AT", "pHT"]
+
+        Notes
+        -----
+        DIC = CT in Bittig et al., (2018), keep it that way to be consistent with the canyon-b extension.
+        """
+        return self._output_list.copy()
 
     def get_param_attrs(self, param: str) -> dict:
         """Provides attributes to be added to a given predicted parameter"""
@@ -267,7 +296,7 @@ class CanyonMED(ArgoAccessorExtension):
 
     @property
     def input(self) -> pd.DataFrame:
-        """CANYON-MED input :class:`pd.DataFrame`
+        """CANYON-MED input as :class:`pd.DataFrame`
 
         This :class:`pd.DataFrame` is stored internally to avoid to re-compute it for each prediction
 

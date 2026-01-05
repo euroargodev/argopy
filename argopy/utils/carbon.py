@@ -139,6 +139,7 @@ class GreenCoding:
             "City",
             "GridIntensity",
             "gCO2eq",
+            "comment",
         ]
 
         results = copy.deepcopy(self.workflows)

@@ -12,6 +12,8 @@ ignore =
     W503
     # whitespace before ':' (https://black.readthedocs.io/en/stable/guides/using_black_with_other_tools.html#e203)
     E203
+per-file-ignores =
+    argopy/extensions/optical_modeling.py:W605
 exclude =
     # No need to traverse our git directory
     .git,

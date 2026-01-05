@@ -26,7 +26,7 @@ skip_offline = pytest.mark.skipif(0, reason="Skipped tests for offline implement
 
 
 """
-Select GDAC host to be use for plot accessor test 
+Select GDAC host to be use for plot extension tests 
 """
 VALID_HOST = argopy.tutorial.open_dataset("gdac")[0]  # Use local files
 # 'http1': mocked_server_address,  # Use the mocked http server
@@ -68,11 +68,31 @@ class Test_FloatStore_PlotAccessor:
         "wmo", [VALID_WMO[0]], indirect=False, ids=[f"wmo={w}" for w in [VALID_WMO[0]]]
     )
     @pytest.mark.parametrize(
-        "pres", [0., 200.], indirect=False, ids=[f"pres={p}" for p in [0., 200.]]
+        "pres",
+        [0.0, -1.0, 200.0],
+        indirect=False,
+        ids=[f"pres={p}" for p in [0.0, -1.0, 200.0]],
     )
     def test_plot_map(self, wmo, pres):
         af = ArgoFloat(wmo, host=VALID_HOST, cache=True)
         fig, ax, hdl = af.plot.map("TEMP", pres=pres, ds="prof")
+        assert isinstance(fig, mpl.figure.Figure)
+        assert isinstance(ax, cartopy.mpl.geoaxes.GeoAxesSubplot)
+        mpl.pyplot.close(fig)
+
+    @requires_cartopy
+    @pytest.mark.parametrize(
+        "wmo", [VALID_WMO[0]], indirect=False, ids=[f"wmo={w}" for w in [VALID_WMO[0]]]
+    )
+    @pytest.mark.parametrize(
+        "param",
+        ["TEMP_QC", "PROFILE_TEMP_QC"],
+        indirect=False,
+        ids=[f"param={p}" for p in ["TEMP_QC", "PROFILE_TEMP_QC"]],
+    )
+    def test_plot_map_prof(self, wmo, param):
+        af = ArgoFloat(wmo, host=VALID_HOST, cache=True)
+        fig, ax, hdl = af.plot.map(param, ds="prof")
         assert isinstance(fig, mpl.figure.Figure)
         assert isinstance(ax, cartopy.mpl.geoaxes.GeoAxesSubplot)
         mpl.pyplot.close(fig)
@@ -93,7 +113,10 @@ class Test_FloatStore_PlotAccessor:
         "cbar", [True, False], indirect=False, ids=[f"cbar={c}" for c in [True, False]]
     )
     @pytest.mark.parametrize(
-        "param", ["TEMP", "TEMP_QC"], indirect=False, ids=[f"param={p}" for p in ["TEMP", "TEMP_QC"]]
+        "param",
+        ["TEMP", "TEMP_QC"],
+        indirect=False,
+        ids=[f"param={p}" for p in ["TEMP", "TEMP_QC"]],
     )
     def test_plot_scatter(self, wmo, cbar, param):
         af = ArgoFloat(wmo, host=VALID_HOST, cache=True)
