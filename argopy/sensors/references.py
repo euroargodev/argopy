@@ -6,11 +6,11 @@ import logging
 import fnmatch
 
 from argopy.options import OPTIONS
-from argopy.stores import httpstore, filestore
+from argopy.stores import httpstore
 from argopy.related.reference_tables import ArgoNVSReferenceTables
 from argopy.errors import DataNotFound, OptionValueError
 
-from argopy.utils import path2assets
+from argopy.utils.locals import Asset
 from argopy.utils.decorators import register_accessor
 from argopy.utils.format import ppliststr
 from argopy.utils.checkers import to_list
@@ -77,16 +77,10 @@ class SensorReferenceHolder(ABC):
         These mapping files were download from https://github.com/OneArgo/ArgoVocabs/issues/156.
         """
         df = []
-        for p in (
-            Path(path2assets).joinpath("nvs_R25_R27").glob("NVS_R25_R27_mappings_*.txt")
-        ):
-            df.append(
-                filestore().read_csv(
-                    p,
-                    header=None,
-                    names=["origin", "model", "?", "destination", "type", "??"],
-                )
-            )
+        for uri in ['1', '2', '2b', '3', '3b', '4_cndc', '4_ido_doxy', '4_pres', '4_temp']:
+            df.append(Asset().load(f"nvs_R25_R27:NVS_R25_R27_mappings_{uri}.txt",
+                                   header=None,
+                                   names=["origin", "model", "?", "destination", "type", "??"]))
         df = pd.concat(df)
         for col in ['origin', 'destination', 'type', 'model', '?', '??']:
             df[col] = df[col].apply(lambda x: x.strip())
