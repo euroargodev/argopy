@@ -77,7 +77,7 @@ Breaking changes
 Energy
 ^^^^^^
 
-.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.4.0%20%5BgCO2eq%5D-TBA-black?style=plastic&labelColor=grey
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.4.0%20%5BgCO2eq%5D-1666-black?style=plastic&labelColor=grey
 
 v1.3.1 (22 Oct. 2025)
 ---------------------
