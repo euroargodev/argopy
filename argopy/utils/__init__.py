@@ -62,7 +62,7 @@ from .transformers import (
     split_data_mode,
 )
 from .mappers import map_vars_to_dict
-from .format import argo_split_path, format_oneline, UriCName, redact, dirfs_relpath, urnparser, ppliststr, mono2multi, cfgnameparser, group_cycles_by_missions
+from .format import argo_split_path, format_oneline, UriCName, redact, dirfs_relpath, urnparser, ppliststr
 from .loggers import warnUnless, log_argopy_callerstack
 from .carbon import GreenCoding, Github
 from . import optical_modeling
@@ -153,11 +153,8 @@ __all__ = (
     "dirfs_relpath",
     "UriCName",
     "redact",
-    "cfgnameparser",
-    "mono2multi",
     "urnparser",
     "ppliststr",
-    "group_cycles_by_missions",
     # Loggers:
     "warnUnless",
     "log_argopy_callerstack",
