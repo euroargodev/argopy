@@ -13,8 +13,8 @@ try:
 except ImportError:
     pass
 
-from ..options import OPTIONS
-from .utils import path2assets
+from argopy.options import OPTIONS
+from argopy.related.utils import path2assets
 
 
 class Assistant:

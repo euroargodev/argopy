@@ -5,11 +5,11 @@ import pandas as pd
 from typing import Literal
 import logging
 
-from .. import __version__
-from ..errors import DataNotFound, InvalidDataset
-from ..stores import httpstore
-from ..options import OPTIONS
-from .. import ArgoDocs
+from argopy import __version__
+from argopy.errors import DataNotFound, InvalidDataset
+from argopy.stores import httpstore
+from argopy.options import OPTIONS
+from argopy import ArgoDocs
 
 
 log = logging.getLogger("argopy.related.mistralai")
