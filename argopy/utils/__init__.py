@@ -36,7 +36,7 @@ from .lists import (
 from .caching import clear_cache, lscache
 from .monitored_threadpool import MyThreadPoolExecutor as MonitoredThreadPoolExecutor
 from .chunking import Chunker
-from .accessories import Registry, float_wmo, NVSrow
+from .accessories import Registry, float_wmo, NVSrow, ListStrProperty
 from .locals import (  # noqa: F401
     show_versions,
     show_options,
@@ -51,16 +51,17 @@ from .geo import (
     conv_lon,
     toYearFraction,
     YearFraction_to_datetime,
+    point_in_polygon,
 )
-from .compute import linear_interpolation_remap, groupby_remap
-from .transform import (
+from .computers import linear_interpolation_remap, groupby_remap
+from .transformers import (
     fill_variables_not_in_all_datasets,
     drop_variables_not_in_all_datasets,
     merge_param_with_param_adjusted,
     filter_param_by_data_mode,
     split_data_mode,
 )
-from .format import argo_split_path, format_oneline, UriCName, redact, dirfs_relpath, urnparser, ppliststr
+from .format import argo_split_path, format_oneline, UriCName, redact, dirfs_relpath, urnparser, ppliststr, mono2multi, cfgnameparser, group_cycles_by_missions
 from .loggers import warnUnless, log_argopy_callerstack
 from .carbon import GreenCoding, Github
 from . import optical_modeling
@@ -118,6 +119,7 @@ __all__ = (
     "Registry",
     "float_wmo",
     "NVSrow",
+    "ListStrProperty",
     # Locals (environments, versions, systems):
     "path2assets",
     "show_versions",
@@ -131,6 +133,7 @@ __all__ = (
     "conv_lon",
     "toYearFraction",
     "YearFraction_to_datetime",
+    "point_in_polygon",
     # Computation with datasets:
     "linear_interpolation_remap",
     "groupby_remap",
@@ -146,8 +149,11 @@ __all__ = (
     "dirfs_relpath",
     "UriCName",
     "redact",
+    "cfgnameparser",
+    "mono2multi",
     "urnparser",
     "ppliststr",
+    "group_cycles_by_missions",
     # Loggers:
     "warnUnless",
     "log_argopy_callerstack",
