@@ -123,10 +123,10 @@ class FloatStoreProto(ABC):
         raise NotImplementedError("Not implemented")
 
     def load_metadata_from_meta_file(self):
-        """Method to load float meta-data"""
+        """Method to load float meta-data from the netcdf file"""
         data = {}
 
-        ds = self.open_dataset("meta")
+        ds = self.dataset("meta")
         data.update(
             {
                 "deployment": {
@@ -324,7 +324,7 @@ class FloatStoreProto(ABC):
 
     def dataset(self, name: str = "prof"):
         if name not in self._dataset:
-            self._dataset[name] = self.open_dataset(name)
+            self.open_dataset(name)  # will commit this dataset to self._dataset dict
         return self._dataset[name]
 
     @property

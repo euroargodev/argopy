@@ -4,7 +4,7 @@ import numpy as np
 from typing import List
 
 from .....options import OPTIONS
-from .....errors import InvalidDatasetStructure
+from .....errors import InvalidDatasetStructure, OptionValueError
 from .....utils import is_indexbox, check_wmo, check_cyc, to_list, conv_lon
 from ...extensions import register_ArgoIndex_accessor, ArgoIndexSearchEngine
 from ..index_s3 import search_s3
@@ -476,4 +476,75 @@ class SearchEngine(ArgoIndexSearchEngine):
             return self._obj
         else:
             self._obj.search_type.update(namer(profiler_type))
+            return search_filter
+
+    @search_s3
+    def institution_code(self, institution_code: List[str], nrows=None, composed=False):
+        def checker(institution_code):
+            if "institution" not in self._obj.convention_columns:
+                raise InvalidDatasetStructure("Cannot search for institution codes in this index)")
+            log.debug("Argo index searching for institution code in %s ..." % institution_code)
+            institution_code = to_list(institution_code)
+            valid_codes = []
+            for code in institution_code:
+                if self._obj.valid('institution_code', code):
+                    valid_codes.append(code.upper())
+            if len(valid_codes) == 0:
+                raise OptionValueError(f"No valid codes found for institution in {institution_code}. Valid codes are: {self._obj.valid.institution_code}")
+            else:
+                return valid_codes
+
+        def namer(institution_code):
+            return {"INST_CODE": institution_code}
+
+        def composer(institution_code):
+            return (
+                self._obj.index["institution"]
+                .fillna("")
+                .isin(institution_code)
+            )
+
+        institution_code = checker(institution_code)
+        self._obj.load(nrows=self._obj._nrows_index)
+        search_filter = composer(institution_code)
+        if not composed:
+            self._obj.search_type = namer(institution_code)
+            self._obj.search_filter = search_filter
+            self._obj.run(nrows=nrows)
+            return self._obj
+        else:
+            self._obj.search_type.update(namer(institution_code))
+            return search_filter
+
+    @search_s3
+    def dac(self, dac: List[str], nrows=None, composed=False):
+        def checker(dac):
+            if "file" not in self._obj.convention_columns:
+                raise InvalidDatasetStructure("Cannot search for DAC in this index)")
+            log.debug("Argo index searching for DAC in %s ..." % dac)
+            return to_list(dac)
+
+        def namer(dac):
+            return {"DAC": dac}
+
+        def composer(DACs):
+            filt = []
+            for dac in DACs:
+                filt.append(
+                    self._obj.index["file"].str.contains(
+                        "%s/" % dac, regex=True, case=False
+                    )
+                )
+            return self._obj._reduce_a_filter_list(filt, op="or")
+
+        dac = checker(dac)
+        self._obj.load(nrows=self._obj._nrows_index)
+        search_filter = composer(dac)
+        if not composed:
+            self._obj.search_type = namer(dac)
+            self._obj.search_filter = search_filter
+            self._obj.run(nrows=nrows)
+            return self._obj
+        else:
+            self._obj.search_type.update(namer(dac))
             return search_filter

@@ -1,7 +1,6 @@
 import pandas as pd
 import logging
 
-from .....errors import DataNotFound
 from .... import httpstore
 from ...spec import FloatStoreProto
 
@@ -30,6 +29,13 @@ class FloatStore(FloatStoreProto):
                 "/idx", ""
             )  # Fix s3 anomaly whereby index files are not at the 'dac' level
 
+        if not self.host_protocol == "http":
+            self._ea_fs = httpstore(
+                cache=self.cache, cachedir=self.cachedir
+            )
+        else:
+            self._ea_fs = self.fs
+
     @property
     def api_point(self):
         """Euro-Argo fleet-monitoring API points"""
@@ -57,9 +63,7 @@ class FloatStore(FloatStoreProto):
         :class:`ArgoFloat.load_technicaldata`
         """
         try:
-            self._metadata = httpstore(
-                cache=self.cache, cachedir=self.cachedir
-            ).open_json(self.api_point["meta"], errors="raise")
+            self._metadata = self._ea_fs.open_json(self.api_point["meta"], errors="raise")
         except Exception:
             # Try to load metadata from the meta file
             # to so, we first need the DAC name
@@ -85,9 +89,7 @@ class FloatStore(FloatStoreProto):
         --------
         :class:`ArgoFloat.load_metadata`
         """
-        self._technicaldata = httpstore(
-            cache=self.cache, cachedir=self.cachedir
-        ).open_json(self.api_point["technical"], errors="raise")
+        self._technicaldata = self._ea_fs.open_json(self.api_point["technical"], errors="raise")
         return self
 
     @property

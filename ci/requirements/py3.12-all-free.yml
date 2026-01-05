@@ -5,7 +5,7 @@ dependencies:
   - python = 3.12
 
 # CORE:
-  - aiohttp
+  - aiohttp <= 3.12.15
   - decorator
   - erddapy
   - fsspec
@@ -15,10 +15,11 @@ dependencies:
   - requests
   - scipy
   - toolz
-  - xarray >= 2025.8.0
+  - xarray >=2025.7.0,<=2025.9.0
 
 # EXT.UTIL:
   - gsw
+  - pyco2sys
   - tqdm
 
 # EXT.FILES:
@@ -31,6 +32,8 @@ dependencies:
 # EXT.PERF:
   - dask
   - distributed
+  - joblib
+  - numba
   - pyarrow
 
 # EXT.PLOT:
@@ -43,7 +46,7 @@ dependencies:
   - seaborn
 
 # DEV:
-  - aiofiles
+  - aiofiles <= 24.1.0
   - black
   - bottleneck
   - cfgrib

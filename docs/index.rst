@@ -1,7 +1,7 @@
-Argo data python library
-========================
+Argo data python library documentation
+======================================
 
-**argopy** is a python library dedicated to :ref:`Argo <what_is_argo>` data access, manipulation and visualisation
+**Argopy** is a python library dedicated to :ref:`Argo <what_is_argo>` data access, manipulation and visualisation
 for standard users as well as Argo experts.
 
 |JOSS| |lifecycle| |Gitter|
@@ -9,30 +9,12 @@ for standard users as well as Argo experts.
 |License| |Python version| |Anaconda-Server Badge|
 
 
-.. admonition:: 2025 argopy training camps 🎓
-
-    The argopy team will organise "training camps" in 2025:
-
-    1. **in person** training: Monday Sept. 22nd afternoon, `Thalassocosmos <https://cretaquarium.gr/>`_, HCMR, Heraklion, Crete, during the `Euro-Argo Science Meeting <https://www.euro-argo.eu/News-Meetings/News/News-archives/2025/8th-Euro-Argo-Science-Meeting>`_. Registration closed.
-
-    2. **in person** training: Wednesday June 25th 10am, room 304, `JAMSTEC Headquarters <https://www.jamstec.go.jp/e/about/access/yokosuka.html>`_ `GOORC <https://www.jamstec.go.jp/goorc/e/>`_, Yokosuka, Japan. No registration required.
-
-    3. **in person** training: Wednesday June 18th 10am, room 425, `Tohoku University <https://www.gp.tohoku.ac.jp/pol/index-e.html>`_ `WPI-AIMEC <https://wpi-aimec.jp/en/>`_, Sendai, Japan. No registration required.
-
-    4. **online** training, to be organised sometime this fall: `register here <https://forms.gle/d8xPbrWu7aZcvMut9>`_
-
-    The goal of these events is to train users with all the argopy features.
-    Whether you're a standard, research or expert users, argopy has features for you !
-
-
-Documentation
--------------
-
 **Getting Started**
 
 * :doc:`install`
 * :doc:`usage`
-* :doc:`Gallery of examples <gallery>`
+* :doc:`Examples <gallery>`
+* :doc:`tutorials`
 * :doc:`What is Argo ? Why argopy ? <what_why>`
 * :doc:`impact`
 
@@ -43,7 +25,8 @@ Documentation
 
     install
     usage
-    Gallery of examples and tutorials <gallery>
+    Examples <gallery>
+    tutorials
     What is Argo ? Why argopy ? <what_why>
     impact
 

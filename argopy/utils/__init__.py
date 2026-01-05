@@ -36,13 +36,14 @@ from .lists import (
 from .caching import clear_cache, lscache
 from .monitored_threadpool import MyThreadPoolExecutor as MonitoredThreadPoolExecutor
 from .chunking import Chunker
-from .accessories import Registry, float_wmo
+from .accessories import Registry, float_wmo, ListStrProperty
 from .locals import (  # noqa: F401
     show_versions,
     show_options,
     modified_environ,
     get_sys_info,  # noqa: F401
     netcdf_and_hdf5_versions,  # noqa: F401
+    Asset,
 )
 from .monitors import monitor_status, badge, fetch_status  # noqa: F401
 from .geo import (
@@ -51,19 +52,22 @@ from .geo import (
     conv_lon,
     toYearFraction,
     YearFraction_to_datetime,
+    point_in_polygon,
 )
-from .compute import linear_interpolation_remap, groupby_remap
-from .transform import (
+from .computers import linear_interpolation_remap, groupby_remap
+from .transformers import (
     fill_variables_not_in_all_datasets,
     drop_variables_not_in_all_datasets,
     merge_param_with_param_adjusted,
     filter_param_by_data_mode,
     split_data_mode,
 )
+from .mappers import map_vars_to_dict
 from .format import argo_split_path, format_oneline, UriCName, redact, dirfs_relpath
 from .loggers import warnUnless, log_argopy_callerstack
 from .carbon import GreenCoding, Github
 from . import optical_modeling
+from .carbonate import calculate_uncertainties, error_propagation
 
 import importlib
 path2assets = importlib.util.find_spec('argopy.static.assets').submodule_search_locations[0]
@@ -117,10 +121,13 @@ __all__ = (
     # Accessories classes (specific objects):
     "Registry",
     "float_wmo",
+    "ListStrProperty",
     # Locals (environments, versions, systems):
+    "path2assets",
     "show_versions",
     "show_options",
     "modified_environ",
+    "Asset",
     # Monitors
     "monitor_status",
     # Geo (space/time data utilities)
@@ -129,6 +136,7 @@ __all__ = (
     "conv_lon",
     "toYearFraction",
     "YearFraction_to_datetime",
+    "point_in_polygon",
     # Computation with datasets:
     "linear_interpolation_remap",
     "groupby_remap",
@@ -138,6 +146,8 @@ __all__ = (
     "merge_param_with_param_adjusted",
     "filter_param_by_data_mode",
     "split_data_mode",
+    # Mapping out of datasets:
+    "map_vars_to_dict",
     # Formatters:
     "format_oneline",
     "argo_split_path",
@@ -152,4 +162,7 @@ __all__ = (
     "Github",
     # Optical modeling
     "optical_modeling",
+    # Carbonate calculations
+    "calculate_uncertainties",
+    "error_propagation",
 )

@@ -87,12 +87,7 @@ Just check out [the documentation for more](https://argopy.readthedocs.io) !
 
 The **argopy** team is concerned about the environmental impact of your favorite software development. Starting June 1st 2024, we're experimenting with the [Green Metrics Tools](https://metrics.green-coding.io) from [Green Coding](https://www.green-coding.io/) to get an estimate of the energy used and CO2eq emitted by our development activities on Github infrastructure. Results:
 
-| Activity                         | Green Coding tool                                                                                                                       |
-|----------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
-| CI tests running on each commit  | [![CI Energy][ci-energy-badge]][ci-energy-link] [![CI Energy][ci-energy-badge-co2]][ci-energy-link]                                     |
-| Upstream CI tests, running daily | [![CI Energy][ci-energy-badge-upstream]][ci-energy-link-upstream] [![CI Energy][ci-energy-badge-upstream-co2]][ci-energy-link-upstream] |
-
-
+[![CI Energy][ci-energy-badge]][ci-energy-link] [![CI Energy][ci-energy-badge-co2]][ci-energy-link]
 
 ## Development and contributions 
 
@@ -103,6 +98,4 @@ And if you want to get involved and help maintain or develop ``argopy``, please 
 
 ## Tutorials
 
-Some tutorials, as jupyter notebooks, are available to get you started:
-
-- https://github.com/euroargodev/argopy/blob/master/docs/tutorials/basic_features_core_01.ipynb
+Some tutorials, as jupyter notebooks, are available to get you started. See here more for all details: https://argopy.readthedocs.io/en/latest/tutorials.html

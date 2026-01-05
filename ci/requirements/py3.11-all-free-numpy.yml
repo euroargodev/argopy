@@ -19,11 +19,14 @@ dependencies:
 
 # EXT.UTIL:
   - gsw
+  - pyco2sys
   - tqdm
 
 # EXT.PERF:
   - dask
   - distributed
+  - joblib
+  - numba
   - pyarrow
 
 # EXT.FILES:

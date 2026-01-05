@@ -8,7 +8,9 @@ import logging
 import pandas as pd
 import numpy as np
 import warnings
-from .checkers import check_cyc, check_wmo
+from typing import Literal
+
+from argopy.utils.checkers import check_cyc, check_wmo
 
 
 log = logging.getLogger("argopy.utils.format")
@@ -398,3 +400,127 @@ class UriCName:
                 cname = self.dataset_id + ";" + cname
 
         return cname
+
+
+def cfgnameparser(name: str) -> dict[str, str]:
+    """Configuration parameter name parser
+
+    Get parameter name and unit as dictionary out of R18 prefLabel.
+
+    Unit is always lower case.
+    """
+    assert name.split("_")[0] == 'CONFIG', "This is not a valid configuration parameter (see R18 prefLabel)"
+    unit = name.split("_")[-1]
+    label = "".join(name.split("_")[1:-1])
+    return {'label': label, 'unit': unit.lower()}
+
+
+def group_cycles_by_missions(cycles: dict[int, int], output: Literal['group', 'list'] = 'group') -> dict[int, str] | dict[int, list[int]]:
+    """
+
+    Parameters
+    ----------
+    cycles: dict[int, int]
+        A dictionary mapping cycle (keys) on mission numbers (values).
+    output: Literal['group', 'list'], default='group'
+
+    Returns
+    -------
+    dict[int, str] | dict[int, list[int]]
+        A dictionary mapping mission numbers (keys) on group of cycle numbers (values). If output is set to 'group', values are a string (eg '1>3') and if output is set to 'list', values are the list of cycle numbers as integers.
+
+    """
+    is_suite = lambda x: list(range(np.min(x), np.max(x) + 1)) == sorted(x)
+
+    def group_consecutive(lst):
+        if not lst:
+            return []
+
+        # Sort the list to ensure consecutive values are adjacent
+        lst = sorted(lst)
+
+        groups = [[lst[0]]]
+        for i in range(1, len(lst)):
+            if lst[i] == groups[-1][-1] + 1:
+                groups[-1].append(lst[i])
+            else:
+                groups.append([lst[i]])
+
+        return groups
+
+    missions = np.unique(list(cycles.values()))
+    mission_cycles = {}
+    for m in missions:
+        mission_cycles.update({int(m): []})
+        for cyc, mis in cycles.items():
+            if mis == m:
+                mission_cycles[int(m)].append(cyc)
+    if output == 'list':
+        return mission_cycles
+
+    else:
+        results = {}
+        for mis, cycs in mission_cycles.items():
+            if len(cycs) == 1:
+                txt = f"{cycs[0]}"
+            elif is_suite(cycs):
+                txt = f"{np.min(cycs)}>{np.max(cycs)}"
+            else:
+                grps = group_consecutive(cycs)
+                summary = []
+                for grp in grps:
+                    summary.append(f"{np.min(grp)}>{np.max(grp)}")
+                txt = ",".join(summary)
+            results.update({int(mis): txt})
+        return results
+
+
+def mono2multi(flist : list[str], convention : str = 'core', sep :str = '/') -> list[str]:
+    """Convert a list of mono-profile files to a list of multi-profile files
+
+    The multi-profile file name is based on an :class:`ArgoIndex` convention.
+
+    Parameters
+    ----------
+    flist: list[str]
+        A list of mono-profile files (relative GDAC paths), as output for :meth:`ArgoIndex.read_files`.
+    convention: str, optional, default = 'ar_index_global_prof'
+        The Argo index convention from which `flist` was extracted. Can be 'ar_index_global_prof' or 'argo_synthetic-profile_index'.
+    sep: str, optional, default = '/'
+        GDAC file system separator used in flist
+
+    Returns
+    -------
+    list(str)
+    """
+    def _mono2multi(mono_path):
+        meta = argo_split_path(mono_path)
+
+        if convention == "ar_index_global_prof":
+            return sep.join(
+                [
+                    meta["origin"],
+                    "dac",
+                    meta["dac"],
+                    meta["wmo"],
+                    "%s_prof.nc" % meta["wmo"],
+                ]
+            )
+
+        elif convention in ["argo_synthetic-profile_index"]:
+            return sep.join(
+                [
+                    meta["origin"],
+                    "dac",
+                    meta["dac"],
+                    meta["wmo"],
+                    "%s_Sprof.nc" % meta["wmo"],
+                ]
+            )
+
+        else:
+            raise ValueError("Method not available for this index (only 'ar_index_global_prof' and 'argo_synthetic-profile_index' allowed).")
+
+    new_uri = [_mono2multi(uri)[2:] for uri in flist]
+    new_uri = list(set(new_uri))
+    return new_uri
