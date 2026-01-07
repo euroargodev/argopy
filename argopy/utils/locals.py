@@ -318,7 +318,7 @@ def show_options(file=sys.stdout):  # noqa: C901
     opts = copy.deepcopy(OPTIONS)
     opts = dict(sorted(opts.items()))
     for k, v in opts.items():
-        if 'password' in k.lower() or 'api_key' in k.lower():
+        if 'password' in k.lower() or 'api_key' in k.lower() and v is not None:
             v = "*"*len(v)
         print(f"{k:<20}: {v}", file=file)
 
