@@ -46,6 +46,8 @@ TRUST_ENV = "trust_env"
 SERVER = "server"
 USER = "user"
 PASSWORD = "password"
+OPENAI_API_KEY = "openai_api_key"
+MISTRAL_API_KEY = "mistral_api_key"
 ARGOVIS_API_KEY = "argovis_api_key"
 PARALLEL = "parallel"
 PARALLEL_DEFAULT_METHOD = "parallel_default_method"
@@ -65,6 +67,8 @@ OPTIONS = {
     SERVER: None,
     USER: os.environ.get("ERDDAP_USERNAME"),
     PASSWORD: os.environ.get("ERDDAP_PASSWORD"),
+    OPENAI_API_KEY: None,
+    MISTRAL_API_KEY: None,
     ARGOVIS_API_KEY: "guest",  # https://argovis-keygen.colorado.edu
     PARALLEL: False,
     PARALLEL_DEFAULT_METHOD: "thread",
@@ -130,6 +134,8 @@ _VALIDATORS = {
     SERVER: lambda x: True,
     USER: lambda x: isinstance(x, str) or x is None,
     PASSWORD: lambda x: isinstance(x, str) or x is None,
+    OPENAI_API_KEY: lambda x: isinstance(x, str) or x is None,
+    MISTRAL_API_KEY: lambda x: isinstance(x, str) or x is None,
     ARGOVIS_API_KEY: lambda x: isinstance(x, str) or x is None,
     PARALLEL: validate_parallel,
     PARALLEL_DEFAULT_METHOD: validate_parallel_method,
