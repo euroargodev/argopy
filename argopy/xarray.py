@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 import logging
-from typing import Union, Any, LiteralString
+from typing import Union, Any, Literal
 from xarray.backends import BackendEntrypoint  # For xarray > 0.18
 from xarray.backends import ZarrStore
 
@@ -1075,7 +1075,7 @@ class ArgoAccessor:
         self,
         std_lev: list[list, np.array, str] = "EasyOneArgoLite", 
         axis: str = "PRES",
-        method: LiteralString['pchip', 'mrst-pchip', 'linear'] = 'pchip',
+        method: Literal['pchip', 'mrst-pchip', 'linear'] = 'pchip',
     ) -> xr.Dataset:
         """Interpolate measurements to standard pressure levels
 
