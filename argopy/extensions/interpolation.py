@@ -4,7 +4,7 @@ from typing import Literal
 from dataclasses import dataclass
 
 from argopy.extensions.utils import register_argo_accessor, ArgoAccessorExtension
-from argopy.utils.computers import pchip_interpolation_remap, linear_interpolation_remap
+from argopy.utils.computers import linear_interpolation_remap, pchip_interpolation_remap, mrst_pchip_interpolation_remap
 
 
 @dataclass(frozen=True)
@@ -61,7 +61,7 @@ def read_da_list(dsp: xr.Dataset) -> tuple[xr.DataArray]:
 
     # List all variables to interpolate:
     datavars = [
-        dv
+        str(dv)
         for dv in list(dsp.variables)
         if set(["N_LEVELS", "N_PROF"]) == set(dsp[dv].dims)
            and "QC" not in dv
@@ -69,12 +69,12 @@ def read_da_list(dsp: xr.Dataset) -> tuple[xr.DataArray]:
            and "DATA_MODE" not in dv
     ]
     # List coordinates to preserve:
-    coords = [dv for dv in list(dsp.coords)]
+    coords = [str(dv) for dv in list(dsp.coords)]
 
     # List variables depending on N_PROF only
     # (hence not needing interpolation and that will be replicated in the output dataset):
     solovars = [
-        dv
+        str(dv)
         for dv in list(dsp.variables)
         if dv not in datavars
            and dv not in coords
@@ -233,7 +233,37 @@ class Interpolator(ArgoAccessorExtension):
 
 
         elif method == "mrst-pchip":
-            raise NotImplementedError
+            # T/S are interpolated together as CT/SA
+            # then all other parameters are interpolated with pchip, one after the other
+            ds_out['CT'], ds_out['SA'] = mrst_pchip_interpolation_remap(
+                                this_dsp[axis],
+                                this_dsp['CT'],
+                                this_dsp['SA'],
+                                this_dsp["Z_LEVELS"],
+                                output_dim=f"{axis}_INTERPOLATED",
+                                zTolerance=std_lev.tolerance,
+                            )
+            for da in ['CT', 'SA']:
+                ds_out[da].attrs = this_dsp[da].attrs  # Preserve attributes
+                if "long_name" in ds_out[da].attrs:
+                    ds_out[da].attrs["long_name"] = f"Interpolated {ds_out[da].attrs['long_name']}"
+
+            for da in datavars:
+                if da not in ['CT', 'SA']:
+                    ds_out[da] = pchip_interpolation_remap(
+                        this_dsp[axis],
+                        this_dsp[da],
+                        this_dsp["Z_LEVELS"],
+                        z_dim="N_LEVELS",
+                        z_regridded_dim="Z_LEVELS",
+                        output_dim=f"{axis}_INTERPOLATED",
+                        zTolerance=std_lev.tolerance,
+                    )
+                    ds_out[da].attrs = this_dsp[da].attrs  # Preserve attributes
+                    if "long_name" in ds_out[da].attrs:
+                        ds_out[da].attrs["long_name"] = f"Interpolated {ds_out[da].attrs['long_name']}"
+
+
 
         ds_out[f"{axis}_INTERPOLATED"].attrs = this_dsp[axis].attrs
         if "long_name" in ds_out[f"{axis}_INTERPOLATED"].attrs:
