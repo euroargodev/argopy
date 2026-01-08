@@ -18,9 +18,9 @@ try:
 except:  # noqa: E722
     # >= v0.8.0
     from erddapy.erddapy import ERDDAP  # noqa: F401
-    from erddapy.erddapy import (
+    from erddapy.erddapy import (  # noqa: F401
         _quote_string_constraints as quote_string_constraints,
-    )  # noqa: F401
+    )
     from erddapy.erddapy import parse_dates  # noqa: F401
 
     # Soon ! https://github.com/ioos/erddapy

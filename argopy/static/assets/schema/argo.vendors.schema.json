@@ -1,0 +1,356 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://schema.nerc.ac.uk/schemas/sensor/0.1.0/argo.vendors.schema.json",
+  "title": "JSON Schema for Argo Program Sensors : Vendor-specific information",
+  "description": "A JSON Schema used to populate vendor-specific Argo float sensor and parameter metadata elements.",
+  "version": "0.1",
+  "type": "object",
+  "$defs": {
+    "sensor_vendorinfo": {
+      "type": "object",
+      "properties": {
+        "vendor_schema": {
+          "type": "string",
+          "enum": [
+            "None",
+            "SBE",
+            "RBR",
+            "TRIOS"
+          ],
+          "default": "None"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "vendor_schema": {
+                "const": "None"
+              }
+            }
+          },
+          "then": {
+            "additionalProperties": {
+              "__comment__": {
+                "description": "sensor_vendorinfo is optional. When vendor schema is unspecified or None, content is uncontrolled",
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "vendor_schema": {
+                "const": "SBE"
+              }
+            },
+            "required": [
+              "vendor_schema"
+            ]
+          },
+          "then": {
+            "$ref": "./argo.SBE.schema.json#/$defs/sensor_vendorinfo"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "vendor_schema": {
+                "const": "RBR"
+              }
+            },
+            "required": [
+              "vendor_schema"
+            ]
+          },
+          "then": {
+            "$ref": "./argo.RBR.schema.json#/$defs/sensor_vendorinfo"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "vendor_schema": {
+                "const": "TRIOS"
+              }
+            },
+            "required": [
+              "vendor_schema"
+            ]
+          },
+          "then": {
+            "$ref": "./argo.TRIOS.schema.json#/$defs/sensor_vendorinfo"
+          }
+        }
+      ]
+    },
+    "parameter_vendorinfo": {
+      "type": "object",
+      "properties": {
+        "vendor_schema": {
+          "type": "string",
+          "enum": [
+            "None",
+            "SBE",
+            "RBR",
+            "TRIOS"
+          ],
+          "default": "None"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "vendor_schema": {
+                "const": "None"
+              }
+            }
+          },
+          "then": {
+            "additionalProperties": {
+              "__comment__": {
+                "description": "parameter_vendorinfo is optional. When vendor schema is unspecified or None, content is uncontrolled",
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "vendor_schema": {
+                "const": "SBE"
+              }
+            },
+            "required": [
+              "vendor_schema"
+            ]
+          },
+          "then": {
+            "$ref": "./argo.SBE.schema.json#/$defs/parameter_vendorinfo"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "vendor_schema": {
+                "const": "RBR"
+              }
+            },
+            "required": [
+              "vendor_schema"
+            ]
+          },
+          "then": {
+            "$ref": "./argo.RBR.schema.json#/$defs/parameter_vendorinfo"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "vendor_schema": {
+                "const": "TRIOS"
+              }
+            },
+            "required": [
+              "vendor_schema"
+            ]
+          },
+          "then": {
+            "$ref": "./argo.TRIOS.schema.json#/$defs/parameter_vendorinfo"
+          }
+        }
+      ]
+    },
+    "predeployment_vendorinfo": {
+      "type": "object",
+      "properties": {
+        "vendor_schema": {
+          "type": "string",
+          "enum": [
+            "None",
+            "RBR",
+            "SBE"
+          ],
+          "default": "None"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "vendor_schema": {
+                "const": "None"
+              }
+            }
+          },
+          "then": {
+            "additionalProperties": {
+              "__comment__": {
+                "description": "predeployment_vendorinfo is optional. When vendor schema is unspecified or None, content is uncontrolled",
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "vendor_schema": {
+                "const": "RBR"
+              }
+            },
+            "required": [
+              "vendor_schema"
+            ]
+          },
+          "then": {
+            "$ref": "./argo.RBR.schema.json#/$defs/predeployment_vendorinfo"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "vendor_schema": {
+                "const": "SBE"
+              }
+            },
+            "required": [
+              "vendor_schema"
+            ]
+          },
+          "then": {
+            "$ref": "./argo.SBE.schema.json#/$defs/predeployment_vendorinfo"
+          }
+        }
+      ]
+    },
+    "instrument_vendorinfo": {
+      "type": "object",
+      "properties": {
+        "vendor_schema": {
+          "type": "string",
+          "enum": [
+            "None",
+            "SBE"
+          ],
+          "default": "None"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "vendor_schema": {
+                "const": "None"
+              }
+            }
+          },
+          "then": {
+            "additionalProperties": {
+              "__comment__": {
+                "description": "instrument_vendorinfo is optional. When vendor_schema is unspecified or None, content is uncontrolled",
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "vendor_schema": {
+                "const": "SBE"
+              }
+            },
+            "required": [
+              "vendor_schema"
+            ]
+          },
+          "then": {
+            "$ref": "./argo.SBE.schema.json#/$defs/instrument_vendorinfo"
+          }
+        }
+      ]
+    },
+    "platform_vendorinfo": {
+      "type": "object",
+      "properties": {
+        "vendor_schema": {
+          "type": "string",
+          "enum": [
+            "None",
+            "SBE",
+            "MRV"
+          ],
+          "default": "None"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "vendor_schema": {
+                "const": "None"
+              }
+            }
+          },
+          "then": {
+            "additionalProperties": {
+              "__comment__": {
+                "description": "instrument_vendorinfo is optional. When vendor_schema is unspecified or None, content is uncontrolled",
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "vendor_schema": {
+                "const": "SBE"
+              }
+            },
+            "required": [
+              "vendor_schema"
+            ]
+          },
+          "then": {
+            "$ref": "./argo.SBE.schema.json#/$defs/platform_vendorinfo"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "vendor_schema": {
+                "const": "MRV"
+              }
+            },
+            "required": [
+              "vendor_schema"
+            ]
+          },
+          "then": {
+            "$ref": "./argo.MRV.schema.json#/$defs/platform_vendorinfo"
+          }
+        }
+      ]
+    }
+  }
+}

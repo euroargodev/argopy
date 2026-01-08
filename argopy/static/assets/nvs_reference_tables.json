@@ -1,0 +1,308 @@
+{
+  "name": "List of Argo NVS reference tables",
+  "long_name": "List of Argo NVS reference table ids and description",
+  "last_update": "2025-12-09T16:47:17.939027+00:00",
+  "data": {
+    "valid_ref": [
+      "R01",
+      "R03",
+      "R04",
+      "R05",
+      "R06",
+      "R07",
+      "R08",
+      "R09",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "R14",
+      "R15",
+      "R16",
+      "R18",
+      "R19",
+      "R20",
+      "R21",
+      "R22",
+      "R23",
+      "R24",
+      "R25",
+      "R26",
+      "R27",
+      "R28",
+      "R31",
+      "R40",
+      "RD2",
+      "RMC",
+      "RP2",
+      "RR2",
+      "RTV"
+    ],
+    "details": [
+      {
+        "id": "R04",
+        "altLabel": "DATA_CENTRE_CODES",
+        "prefLabel": "Argo data centres and institutions",
+        "description": "Codes for data centres and institutions handling or managing Argo data. Argo netCDF variable DATA_CENTRE is populated by R04 altLabel.",
+        "date": "2025-10-09 03:00:01.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R04/current/"
+      },
+      {
+        "id": "RD2",
+        "altLabel": "DM_QC_FLAG",
+        "prefLabel": "Argo delayed-mode quality control measurement flags",
+        "description": "Quality flag scale for delayed-mode measurements. Argo netCDF variables <PARAMETER>_ADJUSTED_QC in 'D' mode are populated by RD2 altLabel.",
+        "date": "2024-04-19 03:00:08.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/RD2/current/"
+      },
+      {
+        "id": "R24",
+        "altLabel": "PLATFORM_MAKER",
+        "prefLabel": "Argo platform maker",
+        "description": "List of Argo float manufacturers. Argo netCDF variable PLATFORM_MAKER is populated by R24 altLabel.",
+        "date": "2025-11-26 02:00:00.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R24/current/"
+      },
+      {
+        "id": "R09",
+        "altLabel": "POSITIONING_SYSTEM",
+        "prefLabel": "Argo positioning system",
+        "description": "List of float location measuring systems. Argo netCDF variable POSITIONING_SYSTEM is populated by R09 altLabel.",
+        "date": "2020-04-08 03:00:04.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R09/current/"
+      },
+      {
+        "id": "R31",
+        "altLabel": "ENDING_CAUSE",
+        "prefLabel": "Argo float ending cause",
+        "description": "Lists the float end-of-life reasons. This information is allocated manually after analysis of the float's end of life. Argo netCDF variable ANOMALY syntax uses R31 altLabel preceeded by the 'ending_cause:' keyword and separated from the other anomaly items by commas.",
+        "date": "2025-08-29 03:00:01.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R31/current/"
+      },
+      {
+        "id": "R16",
+        "altLabel": "VERTICAL_SAMPLING_SCHEME",
+        "prefLabel": "Argo vertical sampling schemes",
+        "description": "Profile sampling schemes and sampling methods. Argo netCDF variable VERTICAL_SAMPLING_SCHEME is populated by R16 prefLabel, optionally appended by free text in brackets: e.g. \"Primary sampling: averaged [nominal 2 dbar binned data sampled at 0.5 Hz from a SBE41CP]\".",
+        "date": "2020-05-04 03:00:04.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R16/current/"
+      },
+      {
+        "id": "RTV",
+        "altLabel": "CYCLE_TIMING_VARIABLE",
+        "prefLabel": "Argo float cycle timing variables",
+        "description": "Timing variables representing stages of an Argo float profiling cycle, most of which are associated with a trajectory measurement code ID listed in NVS collection 'R15'. Argo netCDF cycle timing variable names JULD_<RTV>_STATUS are constructed by RTV altLabel.",
+        "date": "2021-12-01 02:00:02.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/RTV/current/"
+      },
+      {
+        "id": "RMC",
+        "altLabel": "MEASUREMENT_CODE_CATEGORY",
+        "prefLabel": "Argo measurement code categories",
+        "description": "Categories of trajectory measurement codes listed in NVS collection 'R15'",
+        "date": "2021-12-02 02:00:02.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/RMC/current/"
+      },
+      {
+        "id": "R23",
+        "altLabel": "PLATFORM_TYPE",
+        "prefLabel": "Argo platform type",
+        "description": "List of Argo float types. Argo netCDF variable PLATFORM_TYPE is populated by R23 altLabel.",
+        "date": "2024-10-25 03:00:00.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R23/current/"
+      },
+      {
+        "id": "R10",
+        "altLabel": "TRANS_SYSTEM",
+        "prefLabel": "Argo transmission systems",
+        "description": "List of telecommunication systems. Argo netCDF variable TRANS_SYSTEM is populated by R10 altLabel.",
+        "date": "2024-11-12 02:00:00.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R10/current/"
+      },
+      {
+        "id": "R20",
+        "altLabel": "GROUNDED",
+        "prefLabel": "Argo GROUNDED flags",
+        "description": "Codes to indicate the best estimate of whether the float touched the ground during a specific cycle. Argo netCDF variable GROUNDED in the Trajectory file is populated by R20 altLabel.",
+        "date": "2021-02-09 02:00:03.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R20/current/"
+      },
+      {
+        "id": "R05",
+        "altLabel": "POSITION_ACCURACY",
+        "prefLabel": "Argo position accuracy",
+        "description": "Accuracy in latitude and longitude measurements received from the positioning system, grouped by location accuracy classes.",
+        "date": "2024-09-13 03:00:00.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R05/current/"
+      },
+      {
+        "id": "R13",
+        "altLabel": "OCEAN_CODE",
+        "prefLabel": "Argo ocean area codes and boundary definitions",
+        "description": "Ocean area codes assigned to each profile in the Metadata directory (index) file of the Argo Global Assembly Centre.",
+        "date": "2024-09-12 03:00:00.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R13/current/"
+      },
+      {
+        "id": "R06",
+        "altLabel": "DATA_STATE_INDICATOR",
+        "prefLabel": "Argo data state indicators",
+        "description": "Processing stage of the data based on the concatenation of processing level and class indicators. Argo netCDF variable DATA_STATE_INDICATOR is populated by R06 altLabel.",
+        "date": "2020-04-04 15:45:13.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R06/current/"
+      },
+      {
+        "id": "R12",
+        "altLabel": "HISTORY_STEP",
+        "prefLabel": "Argo history processing step codes",
+        "description": "Data processing step codes for history record. Argo netCDF variable TRANS_SYSTEM is populated by R12 altLabel.",
+        "date": "2020-04-08 03:00:04.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R12/current/"
+      },
+      {
+        "id": "RP2",
+        "altLabel": "PROF_QC_FLAG",
+        "prefLabel": "Argo profile quality control flags",
+        "description": "Quality control flag scale for whole profiles. Argo netCDF variables PROFILE_<PARAMETER>_QC are populated by RP2 altLabel.",
+        "date": "2025-08-29 03:00:01.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/RP2/current/"
+      },
+      {
+        "id": "R03",
+        "altLabel": "PARAMETER",
+        "prefLabel": "Argo parameter codes",
+        "description": "Terms describing individual measured phenomena, used to mark up sets of data in Argo netCDF arrays. Argo netCDF variables PARAMETER and TRAJECTORY_PARAMETERS are populated by R03 altLabel; R03 altLabel is also used to name netCDF profile files parameter variables <PARAMETER>.",
+        "date": "2025-11-27 02:00:01.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R03/current/"
+      },
+      {
+        "id": "R11",
+        "altLabel": "RTQC_TESTID",
+        "prefLabel": "Argo real-time quality-control test identifiers",
+        "description": "List of real-time quality-control tests and corresponding binary identifiers, used as reference to populate the Argo netCDF HISTORY_QCTEST variable.",
+        "date": "2025-03-07 02:00:00.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R11/current/"
+      },
+      {
+        "id": "R14",
+        "altLabel": "TECHNICAL_PARAMETER_NAME",
+        "prefLabel": "Argo technical parameter names",
+        "description": "List of technical parameters reported by a float at every cycle. Technical parameter names follow a naming convention to indicate what is being reported (category), where or when (descriptor), and in what units, delimited by an underscore. They are stored in the float 'tech.nc' file, under TECHNICAL_PARAMETER_NAME. Each technical parameter name has an associated value, stored in TECHNICAL_PARAMTER_VALUE. Argo netCDF variable TECHNICAL_PARAMETER_NAME is populated by R14 prefLabel.",
+        "date": "2025-09-30 03:00:01.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R14/current/"
+      },
+      {
+        "id": "R07",
+        "altLabel": "HISTORY_ACTION",
+        "prefLabel": "Argo history action codes",
+        "description": "Coded history information for each action performed on each profile by a data centre. Argo netCDF variable HISTORY_ACTION is populated by R07 altLabel.",
+        "date": "2020-04-08 03:00:04.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R07/current/"
+      },
+      {
+        "id": "R27",
+        "altLabel": "SENSOR_MODEL",
+        "prefLabel": "Argo sensor models",
+        "description": "Terms listing models of sensors mounted on Argo floats. Note: avoid using the manufacturer name and sensor firmware version in new entries when possible. Argo netCDF variable SENSOR_MODEL is populated by R27 altLabel.",
+        "date": "2025-11-19 02:00:00.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R27/current/"
+      },
+      {
+        "id": "R01",
+        "altLabel": "DATA_TYPE",
+        "prefLabel": "Argo data type",
+        "description": "Terms describing the type of data contained in an Argo netCDF file. Argo netCDF variable DATA_TYPE is populated by R01 prefLabel.",
+        "date": "2024-09-13 03:00:00.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R01/current/"
+      },
+      {
+        "id": "RR2",
+        "altLabel": "RT_QC_FLAG",
+        "prefLabel": "Argo real-time quality control measurement flags",
+        "description": "Quality flag scale for real-time measurements. Argo netCDF variables <PARAMETER>_QC in 'R' mode and <PARAMETER>_ADJUSTED_QC in 'A' mode are populated by RR2 altLabel.",
+        "date": "2024-04-19 03:00:08.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/RR2/current/"
+      },
+      {
+        "id": "R21",
+        "altLabel": "REPRESENTATIVE_PARK_PRESSURE_STATUS",
+        "prefLabel": "Argo status flag on the Representative Park Pressure (RPP)",
+        "description": "Argo status flag on the Representative Park Pressure (RPP). Argo netCDF variable REPRESENTATIVE_PARK_PRESSURE_STATUS in the Trajectory file is populated by R21 altLabel.",
+        "date": "2020-05-04 03:00:04.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R21/current/"
+      },
+      {
+        "id": "R22",
+        "altLabel": "PLATFORM_FAMILY",
+        "prefLabel": "Argo platform family",
+        "description": "List of platform family/category of Argo floats. Argo netCDF variable PLATFORM_FAMILY is populated by R22 altLabel.",
+        "date": "2020-05-04 03:00:04.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R22/current/"
+      },
+      {
+        "id": "R08",
+        "altLabel": "ARGO_WMO_INST_TYPE",
+        "prefLabel": "Argo instrument types",
+        "description": "Subset of instrument type codes from the World Meteorological Organization (WMO) Common Code Table C-3 (CCT C-3) 1770, named 'Instrument make and type for water temperature profile measurement with fall rate equation coefficients' and available here: https://library.wmo.int/doc_num.php?explnum_id=11283. Argo netCDF variable WMO_INST_TYPE is populated by R08 altLabel.",
+        "date": "2024-12-17 02:00:00.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R08/current/"
+      },
+      {
+        "id": "R15",
+        "altLabel": "MEASUREMENT_CODE_ID",
+        "prefLabel": "Argo trajectory measurement code identifiers",
+        "description": "Measurement code IDs used in Argo Trajectory netCDF files. Argo netCDF variable MEASUREMENT_CODE is populated by R15 altLabel.",
+        "date": "2025-09-30 03:00:01.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R15/current/"
+      },
+      {
+        "id": "R40",
+        "altLabel": "PI_NAME",
+        "prefLabel": "Argo Principal Investigator (PI) names",
+        "description": "List of Principal Investigator (PI) names in charge of Argo floats. Argo netCDF variable PI_NAME is populated by R40 altLabel.",
+        "date": "2025-10-09 03:00:01.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R40/current/"
+      },
+      {
+        "id": "R28",
+        "altLabel": "CONTROLLER_BOARD_TYPE",
+        "prefLabel": "Argo controller board types and generations",
+        "description": "List of Argo floats controller board types and generations. Argo netCDF variables CONTROLLER_BOARD_TYPE_PRIMARY and, when needed, CONTROLLER_BOARD_TYPE_SECONDARY, are populated by R28 altLabel.",
+        "date": "2023-06-23 03:00:02.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R28/current/"
+      },
+      {
+        "id": "R25",
+        "altLabel": "SENSOR",
+        "prefLabel": "Argo sensor types",
+        "description": "Terms describing sensor types mounted on Argo floats. Argo netCDF variable SENSOR is populated by R25 altLabel.",
+        "date": "2025-08-29 03:00:01.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R25/current/"
+      },
+      {
+        "id": "R18",
+        "altLabel": "CONFIG_PARAMETER_NAME",
+        "prefLabel": "Argo configuration parameter names",
+        "description": "List of float configuration settings selected by the float Principal Investigator (PI). Configuration parameters may or may not be reported by the float, and do not constitute float measurements. Configuration parameters selected for a float are stored in the float 'meta.nc' file, under CONFIG_PARAMETER_NAME. Each configuration parameter name has an associated value, stored in CONFIG_PARAMETER_VALUE. Argo netCDF variable CONFIG_PARAMETER_NAME is populated by R18 prefLabel.",
+        "date": "2025-06-10 03:00:00.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R18/current/"
+      },
+      {
+        "id": "R26",
+        "altLabel": "SENSOR_MAKER",
+        "prefLabel": "Argo sensor manufacturers",
+        "description": "Terms describing developers and manufacturers of sensors mounted on Argo floats. Argo netCDF variable SENSOR_MAKER is populated by R26 altLabel.",
+        "date": "2025-08-30 03:00:01.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R26/current/"
+      },
+      {
+        "id": "R19",
+        "altLabel": "STATUS",
+        "prefLabel": "Argo STATUS flags",
+        "description": "Flag scale for values in all Argo netCDF cycle timing variables. Argo netCDF cycle timing variables JULD_<RTV>_STATUS are populated by R19 altLabel.",
+        "date": "2020-05-04 03:00:04.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R19/current/"
+      }
+    ]
+  }
+}

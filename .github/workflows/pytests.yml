@@ -25,7 +25,7 @@ jobs:
     outputs:
       skipped: ${{ steps.detect-skip.outputs.trigger-found }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 2
       - uses: xarray-contrib/ci-trigger@v1.2
@@ -65,12 +65,13 @@ jobs:
           co2-grid-intensity-api-token: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
           send-data: true
         continue-on-error: true
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v5.1.0
+        uses: aws-actions/configure-aws-credentials@v5.1.1
         with:
           aws-region: us-west-1
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ga-ci-tests-argopy-01
+          role-duration-seconds: 7200
       - name: Set environment variables
         run: |
           echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-core-pinned.yml" >> $GITHUB_ENV
@@ -122,21 +123,26 @@ jobs:
           label: 'pytest core-pinned'
         continue-on-error: true
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5.5.1
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./cov.xml
-          flags: unittests, core, pinned, py${{matrix.python-version}}
+          report_type: coverage
+          flags: core, pinned, py${{matrix.python-version}}
           name: codecov-github
           fail_ci_if_error: false
           env_vars: RUNNER_OS,PYTHON_VERSION
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
-        uses: codecov/test-results-action@v1
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          report_type: test_results
+          flags: core, pinned, py${{matrix.python-version}}
+          fail_ci_if_error: false
+          env_vars: RUNNER_OS,PYTHON_VERSION
       - name: Save tests log as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: Argopy-Tests-Core-${{matrix.python-version}}-${{matrix.os}}
           path: ${{env.LOG_FILE}}
@@ -180,12 +186,13 @@ jobs:
           co2-grid-intensity-api-token: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
           send-data: true
         continue-on-error: true
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v5.1.0
+        uses: aws-actions/configure-aws-credentials@v5.1.1
         with:
           aws-region: us-west-1
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ga-ci-tests-argopy-01
+          role-duration-seconds: 7200
       - name: Set environment variables
         run: |
           echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-all-pinned.yml" >> $GITHUB_ENV
@@ -237,21 +244,26 @@ jobs:
           label: 'pytest all-pinned'
         continue-on-error: true
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5.5.1
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./cov.xml
-          flags: unittests, all, pinned, py${{matrix.python-version}}
+          report_type: coverage
+          flags: all, pinned, py${{matrix.python-version}}
           name: codecov-github
           fail_ci_if_error: false
           env_vars: RUNNER_OS,PYTHON_VERSION
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
-        uses: codecov/test-results-action@v1
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          report_type: test_results
+          flags: all, pinned, py${{matrix.python-version}}
+          fail_ci_if_error: false
+          env_vars: RUNNER_OS,PYTHON_VERSION
       - name: Upload tests log to GA
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: Argopy-Tests-All-${{matrix.python-version}}-${{matrix.os}}
           path: ${{env.LOG_FILE}}

@@ -1,0 +1,53 @@
+{
+  "name": "Sensor json meta-data examples",
+  "long_name": "Examples of Argo sensor meta-data following a schema",
+  "last_update": "2025-12-09T16:47:17.577176+00:00",
+  "data": {
+    "content": [
+      "AANDERAA-AANDERAA_OPTODE_4330-3901",
+      "RBR-RBR_ARGO3-205908",
+      "SATLANTIC-SATLANTIC_OCR504_ICSW-42139",
+      "SATLANTIC-SATLANTIC_OCR504_ICSW-42442",
+      "SATLANTIC-SUNA_V2-1527",
+      "SBE-SBE41CP-11643",
+      "SBE-SBE63_OPTODE-2739",
+      "SBE-SEAFET-11341",
+      "SBE-SEAFET-17682",
+      "SBE-SEAFET-17683",
+      "SBE-SEAFET-18950",
+      "TRIOS-RAMSES_ACC_VIS-01600040",
+      "WETLABS-ECO_FLBBAP2-8589",
+      "WETLABS-ECO_FLBBBBRT2K-8635",
+      "WETLABS-ECO_FLBBCD-3666",
+      "WETLABS-ECO_FLBBCDRT2K-6666",
+      "WETLABS-ECO_FLBBCDRT2K-8690",
+      "WETLABS-ECO_FLBBFLRT2K-8660",
+      "WETLABS-ECO_FLBBRT2K-8462",
+      "WETLABS-MCOMS_FLBBCD-0157",
+      "WETLABS-MCOMS_MCOMS_FLBBCD-0498"
+    ],
+    "uri": {
+      "AANDERAA-AANDERAA_OPTODE_4330-3901": "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/json_sensors/sensor-AANDERAA-AANDERAA_OPTODE_4330-3901.json",
+      "RBR-RBR_ARGO3-205908": "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/json_sensors/sensor-RBR-RBR_ARGO3-205908.json",
+      "SATLANTIC-SATLANTIC_OCR504_ICSW-42139": "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/json_sensors/sensor-SATLANTIC-SATLANTIC_OCR504_ICSW-42139.json",
+      "SATLANTIC-SATLANTIC_OCR504_ICSW-42442": "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/json_sensors/sensor-SATLANTIC-SATLANTIC_OCR504_ICSW-42442.json",
+      "SATLANTIC-SUNA_V2-1527": "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/json_sensors/sensor-SATLANTIC-SUNA_V2-1527.json",
+      "SBE-SBE41CP-11643": "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/json_sensors/sensor-SBE-SBE41CP-11643.json",
+      "SBE-SBE63_OPTODE-2739": "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/json_sensors/sensor-SBE-SBE63_OPTODE-2739.json",
+      "SBE-SEAFET-11341": "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/json_sensors/sensor-SBE-SEAFET-11341.json",
+      "SBE-SEAFET-17682": "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/json_sensors/sensor-SBE-SEAFET-17682.json",
+      "SBE-SEAFET-17683": "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/json_sensors/sensor-SBE-SEAFET-17683.json",
+      "SBE-SEAFET-18950": "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/json_sensors/sensor-SBE-SEAFET-18950.json",
+      "TRIOS-RAMSES_ACC_VIS-01600040": "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/json_sensors/sensor-TRIOS-RAMSES_ACC_VIS-01600040.json",
+      "WETLABS-ECO_FLBBAP2-8589": "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/json_sensors/sensor-WETLABS-ECO_FLBBAP2-8589.json",
+      "WETLABS-ECO_FLBBBBRT2K-8635": "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/json_sensors/sensor-WETLABS-ECO_FLBBBBRT2K-8635.json",
+      "WETLABS-ECO_FLBBCD-3666": "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/json_sensors/sensor-WETLABS-ECO_FLBBCD-3666.json",
+      "WETLABS-ECO_FLBBCDRT2K-6666": "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/json_sensors/sensor-WETLABS-ECO_FLBBCDRT2K-6666.json",
+      "WETLABS-ECO_FLBBCDRT2K-8690": "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/json_sensors/sensor-WETLABS-ECO_FLBBCDRT2K-8690.json",
+      "WETLABS-ECO_FLBBFLRT2K-8660": "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/json_sensors/sensor-WETLABS-ECO_FLBBFLRT2K-8660.json",
+      "WETLABS-ECO_FLBBRT2K-8462": "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/json_sensors/sensor-WETLABS-ECO_FLBBRT2K-8462.json",
+      "WETLABS-MCOMS_FLBBCD-0157": "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/json_sensors/sensor-WETLABS-MCOMS_FLBBCD-0157.json",
+      "WETLABS-MCOMS_MCOMS_FLBBCD-0498": "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/json_sensors/sensor-WETLABS-MCOMS_MCOMS_FLBBCD-0498.json"
+    }
+  }
+}

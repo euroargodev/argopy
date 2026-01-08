@@ -1,7 +1,7 @@
 {
   "name": "BGC synthetic netcdf files variables",
   "long_name": "Variables from the Ifremer Erddap ArgoFloats-synthetic-BGC dataset based on GDAC synthetic netcdf files",
-  "last_update": "2025-08-20T06:52:06.748271+00:00",
+  "last_update": "2025-12-09T16:47:11.448697+00:00",
   "data": {
     "variables": [
       "BBP470",

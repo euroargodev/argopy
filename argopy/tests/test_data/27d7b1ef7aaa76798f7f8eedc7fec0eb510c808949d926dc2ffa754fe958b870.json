@@ -32,40 +32,6 @@
             "@type": "skos:Concept"
         },
         {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/FLOATCLOCK/",
-            "pav:authoredOn": "2021-08-18 14:32:12.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/FLOATCLOCK/1/"
-            },
-            "dce:identifier": "SDN:R27::FLOATCLOCK",
-            "pav:version": "1",
-            "skos:notation": "SDN:R27::FLOATCLOCK",
-            "skos:altLabel": "FLOATCLOCK",
-            "dc:date": "2021-08-18 14:32:12.0",
-            "owl:versionInfo": "1",
-            "skos:prefLabel": {
-                "@language": "en",
-                "@value": "Float clock"
-            },
-            "dc:identifier": "SDN:R27::FLOATCLOCK",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
-            },
-            "owl:deprecated": "false",
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "skos:definition": {
-                "@language": "en",
-                "@value": "Inboard Real Time Clock (RTC) of a float."
-            },
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLOATCLOCK_MTIME/"
-            },
-            "@type": "skos:Concept"
-        },
-        {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RAFOS/",
             "pav:authoredOn": "2021-08-18 14:32:12.0",
             "pav:hasCurrentVersion": {
@@ -101,47 +67,233 @@
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/",
-            "pav:authoredOn": "2023-11-24 09:35:13.0",
-            "pav:hasCurrentVersion": {
+            "pav:hasVersion": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/1/"
             },
-            "dce:identifier": "SDN:R27::SBE83_OPTODE",
-            "pav:version": "1",
-            "skos:notation": "SDN:R27::SBE83_OPTODE",
-            "skos:altLabel": "",
-            "dc:date": "2023-11-24 09:35:13.0",
-            "owl:versionInfo": "1",
-            "skos:prefLabel": {
-                "@language": "en",
-                "@value": "Sea-Bird Scientific SBE83 oxygen optode"
-            },
-            "dc:identifier": "SDN:R27::SBE83_OPTODE",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
-            },
-            "owl:deprecated": "false",
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            "@type": "skos:Concept",
+            "skos:related": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R25/current/OPTODE_DOXY/"
             },
             "skos:definition": {
                 "@language": "en",
                 "@value": "An optical dissolved oxygen sensor, manufactured by Sea-Bird Scientific and designed to be integrated into a pumped CTD system."
             },
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R25/current/OPTODE_DOXY/"
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
             },
-            "@type": "skos:Concept"
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R27::SBE83_OPTODE",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Sea-Bird Scientific SBE83 oxygen optode"
+            },
+            "owl:versionInfo": "2",
+            "dc:date": "2025-11-18 12:09:41.0",
+            "skos:altLabel": "SBE83_OPTODE",
+            "skos:notation": "SDN:R27::SBE83_OPTODE",
+            "pav:version": "2",
+            "dce:identifier": "SDN:R27::SBE83_OPTODE",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/2/"
+            },
+            "pav:authoredOn": "2025-11-18 12:09:41.0"
         },
         {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/QUARTZDYNE_DSB301-10-C85/",
-            "pav:hasVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/QUARTZDYNE_DSB301-10-C85/1/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/",
+            "pav:authoredOn": "2025-10-08 10:58:28.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/1/"
             },
+            "dce:identifier": "SDN:R27::RBR_CTD",
             "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/"
+                }
+            ],
+            "skos:definition": {
+                "@language": "en",
+                "@value": "A system comprising temperature, conductivity and pressure sensors, manufactured by RBR for moored applications. This cell was not optimized for use on profiling floats, and this was used in only one test deployment. The system supports both spot and continuous sampling modes, with sampling speeds configurable to up to 12 Hz. The depth rating for a standard profile is 2000 dbar, with energy consumption of approximately 700 J."
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R27::RBR_CTD",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "RBR CTD"
+            },
+            "owl:versionInfo": "1",
+            "dc:date": "2025-10-08 10:58:28.0",
+            "skos:altLabel": "RBR_CTD",
+            "skos:notation": "SDN:R27::RBR_CTD",
+            "pav:version": "1"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_R10W/",
+            "pav:authoredOn": "2025-08-28 11:45:52.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_R10W/1/"
+            },
+            "dce:identifier": "SDN:R27::OCR504_R10W",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD443/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD555/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD490/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD412/"
+                }
+            ],
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Replaces deprecated term  'http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_R10W'. A cosine-response, multispectral radiometer configured to measure upwelling radiance in water. Number of channels: 4; field of view: 10 deg (half angle, half maximum); bandwidth range: 400 nm to 865 nm (standard), or 305 nm, 325 nm, 340 nm, 380 nm (UV); sampling rate: 7 Hz - 24 Hz; spectral bandwidth: 10 nm or 20 nm. The instrument was originally developed and manufactured at Satlantic, and was rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2011."
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R27::OCR504_R10W",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "OCR-504 multispectral radiometer (upwelling radiance)"
+            },
+            "owl:versionInfo": "1",
+            "dc:date": "2025-08-28 11:45:52.0",
+            "skos:altLabel": "OCR504_R10W",
+            "skos:notation": "SDN:R27::OCR504_R10W",
+            "pav:version": "1"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/",
+            "pav:authoredOn": "2025-08-28 11:45:52.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/1/"
+            },
+            "dce:identifier": "SDN:R27::OCR504_ICSW",
+            "pav:version": "1",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR380/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR555/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR412/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR443/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR490/"
+                }
+            ],
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Replaces deprecated term  'http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW'. A cosine-response, multispectral radiometer configured to measure downwelling irradiance in water. Number of channels: 4; bandwidth range: 400 nm to 865 nm (standard), or 305 nm, 325 nm, 340 nm, 380 nm (UV); sampling rate: 7 Hz - 24 Hz; spectral bandwidth: 10 nm or 20 nm. The instrument was originally developed and manufactured at Satlantic, and was rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2011."
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R27::OCR504_ICSW",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "OCR-504 multispectral radiometer (downwelling irradiance)"
+            },
+            "owl:versionInfo": "1",
+            "dc:date": "2025-08-28 11:45:52.0",
+            "skos:altLabel": "OCR504_ICSW",
+            "skos:notation": "SDN:R27::OCR504_ICSW"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/DSB301-10-C85/",
+            "pav:authoredOn": "2025-08-20 09:29:53.0",
+            "@type": "skos:Concept",
+            "skos:related": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+            },
             "skos:definition": {
                 "@language": "en",
                 "@value": "A thickness shear mode quartz resonator pressure sensor manufactured by Quartzdyne. Pressure range: 0 dbar - 6900 dbar; field accuracy: 0.02 % Full Scale (FS) between -40 degC and 85 degC."
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R27::DSB301-10-C85",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Quartzdyne DSB301-10-C85 pressure sensor"
+            },
+            "owl:versionInfo": "1",
+            "dc:date": "2025-08-20 09:29:53.0",
+            "skos:altLabel": "DSB301-10-C85",
+            "skos:notation": "SDN:R27::DSB301-10-C85",
+            "skos:broader": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R26/current/QUARTZDYNE/"
+            },
+            "pav:version": "1",
+            "dce:identifier": "SDN:R27::DSB301-10-C85",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/DSB301-10-C85/1/"
+            }
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/QUARTZDYNE_DSB301-10-C85/",
+            "pav:hasVersion": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/QUARTZDYNE_DSB301-10-C85/1/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/QUARTZDYNE_DSB301-10-C85/3/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/QUARTZDYNE_DSB301-10-C85/2/"
+                }
+            ],
+            "@type": "skos:Concept",
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Term deprecated, replaced by 'https://vocab.nerc.ac.uk/collection/R27/current/DSB301-10-C85/'. A thickness shear mode quartz resonator pressure sensor manufactured by Quartzdyne. Pressure range: 0 dbar - 6900 dbar; field accuracy: 0.02 % Full Scale (FS) between -40 degC and 85 degC."
             },
             "void:inDataset": {
                 "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -156,19 +308,19 @@
                 "@language": "en",
                 "@value": "Quartzdyne DSB301-10-C85 pressure sensor"
             },
-            "owl:versionInfo": "2",
-            "dc:date": "2025-08-18 11:38:02.0",
+            "owl:versionInfo": "4",
+            "dc:date": "2025-09-02 12:51:44.0",
             "skos:altLabel": "QUARTZDYNE_DSB301-10-C85",
             "skos:notation": "SDN:R27::QUARTZDYNE_DSB301-10-C85",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/QUARTZDYNE/"
             },
-            "pav:version": "2",
+            "pav:version": "4",
             "dce:identifier": "SDN:R27::QUARTZDYNE_DSB301-10-C85",
             "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/QUARTZDYNE_DSB301-10-C85/2/"
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/QUARTZDYNE_DSB301-10-C85/4/"
             },
-            "pav:authoredOn": "2025-08-18 11:38:02.0"
+            "pav:authoredOn": "2025-09-02 12:51:44.0"
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ISUS_V3/",
@@ -815,10 +967,18 @@
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RAMSES_ACC/",
             "pav:authoredOn": "2021-07-01 16:48:21.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_PAR/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RAMSES_ACC/1/"
             },
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_PAR/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A spectral imaging radiometer with cosine detector which measures radiance, irradiance or scalar irradiance in the Ultraviolet (UV), Vis (Visible) and Ultraviolet-visible (UV-Vis) ranges, manufactured by TriOS. Number of channels: 256."
@@ -844,10 +1004,7 @@
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/TRIOS/"
             },
             "pav:version": "1",
-            "dce:identifier": "SDN:R27::RAMSES_ACC",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RAMSES_ACC/1/"
-            }
+            "dce:identifier": "SDN:R27::RAMSES_ACC"
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/KISTLER_10153PSIA/",
@@ -1369,6 +1526,7 @@
                 "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR/1/"
             },
             "dce:identifier": "SDN:R27::RBR",
+            "pav:version": "1",
             "@type": "skos:Concept",
             "skos:related": [
                 {
@@ -1379,6 +1537,9 @@
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/"
                 }
             ],
             "skos:definition": {
@@ -1404,8 +1565,7 @@
             "skos:notation": "SDN:R27::RBR",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/RBR/"
-            },
-            "pav:version": "1"
+            }
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/",
@@ -1414,6 +1574,7 @@
                 "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/1/"
             },
             "dce:identifier": "SDN:R27::RBR_ARGO3_DEEP6K",
+            "pav:version": "1",
             "@type": "skos:Concept",
             "skos:related": [
                 {
@@ -1424,6 +1585,9 @@
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/"
                 }
             ],
             "skos:definition": {
@@ -1449,8 +1613,7 @@
             "skos:notation": "SDN:R27::RBR_ARGO3_DEEP6K",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/RBR/"
-            },
-            "pav:version": "1"
+            }
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CODA_T_ODO/",
@@ -1496,6 +1659,7 @@
                 "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO/1/"
             },
             "dce:identifier": "SDN:R27::RBR_ARGO",
+            "pav:version": "1",
             "@type": "skos:Concept",
             "skos:related": [
                 {
@@ -1506,6 +1670,9 @@
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/"
                 }
             ],
             "skos:definition": {
@@ -1531,8 +1698,7 @@
             "skos:notation": "SDN:R27::RBR_ARGO",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/RBR/"
-            },
-            "pav:version": "1"
+            }
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES/",
@@ -1615,6 +1781,7 @@
                 "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP4K/1/"
             },
             "dce:identifier": "SDN:R27::RBR_ARGO3_DEEP4K",
+            "pav:version": "1",
             "@type": "skos:Concept",
             "skos:related": [
                 {
@@ -1625,6 +1792,9 @@
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/"
                 }
             ],
             "skos:definition": {
@@ -1650,8 +1820,7 @@
             "skos:notation": "SDN:R27::RBR_ARGO3_DEEP4K",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/RBR/"
-            },
-            "pav:version": "1"
+            }
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3/",
@@ -1660,6 +1829,7 @@
                 "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3/1/"
             },
             "dce:identifier": "SDN:R27::RBR_ARGO3",
+            "pav:version": "1",
             "@type": "skos:Concept",
             "skos:related": [
                 {
@@ -1670,6 +1840,9 @@
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/"
                 }
             ],
             "skos:definition": {
@@ -1695,8 +1868,7 @@
             "skos:notation": "SDN:R27::RBR_ARGO3",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/RBR/"
-            },
-            "pav:version": "1"
+            }
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/EM/",
@@ -2090,10 +2262,26 @@
                 "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.12/1/"
             },
             "pav:authoredOn": "2025-04-03 11:54:30.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.12/2/"
             },
+            "dce:identifier": "SDN:R27::SBE61_V5.0.12",
+            "pav:version": "2",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on Deep Argo profiling floats reaching 7000 m depth. This SBE61 model has firmware version 5.0.9."
@@ -2117,11 +2305,6 @@
             "skos:notation": "SDN:R27::SBE61_V5.0.12",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "2",
-            "dce:identifier": "SDN:R27::SBE61_V5.0.12",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.12/2/"
             }
         },
         {
@@ -2210,10 +2393,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:29.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.0.1/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41CP_V5.0.1",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 5.0.1."
@@ -2237,11 +2436,6 @@
             "skos:notation": "SDN:R27::SBE41CP_V5.0.1",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41CP_V5.0.1",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.0.1/3/"
             }
         },
         {
@@ -2372,10 +2566,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:29.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0a/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41CP_V3.0a",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 3.0a."
@@ -2399,11 +2609,6 @@
             "skos:notation": "SDN:R27::SBE41CP_V3.0a",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41CP_V3.0a",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0a/3/"
             }
         },
         {
@@ -2412,10 +2617,26 @@
                 "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.4/1/"
             },
             "pav:authoredOn": "2025-04-03 11:54:30.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.4/2/"
             },
+            "dce:identifier": "SDN:R27::SBE41N_V5.3.4",
+            "pav:version": "2",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow, manufactured by Sea-Bir Scientific. The unit is designed for deployment on profiling floats hosting multiple biogeochemical (BGC) sensors. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent. Data from all the float's sensors, including the optional bolt-on ones, are integrated in the data stream and transmitted to the float controller when the float reaches the surface. This SBE41N model has firmware version 5.3.4."
@@ -2439,11 +2660,6 @@
             "skos:notation": "SDN:R27::SBE41N_V5.3.4",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "2",
-            "dce:identifier": "SDN:R27::SBE41N_V5.3.4",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.4/2/"
             }
         },
         {
@@ -2514,10 +2730,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:29.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41CP_V1.2",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 1.2."
@@ -2541,11 +2773,6 @@
             "skos:notation": "SDN:R27::SBE41CP_V1.2",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41CP_V1.2",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2/3/"
             }
         },
         {
@@ -2609,10 +2836,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:29.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V4.4.0/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41CP_V4.4.0",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 4.4.0."
@@ -2636,11 +2879,6 @@
             "skos:notation": "SDN:R27::SBE41CP_V4.4.0",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41CP_V4.4.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V4.4.0/3/"
             }
         },
         {
@@ -2704,10 +2942,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:30.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.1/3/"
             },
+            "dce:identifier": "SDN:R27::SBE61_V5.0.1",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on Deep Argo profiling floats reaching 7000 m depth. This SBE61 model has firmware version 5.0.1."
@@ -2731,11 +2985,6 @@
             "skos:notation": "SDN:R27::SBE61_V5.0.1",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE61_V5.0.1",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.1/3/"
             }
         },
         {
@@ -2749,10 +2998,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:30.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.3/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41CP_V7.2.3",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on profiling floats. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 7.2.3."
@@ -2776,18 +3041,16 @@
             "skos:notation": "SDN:R27::SBE41CP_V7.2.3",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41CP_V7.2.3",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.3/3/"
             }
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSW/",
-            "pav:authoredOn": "2021-07-01 16:48:21.0",
-            "pav:hasCurrentVersion": {
+            "pav:hasVersion": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSW/1/"
+            },
+            "pav:authoredOn": "2025-08-28 11:45:52.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSW/2/"
             },
             "@type": "skos:Concept",
             "skos:related": {
@@ -2800,18 +3063,18 @@
             "void:inDataset": {
                 "@id": "http://vocab.nerc.ac.uk/.well-known/void"
             },
-            "owl:deprecated": "false",
+            "owl:deprecated": "true",
             "skos:note": {
                 "@language": "en",
-                "@value": "accepted"
+                "@value": "deprecated"
             },
             "dc:identifier": "SDN:R27::SATLANTIC_OCR507_ICSW",
             "skos:prefLabel": {
                 "@language": "en",
                 "@value": "OCR-507 multispectral radiometer (downwelling irradiance)"
             },
-            "owl:versionInfo": "1",
-            "dc:date": "2021-07-01 16:48:21.0",
+            "owl:versionInfo": "2",
+            "dc:date": "2025-08-28 11:45:52.0",
             "skos:altLabel": "SATLANTIC_OCR507_ICSW",
             "skos:notation": "SDN:R27::SATLANTIC_OCR507_ICSW",
             "skos:broader": [
@@ -2822,7 +3085,7 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SATLANTIC/"
                 }
             ],
-            "pav:version": "1",
+            "pav:version": "2",
             "dce:identifier": "SDN:R27::SATLANTIC_OCR507_ICSW"
         },
         {
@@ -2836,10 +3099,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:29.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.8/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41CP_V1.8",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 1.8."
@@ -2863,11 +3142,6 @@
             "skos:notation": "SDN:R27::SBE41CP_V1.8",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41CP_V1.8",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.8/3/"
             }
         },
         {
@@ -2926,10 +3200,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:29.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.1/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41CP_V1.1",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 1.1."
@@ -2953,11 +3243,6 @@
             "skos:notation": "SDN:R27::SBE41CP_V1.1",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41CP_V1.1",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.1/3/"
             }
         },
         {
@@ -2971,10 +3256,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:29.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.4/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41CP_V1.4",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 1.4."
@@ -2998,11 +3299,6 @@
             "skos:notation": "SDN:R27::SBE41CP_V1.4",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41CP_V1.4",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.4/3/"
             }
         },
         {
@@ -3066,10 +3362,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:30.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.0/3/"
             },
+            "dce:identifier": "SDN:R27::SBE61_V5.0.0",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on Deep Argo profiling floats reaching 7000 m depth. This SBE61 model has firmware version 5.0.0."
@@ -3093,11 +3405,6 @@
             "skos:notation": "SDN:R27::SBE61_V5.0.0",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE61_V5.0.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.0/3/"
             }
         },
         {
@@ -3111,10 +3418,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:30.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.2/3/"
             },
+            "dce:identifier": "SDN:R27::SBE61_V4.5.2",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on Deep Argo profiling floats reaching 7000 m depth. This SBE61 model has firmware version 4.5.2."
@@ -3138,11 +3461,6 @@
             "skos:notation": "SDN:R27::SBE61_V4.5.2",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE61_V4.5.2",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.2/3/"
             }
         },
         {
@@ -3156,10 +3474,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:30.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.2/3/"
             },
+            "dce:identifier": "SDN:R27::SBE61_V5.0.2",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on Deep Argo profiling floats reaching 7000 m depth. This SBE61 model has firmware version 5.0.2."
@@ -3183,11 +3517,6 @@
             "skos:notation": "SDN:R27::SBE61_V5.0.2",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE61_V5.0.2",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.2/3/"
             }
         },
         {
@@ -3196,10 +3525,26 @@
                 "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.9/1/"
             },
             "pav:authoredOn": "2025-04-03 11:54:30.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.9/2/"
             },
+            "dce:identifier": "SDN:R27::SBE61_V5.0.9",
+            "pav:version": "2",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on Deep Argo profiling floats reaching 7000 m depth. This SBE61 model has firmware version 5.0.9."
@@ -3223,11 +3568,6 @@
             "skos:notation": "SDN:R27::SBE61_V5.0.9",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "2",
-            "dce:identifier": "SDN:R27::SBE61_V5.0.9",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.9/2/"
             }
         },
         {
@@ -3241,10 +3581,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:30.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.3/3/"
             },
+            "dce:identifier": "SDN:R27::SBE61_V4.5.3",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on Deep Argo profiling floats reaching 7000 m depth. This SBE61 model has firmware version 4.5.3."
@@ -3268,11 +3624,6 @@
             "skos:notation": "SDN:R27::SBE61_V4.5.3",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE61_V4.5.3",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.3/3/"
             }
         },
         {
@@ -3281,10 +3632,26 @@
                 "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.10/1/"
             },
             "pav:authoredOn": "2025-04-03 11:54:30.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.10/2/"
             },
+            "dce:identifier": "SDN:R27::SBE61_V5.0.10",
+            "pav:version": "2",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on Deep Argo profiling floats reaching 7000 m depth. This SBE61 model has firmware version 5.0.9."
@@ -3308,11 +3675,6 @@
             "skos:notation": "SDN:R27::SBE61_V5.0.10",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "2",
-            "dce:identifier": "SDN:R27::SBE61_V5.0.10",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.10/2/"
             }
         },
         {
@@ -3326,10 +3688,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:30.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.3/3/"
             },
+            "dce:identifier": "SDN:R27::SBE61_V5.0.3",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on Deep Argo profiling floats reaching 7000 m depth. This SBE61 model has firmware version 5.0.3."
@@ -3353,11 +3731,6 @@
             "skos:notation": "SDN:R27::SBE61_V5.0.3",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE61_V5.0.3",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.3/3/"
             }
         },
         {
@@ -3371,10 +3744,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:28.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.5/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41_V2.5",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. During float ascent, spot samples are taken and transmitted to the float controller. This SBE41 model has firmware version 2.5."
@@ -3398,11 +3787,6 @@
             "skos:notation": "SDN:R27::SBE41_V2.5",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41_V2.5",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.5/3/"
             }
         },
         {
@@ -3473,10 +3857,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:30.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.2/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41CP_V5.3.2",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 5.3.2."
@@ -3500,107 +3900,6 @@
             "skos:notation": "SDN:R27::SBE41CP_V5.3.2",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41CP_V5.3.2",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.2/3/"
-            }
-        },
-        {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO/",
-            "pav:authoredOn": "2025-03-31 13:56:07.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO/1/"
-            },
-            "dce:identifier": "SDN:R27::SBE41CP_IDO",
-            "pav:version": "1",
-            "skos:notation": "SDN:R27::SBE41CP_IDO",
-            "@type": "skos:Concept",
-            "skos:related": [
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/IDO_DOXY/"
-                }
-            ],
-            "skos:definition": {
-                "@language": "en",
-                "@value": "A system comprising temperature, conductivity and pressure sensor, as well as an electrochemical Integrated Dissolved Oxygen sensor with pump-controlled, T-C ducted flow. The unit is designed for deployment on profiling floats. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface."
-            },
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "owl:deprecated": "false",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
-            },
-            "dc:identifier": "SDN:R27::SBE41CP_IDO",
-            "skos:prefLabel": {
-                "@language": "en",
-                "@value": "Sea-Bird Scientific SBE 41CP CTD with an Integrated Dissolved Oxygen (IDO) sensor"
-            },
-            "owl:versionInfo": "1",
-            "dc:date": "2025-03-31 13:56:07.0",
-            "skos:altLabel": "SBE41CP_IDO"
-        },
-        {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/",
-            "pav:hasVersion": [
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/2/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/1/"
-                }
-            ],
-            "pav:authoredOn": "2025-04-03 11:54:30.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO/"
-            },
-            "skos:definition": {
-                "@language": "en",
-                "@value": "A system comprising temperature, conductivity and pressure sensor, as well as an electrochemical Integrated Dissolved Oxygen sensor with pump-controlled, T-C ducted flow. The unit is designed for deployment on profiling floats. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP IDO model has firmware version 2.0b."
-            },
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "owl:deprecated": "true",
-            "skos:note": {
-                "@language": "en",
-                "@value": "deprecated"
-            },
-            "dc:identifier": "SDN:R27::SBE41CP_IDO_V2.0b",
-            "skos:prefLabel": {
-                "@language": "en",
-                "@value": "Sea-Bird Scientific SBE 41CP CTD with an Integrated Dissolved Oxygen (IDO) sensor V2.0b"
-            },
-            "owl:versionInfo": "3",
-            "dc:date": "2025-04-03 11:54:30.0",
-            "skos:altLabel": "SBE41CP_IDO_V2.0b",
-            "skos:notation": "SDN:R27::SBE41CP_IDO_V2.0b",
-            "skos:broader": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41CP_IDO_V2.0b",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/3/"
             }
         },
         {
@@ -3654,6 +3953,116 @@
             ]
         },
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/",
+            "pav:hasVersion": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/2/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/1/"
+                }
+            ],
+            "pav:authoredOn": "2025-04-03 11:54:30.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/3/"
+            },
+            "dce:identifier": "SDN:R27::SBE41CP_IDO_V2.0b",
+            "pav:version": "3",
+            "skos:broader": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+            },
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/IDO_DOXY/"
+                }
+            ],
+            "skos:definition": {
+                "@language": "en",
+                "@value": "A system comprising temperature, conductivity and pressure sensor, as well as an electrochemical Integrated Dissolved Oxygen sensor with pump-controlled, T-C ducted flow. The unit is designed for deployment on profiling floats. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP IDO model has firmware version 2.0b."
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "true",
+            "skos:note": {
+                "@language": "en",
+                "@value": "deprecated"
+            },
+            "dc:identifier": "SDN:R27::SBE41CP_IDO_V2.0b",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Sea-Bird Scientific SBE 41CP CTD with an Integrated Dissolved Oxygen (IDO) sensor V2.0b"
+            },
+            "owl:versionInfo": "3",
+            "dc:date": "2025-04-03 11:54:30.0",
+            "skos:altLabel": "SBE41CP_IDO_V2.0b",
+            "skos:notation": "SDN:R27::SBE41CP_IDO_V2.0b"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO/",
+            "pav:authoredOn": "2025-03-31 13:56:07.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO/1/"
+            },
+            "dce:identifier": "SDN:R27::SBE41CP_IDO",
+            "pav:version": "1",
+            "skos:broader": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+            },
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/IDO_DOXY/"
+                }
+            ],
+            "skos:definition": {
+                "@language": "en",
+                "@value": "A system comprising temperature, conductivity and pressure sensor, as well as an electrochemical Integrated Dissolved Oxygen sensor with pump-controlled, T-C ducted flow. The unit is designed for deployment on profiling floats. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface."
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R27::SBE41CP_IDO",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Sea-Bird Scientific SBE 41CP CTD with an Integrated Dissolved Oxygen (IDO) sensor"
+            },
+            "owl:versionInfo": "1",
+            "dc:date": "2025-03-31 13:56:07.0",
+            "skos:altLabel": "SBE41CP_IDO",
+            "skos:notation": "SDN:R27::SBE41CP_IDO"
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V2.0/",
             "pav:hasVersion": [
                 {
@@ -3664,10 +4073,32 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:28.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V2.0/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41_IDO_V2.0",
+            "pav:version": "3",
+            "skos:broader": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+            },
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/IDO_DOXY/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensor, as well as an electrochemical Integrated Dissolved Oxygen sensor with pump-controlled, T-C ducted flow. The unit is designed for deployment on profiling floats. During float ascent, spot samples are taken and transmitted to the float controller. This SBE41 IDO model has firmware version 2.0c."
@@ -3688,15 +4119,7 @@
             "owl:versionInfo": "3",
             "dc:date": "2025-04-03 11:54:28.0",
             "skos:altLabel": "SBE41_IDO_V2.0",
-            "skos:notation": "SDN:R27::SBE41_IDO_V2.0",
-            "skos:broader": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41_IDO_V2.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V2.0/3/"
-            }
+            "skos:notation": "SDN:R27::SBE41_IDO_V2.0"
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO/",
@@ -3706,16 +4129,15 @@
             },
             "dce:identifier": "SDN:R27::SBE41_IDO",
             "pav:version": "1",
+            "skos:broader": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+            },
             "skos:notation": "SDN:R27::SBE41_IDO",
             "skos:altLabel": "SBE41_IDO",
-            "dc:date": "2025-03-31 13:56:07.0",
             "@type": "skos:Concept",
             "skos:related": [
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V3.0/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V1.0c/"
@@ -3753,11 +4175,15 @@
                 "@language": "en",
                 "@value": "Sea-Bird Scientific SBE 41 CTD with an Integrated Dissolved Oxygen (IDO)"
             },
-            "owl:versionInfo": "1"
+            "owl:versionInfo": "1",
+            "dc:date": "2025-03-31 13:56:07.0"
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_R10W/",
-            "pav:authoredOn": "2021-07-01 16:48:21.0",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_R10W/1/"
+            },
+            "pav:authoredOn": "2025-08-28 11:45:52.0",
             "@type": "skos:Concept",
             "skos:definition": {
                 "@language": "en",
@@ -3766,18 +4192,18 @@
             "void:inDataset": {
                 "@id": "http://vocab.nerc.ac.uk/.well-known/void"
             },
-            "owl:deprecated": "false",
+            "owl:deprecated": "true",
             "skos:note": {
                 "@language": "en",
-                "@value": "accepted"
+                "@value": "deprecated"
             },
             "dc:identifier": "SDN:R27::SATLANTIC_OCR507_R10W",
             "skos:prefLabel": {
                 "@language": "en",
                 "@value": "OCR-507 multispectral radiometer (upwelling radiance)"
             },
-            "owl:versionInfo": "1",
-            "dc:date": "2021-07-01 16:48:21.0",
+            "owl:versionInfo": "2",
+            "dc:date": "2025-08-28 11:45:52.0",
             "skos:altLabel": "SATLANTIC_OCR507_R10W",
             "skos:notation": "SDN:R27::SATLANTIC_OCR507_R10W",
             "skos:broader": [
@@ -3788,10 +4214,10 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SATLANTIC/"
                 }
             ],
-            "pav:version": "1",
+            "pav:version": "2",
             "dce:identifier": "SDN:R27::SATLANTIC_OCR507_R10W",
             "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_R10W/1/"
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_R10W/2/"
             }
         },
         {
@@ -3889,10 +4315,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:29.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41CP_V1",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 1."
@@ -3916,11 +4358,6 @@
             "skos:notation": "SDN:R27::SBE41CP_V1",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41CP_V1",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1/3/"
             }
         },
         {
@@ -3934,10 +4371,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:28.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V3/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41_V3",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. During float ascent, spot samples are taken and transmitted to the float controller. This SBE41 model has firmware version 3."
@@ -3961,11 +4414,6 @@
             "skos:notation": "SDN:R27::SBE41_V3",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41_V3",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V3/3/"
             }
         },
         {
@@ -3979,10 +4427,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:28.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.6/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41_V2.6",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. During float ascent, spot samples are taken and transmitted to the float controller. This SBE41 model has firmware version 2.6."
@@ -4006,11 +4470,6 @@
             "skos:notation": "SDN:R27::SBE41_V2.6",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41_V2.6",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.6/3/"
             }
         },
         {
@@ -4074,10 +4533,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:29.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9a/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41CP_V1.9a",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 1.9a."
@@ -4101,11 +4576,6 @@
             "skos:notation": "SDN:R27::SBE41CP_V1.9a",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41CP_V1.9a",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9a/3/"
             }
         },
         {
@@ -4119,10 +4589,32 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:28.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V1.0c/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41_IDO_V1.0c",
+            "pav:version": "3",
+            "skos:broader": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+            },
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/IDO_DOXY/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensor, as well as an electrochemical Integrated Dissolved Oxygen sensor with pump-controlled, T-C ducted flow. The unit is designed for deployment on profiling floats. During float ascent, spot samples are taken and transmitted to the float controller. This SBE41 IDO model has firmware version 1.0c."
@@ -4143,15 +4635,7 @@
             "owl:versionInfo": "3",
             "dc:date": "2025-04-03 11:54:28.0",
             "skos:altLabel": "SBE41_IDO_V1.0c",
-            "skos:notation": "SDN:R27::SBE41_IDO_V1.0c",
-            "skos:broader": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41_IDO_V1.0c",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V1.0c/3/"
-            }
+            "skos:notation": "SDN:R27::SBE41_IDO_V1.0c"
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_2K/",
@@ -4202,9 +4686,12 @@
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSWR10W/",
-            "pav:authoredOn": "2021-07-01 16:48:21.0",
-            "pav:hasCurrentVersion": {
+            "pav:hasVersion": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSWR10W/1/"
+            },
+            "pav:authoredOn": "2025-08-28 11:45:52.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSWR10W/2/"
             },
             "@type": "skos:Concept",
             "skos:related": {
@@ -4217,18 +4704,18 @@
             "void:inDataset": {
                 "@id": "http://vocab.nerc.ac.uk/.well-known/void"
             },
-            "owl:deprecated": "false",
+            "owl:deprecated": "true",
             "skos:note": {
                 "@language": "en",
-                "@value": "accepted"
+                "@value": "deprecated"
             },
             "dc:identifier": "SDN:R27::SATLANTIC_OCR507_ICSWR10W",
             "skos:prefLabel": {
                 "@language": "en",
                 "@value": "OCR-507 multispectral radiometer (downwelling irradiance and upwelling radiance)"
             },
-            "owl:versionInfo": "1",
-            "dc:date": "2021-07-01 16:48:21.0",
+            "owl:versionInfo": "2",
+            "dc:date": "2025-08-28 11:45:52.0",
             "skos:altLabel": "SATLANTIC_OCR507_ICSWR10W",
             "skos:notation": "SDN:R27::SATLANTIC_OCR507_ICSWR10W",
             "skos:broader": [
@@ -4239,8 +4726,62 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SATLANTIC/"
                 }
             ],
-            "pav:version": "1",
+            "pav:version": "2",
             "dce:identifier": "SDN:R27::SATLANTIC_OCR507_ICSWR10W"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/FLOATCLOCK/",
+            "pav:authoredOn": "2021-08-18 14:32:12.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/FLOATCLOCK/1/"
+            },
+            "dce:identifier": "SDN:R27::FLOATCLOCK",
+            "pav:version": "1",
+            "skos:broader": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/NKE/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/MARTEC/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/OPTIMARE/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/TWR/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WRC/"
+                }
+            ],
+            "@type": "skos:Concept",
+            "skos:related": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLOATCLOCK_MTIME/"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Inboard Real Time Clock (RTC) of a float."
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R27::FLOATCLOCK",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Float clock"
+            },
+            "owl:versionInfo": "1",
+            "dc:date": "2021-08-18 14:32:12.0",
+            "skos:altLabel": "FLOATCLOCK",
+            "skos:notation": "SDN:R27::FLOATCLOCK"
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE37/",
@@ -4298,10 +4839,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:29.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.0/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41CP_V5.3.0",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 5.3.0."
@@ -4325,11 +4882,6 @@
             "skos:notation": "SDN:R27::SBE41CP_V5.3.0",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41CP_V5.3.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.0/3/"
             }
         },
         {
@@ -4380,10 +4932,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:30.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.5/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41CP_V7.2.5",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on profiling floats. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 7.2.5."
@@ -4407,11 +4975,6 @@
             "skos:notation": "SDN:R27::SBE41CP_V7.2.5",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41CP_V7.2.5",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.5/3/"
             }
         },
         {
@@ -4467,10 +5030,32 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:29.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V3.0/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41_IDO_V3.0",
+            "pav:version": "3",
+            "skos:broader": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+            },
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/IDO_DOXY/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensor, as well as an electrochemical Integrated Dissolved Oxygen sensor with pump-controlled, T-C ducted flow. The unit is designed for deployment on profiling floats. During float ascent, spot samples are taken and transmitted to the float controller. This SBE41 IDO model has firmware version 3.0."
@@ -4491,15 +5076,7 @@
             "owl:versionInfo": "3",
             "dc:date": "2025-04-03 11:54:29.0",
             "skos:altLabel": "SBE41_IDO_V3.0",
-            "skos:notation": "SDN:R27::SBE41_IDO_V3.0",
-            "skos:broader": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41_IDO_V3.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V3.0/3/"
-            }
+            "skos:notation": "SDN:R27::SBE41_IDO_V3.0"
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3/",
@@ -4512,10 +5089,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:29.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41CP_V3",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 3."
@@ -4539,11 +5132,6 @@
             "skos:notation": "SDN:R27::SBE41CP_V3",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41CP_V3",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3/3/"
             }
         },
         {
@@ -4557,10 +5145,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:29.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.1/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41CP_V5.3.1",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 5.3.1."
@@ -4584,11 +5188,6 @@
             "skos:notation": "SDN:R27::SBE41CP_V5.3.1",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41CP_V5.3.1",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.1/3/"
             }
         },
         {
@@ -4731,10 +5330,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:29.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V2/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41CP_V2",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 2."
@@ -4758,11 +5373,6 @@
             "skos:notation": "SDN:R27::SBE41CP_V2",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41CP_V2",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V2/3/"
             }
         },
         {
@@ -4776,10 +5386,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:29.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2a/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41CP_V1.2a",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 1.2a."
@@ -4803,11 +5429,6 @@
             "skos:notation": "SDN:R27::SBE41CP_V1.2a",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41CP_V1.2a",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2a/3/"
             }
         },
         {
@@ -4821,10 +5442,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:29.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3b/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41CP_V1.3b",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 1.3b."
@@ -4848,11 +5485,6 @@
             "skos:notation": "SDN:R27::SBE41CP_V1.3b",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41CP_V1.3b",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3b/3/"
             }
         },
         {
@@ -4866,10 +5498,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:29.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.5/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41CP_V1.5",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 1.5."
@@ -4893,11 +5541,6 @@
             "skos:notation": "SDN:R27::SBE41CP_V1.5",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41CP_V1.5",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.5/3/"
             }
         },
         {
@@ -4911,10 +5554,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:29.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41CP_V1.9",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 1.9."
@@ -4938,11 +5597,6 @@
             "skos:notation": "SDN:R27::SBE41CP_V1.9",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41CP_V1.9",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9/3/"
             }
         },
         {
@@ -4956,10 +5610,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:29.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41CP_V1.3",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 1.3."
@@ -4983,11 +5653,6 @@
             "skos:notation": "SDN:R27::SBE41CP_V1.3",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41CP_V1.3",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3/3/"
             }
         },
         {
@@ -5001,10 +5666,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:29.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.7/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41CP_V1.7",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 1.7."
@@ -5028,11 +5709,6 @@
             "skos:notation": "SDN:R27::SBE41CP_V1.7",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41CP_V1.7",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.7/3/"
             }
         },
         {
@@ -5046,10 +5722,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:29.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0c/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41CP_V3.0c",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 3.0c."
@@ -5073,11 +5765,6 @@
             "skos:notation": "SDN:R27::SBE41CP_V3.0c",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41CP_V3.0c",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0c/3/"
             }
         },
         {
@@ -5091,10 +5778,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:30.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.0/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41N_V5.3.0",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on profiling floats hosting multiple biogeochemical (BGC) sensors. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent. Data from all the float's sensors, including the optional bolt-on ones, are integrated in the data stream and transmitted to the float controller when the float reaches the surface. This SBE41N model has firmware version 5.3.0."
@@ -5118,11 +5821,6 @@
             "skos:notation": "SDN:R27::SBE41N_V5.3.0",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41N_V5.3.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.0/3/"
             }
         },
         {
@@ -5136,10 +5834,26 @@
                 }
             ],
             "pav:authoredOn": "2025-04-03 11:54:30.0",
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N/"
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.4.0/3/"
             },
+            "dce:identifier": "SDN:R27::SBE41N_V5.4.0",
+            "pav:version": "3",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
             "skos:definition": {
                 "@language": "en",
                 "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on profiling floats hosting multiple biogeochemical (BGC) sensors. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent. Data from all the float's sensors, including the optional bolt-on ones, are integrated in the data stream and transmitted to the float controller when the float reaches the surface. This SBE41N model has firmware version 5.4.0."
@@ -5163,16 +5877,14 @@
             "skos:notation": "SDN:R27::SBE41N_V5.4.0",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-            },
-            "pav:version": "3",
-            "dce:identifier": "SDN:R27::SBE41N_V5.4.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.4.0/3/"
             }
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB/",
-            "pav:authoredOn": "2021-08-09 12:23:38.0",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB/1/"
+            },
+            "pav:authoredOn": "2025-08-28 11:45:52.0",
             "@type": "skos:Concept",
             "skos:definition": {
                 "@language": "en",
@@ -5181,18 +5893,18 @@
             "void:inDataset": {
                 "@id": "http://vocab.nerc.ac.uk/.well-known/void"
             },
-            "owl:deprecated": "false",
+            "owl:deprecated": "true",
             "skos:note": {
                 "@language": "en",
-                "@value": "accepted"
+                "@value": "deprecated"
             },
             "dc:identifier": "SDN:R27::ECO_BB",
             "skos:prefLabel": {
                 "@language": "en",
                 "@value": "ECO BB scattering meter"
             },
-            "owl:versionInfo": "1",
-            "dc:date": "2021-08-09 12:23:38.0",
+            "owl:versionInfo": "2",
+            "dc:date": "2025-08-28 11:45:52.0",
             "skos:altLabel": "ECO_BB",
             "skos:notation": "SDN:R27::ECO_BB",
             "skos:broader": [
@@ -5203,10 +5915,10 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
                 }
             ],
-            "pav:version": "1",
+            "pav:version": "2",
             "dce:identifier": "SDN:R27::ECO_BB",
             "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB/1/"
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB/2/"
             }
         },
         {
@@ -5258,12 +5970,15 @@
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/",
-            "pav:authoredOn": "2021-07-01 16:48:21.0",
-            "pav:hasCurrentVersion": {
+            "pav:hasVersion": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/1/"
             },
+            "pav:authoredOn": "2025-08-28 11:45:52.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/2/"
+            },
             "dce:identifier": "SDN:R27::SATLANTIC_OCR504_ICSW",
-            "pav:version": "1",
+            "pav:version": "2",
             "skos:broader": [
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SATLANTIC/"
@@ -5301,18 +6016,18 @@
             "void:inDataset": {
                 "@id": "http://vocab.nerc.ac.uk/.well-known/void"
             },
-            "owl:deprecated": "false",
+            "owl:deprecated": "true",
             "skos:note": {
                 "@language": "en",
-                "@value": "accepted"
+                "@value": "deprecated"
             },
             "dc:identifier": "SDN:R27::SATLANTIC_OCR504_ICSW",
             "skos:prefLabel": {
                 "@language": "en",
                 "@value": "OCR-504 multispectral radiometer (downwelling irradiance)"
             },
-            "owl:versionInfo": "1",
-            "dc:date": "2021-07-01 16:48:21.0",
+            "owl:versionInfo": "2",
+            "dc:date": "2025-08-28 11:45:52.0",
             "skos:altLabel": "SATLANTIC_OCR504_ICSW"
         },
         {
@@ -5359,12 +6074,15 @@
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_R10W/",
-            "pav:authoredOn": "2021-07-01 16:48:21.0",
-            "pav:hasCurrentVersion": {
+            "pav:hasVersion": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_R10W/1/"
             },
+            "pav:authoredOn": "2025-08-28 11:45:52.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_R10W/2/"
+            },
             "dce:identifier": "SDN:R27::SATLANTIC_OCR504_R10W",
-            "pav:version": "1",
+            "pav:version": "2",
             "skos:broader": [
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SATLANTIC/"
@@ -5395,18 +6113,18 @@
             "void:inDataset": {
                 "@id": "http://vocab.nerc.ac.uk/.well-known/void"
             },
-            "owl:deprecated": "false",
+            "owl:deprecated": "true",
             "skos:note": {
                 "@language": "en",
-                "@value": "accepted"
+                "@value": "deprecated"
             },
             "dc:identifier": "SDN:R27::SATLANTIC_OCR504_R10W",
             "skos:prefLabel": {
                 "@language": "en",
                 "@value": "OCR-504 multispectral radiometer (upwelling radiance)"
             },
-            "owl:versionInfo": "1",
-            "dc:date": "2021-07-01 16:48:21.0",
+            "owl:versionInfo": "2",
+            "dc:date": "2025-08-28 11:45:52.0",
             "skos:altLabel": "SATLANTIC_OCR504_R10W",
             "skos:notation": "SDN:R27::SATLANTIC_OCR504_R10W"
         },
@@ -5780,13 +6498,22 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/UNKNOWN/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/FLOATCLOCK/"
-                },
-                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RAFOS/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_R10W/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/DSB301-10-C85/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/QUARTZDYNE_DSB301-10-C85/"
@@ -5999,9 +6726,6 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.2/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO/"
-                },
-                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD/"
                 },
                 {
@@ -6039,6 +6763,9 @@
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSWR10W/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/FLOATCLOCK/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.3/"
@@ -6137,6 +6864,9 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_NTU/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.2/"
                 },
                 {
@@ -6181,8 +6911,8 @@
             "dc:description": "Terms listing models of sensors mounted on Argo floats. Note: avoid using the manufacturer name and sensor firmware version in new entries when possible. Argo netCDF variable SENSOR_MODEL is populated by R27 altLabel.",
             "dc:title": "Argo sensor models",
             "skos:prefLabel": "Argo sensor models",
-            "owl:versionInfo": "18",
-            "dc:date": "2025-08-19 03:00:00.0",
+            "owl:versionInfo": "23",
+            "dc:date": "2025-11-19 02:00:00.0",
             "skos:altLabel": "SENSOR_MODEL",
             "dc:creator": "Argo Data Management Team",
             "dc:alternative": "SENSOR_MODEL",
@@ -6190,7 +6920,7 @@
             "grg:RE_RegisterOwner": "Argo Data Management Team",
             "grg:RE_RegisterManager": "British Oceanographic Data Centre",
             "rdfs:seeAlso": {
-                "@id": "https://github.com/nvs-vocabs/R27"
+                "@id": "https://github.com/OneArgo/ArgoVocabs"
             }
         }
     ],

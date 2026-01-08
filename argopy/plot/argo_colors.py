@@ -43,7 +43,7 @@ class ArgoColors:
     COLORS = ARGOPY_COLORS.copy()
     """Set of Argo colors derived from the logo"""
 
-    def __init__(self, name: str = "Set1", N: int = None):
+    def __init__(self, name: str = "Set1", N: int | None = None):
         """
 
         Parameters
@@ -81,7 +81,7 @@ class ArgoColors:
                 "ticklabels": ['PROBABLE', 'CONFIRMED', 'REGISTERED', 'OPERATIONAL', 'INACTIVE', 'CLOSED'],
             },
             "qc": {
-                "name": "Quality control flag scale",
+                "name": "Quality control flag scale for measurements",
                 "aka": ["qc_flag", "quality_control", "quality_control_flag", "quality_control_flag_scale"],
                 "constructor": self._colormap_quality_control_flag,
                 "ticks": np.arange(0, 9 + 1),
@@ -103,6 +103,19 @@ class ArgoColors:
                 "ticks": np.arange(0, 12) + 1,
                 "ticklabels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+            },
+            "pqc": {
+                "name": "Quality control flag scale for whole profiles",
+                "aka": ["pqc_flag", "profile_qc", "profile_quality_control_flag", "profile_quality_control_flag", "profile_quality_control_flag_scale"],
+                "constructor": self._colormap_profile_quality_control_flag,
+                "ticks": ["N", "A", "B", "C", "D", "E", "F"],
+                "ticklabels": ["No QC performed",
+                               "100% of profile good",
+                               "75% - 100% of profile good",
+                               "50% - 75% of profile good",
+                               "25% - 50% of profile good",
+                               "0% - 25% of profile good",
+                               "0% of profile good"]
             },
         }
         self.registered = self.name in self.list_valid_known_colormaps
@@ -269,6 +282,18 @@ class ArgoColors:
                  '#000000'
                  ]
         return mcolors.LinearSegmentedColormap.from_list(self.definition['name'], clist, 10)
+
+    def _colormap_profile_quality_control_flag(self):
+        """Return a colormap for Profile QC flag"""
+        clist = ['#000000',
+                 '#31FC03',
+                 '#ADFC03',
+                 '#FCBA03',
+                 '#324CA8',
+                 '#B22CC9',
+                 '#FC1C03',
+                 ]
+        return mcolors.LinearSegmentedColormap.from_list(self.definition['name'], clist, 7)
 
     @property
     def cmap(self):

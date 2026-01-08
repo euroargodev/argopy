@@ -11,8 +11,8 @@ import json
 import logging
 import importlib
 
-from ..options import OPTIONS
-from ..errors import InvalidDatasetStructure, GdacPathError, InvalidFetcher
+from argopy.options import OPTIONS
+from argopy.errors import InvalidDatasetStructure, GdacPathError, InvalidFetcher
 from .lists import list_available_data_src, list_available_index_src, list_gdac_servers
 from .casting import to_list
 from .geo import conv_lon

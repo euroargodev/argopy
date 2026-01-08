@@ -1,7 +1,7 @@
 {
   "name": "ADMT documentation catalogue",
   "long_name": "Titles and DOIs of all the official ADMT documentation",
-  "last_update": "2025-08-20T06:51:59.283330+00:00",
+  "last_update": "2025-12-09T16:47:08.606450+00:00",
   "data": {
     "catalogue": [
       {
@@ -159,12 +159,6 @@
         "title": "BGC-Argo quality control manual for pH",
         "doi": "10.13155/97828",
         "id": 97828
-      },
-      {
-        "category": "Quality Control",
-        "title": "BGC Argo quality control manual for particles backscattering",
-        "doi": "10.13155/60262",
-        "id": 60262
       }
     ]
   }

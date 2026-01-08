@@ -186,3 +186,38 @@ def YearFraction_to_datetime(yf: float):
     ).total_seconds()
     yearElapsed_sec = pd.Timedelta(fraction * yearDuration_sec, unit="s")
     return pd.to_datetime(startOfThisYear + yearElapsed_sec, unit="s")
+
+
+def point_in_polygon(point, polygon):
+    """
+    Check if a point is inside a polygon using the ray-casting algorithm.
+
+    Parameters
+    ----------
+    point: A 2D coordinate as a NumPy array or list, e.g., [x, y].
+    polygon: A list of 2D coordinates representing the polygon vertices,
+            ordered clockwise or counter-clockwise, e.g., [[x1, y1], [x2, y2], ...].
+
+    Returns
+    -------
+    bool: True if the point is strictly inside the polygon, False otherwise.
+    """
+    x, y = point
+    polygon = np.array(polygon)
+    n = len(polygon)
+    inside = False
+
+    # Iterate over each edge of the polygon
+    for i in range(n):
+        x1, y1 = polygon[i]
+        x2, y2 = polygon[(i + 1) % n]
+
+        # Check if the ray from (x, y) crosses the edge (x1, y1) to (x2, y2)
+        if y > min(y1, y2):
+            if y <= max(y1, y2):
+                if x <= max(x1, x2):
+                    if y1 != y2:
+                        x_intersect = (y - y1) * (x2 - x1) / (y2 - y1) + x1
+                    if x1 == x2 or x <= x_intersect:
+                        inside = not inside
+    return inside

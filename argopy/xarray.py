@@ -1,11 +1,10 @@
 import os
 import warnings
-
 import numpy as np
 import pandas as pd
 import xarray as xr
 import logging
-from typing import Union, LiteralString
+from typing import Union, Any, LiteralString
 from xarray.backends import BackendEntrypoint  # For xarray > 0.18
 from xarray.backends import ZarrStore
 
@@ -25,20 +24,22 @@ except ModuleNotFoundError:
     Delayed = lambda x: x  # noqa: E731
 
 
-from .utils import is_list_of_strings
-from .utils import (
+from argopy.errors import InvalidDatasetStructure, OptionValueError, NoData, NoDataLeft
+from argopy.utils.mappers import map_vars_to_dict
+from argopy.utils.checkers import is_list_of_strings
+from argopy.utils.casting import (
     cast_Argo_variable_type,
     DATA_TYPES,
     to_list,
 )
-from .utils import (
+from argopy.utils.computers import (
     linear_interpolation_remap,
     pchip_interpolation_remap,
     groupby_remap,
 )
-from .utils import list_core_parameters
-from .utils import toYearFraction
-from .errors import InvalidDatasetStructure, OptionValueError, NoData, NoDataLeft
+from argopy.utils.lists import list_core_parameters
+from argopy.utils.geo import toYearFraction
+
 
 log = logging.getLogger("argopy.xarray")
 
@@ -46,8 +47,6 @@ log = logging.getLogger("argopy.xarray")
 @xr.register_dataset_accessor("argo")
 class ArgoAccessor:
     """Class registered under scope ``argo`` to access a :class:`xarray.Dataset` object.
-
-
 
     Examples
     --------
@@ -1061,7 +1060,7 @@ class ArgoAccessor:
         for co in coords:
             ds_out.coords[co] = this_dsp[co]
 
-        ds_out = ds_out.drop_vars(["N_LEVELS", "Z_LEVELS"])
+        ds_out = ds_out.drop_vars(["N_LEVELS", "Z_LEVELS"], errors='ignore')
         ds_out = ds_out[np.sort(ds_out.data_vars)]
         ds_out = ds_out.argo.cast_types()
         ds_out.attrs = self.attrs  # Preserve original attributes
@@ -2328,6 +2327,9 @@ class ArgoAccessor:
             **ufunc_kwargs,
         )
         return reduced
+
+    def map_vars_to_dict(self, var_key: str, var_val:str, duplicate:bool=False) -> dict[Any, Any]:
+        return map_vars_to_dict(self._obj, var_key=var_key, var_val=var_val, duplicate=duplicate)
 
 
 def open_Argo_dataset(filename_or_obj):

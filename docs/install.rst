@@ -37,7 +37,7 @@ Required dependencies
 
 **argopy** >= 1.3 requires Python 3.11
 
-- xarray >= 2025.7.0
+- xarray >= 2025.7.0, <=2025.9.0
 - scipy
 - numpy
 - erddapy
@@ -46,7 +46,7 @@ Required dependencies
 - fsspec >= 2025.5.1
 - toolz
 - requests
-- aiohttp
+- aiohttp <= 3.12.15
 - decorator
 - packaging
 
@@ -62,12 +62,15 @@ For a complete **argopy** experience, you may also consider to install the follo
 **Utilities**
 
 - gsw
+- pyco2sys
 - tqdm
 
 **Performances**
 
 - dask
 - distributed
+- joblib
+- numba
 - pyarrow
 
 **Files handling**

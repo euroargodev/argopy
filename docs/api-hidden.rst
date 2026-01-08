@@ -80,6 +80,7 @@
 
     argopy.utils.show_versions
     argopy.utils.show_options
+    argopy.utils.Asset
 
     argopy.utils.clear_cache
     argopy.utils.lscache
@@ -297,17 +298,6 @@
     argopy.ArgoIndex.read_files
     argopy.ArgoIndex.records_per_wmo
 
-    argopy.ArgoIndex.search_wmo
-    argopy.ArgoIndex.search_cyc
-    argopy.ArgoIndex.search_wmo_cyc
-    argopy.ArgoIndex.search_tim
-    argopy.ArgoIndex.search_lat_lon
-    argopy.ArgoIndex.search_lat_lon_tim
-    argopy.ArgoIndex.search_params
-    argopy.ArgoIndex.search_parameter_data_mode
-    argopy.ArgoIndex.search_profiler_type
-    argopy.ArgoIndex.search_profiler_label
-
     argopy.ArgoIndex.to_dataframe
     argopy.ArgoIndex.to_indexfile
     argopy.ArgoIndex.copy
@@ -327,6 +317,9 @@
     argopy.ArgoIndex.query.parameter_data_mode
     argopy.ArgoIndex.query.profiler_type
     argopy.ArgoIndex.query.profiler_label
+    argopy.ArgoIndex.query.institution_code
+    argopy.ArgoIndex.query.institution_name
+    argopy.ArgoIndex.query.dac
 
     argopy.ArgoIndex.query.wmo_cyc
     argopy.ArgoIndex.query.lon_lat
@@ -368,8 +361,18 @@
 
     argopy.extensions.CanyonMED
     argopy.extensions.CanyonMED.predict
-    argopy.extensions.CanyonMED.input
+    argopy.extensions.CanyonMED.input_list
     argopy.extensions.CanyonMED.output_list
+
+    argopy.extensions.CanyonB
+    argopy.extensions.CanyonB.predict
+    argopy.extensions.CanyonB.input_list
+    argopy.extensions.CanyonB.output_list
+
+    argopy.extensions.CONTENT
+    argopy.extensions.CONTENT.predict
+    argopy.extensions.CONTENT.input_list
+    argopy.extensions.CONTENT.output_list
 
     argopy.extensions.ParamsDataMode.compute
     argopy.extensions.ParamsDataMode.merge
@@ -384,12 +387,8 @@
 
     argopy.errors.InvalidDatasetStructure
 
-    argopy.stores.float.spec.ArgoFloatProto
+    argopy.stores.float.spec.FloatStoreProto
     argopy.stores.ArgoFloat
-    argopy.stores.ArgoFloat.plot
-    argopy.stores.ArgoFloat.plot.trajectory
-    argopy.stores.ArgoFloat.plot.map
-    argopy.stores.ArgoFloat.plot.scatter
     argopy.ArgoFloat.open_dataset
     argopy.ArgoFloat.ls_dataset
     argopy.ArgoFloat.path
@@ -399,7 +398,38 @@
     argopy.ArgoFloat.metadata
     argopy.ArgoFloat.N_CYCLES
     argopy.ArgoFloat.dac
+
+    argopy.stores.ArgoFloat.plot
+    argopy.stores.ArgoFloat.plot.trajectory
+    argopy.stores.ArgoFloat.plot.map
+    argopy.stores.ArgoFloat.plot.scatter
     argopy.ArgoFloat.plot
     argopy.ArgoFloat.plot.trajectory
     argopy.ArgoFloat.plot.scatter
     argopy.ArgoFloat.plot.map
+
+    argopy.stores.ArgoFloat.config
+    argopy.stores.ArgoFloat.config.n_params
+    argopy.stores.ArgoFloat.config.parameters
+    argopy.stores.ArgoFloat.config.n_missions
+    argopy.stores.ArgoFloat.config.missions
+    argopy.stores.ArgoFloat.config.cycles
+    argopy.stores.ArgoFloat.config.for_cycles
+    argopy.stores.ArgoFloat.config.to_dataframe
+    argopy.ArgoFloat.config
+    argopy.ArgoFloat.config.n_params
+    argopy.ArgoFloat.config.parameters
+    argopy.ArgoFloat.config.n_missions
+    argopy.ArgoFloat.config.missions
+    argopy.ArgoFloat.config.cycles
+    argopy.ArgoFloat.config.for_cycles
+    argopy.ArgoFloat.config.to_dataframe
+
+    argopy.stores.ArgoFloat.launchconfig
+    argopy.stores.ArgoFloat.launchconfig.n_params
+    argopy.stores.ArgoFloat.launchconfig.parameters
+    argopy.stores.ArgoFloat.launchconfig.to_dataframe
+    argopy.ArgoFloat.launchconfig
+    argopy.ArgoFloat.launchconfig.n_params
+    argopy.ArgoFloat.launchconfig.parameters
+    argopy.ArgoFloat.launchconfig.to_dataframe
