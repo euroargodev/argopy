@@ -7,8 +7,8 @@ What's New
 
 |pypi dwn| |conda dwn|
 
-v1.4.0 (xx Jan. 2026)
----------------------
+v1.4.0 (5 Jan. 2026)
+--------------------
 
 .. _v1.4.0-features:
 
@@ -64,8 +64,7 @@ Breaking changes
 Energy
 ^^^^^^
 
-.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.4.0%20%5BgCO2eq%5D-TBA-black?style=plastic&labelColor=grey
-
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.4.0%20%5BgCO2eq%5D-1666-black?style=plastic&labelColor=grey
 
 v1.3.1 (22 Oct. 2025)
 ---------------------
@@ -102,7 +101,7 @@ Internals
 Energy
 ^^^^^^
 
-.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.3.1%20%5BgCO2eq%5D-TBA-black?style=plastic&labelColor=grey
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.3.1%20%5BgCO2eq%5D-1186-black?style=plastic&labelColor=grey
 
 v1.3.0 (22 Aug. 2025)
 ---------------------
@@ -153,7 +152,7 @@ Breaking changes
 Energy
 ^^^^^^
 
-.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.3.0%20%5BgCO2eq%5D-TBA-black?style=plastic&labelColor=grey
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.3.0%20%5BgCO2eq%5D-1258-black?style=plastic&labelColor=grey
 
 
 v1.2.0 (9 June 2025)
@@ -188,7 +187,7 @@ Internals
 Energy
 ^^^^^^
 
-.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.2.0%20%5BgCO2eq%5D-1328.99-black?style=plastic&labelColor=grey
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.2.0%20%5BgCO2eq%5D-0.27-black?style=plastic&labelColor=grey
 
 
 v1.1.0 (18 March 2025)
@@ -290,7 +289,7 @@ Internals
 Energy
 ^^^^^^
 
-.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.1.0%20%5BgCO2eq%5D-1328.99-black?style=plastic&labelColor=grey
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.1.0%20%5BgCO2eq%5D-4302.71-black?style=plastic&labelColor=grey
 
 
 v1.0.0 (16 Oct. 2024)
@@ -1526,4 +1525,5 @@ v0.1.0 (17 Mar. 2020)
 .. |release date| image:: https://img.shields.io/github/release-date/euroargodev/argopy?display_date=published_at
    :target: //github.com/euroargodev/argopy/releases
 .. |eqco2_since_last_release| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_carbonfootprint_since_last_release.json
+.. |eqco2_baseline| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_carbonfootprint_baseline.json
 
