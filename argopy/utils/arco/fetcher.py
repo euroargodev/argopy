@@ -13,10 +13,10 @@ from argopy.utils.format import argo_split_path
 from argopy.utils.arco.argo_multiprof import ArgoMultiProf
 
 
-class BigFetcher(object):
+class MassFetcher(object):
     """Fetch Argo data massively
 
-    This class implements a naive approach to fetch Argo data massively, i.e. to fetch a very large selection of measurements, as fast as possible.
+    This class implements a direct approach to fetch Argo data massively, i.e. to fetch a very large selection of measurements, as fast as possible. In other word, this class bypasses all Argopy features to hard code all data processing steps for user modes, making data fetching effective for large selections.
 
     Warnings
     --------
@@ -31,11 +31,11 @@ class BigFetcher(object):
     Examples
     --------
     ..code-block:: python
-        :caption: Fetch and load global Argo dataset for a given month
+        :caption: Fetch to load global Argo dataset for a given month
 
         from dask.distributed import Client
         from argopy import ArgoIndex
-        from argopy.utils.arco import BigFetcher
+        from argopy.utils.arco import MassFetcher
 
         # Create the Dask cluster to work with:
         client = Client(processes=True)
@@ -48,14 +48,14 @@ class BigFetcher(object):
 
         # Fetch and load data in memory:
         # (~6 mins on laptop with 4 cores and 32Gb of RAM)
-        dsp = BigFetcher(idx).to_xarray()
+        dsp = MassFetcher(idx).to_xarray()
 
     ..code-block:: python
-        :caption: Fetch and save global Argo dataset for a given month
+        :caption: Fetch to save global Argo dataset for a given month
 
         from dask.distributed import Client
         from argopy import ArgoIndex
-        from argopy.utils.arco import BigFetcher
+        from argopy.utils.arco import MassFetcher
 
         # Create the Dask cluster to work with:
         client = Client(processes=True)
@@ -66,10 +66,10 @@ class BigFetcher(object):
         idx = ArgoIndex(index_file='core')
         idx.query.box([-180, 180, -90, 90, '20251001', '20251101'])
 
-        # Fetch and load data in memory:
+        # Fetch and save data to a zarr archive:
         # (~6 mins on laptop with 4 cores and 32Gb of RAM)
         zarr_archive = f"zarr/{idx.search_type['BOX'][-2]}_ARGO_STANDARD_POINTS.zarr"
-        BigFetcher(idx).to_zarr(zarr_archive)
+        MassFetcher(idx).to_zarr(zarr_archive)
 
     ..code-block:: python
         :caption: Work with interpolated data
@@ -77,7 +77,7 @@ class BigFetcher(object):
         from dask.distributed import Client
         import numpy as np
         from argopy import ArgoIndex
-        from argopy.utils.arco import BigFetcher
+        from argopy.utils.arco import MassFetcher
 
         # Create the Dask cluster to work with:
         client = Client(processes=True)
@@ -92,16 +92,16 @@ class BigFetcher(object):
         sdl = np.arange(0, 2005., 5)
 
         # Fetch, interpolate and load data in memory:
-        dsp = BigFetcher(idx, sdl=sdl).to_xarray()
+        dsp = MassFetcher(idx, sdl=sdl).to_xarray()
 
         # Fetch, interpolate and save data to zarr:
         zarr_archive = f"zarr/{idx.search_type['BOX'][-2]}_ARGO_STANDARD_POINTS.zarr"
-        dsp = BigFetcher(idx, sdl=sdl).to_zarr(zarr_archive)
+        dsp = MassFetcher(idx, sdl=sdl).to_zarr(zarr_archive)
 
     ..code-block:: python
         :caption: Load time series of global Argo dataset as points
 
-        # Considering the above example where monthly data have been saved in several zarr archives
+        # Considering the above example where monthly data have been saved in several zarr archives,
         # one can load back everything like this:
 
         import xarray as xr
@@ -115,7 +115,7 @@ class BigFetcher(object):
     ..code-block:: python
         :caption: Load time series of global Argo dataset as interpolated profiles
 
-        # Considering the above example where monthly data have been saved in several zarr archives
+        # Considering the above example where monthly data have been saved in several zarr archives,
         # one can load back everything like this:
 
         import xarray as xr
@@ -159,13 +159,9 @@ class BigFetcher(object):
         self.argo_files = idx.read_files(multi=True)
         self.N_RECORDS = len(self.argo_files)
 
-        # self.argo_wmos = [
-        #     int(os.path.basename(x).split("_")[0]) for x in self.argo_files
-        # ]
-        # self.argo_dacs = [x.split("/")[-3] for x in self.argo_files]
 
     def __repr__(self):
-        summary = [f"<argopy.BigFetcher.{self.protocol}>"]
+        summary = [f"<argopy.MassFetcher.{self.protocol}>"]
         summary.append(f"Host: {self.host}")
         summary.append(f"Domain: {self.cname}")
         summary.append(f"Number of floats: {self.N_RECORDS}")
@@ -305,8 +301,8 @@ class BigFetcher(object):
             }
 
         # Specific to this machinery:
-        if "id" in ds:
-            ds["id"].attrs = {
+        if "ARCOID" in ds:
+            ds["ARCOID"].attrs = {
                 "long_name": "Profile unique ID",
                 "standard_name": "ID",
                 "comment": "Computed as: 1000 * FLOAT_WMO + CYCLE_NUMBER",
@@ -545,7 +541,7 @@ class BigFetcher(object):
                         xr.DataArray(lats, name="LATITUDE", dims="N_POINTS"),
                         xr.DataArray(pres_pts, name="PRES", dims="N_POINTS"),
                         xr.DataArray(dts, name="TIME", dims="N_POINTS"),
-                        xr.DataArray(profile_numid, name="id", dims="N_POINTS"),
+                        xr.DataArray(profile_numid, name="ARCOID", dims="N_POINTS"),
                         xr.DataArray(temp_pts, name="TEMP", dims="N_POINTS"),
                         xr.DataArray(psal_pts, name="PSAL", dims="N_POINTS"),
                     )
@@ -590,7 +586,6 @@ class BigFetcher(object):
         - Real-time, adjusted or delayed, according to data_mode
 
         """
-
         if client is None:
             try:
                 client = distributed.Client.current()
@@ -618,8 +613,8 @@ class BigFetcher(object):
         ds.attrs.pop("DAC")
         ds.attrs.pop("PLATFORM_NUMBER")
         ds.attrs["domain"] = self.cname
-        ds.attrs["nb_floats"] = len(np.unique((ds["id"] / 1000).astype(int)))
-        ds.attrs["nb_profiles"] = len(np.unique((ds["id"])))
+        ds.attrs["nb_floats"] = len(np.unique((ds["ARCOID"] / 1000).astype(int)))
+        ds.attrs["nb_profiles"] = len(np.unique((ds["ARCOID"])))
         ds = ds.sortby("TIME")
         ds[concat_dim] = np.arange(0, len(ds[concat_dim]))
         return ds
