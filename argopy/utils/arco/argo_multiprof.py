@@ -68,11 +68,14 @@ class ArgoMultiProf(NCParsed):
         self.pres = get_param("PRES", "PRES_ADJUSTED", self.pres_selection_mask, arr).astype(np.float32)
         self.pres_qc = get_param("PRES_QC", "PRES_ADJUSTED_QC", self.pres_selection_mask, arr, assign_nan=7).astype(
             np.float32)
+        self.pres_error = get_param("PRES_ADJUSTED_ERROR", "PRES_ADJUSTED_ERROR", self.pres_selection_mask, arr).astype(np.float32)
 
         if self.temp_selection_mask is not None:
             self.temp = get_param("TEMP", "TEMP_ADJUSTED", self.temp_selection_mask, arr).astype(np.float32)
             self.temp_qc = get_param("TEMP_QC", "TEMP_ADJUSTED_QC", self.temp_selection_mask, arr, assign_nan=7).astype(
                 np.float32)
+            self.temp_error = get_param("TEMP_ADJUSTED_ERROR", "TEMP_ADJUSTED_ERROR", self.temp_selection_mask,
+                                        arr).astype(np.float32)
         else:
             self.temp = None
             self.temp_qc = None
@@ -81,6 +84,8 @@ class ArgoMultiProf(NCParsed):
             self.psal = get_param("PSAL", "PSAL_ADJUSTED", self.psal_selection_mask, arr).astype(np.float32)
             self.psal_qc = get_param("PSAL_QC", "PSAL_ADJUSTED_QC", self.psal_selection_mask, arr, assign_nan=7).astype(
                 np.float32)
+            self.psal_error = get_param("PSAL_ADJUSTED_ERROR", "PSAL_ADJUSTED_ERROR", self.psal_selection_mask,
+                                        arr).astype(np.float32)
         else:
             self.psal = None
             self.psal_qc = None

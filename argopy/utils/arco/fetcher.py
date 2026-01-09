@@ -4,7 +4,9 @@ import xarray as xr
 import pandas as pd
 import numpy as np
 import datetime as dt
+from typing import Literal
 
+from argopy.options import OPTIONS, VALIDATE
 from argopy.errors import OptionValueError
 from argopy.stores.filesystems import distributed
 
@@ -129,7 +131,7 @@ class MassFetcher(object):
 
     """
 
-    def __init__(self, idx: "ArgoIndex", sdl=None):
+    def __init__(self, idx: "ArgoIndex", sdl=None, mode : Literal['standard', 'research'] | None = None):
         """
         Parameters
         ----------
@@ -138,11 +140,14 @@ class MassFetcher(object):
         sdl: list, optional, default=None
             Standard pressure levels to interpolate T/S profiles on.
         """
-
         if "BOX" not in idx.search_type.keys():
             raise OptionValueError(
                 f"Argo data mass fetching is only available for an ArgoIndex that was search with a 'box' !"
             )
+
+        self.mode = OPTIONS['mode'] if mode is None else mode
+        VALIDATE('mode', self.mode)
+
         self.domain = idx.domain
         self.cname = idx.cname
         self.box = idx.search_type["BOX"]
@@ -215,17 +220,25 @@ class MassFetcher(object):
         else:
             return None
 
-    def _add_dsattributes(self, ds, title="Argo float data"):
+    def _add_dsattributes(self, ds, title="Argo float data", mode='standard'):
         ds.attrs["title"] = title
         ds.attrs["Conventions"] = "CF-1.6"
         ds.attrs["CreationDate"] = pd.to_datetime("now").strftime("%Y/%m/%d")
-        ds.attrs["Comment"] = (
-            "Measurements in this dataset are those with Argo QC flags "
-            "1, 5 or 8 on position and date; and with Argo QC flag 1 on pressure, temperature and "
-            "salinity. Adjusted variables were used wherever necessary "
-            "(depending on the data mode). See the Argo user manual for "
-            "more information: https://archimer.ifremer.fr/doc/00187/29825"
-        )
+        if mode == 'standard':
+            ds.attrs["Comment"] = (
+                "Measurements in this dataset are those with Argo QC flags "
+                "1, 5 or 8 on position and date; and with Argo QC flag 1 on pressure, temperature and "
+                "salinity. Adjusted variables were used wherever necessary "
+                "(depending on the data mode). See the Argo user manual for "
+                "more information: https://archimer.ifremer.fr/doc/00187/29825"
+            )
+        elif mode == 'research':
+            ds.attrs["Comment"] = (
+                "Measurements in this dataset are those with Argo QC flags "
+                "1, 5 or 8 on position and date; and with Argo QC flag 1 on pressure, temperature and "
+                "salinity. Only delayed-mode variables were used and samples with a pressure error smaller than 20db. "
+                "See the Argo user manual for more information: https://archimer.ifremer.fr/doc/00187/29825"
+            )
 
         # This is following: http://cfconventions.org/Data/cf-standard-names/70/build/cf-standard-name-table.html
         if "TEMP" in ds:
@@ -310,10 +323,10 @@ class MassFetcher(object):
 
         return ds
 
-    def _xload_multiprof(
+    def _xload_multiprof_standard(
         self, ds: xr.Dataset | None, domain: list
     ) -> xr.Dataset | None:
-        """Load a core-Argo multi-profile file as a collection of points or sdl profiles
+        """Load a core-Argo multi-profile file as a collection of points or sdl profiles in 'standard' user mode
 
         Parameters
         ----------
@@ -491,6 +504,7 @@ class MassFetcher(object):
                     ds = self._add_dsattributes(
                         ds,
                         title="Argo float profiles interpolated onto Standard Pressure Levels",
+                        self.mode,
                     )
                     ds.attrs["DAC"] = dac_wmo[0]
                     ds.attrs["PLATFORM_NUMBER"] = int(dac_wmo[1])
@@ -550,6 +564,270 @@ class MassFetcher(object):
 
                 # Preserve Argo attributes:
                 ds = self._add_dsattributes(
+                    ds, title="Argo float profiles ravelled data", self.mode,
+                )
+                ds.attrs["DAC"] = dac_wmo[0]
+                ds.attrs["PLATFORM_NUMBER"] = int(dac_wmo[1])
+                ds["N_POINTS"].attrs = {"long_name": "Measurement samples"}
+                return ds
+
+        else:
+            return None
+
+    def _xload_multiprof_research(
+        self, ds: xr.Dataset | None, domain: list
+    ) -> xr.Dataset | None:
+        """Load a core-Argo multi-profile file as a collection of points or sdl profiles in 'research' user mode
+
+        Parameters
+        ----------
+        ds: :class:`xr.Dataset`
+            A raw loaded Xarray dataset to work with
+        domain: list[float | datetime]
+            The `box` domain to select. Contains: [lon_min, lon_max, lat_min, lat_max, date_min, date_max]
+
+        Returns
+        -------
+        :class:`xr.Dataset`
+        """
+        if ds is None:
+            return None
+
+        try:
+            argo = ArgoMultiProf(ds)
+        except Exception as e:
+            print("Error with", ds.attrs)
+            return None
+
+        if argo.psal_qc is None:
+            return None
+        if argo.temp_qc is None:
+            return None
+        if (argo.juld < 0).any():
+            return None
+
+        # Profile selection
+        metas_finite = np.logical_and.reduce(
+            [np.isfinite(argo.lon), np.isfinite(argo.lat), np.isfinite(argo.juld)]
+        )
+        pos_good = np.isin(argo.position_qc, [1, 5, 8])
+        juld_good = np.isin(argo.juld_qc, [1, 5, 8])
+        dm_good = np.isin(argo.data_mode, [2])  # Only delayed-mode data
+        in_domain = np.logical_and.reduce(
+            [
+                argo.lon >= domain[0],
+                argo.lon <= domain[1],
+                argo.lat >= domain[2],
+                argo.lat <= domain[3],
+                argo.datetime >= dt.datetime.utcfromtimestamp(domain[4].tolist() / 1e9),
+                argo.datetime < dt.datetime.utcfromtimestamp(domain[5].tolist() / 1e9),
+            ]
+        )
+        good_profiles = np.logical_and.reduce(
+            [metas_finite, juld_good, pos_good, dm_good, in_domain]
+        )
+
+        if (~good_profiles).all():
+            return None
+
+        temps = argo.temp[
+            good_profiles
+        ]  # R/A/D measurements have been merged according to DATA_MODE
+        psals = argo.psal[
+            good_profiles
+        ]  # R/A/D measurements have been merged according to DATA_MODE
+        pres = argo.pres[
+            good_profiles
+        ]  # R/A/D measurements have been merged according to DATA_MODE
+
+        lons, lats, dats = (
+            argo.lon[good_profiles],
+            argo.lat[good_profiles],
+            argo.datetime[good_profiles],
+        )
+        cycs = argo.cycle[good_profiles]
+
+        perrs = argo.pres_error[good_profiles]
+        serrs = argo.temp_error[good_profiles]
+        terrs = argo.psal_error[good_profiles]
+
+        # Assign an id for each good profile
+        meta = argo_split_path(ds.encoding["source"])
+        dac_wmo = meta["dac"], meta["wmo"]
+        # profile_id = np.array(
+        #     [str(dac_wmo[1]) + "_" + x for x in np.arange(pres.shape[0]).astype(str)]
+        # )
+
+        assert temps.shape == psals.shape
+        assert temps.shape == pres.shape
+        assert temps.shape == perrs.shape
+        assert temps.shape == serrs.shape
+        assert temps.shape == terrs.shape
+
+        # per-point selection
+        finite_measurements = np.logical_and.reduce(
+            [np.isfinite(temps), np.isfinite(pres), np.isfinite(psals)]
+        )
+
+        # Keep points with QC=1
+        temp_good = np.isin(argo.temp_qc[good_profiles], [1])
+        pres_good = np.isin(argo.pres_qc[good_profiles], [1])
+        psal_good = np.isin(argo.psal_qc[good_profiles], [1])
+
+        # Keep points with pressure error smaller than 20db:
+        perr_in_range = argo.pres_error[good_profiles] < 20
+
+        # More sanity checks:
+        pres_in_range = np.nan_to_num(pres) >= 0
+        temp_in_range = np.logical_and(
+            np.nan_to_num(temps) < 40.0, np.nan_to_num(temps) > -2.0
+        )
+        psal_in_range = np.logical_and(
+            np.nan_to_num(psals) < 41.0, np.nan_to_num(psals) > 2.0
+        )
+
+        assert finite_measurements.shape == temps.shape
+        assert temp_good.shape == temps.shape
+        assert pres_good.shape == temps.shape
+        assert psal_good.shape == temps.shape
+        assert pres_in_range.shape == temps.shape
+        assert psal_in_range.shape == temps.shape
+        assert temp_in_range.shape == temps.shape
+        assert perr_in_range.shape == temps.shape
+        assert lons.shape == temps[:, 0].shape
+        assert lats.shape == temps[:, 0].shape
+        assert dats.shape == temps[:, 0].shape
+        assert cycs.shape == temps[:, 0].shape
+
+        # good points?
+        good = np.logical_and.reduce(
+            [
+                finite_measurements,
+                temp_good,
+                pres_good,
+                psal_good,
+                pres_in_range,
+                temp_in_range,
+                psal_in_range,
+                perr_in_range,
+            ]
+        )
+
+        assert good.shape == temps.shape
+
+        if np.sum(good) > 0:
+            lons = lons[good[:, 0]]
+            lats = lats[good[:, 0]]
+            dats = dats[good[:, 0]]
+            cycs = cycs[good[:, 0]]
+
+            sdl = self.sdl_axis
+
+            if sdl is not None:
+                # Return data interpolated onto Standard Depth Levels:
+                temps = self._to_sdl(sdl, temps, pres, good, lats, name="TEMP")
+                psals = self._to_sdl(sdl, psals, pres, good, lats, name="PSAL")
+                if temps is not None and psals is not None:
+                    assert np.all(temps["N_PROF"] == psals["N_PROF"]) == True
+                    ip = temps["N_PROF"].values
+                    try:
+                        # Create dataset:
+                        ds = xr.merge(
+                            (
+                                xr.DataArray(lons[ip], name="LONGITUDE", dims="N_PROF"),
+                                xr.DataArray(lats[ip], name="LATITUDE", dims="N_PROF"),
+                                xr.DataArray(dats[ip], name="TIME", dims="N_PROF"),
+                                xr.DataArray(
+                                    1000 * argo.wmo[0] + cycs[ip],
+                                    name="id",
+                                    dims="N_PROF",
+                                ),
+                                temps,
+                                psals,
+                            )
+                        )
+                    except:
+                        print(
+                            "Error while merging SDL:\n",
+                            temps["N_PROF"],
+                            "\n",
+                            min(ip),
+                            max(ip),
+                            "\n",
+                            good[ip, 0].shape,
+                        )
+                        return None
+
+                    # Preserve Argo attributes:
+                    ds = self._add_dsattributes(
+                        ds,
+                        title="Argo float profiles interpolated onto Standard Pressure Levels",
+                    )
+                    ds.attrs["DAC"] = dac_wmo[0]
+                    ds.attrs["PLATFORM_NUMBER"] = int(dac_wmo[1])
+                    ds.attrs["Method"] = "Vertical linear interpolation"
+                    ds["N_PROF"].attrs = {"long_name": "Profile samples"}
+                    return ds
+                else:
+                    return None
+
+            else:
+                # Return a collection of points:
+                pres_pts = pres[good]
+                temp_pts = temps[good]
+                psal_pts = psals[good]
+
+                perr_pts = perrs[good]
+                terr_pts = terrs[good]
+                serr_pts = serrs[good]
+
+                repeat_n = [np.sum(x) for x in good]
+                lons = np.concatenate(
+                    [
+                        np.repeat(x, repeat_n[i])
+                        for i, x in enumerate(argo.lon[good_profiles])
+                    ]
+                )
+                lats = np.concatenate(
+                    [
+                        np.repeat(x, repeat_n[i])
+                        for i, x in enumerate(argo.lat[good_profiles])
+                    ]
+                )
+                dts = np.concatenate(
+                    [
+                        np.repeat(x, repeat_n[i])
+                        for i, x in enumerate(argo.datetime[good_profiles])
+                    ]
+                )
+                # profile_id_pp = np.concatenate([np.repeat(x, repeat_n[i]) for i, x in enumerate(profile_id)])
+                profile_numid = np.concatenate(
+                    [
+                        np.repeat(x, repeat_n[i])
+                        for i, x in enumerate(
+                            1000 * argo.wmo[good_profiles] + argo.cycle[good_profiles]
+                        )
+                    ]
+                )
+
+                ds = xr.merge(
+                    (
+                        xr.DataArray(profile_numid, name="ARCOID", dims="N_POINTS"),
+                        xr.DataArray(lons, name="LONGITUDE", dims="N_POINTS"),
+                        xr.DataArray(lats, name="LATITUDE", dims="N_POINTS"),
+                        xr.DataArray(dts, name="TIME", dims="N_POINTS"),
+                        xr.DataArray(pres_pts, name="PRES", dims="N_POINTS"),
+                        xr.DataArray(temp_pts, name="TEMP", dims="N_POINTS"),
+                        xr.DataArray(psal_pts, name="PSAL", dims="N_POINTS"),
+                        xr.DataArray(perr_pts, name="PRES_ERROR", dims="N_POINTS"),
+                        xr.DataArray(terr_pts, name="TEMP_ERROR", dims="N_POINTS"),
+                        xr.DataArray(serr_pts, name="PSAL_ERROR", dims="N_POINTS"),
+                    )
+                )
+                # xr.DataArray(gsw.z_from_p(pres_pts, lats, geo_strf_dyn_height=0), name='PRES_INTERPOLATED', dims='N_POINTS'),
+
+                # Preserve Argo attributes:
+                ds = self._add_dsattributes(
                     ds, title="Argo float profiles ravelled data"
                 )
                 ds.attrs["DAC"] = dac_wmo[0]
@@ -600,12 +878,14 @@ class MassFetcher(object):
             ]
         concat_dim = "N_PROF" if self.sdl_axis is not None else "N_POINTS"
 
+        preprocess = self._xload_multiprof_standard if self.mode == 'standard' else self._xload_multiprof_research
+
         ds = self.fs.open_mfdataset(
             ncfiles,
             method=client,
             concat=True,
             concat_dim=concat_dim,
-            preprocess=self._xload_multiprof,
+            preprocess=preprocess,
             preprocess_opts={"domain": self.domain},
             open_dataset_opts={"errors": "ignore"},
             errors="ignore",
