@@ -7,6 +7,6 @@ https://github.com/euroargodev/argopy-osnet
 
 API may change anytime, not all files may be necessary in here and shall be removed/refactored without notice.
 """
-from argopy.utils.arco.fetcher import BigFetcher
+from argopy.utils.arco.fetcher import MassFetcher
 
-__all__ = ('BigFetcher')
+__all__ = ('MassFetcher')
