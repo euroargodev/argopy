@@ -1,7 +1,7 @@
-Impact of argopy
+Impact of Argopy
 ================
 
-Papers & proceedings mentioning argopy
+Papers & proceedings mentioning Argopy
 --------------------------------------
 
 - Bartlett, Jenna  (2022). "An investigation of geostationary satellite imagery to compare developing and non-developing African easterly waves", Thesis and Dissertations. 5600. https://scholarsjunction.msstate.edu/td/5600
@@ -10,7 +10,9 @@ Papers & proceedings mentioning argopy
 
 - Chevillard C, Juza M, Dıaz-Barroso L, Reyes E, Escudier R and Tintore J (2024). "Capability of the Mediterranean Argo network to monitor sub-regional climate change indicators", Front. Mar. Sci. 11:1416486. https://doi.org/10.3389/fmars.2024.1416486
 
-- Dan E. Kelley, Jaimie Harbin, Clark Richards (2021). "argoFloats: An R Package for Analyzing Argo Data" Frontiers in Marine Science, https://doi.org/10.3389/fmars.2021.635922
+- Dan E. Kelley, Jaimie Harbin, Clark Richards (2021). "argoFloats: An R Package for Analyzing Argo Data", Frontiers in Marine Science, https://doi.org/10.3389/fmars.2021.635922
+
+- Danilo Augusto Silva, Avijit Gangopadhyay, Dalton Kei Sasaki, et al. (2026). "Evidence of Synoptic Cross-shelf Pathways of Mid-depth Salinity Maximum Intrusions in the South Brazil Bight", ESS Open Archive, https://doi.org/10.22541/essoar.176771720.05845924/v1
 
 - de Solo, Sofia M. (2021). "What makes a hurricane fall apart? A multi-platform assessment of tropical cyclone weakening By", Thesis and Dissertations. 5274. https://scholarsjunction.msstate.edu/td/5274
 
