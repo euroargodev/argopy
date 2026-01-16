@@ -223,7 +223,7 @@ class FloatStoreProto(ABC):
         paths = self.fs.glob(self.host_sep.join([self.path, "*"]))
 
         if self._aux:
-            paths += self.fs.glob(self.host_sep.join([self.path.replace('dac', 'aux'), "*"]))
+            paths += self.fs.glob(self.host_sep.join([self.path.replace(f"{self.host_sep}dac{self.host_sep}", f"{self.host_sep}aux{self.host_sep}"), "*"]))
 
         paths = [p for p in paths if Path(p).suffix != ""]
 
