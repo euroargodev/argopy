@@ -179,7 +179,7 @@ class FloatStoreProto(ABC):
     @property
     def host_protocol(self) -> str:
         """Protocol of the GDAC host"""
-        return self.idx.fs["src"].protocol
+        return self.fs.protocol
 
     @property
     def host_sep(self) -> str:
