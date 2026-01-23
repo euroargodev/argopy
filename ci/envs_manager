@@ -14,7 +14,7 @@
 # envs_manager -i all-free -d
 #
 
-source ~/miniconda3/etc/profile.d/conda.sh
+source $CONDA_SRC
 #conda activate argopy-base
 
 #########################
