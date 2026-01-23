@@ -2,7 +2,7 @@
 |:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
 |                                                                            [![DOI][joss-badge]][joss-link] [![Documentation][rtd-badge]][rtd-link] [![Pypi][pip-badge]][pip-link] [![Conda][conda-badge]][conda-link]                                                                            |
 |                                                                                             [![codecov][cov-badge]][conda-link]  ![CI][ci-badge] [![CI Energy][ci-energy-badge-co2]][ci-energy-link]                                                                                             |
-|                                                                                                                               [![Open-SSF][ossf-badge]][ossf-link]                                                                                                                               |
+|                                                                                                                               [![Open-SSF][ossf-badge]][ossf-link]                      ![</> Argo Software Dev. Guidelines: 🐥 Novice level: 100.0% complete](https://img.shields.io/badge/%3C%2F%3E%20Argo%20Software%20Dev.%20Guidelines-%F0%9F%90%A5%20Novice%20level%3A%20100.0%25%20complete-16a34a?style=flat&labelColor=0c5d8d)                                                                                                         |
 
 [joss-badge]: https://img.shields.io/badge/DOI-10.21105%2Fjoss.02425-brightgreen
 [joss-link]: https://dx.doi.org/10.21105/joss.02425
@@ -17,6 +17,7 @@
 [conda-link]: https://anaconda.org/conda-forge/argopy
 [ossf-badge]: https://www.bestpractices.dev/projects/5939/badge
 [ossf-link]: https://www.bestpractices.dev/projects/5939
+
 
 
 ### Documentation
@@ -94,7 +95,6 @@ The **argopy** team is concerned about the environmental impact of your favorite
 See our software management dashboard here: https://github.com/orgs/euroargodev/projects/19
 
 And if you want to get involved and help maintain or develop ``argopy``, please checkout [the contribution page](https://argopy.readthedocs.io/en/latest/contributing.html).
-
 
 ## Tutorials
 
