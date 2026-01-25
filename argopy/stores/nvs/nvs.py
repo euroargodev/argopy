@@ -15,11 +15,11 @@ else:
 
 
 class NVS(Implementation):
-    """Load json data from the NVS
+    """NVS json data manager
 
     Used by other classes to handle NVS json download for a table/vocabulary or a value/concept.
 
-    This class will always try to work with online data directly from the server.
+    This class will always try to work with online data directly from a NVS server.
 
     But if **argopy** is loaded offline, this class will fall back on using static assets and still return NVS data.
 
