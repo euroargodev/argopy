@@ -21,16 +21,17 @@ def concept2vocabulary(name: str) -> str | None:
 
     Based on the NVS Vocabulary-to-Concept mapping in static assets
 
+    Returns
+    -------
+    str | None
+        No error is raised, None is returned if the concept is not found in any of the vocabularies
+
     Examples
     --------
     .. code-block:: python
 
         concept2vocabulary('FLOAT_COASTAL') # ['R22']
 
-    Returns
-    -------
-    str | None
-        No error is raised, None is returned if the concept is not found in any of the vocabularies
     """
     name = name.strip().upper()
     found = []
@@ -43,7 +44,7 @@ def concept2vocabulary(name: str) -> str | None:
 
 
 def check_vocabulary(input: str) -> str | None:
-    """Check the input and return a 'Reference Table ID'
+    """Check the input and return a 'Reference Table ID', even if the input a table parameter name
 
     Parameters
     ----------
@@ -53,7 +54,16 @@ def check_vocabulary(input: str) -> str | None:
     Returns
     -------
     str | None
-        Reference table ID
+        Reference table ID or None if not found.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        check_vocabulary('R22')  # Return: 'R22'
+        check_vocabulary('PLATFORM_FAMILY')  # Return: 'R22'
+        check_vocabulary('dummy')  # Return: None
+
     """
     input = input.strip().upper()
     for vocab in Vocabulary2Parameter:
@@ -84,9 +94,12 @@ def id2urn(uri: str) -> str:
     """
     parts = urlparse(uri).path.split("/")
     try:
-        listid = [p for p in parts if p.startswith('R') or p.startswith('P')][0]
+        # listid = [p for p in parts if p.startswith('R') or p.startswith('P')][0]
+        listid = parts[1 + [parts.index(p) for p in parts if p == 'collection'][0]]
+        if not listid[0] == 'R' or listid[0] == 'P':
+            raise ValueError(f"{uri} is not a valid NVS id, only R* and P* collections are allowed.")
     except:
-        raise ValueError(f"{uri} is not a valid NVS id")
+        raise ValueError(f"{uri} is not a valid NVS id, only R* and P* collections are allowed.")
     try:
         termid = parts[1+[parts.index(p) for p in parts if p=='current'][0]]
     except:
