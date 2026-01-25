@@ -18,6 +18,7 @@ from scipy import interpolate
 import xarray as xr
 from packaging import version
 import logging
+from dataclasses import dataclass
 
 try:
     import gsw
@@ -30,6 +31,13 @@ except ModuleNotFoundError:
 from argopy.errors import InvalidOption
 
 log = logging.getLogger("argopy.utils.compute")
+
+
+@dataclass
+class Msg:
+    points_missing: str = "Not enough points to work with, skip profile interpolation"
+    unstable_pres: str = "Encounter profile with unstable pressure, skip profile interpolation"
+    nodata_left: str = "No data left to interpolate after pre-processing, skip profile interpolation"
 
 #
 #  From xarrayutils : https://github.com/jbusecke/xarrayutils/blob/master/xarrayutils/vertical_coordinates.py
@@ -88,7 +96,7 @@ def _linear_interp(x: np.ndarray, y: np.ndarray, xi: np.ndarray) -> np.ndarray:
 
     # At least 5 points:
     if np.nonzero(mask)[0].shape[0] < 5:
-        log.debug("Not enough points to work with, skip profile interpolation")
+        log.debug(Msg().points_missing)
         return yi_empty
 
     # Skip a profile without monotonically increasing Pressure
@@ -96,7 +104,7 @@ def _linear_interp(x: np.ndarray, y: np.ndarray, xi: np.ndarray) -> np.ndarray:
     dx = np.diff(x)
     if np.any(dx < 0):
         log.debug(
-            "Encounter profile with unstable pressure, skip profile interpolation"
+            Msg().unstable_pres
         )
         return yi_empty
 
@@ -106,7 +114,7 @@ def _linear_interp(x: np.ndarray, y: np.ndarray, xi: np.ndarray) -> np.ndarray:
 
     if len(x) == 0:
         log.debug(
-            "No data left to interpolate after pre-processing, skip profile interpolation"
+            Msg().nodata_left
         )
         return yi_empty
 
@@ -144,7 +152,7 @@ def _pchip_interp(x: np.ndarray, y: np.ndarray, xi: np.ndarray, xTolerance: np.n
 
     # At least 5 points:
     if np.nonzero(mask)[0].shape[0] < 5:
-        log.debug("Not enough points to work with, skip profile interpolation")
+        log.debug(Msg().points_missing)
         return yi_empty
 
     # Skip a profile without monotonically increasing Pressure
@@ -152,7 +160,7 @@ def _pchip_interp(x: np.ndarray, y: np.ndarray, xi: np.ndarray, xTolerance: np.n
     dx = np.diff(x)
     if np.any(dx < 0):
         log.debug(
-            "Encounter profile with unstable pressure, skip profile interpolation"
+            Msg().unstable_pres
         )
         return yi_empty
 
@@ -162,7 +170,7 @@ def _pchip_interp(x: np.ndarray, y: np.ndarray, xi: np.ndarray, xTolerance: np.n
 
     if len(x) == 0:
         log.debug(
-            "No data left to interpolate after pre-processing, skip profile interpolation"
+            Msg().nodata_left
         )
         return yi_empty
 
@@ -219,7 +227,7 @@ def _mrst_pchip_interp(x: np.ndarray, sa: np.ndarray, ct: np.ndarray, xi: np.nda
 
     # At least 5 points:
     if np.nonzero(mask)[0].shape[0] < 5:
-        log.debug("Not enough points to work with, skip profile interpolation")
+        log.debug(Msg().points_missing)
         return yi_empty, yi_empty
 
     # Skip a profile without monotonically increasing Pressure
@@ -227,7 +235,7 @@ def _mrst_pchip_interp(x: np.ndarray, sa: np.ndarray, ct: np.ndarray, xi: np.nda
     dx = np.diff(x)
     if np.any(dx < 0):
         log.debug(
-            "Encounter profile with unstable pressure, skip profile interpolation"
+            Msg().unstable_pres
         )
         return yi_empty, yi_empty
 
@@ -238,7 +246,7 @@ def _mrst_pchip_interp(x: np.ndarray, sa: np.ndarray, ct: np.ndarray, xi: np.nda
 
     if len(x) == 0:
         log.debug(
-            "No data left to interpolate after pre-processing, skip profile interpolation"
+            Msg().nodata_left
         )
         return yi_empty, yi_empty
 
