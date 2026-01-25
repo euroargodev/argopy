@@ -1,6 +1,5 @@
 from typing import Any
 from functools import lru_cache
-import inspect
 
 from argopy.options import OPTIONS
 from argopy.stores.implementations.http import httpstore
@@ -8,11 +7,25 @@ from argopy.stores.nvs.spec import NVSProto
 from argopy.stores.nvs.utils import concept2vocabulary
 
 
+def fmt2urlparams(fmt):
+    d = {
+        "json": "application/ld+json",
+        "xml": "application/rdf+xml",
+        "turtle": "text/turtle"}
+
+    if fmt in d.keys():
+        return f"?_profile=nvs&_mediatype={d[fmt]}"
+
+    raise ValueError(
+            "Invalid format. Must be in: 'json', 'xml' or 'turtle'."
+        )
+
+
 class NVS(NVSProto):
     online = True
 
     nvs: str = None
-    """Url to the NVS"""
+    """Url to NVS"""
 
     _fs: Any = None
     _instance: "NVS | None" = None
@@ -25,68 +38,58 @@ class NVS(NVSProto):
 
     def __init__(self, *args, **kwargs) -> None:
         if not self._initialized:
-            self._fs = httpstore(
+            self._fs : httpstore = httpstore(
                 cache=kwargs.get("cache", True),
                 cachedir=kwargs.get("cachedir", OPTIONS["cachedir"]),
                 timeout=kwargs.get("timeout", OPTIONS["api_timeout"]),
             )
             self.nvs = kwargs.get("nvs", OPTIONS["nvs"])
-            # self._vocabulary = self._ls_vocabulary()
             self._initialized = True
         self.uid = id(self)
 
-
-    def __setattr__(self, attr, value):
-        """Set attribute value, with read-only after instantiation policy for public attributes"""
-        if (
-            attr in [key for key in self.__dir__() if key[0] != "_"]
-            and inspect.stack()[1][3] != "__init__"
-        ):
-            raise AttributeError(f"'{attr}' is read-only after instantiation.")
-        self.__dict__[f"{attr}"] = value
+    def _downloader(self, fmt: str = "json"):
+        if 'json' not in fmt:
+            return lambda x: self._fs.download_url(x).decode('utf-8')
+        return self._fs.open_json
 
     @lru_cache
     def open_json(self, *args, **kwargs):
         return self._fs.open_json(*args, **kwargs)
 
-    def vocabulary2url(self, rtid: str, fmt: str = "ld+json"):
-        """Return URL toward a given reference table for a given format
+    def _vocabulary2uri(self, rtid: str, fmt: str = "json") -> str:
+        """Return URI of a given vocabulary with a given format
 
         Parameters
         ----------
         rtid: str
-            Name of the vocabulary table to retrieve. Eg: 'R01'
-        fmt: str, default: "ld+json"
-            Format of the NVS server response. Can be: "ld+json", "rdf+xml" or "text/turtle".
+            Name of the vocabulary (SKOS collection) to address. Eg: 'R01'.
+        fmt: str, default: "json"
+            Format of the NVS server response. Can be: "json", "xml" or "turtle".
 
         Returns
         -------
         str
         """
-        if fmt == "ld+json":
-            fmt_ext = "?_profile=nvs&_mediatype=application/ld+json"
-        elif fmt == "rdf+xml":
-            fmt_ext = "?_profile=nvs&_mediatype=application/rdf+xml"
-        elif fmt == "text/turtle":
-            fmt_ext = "?_profile=nvs&_mediatype=text/turtle"
-        else:
-            raise ValueError(
-                "Invalid format. Must be in: 'ld+json', 'rdf+xml' or 'text/turtle'."
-            )
         url = "{}/{}/current/{}".format
-        return url(self.nvs, rtid, fmt_ext)
+        return url(self.nvs, rtid, fmt2urlparams(fmt))
 
-    def concept2url(self, conceptid: str, rtid: str | None = None, fmt: str = "ld+json"):
-        """Return URL toward a given concept for a given format
+    @lru_cache
+    def load_vocabulary(self, rtid: str, fmt: str = "json") -> dict | Any:
+        url = self._vocabulary2uri(rtid, fmt=fmt)
+        return self._downloader(fmt)(url)
+
+    def _concept2uri(self, conceptid: str, rtid: str | None = None, fmt: str = "json") -> str:
+        """Return URI of a given concept, with a given format
 
         Parameters
         ----------
         conceptid: str
-            Name of the vocabulary concept to retrieve. Eg: 'R01'
-        rtid: str
-            Name of the vocabulary for this concept. Eg: 'R01'
-        fmt: str, default: "ld+json"
-            Format of the NVS server response. Can be: "ld+json", "rdf+xml" or "text/turtle".
+            Name of the concept (SKOS concept) to retrieve. Eg: 'AANDERAA_OPTODE_3835'
+        rtid: str, optional, default = None
+            Name of the vocabulary (SKOS collection) for this concept. Eg: 'R27'.
+            If set to None, we try to guess it, but if the concept is not found or can be found in more than one vocabulary, an error is raised.
+        fmt: str, default: "json"
+            Format of the NVS server response. Can be: "json", "xml" or "turtle".
 
         Returns
         -------
@@ -102,47 +105,11 @@ class NVS(NVSProto):
             else:
                 rtid = reftable[0]
 
-        if fmt == "ld+json":
-            fmt_ext = "?_profile=nvs&_mediatype=application/ld+json"
-        elif fmt == "rdf+xml":
-            fmt_ext = "?_profile=nvs&_mediatype=application/rdf+xml"
-        elif fmt == "text/turtle":
-            fmt_ext = "?_profile=nvs&_mediatype=text/turtle"
-        else:
-            raise ValueError(
-                "Invalid format. Must be in: 'ld+json', 'rdf+xml' or 'text/turtle'."
-            )
         url = "{}/{}/current/{}/{}".format
-        return url(self.nvs, rtid, conceptid, fmt_ext)
+        return url(self.nvs, rtid, conceptid, fmt2urlparams(fmt))
 
     @lru_cache
-    def load_vocabulary(self, rtid: str) -> dict:
-        url = self.vocabulary2url(rtid)
-        return self._fs.open_json(url)
+    def load_concept(self, conceptid: str, rtid: str | None = None, fmt: str = "json") -> dict | Any:
+        url = self._concept2uri(conceptid, rtid, fmt=fmt)
+        return self._downloader(fmt)(url)
 
-    @lru_cache
-    def load_concept(self, conceptid: str, rtid: str | None = None) -> dict:
-        url = self.concept2url(conceptid, rtid)
-        return self._fs.open_json(url)
-
-    # def _ls_vocabulary(self):
-    #     data = self._fs.open_json(f'{self.nvs}/?_profile=nvs&_mediatype=application/ld+json')
-    #
-    #     def is_admt(item):
-    #         return item['dc:creator'] == 'Argo Data Management Team'
-    #
-    #     id_list = [item for item in data['@graph'] if is_admt(item)]
-    #
-    #     valid_ref = []
-    #     for item in id_list:
-    #         valid_ref.append(item['@id'].replace(f"{self.nvs}/", "").replace("/current/", ""))
-    #     #     valid_ref.append({
-    #     #         'id': item['@id'].replace("http://vocab.nerc.ac.uk/collection/", "").replace("/current/", ""),
-    #     #         'altLabel': item['skos:altLabel'],
-    #     #         'prefLabel': item['skos:prefLabel'],
-    #     #         'description': item['dc:description'],
-    #     #         'date': item['dc:date'],
-    #     #         'uri': item['@id'],
-    #     #     })
-    #     # df = pd.DataFrame(valid_ref).sort_values('id', axis=0).reset_index(drop=1)
-    #     return valid_ref
