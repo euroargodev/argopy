@@ -1,0 +1,68 @@
+{
+  "name": "PSAL",
+  "long_name": "Practical salinity",
+  "last_update": "2025-10-29T20:57:40.215893+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R03/current/PSAL/",
+    "pav:hasVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/PSAL/1/"
+    },
+    "pav:authoredOn": "2025-09-29 14:51:42.0",
+    "@type": "skos:Concept",
+    "skos:related": {
+      "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UUUU/"
+    },
+    "skos:definition": {
+      "@language": "en",
+      "@value": "Practical salinity of the water body by conductivity cell and computation using the UNESCO 1983 algorithm. Local_Attributes:{long_name:Practical salinity; standard_name:sea_water_salinity; units:psu; valid_min:2.f; valid_max:41.f; category:c; fill_value:99999.f; data_type:float}."
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R03::PSAL",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "Practical salinity"
+    },
+    "owl:versionInfo": "2",
+    "dc:date": "2025-09-29 14:51:42.0",
+    "skos:altLabel": "PSAL",
+    "skos:notation": "SDN:R03::PSAL",
+    "owl:sameAs": {
+      "@id": "http://vocab.nerc.ac.uk/collection/P01/current/PSALST01/"
+    },
+    "pav:version": "2",
+    "dce:identifier": "SDN:R03::PSAL",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/PSAL/2/"
+    },
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

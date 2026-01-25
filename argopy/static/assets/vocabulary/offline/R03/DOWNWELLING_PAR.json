@@ -1,0 +1,68 @@
+{
+  "name": "DOWNWELLING_PAR",
+  "long_name": "Downwelling photosynthetic available radiation",
+  "last_update": "2025-10-29T20:57:34.842591+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R03/current/DOWNWELLING_PAR/",
+    "pav:hasVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/DOWNWELLING_PAR/1/"
+    },
+    "pav:authoredOn": "2025-09-29 14:51:40.0",
+    "@type": "skos:Concept",
+    "skos:related": {
+      "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UMES/"
+    },
+    "skos:definition": {
+      "@language": "en",
+      "@value": "Downwelling Photosynthetically Available Radiation (PAR). Local_Attributes:{long_name:Downwelling photosynthetic available radiation; standard_name:downwelling_photosynthetic_photon_flux_in_sea_water; units:microMoleQuanta/m^2/sec; valid_min:-; valid_max:-; category:b; fill_value:99999.f; data_type:float}."
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R03::DOWNWELLING_PAR",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "Downwelling photosynthetic available radiation"
+    },
+    "owl:versionInfo": "2",
+    "dc:date": "2025-09-29 14:51:40.0",
+    "skos:altLabel": "DOWNWELLING_PAR",
+    "skos:notation": "SDN:R03::DOWNWELLING_PAR",
+    "owl:sameAs": {
+      "@id": "http://vocab.nerc.ac.uk/collection/P01/current/DWIRRXUD/"
+    },
+    "pav:version": "2",
+    "dce:identifier": "SDN:R03::DOWNWELLING_PAR",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/DOWNWELLING_PAR/2/"
+    },
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

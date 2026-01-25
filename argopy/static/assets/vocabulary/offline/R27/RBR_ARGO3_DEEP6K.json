@@ -1,0 +1,76 @@
+{
+  "name": "RBR_ARGO3_DEEP6K",
+  "long_name": "RBRargo3 CTD deep6k",
+  "last_update": "2025-10-29T20:58:57.539261+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/",
+    "pav:authoredOn": "2021-05-26 09:01:46.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/1/"
+    },
+    "dce:identifier": "SDN:R27::RBR_ARGO3_DEEP6K",
+    "pav:version": "1",
+    "@type": "skos:Concept",
+    "skos:related": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/"
+      }
+    ],
+    "skos:definition": {
+      "@language": "en",
+      "@value": "A system comprising temperature, conductivity and pressure sensors with Computational Fluid Dynamic (CFD) optimised flow path, manufactured by RBR. Salinity is measured by induction of water flushing freely through the conductivity cell, and is accurate to within 10 cm of the air-ocean interface. The unit is built with a compact titanium housing rated to 6000 dbar, and is specifically designed to be integrated with glass sphere profiling floats part of the Deep Argo program. The system supports both spot and continuous sampling modes, with sampling speeds configurable to up to 8 Hz."
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R27::RBR_ARGO3_DEEP6K",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "RBRargo3 CTD deep6k"
+    },
+    "owl:versionInfo": "1",
+    "dc:date": "2021-05-26 09:01:46.0",
+    "skos:altLabel": "RBR_ARGO3_DEEP6K",
+    "skos:notation": "SDN:R27::RBR_ARGO3_DEEP6K",
+    "skos:broader": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R26/current/RBR/"
+    },
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

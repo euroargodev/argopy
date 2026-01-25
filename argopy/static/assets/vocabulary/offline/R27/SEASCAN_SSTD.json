@@ -1,0 +1,73 @@
+{
+  "name": "SEASCAN_SSTD",
+  "long_name": "Seascan Temperature and Depth (SSTD) sensor package",
+  "last_update": "2025-10-29T20:58:56.977565+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SEASCAN_SSTD/",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SEASCAN_SSTD/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SEASCAN_SSTD/1/"
+      }
+    ],
+    "pav:authoredOn": "2021-08-19 11:24:56.0",
+    "@type": "skos:Concept",
+    "skos:related": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+    },
+    "skos:definition": {
+      "@language": "en",
+      "@value": "A temperature and pressure sensor package developed by Seascan, composed of a high-stability, glass-encapsulated thermistor manufactured by YSI (or optionally an ultra-stable thermistor manufactured by Thermometrics), and a mono-crystal silicon strain gage sensor manufactured by Druck. YSI thermistor accuracy: 0.01 degC; YSI thermistor resolution: 0.001 degC; pressure transducer accuracy: 0.1 % of full scale. Instrument's depth rating: either 2000 dbar or 4000 dbar."
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R27::SEASCAN_SSTD",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "Seascan Temperature and Depth (SSTD) sensor package"
+    },
+    "owl:versionInfo": "3",
+    "dc:date": "2021-08-19 11:24:56.0",
+    "skos:altLabel": "SEASCAN_SSTD",
+    "skos:notation": "SDN:R27::SEASCAN_SSTD",
+    "skos:broader": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SEASCAN/"
+    },
+    "pav:version": "3",
+    "dce:identifier": "SDN:R27::SEASCAN_SSTD",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SEASCAN_SSTD/3/"
+    },
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

@@ -1,0 +1,359 @@
+{
+  "name": "POSITIONING_SYSTEM",
+  "long_name": "Argo positioning system",
+  "last_update": "2025-10-29T19:56:31.356578+00:00",
+  "data": {
+    "@graph": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R09/current/GALILEO/",
+        "pav:authoredOn": "2020-04-07 22:59:46.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R09/current/GALILEO/1/"
+        },
+        "dce:identifier": "SDN:R09::GALILEO",
+        "pav:version": "1",
+        "skos:notation": "SDN:R09::GALILEO",
+        "skos:altLabel": "GALILEO",
+        "dc:date": "2020-04-07 22:59:46.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Galileo navigation satellite system"
+        },
+        "dc:identifier": "SDN:R09::GALILEO",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Galileo navigation satellite system"
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R09/current/BEIDOU/",
+        "pav:authoredOn": "2020-04-07 22:59:46.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R09/current/BEIDOU/1/"
+        },
+        "dce:identifier": "SDN:R09::BEIDOU",
+        "pav:version": "1",
+        "skos:notation": "SDN:R09::BEIDOU",
+        "skos:altLabel": "BEIDOU",
+        "dc:date": "2020-04-07 22:59:46.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Beidou navigation satellite system"
+        },
+        "dc:identifier": "SDN:R09::BEIDOU",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Beidou navigation satellite system"
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R09/current/GLONASS/",
+        "pav:authoredOn": "2020-04-07 22:59:46.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R09/current/GLONASS/1/"
+        },
+        "dce:identifier": "SDN:R09::GLONASS",
+        "pav:version": "1",
+        "skos:notation": "SDN:R09::GLONASS",
+        "skos:altLabel": "GLONASS",
+        "dc:date": "2020-04-07 22:59:46.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "GLONASS navigation satellite system"
+        },
+        "dc:identifier": "SDN:R09::GLONASS",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "GLONASS navigation satellite system"
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R09/current/NONE/",
+        "pav:authoredOn": "2020-04-07 22:59:46.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R09/current/NONE/1/"
+        },
+        "dce:identifier": "SDN:R09::NONE",
+        "pav:version": "1",
+        "skos:notation": "SDN:R09::NONE",
+        "skos:altLabel": "NONE",
+        "dc:date": "2020-04-07 22:59:46.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "More than one system used or none available"
+        },
+        "dc:identifier": "SDN:R09::NONE",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "For profile file only: if an estimated position is based on two or more positioning systems, or if the estimation does not rely on information from positioning systems."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R09/current/IRIDIUM/",
+        "pav:authoredOn": "2020-04-07 22:59:46.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R09/current/IRIDIUM/1/"
+        },
+        "dce:identifier": "SDN:R09::IRIDIUM",
+        "pav:version": "1",
+        "skos:notation": "SDN:R09::IRIDIUM",
+        "skos:altLabel": "IRIDIUM",
+        "dc:date": "2020-04-07 22:59:46.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Iridium positioning system"
+        },
+        "dc:identifier": "SDN:R09::IRIDIUM",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Iridium positioning system"
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R09/current/RAFOS/",
+        "pav:authoredOn": "2020-04-07 22:59:46.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R09/current/RAFOS/1/"
+        },
+        "dce:identifier": "SDN:R09::RAFOS",
+        "pav:version": "1",
+        "skos:notation": "SDN:R09::RAFOS",
+        "skos:altLabel": "RAFOS",
+        "dc:date": "2020-04-07 22:59:46.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "RAFOS positioning system"
+        },
+        "dc:identifier": "SDN:R09::RAFOS",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "RAFOS positioning system"
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R09/current/GNSS/",
+        "pav:authoredOn": "2020-04-07 22:59:46.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R09/current/GNSS/1/"
+        },
+        "dce:identifier": "SDN:R09::GNSS",
+        "pav:version": "1",
+        "skos:notation": "SDN:R09::GNSS",
+        "skos:altLabel": "GNSS",
+        "dc:date": "2020-04-07 22:59:46.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Global Navigation Satellite System"
+        },
+        "dc:identifier": "SDN:R09::GNSS",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Global Navigation Satellite System"
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R09/current/ARGOS/",
+        "pav:authoredOn": "2020-04-07 22:59:46.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R09/current/ARGOS/1/"
+        },
+        "dce:identifier": "SDN:R09::ARGOS",
+        "pav:version": "1",
+        "skos:notation": "SDN:R09::ARGOS",
+        "skos:altLabel": "ARGOS",
+        "dc:date": "2020-04-07 22:59:46.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Argos positioning system"
+        },
+        "dc:identifier": "SDN:R09::ARGOS",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Argos positioning system"
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R09/current/GPS/",
+        "pav:authoredOn": "2020-04-07 22:59:46.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R09/current/GPS/1/"
+        },
+        "dce:identifier": "SDN:R09::GPS",
+        "pav:version": "1",
+        "skos:notation": "SDN:R09::GPS",
+        "skos:altLabel": "GPS",
+        "dc:date": "2020-04-07 22:59:46.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "GPS positioning system"
+        },
+        "dc:identifier": "SDN:R09::GPS",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "GPS positioning system"
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R09/current/",
+        "skos:member": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R09/current/GALILEO/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R09/current/BEIDOU/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R09/current/GLONASS/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R09/current/NONE/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R09/current/IRIDIUM/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R09/current/RAFOS/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R09/current/GNSS/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R09/current/GPS/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R09/current/ARGOS/"
+          }
+        ],
+        "@type": "skos:Collection",
+        "dc:publisher": "Natural Environment Research Council",
+        "dc:description": "List of float location measuring systems. Argo netCDF variable POSITIONING_SYSTEM is populated by R09 altLabel.",
+        "dc:title": "Argo positioning system",
+        "skos:prefLabel": "Argo positioning system",
+        "owl:versionInfo": "1",
+        "dc:date": "2020-04-08 03:00:04.0",
+        "skos:altLabel": "POSITIONING_SYSTEM",
+        "dc:creator": "Argo Data Management Team",
+        "dc:alternative": "POSITIONING_SYSTEM",
+        "rdfs:comment": "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
+        "grg:RE_RegisterOwner": "Argo Data Management Team",
+        "grg:RE_RegisterManager": "British Oceanographic Data Centre",
+        "rdfs:seeAlso": {
+          "@id": "https://github.com/OneArgo/ArgoVocabs"
+        }
+      }
+    ],
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}
