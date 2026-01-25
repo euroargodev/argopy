@@ -8,7 +8,7 @@ from typing import Any
 from dataclasses import dataclass
 
 from argopy.errors import NoDataLeft, OptionValueError
-from argopy.utils.accessories import Asset
+from argopy.utils.locals import Asset
 from argopy.utils.format import ppliststr, urnparser
 from argopy.utils.checkers import to_list
 from argopy.stores.nvs import NVS, id2urn

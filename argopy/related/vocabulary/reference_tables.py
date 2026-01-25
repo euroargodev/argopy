@@ -2,9 +2,11 @@ import pandas as pd
 from functools import lru_cache
 import collections
 
-from ...stores import httpstore
-from ...options import OPTIONS
-from ...utils import urnparser, Asset, deprecated
+from argopy.stores import httpstore
+from argopy.options import OPTIONS
+from argopy.utils.locals import Asset
+from argopy.utils.decorators import deprecated
+from argopy.utils.format import urnparser
 
 
 VALID_REF = Asset.load('vocabulary:description')['data']['valid_ref']
@@ -216,7 +218,7 @@ class NVScollection:
         return results
 
 
-@deprecated("Replaced by ArgoReference", version='1.3.1')
+@deprecated("Update your code to use 'ArgoReference' instead.", version='[TBD]')
 class ArgoNVSReferenceTables(NVScollection):
     """Argo Reference Tables
 

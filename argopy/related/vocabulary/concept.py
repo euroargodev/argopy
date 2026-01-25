@@ -7,7 +7,7 @@ import json
 from dataclasses import dataclass
 
 from argopy.errors import OptionValueError
-from argopy.utils.accessories import Asset
+from argopy.utils.locals import Asset
 from argopy.utils.format import urnparser, ppliststr
 from argopy.utils.checkers import to_list
 from argopy.utils.casting import Encoder
