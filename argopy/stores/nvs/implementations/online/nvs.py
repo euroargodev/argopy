@@ -48,9 +48,20 @@ class NVS(NVSProto):
         self.uid = id(self)
 
     def _downloader(self, fmt: str = "json"):
-        if 'json' not in fmt:
-            return lambda x: self._fs.download_url(x).decode('utf-8')
-        return self._fs.open_json
+        d = {
+            "json": self.open_json,
+            "xml": self.open_xml,
+            "turtle": self.open_turtle
+        }
+        return d[fmt]
+
+    @lru_cache
+    def open_turtle(self, *args, **kwargs):
+        return self._fs.download_url(*args, **kwargs).decode('utf-8')
+
+    @lru_cache
+    def open_xml(self, *args, **kwargs):
+        return self._fs.download_url(*args, **kwargs).decode('utf-8')
 
     @lru_cache
     def open_json(self, *args, **kwargs):
