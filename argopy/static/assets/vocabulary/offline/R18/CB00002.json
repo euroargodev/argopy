@@ -1,40 +1,45 @@
 {
   "name": "CB00002",
   "long_name": "CONFIG_<short_sensor_name>DepthZone<N>SlicesThickness_dbar",
-  "last_update": "2025-10-29T21:00:36.890039+00:00",
+  "last_update": "2026-01-25T11:15:52.427019+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00002/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00002/1/"
-    },
-    "pav:authoredOn": "2023-05-02 19:58:02.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00002/2/"
-    },
-    "dce:identifier": "SDN:R18::CB00002",
-    "pav:version": "2",
-    "skos:notation": "SDN:R18::CB00002",
-    "skos:altLabel": "BGC Config 2 - Mandatory",
-    "dc:date": "2023-05-02 19:58:02.0",
-    "owl:versionInfo": "2",
-    "skos:prefLabel": {
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00002/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00002/1/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
       "@language": "en",
-      "@value": "CONFIG_<short_sensor_name>DepthZone<N>SlicesThickness_dbar"
+      "@value": "Slices thickness for <short_sensor_name> in the depth zone #<N>. Template_Values:{short_sensor_name:[Crover, Ctd, Eco, Flbb, Flntu, Ocr, Optode, Sfet, Suna];N:[1..5];unit:[bar, dbar, cbar, mbar, inHg]}."
     },
-    "dc:identifier": "SDN:R18::CB00002",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R18::CB00002",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "Slices thickness for <short_sensor_name> in the depth zone #<N> (in dbar)."
+      "@value": "CONFIG_<short_sensor_name>DepthZone<N>SlicesThickness_dbar"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-12-11 09:34:58.0",
+    "skos:altLabel": "BGC Config 2",
+    "skos:notation": "SDN:R18::CB00002",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R18::CB00002",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00002/3/"
+    },
+    "pav:authoredOn": "2025-12-11 09:34:58.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

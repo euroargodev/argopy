@@ -1,40 +1,45 @@
 {
   "name": "CB00027",
   "long_name": "CONFIG_OptodeMinTransmittedTemperature_mdegC",
-  "last_update": "2025-10-29T21:00:18.860753+00:00",
+  "last_update": "2026-01-25T11:15:38.765498+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00027/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00027/1/"
-    },
-    "pav:authoredOn": "2023-05-02 19:58:02.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00027/2/"
-    },
-    "dce:identifier": "SDN:R18::CB00027",
-    "pav:version": "2",
-    "skos:notation": "SDN:R18::CB00027",
-    "skos:altLabel": "BGC Config 27 - Mandatory",
-    "dc:date": "2023-05-02 19:58:02.0",
-    "owl:versionInfo": "2",
-    "skos:prefLabel": {
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00027/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00027/1/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
       "@language": "en",
-      "@value": "CONFIG_OptodeMinTransmittedTemperature_mdegC"
+      "@value": "Minimum value of transmitted Optode temperature measurements. Template_Values:{unit:[degC, mdegC]}."
     },
-    "dc:identifier": "SDN:R18::CB00027",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R18::CB00027",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "Minimum value of transmitted Optode temperature measurements (in milli-DegC)."
+      "@value": "CONFIG_OptodeMinTransmittedTemperature_mdegC"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-12-11 09:34:52.0",
+    "skos:altLabel": "BGC Config 27",
+    "skos:notation": "SDN:R18::CB00027",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R18::CB00027",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00027/3/"
+    },
+    "pav:authoredOn": "2025-12-11 09:34:52.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

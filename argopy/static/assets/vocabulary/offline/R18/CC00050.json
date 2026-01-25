@@ -1,19 +1,22 @@
 {
   "name": "CC00050",
   "long_name": "CONFIG_DownTimeExpiryTimeOfDay_minutes",
-  "last_update": "2025-10-29T21:00:33.155056+00:00",
+  "last_update": "2026-01-25T11:15:53.841938+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00050/",
-    "pav:authoredOn": "2023-05-02 16:34:05.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00050/1/"
     },
+    "pav:authoredOn": "2025-12-12 11:41:05.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00050/2/"
+    },
     "dce:identifier": "SDN:R18::CC00050",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R18::CC00050",
-    "skos:altLabel": "Core Config 50 - Optional",
-    "dc:date": "2023-05-02 16:34:05.0",
-    "owl:versionInfo": "1",
+    "skos:altLabel": "Core Config 50",
+    "dc:date": "2025-12-12 11:41:05.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "CONFIG_DownTimeExpiryTimeOfDay_minutes"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "a time-out value (time of day, i.e. in minutes past midnight) for expiration of the down time"
+      "@value": "Time out value for expiration of the down time (in minutes past midnight). Template_Values:{unit:[hours, minutes, seconds]}."
     },
     "@type": "skos:Concept",
     "@context": {

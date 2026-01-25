@@ -1,19 +1,22 @@
 {
   "name": "CC00061",
   "long_name": "CONFIG_GroundingMode_LOGICAL",
-  "last_update": "2025-10-29T21:00:15.206930+00:00",
+  "last_update": "2026-01-25T11:15:22.509175+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00061/",
-    "pav:authoredOn": "2023-05-02 16:34:05.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00061/1/"
     },
+    "pav:authoredOn": "2025-12-12 11:41:07.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00061/2/"
+    },
     "dce:identifier": "SDN:R18::CC00061",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R18::CC00061",
-    "skos:altLabel": "Core Config 61 - Optional",
-    "dc:date": "2023-05-02 16:34:05.0",
-    "owl:versionInfo": "1",
+    "skos:altLabel": "Core Config 61",
+    "dc:date": "2025-12-12 11:41:07.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "CONFIG_GroundingMode_LOGICAL"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Action performed by the float when a grounding is detected. 0: the float changes its drift pressure, 1: the float stays on the seabed until the next phase of the cycle. For PROVOR CTS5 the number assigned to each mode has changed - see float manual for details for this model."
+      "@value": "Action performed by the float when a grounding is detected. 0 = the float changes its drift pressure, 1 = the float stays on the seabed until the next phase of the cycle. For PROVOR CTS5 the number assigned to each mode has changed - see float manual for details for this model. Template_Values:{unit:[LOGICAL, NUMBER]}."
     },
     "@type": "skos:Concept",
     "@context": {

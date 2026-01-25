@@ -1,7 +1,7 @@
 {
   "name": "RBR_ARGO3",
   "long_name": "RBRargo3 CTD",
-  "last_update": "2025-10-29T20:58:58.175577+00:00",
+  "last_update": "2026-01-25T11:14:00.184431+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3/",
     "pav:authoredOn": "2021-05-26 09:01:46.0",

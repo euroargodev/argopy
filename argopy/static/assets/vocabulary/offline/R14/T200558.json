@@ -1,37 +1,45 @@
 {
   "name": "T200558",
   "long_name": "NUMBER_ParkIridiumPackets_COUNT",
-  "last_update": "2025-10-29T20:58:41.709974+00:00",
+  "last_update": "2026-01-25T11:13:32.020850+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T200558/",
-    "pav:authoredOn": "2025-09-29 14:51:40.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T200558/1/"
-    },
-    "dce:identifier": "SDN:R14::T200558",
-    "pav:version": "1",
-    "skos:notation": "SDN:R14::T200558",
-    "skos:altLabel": "558.2",
-    "dc:date": "2025-09-29 14:51:40.0",
-    "owl:versionInfo": "1",
-    "skos:prefLabel": {
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T200558/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T200558/2/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
       "@language": "en",
-      "@value": "NUMBER_ParkIridiumPackets_COUNT"
+      "@value": "Number of Iridium packets used to transmit data collected during the drift at park depth. Template_Values:{unit:[COUNT];short_sensor_name:[Crover, Ctd, CTD, Cyc, Eco, Flbb, Flntu, Mcoms, Ocr, Optode, Ph, Sfet, Stm, Suna]}."
     },
-    "dc:identifier": "SDN:R14::T200558",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R14::T200558",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "Number of Iridium packets used to transmit data collected during the drift at park depth."
+      "@value": "NUMBER_ParkIridiumPackets_COUNT"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "3",
+    "dc:date": "2026-01-19 15:35:33.0",
+    "skos:altLabel": "558.2",
+    "skos:notation": "SDN:R14::T200558",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R14::T200558",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T200558/3/"
+    },
+    "pav:authoredOn": "2026-01-19 15:35:33.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

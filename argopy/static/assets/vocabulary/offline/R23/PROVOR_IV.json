@@ -1,7 +1,7 @@
 {
   "name": "PROVOR_IV",
   "long_name": "PROVOR CTS5-Payload float",
-  "last_update": "2025-10-29T20:57:23.239308+00:00",
+  "last_update": "2026-01-25T11:11:13.599356+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_IV/",
     "pav:hasVersion": [

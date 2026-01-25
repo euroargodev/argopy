@@ -1,19 +1,22 @@
 {
   "name": "CC00021",
   "long_name": "CONFIG_ClockAscentEndTimeProfile3_HHMM",
-  "last_update": "2025-10-29T21:00:35.119684+00:00",
+  "last_update": "2026-01-25T11:15:57.121092+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00021/",
-    "pav:authoredOn": "2023-05-02 16:34:05.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00021/1/"
     },
+    "pav:authoredOn": "2025-12-12 11:41:04.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00021/2/"
+    },
     "dce:identifier": "SDN:R18::CC00021",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R18::CC00021",
-    "skos:altLabel": "Core Config 21 - Optional",
-    "dc:date": "2023-05-02 16:34:05.0",
-    "owl:versionInfo": "1",
+    "skos:altLabel": "Core Config 21",
+    "dc:date": "2025-12-12 11:41:04.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "CONFIG_ClockAscentEndTimeProfile3_HHMM"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Profiler configuration - Ascent end time - Profile 3. The expected time at the surface of Profile 3."
+      "@value": "Ascent end time of Profile 3 (expected time at the surface of Profile 3). Template_Values:{unit:[YYYYMMDD, HHMMSS, YYYYMMDDHHMMSS, HHMM, MMSS, YYYY, DD, HH, MM]}."
     },
     "@type": "skos:Concept",
     "@context": {

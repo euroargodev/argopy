@@ -1,7 +1,7 @@
 {
   "name": "SBE41_IDO_V1.0c",
   "long_name": "Sea-Bird Scientific SBE 41 CTD with an Integrated Dissolved Oxygen (IDO) sensor V1.0c",
-  "last_update": "2025-10-29T20:59:03.826572+00:00",
+  "last_update": "2026-01-25T11:14:09.885877+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V1.0c/",
     "pav:hasVersion": [

@@ -1,10 +1,13 @@
 {
   "name": "UV_INTENSITY_NITRATE",
   "long_name": "Intensity of ultra violet flux from nitrate sensor",
-  "last_update": "2025-10-29T20:57:40.784358+00:00",
+  "last_update": "2026-01-25T11:11:33.844789+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UV_INTENSITY_NITRATE/",
     "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UV_INTENSITY_NITRATE/3/"
+      },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UV_INTENSITY_NITRATE/2/"
       },
@@ -12,14 +15,14 @@
         "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UV_INTENSITY_NITRATE/1/"
       }
     ],
-    "pav:authoredOn": "2025-10-08 10:58:28.0",
+    "pav:authoredOn": "2025-11-25 10:14:01.0",
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UUUU/"
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Raw ultra-violet (UV) flux signal from nitrate sensor. Measurement in counts proportional to light intensity. Local_Attributes:{long_name:Intensity of ultra violet flux from nitrate sensor; standard_name:-; units:count; valid_min:-; valid_max:-; category:ib; fill_value:99999.f; data_type:float; extra_dim:[N_VALUES]}."
+      "@value": "Raw ultra-violet (UV) flux signal from nitrate sensor. Measurement in counts proportional to light intensity. Multi-spectral parameter requiring an extra N_VALUESxxx dimension in the NetCDF files; xxx is a number between 0 and 255 representing the number of wavelengths transmitted. Local_Attributes:{long_name:Intensity of ultra violet flux from nitrate sensor; standard_name:-; units:count; valid_min:-; valid_max:-; fill_value:99999.f}. Properties:{category:ib; data_type:float; extra_dim:[N_VALUES]}"
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -34,17 +37,17 @@
       "@language": "en",
       "@value": "Intensity of ultra violet flux from nitrate sensor"
     },
-    "owl:versionInfo": "3",
-    "dc:date": "2025-10-08 10:58:28.0",
+    "owl:versionInfo": "4",
+    "dc:date": "2025-11-25 10:14:01.0",
     "skos:altLabel": "UV_INTENSITY_NITRATE",
     "skos:notation": "SDN:R03::UV_INTENSITY_NITRATE",
     "owl:sameAs": {
       "@id": "http://vocab.nerc.ac.uk/collection/P01/current/UVINZZ01/"
     },
-    "pav:version": "3",
+    "pav:version": "4",
     "dce:identifier": "SDN:R03::UV_INTENSITY_NITRATE",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UV_INTENSITY_NITRATE/3/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UV_INTENSITY_NITRATE/4/"
     },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",

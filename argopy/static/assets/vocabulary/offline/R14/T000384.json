@@ -1,19 +1,22 @@
 {
   "name": "T000384",
   "long_name": "PRES_DOXYProfileReductionBottomSlicesThickness_dbar",
-  "last_update": "2025-10-29T20:58:41.592518+00:00",
+  "last_update": "2026-01-25T11:12:00.101109+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000384/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000384/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:09.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000384/2/"
+    },
     "dce:identifier": "SDN:R14::T000384",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T000384",
     "skos:altLabel": "384",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:09.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "PRES_DOXYProfileReductionBottomSlicesThickness_dbar"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "DOXY profile reduction Deep zone slices thickness - ETF"
+      "@value": "DOXY profile reduction Deep zone slices thickness - ETF. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
     },
     "@type": "skos:Concept",
     "@context": {

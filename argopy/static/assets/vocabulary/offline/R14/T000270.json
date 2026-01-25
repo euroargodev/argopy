@@ -1,19 +1,22 @@
 {
   "name": "T000270",
   "long_name": "DIAGNOSTICbit_BatteryPumpVoltage_bit",
-  "last_update": "2025-10-29T20:58:25.860103+00:00",
+  "last_update": "2026-01-25T11:13:16.622686+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000270/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000270/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:25.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000270/2/"
+    },
     "dce:identifier": "SDN:R14::T000270",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T000270",
     "skos:altLabel": "270",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:25.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "DIAGNOSTICbit_BatteryPumpVoltage_bit"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "bit indicating the status of the pump battery voltage"
+      "@value": "Bit indicating the status of the pump battery voltage. Template_Values:{unit:[hex, bit, byte, kbyte]}."
     },
     "@type": "skos:Concept",
     "@context": {

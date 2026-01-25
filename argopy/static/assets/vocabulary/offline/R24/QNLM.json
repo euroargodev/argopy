@@ -1,7 +1,7 @@
 {
   "name": "QNLM",
   "long_name": "Qingdao National Laboratory for Marine Science and Technology",
-  "last_update": "2025-10-29T20:57:15.066909+00:00",
+  "last_update": "2026-01-25T11:11:04.580917+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R24/current/QNLM/",
     "pav:hasVersion": {

@@ -1,19 +1,22 @@
 {
   "name": "CC00033",
   "long_name": "CONFIG_CycleTime_hours",
-  "last_update": "2025-10-29T21:00:36.738120+00:00",
+  "last_update": "2026-01-25T11:15:59.136656+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00033/",
-    "pav:authoredOn": "2023-05-02 16:34:05.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00033/1/"
     },
+    "pav:authoredOn": "2025-12-12 11:41:04.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00033/2/"
+    },
     "dce:identifier": "SDN:R18::CC00033",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R18::CC00033",
-    "skos:altLabel": "Core Config 33 - Mandatory (if applies)",
-    "dc:date": "2023-05-02 16:34:05.0",
-    "owl:versionInfo": "1",
+    "skos:altLabel": "Core Config 33",
+    "dc:date": "2025-12-12 11:41:04.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "CONFIG_CycleTime_hours"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "For APEX and ARVOR floats this is the total duration of one cycle, usually 240 hours (10 days). For SOLO floats this is the total duration of one cycle, assuming that all float operations reach their full time-out intervals before moving to the next float stage. Typically the actual cycle time will be shorter than this value."
+      "@value": "Total duration of one cycle, usually close to 240 hours (10 days). For SOLO floats this is the total duration of one cycle, assuming that all float operations reach their full time-out intervals before moving to the next float stage. Typically the actual cycle time will be shorter than this value. Template_Values:{unit:[days, hours, minutes, seconds]}."
     },
     "@type": "skos:Concept",
     "@context": {

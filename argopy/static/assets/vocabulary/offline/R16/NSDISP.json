@@ -1,7 +1,7 @@
 {
   "name": "NSDISP",
   "long_name": "Near-surface sampling: discrete, pumped",
-  "last_update": "2025-10-29T20:57:19.749908+00:00",
+  "last_update": "2026-01-25T11:11:09.929614+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R16/current/NSDISP/",
     "pav:authoredOn": "2020-05-03 20:29:08.0",

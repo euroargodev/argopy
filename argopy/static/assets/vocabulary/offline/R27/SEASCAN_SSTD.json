@@ -1,7 +1,7 @@
 {
   "name": "SEASCAN_SSTD",
   "long_name": "Seascan Temperature and Depth (SSTD) sensor package",
-  "last_update": "2025-10-29T20:58:56.977565+00:00",
+  "last_update": "2026-01-25T11:13:57.795451+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SEASCAN_SSTD/",
     "pav:hasVersion": [

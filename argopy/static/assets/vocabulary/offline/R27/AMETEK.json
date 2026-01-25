@@ -1,7 +1,7 @@
 {
   "name": "AMETEK",
   "long_name": "Ametek pressure sensor with unknown pressure rating",
-  "last_update": "2025-10-29T20:58:59.400838+00:00",
+  "last_update": "2026-01-25T11:14:05.725454+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/AMETEK/",
     "pav:authoredOn": "2019-10-11 14:49:00.0",

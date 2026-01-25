@@ -1,7 +1,7 @@
 {
   "name": "SBE",
   "long_name": "Sea-Bird Scientific (SBE) unknown CTD model",
-  "last_update": "2025-10-29T20:59:01.244987+00:00",
+  "last_update": "2026-01-25T11:14:05.657525+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE/",
     "pav:authoredOn": "2019-10-11 14:49:00.0",

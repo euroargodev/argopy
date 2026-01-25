@@ -1,7 +1,7 @@
 {
   "name": "SATLANTIC_OCR507_ICSW",
   "long_name": "OCR-507 multispectral radiometer (downwelling irradiance)",
-  "last_update": "2025-10-29T20:59:00.735377+00:00",
+  "last_update": "2026-01-25T11:14:03.174190+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSW/",
     "pav:hasVersion": {

@@ -1,19 +1,22 @@
 {
   "name": "T000507",
   "long_name": "CURRENT_BatterySurfaceAirPumpOn_mA",
-  "last_update": "2025-10-29T20:58:39.761610+00:00",
+  "last_update": "2026-01-25T11:12:41.771683+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000507/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000507/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:05:04.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000507/2/"
+    },
     "dce:identifier": "SDN:R14::T000507",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T000507",
     "skos:altLabel": "507",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:05:04.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "CURRENT_BatterySurfaceAirPumpOn_mA"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Battery Current measured at the surface with the air pump running (6 seconds)"
+      "@value": "Battery Current measured at the surface with the air pump running (6 seconds). Template_Values:{unit:[COUNT, amps, mA]}."
     },
     "@type": "skos:Concept",
     "@context": {

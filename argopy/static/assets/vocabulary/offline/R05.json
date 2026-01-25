@@ -1,7 +1,7 @@
 {
   "name": "POSITION_ACCURACY",
   "long_name": "Argo position accuracy",
-  "last_update": "2025-10-29T19:56:33.105667+00:00",
+  "last_update": "2026-01-25T10:44:09.202173+00:00",
   "data": {
     "@graph": [
       {

@@ -1,7 +1,7 @@
 {
   "name": "ECO_NTU",
   "long_name": "ECO NTU turbidity sensor",
-  "last_update": "2025-10-29T20:59:06.744692+00:00",
+  "last_update": "2026-01-25T11:14:13.135385+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_NTU/",
     "pav:authoredOn": "2021-08-09 12:23:38.0",

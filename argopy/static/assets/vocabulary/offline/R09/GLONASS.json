@@ -1,7 +1,7 @@
 {
   "name": "GLONASS",
   "long_name": "GLONASS navigation satellite system",
-  "last_update": "2025-10-29T20:57:15.853324+00:00",
+  "last_update": "2026-01-25T11:11:05.481302+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R09/current/GLONASS/",
     "pav:authoredOn": "2020-04-07 22:59:46.0",

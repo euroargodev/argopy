@@ -1,40 +1,45 @@
 {
   "name": "CB00101",
   "long_name": "CONFIG_Optode2VerticalPressureOffset_dbar",
-  "last_update": "2025-10-29T21:00:19.405614+00:00",
+  "last_update": "2026-01-25T11:15:39.629903+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00101/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00101/1/"
-    },
-    "pav:authoredOn": "2025-06-09 09:14:49.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00101/2/"
-    },
-    "dce:identifier": "SDN:R18::CB00101",
-    "pav:version": "2",
-    "skos:notation": "SDN:R18::CB00101",
-    "skos:altLabel": "",
-    "dc:date": "2025-06-09 09:14:49.0",
-    "owl:versionInfo": "2",
-    "skos:prefLabel": {
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00101/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00101/2/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
       "@language": "en",
-      "@value": "CONFIG_Optode2VerticalPressureOffset_dbar"
+      "@value": "Vertical pressure offset of the secondary optode sensor. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
     },
-    "dc:identifier": "SDN:R18::CB00101",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "true",
     "skos:note": {
       "@language": "en",
       "@value": "deprecated"
     },
-    "owl:deprecated": "true",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R18::CB00101",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "Vertical pressure offset of the secondary optode sensor"
+      "@value": "CONFIG_Optode2VerticalPressureOffset_dbar"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-12-12 11:39:42.0",
+    "skos:altLabel": "BGC Config 101",
+    "skos:notation": "SDN:R18::CB00101",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R18::CB00101",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00101/3/"
+    },
+    "pav:authoredOn": "2025-12-12 11:39:42.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

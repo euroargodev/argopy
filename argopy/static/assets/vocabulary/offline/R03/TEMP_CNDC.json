@@ -1,16 +1,21 @@
 {
   "name": "TEMP_CNDC",
   "long_name": "Internal temperature of the conductivity cell",
-  "last_update": "2025-10-29T20:57:33.933211+00:00",
+  "last_update": "2026-01-25T11:11:26.819054+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_CNDC/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_CNDC/1/"
-    },
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_CNDC/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_CNDC/2/"
+      }
+    ],
     "@type": "skos:Concept",
     "skos:definition": {
       "@language": "en",
-      "@value": "Internal temperature of the conductivity cell. Local_Attributes:{long_name:Internal temperature of the conductivity cell; standard_name:-; units:degree_Celsius; valid_min:-2.f; valid_max:40.f; category:ic; fill_value:99999.f; data_type:float}."
+      "@value": "Internal temperature of the conductivity cell. Local_Attributes:{long_name:Internal temperature of the conductivity cell; standard_name:-; units:degree_Celsius; valid_min:-2.f; valid_max:40.f; fill_value:99999.f}. Properties:{category:ic; data_type:float}"
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -25,19 +30,19 @@
       "@language": "en",
       "@value": "Internal temperature of the conductivity cell"
     },
-    "owl:versionInfo": "2",
-    "dc:date": "2025-09-29 14:51:43.0",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-25 10:14:00.0",
     "skos:altLabel": "TEMP_CNDC",
     "skos:notation": "SDN:R03::TEMP_CNDC",
     "owl:sameAs": {
       "@id": "http://vocab.nerc.ac.uk/collection/P01/current/TMESCNDC/"
     },
-    "pav:version": "2",
+    "pav:version": "3",
     "dce:identifier": "SDN:R03::TEMP_CNDC",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_CNDC/2/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_CNDC/3/"
     },
-    "pav:authoredOn": "2025-09-29 14:51:43.0",
+    "pav:authoredOn": "2025-11-25 10:14:00.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

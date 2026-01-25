@@ -1,40 +1,45 @@
 {
   "name": "CB00035",
   "long_name": "CONFIG_<short_sensor_name>MinTransmitted<param>Fluorescence_COUNT",
-  "last_update": "2025-10-29T21:00:25.005861+00:00",
+  "last_update": "2026-01-25T11:15:44.414061+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00035/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00035/1/"
-    },
-    "pav:authoredOn": "2023-05-02 19:58:02.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00035/2/"
-    },
-    "dce:identifier": "SDN:R18::CB00035",
-    "pav:version": "2",
-    "skos:notation": "SDN:R18::CB00035",
-    "skos:altLabel": "BGC Config 35 - Mandatory",
-    "dc:date": "2023-05-02 19:58:02.0",
-    "owl:versionInfo": "2",
-    "skos:prefLabel": {
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00035/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00035/1/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
       "@language": "en",
-      "@value": "CONFIG_<short_sensor_name>MinTransmitted<param>Fluorescence_COUNT"
+      "@value": "Minimum value of transmitted <short_sensor_name> Fluorescence of <param> measurements. Template_Values:{short_sensor_name:[Eco, Flbb, Flntu];param:[Cdom, Chla];unit:[COUNT]}."
     },
-    "dc:identifier": "SDN:R18::CB00035",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R18::CB00035",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "Minimum value of transmitted <short_sensor_name> Fluorescence of <param> measurements (in counts)."
+      "@value": "CONFIG_<short_sensor_name>MinTransmitted<param>Fluorescence_COUNT"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-12-11 09:34:56.0",
+    "skos:altLabel": "BGC Config 35",
+    "skos:notation": "SDN:R18::CB00035",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R18::CB00035",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00035/3/"
+    },
+    "pav:authoredOn": "2025-12-11 09:34:56.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

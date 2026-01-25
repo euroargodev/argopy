@@ -1,19 +1,22 @@
 {
   "name": "T000391",
   "long_name": "PRES_MaximumDepthBinWithValidData_dbar",
-  "last_update": "2025-10-29T20:58:21.293494+00:00",
+  "last_update": "2026-01-25T11:13:10.742461+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000391/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000391/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:26.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000391/2/"
+    },
     "dce:identifier": "SDN:R14::T000391",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T000391",
     "skos:altLabel": "391",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:26.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "PRES_MaximumDepthBinWithValidData_dbar"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Maximum depth bin with valid data according to the float"
+      "@value": "Maximum depth bin with valid data according to the float. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
     },
     "@type": "skos:Concept",
     "@context": {

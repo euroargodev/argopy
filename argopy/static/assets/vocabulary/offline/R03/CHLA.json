@@ -1,20 +1,25 @@
 {
   "name": "CHLA",
   "long_name": "Chlorophyll-A",
-  "last_update": "2025-10-29T20:57:43.953875+00:00",
+  "last_update": "2026-01-25T11:11:37.563418+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/CHLA/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/CHLA/1/"
-    },
-    "pav:authoredOn": "2025-09-29 14:51:39.0",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/CHLA/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/CHLA/2/"
+      }
+    ],
+    "pav:authoredOn": "2025-11-25 10:13:59.0",
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UMMC/"
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Chlorophyll-a concentration (mg/m^3), reported by ECO3 sensor. Local_Attributes:{long_name:Chlorophyll-A; standard_name:mass_concentration_of_chlorophyll_a_in_sea_water; units:mg/m3; valid_min:-; valid_max:-; category:b; fill_value:99999.f; data_type:float}."
+      "@value": "Chlorophyll-a concentration (mg/m^3), reported by ECO3 sensor. Local_Attributes:{long_name:Chlorophyll-A; standard_name:mass_concentration_of_chlorophyll_a_in_sea_water; units:mg/m3; valid_min:-; valid_max:-; fill_value:99999.f}. Properties:{category:b; data_type:float}"
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -29,17 +34,17 @@
       "@language": "en",
       "@value": "Chlorophyll-A"
     },
-    "owl:versionInfo": "2",
-    "dc:date": "2025-09-29 14:51:39.0",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-25 10:13:59.0",
     "skos:altLabel": "CHLA",
     "skos:notation": "SDN:R03::CHLA",
     "owl:sameAs": {
       "@id": "http://vocab.nerc.ac.uk/collection/P01/current/CPHLPR01/"
     },
-    "pav:version": "2",
+    "pav:version": "3",
     "dce:identifier": "SDN:R03::CHLA",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/CHLA/2/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/CHLA/3/"
     },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",

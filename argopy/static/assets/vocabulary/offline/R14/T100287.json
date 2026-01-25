@@ -1,19 +1,22 @@
 {
   "name": "T100287",
   "long_name": "FLAG_FlbbStatus_NUMBER",
-  "last_update": "2025-10-29T20:57:53.902627+00:00",
+  "last_update": "2026-01-25T11:12:48.593142+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100287/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100287/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:33.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100287/2/"
+    },
     "dce:identifier": "SDN:R14::T100287",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T100287",
     "skos:altLabel": "287.1",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:33.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "FLAG_FlbbStatus_NUMBER"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Flag indicating the status of the FLBB (see manual)"
+      "@value": "Flag indicating the status of the FLBB (see manual). Template_Values:{unit:[LOGICAL, hex, NUMBER]}."
     },
     "@type": "skos:Concept",
     "@context": {

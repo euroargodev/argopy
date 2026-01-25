@@ -1,20 +1,25 @@
 {
   "name": "BETA_BACKSCATTERING",
   "long_name": "Total angle specific volume from backscattering sensor at x nanometers",
-  "last_update": "2025-10-29T20:57:41.864451+00:00",
+  "last_update": "2026-01-25T11:11:34.468579+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/BETA_BACKSCATTERING/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/BETA_BACKSCATTERING/1/"
-    },
-    "pav:authoredOn": "2025-09-29 14:51:42.0",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/BETA_BACKSCATTERING/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/BETA_BACKSCATTERING/2/"
+      }
+    ],
+    "pav:authoredOn": "2025-11-25 10:14:00.0",
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UUUU/"
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Raw backscattering signal from backscattering meter at unspecified wavelength, reported by ECO3 or FLBB sensors. Local_Attributes:{long_name:Total angle specific volume from backscattering sensor at x nanometers; standard_name:-; units:count; valid_min:-; valid_max:-; category:ib; fill_value:99999.f; data_type:float}."
+      "@value": "Raw backscattering signal from backscattering meter at unspecified wavelength, reported by ECO3 or FLBB sensors. Local_Attributes:{long_name:Total angle specific volume from backscattering sensor at x nanometers; standard_name:-; units:count; valid_min:-; valid_max:-; fill_value:99999.f}. Properties:{category:ib; data_type:float}"
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -29,17 +34,17 @@
       "@language": "en",
       "@value": "Total angle specific volume from backscattering sensor at x nanometers"
     },
-    "owl:versionInfo": "2",
-    "dc:date": "2025-09-29 14:51:42.0",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-25 10:14:00.0",
     "skos:altLabel": "BETA_BACKSCATTERING",
     "skos:notation": "SDN:R03::BETA_BACKSCATTERING",
     "owl:sameAs": {
       "@id": "http://vocab.nerc.ac.uk/collection/P01/current/NVLTOBS1/"
     },
-    "pav:version": "2",
+    "pav:version": "3",
     "dce:identifier": "SDN:R03::BETA_BACKSCATTERING",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/BETA_BACKSCATTERING/2/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/BETA_BACKSCATTERING/3/"
     },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",

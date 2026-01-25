@@ -1,7 +1,7 @@
 {
   "name": "NSMIXP",
   "long_name": "Near-surface sampling: mixed, pumped",
-  "last_update": "2025-10-29T20:57:19.238685+00:00",
+  "last_update": "2026-01-25T11:11:09.309032+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R16/current/NSMIXP/",
     "pav:authoredOn": "2020-05-03 20:29:08.0",

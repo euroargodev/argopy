@@ -1,7 +1,7 @@
 {
   "name": "HM4000",
   "long_name": "HM4000 float",
-  "last_update": "2025-10-29T20:57:23.307896+00:00",
+  "last_update": "2026-01-25T11:11:14.002650+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R23/current/HM4000/",
     "pav:authoredOn": "2022-06-16 11:36:09.0",

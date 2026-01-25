@@ -1,7 +1,7 @@
 {
   "name": "OCEAN_CODE",
   "long_name": "Argo ocean area codes and boundary definitions",
-  "last_update": "2025-10-29T19:56:33.334506+00:00",
+  "last_update": "2026-01-25T10:44:09.403910+00:00",
   "data": {
     "@graph": [
       {

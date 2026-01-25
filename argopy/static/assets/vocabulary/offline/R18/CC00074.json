@@ -1,19 +1,22 @@
 {
   "name": "CC00074",
   "long_name": "CONFIG_IceDetectionDescentVerticalThresholdToEndBuoyancyInversionPhase_dbar",
-  "last_update": "2025-10-29T21:00:35.428332+00:00",
+  "last_update": "2026-01-25T11:15:58.134483+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00074/",
-    "pav:authoredOn": "2023-05-02 16:34:05.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00074/1/"
     },
+    "pav:authoredOn": "2025-12-12 11:41:04.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00074/2/"
+    },
     "dce:identifier": "SDN:R18::CC00074",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R18::CC00074",
-    "skos:altLabel": "Core Config 74 - Optional",
-    "dc:date": "2023-05-02 16:34:05.0",
-    "owl:versionInfo": "1",
+    "skos:altLabel": "Core Config 74",
+    "dc:date": "2025-12-12 11:41:04.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "CONFIG_IceDetectionDescentVerticalThresholdToEndBuoyancyInversionPhase_dbar"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "When the cycle is aborted this threshold is used to detect speed inversion and to stop buoyancy inversion phase."
+      "@value": "Threshold. When the cycle is aborted, this threshold is used to detect speed inversion and to stop buoyancy inversion phase. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
     },
     "@type": "skos:Concept",
     "@context": {

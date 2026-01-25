@@ -1,7 +1,7 @@
 {
   "name": "1",
   "long_name": "Value is the weighted average of pressure measurements regularly sampled during the drift phase and provided by the float",
-  "last_update": "2025-10-29T20:59:10.105060+00:00",
+  "last_update": "2026-01-25T11:14:16.789188+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R21/current/1/",
     "pav:authoredOn": "2020-05-03 20:29:43.0",

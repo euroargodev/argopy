@@ -1,7 +1,7 @@
 {
   "name": "C",
   "long_name": "Grounded (external bathymetry database check), but free-drift period not affected",
-  "last_update": "2025-10-29T20:57:27.223576+00:00",
+  "last_update": "2026-01-25T11:11:19.126676+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R20/current/C/",
     "pav:authoredOn": "2021-02-08 16:07:23.0",

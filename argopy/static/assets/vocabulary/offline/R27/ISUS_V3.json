@@ -1,7 +1,7 @@
 {
   "name": "ISUS_V3",
   "long_name": "Satlantic In Situ Ultraviolet Spectrophotometer (ISUS) V3 nitrate sensor",
-  "last_update": "2025-10-29T20:58:54.781796+00:00",
+  "last_update": "2026-01-25T11:13:54.561842+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ISUS_V3/",
     "pav:authoredOn": "2021-08-09 12:23:38.0",

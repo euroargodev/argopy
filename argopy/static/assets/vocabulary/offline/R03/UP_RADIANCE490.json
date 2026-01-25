@@ -1,20 +1,25 @@
 {
   "name": "UP_RADIANCE490",
   "long_name": "Upwelling radiance at 490 nanometers",
-  "last_update": "2025-10-29T20:57:37.018597+00:00",
+  "last_update": "2026-01-25T11:11:29.859935+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE490/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE490/1/"
-    },
-    "pav:authoredOn": "2025-09-29 14:51:40.0",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE490/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE490/1/"
+      }
+    ],
+    "pav:authoredOn": "2025-11-25 10:14:01.0",
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UWNS/"
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Upwelling radiance at 490 nm wavelength, reported by OCR504 sensor (unit conversion). Local_Attributes:{long_name:Upwelling radiance at 490 nanometers; standard_name:upwelling_radiance_in_sea_water; units:W/m^2/nm/sr; valid_min:-; valid_max:-; category:b; fill_value:99999.f; data_type:float}."
+      "@value": "Upwelling radiance at 490 nm wavelength, reported by OCR504 sensor (unit conversion). Local_Attributes:{long_name:Upwelling radiance at 490 nanometers; standard_name:upwelling_radiance_in_sea_water; units:W/m^2/nm/sr; valid_min:-; valid_max:-; fill_value:99999.f}. Properties:{category:b; data_type:float}"
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -29,17 +34,17 @@
       "@language": "en",
       "@value": "Upwelling radiance at 490 nanometers"
     },
-    "owl:versionInfo": "2",
-    "dc:date": "2025-09-29 14:51:40.0",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-25 10:14:01.0",
     "skos:altLabel": "UP_RADIANCE490",
     "skos:notation": "SDN:R03::UP_RADIANCE490",
     "owl:sameAs": {
       "@id": "http://vocab.nerc.ac.uk/collection/P01/current/RXUU490L/"
     },
-    "pav:version": "2",
+    "pav:version": "3",
     "dce:identifier": "SDN:R03::UP_RADIANCE490",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE490/2/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE490/3/"
     },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",

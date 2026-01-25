@@ -1,40 +1,45 @@
 {
   "name": "CB00059",
   "long_name": "CONFIG_<short_sensor_name><param>FluorescenceExcitationBandwidth_nm",
-  "last_update": "2025-10-29T21:00:26.967093+00:00",
+  "last_update": "2026-01-25T11:15:46.606939+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00059/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00059/1/"
-    },
-    "pav:authoredOn": "2023-05-02 19:58:02.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00059/2/"
-    },
-    "dce:identifier": "SDN:R18::CB00059",
-    "pav:version": "2",
-    "skos:notation": "SDN:R18::CB00059",
-    "skos:altLabel": "BGC Config 59 - Optional",
-    "dc:date": "2023-05-02 19:58:02.0",
-    "owl:versionInfo": "2",
-    "skos:prefLabel": {
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00059/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00059/1/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
       "@language": "en",
-      "@value": "CONFIG_<short_sensor_name><param>FluorescenceExcitationBandwidth_nm"
+      "@value": "Bandwidth of <short_sensor_name> for excitation of <param> fluorescence measurements. Template_Values:{short_sensor_name:[Cyc, Eco, Flbb, Flntu];param:[Cdom, Chla];unit:[nm]}."
     },
-    "dc:identifier": "SDN:R18::CB00059",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R18::CB00059",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "Bandwidth of <short_sensor_name> for excitation of <param> fluorescence measurements (in nanometer)"
+      "@value": "CONFIG_<short_sensor_name><param>FluorescenceExcitationBandwidth_nm"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-12-11 09:34:56.0",
+    "skos:altLabel": "BGC Config 59",
+    "skos:notation": "SDN:R18::CB00059",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R18::CB00059",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00059/3/"
+    },
+    "pav:authoredOn": "2025-12-11 09:34:56.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

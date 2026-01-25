@@ -1,20 +1,25 @@
 {
   "name": "DOWN_IRRADIANCE412",
   "long_name": "Downwelling irradiance at 412 nanometers",
-  "last_update": "2025-10-29T20:57:37.270501+00:00",
+  "last_update": "2026-01-25T11:11:29.934688+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/DOWN_IRRADIANCE412/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/DOWN_IRRADIANCE412/1/"
-    },
-    "pav:authoredOn": "2025-09-29 14:51:39.0",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/DOWN_IRRADIANCE412/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/DOWN_IRRADIANCE412/2/"
+      }
+    ],
+    "pav:authoredOn": "2025-11-25 10:14:02.0",
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UWNM/"
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Downwelling irradiance at 412 nm wavelength, reported by OCR504 sensor (unit conversion). Local_Attributes:{long_name:Downwelling irradiance at 412 nanometers; standard_name:-; units:W/m^2/nm; valid_min:-; valid_max:-; category:b; fill_value:99999.f; data_type:float}."
+      "@value": "Downwelling irradiance at 412 nm wavelength, reported by OCR504 sensor (unit conversion). Local_Attributes:{long_name:Downwelling irradiance at 412 nanometers; standard_name:-; units:W/m^2/nm; valid_min:-; valid_max:-; fill_value:99999.f}. Properties:{category:b; data_type:float}"
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -29,17 +34,17 @@
       "@language": "en",
       "@value": "Downwelling irradiance at 412 nanometers"
     },
-    "owl:versionInfo": "2",
-    "dc:date": "2025-09-29 14:51:39.0",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-25 10:14:02.0",
     "skos:altLabel": "DOWN_IRRADIANCE412",
     "skos:notation": "SDN:R03::DOWN_IRRADIANCE412",
     "owl:sameAs": {
       "@id": "http://vocab.nerc.ac.uk/collection/P01/current/RXUD412E/"
     },
-    "pav:version": "2",
+    "pav:version": "3",
     "dce:identifier": "SDN:R03::DOWN_IRRADIANCE412",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/DOWN_IRRADIANCE412/2/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/DOWN_IRRADIANCE412/3/"
     },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",

@@ -1,19 +1,22 @@
 {
   "name": "T000405",
   "long_name": "PRES_ShallowDeepBoundaryDescent_dbar",
-  "last_update": "2025-10-29T20:58:09.720262+00:00",
+  "last_update": "2026-01-25T11:12:59.849077+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000405/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000405/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:10.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000405/2/"
+    },
     "dce:identifier": "SDN:R14::T000405",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T000405",
     "skos:altLabel": "405",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:10.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "PRES_ShallowDeepBoundaryDescent_dbar"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "boundary pressure between shallow/deep areas at descent"
+      "@value": "Boundary pressure between shallow/deep areas at descent. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
     },
     "@type": "skos:Concept",
     "@context": {

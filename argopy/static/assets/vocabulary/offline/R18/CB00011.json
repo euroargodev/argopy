@@ -1,40 +1,45 @@
 {
   "name": "CB00011",
   "long_name": "CONFIG_<short_sensor_name>PowerSwitchDelayMin_msec",
-  "last_update": "2025-10-29T21:00:22.451342+00:00",
+  "last_update": "2026-01-25T11:15:42.599691+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00011/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00011/1/"
-    },
-    "pav:authoredOn": "2023-05-02 19:58:02.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00011/2/"
-    },
-    "dce:identifier": "SDN:R18::CB00011",
-    "pav:version": "2",
-    "skos:notation": "SDN:R18::CB00011",
-    "skos:altLabel": "BGC Config 11 - Mandatory",
-    "dc:date": "2023-05-02 19:58:02.0",
-    "owl:versionInfo": "2",
-    "skos:prefLabel": {
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00011/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00011/1/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
       "@language": "en",
-      "@value": "CONFIG_<short_sensor_name>PowerSwitchDelayMin_msec"
+      "@value": "Minimum waiting time needed by the <short_sensor_name> between a switch OFF and a switch ON. Template_Values:{short_sensor_name:[Crover, Ctd, Eco, Flbb, Flntu, Ocr, Optode, Sfet, Suna];unit:[seconds, dsec, csec, msec, usec]}."
     },
-    "dc:identifier": "SDN:R18::CB00011",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R18::CB00011",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "Minimum waiting time needed by the <short_sensor_name> between a switch OFF and a switch ON (in milli-seconds)."
+      "@value": "CONFIG_<short_sensor_name>PowerSwitchDelayMin_msec"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-12-11 09:34:55.0",
+    "skos:altLabel": "BGC Config 11",
+    "skos:notation": "SDN:R18::CB00011",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R18::CB00011",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00011/3/"
+    },
+    "pav:authoredOn": "2025-12-11 09:34:55.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

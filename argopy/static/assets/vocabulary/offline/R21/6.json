@@ -1,7 +1,7 @@
 {
   "name": "6",
   "long_name": "Value is the PARKING_PRESSURE meta-data but the float is programmed to sample measurements during the drift phase (i.e. drift measurement is missing)",
-  "last_update": "2025-10-29T20:59:09.835612+00:00",
+  "last_update": "2026-01-25T11:14:16.402051+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R21/current/6/",
     "pav:authoredOn": "2020-05-03 20:29:43.0",

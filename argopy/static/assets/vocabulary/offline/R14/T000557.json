@@ -1,37 +1,45 @@
 {
   "name": "T000557",
   "long_name": "NUMBER_<short_sensor_name>DescentSamplesDepthZone<Z>_COUNT",
-  "last_update": "2025-10-29T20:58:19.348798+00:00",
+  "last_update": "2026-01-25T11:12:41.291392+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000557/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000557/1/"
-    },
-    "dce:identifier": "SDN:R14::T000557",
-    "pav:version": "1",
-    "skos:notation": "SDN:R14::T000557",
-    "skos:altLabel": "557",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
-    "skos:prefLabel": {
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000557/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000557/2/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
       "@language": "en",
-      "@value": "NUMBER_<short_sensor_name>DescentSamplesDepthZone<Z>_COUNT"
+      "@value": "Number of samples acquired by <short_sensor_name> in the depth zone #<Z> during the descent phases (from surface to the parking depth and from the parking depth to the profile depth). Template_Values:{unit:[COUNT];short_sensor_name:[Crover, Ctd, CTD, Cyc, Eco, Flbb, Flntu, Mcoms, Ocr, Optode, Ph, Sfet, Stm, Suna];Z=[1..5]}."
     },
-    "dc:identifier": "SDN:R14::T000557",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R14::T000557",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "Number of samples acquired by <short_sensor_name> in the depth zone #<Z> during the descent phases (from surface to the parking depth and from the parking depth to the profile depth). Depth zone number: <Z> = 1..5"
+      "@value": "NUMBER_<short_sensor_name>DescentSamplesDepthZone<Z>_COUNT"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "3",
+    "dc:date": "2026-01-19 15:35:35.0",
+    "skos:altLabel": "557",
+    "skos:notation": "SDN:R14::T000557",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R14::T000557",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000557/3/"
+    },
+    "pav:authoredOn": "2026-01-19 15:35:35.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

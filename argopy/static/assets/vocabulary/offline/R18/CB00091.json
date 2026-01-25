@@ -1,40 +1,45 @@
 {
   "name": "CB00091",
   "long_name": "CONFIG_<short_sensor_name>CpAscentPhaseDepthZone<N>StartPres_dbar",
-  "last_update": "2025-10-29T21:00:08.952158+00:00",
+  "last_update": "2026-01-25T11:15:46.345247+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00091/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00091/1/"
-    },
-    "pav:authoredOn": "2023-05-02 19:58:02.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00091/2/"
-    },
-    "dce:identifier": "SDN:R18::CB00091",
-    "pav:version": "2",
-    "skos:notation": "SDN:R18::CB00091",
-    "skos:altLabel": "BGC Config 91 - Optional",
-    "dc:date": "2023-05-02 19:58:02.0",
-    "owl:versionInfo": "2",
-    "skos:prefLabel": {
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00091/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00091/1/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
       "@language": "en",
-      "@value": "CONFIG_<short_sensor_name>CpAscentPhaseDepthZone<N>StartPres_dbar"
+      "@value": "Start pressure to define the ascent depth zone #<N> of the <short_sensor_name> sensor used in continuous profiling mode. Template_Values:{short_sensor_name:[Ctd, Sfet];N:[1..5];unit:[bar, dbar, cbar, mbar, inHg]}."
     },
-    "dc:identifier": "SDN:R18::CB00091",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R18::CB00091",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "Start pressure to define the ascent depth zone #<N> of the <short_sensor_name> sensor used in continuous profiling mode."
+      "@value": "CONFIG_<short_sensor_name>CpAscentPhaseDepthZone<N>StartPres_dbar"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-12-11 09:34:53.0",
+    "skos:altLabel": "BGC Config 91",
+    "skos:notation": "SDN:R18::CB00091",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R18::CB00091",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00091/3/"
+    },
+    "pav:authoredOn": "2025-12-11 09:34:53.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

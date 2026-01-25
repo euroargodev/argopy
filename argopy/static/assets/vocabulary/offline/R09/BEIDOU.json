@@ -1,7 +1,7 @@
 {
   "name": "BEIDOU",
   "long_name": "Beidou navigation satellite system",
-  "last_update": "2025-10-29T20:57:15.762808+00:00",
+  "last_update": "2026-01-25T11:11:05.315139+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R09/current/BEIDOU/",
     "pav:authoredOn": "2020-04-07 22:59:46.0",

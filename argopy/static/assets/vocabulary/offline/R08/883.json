@@ -1,7 +1,7 @@
 {
   "name": "883",
   "long_name": "APEX_D deep float with RBR conductivity sensor",
-  "last_update": "2025-10-29T20:59:13.135798+00:00",
+  "last_update": "2026-01-25T11:14:20.506893+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/883/",
     "pav:hasVersion": [

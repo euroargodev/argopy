@@ -1,19 +1,22 @@
 {
   "name": "T000158",
   "long_name": "NUMBER_ProfileOldNotSent_COUNT",
-  "last_update": "2025-10-29T20:58:39.554477+00:00",
+  "last_update": "2026-01-25T11:11:58.568155+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000158/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000158/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:17.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000158/2/"
+    },
     "dce:identifier": "SDN:R14::T000158",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T000158",
     "skos:altLabel": "158",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:17.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "NUMBER_ProfileOldNotSent_COUNT"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Number of older profiles not sent."
+      "@value": "Number of older profiles not sent. Template_Values:{unit:[COUNT]}."
     },
     "@type": "skos:Concept",
     "@context": {

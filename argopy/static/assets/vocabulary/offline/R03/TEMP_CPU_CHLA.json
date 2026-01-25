@@ -1,7 +1,7 @@
 {
   "name": "TEMP_CPU_CHLA",
   "long_name": "Thermistor signal from backscattering sensor",
-  "last_update": "2025-10-29T20:57:43.217244+00:00",
+  "last_update": "2026-01-25T11:11:35.735948+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_CPU_CHLA/",
     "pav:hasVersion": [
@@ -10,16 +10,19 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_CPU_CHLA/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_CPU_CHLA/3/"
       }
     ],
-    "pav:authoredOn": "2025-09-29 14:51:43.0",
+    "pav:authoredOn": "2025-11-25 10:13:59.0",
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UUUU/"
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Raw temperature signalfrom thermistor on backscattering meter and/or fluorometer, reported by FLBB sensor. Local_Attributes:{long_name:Thermistor signal from backscattering sensor; standard_name:-; units:count; valid_min:-; valid_max:-; category:ib; fill_value:99999.f; data_type:float}."
+      "@value": "Raw temperature signalfrom thermistor on backscattering meter and/or fluorometer, reported by FLBB sensor. Local_Attributes:{long_name:Thermistor signal from backscattering sensor; standard_name:-; units:count; valid_min:-; valid_max:-; fill_value:99999.f}. Properties:{category:ib; data_type:float}"
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -34,17 +37,17 @@
       "@language": "en",
       "@value": "Thermistor signal from backscattering sensor"
     },
-    "owl:versionInfo": "3",
-    "dc:date": "2025-09-29 14:51:43.0",
+    "owl:versionInfo": "4",
+    "dc:date": "2025-11-25 10:13:59.0",
     "skos:altLabel": "TEMP_CPU_CHLA",
     "skos:notation": "SDN:R03::TEMP_CPU_CHLA",
     "owl:sameAs": {
       "@id": "http://vocab.nerc.ac.uk/collection/P01/current/TCNTICPU/"
     },
-    "pav:version": "3",
+    "pav:version": "4",
     "dce:identifier": "SDN:R03::TEMP_CPU_CHLA",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_CPU_CHLA/3/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_CPU_CHLA/4/"
     },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",

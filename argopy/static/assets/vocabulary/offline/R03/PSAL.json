@@ -1,20 +1,25 @@
 {
   "name": "PSAL",
   "long_name": "Practical salinity",
-  "last_update": "2025-10-29T20:57:40.215893+00:00",
+  "last_update": "2026-01-25T11:11:32.875867+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/PSAL/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/PSAL/1/"
-    },
-    "pav:authoredOn": "2025-09-29 14:51:42.0",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/PSAL/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/PSAL/1/"
+      }
+    ],
+    "pav:authoredOn": "2025-11-25 10:14:01.0",
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UUUU/"
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Practical salinity of the water body by conductivity cell and computation using the UNESCO 1983 algorithm. Local_Attributes:{long_name:Practical salinity; standard_name:sea_water_salinity; units:psu; valid_min:2.f; valid_max:41.f; category:c; fill_value:99999.f; data_type:float}."
+      "@value": "Practical salinity of the water body by conductivity cell and computation using the UNESCO 1983 algorithm. Local_Attributes:{long_name:Practical salinity; standard_name:sea_water_salinity; units:psu; valid_min:2.f; valid_max:41.f; fill_value:99999.f}. Properties:{category:c; data_type:float}"
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -29,17 +34,17 @@
       "@language": "en",
       "@value": "Practical salinity"
     },
-    "owl:versionInfo": "2",
-    "dc:date": "2025-09-29 14:51:42.0",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-25 10:14:01.0",
     "skos:altLabel": "PSAL",
     "skos:notation": "SDN:R03::PSAL",
     "owl:sameAs": {
       "@id": "http://vocab.nerc.ac.uk/collection/P01/current/PSALST01/"
     },
-    "pav:version": "2",
+    "pav:version": "3",
     "dce:identifier": "SDN:R03::PSAL",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/PSAL/2/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/PSAL/3/"
     },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",

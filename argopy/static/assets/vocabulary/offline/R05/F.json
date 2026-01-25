@@ -1,7 +1,7 @@
 {
   "name": "F",
   "long_name": "GALILEO accuracy (not better than 10 m)",
-  "last_update": "2025-10-29T20:57:28.852901+00:00",
+  "last_update": "2026-01-25T11:11:21.465411+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R05/current/F/",
     "pav:hasVersion": {

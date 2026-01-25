@@ -1,19 +1,22 @@
 {
   "name": "T000522",
   "long_name": "VOLTAGE_BatteryCPUStartXmit_volts",
-  "last_update": "2025-10-29T20:58:44.296215+00:00",
+  "last_update": "2026-01-25T11:12:03.252246+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000522/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000522/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:21.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000522/2/"
+    },
     "dce:identifier": "SDN:R14::T000522",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T000522",
     "skos:altLabel": "522",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:21.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "VOLTAGE_BatteryCPUStartXmit_volts"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "CPU Battery @ start oftransmission after data has been processed LSB=0.1 volts, IDG Var= Vcpu"
+      "@value": "CPU Battery at the start of transmission after data has been processed (LSB=0.1 volts, IDG Var= Vcpu). Template_Values:{unit:[COUNT, volts, mV]}."
     },
     "@type": "skos:Concept",
     "@context": {

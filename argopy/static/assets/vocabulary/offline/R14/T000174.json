@@ -1,19 +1,22 @@
 {
   "name": "T000174",
   "long_name": "NUMBER_AscendingProfileReductionUpperPart_COUNT",
-  "last_update": "2025-10-29T20:57:49.089181+00:00",
+  "last_update": "2026-01-25T11:12:13.638966+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000174/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000174/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:02.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000174/2/"
+    },
     "dce:identifier": "SDN:R14::T000174",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T000174",
     "skos:altLabel": "174",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:02.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "NUMBER_AscendingProfileReductionUpperPart_COUNT"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "NUMBER_AscendingProfileReductionUpperPart_COUNT"
+      "@value": "Number of slices in shallow zone for ascending profile reduction. Template_Values:{unit:[COUNT]}."
     },
     "@type": "skos:Concept",
     "@context": {

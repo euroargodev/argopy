@@ -1,37 +1,45 @@
 {
   "name": "T000235",
   "long_name": "NUMBER_Park<short_sensor_name>SamplesInternal_COUNT",
-  "last_update": "2025-10-29T20:58:18.327902+00:00",
+  "last_update": "2026-01-25T11:13:06.742032+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000235/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000235/1/"
-    },
-    "dce:identifier": "SDN:R14::T000235",
-    "pav:version": "1",
-    "skos:notation": "SDN:R14::T000235",
-    "skos:altLabel": "235",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
-    "skos:prefLabel": {
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000235/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000235/1/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
       "@language": "en",
-      "@value": "NUMBER_Park<short_sensor_name>SamplesInternal_COUNT"
+      "@value": "Park measurements - Internal counter. Template_Values:{unit:[COUNT];short_sensor_name:[Crover, Ctd, CTD, Cyc, Eco, Flbb, Flntu, Mcoms, Ocr, Optode, Ph, Sfet, Stm, Suna]}."
     },
-    "dc:identifier": "SDN:R14::T000235",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R14::T000235",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "Park measurements - Internal counter"
+      "@value": "NUMBER_Park<short_sensor_name>SamplesInternal_COUNT"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "3",
+    "dc:date": "2026-01-19 15:35:35.0",
+    "skos:altLabel": "235",
+    "skos:notation": "SDN:R14::T000235",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R14::T000235",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000235/3/"
+    },
+    "pav:authoredOn": "2026-01-19 15:35:35.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

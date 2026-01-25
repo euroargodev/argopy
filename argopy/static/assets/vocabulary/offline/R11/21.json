@@ -1,7 +1,7 @@
 {
   "name": "21",
   "long_name": "Near-surface unpumped CTD salinity test",
-  "last_update": "2025-10-29T20:57:45.880060+00:00",
+  "last_update": "2026-01-25T11:11:40.355231+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R11/current/21/",
     "pav:authoredOn": "2020-04-07 22:59:46.0",

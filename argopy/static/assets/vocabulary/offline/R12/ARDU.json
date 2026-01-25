@@ -1,7 +1,7 @@
 {
   "name": "ARDU",
   "long_name": "Delayed-mode data archived locally and sent to GDACs",
-  "last_update": "2025-10-29T20:57:29.977083+00:00",
+  "last_update": "2026-01-25T11:11:22.902646+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R12/current/ARDU/",
     "pav:authoredOn": "2020-04-07 22:59:46.0",

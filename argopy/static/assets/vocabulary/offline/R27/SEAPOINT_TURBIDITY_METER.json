@@ -1,7 +1,7 @@
 {
   "name": "SEAPOINT_TURBIDITY_METER",
   "long_name": "Seapoint Turbidity Meter",
-  "last_update": "2025-10-29T20:58:57.522322+00:00",
+  "last_update": "2026-01-25T11:13:58.869570+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SEAPOINT_TURBIDITY_METER/",
     "pav:authoredOn": "2021-08-09 12:23:38.0",

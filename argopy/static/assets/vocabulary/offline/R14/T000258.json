@@ -1,19 +1,22 @@
 {
   "name": "T000258",
   "long_name": "NUMBER_TEMPSampleErrorDeepZoneDuringDescending_COUNT",
-  "last_update": "2025-10-29T20:57:56.369830+00:00",
+  "last_update": "2026-01-25T11:13:16.287181+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000258/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000258/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:37.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000258/2/"
+    },
     "dce:identifier": "SDN:R14::T000258",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T000258",
     "skos:altLabel": "258",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:37.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "NUMBER_TEMPSampleErrorDeepZoneDuringDescending_COUNT"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "error of temperature measurements in deep zone during descent"
+      "@value": "Error of temperature measurements in deep zone during descent. Template_Values:{unit:[COUNT]}."
     },
     "@type": "skos:Concept",
     "@context": {

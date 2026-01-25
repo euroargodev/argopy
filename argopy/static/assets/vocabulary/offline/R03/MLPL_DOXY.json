@@ -1,20 +1,25 @@
 {
   "name": "MLPL_DOXY",
   "long_name": "Oxygen concentration reported by the oxygen sensor",
-  "last_update": "2025-10-29T20:57:43.329358+00:00",
+  "last_update": "2026-01-25T11:11:36.320848+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/MLPL_DOXY/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/MLPL_DOXY/1/"
-    },
-    "pav:authoredOn": "2025-09-29 14:51:41.0",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/MLPL_DOXY/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/MLPL_DOXY/1/"
+      }
+    ],
+    "pav:authoredOn": "2025-11-25 10:14:01.0",
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UMLL/"
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Dissolved oxygen concentration uncorrected for salinity and pressure effects. Local_Attributes:{long_name:Oxygen concentration reported by the oxygen sensor; standard_name:-; units:ml/l; valid_min:0.f; valid_max:650.f; category:ib; fill_value:99999.f; data_type:float}."
+      "@value": "Dissolved oxygen concentration uncorrected for salinity and pressure effects. Local_Attributes:{long_name:Oxygen concentration reported by the oxygen sensor; standard_name:-; units:ml/l; valid_min:0.f; valid_max:650.f; fill_value:99999.f}. Properties:{category:ib; data_type:float}"
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -29,17 +34,17 @@
       "@language": "en",
       "@value": "Oxygen concentration reported by the oxygen sensor"
     },
-    "owl:versionInfo": "2",
-    "dc:date": "2025-09-29 14:51:41.0",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-25 10:14:01.0",
     "skos:altLabel": "MLPL_DOXY",
     "skos:notation": "SDN:R03::MLPL_DOXY",
     "owl:sameAs": {
       "@id": "http://vocab.nerc.ac.uk/collection/P01/current/DOXYZZXX/"
     },
-    "pav:version": "2",
+    "pav:version": "3",
     "dce:identifier": "SDN:R03::MLPL_DOXY",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/MLPL_DOXY/2/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/MLPL_DOXY/3/"
     },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",

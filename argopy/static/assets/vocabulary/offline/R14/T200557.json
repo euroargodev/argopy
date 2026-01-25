@@ -1,37 +1,45 @@
 {
   "name": "T200557",
   "long_name": "NUMBER_<short_sensor_name>InAirSamples_COUNT",
-  "last_update": "2025-10-29T20:58:18.168099+00:00",
+  "last_update": "2026-01-25T11:12:48.864248+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T200557/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T200557/1/"
-    },
-    "dce:identifier": "SDN:R14::T200557",
-    "pav:version": "1",
-    "skos:notation": "SDN:R14::T200557",
-    "skos:altLabel": "557.2",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
-    "skos:prefLabel": {
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T200557/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T200557/2/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
       "@language": "en",
-      "@value": "NUMBER_<short_sensor_name>InAirSamples_COUNT"
+      "@value": "Number of samples acquired by <short_sensor_name> during the surface phase. Template_Values:{unit:[COUNT];short_sensor_name:[Crover, Ctd, CTD, Cyc, Eco, Flbb, Flntu, Mcoms, Ocr, Optode, Ph, Sfet, Stm, Suna]}."
     },
-    "dc:identifier": "SDN:R14::T200557",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R14::T200557",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "Number of samples acquired by <short_sensor_name> during the \"surface\" phase."
+      "@value": "NUMBER_<short_sensor_name>InAirSamples_COUNT"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "3",
+    "dc:date": "2026-01-19 15:35:34.0",
+    "skos:altLabel": "557.2",
+    "skos:notation": "SDN:R14::T200557",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R14::T200557",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T200557/3/"
+    },
+    "pav:authoredOn": "2026-01-19 15:35:34.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

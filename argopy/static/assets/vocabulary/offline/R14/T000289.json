@@ -1,19 +1,22 @@
 {
   "name": "T000289",
   "long_name": "FLAG_GPSStatus_LOGICAL",
-  "last_update": "2025-10-29T20:58:43.403503+00:00",
+  "last_update": "2026-01-25T11:13:33.857741+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000289/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000289/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:03:58.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000289/2/"
+    },
     "dce:identifier": "SDN:R14::T000289",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T000289",
     "skos:altLabel": "289",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:03:58.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "FLAG_GPSStatus_LOGICAL"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Flag indicating whether GPS is valid (1) or not valid (0)"
+      "@value": "Flag indicating whether GPS is valid (1) or not valid (0). Template_Values:{unit:[LOGICAL, hex, NUMBER]}."
     },
     "@type": "skos:Concept",
     "@context": {

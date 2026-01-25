@@ -1,7 +1,7 @@
 {
   "name": "ARUP",
   "long_name": "Real-time data archived locally and sent to GDACs",
-  "last_update": "2025-10-29T20:57:30.608673+00:00",
+  "last_update": "2026-01-25T11:11:24.094649+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R12/current/ARUP/",
     "pav:authoredOn": "2020-04-07 22:59:46.0",

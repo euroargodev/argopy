@@ -1,40 +1,45 @@
 {
   "name": "CB00067",
   "long_name": "CONFIG_SetClockSensorCard_LOGICAL",
-  "last_update": "2025-10-29T21:00:33.839304+00:00",
+  "last_update": "2026-01-25T11:15:55.151847+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00067/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00067/1/"
-    },
-    "pav:authoredOn": "2023-05-02 19:58:02.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00067/2/"
-    },
-    "dce:identifier": "SDN:R18::CB00067",
-    "pav:version": "2",
-    "skos:notation": "SDN:R18::CB00067",
-    "skos:altLabel": "BGC Config 67 - Optional",
-    "dc:date": "2023-05-02 19:58:02.0",
-    "owl:versionInfo": "2",
-    "skos:prefLabel": {
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00067/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00067/2/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
       "@language": "en",
-      "@value": "CONFIG_SetClockSensorCard_LOGICAL"
+      "@value": "When the float Real Time Clock is set, also set the clock of the measurement card. Template_Values:{unit:[LOGICAL]}."
     },
-    "dc:identifier": "SDN:R18::CB00067",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R18::CB00067",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "When the float Real Time Clock is set, also set the clock of the measurement card."
+      "@value": "CONFIG_SetClockSensorCard_LOGICAL"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-12-11 09:34:57.0",
+    "skos:altLabel": "BGC Config 67",
+    "skos:notation": "SDN:R18::CB00067",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R18::CB00067",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00067/3/"
+    },
+    "pav:authoredOn": "2025-12-11 09:34:57.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

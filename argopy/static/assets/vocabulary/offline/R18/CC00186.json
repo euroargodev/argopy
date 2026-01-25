@@ -1,19 +1,22 @@
 {
   "name": "CC00186",
   "long_name": "CONFIG_PumpActionTimeBuoyancyAcquisitionForInAirMeasCycle_csec",
-  "last_update": "2025-10-29T21:00:13.017411+00:00",
+  "last_update": "2026-01-25T11:15:22.346357+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00186/",
-    "pav:authoredOn": "2023-05-02 16:34:05.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00186/1/"
     },
+    "pav:authoredOn": "2025-12-12 11:41:04.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00186/2/"
+    },
     "dce:identifier": "SDN:R18::CC00186",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R18::CC00186",
     "skos:altLabel": "Core Config 186",
-    "dc:date": "2023-05-02 16:34:05.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-12 11:41:04.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "CONFIG_PumpActionTimeBuoyancyAcquisitionForInAirMeasCycle_csec"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Duration of the last pump action of the buoyancy acquisition phase when a \"in air measurement\" phase is programmed (in centi-seconds). [For a cycle without \"in air measurement phase\" it is CONFIG_PumpActionTimeBuoyancyAcquisition_csec]."
+      "@value": "Duration or volume transfer of the last pump action of the buoyancy acquisition phase when a in air measurement phase is programmed. For a cycle without in air measurement phase, it is CONFIG_PumpActionTimeBuoyancyAcquisition_csec. Template_Values:{unit:[seconds, dsec, csec, msec, usec, cm^3]}."
     },
     "@type": "skos:Concept",
     "@context": {

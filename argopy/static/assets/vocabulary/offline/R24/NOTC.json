@@ -1,37 +1,43 @@
 {
   "name": "NOTC",
   "long_name": "National Ocean Technology Center",
-  "last_update": "2025-10-29T20:57:14.145086+00:00",
+  "last_update": "2026-01-25T11:11:03.977767+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NOTC/",
-    "pav:authoredOn": "2024-11-11 09:32:23.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NOTC/1/"
     },
-    "dce:identifier": "SDN:R24::NOTC",
-    "pav:version": "1",
-    "skos:notation": "SDN:R24::NOTC",
-    "skos:altLabel": "",
-    "dc:date": "2024-11-11 09:32:23.0",
-    "owl:versionInfo": "1",
-    "skos:prefLabel": {
-      "@language": "en",
-      "@value": "National Ocean Technology Center"
-    },
-    "dc:identifier": "SDN:R24::NOTC",
-    "skos:note": {
-      "@language": "en",
-      "@value": "accepted"
-    },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    "@type": "skos:Concept",
+    "skos:related": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R23/current/COPEX/"
     },
     "skos:definition": {
       "@language": "en",
       "@value": "National Ocean Technology Center, China."
     },
-    "@type": "skos:Concept",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R24::NOTC",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "National Ocean Technology Center"
+    },
+    "owl:versionInfo": "2",
+    "dc:date": "2025-11-25 10:14:01.0",
+    "skos:altLabel": "NOTC",
+    "skos:notation": "SDN:R24::NOTC",
+    "pav:version": "2",
+    "dce:identifier": "SDN:R24::NOTC",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NOTC/2/"
+    },
+    "pav:authoredOn": "2025-11-25 10:14:01.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

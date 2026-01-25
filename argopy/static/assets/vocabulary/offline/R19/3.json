@@ -1,7 +1,7 @@
 {
   "name": "3",
   "long_name": "Value computed directly from transmitted float information",
-  "last_update": "2025-10-29T21:00:43.618097+00:00",
+  "last_update": "2026-01-25T11:16:10.724624+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R19/current/3/",
     "pav:authoredOn": "2020-05-03 20:29:21.0",

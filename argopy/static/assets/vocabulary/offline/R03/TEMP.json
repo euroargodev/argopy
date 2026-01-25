@@ -1,20 +1,25 @@
 {
   "name": "TEMP",
   "long_name": "Sea temperature in-situ ITS-90 scale",
-  "last_update": "2025-10-29T20:57:43.955572+00:00",
+  "last_update": "2026-01-25T11:11:37.197896+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP/1/"
-    },
-    "pav:authoredOn": "2025-09-29 14:51:39.0",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP/2/"
+      }
+    ],
+    "pav:authoredOn": "2025-11-25 10:14:02.0",
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UPAA/"
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Temperature of the water body expressed against the International Temperature Scale 1990 (ITS-90) calibration standard. Local_Attributes:{long_name:Sea temperature in-situ ITS-90 scale; standard_name:sea_water_temperature; units:degree_Celsius; valid_min:-2.5f; valid_max:40.f; category:c; fill_value:99999.f; data_type:float}."
+      "@value": "Temperature of the water body expressed against the International Temperature Scale 1990 (ITS-90) calibration standard. Local_Attributes:{long_name:Sea temperature in-situ ITS-90 scale; standard_name:sea_water_temperature; units:degree_Celsius; valid_min:-2.5f; valid_max:40.f; fill_value:99999.f}. Properties:{category:c; data_type:float}"
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -29,17 +34,17 @@
       "@language": "en",
       "@value": "Sea temperature in-situ ITS-90 scale"
     },
-    "owl:versionInfo": "2",
-    "dc:date": "2025-09-29 14:51:39.0",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-25 10:14:02.0",
     "skos:altLabel": "TEMP",
     "skos:notation": "SDN:R03::TEMP",
     "owl:sameAs": {
       "@id": "http://vocab.nerc.ac.uk/collection/P01/current/TEMPST01/"
     },
-    "pav:version": "2",
+    "pav:version": "3",
     "dce:identifier": "SDN:R03::TEMP",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP/2/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP/3/"
     },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",

@@ -1,20 +1,25 @@
 {
   "name": "NITRATE",
   "long_name": "Nitrate",
-  "last_update": "2025-10-29T20:57:43.219474+00:00",
+  "last_update": "2026-01-25T11:11:36.317241+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NITRATE/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NITRATE/1/"
-    },
-    "pav:authoredOn": "2025-09-29 14:51:42.0",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NITRATE/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NITRATE/2/"
+      }
+    ],
+    "pav:authoredOn": "2025-11-25 10:14:03.0",
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/P06/current/KGUM/"
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Nitrate concentration. Local_Attributes:{long_name:Nitrate; standard_name:moles_of_nitrate_per_unit_mass_in_sea_water; units:micromole/kg; valid_min:-; valid_max:-; category:b; fill_value:99999.f; data_type:float}."
+      "@value": "Nitrate concentration. Local_Attributes:{long_name:Nitrate; standard_name:moles_of_nitrate_per_unit_mass_in_sea_water; units:micromole/kg; valid_min:-; valid_max:-; fill_value:99999.f}. Properties:{category:b; data_type:float}"
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -29,17 +34,17 @@
       "@language": "en",
       "@value": "Nitrate"
     },
-    "owl:versionInfo": "2",
-    "dc:date": "2025-09-29 14:51:42.0",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-25 10:14:03.0",
     "skos:altLabel": "NITRATE",
     "skos:notation": "SDN:R03::NITRATE",
     "owl:sameAs": {
       "@id": "http://vocab.nerc.ac.uk/collection/P01/current/MDMAP005/"
     },
-    "pav:version": "2",
+    "pav:version": "3",
     "dce:identifier": "SDN:R03::NITRATE",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NITRATE/2/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NITRATE/3/"
     },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",

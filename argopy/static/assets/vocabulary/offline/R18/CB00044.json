@@ -1,40 +1,45 @@
 {
   "name": "CB00044",
   "long_name": "CONFIG_VectorBoardShowModeOn_LOGICAL",
-  "last_update": "2025-10-29T21:00:16.257137+00:00",
+  "last_update": "2026-01-25T11:15:49.239159+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00044/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00044/1/"
-    },
-    "pav:authoredOn": "2023-05-02 19:58:02.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00044/2/"
-    },
-    "dce:identifier": "SDN:R18::CB00044",
-    "pav:version": "2",
-    "skos:notation": "SDN:R18::CB00044",
-    "skos:altLabel": "BGC Config 44 - Mandatory",
-    "dc:date": "2023-05-02 19:58:02.0",
-    "owl:versionInfo": "2",
-    "skos:prefLabel": {
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00044/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00044/1/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
       "@language": "en",
-      "@value": "CONFIG_VectorBoardShowModeOn_LOGICAL"
+      "@value": "Is the vector board show mode ON? (Yes/No). Template_Values:{unit:[LOGICAL]}."
     },
-    "dc:identifier": "SDN:R18::CB00044",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R18::CB00044",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "Is the vector board show mode ON? (Yes/No)."
+      "@value": "CONFIG_VectorBoardShowModeOn_LOGICAL"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-12-11 09:34:56.0",
+    "skos:altLabel": "BGC Config 44",
+    "skos:notation": "SDN:R18::CB00044",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R18::CB00044",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00044/3/"
+    },
+    "pav:authoredOn": "2025-12-11 09:34:56.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

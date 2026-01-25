@@ -1,37 +1,45 @@
 {
   "name": "T000162",
   "long_name": "NUMBER_Ascending<short_sensor_name>SamplesDeepTotal_COUNT",
-  "last_update": "2025-10-29T20:58:19.968782+00:00",
+  "last_update": "2026-01-25T11:13:08.474973+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000162/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000162/1/"
-    },
-    "dce:identifier": "SDN:R14::T000162",
-    "pav:version": "1",
-    "skos:notation": "SDN:R14::T000162",
-    "skos:altLabel": "162",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
-    "skos:prefLabel": {
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000162/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000162/2/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
       "@language": "en",
-      "@value": "NUMBER_Ascending<short_sensor_name>SamplesDeepTotal_COUNT"
+      "@value": "Ascending profile measurements - Deep total. Template_Values:{unit:[COUNT];short_sensor_name:[Crover, Ctd, CTD, Cyc, Eco, Flbb, Flntu, Mcoms, Ocr, Optode, Ph, Sfet, Stm, Suna]}."
     },
-    "dc:identifier": "SDN:R14::T000162",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R14::T000162",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "Ascending profile measurements - Deep total"
+      "@value": "NUMBER_Ascending<short_sensor_name>SamplesDeepTotal_COUNT"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "3",
+    "dc:date": "2026-01-19 15:35:34.0",
+    "skos:altLabel": "162",
+    "skos:notation": "SDN:R14::T000162",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R14::T000162",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000162/3/"
+    },
+    "pav:authoredOn": "2026-01-19 15:35:34.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

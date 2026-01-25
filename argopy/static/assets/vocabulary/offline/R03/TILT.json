@@ -1,19 +1,24 @@
 {
   "name": "TILT",
   "long_name": "Inclination of the float axis in respect to the local vertical",
-  "last_update": "2025-10-29T20:57:39.082825+00:00",
+  "last_update": "2026-01-25T11:11:31.862632+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TILT/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TILT/1/"
-    },
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TILT/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TILT/2/"
+      }
+    ],
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UAAA/"
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Inclination of the float axis in respect to the local vertical. Local_Attributes:{long_name:Inclination of the float axis in respect to the local vertical; standard_name:-; units:degree; valid_min:-; valid_max:-; category:ib; fill_value:99999.f; data_type:float}."
+      "@value": "Inclination of the float axis in respect to the local vertical. Local_Attributes:{long_name:Inclination of the float axis in respect to the local vertical; standard_name:-; units:degree; valid_min:-; valid_max:-; fill_value:99999.f}. Properties:{category:ib; data_type:float}"
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -28,16 +33,16 @@
       "@language": "en",
       "@value": "Inclination of the float axis in respect to the local vertical"
     },
-    "owl:versionInfo": "2",
-    "dc:date": "2025-09-29 14:51:42.0",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-25 10:14:00.0",
     "skos:altLabel": "TILT",
     "skos:notation": "SDN:R03::TILT",
-    "pav:version": "2",
+    "pav:version": "3",
     "dce:identifier": "SDN:R03::TILT",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TILT/2/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TILT/3/"
     },
-    "pav:authoredOn": "2025-09-29 14:51:42.0",
+    "pav:authoredOn": "2025-11-25 10:14:00.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

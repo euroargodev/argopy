@@ -1,7 +1,7 @@
 {
   "name": "battery_failure",
   "long_name": "battery failure",
-  "last_update": "2025-10-29T20:57:16.857143+00:00",
+  "last_update": "2026-01-25T11:11:06.784464+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R31/current/battery_failure/",
     "pav:authoredOn": "2025-08-28 11:14:55.0",

@@ -1,19 +1,22 @@
 {
   "name": "CC00127",
   "long_name": "CONFIG_ParkSamplesPerAverage_COUNT",
-  "last_update": "2025-10-29T21:00:27.630537+00:00",
+  "last_update": "2026-01-25T11:15:47.048695+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00127/",
-    "pav:authoredOn": "2023-05-02 16:34:05.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00127/1/"
     },
+    "pav:authoredOn": "2025-12-12 11:41:05.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00127/2/"
+    },
     "dce:identifier": "SDN:R18::CC00127",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R18::CC00127",
-    "skos:altLabel": "Core Config 127 - Optional",
-    "dc:date": "2023-05-02 16:34:05.0",
-    "owl:versionInfo": "1",
+    "skos:altLabel": "Core Config 127",
+    "dc:date": "2025-12-12 11:41:05.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "CONFIG_ParkSamplesPerAverage_COUNT"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "If float reports average values, then this is the number of samples per value reported. For example, for a float that samples hourly during the park period for 105 hours, and reports the average P and T, this would be 105. Changeable via 2-way communications."
+      "@value": "Number of samples per value reported when the float reports average values. For example, for a float that samples hourly during the park period for 105 hours, and reports the average P and T, this would be 105. Template_Values:{unit:[COUNT]}."
     },
     "@type": "skos:Concept",
     "@context": {

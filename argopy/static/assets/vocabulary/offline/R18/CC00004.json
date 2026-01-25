@@ -1,19 +1,22 @@
 {
   "name": "CC00004",
   "long_name": "CONFIG_AscentEndThreshold_dbar",
-  "last_update": "2025-10-29T21:00:38.216034+00:00",
+  "last_update": "2026-01-25T11:16:03.536367+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00004/",
-    "pav:authoredOn": "2023-05-02 16:34:05.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00004/1/"
     },
+    "pav:authoredOn": "2025-12-12 11:41:12.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00004/2/"
+    },
     "dce:identifier": "SDN:R18::CC00004",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R18::CC00004",
-    "skos:altLabel": "Core Config 4 - Optional",
-    "dc:date": "2023-05-02 16:34:05.0",
-    "owl:versionInfo": "1",
+    "skos:altLabel": "Core Config 4",
+    "dc:date": "2025-12-12 11:41:12.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "CONFIG_AscentEndThreshold_dbar"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Threshold used by the float to stop ascent speed control and pump actions."
+      "@value": "Threshold used by the float to stop ascent speed control and pump actions. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
     },
     "@type": "skos:Concept",
     "@context": {

@@ -1,20 +1,25 @@
 {
   "name": "BBP700",
   "long_name": "Particle backscattering at 700 nanometers",
-  "last_update": "2025-10-29T20:57:38.179628+00:00",
+  "last_update": "2026-01-25T11:11:30.697960+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/BBP700/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/BBP700/1/"
-    },
-    "pav:authoredOn": "2025-09-29 14:51:38.0",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/BBP700/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/BBP700/2/"
+      }
+    ],
+    "pav:authoredOn": "2025-11-25 10:13:59.0",
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UPRM/"
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Particle backscattering at 700 nm wavelength, reported by ECO3 sensor. Local_Attributes:{long_name:Particle backscattering at 700 nanometers; standard_name:-; units:m-1; valid_min:-; valid_max:-; category:b; fill_value:99999.f; data_type:float}."
+      "@value": "Particle backscattering at 700 nm wavelength, reported by ECO3 sensor. Local_Attributes:{long_name:Particle backscattering at 700 nanometers; standard_name:-; units:m-1; valid_min:-; valid_max:-; fill_value:99999.f}. Properties:{category:b; data_type:float}"
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -29,17 +34,17 @@
       "@language": "en",
       "@value": "Particle backscattering at 700 nanometers"
     },
-    "owl:versionInfo": "2",
-    "dc:date": "2025-09-29 14:51:38.0",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-25 10:13:59.0",
     "skos:altLabel": "BBP700",
     "skos:notation": "SDN:R03::BBP700",
     "owl:sameAs": {
       "@id": "http://vocab.nerc.ac.uk/collection/P01/current/BB117NIR/"
     },
-    "pav:version": "2",
+    "pav:version": "3",
     "dce:identifier": "SDN:R03::BBP700",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/BBP700/2/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/BBP700/3/"
     },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",

@@ -1,19 +1,22 @@
 {
   "name": "T000290",
   "long_name": "FLAG_Grounded_NUMBER",
-  "last_update": "2025-10-29T20:57:50.644125+00:00",
+  "last_update": "2026-01-25T11:12:42.122087+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000290/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000290/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:40.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000290/2/"
+    },
     "dce:identifier": "SDN:R14::T000290",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T000290",
     "skos:altLabel": "290",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:40.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "FLAG_Grounded_NUMBER"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "grounded flag , diagnostic bit - could also be logical? Yes/no? 0/1? Or can be number of profiles during which the float grounded"
+      "@value": "Grounded flag , diagnostic bit (if unit = LOGICAL) or number of profiles during which the float grounded (if unit=NUMBER). Template_Values:{unit:[LOGICAL, NUMBER]}."
     },
     "@type": "skos:Concept",
     "@context": {

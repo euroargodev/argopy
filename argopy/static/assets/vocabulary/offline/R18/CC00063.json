@@ -1,19 +1,22 @@
 {
   "name": "CC00063",
   "long_name": "CONFIG_GroundingModeForProfileDepth_NUMBER",
-  "last_update": "2025-10-29T21:00:18.548923+00:00",
+  "last_update": "2026-01-25T11:15:38.749088+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00063/",
-    "pav:authoredOn": "2023-05-02 16:34:05.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00063/1/"
     },
+    "pav:authoredOn": "2025-12-12 11:41:05.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00063/2/"
+    },
     "dce:identifier": "SDN:R18::CC00063",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R18::CC00063",
-    "skos:altLabel": "Core Config 63 - Optional",
-    "dc:date": "2023-05-02 16:34:05.0",
-    "owl:versionInfo": "1",
+    "skos:altLabel": "Core Config 63",
+    "dc:date": "2025-12-12 11:41:05.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "CONFIG_GroundingModeForProfileDepth_NUMBER"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Action performed by the float when a grounding is detected during descent to profile depth. For PROVOR CTS5 floats: 2: the float stays on the seabed until the ascent start time, 3: the ascent starts immediately. In this float version the actions to be performed when a grounding is detected at parking depth (stored in CONFIG_GroundingMode_NUMBER) or at profile depth (stored in CONFIG_GroundingModeForProfileDepth_NUMBER) may differ. Consequently we need 2 configuration parameters."
+      "@value": "Action performed by the float when a grounding is detected during descent to profile depth. For PROVOR CTS5 floats: 2 = the float stays on the seabed until the ascent start time, 3 = the ascent starts immediately. Template_Values:{unit:[NUMBER]}."
     },
     "@type": "skos:Concept",
     "@context": {

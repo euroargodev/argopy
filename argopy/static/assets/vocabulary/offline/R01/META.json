@@ -1,7 +1,7 @@
 {
   "name": "META",
   "long_name": "Argo meta-data",
-  "last_update": "2025-10-29T20:59:08.116226+00:00",
+  "last_update": "2026-01-25T11:14:14.735028+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R01/current/META/",
     "pav:hasVersion": {

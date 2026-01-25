@@ -1,7 +1,7 @@
 {
   "name": "SBE43I",
   "long_name": "Sea-Bird Scientific SBE 43I (integral) dissolved oxygen sensor",
-  "last_update": "2025-10-29T20:59:05.296909+00:00",
+  "last_update": "2026-01-25T11:14:11.607139+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE43I/",
     "pav:authoredOn": "2021-05-26 09:01:46.0",

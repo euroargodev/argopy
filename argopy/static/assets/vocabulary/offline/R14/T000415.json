@@ -1,19 +1,22 @@
 {
   "name": "T000415",
   "long_name": "PSAL_WhenInWaterSensed_psu",
-  "last_update": "2025-10-29T20:57:54.944153+00:00",
+  "last_update": "2026-01-25T11:12:59.185962+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000415/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000415/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:45.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000415/2/"
+    },
     "dce:identifier": "SDN:R14::T000415",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T000415",
     "skos:altLabel": "415",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:45.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "PSAL_WhenInWaterSensed_psu"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "PSAL_WhenInWaterSensed_psu"
+      "@value": "Salinity from P,T,S when in water sensed. Template_Values:{unit:[psu, mpsu]}."
     },
     "@type": "skos:Concept",
     "@context": {

@@ -1,20 +1,25 @@
 {
   "name": "RAW_DOWNWELLING_PAR",
   "long_name": "Raw downwelling photosynthetic available radiation",
-  "last_update": "2025-10-29T20:57:42.479732+00:00",
+  "last_update": "2026-01-25T11:11:35.250885+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_PAR/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_PAR/1/"
-    },
-    "pav:authoredOn": "2025-09-29 14:51:41.0",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_PAR/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_PAR/2/"
+      }
+    ],
+    "pav:authoredOn": "2025-11-25 10:14:02.0",
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UUUU/"
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Raw downwelling photosynthetically available radiation (PAR) signal. Local_Attributes:{long_name:Raw downwelling photosynthetic available radiation; standard_name:-; units:count; valid_min:-; valid_max:-; category:ib; fill_value:NC_FILL_DOUBLE; data_type:double}."
+      "@value": "Raw downwelling photosynthetically available radiation (PAR) signal. Local_Attributes:{long_name:Raw downwelling photosynthetic available radiation; standard_name:-; units:count; valid_min:-; valid_max:-; fill_value:NC_FILL_DOUBLE}. Properties:{category:ib; data_type:double}"
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -29,17 +34,17 @@
       "@language": "en",
       "@value": "Raw downwelling photosynthetic available radiation"
     },
-    "owl:versionInfo": "2",
-    "dc:date": "2025-09-29 14:51:41.0",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-25 10:14:02.0",
     "skos:altLabel": "RAW_DOWNWELLING_PAR",
     "skos:notation": "SDN:R03::RAW_DOWNWELLING_PAR",
     "owl:sameAs": {
       "@id": "http://vocab.nerc.ac.uk/collection/P01/current/DWIRRXZZ/"
     },
-    "pav:version": "2",
+    "pav:version": "3",
     "dce:identifier": "SDN:R03::RAW_DOWNWELLING_PAR",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_PAR/2/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_PAR/3/"
     },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",

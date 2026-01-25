@@ -1,7 +1,7 @@
 {
   "name": "RT_QC_FLAG",
   "long_name": "Argo real-time quality control measurement flags",
-  "last_update": "2025-10-29T19:56:35.967786+00:00",
+  "last_update": "2026-01-25T10:44:14.182785+00:00",
   "data": {
     "@graph": [
       {
@@ -294,7 +294,7 @@
         ],
         "@type": "skos:Collection",
         "dc:publisher": "Natural Environment Research Council",
-        "dc:description": "Quality flag scale for real-time measurements. Argo netCDF variables <PARAMETER>_QC in 'R' mode and <PARAMETER>_ADJUSTED_QC in 'A' mode are populated by RR2 altLabel.",
+        "dc:description": "Quality flag scale for real-time measurements. Argo netCDF {param}_QC when data_mode='R' and {param}_ADJUSTED_QC when data_mode='A' are populated by RR2 altLabel, with {param} consisting of R03 altLabels. Associated FillValue is an empty space in Argo NetCDF file. This case can occur, e.g., in Argo multi-cycle files when the maximum number of vertical levels is not reached by a cycle, or for levels not concerning a specific sensor, or for sampling schemes not concerning a sensor.",
         "dc:title": "Argo real-time quality control measurement flags",
         "skos:prefLabel": "Argo real-time quality control measurement flags",
         "owl:versionInfo": "1",

@@ -1,37 +1,43 @@
 {
   "name": "COPEX",
   "long_name": "COPEX float",
-  "last_update": "2025-10-29T20:57:22.348878+00:00",
+  "last_update": "2026-01-25T11:11:15.383278+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R23/current/COPEX/",
     "pav:authoredOn": "2020-05-03 20:30:02.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R23/current/COPEX/1/"
-    },
-    "dce:identifier": "SDN:R23::COPEX",
-    "pav:version": "1",
-    "skos:notation": "SDN:R23::COPEX",
-    "skos:altLabel": "COPEX",
-    "dc:date": "2020-05-03 20:30:02.0",
-    "owl:versionInfo": "1",
-    "skos:prefLabel": {
-      "@language": "en",
-      "@value": "COPEX float"
-    },
-    "dc:identifier": "SDN:R23::COPEX",
-    "skos:note": {
-      "@language": "en",
-      "@value": "accepted"
-    },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    "@type": "skos:Concept",
+    "skos:related": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NOTC/"
     },
     "skos:definition": {
       "@language": "en",
       "@value": "COPEX float. PLATFORM_TYPE_KEY = 701"
     },
-    "@type": "skos:Concept",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R23::COPEX",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "COPEX float"
+    },
+    "owl:versionInfo": "1",
+    "skos:narrower": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R08/current/871/"
+    },
+    "dc:date": "2020-05-03 20:30:02.0",
+    "skos:altLabel": "COPEX",
+    "skos:notation": "SDN:R23::COPEX",
+    "pav:version": "1",
+    "dce:identifier": "SDN:R23::COPEX",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R23/current/COPEX/1/"
+    },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

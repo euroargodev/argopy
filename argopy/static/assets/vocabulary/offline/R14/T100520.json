@@ -1,19 +1,22 @@
 {
   "name": "T100520",
   "long_name": "VOLTAGE_Battery14VStartDescentToPark_volts",
-  "last_update": "2025-10-29T20:58:20.143886+00:00",
+  "last_update": "2026-01-25T11:12:43.003167+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100520/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100520/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:12.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100520/2/"
+    },
     "dce:identifier": "SDN:R14::T100520",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T100520",
     "skos:altLabel": "520.1",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:12.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "VOLTAGE_Battery14VStartDescentToPark_volts"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "battery voltage of 14V system when float starts descending to park"
+      "@value": "Battery voltage of 14V system when float starts descending to park. Template_Values:{unit:[COUNT, volts, mV]}."
     },
     "@type": "skos:Concept",
     "@context": {

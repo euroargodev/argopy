@@ -1,7 +1,7 @@
 {
   "name": "DATA_CENTRE_CODES",
   "long_name": "Argo data centres and institutions",
-  "last_update": "2025-10-29T19:56:30.749215+00:00",
+  "last_update": "2026-01-25T10:44:06.355961+00:00",
   "data": {
     "@graph": [
       {
@@ -94,6 +94,37 @@
         "skos:definition": {
           "@language": "en",
           "@value": "Japan Meteorological Agency (JMA), hosted in Japan."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R04/current/DK/",
+        "pav:authoredOn": "2025-12-11 09:34:58.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R04/current/DK/1/"
+        },
+        "dce:identifier": "SDN:R04::DK",
+        "pav:version": "1",
+        "skos:notation": "SDN:R04::DK",
+        "skos:altLabel": "DK",
+        "dc:date": "2025-12-11 09:34:58.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "DTU Aqua, Denmark"
+        },
+        "dc:identifier": "SDN:R04::DK",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Technical University of Denmark - DTU Aqua, hosted in Denmark"
         },
         "@type": "skos:Concept"
       },
@@ -854,6 +885,9 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R04/current/JA/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R04/current/DK/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R04/current/RU/"
           },
           {
@@ -931,8 +965,8 @@
         "dc:description": "Codes for data centres and institutions handling or managing Argo data. Argo netCDF variable DATA_CENTRE is populated by R04 altLabel.",
         "dc:title": "Argo data centres and institutions",
         "skos:prefLabel": "Argo data centres and institutions",
-        "owl:versionInfo": "2",
-        "dc:date": "2025-10-09 03:00:01.0",
+        "owl:versionInfo": "3",
+        "dc:date": "2025-12-12 02:00:02.0",
         "skos:altLabel": "DATA_CENTRE_CODES",
         "dc:creator": "Argo Data Management Team",
         "dc:alternative": "DATA_CENTRE_CODES",

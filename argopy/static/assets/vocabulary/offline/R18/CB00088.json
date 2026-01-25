@@ -1,40 +1,45 @@
 {
   "name": "CB00088",
   "long_name": "CONFIG_<short_sensor_name>MeasurementsInAir_LOGICAL",
-  "last_update": "2025-10-29T21:00:25.037880+00:00",
+  "last_update": "2026-01-25T11:16:04.479321+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00088/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00088/1/"
-    },
-    "pav:authoredOn": "2023-05-02 19:58:02.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00088/2/"
-    },
-    "dce:identifier": "SDN:R18::CB00088",
-    "pav:version": "2",
-    "skos:notation": "SDN:R18::CB00088",
-    "skos:altLabel": "BGC Config 88 - Optional",
-    "dc:date": "2023-05-02 19:58:02.0",
-    "owl:versionInfo": "2",
-    "skos:prefLabel": {
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00088/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00088/2/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
       "@language": "en",
-      "@value": "CONFIG_<short_sensor_name>MeasurementsInAir_LOGICAL"
+      "@value": "Sensors can be mounted on a stick to perform measurements in Air. Values (1=YES, 0=NO). Template_Values:{short_sensor_name:[Optode];unit:[LOGICAL]}."
     },
-    "dc:identifier": "SDN:R18::CB00088",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R18::CB00088",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "Sensors can be mounted on a stick to perform measurements in Air. Values: Yes = 1, No = 0"
+      "@value": "CONFIG_<short_sensor_name>MeasurementsInAir_LOGICAL"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-12-11 09:34:59.0",
+    "skos:altLabel": "BGC Config 88",
+    "skos:notation": "SDN:R18::CB00088",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R18::CB00088",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00088/3/"
+    },
+    "pav:authoredOn": "2025-12-11 09:34:59.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

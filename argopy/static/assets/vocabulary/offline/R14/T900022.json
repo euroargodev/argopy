@@ -1,19 +1,22 @@
 {
   "name": "T900022",
   "long_name": "PRES_MinimumDuringProfileDrift_dbar",
-  "last_update": "2025-10-29T20:58:12.450761+00:00",
+  "last_update": "2026-01-25T11:13:09.285093+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900022/",
-    "pav:authoredOn": "2025-09-29 14:51:40.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900022/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:22.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900022/2/"
+    },
     "dce:identifier": "SDN:R14::T900022",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T900022",
     "skos:altLabel": "900022",
-    "dc:date": "2025-09-29 14:51:40.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:22.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "PRES_MinimumDuringProfileDrift_dbar"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Deprecated - minimum PRES during drifting at profile depth. MC minus 3."
+      "@value": "Deprecated - Minimum pressure during drifting at profile depth. MC minus 3. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
     },
     "@type": "skos:Concept",
     "@context": {

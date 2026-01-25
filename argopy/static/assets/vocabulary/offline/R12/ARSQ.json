@@ -1,7 +1,7 @@
 {
   "name": "ARSQ",
   "long_name": "Delayed-mode QC performed",
-  "last_update": "2025-10-29T20:57:31.050611+00:00",
+  "last_update": "2026-01-25T11:11:24.738852+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R12/current/ARSQ/",
     "pav:authoredOn": "2020-04-07 22:59:46.0",

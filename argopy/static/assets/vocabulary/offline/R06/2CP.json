@@ -1,7 +1,7 @@
 {
   "name": "2CP",
   "long_name": "Level 2, class C, subclass + processing stage",
-  "last_update": "2025-10-29T20:57:29.676788+00:00",
+  "last_update": "2026-01-25T11:11:22.369556+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R06/current/2CP/",
     "pav:authoredOn": "2020-04-04 15:05:33.0",

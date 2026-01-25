@@ -1,7 +1,7 @@
 {
   "name": "KISTLER_10153PSIA",
   "long_name": "Kistler pressure sensor with 10153 PSIA rating",
-  "last_update": "2025-10-29T20:58:56.380887+00:00",
+  "last_update": "2026-01-25T11:13:56.657627+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/KISTLER_10153PSIA/",
     "pav:authoredOn": "2019-10-11 14:49:00.0",

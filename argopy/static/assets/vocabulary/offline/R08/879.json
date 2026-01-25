@@ -1,7 +1,7 @@
 {
   "name": "879",
   "long_name": "SOLO-II with RBR conductivity sensor",
-  "last_update": "2025-10-29T20:59:13.479401+00:00",
+  "last_update": "2026-01-25T11:14:20.980266+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/879/",
     "pav:hasVersion": {

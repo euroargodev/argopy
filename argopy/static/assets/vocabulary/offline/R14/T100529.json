@@ -1,37 +1,45 @@
 {
   "name": "T100529",
   "long_name": "VOLTAGE_Battery<short_sensor_name>_volts",
-  "last_update": "2025-10-29T20:58:38.273242+00:00",
+  "last_update": "2026-01-25T11:13:28.927974+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100529/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100529/1/"
-    },
-    "dce:identifier": "SDN:R14::T100529",
-    "pav:version": "1",
-    "skos:notation": "SDN:R14::T100529",
-    "skos:altLabel": "529.1",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
-    "skos:prefLabel": {
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100529/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100529/2/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
       "@language": "en",
-      "@value": "VOLTAGE_Battery<short_sensor_name>_volts"
+      "@value": "Battery voltage measured by the individual sensors. Template_Values:{unit:[COUNT, volts, mV];short_sensor_name:[Crover, Ctd, CTD, Cyc, Eco, Flbb, Flntu, Mcoms, Ocr, Optode, Ph, Sfet, Stm, Suna]}."
     },
-    "dc:identifier": "SDN:R14::T100529",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R14::T100529",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "battery voltage measured by the individual sensors"
+      "@value": "VOLTAGE_Battery<short_sensor_name>_volts"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "3",
+    "dc:date": "2026-01-19 15:35:33.0",
+    "skos:altLabel": "529.1",
+    "skos:notation": "SDN:R14::T100529",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R14::T100529",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100529/3/"
+    },
+    "pav:authoredOn": "2026-01-19 15:35:33.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

@@ -1,7 +1,7 @@
 {
   "name": "FLUOROMETER_CDOM",
   "long_name": "Fluorometer measuring Colored Dissolved Organic Matter (CDOM)",
-  "last_update": "2025-10-29T21:00:01.529870+00:00",
+  "last_update": "2026-01-25T11:15:16.998955+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CDOM/",
     "pav:authoredOn": "2019-10-11 15:06:36.0",

@@ -1,19 +1,24 @@
 {
   "name": "TEMP_PH",
   "long_name": "Sea temperature from pH sensor",
-  "last_update": "2025-10-29T20:57:38.791696+00:00",
+  "last_update": "2026-01-25T11:11:31.333727+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_PH/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_PH/1/"
-    },
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_PH/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_PH/2/"
+      }
+    ],
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UPAA/"
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Temperature of seawater, reported by the pH sensor. Local_Attributes:{long_name:Sea temperature from pH sensor; standard_name:-; units:degree_Celsius; valid_min:-2.f; valid_max:40.f; category:ib; fill_value:99999.f; data_type:float}."
+      "@value": "Temperature of seawater, reported by the pH sensor. Local_Attributes:{long_name:Sea temperature from pH sensor; standard_name:-; units:degree_Celsius; valid_min:-2.f; valid_max:40.f; fill_value:99999.f}. Properties:{category:ib; data_type:float}"
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -28,16 +33,16 @@
       "@language": "en",
       "@value": "Sea temperature from pH sensor"
     },
-    "owl:versionInfo": "2",
-    "dc:date": "2025-09-29 14:51:42.0",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-25 10:14:00.0",
     "skos:altLabel": "TEMP_PH",
     "skos:notation": "SDN:R03::TEMP_PH",
-    "pav:version": "2",
+    "pav:version": "3",
     "dce:identifier": "SDN:R03::TEMP_PH",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_PH/2/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_PH/3/"
     },
-    "pav:authoredOn": "2025-09-29 14:51:42.0",
+    "pav:authoredOn": "2025-11-25 10:14:00.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

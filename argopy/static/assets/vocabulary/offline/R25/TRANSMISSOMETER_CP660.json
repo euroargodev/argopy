@@ -1,7 +1,7 @@
 {
   "name": "TRANSMISSOMETER_CP660",
   "long_name": "Transmissometer measuring attenuation at 660 nanometers",
-  "last_update": "2025-10-29T21:00:03.258939+00:00",
+  "last_update": "2026-01-25T11:15:17.967197+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/TRANSMISSOMETER_CP660/",
     "pav:authoredOn": "2021-02-09 15:34:44.0",

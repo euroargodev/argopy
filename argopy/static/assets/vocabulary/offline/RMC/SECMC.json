@@ -1,7 +1,7 @@
 {
   "name": "SECMC",
   "long_name": "Secondary Measurement Codes (MC)",
-  "last_update": "2025-10-29T20:57:21.820074+00:00",
+  "last_update": "2026-01-25T11:11:12.289592+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/RMC/current/SECMC/",
     "pav:authoredOn": "2021-11-30 12:44:50.0",

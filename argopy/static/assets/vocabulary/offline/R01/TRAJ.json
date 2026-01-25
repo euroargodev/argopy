@@ -1,7 +1,7 @@
 {
   "name": "TRAJ",
   "long_name": "Argo trajectory",
-  "last_update": "2025-10-29T20:59:07.867602+00:00",
+  "last_update": "2026-01-25T11:14:14.327448+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R01/current/TRAJ/",
     "pav:authoredOn": "2020-04-04 15:05:33.0",

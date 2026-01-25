@@ -1,7 +1,7 @@
 {
   "name": "IDO_DOXY",
   "long_name": "Integrated Dissolved Oxygen (IDO) sensor measuring dissolved oxygen",
-  "last_update": "2025-10-29T21:00:00.015234+00:00",
+  "last_update": "2026-01-25T11:15:15.990748+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/IDO_DOXY/",
     "pav:authoredOn": "2019-10-11 15:06:36.0",

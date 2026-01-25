@@ -1,7 +1,7 @@
 {
   "name": "MP40_C_2000_G",
   "long_name": "Micron Instruments MP40C-2000G pressure transducer",
-  "last_update": "2025-10-29T20:58:58.916891+00:00",
+  "last_update": "2026-01-25T11:14:01.209055+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/MP40_C_2000_G/",
     "pav:authoredOn": "2021-08-18 14:32:12.0",

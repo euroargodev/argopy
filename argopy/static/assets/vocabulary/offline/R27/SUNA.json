@@ -1,7 +1,7 @@
 {
   "name": "SUNA",
   "long_name": "Submersible Ultraviolet Nitrate Analyser (SUNA) nitrate sensor",
-  "last_update": "2025-10-29T20:59:03.947007+00:00",
+  "last_update": "2026-01-25T11:14:09.951873+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SUNA/",
     "pav:hasVersion": {

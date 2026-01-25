@@ -1,7 +1,7 @@
 {
   "name": "CTD_TEMP_CNDC",
   "long_name": "Temperature sensor for conductivity on a CTD",
-  "last_update": "2025-10-29T20:59:59.257601+00:00",
+  "last_update": "2026-01-25T11:15:15.131537+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/",
     "pav:authoredOn": "2023-11-24 09:35:13.0",

@@ -1,7 +1,7 @@
 {
   "name": "RBR_PRES_A",
   "long_name": "Pressure sensor for RBR Argo3 CTD systems",
-  "last_update": "2025-10-29T20:58:58.176247+00:00",
+  "last_update": "2026-01-25T11:14:00.087526+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES_A/",
     "pav:authoredOn": "2021-08-18 14:32:12.0",

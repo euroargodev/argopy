@@ -1,40 +1,45 @@
 {
   "name": "NB_SAMPLE_CTD",
   "long_name": "Number of samples in each pressure bin for the CTD",
-  "last_update": "2025-10-29T20:57:34.201826+00:00",
+  "last_update": "2026-01-25T11:11:26.185814+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_CTD/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_CTD/1/"
-    },
-    "pav:authoredOn": "2025-09-29 14:51:41.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_CTD/2/"
-    },
-    "dce:identifier": "SDN:R03::NB_SAMPLE_CTD",
-    "pav:version": "2",
-    "skos:notation": "SDN:R03::NB_SAMPLE_CTD",
-    "skos:altLabel": "NB_SAMPLE_CTD",
-    "dc:date": "2025-09-29 14:51:41.0",
-    "owl:versionInfo": "2",
-    "skos:prefLabel": {
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_CTD/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_CTD/2/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
       "@language": "en",
-      "@value": "Number of samples in each pressure bin for the CTD"
+      "@value": "Number of CTD samples in each pressure bin. Local_Attributes:{long_name:Number of samples in each pressure bin for the CTD; standard_name:-; units:count; valid_min:-; valid_max:-; fill_value:NC_FILL_SHORT}. Properties:{category:ic; data_type:short}"
     },
-    "dc:identifier": "SDN:R03::NB_SAMPLE_CTD",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R03::NB_SAMPLE_CTD",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "Number of CTD samples in each pressure bin. Local_Attributes:{long_name:Number of samples in each pressure bin for the CTD; standard_name:-; units:count; valid_min:-; valid_max:-; category:ic; fill_value:NC_FILL_SHORT; data_type:short}."
+      "@value": "Number of samples in each pressure bin for the CTD"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-25 10:14:03.0",
+    "skos:altLabel": "NB_SAMPLE_CTD",
+    "skos:notation": "SDN:R03::NB_SAMPLE_CTD",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R03::NB_SAMPLE_CTD",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_CTD/3/"
+    },
+    "pav:authoredOn": "2025-11-25 10:14:03.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

@@ -1,19 +1,22 @@
 {
   "name": "T900009",
   "long_name": "PRES_DescentStartToPark_dbar",
-  "last_update": "2025-10-29T20:58:30.141977+00:00",
+  "last_update": "2026-01-25T11:13:22.891116+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900009/",
-    "pav:authoredOn": "2025-09-29 14:51:40.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900009/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:53.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900009/2/"
+    },
     "dce:identifier": "SDN:R14::T900009",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T900009",
     "skos:altLabel": "900009",
-    "dc:date": "2025-09-29 14:51:40.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:53.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "PRES_DescentStartToPark_dbar"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Deprecated - Pressure taken at the end of piston retraction. JULD_PARK_START and JULD with MC = 250."
+      "@value": "Deprecated - Pressure taken at the end of piston retraction. JULD_PARK_START and JULD with MC = 250. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
     },
     "@type": "skos:Concept",
     "@context": {

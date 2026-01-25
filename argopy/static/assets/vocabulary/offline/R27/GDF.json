@@ -1,7 +1,7 @@
 {
   "name": "GDF",
   "long_name": "Gasket DuraFET",
-  "last_update": "2025-10-29T20:58:58.732343+00:00",
+  "last_update": "2026-01-25T11:14:00.617277+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/GDF/",
     "pav:hasVersion": [

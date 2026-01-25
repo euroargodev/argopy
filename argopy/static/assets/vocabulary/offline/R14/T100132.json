@@ -1,19 +1,22 @@
 {
   "name": "T100132",
   "long_name": "NUMBER_BuoyancyInversionValveActions_COUNT",
-  "last_update": "2025-10-29T20:58:50.714679+00:00",
+  "last_update": "2026-01-25T11:13:01.839498+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100132/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100132/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:11.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100132/2/"
+    },
     "dce:identifier": "SDN:R14::T100132",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T100132",
-    "skos:altLabel": "132, 1",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "skos:altLabel": "132.1",
+    "dc:date": "2025-12-11 11:04:11.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "NUMBER_BuoyancyInversionValveActions_COUNT"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Number of solenoid valve actions needed to perform the buoyancy inversion phase when ice was detected during ascent. See 76 and 76,1"
+      "@value": "Number of solenoid valve actions needed to perform the buoyancy inversion phase when ice was detected during ascent. See 76 and 76.1. Template_Values:{unit:[COUNT]}."
     },
     "@type": "skos:Concept",
     "@context": {

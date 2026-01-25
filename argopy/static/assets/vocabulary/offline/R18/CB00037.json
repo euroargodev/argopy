@@ -1,40 +1,45 @@
 {
   "name": "CB00037",
   "long_name": "CONFIG_FlntuMaxTransmittedTurbidity_COUNT",
-  "last_update": "2025-10-29T21:00:21.470184+00:00",
+  "last_update": "2026-01-25T11:15:18.971445+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00037/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00037/1/"
-    },
-    "pav:authoredOn": "2023-05-02 19:58:02.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00037/2/"
-    },
-    "dce:identifier": "SDN:R18::CB00037",
-    "pav:version": "2",
-    "skos:notation": "SDN:R18::CB00037",
-    "skos:altLabel": "BGC Config 37 - Mandatory",
-    "dc:date": "2023-05-02 19:58:02.0",
-    "owl:versionInfo": "2",
-    "skos:prefLabel": {
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00037/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00037/2/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
       "@language": "en",
-      "@value": "CONFIG_FlntuMaxTransmittedTurbidity_COUNT"
+      "@value": "Maximum value of transmitted Flntu turbidity measurements. Template_Values:{unit:[COUNT]}."
     },
-    "dc:identifier": "SDN:R18::CB00037",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R18::CB00037",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "Maximum value of transmitted Flntu turbidity measurements (in counts)."
+      "@value": "CONFIG_FlntuMaxTransmittedTurbidity_COUNT"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-12-11 09:34:56.0",
+    "skos:altLabel": "BGC Config 37",
+    "skos:notation": "SDN:R18::CB00037",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R18::CB00037",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00037/3/"
+    },
+    "pav:authoredOn": "2025-12-11 09:34:56.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

@@ -1,19 +1,22 @@
 {
   "name": "T100126",
   "long_name": "NUMBER_CumulatedValveActionsAtSurfaceDuringDescent_COUNT",
-  "last_update": "2025-10-29T20:57:58.097444+00:00",
+  "last_update": "2026-01-25T11:13:07.234874+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100126/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100126/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:32.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100126/2/"
+    },
     "dce:identifier": "SDN:R14::T100126",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T100126",
     "skos:altLabel": "126.1",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:32.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "NUMBER_CumulatedValveActionsAtSurfaceDuringDescent_COUNT"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Number of solenoid valve actions at the surface until the crossing of the GAP threshold. Number computed by the float from previous cycles behaviour. This float version provides 2 counts for surface valve actions performed before the GAP threshold (threshold used to detect 'float descent start', see T000126, 126). This first one (NUMBER_CumulatedValveActionsAtSurfaceDuringDescent_COUNT) is computed from what happened during the previous cycles (i.e. the total number of action used to reach the gap THRESHOLD). It needs to be combined with the second (NUMBER_AdditionalValveActionsAtSurfaceDuringDescent_COUNT, see T200126, 126.2) to get the parameter defined in T000126, 126: NUMBER_ValveActionsAtSurfaceDuringDescent_COUNT = NUMBER_CumulatedValveActionsAtSurfaceDuringDescent_COUNT + NUMBER_AdditionalValveActionsAtSurfaceDuringDescent_COUNT"
+      "@value": "Number of solenoid valve actions at the surface until the crossing of the GAP threshold. Number computed by the float from previous cycles behaviour. This float version provides 2 counts for surface valve actions performed before the GAP threshold (threshold used to detect float descent start, see T000126, 126). This first one (NUMBER_CumulatedValveActionsAtSurfaceDuringDescent_COUNT) is computed from what happened during the previous cycles (i.e. the total number of action used to reach the gap THRESHOLD). It needs to be combined with the second (NUMBER_AdditionalValveActionsAtSurfaceDuringDescent_COUNT, see T200126, 126.2) to get the parameter defined in T000126, 126: NUMBER_ValveActionsAtSurfaceDuringDescent_COUNT = NUMBER_CumulatedValveActionsAtSurfaceDuringDescent_COUNT + NUMBER_AdditionalValveActionsAtSurfaceDuringDescent_COUNT. Template_Values:{unit:[COUNT]}."
     },
     "@type": "skos:Concept",
     "@context": {

@@ -1,7 +1,7 @@
 {
   "name": "ARGQ",
   "long_name": "Automatic QC of real-time data performed",
-  "last_update": "2025-10-29T20:57:29.970982+00:00",
+  "last_update": "2026-01-25T11:11:23.087995+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R12/current/ARGQ/",
     "pav:authoredOn": "2020-04-07 22:59:46.0",

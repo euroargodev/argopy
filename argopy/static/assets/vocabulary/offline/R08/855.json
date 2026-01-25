@@ -1,7 +1,7 @@
 {
   "name": "855",
   "long_name": "NINJA float with no conductivity sensor",
-  "last_update": "2025-10-29T20:59:16.144042+00:00",
+  "last_update": "2026-01-25T11:14:24.301341+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/855/",
     "pav:authoredOn": "2020-05-03 20:28:54.0",

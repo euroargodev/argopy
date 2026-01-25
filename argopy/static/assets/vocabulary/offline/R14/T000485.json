@@ -1,19 +1,22 @@
 {
   "name": "T000485",
   "long_name": "TIME_TUR3SampleFrequencyDuringAscent_seconds",
-  "last_update": "2025-10-29T20:58:07.324638+00:00",
+  "last_update": "2026-01-25T11:13:27.515895+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000485/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000485/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:27.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000485/2/"
+    },
     "dce:identifier": "SDN:R14::T000485",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T000485",
     "skos:altLabel": "485",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:27.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "TIME_TUR3SampleFrequencyDuringAscent_seconds"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "TUR3 ascent acquisition frequency (sec)"
+      "@value": "TUR3 ascent acquisition frequency. Template_Values:{unit:[days, hours, minutes, seconds, dsec]}."
     },
     "@type": "skos:Concept",
     "@context": {

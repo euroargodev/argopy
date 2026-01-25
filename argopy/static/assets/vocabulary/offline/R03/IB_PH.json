@@ -1,19 +1,24 @@
 {
   "name": "IB_PH",
   "long_name": "Base current of pH sensor",
-  "last_update": "2025-10-29T20:57:35.470485+00:00",
+  "last_update": "2026-01-25T11:11:28.403303+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/IB_PH/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/IB_PH/1/"
-    },
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/IB_PH/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/IB_PH/1/"
+      }
+    ],
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/P06/current/NAMP/"
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Base current of pH sensor chip. Local_Attributes:{long_name:Base current of pH sensor; standard_name:-; units:nanoampere; valid_min:-; valid_max:-; category:ib; fill_value:99999.f; data_type:float}."
+      "@value": "Base current of pH sensor chip. Local_Attributes:{long_name:Base current of pH sensor; standard_name:-; units:nanoampere; valid_min:-; valid_max:-; fill_value:99999.f}. Properties:{category:ib; data_type:float}"
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -28,16 +33,16 @@
       "@language": "en",
       "@value": "Base current of pH sensor"
     },
-    "owl:versionInfo": "2",
-    "dc:date": "2025-09-29 14:51:41.0",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-25 10:14:03.0",
     "skos:altLabel": "IB_PH",
     "skos:notation": "SDN:R03::IB_PH",
-    "pav:version": "2",
+    "pav:version": "3",
     "dce:identifier": "SDN:R03::IB_PH",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/IB_PH/2/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/IB_PH/3/"
     },
-    "pav:authoredOn": "2025-09-29 14:51:41.0",
+    "pav:authoredOn": "2025-11-25 10:14:03.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

@@ -1,7 +1,7 @@
 {
   "name": "LLT",
   "long_name": "Last Location Time",
-  "last_update": "2025-10-29T20:57:21.256446+00:00",
+  "last_update": "2026-01-25T11:11:11.618722+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/LLT/",
     "pav:authoredOn": "2021-11-30 12:47:38.0",

@@ -1,7 +1,7 @@
 {
   "name": "876",
   "long_name": "ALTO float with SBE conductivity sensor",
-  "last_update": "2025-10-29T20:59:13.504672+00:00",
+  "last_update": "2026-01-25T11:14:21.107831+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/876/",
     "pav:hasVersion": {

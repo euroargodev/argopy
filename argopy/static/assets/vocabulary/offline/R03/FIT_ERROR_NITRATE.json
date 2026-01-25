@@ -1,20 +1,25 @@
 {
   "name": "FIT_ERROR_NITRATE",
   "long_name": "Nitrate fit error",
-  "last_update": "2025-10-29T20:57:42.536278+00:00",
+  "last_update": "2026-01-25T11:11:35.100925+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/FIT_ERROR_NITRATE/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/FIT_ERROR_NITRATE/1/"
-    },
-    "pav:authoredOn": "2025-09-29 14:51:40.0",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/FIT_ERROR_NITRATE/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/FIT_ERROR_NITRATE/1/"
+      }
+    ],
+    "pav:authoredOn": "2025-11-25 10:14:02.0",
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UUUU/"
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Calibration fit error of nitrate, SUNA sensro key variable in QC. Local_Attributes:{long_name:Nitrate fit error; standard_name:-; units:dimensionless; valid_min:-; valid_max:-; category:ib; fill_value:99999.f; data_type:float}."
+      "@value": "Calibration fit error of nitrate, SUNA sensro key variable in QC. Local_Attributes:{long_name:Nitrate fit error; standard_name:-; units:dimensionless; valid_min:-; valid_max:-; fill_value:99999.f}. Properties:{category:ib; data_type:float}"
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -29,17 +34,17 @@
       "@language": "en",
       "@value": "Nitrate fit error"
     },
-    "owl:versionInfo": "2",
-    "dc:date": "2025-09-29 14:51:40.0",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-25 10:14:02.0",
     "skos:altLabel": "FIT_ERROR_NITRATE",
     "skos:notation": "SDN:R03::FIT_ERROR_NITRATE",
     "owl:sameAs": {
       "@id": "http://vocab.nerc.ac.uk/collection/P01/current/NTFEZZ01/"
     },
-    "pav:version": "2",
+    "pav:version": "3",
     "dce:identifier": "SDN:R03::FIT_ERROR_NITRATE",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/FIT_ERROR_NITRATE/2/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/FIT_ERROR_NITRATE/3/"
     },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",

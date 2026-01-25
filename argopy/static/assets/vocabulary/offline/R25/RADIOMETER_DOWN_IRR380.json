@@ -1,7 +1,7 @@
 {
   "name": "RADIOMETER_DOWN_IRR380",
   "long_name": "Radiometer measuring downwelling irradiance at 380 nanometers",
-  "last_update": "2025-10-29T21:00:04.156571+00:00",
+  "last_update": "2026-01-25T11:15:18.446257+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR380/",
     "pav:authoredOn": "2021-02-09 15:34:44.0",

@@ -1,20 +1,25 @@
 {
   "name": "RAW_DOWNWELLING_IRRADIANCE443",
   "long_name": "Raw downwelling irradiance at 443 nanometers",
-  "last_update": "2025-10-29T20:57:42.055509+00:00",
+  "last_update": "2026-01-25T11:11:34.818251+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE443/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE443/1/"
-    },
-    "pav:authoredOn": "2025-09-29 14:51:39.0",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE443/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE443/1/"
+      }
+    ],
+    "pav:authoredOn": "2025-11-25 10:14:00.0",
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UUUU/"
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Raw downwelling irradiance signal at 443 nm wavelength. Local_Attributes:{long_name:Raw downwelling irradiance at 443 nanometers; standard_name:-; units:count; valid_min:-; valid_max:-; category:ib; fill_value:NC_FILL_DOUBLE; data_type:double}."
+      "@value": "Raw downwelling irradiance signal at 443 nm wavelength. Local_Attributes:{long_name:Raw downwelling irradiance at 443 nanometers; standard_name:-; units:count; valid_min:-; valid_max:-; fill_value:NC_FILL_DOUBLE}. Properties:{category:ib; data_type:double}"
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -29,17 +34,17 @@
       "@language": "en",
       "@value": "Raw downwelling irradiance at 443 nanometers"
     },
-    "owl:versionInfo": "2",
-    "dc:date": "2025-09-29 14:51:39.0",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-25 10:14:00.0",
     "skos:altLabel": "RAW_DOWNWELLING_IRRADIANCE443",
     "skos:notation": "SDN:R03::RAW_DOWNWELLING_IRRADIANCE443",
     "owl:sameAs": {
       "@id": "http://vocab.nerc.ac.uk/collection/P01/current/DWIRXXZZ/"
     },
-    "pav:version": "2",
+    "pav:version": "3",
     "dce:identifier": "SDN:R03::RAW_DOWNWELLING_IRRADIANCE443",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE443/2/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE443/3/"
     },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",

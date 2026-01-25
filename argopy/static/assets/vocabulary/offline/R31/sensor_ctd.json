@@ -1,7 +1,7 @@
 {
   "name": "sensor_ctd",
   "long_name": "sensor ctd",
-  "last_update": "2025-10-29T20:57:17.232373+00:00",
+  "last_update": "2026-01-25T11:11:07.045032+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R31/current/sensor_ctd/",
     "pav:authoredOn": "2025-08-28 11:14:55.0",

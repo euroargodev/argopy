@@ -1,19 +1,22 @@
 {
   "name": "T000480",
   "long_name": "TIME_SinceAscentEnd_HHMMSS",
-  "last_update": "2025-10-29T20:58:17.620646+00:00",
+  "last_update": "2026-01-25T11:13:06.668899+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000480/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000480/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:45.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000480/2/"
+    },
     "dce:identifier": "SDN:R14::T000480",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T000480",
     "skos:altLabel": "480",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:45.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "TIME_SinceAscentEnd_HHMMSS"
@@ -27,7 +30,10 @@
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
     },
-    "skos:definition": "",
+    "skos:definition": {
+      "@language": "en",
+      "@value": "TIME_SinceAscentEnd. Template_Values:{unit:[YYYYMMDD, HHMMSS, YYYYMMDDHHMMSS, HHMM, MMSS, YYYY, DD, HH, MM]}."
+    },
     "@type": "skos:Concept",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",

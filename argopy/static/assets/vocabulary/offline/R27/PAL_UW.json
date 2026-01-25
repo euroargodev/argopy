@@ -1,7 +1,7 @@
 {
   "name": "PAL_UW",
   "long_name": "Passive Aquatic Listener (PAL) acoustic rain gauge",
-  "last_update": "2025-10-29T20:58:58.742328+00:00",
+  "last_update": "2026-01-25T11:14:00.633988+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/PAL_UW/",
     "pav:authoredOn": "2021-08-18 14:32:12.0",

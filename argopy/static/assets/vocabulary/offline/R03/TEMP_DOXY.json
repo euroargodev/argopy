@@ -1,20 +1,25 @@
 {
   "name": "TEMP_DOXY",
   "long_name": "Sea temperature from oxygen sensor ITS-90 scale",
-  "last_update": "2025-10-29T20:57:38.498451+00:00",
+  "last_update": "2026-01-25T11:11:31.281413+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_DOXY/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_DOXY/1/"
-    },
-    "pav:authoredOn": "2025-09-29 14:51:43.0",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_DOXY/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_DOXY/2/"
+      }
+    ],
+    "pav:authoredOn": "2025-11-25 10:14:03.0",
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UPAA/"
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Temperature from thermistor on dissolved oxygen sensor, expressed against the International Temperature Scale 1990 (ITS-90) calibration standard. Local_Attributes:{long_name:Sea temperature from oxygen sensor ITS-90 scale; standard_name:temperature_of_sensor_for_oxygen_in_sea_water; units:degree_Celsius; valid_min:-2.f; valid_max:40.f; category:ib; fill_value:99999.f; data_type:float}."
+      "@value": "Temperature from thermistor on dissolved oxygen sensor, expressed against the International Temperature Scale 1990 (ITS-90) calibration standard. Local_Attributes:{long_name:Sea temperature from oxygen sensor ITS-90 scale; standard_name:temperature_of_sensor_for_oxygen_in_sea_water; units:degree_Celsius; valid_min:-2.f; valid_max:40.f; fill_value:99999.f}. Properties:{category:ib; data_type:float}"
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -29,17 +34,17 @@
       "@language": "en",
       "@value": "Sea temperature from oxygen sensor ITS-90 scale"
     },
-    "owl:versionInfo": "2",
-    "dc:date": "2025-09-29 14:51:43.0",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-25 10:14:03.0",
     "skos:altLabel": "TEMP_DOXY",
     "skos:notation": "SDN:R03::TEMP_DOXY",
     "owl:sameAs": {
       "@id": "http://vocab.nerc.ac.uk/collection/P01/current/OXYTAAOP/"
     },
-    "pav:version": "2",
+    "pav:version": "3",
     "dce:identifier": "SDN:R03::TEMP_DOXY",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_DOXY/2/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_DOXY/3/"
     },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",

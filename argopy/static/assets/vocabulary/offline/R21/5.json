@@ -1,7 +1,7 @@
 {
   "name": "5",
   "long_name": "Value is the average of the min and max pressure measurements sampled during the drift phase (the precision is 1 bar)",
-  "last_update": "2025-10-29T20:59:09.777903+00:00",
+  "last_update": "2026-01-25T11:14:16.491922+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R21/current/5/",
     "pav:authoredOn": "2020-05-03 20:29:43.0",

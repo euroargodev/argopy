@@ -1,10 +1,13 @@
 {
   "name": "C2PHASE_DOXY",
   "long_name": "Uncalibrated red excitation light phase shift reported by Aanderaa optode 4330/4330F",
-  "last_update": "2025-10-29T20:57:39.352809+00:00",
+  "last_update": "2026-01-25T11:11:31.954608+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/C2PHASE_DOXY/",
     "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/C2PHASE_DOXY/3/"
+      },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R03/current/C2PHASE_DOXY/2/"
       },
@@ -12,14 +15,14 @@
         "@id": "http://vocab.nerc.ac.uk/collection/R03/current/C2PHASE_DOXY/1/"
       }
     ],
-    "pav:authoredOn": "2025-09-29 14:51:42.0",
+    "pav:authoredOn": "2025-11-25 10:14:02.0",
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UAAA/"
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Uncalibrated red excitation light phase shift, reported by Aanderaa optode 4330/4330F sensor. Local_Attributes:{long_name:Uncalibrated phase shift reported by oxygen sensor; standard_name:-; units:degree; valid_min:0.f; valid_max:15.f; category:ib; fill_value:99999.f; data_type:float}."
+      "@value": "Uncalibrated red excitation light phase shift, reported by Aanderaa optode 4330/4330F sensor. Local_Attributes:{long_name:Uncalibrated phase shift reported by oxygen sensor; standard_name:-; units:degree; valid_min:0.f; valid_max:15.f; fill_value:99999.f}. Properties:{category:ib; data_type:float}"
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -34,17 +37,17 @@
       "@language": "en",
       "@value": "Uncalibrated red excitation light phase shift reported by Aanderaa optode 4330/4330F"
     },
-    "owl:versionInfo": "3",
-    "dc:date": "2025-09-29 14:51:42.0",
+    "owl:versionInfo": "4",
+    "dc:date": "2025-11-25 10:14:02.0",
     "skos:altLabel": "C2PHASE_DOXY",
     "skos:notation": "SDN:R03::C2PHASE_DOXY",
     "owl:sameAs": {
       "@id": "http://vocab.nerc.ac.uk/collection/P01/current/OXYCPHAR/"
     },
-    "pav:version": "3",
+    "pav:version": "4",
     "dce:identifier": "SDN:R03::C2PHASE_DOXY",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/C2PHASE_DOXY/3/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/C2PHASE_DOXY/4/"
     },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",

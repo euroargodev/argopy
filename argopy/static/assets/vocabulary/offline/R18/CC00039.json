@@ -1,19 +1,22 @@
 {
   "name": "CC00039",
   "long_name": "CONFIG_DepthTable_NUMBER",
-  "last_update": "2025-10-29T21:00:08.333042+00:00",
+  "last_update": "2026-01-25T11:15:44.318294+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00039/",
-    "pav:authoredOn": "2023-05-02 16:34:05.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00039/1/"
     },
+    "pav:authoredOn": "2025-12-12 11:41:07.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00039/2/"
+    },
     "dce:identifier": "SDN:R18::CC00039",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R18::CC00039",
-    "skos:altLabel": "Core Config 39 - Optional",
-    "dc:date": "2023-05-02 16:34:05.0",
-    "owl:versionInfo": "1",
+    "skos:altLabel": "Core Config 39",
+    "dc:date": "2025-12-12 11:41:07.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "CONFIG_DepthTable_NUMBER"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Depth table number for profiler sampling pressures. Phase 0."
+      "@value": "Depth table number for profiler sampling pressures. Template_Values:{unit:[NUMBER]}."
     },
     "@type": "skos:Concept",
     "@context": {

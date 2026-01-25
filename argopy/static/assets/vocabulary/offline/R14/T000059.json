@@ -1,19 +1,22 @@
 {
   "name": "T000059",
   "long_name": "CLOCK_RealTimeDrift_seconds",
-  "last_update": "2025-10-29T20:58:03.183296+00:00",
+  "last_update": "2026-01-25T11:12:48.406022+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000059/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000059/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:16.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000059/2/"
+    },
     "dce:identifier": "SDN:R14::T000059",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T000059",
     "skos:altLabel": "59",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:16.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "CLOCK_RealTimeDrift_seconds"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "The difference (seconds)between apf9's real time clock (rtc) and gps time representing clock drift. Is also represented in the traj files. We have CLOCK_OFFSET which is defined as: Decimal part of day that float clock has drifted. Float clock drift is defined as Float time (provided by the inboard Real Time Clock (RTC) of the float) \u2013 UT time."
+      "@value": "The difference between float Real Time Clock (RTC) and gps time representing clock drift. Is also represented in the traj files. We have CLOCK_OFFSET which is defined as: Decimal part of day that float clock has drifted. Float clock drift is defined as Float time (provided by the inboard Real Time Clock (RTC) of the float) ? UT time. Template_Values:{unit:[days, hours, minutes, seconds, dsec, csec, msec, usec]}."
     },
     "@type": "skos:Concept",
     "@context": {

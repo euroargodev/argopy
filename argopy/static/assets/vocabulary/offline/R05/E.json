@@ -1,7 +1,7 @@
 {
   "name": "E",
   "long_name": "GLONASS accuracy (not better than 10 m)",
-  "last_update": "2025-10-29T20:57:27.855440+00:00",
+  "last_update": "2026-01-25T11:11:20.078864+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R05/current/E/",
     "pav:hasVersion": {

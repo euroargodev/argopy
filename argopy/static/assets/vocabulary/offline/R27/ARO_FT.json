@@ -1,7 +1,7 @@
 {
   "name": "ARO_FT",
   "long_name": "JFE Advantech Co. (JAC) ARO-FT oxygen optode",
-  "last_update": "2025-10-29T20:58:56.797110+00:00",
+  "last_update": "2026-01-25T11:13:58.309093+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ARO_FT/",
     "pav:authoredOn": "2021-05-26 09:01:46.0",

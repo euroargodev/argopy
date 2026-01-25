@@ -1,7 +1,7 @@
 {
   "name": "DPST",
   "long_name": "Deep Park Start Time",
-  "last_update": "2025-10-29T20:57:20.812732+00:00",
+  "last_update": "2026-01-25T11:11:11.501530+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/DPST/",
     "pav:authoredOn": "2021-11-30 12:47:38.0",

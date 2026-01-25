@@ -1,7 +1,7 @@
 {
   "name": "PAINE_1600PSIA",
   "long_name": "Paine pressure sensor with 1600 PSIA rating",
-  "last_update": "2025-10-29T20:58:55.161043+00:00",
+  "last_update": "2026-01-25T11:13:55.394577+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_1600PSIA/",
     "pav:authoredOn": "2019-10-11 14:49:00.0",

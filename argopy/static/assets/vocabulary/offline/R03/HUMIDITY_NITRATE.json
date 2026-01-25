@@ -1,19 +1,24 @@
 {
   "name": "HUMIDITY_NITRATE",
   "long_name": "Relative humidity inside the SUNA sensor (If > 50% There is a leak)",
-  "last_update": "2025-10-29T20:57:38.929092+00:00",
+  "last_update": "2026-01-25T11:11:31.688621+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/HUMIDITY_NITRATE/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/HUMIDITY_NITRATE/1/"
-    },
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/HUMIDITY_NITRATE/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/HUMIDITY_NITRATE/1/"
+      }
+    ],
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UPCT/"
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Relative humidity inside the nitrate sensor (If > 50% there is a leak), reported by the SUNA sensor from Remocean floats. Local_Attributes:{long_name:Relative humidity inside the SUNA sensor (If > 50% There is a leak); standard_name:-; units:percent; valid_min:0.f; valid_max:100.f; category:ib; fill_value:99999.f; data_type:float}."
+      "@value": "Relative humidity inside the nitrate sensor (If > 50% there is a leak), reported by the SUNA sensor from Remocean floats. Local_Attributes:{long_name:Relative humidity inside the SUNA sensor (If > 50% There is a leak); standard_name:-; units:percent; valid_min:0.f; valid_max:100.f; fill_value:99999.f}. Properties:{category:ib; data_type:float}"
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -28,16 +33,16 @@
       "@language": "en",
       "@value": "Relative humidity inside the SUNA sensor (If > 50% There is a leak)"
     },
-    "owl:versionInfo": "2",
-    "dc:date": "2025-09-29 14:51:41.0",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-25 10:14:03.0",
     "skos:altLabel": "HUMIDITY_NITRATE",
     "skos:notation": "SDN:R03::HUMIDITY_NITRATE",
-    "pav:version": "2",
+    "pav:version": "3",
     "dce:identifier": "SDN:R03::HUMIDITY_NITRATE",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/HUMIDITY_NITRATE/2/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/HUMIDITY_NITRATE/3/"
     },
-    "pav:authoredOn": "2025-09-29 14:51:41.0",
+    "pav:authoredOn": "2025-11-25 10:14:03.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

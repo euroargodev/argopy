@@ -1,7 +1,7 @@
 {
   "name": "RBR_CODA_T_ODO",
   "long_name": "RBRcoda T.ODO Temperature and Dissolved Oxygen sensor",
-  "last_update": "2025-10-29T20:58:57.741256+00:00",
+  "last_update": "2026-01-25T11:13:59.453853+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CODA_T_ODO/",
     "pav:authoredOn": "2021-05-26 09:01:46.0",

@@ -1,7 +1,7 @@
 {
   "name": "FSI",
   "long_name": "Falmouth Scientific, Inc (FSI) unknown CTD model",
-  "last_update": "2025-10-29T20:58:57.519511+00:00",
+  "last_update": "2026-01-25T11:13:58.535169+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/FSI/",
     "pav:authoredOn": "2019-10-11 14:49:00.0",

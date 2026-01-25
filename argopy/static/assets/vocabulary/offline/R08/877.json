@@ -1,7 +1,7 @@
 {
   "name": "877",
   "long_name": "APEX float with RBR conductivity sensor",
-  "last_update": "2025-10-29T20:59:11.505035+00:00",
+  "last_update": "2026-01-25T11:14:18.678993+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/877/",
     "pav:hasVersion": {

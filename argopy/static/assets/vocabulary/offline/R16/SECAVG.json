@@ -1,7 +1,7 @@
 {
   "name": "SECAVG",
   "long_name": "Secondary sampling: averaged",
-  "last_update": "2025-10-29T20:57:19.700119+00:00",
+  "last_update": "2026-01-25T11:11:09.772201+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R16/current/SECAVG/",
     "pav:authoredOn": "2020-05-03 20:29:08.0",

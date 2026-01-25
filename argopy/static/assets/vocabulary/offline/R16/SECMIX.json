@@ -1,7 +1,7 @@
 {
   "name": "SECMIX",
   "long_name": "Secondary sampling: mixed",
-  "last_update": "2025-10-29T20:57:20.057230+00:00",
+  "last_update": "2026-01-25T11:11:10.257303+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R16/current/SECMIX/",
     "pav:authoredOn": "2020-05-03 20:29:08.0",

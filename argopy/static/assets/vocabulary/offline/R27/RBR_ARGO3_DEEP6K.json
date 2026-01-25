@@ -1,7 +1,7 @@
 {
   "name": "RBR_ARGO3_DEEP6K",
   "long_name": "RBRargo3 CTD deep6k",
-  "last_update": "2025-10-29T20:58:57.539261+00:00",
+  "last_update": "2026-01-25T11:13:59.543297+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/",
     "pav:authoredOn": "2021-05-26 09:01:46.0",

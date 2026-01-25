@@ -1,7 +1,7 @@
 {
   "name": "BACKSCATTERINGMETER_BBP700",
   "long_name": "Backscattering meter measuring backscattering at 700 nanometers",
-  "last_update": "2025-10-29T20:59:59.632341+00:00",
+  "last_update": "2026-01-25T11:15:15.476099+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/",
     "pav:authoredOn": "2021-02-09 15:34:44.0",

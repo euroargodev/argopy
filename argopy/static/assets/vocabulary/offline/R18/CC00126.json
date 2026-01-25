@@ -1,19 +1,22 @@
 {
   "name": "CC00126",
   "long_name": "CONFIG_ParkPressure_dbar",
-  "last_update": "2025-10-29T21:00:13.323785+00:00",
+  "last_update": "2026-01-25T11:15:20.544279+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00126/",
-    "pav:authoredOn": "2023-05-02 16:34:05.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00126/1/"
     },
+    "pav:authoredOn": "2025-12-12 11:41:08.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00126/2/"
+    },
     "dce:identifier": "SDN:R18::CC00126",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R18::CC00126",
-    "skos:altLabel": "Core Config 126 - Mandatory (if applies)",
-    "dc:date": "2023-05-02 16:34:05.0",
-    "owl:versionInfo": "1",
+    "skos:altLabel": "Core Config 126",
+    "dc:date": "2025-12-12 11:41:08.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "CONFIG_ParkPressure_dbar"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "park pressure - this may change if the float is reprogrammed and must be reported in the mission configuration settings"
+      "@value": "Park pressure. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
     },
     "@type": "skos:Concept",
     "@context": {

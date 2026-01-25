@@ -1,7 +1,7 @@
 {
   "name": "SBE41_V3",
   "long_name": "Sea-Bird Scientific SBE 41 CTD V3",
-  "last_update": "2025-10-29T20:59:03.210153+00:00",
+  "last_update": "2026-01-25T11:14:09.459138+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V3/",
     "pav:hasVersion": [

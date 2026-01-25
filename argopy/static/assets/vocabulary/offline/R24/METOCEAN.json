@@ -1,7 +1,7 @@
 {
   "name": "METOCEAN",
   "long_name": "Metocean",
-  "last_update": "2025-10-29T20:57:15.091075+00:00",
+  "last_update": "2026-01-25T11:11:04.689206+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R24/current/METOCEAN/",
     "pav:authoredOn": "2020-05-03 20:30:12.0",

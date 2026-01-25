@@ -1,19 +1,22 @@
 {
   "name": "T200488",
   "long_name": "VOLUME_OilVolumeTransferredDuringDescentToPark_cm^3",
-  "last_update": "2025-10-29T20:57:47.124421+00:00",
+  "last_update": "2026-01-25T11:12:52.011085+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T200488/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T200488/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:33.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T200488/2/"
+    },
     "dce:identifier": "SDN:R14::T200488",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T200488",
     "skos:altLabel": "488.2",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:33.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "VOLUME_OilVolumeTransferredDuringDescentToPark_cm^3"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Oil volume transferred from the external bladder during the descent to park (between the second threshold of the buoyancy reduction phase and the end of the descent to park). This is the oil volume tranferred during the NUMBER_ValveActionsDuringDescentToPark_COUNT valve actions (Id 124). Reported pump/valve actions were expressed as durations in the previous floats version. For the CTS5 they are reported as transferred oil volume."
+      "@value": "Oil volume transferred from the external bladder during the descent to park (between the second threshold of the buoyancy reduction phase and the end of the descent to park). This is the oil volume tranferred during the NUMBER_ValveActionsDuringDescentToPark_COUNT valve actions (Id 124). Reported pump/valve actions were expressed as durations in the previous floats version. For the CTS5 they are reported as transferred oil volume. Template_Values:{unit:[cm^3]}."
     },
     "@type": "skos:Concept",
     "@context": {

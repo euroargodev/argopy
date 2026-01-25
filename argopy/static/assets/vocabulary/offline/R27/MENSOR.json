@@ -1,7 +1,7 @@
 {
   "name": "MENSOR",
   "long_name": "Mensor special-built pressure sensor",
-  "last_update": "2025-10-29T20:58:58.772920+00:00",
+  "last_update": "2026-01-25T11:14:00.920298+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/MENSOR/",
     "pav:hasVersion": [

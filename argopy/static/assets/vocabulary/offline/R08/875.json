@@ -1,7 +1,7 @@
 {
   "name": "875",
   "long_name": "ALTO float with RBR conductivity sensor",
-  "last_update": "2025-10-29T20:59:11.466792+00:00",
+  "last_update": "2026-01-25T11:14:18.400387+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/875/",
     "pav:hasVersion": {

@@ -1,7 +1,7 @@
 {
   "name": "RTQC_TESTID",
   "long_name": "Argo real-time quality-control test identifiers",
-  "last_update": "2025-10-29T19:56:34.464909+00:00",
+  "last_update": "2026-01-25T10:44:11.189637+00:00",
   "data": {
     "@graph": [
       {

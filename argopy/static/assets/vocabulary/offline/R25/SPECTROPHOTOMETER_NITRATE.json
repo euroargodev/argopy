@@ -1,7 +1,7 @@
 {
   "name": "SPECTROPHOTOMETER_NITRATE",
   "long_name": "Spectrophotometer measuring nitrate",
-  "last_update": "2025-10-29T20:59:59.977400+00:00",
+  "last_update": "2026-01-25T11:15:15.924609+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/SPECTROPHOTOMETER_NITRATE/",
     "pav:authoredOn": "2019-10-11 15:06:36.0",

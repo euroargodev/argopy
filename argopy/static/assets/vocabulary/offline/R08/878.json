@@ -1,7 +1,7 @@
 {
   "name": "878",
   "long_name": "ARVOR float with RBR conductivity sensor",
-  "last_update": "2025-10-29T20:59:12.953155+00:00",
+  "last_update": "2026-01-25T11:14:20.251787+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/878/",
     "pav:hasVersion": {

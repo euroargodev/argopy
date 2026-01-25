@@ -1,7 +1,7 @@
 {
   "name": "KELLER_PA8",
   "long_name": "Keller PA-8 pressure transducer",
-  "last_update": "2025-10-29T20:58:56.597289+00:00",
+  "last_update": "2026-01-25T11:13:57.043320+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/KELLER_PA8/",
     "pav:authoredOn": "2021-08-18 14:32:12.0",

@@ -1,20 +1,25 @@
 {
   "name": "FLUORESCENCE_CDOM",
   "long_name": "Raw fluorescence from coloured dissolved organic matter sensor",
-  "last_update": "2025-10-29T20:57:41.250184+00:00",
+  "last_update": "2026-01-25T11:11:33.860827+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/FLUORESCENCE_CDOM/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/FLUORESCENCE_CDOM/1/"
-    },
-    "pav:authoredOn": "2025-09-29 14:51:41.0",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/FLUORESCENCE_CDOM/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/FLUORESCENCE_CDOM/2/"
+      }
+    ],
+    "pav:authoredOn": "2025-11-25 10:14:02.0",
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UUUU/"
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Raw fluorescence signal from coloured dissolved organic matter (CDOM) sensor, reported by ECO3 sensor. Local_Attributes:{long_name:Raw fluorescence from coloured dissolved organic matter sensor; standard_name:-; units:count; valid_min:-; valid_max:-; category:ib; fill_value:99999.f; data_type:float}."
+      "@value": "Raw fluorescence signal from coloured dissolved organic matter (CDOM) sensor, reported by ECO3 sensor. Local_Attributes:{long_name:Raw fluorescence from coloured dissolved organic matter sensor; standard_name:-; units:count; valid_min:-; valid_max:-; fill_value:99999.f}. Properties:{category:ib; data_type:float}"
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -29,17 +34,17 @@
       "@language": "en",
       "@value": "Raw fluorescence from coloured dissolved organic matter sensor"
     },
-    "owl:versionInfo": "2",
-    "dc:date": "2025-09-29 14:51:41.0",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-25 10:14:02.0",
     "skos:altLabel": "FLUORESCENCE_CDOM",
     "skos:notation": "SDN:R03::FLUORESCENCE_CDOM",
     "owl:sameAs": {
       "@id": "http://vocab.nerc.ac.uk/collection/P01/current/FLUOCDOM/"
     },
-    "pav:version": "2",
+    "pav:version": "3",
     "dce:identifier": "SDN:R03::FLUORESCENCE_CDOM",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/FLUORESCENCE_CDOM/2/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/FLUORESCENCE_CDOM/3/"
     },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",

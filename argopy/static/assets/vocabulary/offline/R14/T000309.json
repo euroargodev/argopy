@@ -1,19 +1,22 @@
 {
   "name": "T000309",
   "long_name": "FLAG_RemoteControlMessageKO_COUNT",
-  "last_update": "2025-10-29T20:58:09.712765+00:00",
+  "last_update": "2026-01-25T11:13:47.904748+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000309/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000309/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:07.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000309/2/"
+    },
     "dce:identifier": "SDN:R14::T000309",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T000309",
     "skos:altLabel": "309",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:07.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "FLAG_RemoteControlMessageKO_COUNT"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "number of received messages which have been rejected by the float"
+      "@value": "Number of received messages which have been rejected by the float. Template_Values:{unit:[COUNT]}."
     },
     "@type": "skos:Concept",
     "@context": {

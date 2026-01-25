@@ -1,40 +1,45 @@
 {
   "name": "NB_SAMPLE_SUNA",
   "long_name": "Number of SUNA samples in each pressure bin",
-  "last_update": "2025-10-29T20:57:32.535723+00:00",
+  "last_update": "2026-01-25T11:11:26.189635+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_SUNA/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_SUNA/1/"
-    },
-    "pav:authoredOn": "2025-09-29 14:51:41.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_SUNA/2/"
-    },
-    "dce:identifier": "SDN:R03::NB_SAMPLE_SUNA",
-    "pav:version": "2",
-    "skos:notation": "SDN:R03::NB_SAMPLE_SUNA",
-    "skos:altLabel": "NB_SAMPLE_SUNA",
-    "dc:date": "2025-09-29 14:51:41.0",
-    "owl:versionInfo": "2",
-    "skos:prefLabel": {
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_SUNA/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_SUNA/2/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
       "@language": "en",
-      "@value": "Number of SUNA samples in each pressure bin"
+      "@value": "Not Used. Number of samples in each pressure bin. Local_Attributes:{long_name:Number of samples in each pressure bin; standard_name:-; units:count; valid_min:-; valid_max:-; fill_value:NC_FILL_SHORT}. Properties:{category:ic; data_type:short}."
     },
-    "dc:identifier": "SDN:R03::NB_SAMPLE_SUNA",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "true",
     "skos:note": {
       "@language": "en",
       "@value": "deprecated"
     },
-    "owl:deprecated": "true",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R03::NB_SAMPLE_SUNA",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "Number of SUNA sensor samples in each pressure bin (dimensionless)."
+      "@value": "Number of SUNA samples in each pressure bin"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "3",
+    "dc:date": "2026-01-15 16:32:25.0",
+    "skos:altLabel": "NB_SAMPLE_SUNA",
+    "skos:notation": "SDN:R03::NB_SAMPLE_SUNA",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R03::NB_SAMPLE_SUNA",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_SUNA/3/"
+    },
+    "pav:authoredOn": "2026-01-15 16:32:25.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

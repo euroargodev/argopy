@@ -1,40 +1,45 @@
 {
   "name": "CB00048",
   "long_name": "CONFIG_<short_sensor_name>VerticalPressureOffset_dbar",
-  "last_update": "2025-10-29T21:00:12.071366+00:00",
+  "last_update": "2026-01-25T11:15:51.231926+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00048/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00048/1/"
-    },
-    "pav:authoredOn": "2023-05-02 19:58:02.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00048/2/"
-    },
-    "dce:identifier": "SDN:R18::CB00048",
-    "pav:version": "2",
-    "skos:notation": "SDN:R18::CB00048",
-    "skos:altLabel": "BGC Config 48 - Optional",
-    "dc:date": "2023-05-02 19:58:02.0",
-    "owl:versionInfo": "2",
-    "skos:prefLabel": {
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00048/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00048/1/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
       "@language": "en",
-      "@value": "CONFIG_<short_sensor_name>VerticalPressureOffset_dbar"
+      "@value": "Vertical pressure offset due to the fact that the <short_sensor_name> sensor is not exactly at the Ctd pressure. Template_Values:{short_sensor_name:[Crover, Cyc, Eco, Flbb, Flntu, Ocr, Optode, Sfet, Stm, Suna];unit:[bar, dbar, cbar, mbar, inHg]}."
     },
-    "dc:identifier": "SDN:R18::CB00048",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R18::CB00048",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure"
+      "@value": "CONFIG_<short_sensor_name>VerticalPressureOffset_dbar"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-12-11 09:34:54.0",
+    "skos:altLabel": "BGC Config 48",
+    "skos:notation": "SDN:R18::CB00048",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R18::CB00048",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00048/3/"
+    },
+    "pav:authoredOn": "2025-12-11 09:34:54.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

@@ -1,7 +1,7 @@
 {
   "name": "RAMSES_ACC",
   "long_name": "TriOS RAMSES ACC spectral imaging radiometer",
-  "last_update": "2025-10-29T20:58:56.213859+00:00",
+  "last_update": "2026-01-25T11:13:56.655784+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RAMSES_ACC/",
     "pav:authoredOn": "2021-07-01 16:48:21.0",

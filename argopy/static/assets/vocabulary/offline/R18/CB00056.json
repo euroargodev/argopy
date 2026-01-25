@@ -1,40 +1,45 @@
 {
   "name": "CB00056",
   "long_name": "CONFIG_FlbbSampling_NUMBER",
-  "last_update": "2025-10-29T21:00:16.784836+00:00",
+  "last_update": "2026-01-25T11:15:45.781201+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00056/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00056/1/"
-    },
-    "pav:authoredOn": "2023-05-02 19:58:02.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00056/2/"
-    },
-    "dce:identifier": "SDN:R18::CB00056",
-    "pav:version": "2",
-    "skos:notation": "SDN:R18::CB00056",
-    "skos:altLabel": "BGC Config 56 - Mandatory",
-    "dc:date": "2023-05-02 19:58:02.0",
-    "owl:versionInfo": "2",
-    "skos:prefLabel": {
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00056/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00056/2/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
       "@language": "en",
-      "@value": "CONFIG_FlbbSampling_NUMBER"
+      "@value": "Specifies whether the Flbb instrument is set to sample. Values: Zero disables sampling and nonzero enables sampling. Template_Values:{unit:[NUMBER]}."
     },
-    "dc:identifier": "SDN:R18::CB00056",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R18::CB00056",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "Specifies whether the Flbb instrument is set to sample. Values: Zero disables sampling and nonzero enables sampling."
+      "@value": "CONFIG_FlbbSampling_NUMBER"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-12-11 09:34:56.0",
+    "skos:altLabel": "BGC Config 56",
+    "skos:notation": "SDN:R18::CB00056",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R18::CB00056",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00056/3/"
+    },
+    "pav:authoredOn": "2025-12-11 09:34:56.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

@@ -1,7 +1,7 @@
 {
   "name": "UP",
   "long_name": "Station passed through the update program",
-  "last_update": "2025-10-29T20:58:53.102553+00:00",
+  "last_update": "2026-01-25T11:13:53.599306+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R07/current/UP/",
     "pav:authoredOn": "2020-04-07 22:59:46.0",

@@ -1,19 +1,22 @@
 {
   "name": "T000332",
   "long_name": "FLAG_StatusEndAscentToSurface_NUMBER",
-  "last_update": "2025-10-29T20:58:44.832138+00:00",
+  "last_update": "2026-01-25T11:13:01.654262+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000332/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000332/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:29.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000332/2/"
+    },
     "dce:identifier": "SDN:R14::T000332",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T000332",
     "skos:altLabel": "332",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:29.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "FLAG_StatusEndAscentToSurface_NUMBER"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Status of the end date-time of the ascending profile (0:Nominal, 1:Estimated, 2:Transmitted)"
+      "@value": "Status of the end date-time of the ascending profile (0:Nominal, 1:Estimated, 2:Transmitted). Template_Values:{unit:[NUMBER]}."
     },
     "@type": "skos:Concept",
     "@context": {

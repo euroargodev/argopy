@@ -1,19 +1,22 @@
 {
   "name": "T000562",
   "long_name": "NUMBER_AscendingCTDSamplesInternalCounter_COUNT",
-  "last_update": "2025-10-29T20:57:52.178345+00:00",
+  "last_update": "2026-01-25T11:13:04.953601+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000562/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000562/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:21.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000562/2/"
+    },
     "dce:identifier": "SDN:R14::T000562",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T000562",
     "skos:altLabel": "562",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:21.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "NUMBER_AscendingCTDSamplesInternalCounter_COUNT"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "total number of slices of the ascending profile after reduction"
+      "@value": "Total number of slices of the ascending profile after reduction. Template_Values:{unit:[COUNT]}."
     },
     "@type": "skos:Concept",
     "@context": {

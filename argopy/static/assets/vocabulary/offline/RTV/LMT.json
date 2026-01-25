@@ -1,7 +1,7 @@
 {
   "name": "LMT",
   "long_name": "Last Message Time",
-  "last_update": "2025-10-29T20:57:21.717916+00:00",
+  "last_update": "2026-01-25T11:11:12.190225+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/LMT/",
     "pav:authoredOn": "2021-11-30 12:47:38.0",

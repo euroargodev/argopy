@@ -1,7 +1,7 @@
 {
   "name": "ARGOS",
   "long_name": "Argos transmission system",
-  "last_update": "2025-10-29T20:57:26.221042+00:00",
+  "last_update": "2026-01-25T11:11:18.085962+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R10/current/ARGOS/",
     "pav:authoredOn": "2020-04-07 22:59:46.0",

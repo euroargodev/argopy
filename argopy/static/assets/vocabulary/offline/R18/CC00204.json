@@ -1,19 +1,22 @@
 {
   "name": "CC00204",
   "long_name": "CONFIG_TelemetryMaxRetrySecondary_COUNT",
-  "last_update": "2025-10-29T21:00:39.673011+00:00",
+  "last_update": "2026-01-25T11:16:04.743365+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00204/",
-    "pav:authoredOn": "2023-05-02 16:34:05.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00204/1/"
     },
+    "pav:authoredOn": "2025-12-12 11:41:12.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00204/2/"
+    },
     "dce:identifier": "SDN:R18::CC00204",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R18::CC00204",
-    "skos:altLabel": "Core Config 204 - Optional",
-    "dc:date": "2023-05-02 16:34:05.0",
-    "owl:versionInfo": "1",
+    "skos:altLabel": "Core Config 204",
+    "dc:date": "2025-12-12 11:41:12.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "CONFIG_TelemetryMaxRetrySecondary_COUNT"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Some float versions have a secondary telemetry system; in this case the float is able to perform an Iridium session (to get one Iridium position) in addition to the RUDICS version used in the main telemetry session specified by CONFIG_TelemetryMaxRetry_COUNT"
+      "@value": "Some float versions have a secondary telemetry system; in this case the float is able to perform an Iridium session (to get one Iridium position) in addition to the RUDICS version used in the main telemetry session specified by CONFIG_TelemetryMaxRetry_COUNT. Template_Values:{unit:[COUNT]}."
     },
     "@type": "skos:Concept",
     "@context": {

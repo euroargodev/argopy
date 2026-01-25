@@ -1,7 +1,7 @@
 {
   "name": "AANDERAA_OPTODE",
   "long_name": "Aanderaa unknown oxygen optode model",
-  "last_update": "2025-10-29T20:58:55.873049+00:00",
+  "last_update": "2026-01-25T11:13:55.966724+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE/",
     "pav:authoredOn": "2021-05-26 09:01:46.0",

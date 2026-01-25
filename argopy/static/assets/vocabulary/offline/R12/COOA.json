@@ -1,7 +1,7 @@
 {
   "name": "COOA",
   "long_name": "Coriolis objective analysis performed",
-  "last_update": "2025-10-29T20:57:30.325657+00:00",
+  "last_update": "2026-01-25T11:11:23.831307+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R12/current/COOA/",
     "pav:authoredOn": "2020-04-07 22:59:46.0",

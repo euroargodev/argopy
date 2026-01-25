@@ -1,7 +1,7 @@
 {
   "name": "CONTROLLER_BOARD_TYPE",
   "long_name": "Argo controller board types and generations",
-  "last_update": "2025-10-29T19:56:37.401848+00:00",
+  "last_update": "2026-01-25T10:44:16.034347+00:00",
   "data": {
     "@graph": [
       {

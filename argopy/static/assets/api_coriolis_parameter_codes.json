@@ -1,7 +1,7 @@
 {
   "name": "Coriolis_parameters",
   "long_name": "All valid requests to https://api-coriolis.ifremer.fr/legacy/parameter?code={code}",
-  "last_update": "2025-12-09T16:47:08.594469+00:00",
+  "last_update": "2026-01-25T10:32:07.888366+00:00",
   "data": {
     "valid_codes": [
       "9",
@@ -178,6 +178,7 @@
       "355",
       "356",
       "357",
+      "358",
       "359",
       "360",
       "361",
@@ -714,6 +715,7 @@
       "IODI",
       "ISMP",
       "LCAW",
+      "CF3W",
       "LGH2",
       "LGH3",
       "LGH5",
@@ -2805,6 +2807,16 @@
         "parent_code": "0",
         "label": "LIGHT CARBON ABSORPTION",
         "param_type": "-"
+      },
+      "358": {
+        "unit": "picomole/kg",
+        "time_sampling": "",
+        "code": "358",
+        "gf3_strict_name": "CF3W",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "DISSOLVED CFC113",
+        "param_type": "P"
       },
       "359": {
         "unit": "m-1",
@@ -8047,6 +8059,16 @@
         "parent_code": "0",
         "label": "LIGHT CARBON ABSORPTION",
         "param_type": "-"
+      },
+      "CF3W": {
+        "unit": "picomole/kg",
+        "time_sampling": "",
+        "code": "358",
+        "gf3_strict_name": "CF3W",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "DISSOLVED CFC113",
+        "param_type": "P"
       },
       "LGH2": {
         "unit": "m-1",

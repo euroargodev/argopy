@@ -1,7 +1,7 @@
 {
   "name": "POLAR_OCEAN_PROFILING_SYSTEM",
   "long_name": "Ice platform providing meteorological data paired with tethered subsurface platform using buoyancy to go up and down",
-  "last_update": "2025-10-29T20:59:10.564945+00:00",
+  "last_update": "2026-01-25T11:14:17.316481+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R22/current/POLAR_OCEAN_PROFILING_SYSTEM/",
     "pav:authoredOn": "2020-05-03 20:29:53.0",

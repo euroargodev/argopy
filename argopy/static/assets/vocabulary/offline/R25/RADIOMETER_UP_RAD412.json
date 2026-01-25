@@ -1,7 +1,7 @@
 {
   "name": "RADIOMETER_UP_RAD412",
   "long_name": "Radiometer measuring upwelling radiance at 412 nanometers",
-  "last_update": "2025-10-29T21:00:00.753741+00:00",
+  "last_update": "2026-01-25T11:15:16.712032+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD412/",
     "pav:authoredOn": "2021-02-09 15:34:44.0",

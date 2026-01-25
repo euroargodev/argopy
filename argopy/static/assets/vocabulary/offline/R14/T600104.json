@@ -1,19 +1,22 @@
 {
   "name": "T600104",
   "long_name": "NUMBER_RemoteControlCommandOK_COUNT",
-  "last_update": "2025-10-29T20:58:09.507272+00:00",
+  "last_update": "2026-01-25T11:13:47.444779+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T600104/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T600104/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:51.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T600104/2/"
+    },
     "dce:identifier": "SDN:R14::T600104",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T600104",
     "skos:altLabel": "104.6",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:51.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "NUMBER_RemoteControlCommandOK_COUNT"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Number of remote control commands successfully considered. The float can receive message with multiple remote commands. It reports the number of received messages (in FLAG_RemoteControlMessageOK_COUNT and FLAG_RemoteControlMessageKO_COUNT) and also the the number of received commands (in these 2 new labels). See ID 310"
+      "@value": "Number of remote control commands successfully considered. The float can receive message with multiple remote commands. It reports the number of received messages (in FLAG_RemoteControlMessageOK_COUNT and FLAG_RemoteControlMessageKO_COUNT) and also the the number of received commands (in these 2 new labels). See ID 310. Template_Values:{unit:[COUNT]}."
     },
     "@type": "skos:Concept",
     "@context": {

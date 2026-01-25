@@ -1,7 +1,7 @@
 {
   "name": "MEASUREMENT_CODE_ID",
   "long_name": "Argo trajectory measurement code identifiers",
-  "last_update": "2025-10-29T19:56:36.868487+00:00",
+  "last_update": "2026-01-25T10:44:15.360331+00:00",
   "data": {
     "@graph": [
       {

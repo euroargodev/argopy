@@ -1,20 +1,25 @@
 {
   "name": "CDOM",
   "long_name": "Concentration of coloured dissolved organic matter in sea water",
-  "last_update": "2025-10-29T20:57:37.137275+00:00",
+  "last_update": "2026-01-25T11:11:29.740286+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/CDOM/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/CDOM/1/"
-    },
-    "pav:authoredOn": "2025-09-29 14:51:39.0",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/CDOM/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/CDOM/1/"
+      }
+    ],
+    "pav:authoredOn": "2025-11-25 10:14:02.0",
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UPPB/"
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Coloured dissolved organic matter (CDOM) concentration. Local_Attributes:{long_name:Concentration of coloured dissolved organic matter in sea water; standard_name:-; units:ppb; valid_min:-; valid_max:-; category:b; fill_value:99999.f; data_type:float}."
+      "@value": "Coloured dissolved organic matter (CDOM) concentration. Local_Attributes:{long_name:Concentration of coloured dissolved organic matter in sea water; standard_name:-; units:ppb; valid_min:-; valid_max:-; fill_value:99999.f}. Properties:{category:b; data_type:float}"
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -29,17 +34,17 @@
       "@language": "en",
       "@value": "Concentration of coloured dissolved organic matter in sea water"
     },
-    "owl:versionInfo": "2",
-    "dc:date": "2025-09-29 14:51:39.0",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-25 10:14:02.0",
     "skos:altLabel": "CDOM",
     "skos:notation": "SDN:R03::CDOM",
     "owl:sameAs": {
       "@id": "http://vocab.nerc.ac.uk/collection/P01/current/CDOMZZ01/"
     },
-    "pav:version": "2",
+    "pav:version": "3",
     "dce:identifier": "SDN:R03::CDOM",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/CDOM/2/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/CDOM/3/"
     },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",

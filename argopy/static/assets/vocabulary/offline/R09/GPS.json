@@ -1,7 +1,7 @@
 {
   "name": "GPS",
   "long_name": "GPS positioning system",
-  "last_update": "2025-10-29T20:57:16.418386+00:00",
+  "last_update": "2026-01-25T11:11:06.127689+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R09/current/GPS/",
     "pav:authoredOn": "2020-04-07 22:59:46.0",

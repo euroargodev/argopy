@@ -1,7 +1,7 @@
 {
   "name": "PROF_QC_FLAG",
   "long_name": "Argo profile quality control flags",
-  "last_update": "2025-10-29T19:56:33.954601+00:00",
+  "last_update": "2026-01-25T10:44:10.250599+00:00",
   "data": {
     "@graph": [
       {
@@ -251,7 +251,7 @@
         ],
         "@type": "skos:Collection",
         "dc:publisher": "Natural Environment Research Council",
-        "dc:description": "Quality control flag scale for whole profiles. Argo netCDF variables PROFILE_<PARAMETER>_QC are populated by RP2 altLabel.",
+        "dc:description": "Quality control flag scale for whole profiles. Argo netCDF variables PROFILE_{param}_QC are populated by RP2 altLabel, with {param} consisting of R03 altLabels. Associated FillValue is an empty space in Argo NetCDF files. This case occurs when no QC is performed or no usable flag values are present.",
         "dc:title": "Argo profile quality control flags",
         "skos:prefLabel": "Argo profile quality control flags",
         "owl:versionInfo": "1",

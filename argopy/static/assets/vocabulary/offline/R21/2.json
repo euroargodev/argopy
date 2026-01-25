@@ -1,7 +1,7 @@
 {
   "name": "2",
   "long_name": "Value is the mean value, directly provided by the float, of the pressure measurements regularly sampled during the drift phase",
-  "last_update": "2025-10-29T20:59:10.294036+00:00",
+  "last_update": "2026-01-25T11:14:17.004027+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R21/current/2/",
     "pav:authoredOn": "2020-05-03 20:29:43.0",

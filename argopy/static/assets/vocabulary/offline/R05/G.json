@@ -1,7 +1,7 @@
 {
   "name": "G",
   "long_name": "GPS positioning accuracy (not better than 10 m)",
-  "last_update": "2025-10-29T20:57:27.224717+00:00",
+  "last_update": "2026-01-25T11:11:19.491150+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R05/current/G/",
     "pav:hasVersion": {

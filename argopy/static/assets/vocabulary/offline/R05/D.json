@@ -1,7 +1,7 @@
 {
   "name": "D",
   "long_name": "Beidou accuracy (not better than 10 m)",
-  "last_update": "2025-10-29T20:57:28.834388+00:00",
+  "last_update": "2026-01-25T11:11:20.937679+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R05/current/D/",
     "pav:hasVersion": {

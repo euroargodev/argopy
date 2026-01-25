@@ -1,25 +1,28 @@
 {
   "name": "MOLAR_DOXY",
   "long_name": "Uncompensated (pressure and salinity) oxygen concentration reported by the oxygen sensor",
-  "last_update": "2025-10-29T20:57:39.562611+00:00",
+  "last_update": "2026-01-25T11:11:32.288214+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/MOLAR_DOXY/",
     "pav:hasVersion": [
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/MOLAR_DOXY/2/"
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/MOLAR_DOXY/3/"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R03/current/MOLAR_DOXY/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/MOLAR_DOXY/2/"
       }
     ],
-    "pav:authoredOn": "2025-09-29 14:51:41.0",
+    "pav:authoredOn": "2025-11-25 10:14:01.0",
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UPOX/"
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Dissolved oxygen concentration uncorrected for salinity and pressure effects. Local_Attributes:{long_name:Uncompensated (pressure and salinity) oxygen concentration reported by the oxygen sensor; standard_name:mole_concentration_of_dissolved_molecular_oxygen_in_sea_water; units:micromole/l; valid_min:0.f; valid_max:650.f; category:ib; fill_value:99999.f; data_type:float}."
+      "@value": "Dissolved oxygen concentration uncorrected for salinity and pressure effects. Local_Attributes:{long_name:Uncompensated (pressure and salinity) oxygen concentration reported by the oxygen sensor; standard_name:mole_concentration_of_dissolved_molecular_oxygen_in_sea_water; units:micromole/l; valid_min:0.f; valid_max:650.f; fill_value:99999.f}. Properties:{category:ib; data_type:float}"
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -34,17 +37,17 @@
       "@language": "en",
       "@value": "Uncompensated (pressure and salinity) oxygen concentration reported by the oxygen sensor"
     },
-    "owl:versionInfo": "3",
-    "dc:date": "2025-09-29 14:51:41.0",
+    "owl:versionInfo": "4",
+    "dc:date": "2025-11-25 10:14:01.0",
     "skos:altLabel": "MOLAR_DOXY",
     "skos:notation": "SDN:R03::MOLAR_DOXY",
     "owl:sameAs": {
       "@id": "http://vocab.nerc.ac.uk/collection/P01/current/DOXYMMOP/"
     },
-    "pav:version": "3",
+    "pav:version": "4",
     "dce:identifier": "SDN:R03::MOLAR_DOXY",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/MOLAR_DOXY/3/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/MOLAR_DOXY/4/"
     },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",

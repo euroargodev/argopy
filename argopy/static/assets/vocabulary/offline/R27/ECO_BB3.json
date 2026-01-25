@@ -1,7 +1,7 @@
 {
   "name": "ECO_BB3",
   "long_name": "ECO Triplet BB3 sensor package with three scattering meters",
-  "last_update": "2025-10-29T20:59:00.631140+00:00",
+  "last_update": "2026-01-25T11:14:08.067155+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB3/",
     "pav:authoredOn": "2021-08-09 12:23:38.0",

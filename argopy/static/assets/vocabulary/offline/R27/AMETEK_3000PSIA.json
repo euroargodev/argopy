@@ -1,7 +1,7 @@
 {
   "name": "AMETEK_3000PSIA",
   "long_name": "Ametek pressure sensor with 3000 PSIA rating",
-  "last_update": "2025-10-29T20:58:59.400551+00:00",
+  "last_update": "2026-01-25T11:14:01.633473+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/AMETEK_3000PSIA/",
     "pav:authoredOn": "2019-10-11 14:49:00.0",

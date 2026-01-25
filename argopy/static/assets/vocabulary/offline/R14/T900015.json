@@ -1,19 +1,22 @@
 {
   "name": "T900015",
   "long_name": "PRES_DescentToProfileMinPressure_dbar",
-  "last_update": "2025-10-29T20:58:06.693208+00:00",
+  "last_update": "2026-01-25T11:13:38.078631+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900015/",
-    "pav:authoredOn": "2025-09-29 14:51:40.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900015/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:54.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900015/2/"
+    },
     "dce:identifier": "SDN:R14::T900015",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T900015",
     "skos:altLabel": "900015",
-    "dc:date": "2025-09-29 14:51:40.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:54.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "PRES_DescentToProfileMinPressure_dbar"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Deprecated - Descent to profile - Min pressure. MC minus 3."
+      "@value": "Deprecated - Minimum pressure during descent to profile. MC minus 3. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
     },
     "@type": "skos:Concept",
     "@context": {

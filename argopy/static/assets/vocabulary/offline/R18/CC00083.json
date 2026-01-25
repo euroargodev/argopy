@@ -1,19 +1,22 @@
 {
   "name": "CC00083",
   "long_name": "CONFIG_IceDetectionPressureInterval_dbar",
-  "last_update": "2025-10-29T21:00:25.775367+00:00",
+  "last_update": "2026-01-25T11:15:45.431037+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00083/",
-    "pav:authoredOn": "2023-05-02 16:34:05.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00083/1/"
     },
+    "pav:authoredOn": "2025-12-12 11:41:11.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00083/2/"
+    },
     "dce:identifier": "SDN:R18::CC00083",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R18::CC00083",
-    "skos:altLabel": "Core Config 83 - Optional",
-    "dc:date": "2023-05-02 16:34:05.0",
-    "owl:versionInfo": "1",
+    "skos:altLabel": "Core Config 83",
+    "dc:date": "2025-12-12 11:41:11.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "CONFIG_IceDetectionPressureInterval_dbar"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Period of the ice detection algorithm. \"It is the pressure interval used by the float to collect T and S samples between CONFIG_IceDetectionMixedLayerPMax_dbar and CONFIG_IceDetectionMixedLayerPMin_dbar for the TEMP comparison.\" Original proposed name was: CONFIG_IceDetectionPeriod_dbar"
+      "@value": "Period of the ice detection algorithm. It is the pressure interval used by the float to collect T and S samples between CONFIG_IceDetectionMixedLayerPMax_dbar and CONFIG_IceDetectionMixedLayerPMin_dbar for the TEMP comparison. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
     },
     "@type": "skos:Concept",
     "@context": {

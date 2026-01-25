@@ -1,19 +1,22 @@
 {
   "name": "T000044",
   "long_name": "PRES_SurfaceOffsetAfterReset_5cBarResolution_dbar",
-  "last_update": "2025-10-29T20:58:39.450710+00:00",
+  "last_update": "2026-01-25T11:13:30.001490+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000044/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000044/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:15.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000044/2/"
+    },
     "dce:identifier": "SDN:R14::T000044",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T000044",
     "skos:altLabel": "44",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:15.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "PRES_SurfaceOffsetAfterReset_5cBarResolution_dbar"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Surface pressure offset measured after the pressure correction has been applied. Used for SOLO-SIO floats that transmit surface pressure after reset with 0.5db resolution - may be used for other floats as well. Note: this is a relative offset and no further correction is required. Autocorrected. Autocorrecting so no adjustment in either RT or DM typically required"
+      "@value": "Surface pressure offset measured after the pressure correction has been applied. Used for SOLO-SIO floats that transmit surface pressure after reset with 0.5db resolution - may be used for other floats as well. This is a relative offset and no further correction is required. Autocorrected. Autocorrecting so no adjustment in either RT or DM typically required. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
     },
     "@type": "skos:Concept",
     "@context": {

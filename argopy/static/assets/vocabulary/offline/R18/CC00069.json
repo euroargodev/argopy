@@ -1,19 +1,22 @@
 {
   "name": "CC00069",
   "long_name": "CONFIG_IceDetection_degC",
-  "last_update": "2025-10-29T21:00:40.463447+00:00",
+  "last_update": "2026-01-25T11:16:05.879741+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00069/",
-    "pav:authoredOn": "2023-05-02 16:34:05.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00069/1/"
     },
+    "pav:authoredOn": "2025-12-12 11:41:03.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00069/2/"
+    },
     "dce:identifier": "SDN:R18::CC00069",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R18::CC00069",
-    "skos:altLabel": "Core Config 69 - Mandatory (if applies)",
-    "dc:date": "2023-05-02 16:34:05.0",
-    "owl:versionInfo": "1",
+    "skos:altLabel": "Core Config 69",
+    "dc:date": "2025-12-12 11:41:03.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "CONFIG_IceDetection_degC"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Ice temperature in [degree Celsius/1e3] where profiles are aborted because of ice formation conditions"
+      "@value": "Temperature threshold under which profiles are aborted (suspicion of ice formation conditions). Template_Values:{unit:[degC, mdegC]}."
     },
     "@type": "skos:Concept",
     "@context": {

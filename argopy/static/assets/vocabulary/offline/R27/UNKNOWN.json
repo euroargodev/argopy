@@ -1,7 +1,7 @@
 {
   "name": "UNKNOWN",
   "long_name": "Unknown sensor model",
-  "last_update": "2025-10-29T20:58:54.067986+00:00",
+  "last_update": "2026-01-25T11:13:53.289523+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/UNKNOWN/",
     "pav:authoredOn": "2019-10-11 14:49:00.0",

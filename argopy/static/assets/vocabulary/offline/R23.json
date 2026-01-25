@@ -1,7 +1,7 @@
 {
   "name": "PLATFORM_TYPE",
   "long_name": "Argo platform type",
-  "last_update": "2025-10-29T19:56:32.452333+00:00",
+  "last_update": "2026-01-25T10:44:08.494653+00:00",
   "data": {
     "@graph": [
       {
@@ -69,37 +69,6 @@
         },
         "skos:related": {
           "@id": "http://vocab.nerc.ac.uk/collection/R24/current/WHOI/"
-        },
-        "@type": "skos:Concept"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/COPEX/",
-        "pav:authoredOn": "2020-05-03 20:30:02.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/COPEX/1/"
-        },
-        "dce:identifier": "SDN:R23::COPEX",
-        "pav:version": "1",
-        "skos:notation": "SDN:R23::COPEX",
-        "skos:altLabel": "COPEX",
-        "dc:date": "2020-05-03 20:30:02.0",
-        "owl:versionInfo": "1",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "COPEX float"
-        },
-        "dc:identifier": "SDN:R23::COPEX",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "COPEX float. PLATFORM_TYPE_KEY = 701"
         },
         "@type": "skos:Concept"
       },
@@ -868,6 +837,43 @@
         }
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/COPEX/",
+        "pav:authoredOn": "2020-05-03 20:30:02.0",
+        "@type": "skos:Concept",
+        "skos:related": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NOTC/"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "COPEX float. PLATFORM_TYPE_KEY = 701"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R23::COPEX",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "COPEX float"
+        },
+        "owl:versionInfo": "1",
+        "skos:narrower": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R08/current/871/"
+        },
+        "dc:date": "2020-05-03 20:30:02.0",
+        "skos:altLabel": "COPEX",
+        "skos:notation": "SDN:R23::COPEX",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R23::COPEX",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/COPEX/1/"
+        }
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_BGC/",
         "pav:authoredOn": "2024-04-18 10:15:35.0",
         "pav:hasCurrentVersion": {
@@ -1623,9 +1629,6 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ITP/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/COPEX/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R23/current/POPS_NEMO/"
           },
           {
@@ -1684,6 +1687,9 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_D_MRV/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/COPEX/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_BGC/"

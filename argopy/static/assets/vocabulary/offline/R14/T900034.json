@@ -1,19 +1,22 @@
 {
   "name": "T900034",
   "long_name": "TEMP_ParkMinimum_degC",
-  "last_update": "2025-10-29T20:58:45.635810+00:00",
+  "last_update": "2026-01-25T11:12:04.039352+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900034/",
-    "pav:authoredOn": "2025-09-29 14:51:40.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900034/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:52.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900034/2/"
+    },
     "dce:identifier": "SDN:R14::T900034",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T900034",
     "skos:altLabel": "900034",
-    "dc:date": "2025-09-29 14:51:40.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:52.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "TEMP_ParkMinimum_degC"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Deprecated - TEMP min during park phase. MC minus 3 or 297."
+      "@value": "Deprecated - Minimum temperature during park phase. MC minus 3 or 297. Template_Values:{unit:[degC, mdegC]}."
     },
     "@type": "skos:Concept",
     "@context": {

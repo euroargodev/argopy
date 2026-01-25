@@ -1,19 +1,22 @@
 {
   "name": "T000061",
   "long_name": "CLOCK_FloatTimeCorrection_MMSS",
-  "last_update": "2025-10-29T20:58:31.140079+00:00",
+  "last_update": "2026-01-25T11:11:54.702861+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000061/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000061/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:19.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000061/2/"
+    },
     "dce:identifier": "SDN:R14::T000061",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T000061",
     "skos:altLabel": "61",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:19.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "CLOCK_FloatTimeCorrection_MMSS"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "float internal clock time correction"
+      "@value": "Float internal clock time correction. Template_Values:{unit:[YYYYMMDD, HHMMSS, YYYYMMDDHHMMSS, HHMM, MMSS, YYYY, DD, HH, MM, days, hours, minutes, seconds]}."
     },
     "@type": "skos:Concept",
     "@context": {

@@ -1,19 +1,24 @@
 {
   "name": "RAW_UPWELLING_RADIANCE412",
   "long_name": "Raw upwelling radiance at 412 nanometers",
-  "last_update": "2025-10-29T20:57:40.235994+00:00",
+  "last_update": "2026-01-25T11:11:33.196046+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_UPWELLING_RADIANCE412/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_UPWELLING_RADIANCE412/1/"
-    },
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_UPWELLING_RADIANCE412/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_UPWELLING_RADIANCE412/1/"
+      }
+    ],
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UUUU/"
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Raw upwelling radiance signal at 412 nm wavelength, reported by OCR504 sensor. Local_Attributes:{long_name:Raw upwelling radiance at 412 nanometers; standard_name:-; units:count; valid_min:-; valid_max:-; category:ib; fill_value:NC_FILL_DOUBLE; data_type:double}."
+      "@value": "Raw upwelling radiance signal at 412 nm wavelength, reported by OCR504 sensor. Local_Attributes:{long_name:Raw upwelling radiance at 412 nanometers; standard_name:-; units:count; valid_min:-; valid_max:-; fill_value:NC_FILL_DOUBLE}. Properties:{category:ib; data_type:double}"
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -28,16 +33,16 @@
       "@language": "en",
       "@value": "Raw upwelling radiance at 412 nanometers"
     },
-    "owl:versionInfo": "2",
-    "dc:date": "2025-09-29 14:51:39.0",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-25 10:14:02.0",
     "skos:altLabel": "RAW_UPWELLING_RADIANCE412",
     "skos:notation": "SDN:R03::RAW_UPWELLING_RADIANCE412",
-    "pav:version": "2",
+    "pav:version": "3",
     "dce:identifier": "SDN:R03::RAW_UPWELLING_RADIANCE412",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_UPWELLING_RADIANCE412/2/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_UPWELLING_RADIANCE412/3/"
     },
-    "pav:authoredOn": "2025-09-29 14:51:39.0",
+    "pav:authoredOn": "2025-11-25 10:14:02.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

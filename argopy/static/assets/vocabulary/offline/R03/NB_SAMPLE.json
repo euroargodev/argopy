@@ -1,20 +1,25 @@
 {
   "name": "NB_SAMPLE",
   "long_name": "Number of samples in bin",
-  "last_update": "2025-10-29T20:57:41.251657+00:00",
+  "last_update": "2026-01-25T11:11:34.258689+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE/1/"
-    },
-    "pav:authoredOn": "2025-09-29 14:51:42.0",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE/2/"
+      }
+    ],
+    "pav:authoredOn": "2025-11-26 10:16:03.0",
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UUUU/"
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Number of samples in bin (dimensionless)."
+      "@value": "Not Used. Number of samples in each pressure bin. Local_Attributes:{long_name:Number of samples in each pressure bin; standard_name:-; units:count; valid_min:-; valid_max:-; fill_value:NC_FILL_SHORT}. Properties:{category:ic; data_type:short}."
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -29,17 +34,17 @@
       "@language": "en",
       "@value": "Number of samples in bin"
     },
-    "owl:versionInfo": "2",
-    "dc:date": "2025-09-29 14:51:42.0",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-26 10:16:03.0",
     "skos:altLabel": "NB_SAMPLE",
     "skos:notation": "SDN:R03::NB_SAMPLE",
     "owl:sameAs": {
       "@id": "http://vocab.nerc.ac.uk/collection/P01/current/NUMVALES/"
     },
-    "pav:version": "2",
+    "pav:version": "3",
     "dce:identifier": "SDN:R03::NB_SAMPLE",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE/2/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE/3/"
     },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",

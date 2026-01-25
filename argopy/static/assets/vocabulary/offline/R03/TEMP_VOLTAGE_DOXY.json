@@ -1,10 +1,13 @@
 {
   "name": "TEMP_VOLTAGE_DOXY",
   "long_name": "Thermistor voltage reported by oxygen sensor",
-  "last_update": "2025-10-29T20:57:34.826032+00:00",
+  "last_update": "2026-01-25T11:11:27.392814+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_VOLTAGE_DOXY/",
     "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_VOLTAGE_DOXY/3/"
+      },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_VOLTAGE_DOXY/1/"
       },
@@ -12,14 +15,14 @@
         "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_VOLTAGE_DOXY/2/"
       }
     ],
-    "pav:authoredOn": "2025-09-29 14:51:40.0",
+    "pav:authoredOn": "2025-11-25 10:14:02.0",
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UVLT/"
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Raw temperature signal (voltage) from the thermistor of dissolved oxygen sensor, reported by the SBE63 sensor. Local_Attributes:{long_name:Thermistor voltage reported by oxygen sensor; standard_name:-; units:volt; valid_min:-; valid_max:-; category:ib; fill_value:99999.f; data_type:float}."
+      "@value": "Raw temperature signal (voltage) from the thermistor of dissolved oxygen sensor, reported by the SBE63 sensor. Local_Attributes:{long_name:Thermistor voltage reported by oxygen sensor; standard_name:-; units:volt; valid_min:-; valid_max:-; fill_value:99999.f}. Properties:{category:ib; data_type:float}"
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -34,17 +37,17 @@
       "@language": "en",
       "@value": "Thermistor voltage reported by oxygen sensor"
     },
-    "owl:versionInfo": "3",
-    "dc:date": "2025-09-29 14:51:40.0",
+    "owl:versionInfo": "4",
+    "dc:date": "2025-11-25 10:14:02.0",
     "skos:altLabel": "TEMP_VOLTAGE_DOXY",
     "skos:notation": "SDN:R03::TEMP_VOLTAGE_DOXY",
     "owl:sameAs": {
       "@id": "http://vocab.nerc.ac.uk/collection/P01/current/TCNTOPTT/"
     },
-    "pav:version": "3",
+    "pav:version": "4",
     "dce:identifier": "SDN:R03::TEMP_VOLTAGE_DOXY",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_VOLTAGE_DOXY/3/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_VOLTAGE_DOXY/4/"
     },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",

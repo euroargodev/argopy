@@ -1,19 +1,22 @@
 {
   "name": "CC00013",
   "long_name": "CONFIG_BitMaskMonthsIceDetectionActive_NUMBER",
-  "last_update": "2025-10-29T21:00:28.307123+00:00",
+  "last_update": "2026-01-25T11:15:50.120767+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00013/",
-    "pav:authoredOn": "2023-05-02 16:34:05.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00013/1/"
     },
+    "pav:authoredOn": "2025-12-12 11:41:10.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00013/2/"
+    },
     "dce:identifier": "SDN:R18::CC00013",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R18::CC00013",
-    "skos:altLabel": "Core Config 13 - Optional",
-    "dc:date": "2023-05-02 16:34:05.0",
-    "owl:versionInfo": "1",
+    "skos:altLabel": "Core Config 13",
+    "dc:date": "2025-12-12 11:41:10.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "CONFIG_BitMaskMonthsIceDetectionActive_NUMBER"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "This parameter indicates for which months the ice detection algorithm is active. The bit mask is input as a 3 digit hexadecimal value in the mission file sent to the float. This parameter in the metadata file however is the decimal number of that hexadecimal value. For example for the Southern Hemisphere the default position is to have the ice detection algorithm active for all months except February. (The hexadecimal value in the mission file is 'FFD' and the number for the configuration parameter in the metafile would be 4093). The northern hemisphere default would be all months active except for August. In this case the hexadecimal value is 'F7F' and the number in the configuration parameter in the metafile would be 3967)."
+      "@value": "Indicates for which months the ice detection algorithm is active - months in reverse order. The bit mask is input as a 3 digit hexadecimal value in the mission file sent to the float. This parameter in the metadata file however is the decimal number of that hexadecimal value. For example for the Southern Hemisphere the default position is to have the ice detection algorithm active for all months except February: the hexadecimal value in the mission file is 'FFD' (or 1111 1111 1101 in binary representation), and the associated decimal value for the configuration parameter in the metafile would be 4093. The northern hemisphere default would be all months active except for August: the hexadecimal value is 'F7F' (or 1111 0111 1111 in binary representation) and the associated decimal value for the configuration parameter in the metafile would be 3967. Template_Values:{unit:[NUMBER]}."
     },
     "@type": "skos:Concept",
     "@context": {

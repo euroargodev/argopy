@@ -1,7 +1,7 @@
 {
   "name": "23",
   "long_name": "Interim rtqc flag scheme for data deeper than 2000 dbar",
-  "last_update": "2025-10-29T20:57:44.000736+00:00",
+  "last_update": "2026-01-25T11:11:37.272537+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R11/current/23/",
     "pav:authoredOn": "2020-04-07 22:59:46.0",

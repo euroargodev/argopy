@@ -1,7 +1,7 @@
 {
   "name": "BACKSCATTERINGMETER_BBP532",
   "long_name": "Backscattering meter measuring backscattering at 532 nanometers",
-  "last_update": "2025-10-29T21:00:03.906657+00:00",
+  "last_update": "2026-01-25T11:15:18.033343+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP532/",
     "pav:authoredOn": "2021-02-09 15:34:44.0",

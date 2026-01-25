@@ -1,7 +1,7 @@
 {
   "name": "FLOATCLOCK",
   "long_name": "Float clock",
-  "last_update": "2025-10-29T20:59:04.505579+00:00",
+  "last_update": "2026-01-25T11:14:10.447129+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/FLOATCLOCK/",
     "pav:authoredOn": "2021-08-18 14:32:12.0",

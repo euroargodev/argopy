@@ -1,37 +1,45 @@
 {
   "name": "T000227",
   "long_name": "NUMBER_<short_sensor_name>FramesEmittedOnAscendingProfile1_COUNT",
-  "last_update": "2025-10-29T20:58:19.900214+00:00",
+  "last_update": "2026-01-25T11:13:08.258021+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000227/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000227/1/"
-    },
-    "dce:identifier": "SDN:R14::T000227",
-    "pav:version": "1",
-    "skos:notation": "SDN:R14::T000227",
-    "skos:altLabel": "227",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
-    "skos:prefLabel": {
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000227/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000227/1/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
       "@language": "en",
-      "@value": "NUMBER_<short_sensor_name>FramesEmittedOnAscendingProfile1_COUNT"
+      "@value": "Distinct optique frames emitted on ascending profile - Profile 1. Template_Values:{unit:[COUNT];short_sensor_name:[Crover, Ctd, CTD, Cyc, Eco, Flbb, Flntu, Mcoms, Ocr, Optode, Ph, Sfet, Stm, Suna]}."
     },
-    "dc:identifier": "SDN:R14::T000227",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R14::T000227",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "Distinct optique frames emitted on ascending profile - Profile 1"
+      "@value": "NUMBER_<short_sensor_name>FramesEmittedOnAscendingProfile1_COUNT"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "3",
+    "dc:date": "2026-01-19 15:35:34.0",
+    "skos:altLabel": "227",
+    "skos:notation": "SDN:R14::T000227",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R14::T000227",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000227/3/"
+    },
+    "pav:authoredOn": "2026-01-19 15:35:34.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

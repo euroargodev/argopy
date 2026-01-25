@@ -1,7 +1,7 @@
 {
   "name": "List of Argo NVS reference tables",
   "long_name": "List of Argo NVS reference table ids and description",
-  "last_update": "2025-10-21T13:00:31.288927+00:00",
+  "last_update": "2026-01-25T10:41:09.036376+00:00",
   "data": {
     "valid_ref": [
       "R01",
@@ -44,14 +44,14 @@
         "altLabel": "DATA_CENTRE_CODES",
         "prefLabel": "Argo data centres and institutions",
         "description": "Codes for data centres and institutions handling or managing Argo data. Argo netCDF variable DATA_CENTRE is populated by R04 altLabel.",
-        "date": "2025-10-09 03:00:01.0",
+        "date": "2025-12-12 02:00:02.0",
         "uri": "http://vocab.nerc.ac.uk/collection/R04/current/"
       },
       {
         "id": "RD2",
         "altLabel": "DM_QC_FLAG",
         "prefLabel": "Argo delayed-mode quality control measurement flags",
-        "description": "Quality flag scale for delayed-mode measurements. Argo netCDF variables <PARAMETER>_ADJUSTED_QC in 'D' mode are populated by RD2 altLabel.",
+        "description": "Quality flag scale for delayed-mode measurements. Argo netCDF {param}_ADJUSTED_QC when data_mode='D' are populated by RD2 altLabel, with {param} consisting of R03 altLabels. Associated FillValue is an empty space in Argo NetCDF files. This case can occur, e.g., in Argo multi-cycle files when the maximum number of vertical level is not reached by a cycle, or for levels not concerning a specific sensor, or for sampling schemes not concerning a sensor.",
         "date": "2024-04-19 03:00:08.0",
         "uri": "http://vocab.nerc.ac.uk/collection/RD2/current/"
       },
@@ -60,7 +60,7 @@
         "altLabel": "PLATFORM_MAKER",
         "prefLabel": "Argo platform maker",
         "description": "List of Argo float manufacturers. Argo netCDF variable PLATFORM_MAKER is populated by R24 altLabel.",
-        "date": "2024-11-12 02:00:00.0",
+        "date": "2025-11-26 02:00:00.0",
         "uri": "http://vocab.nerc.ac.uk/collection/R24/current/"
       },
       {
@@ -163,7 +163,7 @@
         "id": "RP2",
         "altLabel": "PROF_QC_FLAG",
         "prefLabel": "Argo profile quality control flags",
-        "description": "Quality control flag scale for whole profiles. Argo netCDF variables PROFILE_<PARAMETER>_QC are populated by RP2 altLabel.",
+        "description": "Quality control flag scale for whole profiles. Argo netCDF variables PROFILE_{param}_QC are populated by RP2 altLabel, with {param} consisting of R03 altLabels. Associated FillValue is an empty space in Argo NetCDF files. This case occurs when no QC is performed or no usable flag values are present.",
         "date": "2025-08-29 03:00:01.0",
         "uri": "http://vocab.nerc.ac.uk/collection/RP2/current/"
       },
@@ -171,8 +171,8 @@
         "id": "R03",
         "altLabel": "PARAMETER",
         "prefLabel": "Argo parameter codes",
-        "description": "Terms describing individual measured phenomena, used to mark up sets of data in Argo netCDF arrays. Argo netCDF variables PARAMETER and TRAJECTORY_PARAMETERS are populated by R03 altLabel; R03 altLabel is also used to name netCDF profile files parameter variables <PARAMETER>.",
-        "date": "2025-10-09 03:00:01.0",
+        "description": "Terms describing individual measured parameters or phenomena, used to mark up sets of data in Argo netCDF arrays. Argo netCDF variables PARAMETER, STATION_PARAMETERS, HISTORY_PARAMETER and TRAJECTORY_PARAMETERS are populated by R03 altLabel. R03 altLabel is also used to name netCDF variables. Detailed information (incl. about Local_Attributes and Properties) is in the user manual (https://dx.doi.org/10.13155/29825), in the Reference Table 3 section.",
+        "date": "2026-01-16 02:00:00.0",
         "uri": "http://vocab.nerc.ac.uk/collection/R03/current/"
       },
       {
@@ -187,8 +187,8 @@
         "id": "R14",
         "altLabel": "TECHNICAL_PARAMETER_NAME",
         "prefLabel": "Argo technical parameter names",
-        "description": "List of technical parameters reported by a float at every cycle. Technical parameter names follow a naming convention to indicate what is being reported (category), where or when (descriptor), and in what units, delimited by an underscore. They are stored in the float 'tech.nc' file, under TECHNICAL_PARAMETER_NAME. Each technical parameter name has an associated value, stored in TECHNICAL_PARAMTER_VALUE. Argo netCDF variable TECHNICAL_PARAMETER_NAME is populated by R14 prefLabel.",
-        "date": "2025-09-30 03:00:01.0",
+        "description": "List of technical parameters reported by a float at every cycle. Technical parameter names are stored in the float 'tech.nc' file, under TECHNICAL_PARAMETER_NAME, which is populated by R14 prefLabel. Detailed information (incl. Template_Values explanation) is in the user manual (https://dx.doi.org/10.13155/29825), in the Reference Table 14 section.",
+        "date": "2026-01-20 02:00:01.0",
         "uri": "http://vocab.nerc.ac.uk/collection/R14/current/"
       },
       {
@@ -204,7 +204,7 @@
         "altLabel": "SENSOR_MODEL",
         "prefLabel": "Argo sensor models",
         "description": "Terms listing models of sensors mounted on Argo floats. Note: avoid using the manufacturer name and sensor firmware version in new entries when possible. Argo netCDF variable SENSOR_MODEL is populated by R27 altLabel.",
-        "date": "2025-10-09 03:00:01.0",
+        "date": "2025-11-19 02:00:00.0",
         "uri": "http://vocab.nerc.ac.uk/collection/R27/current/"
       },
       {
@@ -219,7 +219,7 @@
         "id": "RR2",
         "altLabel": "RT_QC_FLAG",
         "prefLabel": "Argo real-time quality control measurement flags",
-        "description": "Quality flag scale for real-time measurements. Argo netCDF variables <PARAMETER>_QC in 'R' mode and <PARAMETER>_ADJUSTED_QC in 'A' mode are populated by RR2 altLabel.",
+        "description": "Quality flag scale for real-time measurements. Argo netCDF {param}_QC when data_mode='R' and {param}_ADJUSTED_QC when data_mode='A' are populated by RR2 altLabel, with {param} consisting of R03 altLabels. Associated FillValue is an empty space in Argo NetCDF file. This case can occur, e.g., in Argo multi-cycle files when the maximum number of vertical levels is not reached by a cycle, or for levels not concerning a specific sensor, or for sampling schemes not concerning a sensor.",
         "date": "2024-04-19 03:00:08.0",
         "uri": "http://vocab.nerc.ac.uk/collection/RR2/current/"
       },
@@ -283,8 +283,8 @@
         "id": "R18",
         "altLabel": "CONFIG_PARAMETER_NAME",
         "prefLabel": "Argo configuration parameter names",
-        "description": "List of float configuration settings selected by the float Principal Investigator (PI). Configuration parameters may or may not be reported by the float, and do not constitute float measurements. Configuration parameters selected for a float are stored in the float 'meta.nc' file, under CONFIG_PARAMETER_NAME. Each configuration parameter name has an associated value, stored in CONFIG_PARAMETER_VALUE. Argo netCDF variable CONFIG_PARAMETER_NAME is populated by R18 prefLabel.",
-        "date": "2025-06-10 03:00:00.0",
+        "description": "List of float configuration settings selected by the float Principal Investigator (PI). Configuration parameters selected for a float are stored in the float 'meta.nc' file, under CONFIG_PARAMETER_NAME and LAUNCH_CONFIG_PARAMETER_NAME, which are populated by R18 prefLabel. Detailed information (incl. Template_Values explanation) is in the user manual (https://dx.doi.org/10.13155/29825), in the Reference Table 18 section.",
+        "date": "2025-12-13 02:00:01.0",
         "uri": "http://vocab.nerc.ac.uk/collection/R18/current/"
       },
       {

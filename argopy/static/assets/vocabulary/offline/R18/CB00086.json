@@ -1,40 +1,45 @@
 {
   "name": "CB00086",
   "long_name": "CONFIG_<short_sensor_name><cycle_phase_name>SamplingScheme<S>SubSampling<SubS>DataProcessingMode_NUMBER",
-  "last_update": "2025-10-29T21:00:10.805432+00:00",
+  "last_update": "2026-01-25T11:16:02.340773+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00086/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00086/1/"
-    },
-    "pav:authoredOn": "2023-05-02 19:58:02.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00086/2/"
-    },
-    "dce:identifier": "SDN:R18::CB00086",
-    "pav:version": "2",
-    "skos:notation": "SDN:R18::CB00086",
-    "skos:altLabel": "BGC Config 86 - Optional",
-    "dc:date": "2023-05-02 19:58:02.0",
-    "owl:versionInfo": "2",
-    "skos:prefLabel": {
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00086/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00086/2/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
       "@language": "en",
-      "@value": "CONFIG_<short_sensor_name><cycle_phase_name>SamplingScheme<S>SubSampling<SubS>DataProcessingMode_NUMBER"
+      "@value": "Data processing mode for the subsampling #<SubS> of the data sampled within the sampling scheme #<S> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle. Template_Values:{short_sensor_name:[Crover, Cyc, Eco, Flbb, Flntu, Ocr, Optode, Sfet, Stm, Suna];cycle_phase_name:[ParkDriftPhase, ProfDriftPhase, SurfaceDriftPhase];S:[1..9999];SubS:[1..9999];unit:[NUMBER]}."
     },
-    "dc:identifier": "SDN:R18::CB00086",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R18::CB00086",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "Data processing mode for the subsampling #<SubS> of the data sampled within the sampling scheme #<S> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle."
+      "@value": "CONFIG_<short_sensor_name><cycle_phase_name>SamplingScheme<S>SubSampling<SubS>DataProcessingMode_NUMBER"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-12-11 09:34:55.0",
+    "skos:altLabel": "BGC Config 86",
+    "skos:notation": "SDN:R18::CB00086",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R18::CB00086",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00086/3/"
+    },
+    "pav:authoredOn": "2025-12-11 09:34:55.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

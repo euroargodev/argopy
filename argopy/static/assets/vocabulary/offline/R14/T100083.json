@@ -1,19 +1,22 @@
 {
   "name": "T100083",
   "long_name": "CLOCK_PressureActivationStart_YYYYMMDDHHMMSS",
-  "last_update": "2025-10-29T20:58:44.290823+00:00",
+  "last_update": "2026-01-25T11:13:04.038457+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100083/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100083/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:21.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100083/2/"
+    },
     "dce:identifier": "SDN:R14::T100083",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T100083",
     "skos:altLabel": "83.1",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:21.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "CLOCK_PressureActivationStart_YYYYMMDDHHMMSS"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Pressure activation scrutation start date. The pressure activation phase starts after the first successfull auto-test and ends (with the start of the float mission) at the end of the CONFIG_PressureActivationTimeout_seconds period. During this phase the float checks the external pressure and can start its mission as soon as a CONFIG_PressureActivation_dbar pressure is measured."
+      "@value": "Pressure activation scrutation start date. The pressure activation phase starts after the first successfull auto-test and ends (with the start of the float mission) at the end of the CONFIG_PressureActivationTimeout_seconds period. During this phase the float checks the external pressure and can start its mission as soon as a CONFIG_PressureActivation_dbar pressure is measured. Template_Values:{unit:[YYYYMMDD, HHMMSS, YYYYMMDDHHMMSS, HHMM, MMSS, YYYY, DD, HH, MM]}."
     },
     "@type": "skos:Concept",
     "@context": {

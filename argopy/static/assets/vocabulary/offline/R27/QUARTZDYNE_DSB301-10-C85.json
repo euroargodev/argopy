@@ -1,7 +1,7 @@
 {
   "name": "QUARTZDYNE_DSB301-10-C85",
   "long_name": "Quartzdyne DSB301-10-C85 pressure sensor",
-  "last_update": "2025-10-29T20:58:54.629587+00:00",
+  "last_update": "2026-01-25T11:13:54.420838+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/QUARTZDYNE_DSB301-10-C85/",
     "pav:hasVersion": [

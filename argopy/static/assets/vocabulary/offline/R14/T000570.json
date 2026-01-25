@@ -1,19 +1,22 @@
 {
   "name": "T000570",
   "long_name": "VOLTAGE_SUNAAPFSupplyVoltage_volts",
-  "last_update": "2025-10-29T20:58:07.095066+00:00",
+  "last_update": "2026-01-25T11:13:38.993932+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000570/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000570/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:05:05.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000570/2/"
+    },
     "dce:identifier": "SDN:R14::T000570",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T000570",
     "skos:altLabel": "570",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:05:05.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "VOLTAGE_SUNAAPFSupplyVoltage_volts"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Voltage [V] measured inside SUNA via ADC. The voltage available to the SUNA just outside its power regulators. SUNA can operate on 6 to 18 VDC. This voltage allows the operator to monitor supply voltage, and in the case of a drop to make decisions on the continued operation of the SUNA."
+      "@value": "Voltage measured inside SUNA via ADC. The voltage available to the SUNA just outside its power regulators. SUNA can operate on 6 to 18 VDC. This voltage allows the operator to monitor supply voltage, and in the case of a drop to make decisions on the continued operation of the SUNA. Template_Values:{unit:[COUNT, volts, mV]}."
     },
     "@type": "skos:Concept",
     "@context": {

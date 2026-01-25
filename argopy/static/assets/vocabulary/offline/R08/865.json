@@ -1,7 +1,7 @@
 {
   "name": "865",
   "long_name": "NOVA float with SBE conductivity sensor",
-  "last_update": "2025-10-29T20:59:15.247153+00:00",
+  "last_update": "2026-01-25T11:14:23.108839+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/865/",
     "pav:authoredOn": "2020-05-03 20:28:54.0",

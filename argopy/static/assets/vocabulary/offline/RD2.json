@@ -1,7 +1,7 @@
 {
   "name": "DM_QC_FLAG",
   "long_name": "Argo delayed-mode quality control measurement flags",
-  "last_update": "2025-10-29T19:56:30.965900+00:00",
+  "last_update": "2026-01-25T10:44:06.591951+00:00",
   "data": {
     "@graph": [
       {
@@ -297,7 +297,7 @@
         ],
         "@type": "skos:Collection",
         "dc:publisher": "Natural Environment Research Council",
-        "dc:description": "Quality flag scale for delayed-mode measurements. Argo netCDF variables <PARAMETER>_ADJUSTED_QC in 'D' mode are populated by RD2 altLabel.",
+        "dc:description": "Quality flag scale for delayed-mode measurements. Argo netCDF {param}_ADJUSTED_QC when data_mode='D' are populated by RD2 altLabel, with {param} consisting of R03 altLabels. Associated FillValue is an empty space in Argo NetCDF files. This case can occur, e.g., in Argo multi-cycle files when the maximum number of vertical level is not reached by a cycle, or for levels not concerning a specific sensor, or for sampling schemes not concerning a sensor.",
         "dc:title": "Argo delayed-mode quality control measurement flags",
         "skos:prefLabel": "Argo delayed-mode quality control measurement flags",
         "owl:versionInfo": "1",

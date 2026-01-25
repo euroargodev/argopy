@@ -1,7 +1,7 @@
 {
   "name": "BODIS",
   "long_name": "Bounce sampling: discrete",
-  "last_update": "2025-10-29T20:57:19.357670+00:00",
+  "last_update": "2026-01-25T11:11:09.501504+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R16/current/BODIS/",
     "pav:authoredOn": "2020-05-03 20:29:08.0",

@@ -1,7 +1,7 @@
 {
   "name": "CTD_CNDC",
   "long_name": "Conductivity Temperature Depth (CTD) sensors package measuring conductivity",
-  "last_update": "2025-10-29T21:00:00.204006+00:00",
+  "last_update": "2026-01-25T11:15:16.122367+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/",
     "pav:authoredOn": "2019-10-11 15:06:36.0",

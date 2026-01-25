@@ -1,19 +1,22 @@
 {
   "name": "T000038",
   "long_name": "PRES_SurfaceOffsetBeforeResetTruncated_dbar",
-  "last_update": "2025-10-29T20:58:13.452089+00:00",
+  "last_update": "2026-01-25T11:13:27.427443+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000038/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000038/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:05:00.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000038/2/"
+    },
     "dce:identifier": "SDN:R14::T000038",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T000038",
     "skos:altLabel": "38",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:05:00.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "PRES_SurfaceOffsetBeforeResetTruncated_dbar"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Surface pressure measurement which is then used to correct pressure on board the float. Note: this is a CUMULATIVE offset and no further correction is required. Negative offsets truncated to 0. Autocorrected. Autocorrecting so no adjustment in either RT or DM typically required. NOTE: if the SPO is >40 for the Argo CTD, then the autocorrection is PARTIALLY applied (40 is subtracted, leaving the 'excess' offset uncorrected) and the pressures may need to be adjusted in RT and DM."
+      "@value": "Surface pressure measurement which is then used to correct pressure on board the float. This is a cumulative offset and no further correction is required. Negative offsets truncated to 0. Autocorrected. Autocorrecting so no adjustment in either RT or DM typically required. NOTE: if the SPO is >40 for the Argo CTD, then the autocorrection is PARTIALLY applied (40 is subtracted, leaving the excess offset uncorrected) and the pressures may need to be adjusted in RT and DM. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
     },
     "@type": "skos:Concept",
     "@context": {

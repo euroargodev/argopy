@@ -1,20 +1,25 @@
 {
   "name": "UV_INTENSITY_DARK_SEAWATER_NITRATE",
   "long_name": "Intensity of ultra-violet flux dark sea water from nitrate sensor",
-  "last_update": "2025-10-29T20:57:41.879558+00:00",
+  "last_update": "2026-01-25T11:11:34.849787+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UV_INTENSITY_DARK_SEAWATER_NITRATE/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UV_INTENSITY_DARK_SEAWATER_NITRATE/1/"
-    },
-    "pav:authoredOn": "2025-09-29 14:51:43.0",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UV_INTENSITY_DARK_SEAWATER_NITRATE/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UV_INTENSITY_DARK_SEAWATER_NITRATE/2/"
+      }
+    ],
+    "pav:authoredOn": "2025-11-25 10:14:01.0",
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UUUU/"
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Raw ultra-violet (UV) flux signal in seawater and darkness from nitrate sensor. From light absorption on pixels at shortest wavelengths of array, reported by the SUNA sensor. Local_Attributes:{long_name:Intensity of ultra-violet flux dark sea water from nitrate sensor; standard_name:-; units:count; valid_min:-; valid_max:-; category:ib; fill_value:99999.f; data_type:float}."
+      "@value": "Raw ultra-violet (UV) flux signal in seawater and darkness from nitrate sensor. From light absorption on pixels at shortest wavelengths of array, reported by the SUNA sensor. Local_Attributes:{long_name:Intensity of ultra-violet flux dark sea water from nitrate sensor; standard_name:-; units:count; valid_min:-; valid_max:-; fill_value:99999.f}. Properties:{category:ib; data_type:float}"
     },
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -29,17 +34,17 @@
       "@language": "en",
       "@value": "Intensity of ultra-violet flux dark sea water from nitrate sensor"
     },
-    "owl:versionInfo": "2",
-    "dc:date": "2025-09-29 14:51:43.0",
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-25 10:14:01.0",
     "skos:altLabel": "UV_INTENSITY_DARK_SEAWATER_NITRATE",
     "skos:notation": "SDN:R03::UV_INTENSITY_DARK_SEAWATER_NITRATE",
     "owl:sameAs": {
       "@id": "http://vocab.nerc.ac.uk/collection/P01/current/UVSDZZ01/"
     },
-    "pav:version": "2",
+    "pav:version": "3",
     "dce:identifier": "SDN:R03::UV_INTENSITY_DARK_SEAWATER_NITRATE",
     "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UV_INTENSITY_DARK_SEAWATER_NITRATE/2/"
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UV_INTENSITY_DARK_SEAWATER_NITRATE/3/"
     },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",

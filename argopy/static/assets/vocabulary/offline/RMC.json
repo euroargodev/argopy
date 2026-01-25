@@ -1,7 +1,7 @@
 {
   "name": "MEASUREMENT_CODE_CATEGORY",
   "long_name": "Argo measurement code categories",
-  "last_update": "2025-10-29T19:56:32.205714+00:00",
+  "last_update": "2026-01-25T10:44:08.182334+00:00",
   "data": {
     "@graph": [
       {

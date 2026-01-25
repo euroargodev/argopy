@@ -1,7 +1,7 @@
 {
   "name": "DRUCK_10153PSIA",
   "long_name": "Druck pressure sensor with 10153 PSIA rating",
-  "last_update": "2025-10-29T20:58:56.984305+00:00",
+  "last_update": "2026-01-25T11:13:58.141832+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/DRUCK_10153PSIA/",
     "pav:hasVersion": [

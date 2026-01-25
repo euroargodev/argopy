@@ -1,7 +1,7 @@
 {
   "name": "A",
   "long_name": "Argos no location accuracy estimation (three messages received)",
-  "last_update": "2025-10-29T20:57:28.698135+00:00",
+  "last_update": "2026-01-25T11:11:21.465608+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R05/current/A/",
     "pav:authoredOn": "2020-04-04 15:05:33.0",

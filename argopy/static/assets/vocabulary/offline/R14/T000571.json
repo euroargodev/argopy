@@ -1,19 +1,22 @@
 {
   "name": "T000571",
   "long_name": "CURRENT_SUNAAPFSupplyCurrent_mA",
-  "last_update": "2025-10-29T20:58:13.383373+00:00",
+  "last_update": "2026-01-25T11:12:14.997301+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000571/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000571/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:05:04.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000571/2/"
+    },
     "dce:identifier": "SDN:R14::T000571",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T000571",
     "skos:altLabel": "571",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:05:04.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "CURRENT_SUNAAPFSupplyCurrent_mA"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Current [mA] measured inside SUNA via ADC. The current can be monitored to ascertain that all components are operating. A sudden drop or increase would indicate the failure of a system component."
+      "@value": "Current measured inside SUNA via ADC. The current can be monitored to ascertain that all components are operating. A sudden drop or increase would indicate the failure of a system component. Template_Values:{unit:[amps, mA]}."
     },
     "@type": "skos:Concept",
     "@context": {

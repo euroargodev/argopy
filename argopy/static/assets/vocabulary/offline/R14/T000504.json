@@ -1,19 +1,22 @@
 {
   "name": "T000504",
   "long_name": "CURRENT_BatterySampledbySBE_mA",
-  "last_update": "2025-10-29T20:58:12.446506+00:00",
+  "last_update": "2026-01-25T11:12:04.600969+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000504/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000504/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:45.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000504/2/"
+    },
     "dce:identifier": "SDN:R14::T000504",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T000504",
     "skos:altLabel": "504",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:45.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "CURRENT_BatterySampledbySBE_mA"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Sbe sampled battery current"
+      "@value": "Sbe sampled battery current. Template_Values:{unit:[COUNT, amps, mA]}."
     },
     "@type": "skos:Concept",
     "@context": {

@@ -1,19 +1,22 @@
 {
   "name": "T400488",
   "long_name": "VOLUME_OilVolumeTransferredDuringDescentToProfile_cm^3",
-  "last_update": "2025-10-29T20:58:34.402444+00:00",
+  "last_update": "2026-01-25T11:13:46.363298+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T400488/",
-    "pav:authoredOn": "2023-04-28 13:36:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T400488/1/"
     },
+    "pav:authoredOn": "2025-12-11 11:04:22.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T400488/2/"
+    },
     "dce:identifier": "SDN:R14::T400488",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R14::T400488",
     "skos:altLabel": "488.4",
-    "dc:date": "2023-04-28 13:36:35.0",
-    "owl:versionInfo": "1",
+    "dc:date": "2025-12-11 11:04:22.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "VOLUME_OilVolumeTransferredDuringDescentToProfile_cm^3"
@@ -29,7 +32,7 @@
     },
     "skos:definition": {
       "@language": "en",
-      "@value": "Oil volume transferred from the external bladder during the descent to start profile pressure. This is the oil volume tranferred during the NUMBER_ValveActionsDuringDescentToProfile_COUNT valve actions (Id 125). Reported pump/valve actions were expressed as durations in the previous floats version. For the CTS5 they are reported as transferred oil volume."
+      "@value": "Oil volume transferred from the external bladder during the descent to start profile pressure. This is the oil volume tranferred during the NUMBER_ValveActionsDuringDescentToProfile_COUNT valve actions (Id 125). Reported pump/valve actions were expressed as durations in the previous floats version. For the CTS5 they are reported as transferred oil volume. Template_Values:{unit:[cm^3]}."
     },
     "@type": "skos:Concept",
     "@context": {
