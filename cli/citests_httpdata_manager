@@ -24,6 +24,7 @@ Use this script to download all possible tests data to be used by the local http
 >>> citests_httpdata_manager -a download -t topo
 >>> citests_httpdata_manager -a download -t oops
 >>> citests_httpdata_manager -a download -t nvs
+>>> citests_httpdata_manager -a download -t nvs_store
 >>> citests_httpdata_manager -a download -t docs
 
 >>> citests_httpdata_manager -a download -t ea_dataselection
@@ -71,6 +72,7 @@ from argopy.related import (
     ArgoNVSReferenceTables,
     ArgoDocs,
 )
+from argopy.stores.nvs.implementations.online.nvs import NVS as NVS_online
 
 
 log = logging.getLogger("argopy.cli.test_data")
@@ -110,6 +112,7 @@ DEFAULT_TARGETS = [
     "topo",
     "oops",
     "nvs",
+    "nvs_store",
     "docs",
     "altim",
     "ea_dataselection",
@@ -163,6 +166,7 @@ def setup_args():
        topo             - URIs accessed by TopoFetcher with ds='gebco' from test_related/Test_TopoFetcher
        oops             - URIs accessed by OceanOPSDeployments from test_related/Test_OceanOPSDeployments
        nvs              - URIs accessed by ArgoNVSReferenceTables from test_related/Test_ArgoNVSReferenceTables
+       nvs_store        - URIs accessed from test_stores_nvs
        docs             - URIs accessed by ArgoDocs from test_related/Test_ArgoDocs
        altim            - URIs accessed by open_sat_altim_report from test_related/Test_open_sat_altim_report
        
@@ -172,22 +176,7 @@ def setup_args():
     """
 
     def target_getChoices():
-        return [
-            "erddap",
-            "erddap_bgc",
-            "ifremer_gdac",
-            "ifremer_gdac_bgc",
-            "argovis",
-            "topo",
-            "oops",
-            "nvs",
-            "docs",
-            "altim",
-            "ea_dataselection",
-            "ifremer_api",
-            "github",
-            "argofloat",
-        ]
+        return DEFAULT_TARGETS
 
     parser.add_argument(
         "-t",
@@ -872,6 +861,31 @@ class Lister:
         fmts = {"ld+json": "json", "rdf+xml": "xml", "text/turtle": "txt"}
         for fmt in fmts.keys():
             url = nvs.get_url(3, fmt=fmt)
+            this_URI.commit(self.dfile(unquote(url), fmts[fmt]))
+
+        return self.respond(this_URI)
+
+    @property
+    def nvs_store(self):
+        this_URI = UriRegistry(name="nvs_store")
+        nvs = NVS_online()
+
+        RTID_TESTED = ['R27']
+        CONCEPTID_TESTED = ['AANDERAA_OPTODE_3835']
+
+        for rtid in RTID_TESTED:
+            uri = nvs._vocabulary2uri(rtid)
+            this_URI.commit(self.dfile(unquote(uri), "json"))
+
+        for rtid in CONCEPTID_TESTED:
+            uri = nvs._concept2uri(rtid)
+            this_URI.commit(self.dfile(unquote(uri), "json"))
+
+        fmts = {"ld+json": "json", "rdf+xml": "xml", "text/turtle": "txt"}
+        for fmt in fmts.keys():
+            url = nvs._vocabulary2uri('R27', fmt=fmt)
+            this_URI.commit(self.dfile(unquote(url), fmts[fmt]))
+            url = nvs._concept2uri('AANDERAA_OPTODE_3835', fmt=fmt)
             this_URI.commit(self.dfile(unquote(url), fmts[fmt]))
 
         return self.respond(this_URI)
