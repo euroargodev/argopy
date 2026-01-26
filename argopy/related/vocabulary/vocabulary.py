@@ -158,7 +158,7 @@ class ArgoReferenceTable:
 
         # Retrieve the list of concept names
         """
-        Twp methods:
+        Two methods:
         1- From the skos:Collection list of members:
             >>> values = [m['@id'].split("/")[-2] for m in Collection['skos:member']]
         2- From skos:Concept in the @graph:
@@ -189,6 +189,9 @@ class ArgoReferenceTable:
         summary.append(f"version: {self.version} ({self.date})")
         summary.append(f"keys[{len(self)}]: {ppliststr(self.keys(), n=10)}")
         return "\n".join(summary)
+
+    def __str__(self):
+        return f"ArgoReferenceTable('{self.parameter}')"
 
     def __contains__(self, item):
         return item in self.keys()
@@ -231,6 +234,10 @@ class ArgoReferenceTable:
                     self._d.update({ref_value: ArgoReferenceValue.from_dict(data=data[0])})
             return self._d[ref_value]
         raise ValueError(f"Invalid reference value '{key}'")
+
+    def _ipython_key_completions_(self):
+        """Provide method for key-autocompletions in IPython."""
+        return [p for p in self.keys()]
 
     @classmethod
     def from_urn(cls, urn : str) -> 'ArgoReferenceTable':
@@ -375,5 +382,5 @@ class ArgoReferenceTable:
             d.update({key: getattr(self, key)})
         return d
 
-    def to_json(self):
-        raise NotImplementedError
+    def to_json(self, *args, **kwargs):
+        raise NotImplementedError('Coming up soon !')

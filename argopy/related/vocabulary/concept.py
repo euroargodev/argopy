@@ -71,13 +71,13 @@ class ArgoReferenceValue:
         # All possible attributes are listed in:
         arv.attrs
 
-        # Reference Value attributes:
-        arv.name       # Term-id of the URN, eg 'AANDERAA_OPTODE_3835'
+        # Reference Value attributes (and NVS origin):
+        arv.name       # nvs["skos:altLabel"] or urnparser(id2urn(nvs["@id"]))["termid"] if altLabel is None
         arv.long_name  # nvs["skos:prefLabel"]["@value"]
         arv.definition # nvs["skos:definition"]["@value"]
         arv.deprecated # nvs["owl:deprecated"]
-        arv.parameter  # The netcdf parameter this concept applies to (eg 'SENSOR_MODEL')
-        arv.reference  # The reference table this concept belongs to, can be used on a ArgoReferenceTable (eg 'R27')
+        arv.reference  # The reference table this concept belongs to, can be used with ArgoReferenceTable (eg 'R27')
+        arv.parameter  # The netcdf parameter this concept applies to, can be used with ArgoReferenceTable (eg 'SENSOR_MODEL')
 
         # Other reference Value attributes (more technical):
         arv.version    # nvs["owl:versionInfo"]
@@ -241,6 +241,9 @@ class ArgoReferenceValue:
             summary.append(f"context: {'(not loaded yet, use key indexing to load)' if self._from == 'json' else '-'}")
         return "\n".join(summary)
 
+    def __str__(self):
+        return f"ArgoReferenceValue(name='{self.name}', reference='{self.reference}', parameter='{self.parameter}')"
+
     def __getitem__(self, key):
         if key == 'context':
             """ 'context' requires a special treatment because this is the only attribute that is not filled
@@ -259,6 +262,10 @@ class ArgoReferenceValue:
         elif key in self.__slots__:
             return getattr(self, key)
         raise ValueError(f"Unknown attribute '{key}'")
+
+    def _ipython_key_completions_(self):
+        """Provide method for key-autocompletions in IPython."""
+        return [p for p in Props.keys]
 
     @property
     def nvs(self):
@@ -366,5 +373,5 @@ class ArgoReferenceValue:
             else:
                 return json.dump(data, path, **kwargs)
 
-    def to_mapping(self):
-        raise NotImplementedError
+    def to_mapping(self, *args, **kwargs):
+        raise NotImplementedError('Coming up soon !')
