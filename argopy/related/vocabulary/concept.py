@@ -326,9 +326,6 @@ class ArgoReferenceValue:
                     raise OptionValueError(
                         f"Invalid key name '{k}'. Valid values are: {ppliststr(Props.keys)}")
                 validated_keys.append(k)
-            if len(validated_keys) == 0:
-                raise OptionValueError(
-                    f"No valid keys in '{ppliststr(validated_keys)}'. Valid values are: {ppliststr(Props.keys, last='or')}")
 
         d = {}
         for key in validated_keys:
