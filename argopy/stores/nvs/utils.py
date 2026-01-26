@@ -96,7 +96,7 @@ def id2urn(uri: str) -> str:
     try:
         # listid = [p for p in parts if p.startswith('R') or p.startswith('P')][0]
         listid = parts[1 + [parts.index(p) for p in parts if p == 'collection'][0]]
-        if not listid[0] == 'R' or listid[0] == 'P':
+        if not (listid[0] == 'R' or listid[0] == 'P'):
             raise ValueError(f"{uri} is not a valid NVS id, only R* and P* collections are allowed.")
     except:
         raise ValueError(f"{uri} is not a valid NVS id, only R* and P* collections are allowed.")
