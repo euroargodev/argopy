@@ -1,6 +1,21 @@
 #!/bin/bash
-jupyter nbextension enable --py widgetsnbextension --sys-prefix
+set -e
 
-jupyter lab workspaces import jupyterlab-workspace.json
+# you can add commands that run after building the environment here!
+# https://repo2docker.readthedocs.io/en/latest/config_files.html#postbuild-run-code-after-installing-the-environment
+
+wget https://raw.githubusercontent.com/obidam/ds2-2025/main/binder/matplotlib-fonts.zip
+mkdir /home/jovyan/.cache
+mkdir /home/jovyan/.cache/matplotlib
+unzip matplotlib-fonts.zip -d /home/jovyan/.cache/matplotlib
+
+mkdir /home/jovyan/.matplotlib
+unzip matplotlib-fonts.zip -d /home/jovyan/.matplotlib
+
+jupyter lab clean
+
+# Import the workspace into JupyterLab
+jupyter lab workspaces import workspace.json
+#jupyter lab workspaces import jupyterlab-workspace.json
 
 #EOF
