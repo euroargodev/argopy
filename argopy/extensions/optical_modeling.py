@@ -207,7 +207,7 @@ class OpticalModeling(ArgoAccessorExtension):
 
         References
         ----------
-        .. [1] Morel, A. (1988), Optical modeling of the upper ocean in relation to its biogenous matter content (case I waters), J. Geophys. Res., 93(C9), 10749–10768, doi:10.1029/JC093iC09p10749.
+        .. [1] Morel, A. (1988), Optical modeling of the upper ocean in relation to its biogenous matter content (case I waters), J. Geophys. Res., 93(C9), 10749-10768, doi:10.1029/JC093iC09p10749.
 
         Examples
         --------
