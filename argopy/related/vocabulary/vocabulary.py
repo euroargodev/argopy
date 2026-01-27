@@ -169,6 +169,11 @@ class ArgoReferenceTable:
         """List of this Reference Table value names, aka list of Concept names"""
         self._keys.sort()
 
+    @classmethod
+    def from_urn(cls, urn : str) -> 'ArgoReferenceTable':
+        urn = urnparser(urn)
+        return cls(urn['listid'])
+
     def __setattr__(self, attr, value):
         """Set attribute value, with read-only policy after instantiation for public attributes"""
         if attr in self.__slots__ and attr[0] != '_' and inspect.stack()[1][3] != '__init__':
@@ -210,8 +215,6 @@ class ArgoReferenceTable:
         In a lazy approach, only Reference Values reached with this '__getitem__' progressively populates the dictionary, which is empty at instantiation.
         Dictionary value is returned if a Reference Value has already been reached.
         """
-        if not isinstance(key, str):
-            raise TypeError("Indexing is only possible with a string index")
         ref_value : str | None = None
         if key in self.keys():
             ref_value = key
@@ -238,58 +241,6 @@ class ArgoReferenceTable:
     def _ipython_key_completions_(self):
         """Provide method for key-autocompletions in IPython."""
         return [p for p in self.keys()]
-
-    @classmethod
-    def from_urn(cls, urn : str) -> 'ArgoReferenceTable':
-        urn = urnparser(urn)
-        return cls(urn['listid'])
-
-    def to_dataframe(self, columns : list[str] | None = None) -> DataFrame | None:
-        """Export all reference values attributes to a :class:`pd.DataFrame`
-
-        Default column names are given by the :attr:`ArgoReferenceValue.keys` attribute.
-
-        Parameters
-        ----------
-        columns: list[str] | None, optional, default=None
-            Column names to insert into the output. By default, None, will include all available :attr:`ArgoReferenceValue.keys` attributes.
-
-        Returns
-        -------
-        :class:`pd.DataFrame`
-        """
-        """
-        Also note that we could create a dataframe directly from self.nvs json data
-        But by design, we want to stick to using keys return by ArgoReferenceValue attributes,
-        so that there is only one place determining how to map nvs json jargon onto a user-friendly facade,
-        and that is the ArgoReferenceValue class.
-        """
-        if columns is None:
-            cols = ArgoReferenceValue.keys
-        else:
-            cols = []
-            for c in to_list(columns):
-                if c not in ArgoReferenceValue.keys:
-                    raise OptionValueError(
-                        f"Invalid columns name '{c}'. Valid values are: {ppliststr(ArgoReferenceValue.keys)}")
-                cols.append(c)
-            if len(cols) == 0:
-                raise OptionValueError(
-                    f"No valid column names in '{ppliststr(columns)}'. Valid values are: {ppliststr(ArgoReferenceValue.keys, last='or')}")
-
-        def todf(columns: list[str]):
-            dict_list = []
-            for value in self:
-                d = value.to_dict()
-                d = {key: d[key] for key in columns}
-                dict_list.append(d)
-            return pd.DataFrame(dict_list)
-
-        if self._df is None:
-            self._df = todf(cols)
-        elif set(cols) != set(self._df.columns.tolist()):
-            self._df = todf(cols)
-        return self._df
 
     def search(self, **kwargs) -> list[ArgoReferenceValue] | pd.DataFrame:
         """Search in table list of :class:`ArgoReferenceValue` attributes
@@ -361,6 +312,53 @@ class ArgoReferenceTable:
                 return df.reset_index(drop=True)
         else:
             raise NoDataLeft("This search return no data")
+
+    def to_dataframe(self, columns : list[str] | None = None) -> DataFrame | None:
+        """Export all reference values attributes to a :class:`pd.DataFrame`
+
+        Default column names are given by the :attr:`ArgoReferenceValue.keys` attribute.
+
+        Parameters
+        ----------
+        columns: list[str] | None, optional, default=None
+            Column names to insert into the output. By default, None, will include all available :attr:`ArgoReferenceValue.keys` attributes.
+
+        Returns
+        -------
+        :class:`pd.DataFrame`
+        """
+        """
+        Also note that we could create a dataframe directly from self.nvs json data
+        But by design, we want to stick to using keys return by ArgoReferenceValue attributes,
+        so that there is only one place determining how to map nvs json jargon onto a user-friendly facade,
+        and that is the ArgoReferenceValue class.
+        """
+        if columns is None:
+            cols = ArgoReferenceValue.keys
+        else:
+            cols = []
+            for c in to_list(columns):
+                if c not in ArgoReferenceValue.keys:
+                    raise OptionValueError(
+                        f"Invalid columns name '{c}'. Valid values are: {ppliststr(ArgoReferenceValue.keys)}")
+                cols.append(c)
+            if len(cols) == 0:
+                raise OptionValueError(
+                    f"No valid column names in '{ppliststr(columns)}'. Valid values are: {ppliststr(ArgoReferenceValue.keys, last='or')}")
+
+        def todf(columns: list[str]):
+            dict_list = []
+            for value in self:
+                d = value.to_dict()
+                d = {key: d[key] for key in columns}
+                dict_list.append(d)
+            return pd.DataFrame(dict_list)
+
+        if self._df is None:
+            self._df = todf(cols)
+        elif set(cols) != set(self._df.columns.tolist()):
+            self._df = todf(cols)
+        return self._df
 
     def to_dict(self, keys : list[str] | None = None) -> dict[str, Any]:
         """Export reference table attributes to a dictionary"""
