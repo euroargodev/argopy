@@ -20,7 +20,7 @@ permissions:
 jobs:
   detect-ci-skip:
     name: detect ci skip
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     if: |
       github.repository == 'euroargodev/argopy'
       && (github.event_name == 'push' || github.event_name == 'pull_request')
