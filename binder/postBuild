@@ -15,7 +15,7 @@ unzip matplotlib-fonts.zip -d /home/jovyan/.matplotlib
 jupyter lab clean
 
 # Import the workspace into JupyterLab
-jupyter lab workspaces import workspace.json
+#jupyter lab workspaces import workspace.json
 #jupyter lab workspaces import jupyterlab-workspace.json
 
 #EOF
