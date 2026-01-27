@@ -133,12 +133,7 @@ class ArgoDataFetcherProto(ABC):
 
     @property
     def _icon_data_source(self):
-        if self.data_source == 'erddap':
-            return "⭐"
-        if self.data_source == 'gdac':
-            return "🌐"
-        if self.data_source == 'argovis':
-            return "👁"
+        return " "
 
     @property
     def _repr_access_point(self):
