@@ -5,6 +5,7 @@ from collections import OrderedDict
 import shutil
 import tempfile
 import logging
+from collections.abc import Iterable
 
 from mocked_http import mocked_httpserver, mocked_server_address
 from utils import (
@@ -18,11 +19,13 @@ from argopy.stores.nvs.implementations.offline.nvs import NVS
 from argopy.utils.checkers import (
     is_list_of_strings,
 )
+from argopy.utils.checkers import is_list_of_strings
 
 log = logging.getLogger("argopy.tests.related.reference")
 
 
-class Test_ArgoNVSReferenceTables:
+# @pytest.mark.skip
+class Test_ArgoNVSReferenceTables_Deprecated:
 
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
@@ -137,11 +140,13 @@ class MiscPath:
 
         return MyContext(*args, **kwargs)
 
+default_name = ['AANDERAA_OPTODE_3835']
 
+# @pytest.mark.skip
 class Test_ArgoReferenceValue:
 
     def test_init_implicit(self):
-        arv = ArgoReferenceValue('AANDERAA_OPTODE_3835')
+        arv = ArgoReferenceValue(default_name[0])
         assert isinstance(arv, ArgoReferenceValue)
 
         arv = ArgoReferenceValue('4', 'RR2')
@@ -168,21 +173,30 @@ class Test_ArgoReferenceValue:
         assert 'local_attributes' in arv._extra
         assert 'properties' in arv._extra
 
-    def test_readonly_instance(self):
-        arv = ArgoReferenceValue('AANDERAA_OPTODE_3835')
+    @pytest.mark.parametrize("name", default_name,
+                             indirect=False,
+                             ids=[f"name='{x}'" for x in default_name])
+    def test_readonly_instance(self, name):
+        arv = ArgoReferenceValue(name)
         with pytest.raises(AttributeError):
             arv.definition = 'new value'
 
-    def test_getitem(self):
-        arv = ArgoReferenceValue('AANDERAA_OPTODE_3835')
+    @pytest.mark.parametrize("name", default_name,
+                             indirect=False,
+                             ids=[f"name='{x}'" for x in default_name])
+    def test_getitem(self, name):
+        arv = ArgoReferenceValue(name)
         assert isinstance(arv['name'], str)
 
         with pytest.raises(ValueError):
             arv['dummy']
 
+    @pytest.mark.parametrize("name", default_name,
+                             indirect=False,
+                             ids=[f"name='{x}'" for x in default_name])
     @pytest.mark.parametrize("attr", ['nvs', 'context', 'extra'], indirect=False)
-    def test_props(self, attr):
-        arv = ArgoReferenceValue('AANDERAA_OPTODE_3835')
+    def test_props(self, name, attr):
+        arv = ArgoReferenceValue(name)
         arv.__getattribute__(attr)
 
     def test_from_urn(self):
@@ -197,13 +211,19 @@ class Test_ArgoReferenceValue:
     @pytest.mark.parametrize("keys", [None, ['name', 'deprecated']],
                              indirect=False,
                              ids=[f"keys='{x}'" for x in [None, ['name', 'deprecated']]])
-    def test_to_dict(self, keys):
-        arv = ArgoReferenceValue('AANDERAA_OPTODE_3835')
+    @pytest.mark.parametrize("name", default_name,
+                             indirect=False,
+                             ids=[f"name='{x}'" for x in default_name])
+    def test_to_dict(self, name, keys):
+        arv = ArgoReferenceValue(name)
         assert isinstance(arv.to_dict(keys), dict)
 
     @pytest.mark.parametrize("keys", ['dummy'], indirect=False, ids=[f"keys='{x}'" for x in ['dummy']])
-    def test_to_dict_invalidkeys(self, keys):
-        arv = ArgoReferenceValue('AANDERAA_OPTODE_3835')
+    @pytest.mark.parametrize("name", default_name,
+                             indirect=False,
+                             ids=[f"name='{x}'" for x in default_name])
+    def test_to_dict_invalidkeys(self, name, keys):
+        arv = ArgoReferenceValue(name)
         with pytest.raises(OptionValueError):
             arv.to_dict(keys)
 
@@ -213,14 +233,98 @@ class Test_ArgoReferenceValue:
     @pytest.mark.parametrize("path", [MiscPath.none(), MiscPath.named(), MiscPath.obj()],
                              indirect=False,
                              ids=[f"path='{x}'" for x in [None, 'A file name', 'A file obj']])
-    def test_to_json(self, path, keys):
-        arv = ArgoReferenceValue('AANDERAA_OPTODE_3835')
+    @pytest.mark.parametrize("name", default_name,
+                             indirect=False,
+                             ids=[f"name='{x}'" for x in default_name])
+    def test_to_json(self, name, path, keys):
+        arv = ArgoReferenceValue(name)
         with path as p:
             arv.to_json(path=p, keys=keys)
 
 
+default_identifier = ['R01']
+
 class Test_ArgoReferenceTable:
 
-    def test_init(self):
-        art = ArgoReferenceTable()
+    @pytest.mark.parametrize("identifier", ['R01', 'DATA_TYPE'],
+                             indirect=False,
+                             ids=[f"identifier='{x}'" for x in ['R01', 'DATA_TYPE']])
+    def test_init(self, identifier):
+        art = ArgoReferenceTable(identifier)
         assert isinstance(art, ArgoReferenceTable)
+
+    def test_from_urn(self):
+        art = ArgoReferenceTable.from_urn('SDN:R27::AANDERAA_OPTODE_3835')
+        assert isinstance(art, ArgoReferenceTable)
+
+    @pytest.mark.parametrize("identifier", ['dummy'],
+                             indirect=False,
+                             ids=[f"identifier='{x}'" for x in ['dummy']])
+    def test_init_error(self, identifier):
+        with pytest.raises(ValueError):
+            ArgoReferenceTable(identifier)
+
+    @pytest.mark.parametrize("identifier", default_identifier,
+                             indirect=False,
+                             ids=[f"identifier='{x}'" for x in default_identifier])
+    def test_readonly_instance(self, identifier):
+        art = ArgoReferenceTable(identifier)
+        with pytest.raises(AttributeError):
+            art.parameter = 'dummy'
+
+    @pytest.mark.parametrize("identifier", default_identifier,
+                             indirect=False,
+                             ids=[f"identifier='{x}'" for x in default_identifier])
+    def test_keys(self, identifier):
+        art = ArgoReferenceTable(identifier)
+        assert is_list_of_strings(art.keys())
+
+    @pytest.mark.parametrize("identifier", default_identifier,
+                             indirect=False,
+                             ids=[f"identifier='{x}'" for x in default_identifier])
+    def test_values(self, identifier):
+        art = ArgoReferenceTable(identifier)
+        values = art.values()
+        isinstance(values, list) and all(isinstance(elem, ArgoReferenceValue) for elem in values)
+
+    @pytest.mark.parametrize("identifier", default_identifier,
+                             indirect=False,
+                             ids=[f"identifier='{x}'" for x in default_identifier])
+    def test_contains(self, identifier):
+        art = ArgoReferenceTable(identifier)
+        assert art.keys()[0] in art
+
+    @pytest.mark.parametrize("identifier", default_identifier,
+                             indirect=False,
+                             ids=[f"identifier='{x}'" for x in default_identifier])
+    def test_len(self, identifier):
+        art = ArgoReferenceTable(identifier)
+        assert isinstance(len(art), int)
+
+    @pytest.mark.parametrize("identifier", default_identifier,
+                             indirect=False,
+                             ids=[f"identifier='{x}'" for x in default_identifier])
+    def test_iter(self, identifier):
+        art = ArgoReferenceTable(identifier)
+        assert isinstance(art, Iterable)
+
+    @pytest.mark.parametrize("identifier", default_identifier,
+                             indirect=False,
+                             ids=[f"identifier='{x}'" for x in default_identifier])
+    def test_getitem(self, identifier):
+        art = ArgoReferenceTable(identifier)
+        key = art.keys()[0]
+        assert isinstance(art[key], ArgoReferenceValue)
+
+        with pytest.raises(ValueError):
+            art['dummy']
+
+    @pytest.mark.parametrize("identifier", default_identifier,
+                             indirect=False,
+                             ids=[f"identifier='{x}'" for x in default_identifier])
+    @pytest.mark.parametrize("columns", [None, ArgoReferenceValue.keys[0:2]],
+                             indirect=False,
+                             ids=[f"columns='{x}'" for x in [None, ArgoReferenceValue.keys[0:2]]])
+    def test_to_dataframe(self, identifier, columns):
+        art = ArgoReferenceTable(identifier)
+        assert isinstance(art.to_dataframe(columns), pd.DataFrame)
