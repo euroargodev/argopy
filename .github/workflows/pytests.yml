@@ -51,7 +51,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.11", "3.12"]
-        os: ["ubuntu-latest", "macos-latest", "macos-latest-large"]
+        os: ["ubuntu-latest", "macos-latest"]
         experimental: [false]
 
     steps:
@@ -172,7 +172,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.11", "3.12"]
-        os: ["ubuntu-latest", "macos-latest", "macos-latest-large"]
+        os: ["ubuntu-latest", "macos-latest"]
         experimental: [false]
 
     steps:
