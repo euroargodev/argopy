@@ -18,8 +18,6 @@
 [ossf-badge]: https://www.bestpractices.dev/projects/5939/badge
 [ossf-link]: https://www.bestpractices.dev/projects/5939
 
-
-
 ### Documentation
 
 The official documentation is hosted on ReadTheDocs.org: https://argopy.readthedocs.io
