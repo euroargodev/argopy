@@ -8,7 +8,6 @@ on:
   pull_request:
     branches-ignore:
       - 'dependabot*'
-  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
