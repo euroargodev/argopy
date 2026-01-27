@@ -8,7 +8,6 @@ on:
   pull_request:
     branches-ignore:
       - 'dependabot*'
-  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -20,7 +19,7 @@ permissions:
 jobs:
   detect-ci-skip:
     name: detect ci skip
-    runs-on: windows-latest
+    runs-on: windows-2022
     if: |
       github.repository == 'euroargodev/argopy'
       && (github.event_name == 'push' || github.event_name == 'pull_request')
@@ -53,7 +52,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.11", "3.12"]
-        os: ["windows-latest"]
+        os: ["windows-2022"]
         experimental: [false]
 
     steps:
@@ -144,7 +143,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.11", "3.12"]
-        os: ["windows-latest"]
+        os: ["windows-2022"]
         experimental: [false]
 
     steps:
