@@ -82,8 +82,7 @@ jobs:
 
       - name: Install argopy
         run: |
-          py -m pip install --no-deps --verbose -e .
-          
+          python -m pip install --no-deps --verbose -e .          
 
       - name: Version info
         run: |
@@ -174,7 +173,7 @@ jobs:
 
       - name: Install argopy
         run: |
-          py -m pip install --no-deps --verbose -e .
+          python -m pip install --no-deps --verbose -e .
 
       - name: Version info
         run: |
