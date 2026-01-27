@@ -1,0 +1,217 @@
+name: CI tests - Windows
+# CI tests ran every time new code is pushed to the repo
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches-ignore:
+      - 'dependabot*'
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  detect-ci-skip:
+    name: detect ci skip
+    runs-on: ubuntu-latest
+    if: |
+      github.repository == 'euroargodev/argopy'
+      && (github.event_name == 'push' || github.event_name == 'pull_request')
+    outputs:
+      skipped: ${{ steps.detect-skip.outputs.trigger-found }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+      - uses: xarray-contrib/ci-trigger@v1.2
+        id: detect-skip
+        with:
+          keyword: "[skip-ci]"
+
+  core-pinned:
+    # CI tests for environments with core requirements in pinned versions
+    # All commits must pass this
+
+    name: Core - Pinned - Py${{matrix.python-version}} - ${{ matrix.os }}
+    needs: detect-ci-skip
+    runs-on: ${{ matrix.os }}
+    if: needs.detect-ci-skip.outputs.skipped == 'false'
+    defaults:
+      run:
+        shell: bash -l {0}
+    continue-on-error: ${{ matrix.experimental }}
+#    timeout-minutes: 45
+    strategy:
+      max-parallel: 12
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+        os: ["windows-latest"]
+        experimental: [false]
+
+    steps:
+      - uses: actions/checkout@v6
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5.1.1
+        with:
+          aws-region: us-west-1
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ga-ci-tests-argopy-01
+          role-duration-seconds: 7200
+      - name: Set environment variables
+        run: |
+          echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-core-pinned.yml" >> $GITHUB_ENV
+          echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
+          echo "LOG_FILE=argopy-tests-Core-Pinned-Py${{matrix.python-version}}-${{matrix.os}}.log" >> $GITHUB_ENV
+
+      - name: Setup Micromamba ${{ matrix.python-version }}
+        uses: mamba-org/setup-micromamba@v2
+        with:
+          micromamba-version: '1.5.10-0'
+          environment-name: argopy-tests
+          environment-file: ${{ env.CONDA_ENV_FILE }}
+          init-shell: bash
+          cache-environment: true
+          cache-environment-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
+          create-args: >-
+            python=${{matrix.python-version}}
+
+      - name: Install argopy
+        run: |
+          py -m pip install --no-deps --verbose -e .
+          
+
+      - name: Version info
+        run: |
+          micromamba info
+          micromamba list
+
+      - name: Lint with flake8
+        run: |
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      - name: Test with pytest
+        run: |
+          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}} --junitxml=junit.xml -o junit_family=legacy
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./cov.xml
+          report_type: coverage
+          flags: core, pinned, py${{matrix.python-version}}
+          name: codecov-github
+          fail_ci_if_error: false
+          env_vars: RUNNER_OS,PYTHON_VERSION
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          report_type: test_results
+          flags: core, pinned, py${{matrix.python-version}}
+          fail_ci_if_error: false
+          env_vars: RUNNER_OS,PYTHON_VERSION
+      - name: Save tests log as artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: Argopy-Tests-Core-${{matrix.python-version}}-${{matrix.os}}
+          path: ${{env.LOG_FILE}}
+          retention-days: 90
+
+  all-pinned:
+    # CI tests for environments with all requirements in pinned versions
+    # All commits must pass this
+
+    name: All - Pinned - Py${{matrix.python-version}} - ${{ matrix.os }}
+    needs: detect-ci-skip
+    runs-on: ${{ matrix.os }}
+    if: needs.detect-ci-skip.outputs.skipped == 'false'
+    defaults:
+      run:
+        shell: bash -l {0}
+    continue-on-error: ${{ matrix.experimental }}
+#    timeout-minutes: 45
+    strategy:
+      max-parallel: 12
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+        os: ["windows-latest"]
+        experimental: [false]
+
+    steps:
+      - uses: actions/checkout@v6
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5.1.1
+        with:
+          aws-region: us-west-1
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ga-ci-tests-argopy-01
+          role-duration-seconds: 7200
+      - name: Set environment variables
+        run: |
+          echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-all-pinned.yml" >> $GITHUB_ENV
+          echo "PYTHON_VERSION=${{matrix.python-version}}" >> $GITHUB_ENV
+          echo "LOG_FILE=argopy-tests-All-Pinned-Py${{matrix.python-version}}-${{matrix.os}}.log" >> $GITHUB_ENV
+
+      - name: Setup Micromamba ${{ matrix.python-version }}
+        uses: mamba-org/setup-micromamba@v2
+        with:
+          micromamba-version: '1.5.10-0'
+          environment-name: argopy-tests
+          environment-file: ${{ env.CONDA_ENV_FILE }}
+          init-shell: bash
+          cache-environment: true
+          cache-environment-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
+          create-args: >-
+            python=${{matrix.python-version}}
+
+      - name: Install argopy
+        run: |
+          py -m pip install --no-deps --verbose -e .
+
+      - name: Version info
+        run: |
+          micromamba info
+          micromamba list
+
+      - name: Lint with flake8
+        run: |
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      - name: Test with pytest
+        run: |
+          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}} --junitxml=junit.xml -o junit_family=legacy
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./cov.xml
+          report_type: coverage
+          flags: all, pinned, py${{matrix.python-version}}
+          name: codecov-github
+          fail_ci_if_error: false
+          env_vars: RUNNER_OS,PYTHON_VERSION
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          report_type: test_results
+          flags: all, pinned, py${{matrix.python-version}}
+          fail_ci_if_error: false
+          env_vars: RUNNER_OS,PYTHON_VERSION
+      - name: Upload tests log to GA
+        uses: actions/upload-artifact@v6
+        with:
+          name: Argopy-Tests-All-${{matrix.python-version}}-${{matrix.os}}
+          path: ${{env.LOG_FILE}}
+          retention-days: 90
