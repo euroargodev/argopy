@@ -17,14 +17,49 @@ from argopy.related.vocabulary.concept import ArgoReferenceValue
 
 @dataclass(frozen=True)
 class Props:
-    """ ArgoReferenceTable property holder """
+    """ArgoReferenceTable property holder
 
-    slots = ('nvs', 'identifier', 'parameter', 'long_name', 'description', 'version', 'date', 'uri', '_Vocabulary2Parameter', '_df', '_d', '_keys')
+    This should allow to make the difference between the class logic/attributes and the meta-data to expose.
 
-    attrs = ('nvs', 'identifier', 'parameter', 'long_name', 'description', 'version', 'date', 'uri')
+    slots > attrs > keys
+    """
+
+    slots = (
+        "identifier",
+        "parameter",
+        "long_name",
+        "description",
+        "version",
+        "date",
+        "uri",
+        "nvs",
+        "_Vocabulary2Parameter",
+        "_df",
+        "_d",
+        "_keys",
+    )
+
+    attrs = (
+        "identifier",
+        "parameter",
+        "long_name",
+        "description",
+        "version",
+        "date",
+        "uri",
+        "nvs",
+    )
     """A subset of slots, to be publicly exposed"""
 
-    keys = ('identifier', 'parameter', 'long_name', 'description', 'version', 'date', 'uri')
+    keys = (
+        "identifier",
+        "parameter",
+        "long_name",
+        "description",
+        "version",
+        "date",
+        "uri",
+    )
     """A subset of attrs, to be used in export methods (columns/keys selection)"""
 
 
@@ -89,7 +124,7 @@ class ArgoReferenceTable:
 
         # Allows to iterate over all values/concepts:
         for concept in art:
-        	print(concept.name, concept.urn)
+                print(concept.name, concept.urn)
 
     .. code-block:: python
         :caption: Export methods
@@ -123,38 +158,49 @@ class ArgoReferenceTable:
         art.search(deprecated=True, output='df')  # To a :class:`pd.DataFrame`
 
     """
+
     __slots__ = Props.slots
 
-    attrs : tuple[str] = Props.attrs
+    attrs: tuple[str] = Props.attrs
     """Public attributes"""
 
     def __init__(self, identifier: str | None = None, *args, **kwargs) -> None:
         # Internal placeholders:
-        self._Vocabulary2Parameter : dict[str, str] = Asset.load('vocabulary:mapping')['data']['Vocabulary2Parameter']
-        self._df : pd.DataFrame | None = None  # Dataframe export
-        self._d : dict[str, ArgoReferenceValue] | None = {}  # Dictionary of ArgoReferenceValue for all table concept
+        self._Vocabulary2Parameter: dict[str, str] = Asset.load("vocabulary:mapping")[
+            "data"
+        ]["Vocabulary2Parameter"]
+        self._df: pd.DataFrame | None = None  # Dataframe export
+        self._d: dict[str, ArgoReferenceValue] | None = (
+            {}
+        )  # Dictionary of ArgoReferenceValue for all table concept
 
         if identifier in self._Vocabulary2Parameter:
-            self.identifier : str = identifier
-            self.parameter : str = self._Vocabulary2Parameter[identifier]
+            self.identifier: str = identifier
+            self.parameter: str = self._Vocabulary2Parameter[identifier]
         elif identifier in self._Vocabulary2Parameter.values():
-            self.parameter : str = identifier
-            self.identifier : str = [k for k, v in self._Vocabulary2Parameter.items() if v == identifier][0]
+            self.parameter: str = identifier
+            self.identifier: str = [
+                k for k, v in self._Vocabulary2Parameter.items() if v == identifier
+            ][0]
         else:
-            raise ValueError(f"Unknown Reference Table '{identifier}'. Possible values are: \nIDs like: {ppliststr([k for k in self._Vocabulary2Parameter], last='or')}\nNames like: {ppliststr([k for k in self._Vocabulary2Parameter.values()], last='or')}")
+            raise ValueError(
+                f"Unknown Reference Table '{identifier}'. Possible values are: \nIDs like: {ppliststr([k for k in self._Vocabulary2Parameter], last='or')}\nNames like: {ppliststr([k for k in self._Vocabulary2Parameter.values()], last='or')}"
+            )
 
         # Once we have an id in 'name' we can load raw data from NVS
-        self.nvs : dict[str, Any] = NVS().load_vocabulary(self.identifier)
+        self.nvs: dict[str, Any] = NVS().load_vocabulary(self.identifier)
 
         # And populate all attributes:
-        Collection : dict[str, str] = [item for item in self.nvs['@graph'] if item['@type'] == 'skos:Collection'][0]
+        Collection: dict[str, str] = [
+            item for item in self.nvs["@graph"] if item["@type"] == "skos:Collection"
+        ][0]
         """The NVS skos collection for this vocabulary"""
 
-        self.long_name : str = Collection['skos:prefLabel']
-        self.description : str = Collection["dc:description"]
-        self.version : str = Collection['owl:versionInfo']
-        self.date : pd.Timestamp = pd.to_datetime(Collection['dc:date'])
-        self.uri : str = Collection["@id"]
+        self.long_name: str = Collection["skos:prefLabel"]
+        self.description: str = Collection["dc:description"]
+        self.version: str = Collection["owl:versionInfo"]
+        self.date: pd.Timestamp = pd.to_datetime(Collection["dc:date"])
+        self.uri: str = Collection["@id"]
 
         # Retrieve the list of concept names
         """
@@ -165,18 +211,24 @@ class ArgoReferenceTable:
             >>> values = [c['skos:altLabel'] for c in [item for item in self['@graph'] if item['@type'] == 'skos:Concept']]
         We stick to Collection for consistency with other attributes gathering
         """
-        self._keys : list[str] = [m['@id'].split("/")[-2] for m in Collection['skos:member']]
+        self._keys: list[str] = [
+            m["@id"].split("/")[-2] for m in Collection["skos:member"]
+        ]
         """List of this Reference Table value names, aka list of Concept names"""
         self._keys.sort()
 
     @classmethod
-    def from_urn(cls, urn : str) -> 'ArgoReferenceTable':
+    def from_urn(cls, urn: str) -> "ArgoReferenceTable":
         urn = urnparser(urn)
-        return cls(urn['listid'])
+        return cls(urn["listid"])
 
     def __setattr__(self, attr, value):
         """Set attribute value, with read-only policy after instantiation for public attributes"""
-        if attr in self.__slots__ and attr[0] != '_' and inspect.stack()[1][3] != '__init__':
+        if (
+            attr in self.__slots__
+            and attr[0] != "_"
+            and inspect.stack()[1][3] != "__init__"
+        ):
             raise AttributeError(f"'{attr}' is read-only after instantiation.")
         ArgoReferenceTable.__dict__[attr].__set__(self, value)
 
@@ -208,14 +260,14 @@ class ArgoReferenceTable:
         for v in self.keys():
             yield self[v]
 
-    def __getitem__(self, key : str):
+    def __getitem__(self, key: str):
         """Get a :class:`ArgoReferenceValue` instance from table key
 
         Reference Values are internally stored in a dictionary.
         In a lazy approach, only Reference Values reached with this '__getitem__' progressively populates the dictionary, which is empty at instantiation.
         Dictionary value is returned if a Reference Value has already been reached.
         """
-        ref_value : str | None = None
+        ref_value: str | None = None
         if key in self.keys():
             ref_value = key
         if ref_value is not None:
@@ -227,14 +279,27 @@ class ArgoReferenceTable:
                 each concept.
                 Hopefully this naive method is not necessary since all concepts data are already in `self.nvs`:
                 """
-                data : list[dict] = [item for item in self.nvs['@graph'] if item['@type'] == 'skos:Concept' and item['skos:altLabel'] == ref_value]
+                data: list[dict] = [
+                    item
+                    for item in self.nvs["@graph"]
+                    if item["@type"] == "skos:Concept"
+                    and item["skos:altLabel"] == ref_value
+                ]
                 if len(data) == 1:
-                    self._d.update({ref_value: ArgoReferenceValue.from_dict(data=data[0])})
+                    self._d.update(
+                        {ref_value: ArgoReferenceValue.from_dict(data=data[0])}
+                    )
                 else:
                     # Temporary fix for https://github.com/OneArgo/ArgoVocabs/issues/186:
-                    data = [item for item in self.nvs['@graph'] if
-                            item['@type'] == 'skos:Concept' and urnparser(id2urn(item['@id']))['termid'] == ref_value]
-                    self._d.update({ref_value: ArgoReferenceValue.from_dict(data=data[0])})
+                    data = [
+                        item
+                        for item in self.nvs["@graph"]
+                        if item["@type"] == "skos:Concept"
+                        and urnparser(id2urn(item["@id"]))["termid"] == ref_value
+                    ]
+                    self._d.update(
+                        {ref_value: ArgoReferenceValue.from_dict(data=data[0])}
+                    )
             return self._d[ref_value]
         raise ValueError(f"Invalid reference value '{key}'")
 
@@ -286,9 +351,9 @@ class ArgoReferenceTable:
 
         # Get output format:
         output = None
-        if kwargs.get('output', None) is not None:
-            output = kwargs.get('output')
-            kwargs.pop('output')
+        if kwargs.get("output", None) is not None:
+            output = kwargs.get("output")
+            kwargs.pop("output")
 
         # Search key validation:
         keys = [key for key in kwargs if key in ArgoReferenceValue.keys]
@@ -297,23 +362,25 @@ class ArgoReferenceTable:
         df = self.to_dataframe()
         filters = []
         for key in keys:
-            if df[key].dtype in ['str', 'object']:
-                filters.append(df[key].str.contains(str(kwargs[key]), regex=True, case=False))
-            elif df[key].dtype == 'datetime64[ns]':
+            if df[key].dtype in ["str", "object"]:
+                filters.append(
+                    df[key].str.contains(str(kwargs[key]), regex=True, case=False)
+                )
+            elif df[key].dtype == "datetime64[ns]":
                 warnings.warn("No search method implemented for datetime")
-            elif df[key].dtype == 'bool':
+            elif df[key].dtype == "bool":
                 filters.append(df[key] == kwargs[key])
         mask = np.logical_and.reduce(filters)
         df = df[mask]
         if df.shape[0] > 0:
             if output is None:
-                return [self[name] for name in df['name'].tolist()]
+                return [self[name] for name in df["name"].tolist()]
             else:
                 return df.reset_index(drop=True)
         else:
             raise NoDataLeft("This search return no data")
 
-    def to_dataframe(self, columns : list[str] | None = None) -> DataFrame | None:
+    def to_dataframe(self, columns: list[str] | None = None) -> DataFrame | None:
         """Export all reference values attributes to a :class:`pd.DataFrame`
 
         Default column names are given by the :attr:`ArgoReferenceValue.keys` attribute.
@@ -340,11 +407,9 @@ class ArgoReferenceTable:
             for c in to_list(columns):
                 if c not in ArgoReferenceValue.keys:
                     raise OptionValueError(
-                        f"Invalid columns name '{c}'. Valid values are: {ppliststr(ArgoReferenceValue.keys)}")
+                        f"Invalid columns name '{c}'. Valid values are: {ppliststr(ArgoReferenceValue.keys)}"
+                    )
                 cols.append(c)
-            if len(cols) == 0:
-                raise OptionValueError(
-                    f"No valid column names in '{ppliststr(columns)}'. Valid values are: {ppliststr(ArgoReferenceValue.keys, last='or')}")
 
         def todf(columns: list[str]):
             dict_list = []
@@ -360,7 +425,7 @@ class ArgoReferenceTable:
             self._df = todf(cols)
         return self._df
 
-    def to_dict(self, keys : list[str] | None = None) -> dict[str, Any]:
+    def to_dict(self, keys: list[str] | None = None) -> dict[str, Any]:
         """Export reference table attributes to a dictionary"""
         if keys is None:
             validated_keys = Props.keys
@@ -369,11 +434,9 @@ class ArgoReferenceTable:
             for k in to_list(keys):
                 if k not in Props.keys:
                     raise OptionValueError(
-                        f"Invalid keys name '{k}'. Valid values are: {ppliststr(Props.keys)}")
+                        f"Invalid keys name '{k}'. Valid values are: {ppliststr(Props.keys)}"
+                    )
                 validated_keys.append(k)
-            if len(validated_keys) == 0:
-                raise OptionValueError(
-                    f"No valid key names in '{ppliststr(keys)}'. Valid values are: {ppliststr(Props.keys, last='or')}")
 
         d = {}
         for key in validated_keys:
@@ -381,4 +444,4 @@ class ArgoReferenceTable:
         return d
 
     def to_json(self, *args, **kwargs):
-        raise NotImplementedError('Coming up soon !')
+        raise NotImplementedError("Coming up soon !")
