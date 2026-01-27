@@ -13,6 +13,7 @@ from utils import (
 from argopy.errors import OptionValueError
 from argopy.related.vocabulary.reference_tables import ArgoNVSReferenceTables
 from argopy.related.vocabulary.concept import ArgoReferenceValue
+from argopy.related.vocabulary.vocabulary import ArgoReferenceTable
 from argopy.stores.nvs.implementations.offline.nvs import NVS
 from argopy.utils.checkers import (
     is_list_of_strings,
@@ -216,3 +217,10 @@ class Test_ArgoReferenceValue:
         arv = ArgoReferenceValue('AANDERAA_OPTODE_3835')
         with path as p:
             arv.to_json(path=p, keys=keys)
+
+
+class Test_ArgoReferenceTable:
+
+    def test_init(self):
+        art = ArgoReferenceTable()
+        assert isinstance(art, ArgoReferenceTable)
