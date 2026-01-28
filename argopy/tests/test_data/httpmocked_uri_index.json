@@ -1,5 +1,40 @@
 [
     {
+        "uri": "https://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3835/?_profile=nvs&_mediatype=application/ld+json",
+        "ext": "json",
+        "sha": "b2c87b867baacd01cf414ed142fa809b07141e58a8250898156f086fe5715adf",
+        "type": "application/json",
+        "ts": "2026-01-25 15:29:19"
+    },
+    {
+        "uri": "https://vocab.nerc.ac.uk/collection/R27/current/?_profile=nvs&_mediatype=application/rdf+xml",
+        "ext": "xml",
+        "sha": "f12f9f2ab65033fdd55ab183255f6bcbcf7d9f239e2b8b8b5c06261139b340ef",
+        "type": "application/rdf+xml",
+        "ts": "2026-01-25 15:29:19"
+    },
+    {
+        "uri": "https://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3835/?_profile=nvs&_mediatype=application/rdf+xml",
+        "ext": "xml",
+        "sha": "3823c13a9c9530a61a32a5c9de3778bbd879c02fd4a02a4867ef637be9278f90",
+        "type": "application/rdf+xml",
+        "ts": "2026-01-25 15:29:19"
+    },
+    {
+        "uri": "https://vocab.nerc.ac.uk/collection/R27/current/?_profile=nvs&_mediatype=text/turtle",
+        "ext": "txt",
+        "sha": "09464cd6d5d7894199e81b714470d8cea9d4af635c4f5916259cf16b9c3f896e",
+        "type": "text/plain",
+        "ts": "2026-01-25 15:29:19"
+    },
+    {
+        "uri": "https://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3835/?_profile=nvs&_mediatype=text/turtle",
+        "ext": "txt",
+        "sha": "e18972636a59b71b32490395fb80cf1f820b25e539340428c7bcc77ae7282630",
+        "type": "text/plain",
+        "ts": "2026-01-25 15:29:19"
+    },
+    {
         "uri": "https://argovis-api.colorado.edu/argo?platform=1901393&data=pressure,temperature,salinity",
         "ext": "js",
         "sha": "990959c7c9e8d7c4d2530fd09d6bca6fa67c225e677686373fd6d1a2b3229229",

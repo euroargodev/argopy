@@ -206,11 +206,11 @@ def test_validate_against_matlab():
 
     Reference case:
     - Date: 09-Dec-2014 08:45
-    - Location: 17.6° N, -24.3° E
+    - Location: 17.6 N, -24.3 E
     - Depth: 180 dbar
-    - Temperature: 16 °C
+    - Temperature: 16 C
     - Salinity: 36.1 psu
-    - Oxygen: 104 µmol O2 kg-1
+    - Oxygen: 104 umol O2 kg-1
     """
 
     def matlab_ref():

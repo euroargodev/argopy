@@ -8,6 +8,7 @@ from .implementations.gdac import gdacfs
 
 from .index.argo_index import ArgoIndex
 from .float.argo_float import ArgoFloat
+from .nvs.nvs import NVS
 
 from .kerchunker import ArgoKerchunker
 
@@ -28,4 +29,5 @@ __all__ = (
     "s3store",
     "ArgoKerchunker",
     "gdacfs",
+    "NVS",
 )

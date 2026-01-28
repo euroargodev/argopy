@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Script to (re)install argopy related Conda environments and handle associated Jupyter kernels
-# Use mamba, not conda
+# Use conda, not conda
 #
 # Examples:
 # envs_manager -h
@@ -136,12 +136,12 @@ install_conda_env () {
 	# Eventually remove environment if exists:
 	if conda env list | grep $1; then
 	    printf "$1 already exists, removing this environment...\n"
-		mamba remove --quiet --name $1 --all --yes --json > /dev/null 2>&1
+		conda remove --quiet --name $1 --all --yes --json > /dev/null 2>&1
 	fi
 
 	# Create the environment from file
     printf "Creating conda environment $1 ...\n"
-	mamba env create --file temp_env.yml
+	conda env create --file temp_env.yml
 
 	# Clean-up
 	 /bin/rm tmp.json > /dev/null 2>&1
@@ -161,7 +161,7 @@ remove_conda_env () {
 
 	# Eventually remove environment if exists:
 	if conda env list | grep $1; then
-		  mamba remove --quiet --name $1 --all --yes --json > /dev/null 2>&1
+		  conda remove --quiet --name $1 --all --yes --json > /dev/null 2>&1
 		  # Also remove the ipython kernel
 		  remove_ipykernel $1
 	else

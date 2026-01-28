@@ -1,7 +1,7 @@
 {
   "name": "data_types",
   "long_name": "Expected data types of Argo variables",
-  "last_update": "2025-12-09T16:46:26.290813+00:00",
+  "last_update": "2026-01-25T10:30:26.603371+00:00",
   "data": {
     "str": [
       "PLATFORM_NUMBER",
@@ -86,9 +86,9 @@
       "PROFILE_NB_SAMPLE_STM_QC",
       "PROFILE_NB_SAMPLE_MCOMS_QC",
       "PROFILE_NB_SAMPLE_SFET_QC",
-      "PROFILE_NB_SAMPLE_SUNA_QC",
       "PROFILE_NB_SAMPLE_OPTODE_QC",
       "PROFILE_NB_SAMPLE_CTD_QC",
+      "PROFILE_NB_SAMPLE_SUNA_QC",
       "PROFILE_NB_SAMPLE_ECO_QC",
       "PROFILE_NB_SAMPLE_CROVER_QC",
       "PROFILE_CHLA_FLUORESCENCE_QC",
@@ -186,9 +186,9 @@
       "NB_SAMPLE_STM_DATA_MODE",
       "NB_SAMPLE_MCOMS_DATA_MODE",
       "NB_SAMPLE_SFET_DATA_MODE",
-      "NB_SAMPLE_SUNA_DATA_MODE",
       "NB_SAMPLE_OPTODE_DATA_MODE",
       "NB_SAMPLE_CTD_DATA_MODE",
+      "NB_SAMPLE_SUNA_DATA_MODE",
       "NB_SAMPLE_ECO_DATA_MODE",
       "NB_SAMPLE_CROVER_DATA_MODE",
       "CHLA_FLUORESCENCE_DATA_MODE",
