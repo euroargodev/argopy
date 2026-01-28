@@ -18,11 +18,13 @@
 [ossf-badge]: https://www.bestpractices.dev/projects/5939/badge
 [ossf-link]: https://www.bestpractices.dev/projects/5939
 
-
-
 ### Documentation
 
 The official documentation is hosted on ReadTheDocs.org: https://argopy.readthedocs.io
+
+If you can't wait, click the [MyBinder](https://euroargodev.github.io/binder-links-creator/) button below to open a jupyter notebook ready to play with Argopy:
+
+[![Binder](https://img.shields.io/static/v1.svg?logo=Jupyter&label=Argopy&message=Start%20online%20playground%20notebook&color=blue)](https://2i2c.mybinder.org/v2/gh/euroargodev/binder-sandbox/main?urlpath=git-pull%3Frepo%3Dhttps%253A%252F%252Fgithub.com%252Feuroargodev%252Fargopy%26urlpath%3Dlab%252Ftree%252Fargopy%252Fdocs%252Ftutorials%252Fplayground.ipynb%26branch%3Dmaster)
 
 ### Install
 
@@ -48,21 +50,21 @@ from argopy import DataFetcher
 ```python
 # Define what you want to fetch... 
 # a region:
-ArgoSet = DataFetcher().region([-85,-45,10.,20.,0,10.])
+f = DataFetcher().region([-85,-45,10.,20.,0,10.])
 # floats:
-ArgoSet = DataFetcher().float([6902746, 6902747, 6902757, 6902766])
+f = DataFetcher().float([6902746, 6902747, 6902757, 6902766])
 # or specific profiles:
-ArgoSet = DataFetcher().profile(6902746, 34)
+f = DataFetcher().profile(6902746, 34)
 ```
 ```python
 # then fetch and get data as xarray datasets:
-ds = ArgoSet.load().data
+ds = f.load().data
 # or
-ds = ArgoSet.to_xarray()
+ds = f.to_xarray()
 ```
 ```python
 # you can even plot some information:
-ArgoSet.plot('trajectory')    
+f.plot('trajectory')    
 ```
 
 They are many more usages and fine-tuning to allow you to access and manipulate Argo data:
