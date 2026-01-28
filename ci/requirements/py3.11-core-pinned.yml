@@ -32,6 +32,7 @@ dependencies:
 # EXT.PERF:
 #  - dask = 2025.5.1
 #  - distributed = 2025.5.1
+#  - flox = 0.10.8
 #  - joblib = 1.5.2
 #  - numba = 0.62.1
 #  - pyarrow = 20.0.0
