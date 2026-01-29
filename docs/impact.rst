@@ -10,6 +10,10 @@ Papers & proceedings mentioning Argopy
 
 - Chevillard C, Juza M, Dıaz-Barroso L, Reyes E, Escudier R and Tintore J (2024). "Capability of the Mediterranean Argo network to monitor sub-regional climate change indicators", Front. Mar. Sci. 11:1416486. https://doi.org/10.3389/fmars.2024.1416486
 
+- Clay, S., Ringuette, M., Devred, E., Azetsu-Scott, K., Wang, Z., Greenan, B., Gordon, C.,
+Gabriel, C.E., Childs, D., and Layton, C. (2026). "Physical, Chemical, Biological, and Optical
+Oceanographic Conditions in the Labrador Sea in 2024", Can. Tech. Rep. Fish. Aquat. Sci. 3752: vii + 58 p. https://doi.org/10.60825/327m-sm93
+
 - Dan E. Kelley, Jaimie Harbin, Clark Richards (2021). "argoFloats: An R Package for Analyzing Argo Data", Frontiers in Marine Science, https://doi.org/10.3389/fmars.2021.635922
 
 - Danilo Augusto Silva, Avijit Gangopadhyay, Dalton Kei Sasaki, et al. (2026). "Evidence of Synoptic Cross-shelf Pathways of Mid-depth Salinity Maximum Intrusions in the South Brazil Bight", ESS Open Archive, https://doi.org/10.22541/essoar.176771720.05845924/v1
