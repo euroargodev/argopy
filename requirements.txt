@@ -1,4 +1,4 @@
-xarray>=2025.7,<=2025.9.0
+xarray>=2025.7,<=2026.1.0
 scipy>=1.5
 numpy
 erddapy>=2.2.1
