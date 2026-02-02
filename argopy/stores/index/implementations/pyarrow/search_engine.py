@@ -120,7 +120,7 @@ class SearchEngine(ArgoIndexSearchEngine):
 
         CYCs = checker(CYCs)
         self._obj.load(nrows=self._obj._nrows_index)
-        search_filter = composer(self._obj.CYCs)
+        search_filter = composer(self._obj, CYCs)
         if not composed:
             self._obj.search_type = namer(CYCs)
             self._obj.search_filter = search_filter
