@@ -358,6 +358,11 @@ class ArgoReferenceTable:
         # Search key validation:
         keys = [key for key in kwargs if key in ArgoReferenceValue.keys]
 
+        if len(keys) == 0:
+            raise OptionValueError(
+                        f"No valid search key. Valid values are: {ppliststr(ArgoReferenceValue.keys)}"
+                    )
+
         # Search using the dataframe view of this reference table:
         df = self.to_dataframe()
         filters = []
@@ -367,7 +372,7 @@ class ArgoReferenceTable:
                     df[key].str.contains(str(kwargs[key]), regex=True, case=False)
                 )
             elif df[key].dtype == "datetime64[ns]":
-                warnings.warn("No search method implemented for datetime")
+                raise OptionValueError("No search method implemented for a datetime ArgoReferenceValue attribute")
             elif df[key].dtype == "bool":
                 filters.append(df[key] == kwargs[key])
         mask = np.logical_and.reduce(filters)

@@ -11,7 +11,7 @@ from mocked_http import mocked_httpserver, mocked_server_address
 from utils import (
     create_temp_folder,
 )
-from argopy.errors import OptionValueError
+from argopy.errors import OptionValueError, NoDataLeft
 from argopy.related.vocabulary.reference_tables import ArgoNVSReferenceTables
 from argopy.related.vocabulary.concept import ArgoReferenceValue
 from argopy.related.vocabulary.vocabulary import ArgoReferenceTable
@@ -265,6 +265,9 @@ default_identifier = ["R01"]
 
 class Test_ArgoReferenceTable:
 
+    def setup_class(self):
+        self.tbl = ArgoReferenceTable(default_identifier[0])
+
     @pytest.mark.parametrize(
         "identifier",
         ["R01", "DATA_TYPE"],
@@ -289,161 +292,110 @@ class Test_ArgoReferenceTable:
         with pytest.raises(ValueError):
             ArgoReferenceTable(identifier)
 
-    @pytest.mark.parametrize(
-        "identifier",
-        default_identifier,
-        indirect=False,
-        ids=[f"identifier='{x}'" for x in default_identifier],
-    )
-    def test_readonly_instance(self, identifier):
-        art = ArgoReferenceTable(identifier)
+    def test_readonly_instance(self):
         with pytest.raises(AttributeError):
-            art.parameter = "dummy"
+            self.tbl.parameter = "dummy"
 
-    @pytest.mark.parametrize(
-        "identifier",
-        default_identifier,
-        indirect=False,
-        ids=[f"identifier='{x}'" for x in default_identifier],
-    )
-    def test_keys(self, identifier):
-        art = ArgoReferenceTable(identifier)
-        assert is_list_of_strings(art.keys())
+    def test_keys(self):
+        assert is_list_of_strings(self.tbl.keys())
 
-    @pytest.mark.parametrize(
-        "identifier",
-        default_identifier,
-        indirect=False,
-        ids=[f"identifier='{x}'" for x in default_identifier],
-    )
-    def test_values(self, identifier):
-        art = ArgoReferenceTable(identifier)
-        values = art.values()
+    def test_values(self):
+        values = self.tbl.values()
         isinstance(values, list) and all(
             isinstance(elem, ArgoReferenceValue) for elem in values
         )
 
-    @pytest.mark.parametrize(
-        "identifier",
-        default_identifier,
-        indirect=False,
-        ids=[f"identifier='{x}'" for x in default_identifier],
-    )
-    def test_contains(self, identifier):
-        art = ArgoReferenceTable(identifier)
-        assert art.keys()[0] in art
+    def test_contains(self):
+        assert self.tbl.keys()[0] in self.tbl
 
-    @pytest.mark.parametrize(
-        "identifier",
-        default_identifier,
-        indirect=False,
-        ids=[f"identifier='{x}'" for x in default_identifier],
-    )
-    def test_len(self, identifier):
-        art = ArgoReferenceTable(identifier)
-        assert isinstance(len(art), int)
+    def test_len(self):
+        assert isinstance(len(self.tbl), int)
 
-    @pytest.mark.parametrize(
-        "identifier",
-        default_identifier,
-        indirect=False,
-        ids=[f"identifier='{x}'" for x in default_identifier],
-    )
-    def test_iter(self, identifier):
-        art = ArgoReferenceTable(identifier)
-        assert isinstance(art, Iterable)
+    def test_iter(self):
+        assert isinstance(self.tbl, Iterable)
 
-    @pytest.mark.parametrize(
-        "identifier",
-        default_identifier,
-        indirect=False,
-        ids=[f"identifier='{x}'" for x in default_identifier],
-    )
-    def test_getitem(self, identifier):
-        art = ArgoReferenceTable(identifier)
-        key = art.keys()[0]
-        assert isinstance(art[key], ArgoReferenceValue)
+    def test_getitem(self):
+        key = self.tbl.keys()[0]
+        assert isinstance(self.tbl[key], ArgoReferenceValue)
 
         with pytest.raises(ValueError):
-            art["dummy"]
+            self.tbl["dummy"]
 
     @pytest.mark.parametrize(
-        "identifier",
-        default_identifier,
+        "keyval",
+        [('name', 'BTRAJ'), ('deprecated', False), ('definition', 'nodataleft')],
         indirect=False,
-        ids=[f"identifier='{x}'" for x in default_identifier],
+        ids=[f"{x}='{y}'" for x, y in [('name', 'BTRAJ'), ('deprecated', False), ('definition', 'nodataleft')]],
     )
+    @pytest.mark.parametrize(
+        "output",
+        [None, 'df'],
+        indirect=False,
+        ids=[f"output='{x}'" for x in [None, 'df']],
+    )
+    def test_search(self, keyval, output):
+        if keyval[1] is not 'nodataleft':
+            data = self.tbl.search(**{keyval[0]: keyval[1]}, output=output)
+            if output is None:
+                assert all([isinstance(av, ArgoReferenceValue) for av in data])
+            else:
+                assert isinstance(data, pd.DataFrame)
+        else:
+            with pytest.raises(NoDataLeft):
+                self.tbl.search(**{keyval[0]: keyval[1]}, output=output)
+
+    @pytest.mark.parametrize(
+        "keyval",
+        [('dummy', None), ('date', '1900-01-01')],
+        indirect=False,
+        ids=[f"{x}='{y}'" for x, y in [('dummy', None), ('date', '1900-01-01')]],
+    )
+    def test_search_error(self, keyval):
+        with pytest.raises(OptionValueError):
+            self.tbl.search(**{keyval[0]: keyval[1]})
+
     @pytest.mark.parametrize(
         "columns",
         [None, ArgoReferenceValue.keys[0:3]],
         indirect=False,
         ids=[f"columns='{x}'" for x in [None, ArgoReferenceValue.keys[0:2]]],
     )
-    def test_to_dataframe(self, identifier, columns):
-        art = ArgoReferenceTable(identifier)
-        assert isinstance(art.to_dataframe(columns), pd.DataFrame)
+    def test_to_dataframe(self, columns):
+        assert isinstance(self.tbl.to_dataframe(columns), pd.DataFrame)
 
         if columns is not None and len(columns) > 1:
             # Trigger new export from the same instance
-            assert isinstance(art.to_dataframe(columns[0]), pd.DataFrame)
+            assert isinstance(self.tbl.to_dataframe(columns[0]), pd.DataFrame)
 
-    @pytest.mark.parametrize(
-        "identifier",
-        default_identifier,
-        indirect=False,
-        ids=[f"identifier='{x}'" for x in default_identifier],
-    )
     @pytest.mark.parametrize(
         "columns",
         ['dummy'],
         indirect=False,
         ids=[f"columns='{x}'" for x in ['dummy']],
     )
-    def test_to_dataframe_error(self, identifier, columns):
-        art = ArgoReferenceTable(identifier)
+    def test_to_dataframe_error(self, columns):
         with pytest.raises(OptionValueError):
-            art.to_dataframe(columns)
+            self.tbl.to_dataframe(columns)
 
-    @pytest.mark.parametrize(
-        "identifier",
-        default_identifier,
-        indirect=False,
-        ids=[f"identifier='{x}'" for x in default_identifier],
-    )
     @pytest.mark.parametrize(
         "keys",
         [None, ['parameter', 'long_name']],
         indirect=False,
         ids=[f"keys='{x}'" for x in [None, ['parameter', 'long_name']]],
     )
-    def test_to_dict(self, identifier, keys):
-        art = ArgoReferenceTable(identifier)
-        assert isinstance(art.to_dict(keys), dict)
+    def test_to_dict(self, keys):
+        assert isinstance(self.tbl.to_dict(keys), dict)
 
-    @pytest.mark.parametrize(
-        "identifier",
-        default_identifier,
-        indirect=False,
-        ids=[f"identifier='{x}'" for x in default_identifier],
-    )
     @pytest.mark.parametrize(
         "keys",
         ['dummy'],
         indirect=False,
         ids=[f"keys='{x}'" for x in ['dummy']],
     )
-    def test_to_dict_error(self, identifier, keys):
-        art = ArgoReferenceTable(identifier)
+    def test_to_dict_error(self, keys):
         with pytest.raises(OptionValueError):
-            art.to_dict(keys)
+            self.tbl.to_dict(keys)
 
-    @pytest.mark.parametrize(
-        "identifier",
-        default_identifier,
-        indirect=False,
-        ids=[f"identifier='{x}'" for x in default_identifier],
-    )
-    def test_to_json(self, identifier):
-        art = ArgoReferenceTable(identifier)
+    def test_to_json(self):
         with pytest.raises(NotImplementedError):
-            art.to_json()
+            self.tbl.to_json()
