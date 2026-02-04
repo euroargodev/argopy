@@ -279,7 +279,7 @@ class IndexStore_test_proto:
         if not HAS_S3FS and 's3' in fetcher_args['host']:
             xfail, reason = True, 's3fs not available'
         elif 's3' in fetcher_args['host']:
-            xfail, reason = True, 's3 is experimental'
+            xfail, reason = 0, 's3 is experimental (store)'
         yield self.create_store(fetcher_args, xfail=xfail, reason=reason).load(nrows=N_RECORDS)
 
     @pytest.fixture
@@ -298,7 +298,7 @@ class IndexStore_test_proto:
         if not HAS_S3FS and 's3' in host:
             xfail, reason = True, 's3fs not available'
         elif 's3' in host:
-            xfail, reason = True, 's3 is experimental'
+            xfail, reason = 0, 's3 is experimental (search)'
 
         yield run_a_search(self.new_idx, {"host": host, "cache": True}, srch, xfail=xfail, reason=reason)
 
