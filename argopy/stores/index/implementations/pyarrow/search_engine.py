@@ -14,8 +14,8 @@ try:
 except ModuleNotFoundError:
     pass
 
-from .....options import OPTIONS
-from .....errors import InvalidDatasetStructure, OptionValueError
+from argopy.options import OPTIONS
+from argopy.errors import InvalidDatasetStructure, OptionValueError
 from .....utils import is_indexbox, check_wmo, check_cyc, to_list, conv_lon
 from ...extensions import register_ArgoIndex_accessor, ArgoIndexSearchEngine
 from ..index_s3 import search_s3
@@ -54,7 +54,7 @@ def compute_params(param: str, obj):
 
 
 def pmap(obj, mapper: Callable, a_list: Iterable, kw: dict[Any] = {}) -> list[Any]:
-    """A method to execute some compute in multithreading"""
+    """A method to execute some computation with multithreading"""
     results: list[Any] = []
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -83,7 +83,7 @@ class SearchEngine(ArgoIndexSearchEngine):
 
         def composer(obj, WMOs):
             filt = pmap(obj, compute_wmo, WMOs)
-            return obj._reduce_a_filter_list(filt)
+            return obj._reduce_a_filter_list(filt, op="or")
 
         WMOs = checker(WMOs)
         self._obj.load(nrows=self._obj._nrows_index)
