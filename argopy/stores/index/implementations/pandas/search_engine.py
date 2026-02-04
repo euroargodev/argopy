@@ -1,16 +1,56 @@
 import logging
 import pandas as pd
 import numpy as np
-from typing import List
+from typing import List, Any, Callable, Iterable
+import concurrent.futures
+from functools import lru_cache
 
-from .....options import OPTIONS
-from .....errors import InvalidDatasetStructure, OptionValueError
+from argopy.options import OPTIONS
+from argopy.errors import InvalidDatasetStructure, OptionValueError
 from .....utils import is_indexbox, check_wmo, check_cyc, to_list, conv_lon
 from ...extensions import register_ArgoIndex_accessor, ArgoIndexSearchEngine
 from ..index_s3 import search_s3
 from .index import indexstore
 
 log = logging.getLogger("argopy.stores.index.pd")
+
+
+@lru_cache(maxsize=25_000)
+def compute_wmo(wmo: int, obj):
+    return obj.index["file"].str.contains("/%i/" % wmo, regex=False, case=True)
+
+
+@lru_cache(maxsize=25_000)
+def compute_cyc(cyc: int, obj):
+    pattern = "_%0.3d.nc" % cyc
+    if cyc >= 1000:
+        pattern = "_%0.4d.nc" % cyc
+    return obj.index["file"].str.contains(pattern, regex=False, case=True)
+
+
+@lru_cache(maxsize=25_000)
+def compute_wmo_cyc(wmo: int, obj, cyc=None):
+    filt = []
+    for c in cyc:
+        filt.append(compute_cyc(c, obj))
+    return np.logical_and.reduce([compute_wmo(wmo, obj), np.logical_or.reduce(filt)])
+
+
+@lru_cache(maxsize=1_000)
+def compute_params(param: str, obj):
+    return obj.index["variables"].apply(lambda x: param in x)
+
+
+def pmap(obj, mapper: Callable, a_list: Iterable, kw: dict[Any] = {}) -> list[Any]:
+    """A method to execute some computation with multithreading"""
+    results: list[Any] = []
+
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        futures = {executor.submit(mapper, item, obj, **kw): item for item in a_list}
+        for future in concurrent.futures.as_completed(futures):
+            results.append(future.result())
+
+    return results
 
 
 @register_ArgoIndex_accessor("query", indexstore)
@@ -29,19 +69,13 @@ class SearchEngine(ArgoIndexSearchEngine):
         def namer(WMOs):
             return {"WMO": WMOs}
 
-        def composer(WMOs):
-            filt = []
-            for wmo in WMOs:
-                filt.append(
-                    self._obj.index["file"].str.contains(
-                        "/%i/" % wmo, regex=True, case=False
-                    )
-                )
-            return self._obj._reduce_a_filter_list(filt, op="or")
+        def composer(obj, WMOs):
+            filt = pmap(obj, compute_wmo, WMOs)
+            return obj._reduce_a_filter_list(filt, op="or")
 
         WMOs = checker(WMOs)
         self._obj.load(nrows=self._obj._nrows_index)
-        search_filter = composer(WMOs)
+        search_filter = composer(self._obj, WMOs)
         if not composed:
             self._obj.search_type = namer(WMOs)
             self._obj.search_filter = search_filter
@@ -68,23 +102,13 @@ class SearchEngine(ArgoIndexSearchEngine):
         def namer(CYCs):
             return {"CYC": CYCs}
 
-        def composer(CYCs):
-            filt = []
-            for cyc in CYCs:
-                if cyc < 1000:
-                    pattern = "_%0.3d.nc" % (cyc)
-                else:
-                    pattern = "_%0.4d.nc" % (cyc)
-                filt.append(
-                    self._obj.index["file"].str.contains(
-                        pattern, regex=True, case=False
-                    )
-                )
-            return self._obj._reduce_a_filter_list(filt, op="or")
+        def composer(obj, CYCs):
+            filt = pmap(obj, compute_cyc, CYCs)
+            return obj._reduce_a_filter_list(filt)
 
         CYCs = checker(CYCs)
         self._obj.load(nrows=self._obj._nrows_index)
-        search_filter = composer(CYCs)
+        search_filter = composer(self._obj, CYCs)
         if not composed:
             self._obj.search_type = namer(CYCs)
             self._obj.search_filter = search_filter
@@ -115,24 +139,13 @@ class SearchEngine(ArgoIndexSearchEngine):
         def namer(WMOs, CYCs):
             return {"WMO": WMOs, "CYC": CYCs}
 
-        def composer(WMOs, CYCs):
-            filt = []
-            for wmo in WMOs:
-                for cyc in CYCs:
-                    if cyc < 1000:
-                        pattern = "%i_%0.3d.nc" % (wmo, cyc)
-                    else:
-                        pattern = "%i_%0.4d.nc" % (wmo, cyc)
-                    filt.append(
-                        self._obj.index["file"].str.contains(
-                            pattern, regex=True, case=False
-                        )
-                    )
-            return self._obj._reduce_a_filter_list(filt, op="or")
+        def composer(obj, WMOs, CYCs):
+            filt = pmap(obj, compute_wmo_cyc, WMOs, kw={"cyc": tuple(CYCs)})
+            return obj._reduce_a_filter_list(filt)
 
         WMOs, CYCs = checker(WMOs, CYCs)
         self._obj.load(nrows=self._obj._nrows_index)
-        search_filter = composer(WMOs, CYCs)
+        search_filter = composer(self._obj, WMOs, CYCs)
         if not composed:
             self._obj.search_type = namer(WMOs, CYCs)
             self._obj.search_filter = search_filter
@@ -338,19 +351,17 @@ class SearchEngine(ArgoIndexSearchEngine):
         def namer(PARAMs, logical):
             return {"PARAMS": (PARAMs, logical)}
 
-        def composer(PARAMs, logical):
-            filt = []
-            self._obj.index["variables"] = self._obj.index["parameters"].apply(
+        def composer(obj, PARAMs, logical):
+            obj.index["variables"] = obj.index["parameters"].apply(
                 lambda x: x.split()
             )
-            for param in PARAMs:
-                filt.append(self._obj.index["variables"].apply(lambda x: param in x))
-            self._obj.index = self._obj.index.drop("variables", axis=1)
-            return self._obj._reduce_a_filter_list(filt, op=logical)
+            filt = pmap(obj, compute_params, PARAMs)
+            obj.index = obj.index.drop("variables", axis=1)
+            return obj._reduce_a_filter_list(filt, op=logical)
 
         PARAMs = checker(PARAMs)
         self._obj.load(nrows=self._obj._nrows_index)
-        search_filter = composer(PARAMs, logical)
+        search_filter = composer(self._obj, PARAMs, logical)
         if not composed:
             self._obj.search_type = namer(PARAMs, logical)
             self._obj.search_filter = search_filter
@@ -482,15 +493,21 @@ class SearchEngine(ArgoIndexSearchEngine):
     def institution_code(self, institution_code: List[str], nrows=None, composed=False):
         def checker(institution_code):
             if "institution" not in self._obj.convention_columns:
-                raise InvalidDatasetStructure("Cannot search for institution codes in this index)")
-            log.debug("Argo index searching for institution code in %s ..." % institution_code)
+                raise InvalidDatasetStructure(
+                    "Cannot search for institution codes in this index)"
+                )
+            log.debug(
+                "Argo index searching for institution code in %s ..." % institution_code
+            )
             institution_code = to_list(institution_code)
             valid_codes = []
             for code in institution_code:
-                if self._obj.valid('institution_code', code):
+                if self._obj.valid("institution_code", code):
                     valid_codes.append(code.upper())
             if len(valid_codes) == 0:
-                raise OptionValueError(f"No valid codes found for institution in {institution_code}. Valid codes are: {self._obj.valid.institution_code}")
+                raise OptionValueError(
+                    f"No valid codes found for institution in {institution_code}. Valid codes are: {self._obj.valid.institution_code}"
+                )
             else:
                 return valid_codes
 
@@ -498,11 +515,7 @@ class SearchEngine(ArgoIndexSearchEngine):
             return {"INST_CODE": institution_code}
 
         def composer(institution_code):
-            return (
-                self._obj.index["institution"]
-                .fillna("")
-                .isin(institution_code)
-            )
+            return self._obj.index["institution"].fillna("").isin(institution_code)
 
         institution_code = checker(institution_code)
         self._obj.load(nrows=self._obj._nrows_index)
