@@ -1,8 +1,7 @@
 import logging
 import pandas as pd
 import numpy as np
-from typing import List, Any, Callable, Iterable
-import concurrent.futures
+from typing import List
 from functools import lru_cache
 
 
@@ -16,10 +15,16 @@ except ModuleNotFoundError:
 
 from argopy.options import OPTIONS
 from argopy.errors import InvalidDatasetStructure, OptionValueError
-from .....utils import is_indexbox, check_wmo, check_cyc, to_list, conv_lon
-from ...extensions import register_ArgoIndex_accessor, ArgoIndexSearchEngine
-from ..index_s3 import search_s3
-from .index import indexstore
+from argopy.utils.monitored_threadpool import pmap
+from argopy.utils.checkers import is_indexbox, check_wmo, check_cyc
+from argopy.utils.casting import to_list
+from argopy.utils.geo import conv_lon
+from argopy.stores.index.extensions import (
+    register_ArgoIndex_accessor,
+    ArgoIndexSearchEngine,
+)
+from argopy.stores.index.implementations.index_s3 import search_s3
+from argopy.stores.index.implementations.pyarrow.index import indexstore
 
 log = logging.getLogger("argopy.stores.index.pa")
 
@@ -51,18 +56,6 @@ def compute_params(param: str, obj):
         obj.index["parameters"],
         options=pa.compute.MatchSubstringOptions(param, ignore_case=True),
     )
-
-
-def pmap(obj, mapper: Callable, a_list: Iterable, kw: dict[Any] = {}) -> list[Any]:
-    """A method to execute some computation with multithreading"""
-    results: list[Any] = []
-
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        futures = {executor.submit(mapper, item, obj, **kw): item for item in a_list}
-        for future in concurrent.futures.as_completed(futures):
-            results.append(future.result())
-
-    return results
 
 
 @register_ArgoIndex_accessor("query", indexstore)
