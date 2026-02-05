@@ -174,12 +174,6 @@ class Test_ArgoReferenceValue:
         arv = ArgoReferenceValue(None, data=data)
         assert isinstance(arv, ArgoReferenceValue)
 
-    def test_init_with_extra(self):
-        arv = ArgoReferenceValue("FLUORESCENCE_CHLA", "R03")
-        assert isinstance(arv._extra, dict)
-        assert "local_attributes" in arv._extra
-        assert "properties" in arv._extra
-
     @pytest.mark.parametrize(
         "name", default_name, indirect=False, ids=[f"name='{x}'" for x in default_name]
     )
@@ -259,6 +253,21 @@ class Test_ArgoReferenceValue:
         with path as p:
             arv.to_json(path=p, keys=keys)
 
+    @pytest.mark.parametrize(
+        "name", ['BBP470', 'T000015', 'CB00001'], indirect=False, ids=[f"name='{x}'" for x in ['BBP470', 'T000015', 'CB00001']]
+    )
+    def test_extra_attrs(self, name):
+        arv = ArgoReferenceValue(name)
+        assert isinstance(arv.extra, dict)
+        match arv.reference:
+            case 'R03':
+                assert "Local_Attributes" in arv.extra
+                assert "Properties" in arv.extra
+            case 'R14':
+                assert "Template_Values" in arv.extra
+            case 'R18':
+                assert "Template_Values" in arv.extra
+
 
 default_identifier = ["R01"]
 
@@ -334,7 +343,7 @@ class Test_ArgoReferenceTable:
         ids=[f"output='{x}'" for x in [None, 'df']],
     )
     def test_search(self, keyval, output):
-        if keyval[1] is not 'nodataleft':
+        if keyval[1] != 'nodataleft':
             data = self.tbl.search(**{keyval[0]: keyval[1]}, output=output)
             if output is None:
                 assert all([isinstance(av, ArgoReferenceValue) for av in data])
@@ -396,6 +405,6 @@ class Test_ArgoReferenceTable:
         with pytest.raises(OptionValueError):
             self.tbl.to_dict(keys)
 
-    def test_to_json(self):
-        with pytest.raises(NotImplementedError):
-            self.tbl.to_json()
+    # def test_to_json(self):
+    #     with pytest.raises(NotImplementedError):
+    #         self.tbl.to_json()

@@ -17,7 +17,7 @@ from argopy.related.vocabulary.concept import ArgoReferenceValue
 
 @dataclass(frozen=True)
 class Props:
-    """ArgoReferenceTable property holder
+    """:class:`ArgoReferenceTable` property holder
 
     This should allow to make the difference between the class logic/attributes and the meta-data to expose.
 
@@ -38,6 +38,7 @@ class Props:
         "_d",
         "_keys",
     )
+    """All possible class attributes"""
 
     attrs = (
         "identifier",
@@ -49,7 +50,7 @@ class Props:
         "uri",
         "nvs",
     )
-    """A subset of slots, to be publicly exposed"""
+    """A subset of slots, to be publicly exposed (and are read-only)"""
 
     keys = (
         "identifier",
@@ -60,20 +61,23 @@ class Props:
         "date",
         "uri",
     )
-    """A subset of attrs, to be used in export methods (columns/keys selection)"""
+    """A subset of attrs, used to validate table export methods (to_dict)"""
 
 
 class ArgoReferenceTable:
-    """A class to work with one Argo reference table
-
-    For instance the vocabulary for "Argo sensor models", corresponds to the Argo reference table 27 ("R27")
-    and is used to document possible values of the "SENSOR_MODEL" parameter in netcdf files.
+    """A class to work with an Argo reference table, i.e. a NVS "vocabulary"
 
     An Argo reference table is a NVS "vocabulary", aka a SKOS "collection".
 
+    For instance, the vocabulary for "Argo sensor models", corresponds to the Argo reference table 27 ("R27")
+    and is used to document possible values of the "SENSOR_MODEL" parameter in netcdf files. All possible values for this parameter are instances of :class:`ArgoReferenceValue`.
+
     .. note::
-        ArgoNVSReferenceTables.tbl('R25')  # Deprecated API
-        ArgoReferenceTable('R25').to_dataframe()  # New API, not backward compatible (new column names)
+        # Deprecated API:
+        ArgoNVSReferenceTables.tbl('R25')
+
+        # New API, but not backward compatible (new column names):
+        ArgoReferenceTable('R25').to_dataframe()
 
     Examples
     --------
@@ -132,18 +136,13 @@ class ArgoReferenceTable:
         from argopy import ArgoReferenceTable
         art = ArgoReferenceTable('SENSOR')
 
-        # Export table content to a pd.DataFrame:
+        # Export table values to a pd.DataFrame:
         art.to_dataframe()
-        art.to_dataframe(columns=['name', 'deprecated'])  # Select attributes to export in columns
-
-        # Export to json structure:
-        # (basic export of NVS data)
-        art.to_json()  # In memory
-        art.to_json('referance_table.json')  # To a json file
+        art.to_dataframe(columns=['name', 'deprecated'])  # Select value attributes to export in columns
 
         # Export to a dictionary:
         art.to_dict()
-        art.to_dict(keys=['name', 'deprecated'])  # Select attributes to export in dictionary keys
+        art.to_dict(keys=['name', 'deprecated'])  # Select value attributes to export in dictionary keys
 
     .. code-block:: python
         :caption: Search the table
@@ -221,6 +220,10 @@ class ArgoReferenceTable:
     def from_urn(cls, urn: str) -> "ArgoReferenceTable":
         urn = urnparser(urn)
         return cls(urn["listid"])
+
+    @classmethod
+    def valid_identifier(cls):
+        return Asset.load("vocabulary:description")["data"]['valid_ref']
 
     def __setattr__(self, attr, value):
         """Set attribute value, with read-only policy after instantiation for public attributes"""
@@ -447,6 +450,3 @@ class ArgoReferenceTable:
         for key in validated_keys:
             d.update({key: getattr(self, key)})
         return d
-
-    def to_json(self, *args, **kwargs):
-        raise NotImplementedError("Coming up soon !")

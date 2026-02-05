@@ -11,14 +11,15 @@ from argopy.utils.locals import Asset
 from argopy.utils.format import urnparser, ppliststr
 from argopy.utils.checkers import to_list
 from argopy.utils.casting import Encoder
-from argopy.stores.nvs import (
+from argopy.stores.nvs import NVS
+from argopy.stores.nvs.utils import (
     concept2vocabulary,
     check_vocabulary,
     id2urn,
-    NVS,
-    read_r03definition,
+    curate_r03definition,
+    curate_r14definition,
+    curate_r18definition,
 )
-
 
 FilePath: TypeAlias = str | PathLike[str]
 
@@ -73,7 +74,7 @@ class Props:
         "extra",
         "nvs",
     )
-    """Attributes to be publicly exposed (and are read-only)"""
+    """A subset of slots, to be publicly exposed (and are read-only)"""
 
     keys = (
         "name",
@@ -92,7 +93,7 @@ class Props:
         "sameas",
         "context",
     )
-    """Attributes to be used to validate export/search possible values"""
+    """A subset of attrs, to be used to validate export/search possible values"""
 
 
 class ArgoReferenceValue:
@@ -100,11 +101,7 @@ class ArgoReferenceValue:
 
     An Argo Reference Value is one possible and documented value for one Argo parameter.
 
-    For instance, 'AANDERAA_OPTODE_3835' is an Argo Reference Value for the 'SENSOR_MODEL' parameter.
-
-    Notes
-    -----
-    The :class:`ArgoReferenceValue` class is low-level interface and can typically be ignored. However, the word “ArgoReferenceValue” appears often enough in the code and documentation that is useful to understand.
+    For instance, 'AANDERAA_OPTODE_3835' is an Argo Reference Value for the 'SENSOR_MODEL' parameter. All other possible values for this parameter are in the Argo reference table 27 for "Argo sensor models" (see :class:`ArgoReferenceTable`).
 
     Examples
     --------
@@ -153,8 +150,32 @@ class ArgoReferenceValue:
         arv.sameas     # nvs["owl:sameAs"]
         arv.context    # nvs["@context"]
 
+        # Extra attributes for R03, R14, R18 values (content curated from the value definition string, see e.g. below)
+        arv.extra
+
         # Raw NVS json data:
         arv.nvs
+
+    .. code-block:: python
+        :caption: Extra attributes (R03, R14, R18)
+
+        from argopy import ArgoReferenceValue
+
+        # For Values from R03 table
+        arv = ArgoReferenceValue('BBP470')
+        arv.extra
+        arv.extra['Local_Attributes'].long_name
+        arv.extra['Properties'].category
+
+        # For Values from R14 table
+        arv = ArgoReferenceValue('T000015')
+        arv.extra
+        arv.extra['Template_Values'].unit
+
+        # For Values from R18 table
+        arv = ArgoReferenceValue('CB00001')
+        arv.extra
+        arv.extra['Template_Values'].short_sensor_name
 
     .. code-block:: python
         :caption: Export methods
@@ -237,7 +258,11 @@ class ArgoReferenceValue:
 
         # And populate all attributes:
         self.long_name = self.nvs["skos:prefLabel"]["@value"]
-        self.definition = self.nvs["skos:definition"]["@value"]
+        self.definition = (
+            self.nvs["skos:definition"]["@value"]
+            if isinstance(self.nvs["skos:definition"], dict)
+            else self.nvs["skos:definition"]
+        )
         self.deprecated = True if self.nvs["owl:deprecated"] == "True" else False
         self.version = self.nvs["owl:versionInfo"]
         self.date = pd.to_datetime(self.nvs["dc:date"])
@@ -250,7 +275,11 @@ class ArgoReferenceValue:
 
         self._extra = None
         if self.reference == "R03":
-            self._extra = read_r03definition(self.definition)
+            self._extra = curate_r03definition(self.definition)
+        if self.reference == "R14":
+            self._extra = curate_r14definition(self.definition)
+        if self.reference == "R18":
+            self._extra = curate_r18definition(self.definition)
 
         # todo: support mapping (https://github.com/OneArgo/ArgoVocabs?tab=readme-ov-file#ivb-mappings)
         # Relation can be:
@@ -288,41 +317,53 @@ class ArgoReferenceValue:
         summary.append(f'deprecated: {"True" if self.deprecated else "False"}')
         summary.append(f"reference/parameter: {self.reference}/{self.parameter}")
 
-        summary.append(f"relations:")
+        nrel = sum(
+            [
+                len(getattr(self, rel)) if getattr(self, rel, None) is not None else 0
+                for rel in ["broader", "narrower", "related", "sameas"]
+            ]
+        )
+        if nrel > 0:
+            summary.append(f"relations[{nrel}]:")
+        else:
+            summary.append(
+                f'relations[{ppliststr(["broader", "narrower", "related", "sameas"], last="or")}]: -'
+            )
         for relation in ["broader", "narrower", "related", "sameas"]:
             if getattr(self, relation, None) is not None:
-                # list of items like: {'@id': 'http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_II/'}
+                # list of items like: {"@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_II/"}
                 rels = getattr(self, relation)
-                # Format the list as a list of items like 'R23/PROVOR_II':
+                # Format the list as a list of items like "R23/PROVOR_II":
                 urns = [urnparser(id2urn(r["@id"])) for r in rels]
-                urns = [f"{u['listid']}/{u['termid']}" for u in urns]
+                urns = [f'{u["listid"]}/{u["termid"]}' for u in urns]
                 # Final print:
                 if relation == "related":
                     summary.append(
-                        f"  - '{relation}' to {len(urns)} value{'s' if len(urns) > 1 else ''} : {ppliststr(urns)}"
+                        f'  - "{relation}" to {len(urns)} value{"s" if len(urns) > 1 else ""} : {ppliststr(urns)}'
                     )
                 elif relation == "sameas":
                     summary.append(
-                        f"  - '{relation}' {len(urns)} value{'s' if len(urns) > 1 else ''} : {ppliststr(urns)}"
+                        f'  - "{relation}" {len(urns)} value{"s" if len(urns) > 1 else ""} : {ppliststr(urns)}'
                     )
                 else:
                     summary.append(
-                        f"  - {len(urns)} '{relation}' value{'s' if len(urns)>1 else ''}: {ppliststr(urns)}"
+                        f'  - {len(urns)} "{relation}" value{"s" if len(urns)>1 else ""}: {ppliststr(urns)}'
                     )
-            # else:
-            #     summary.append(f"  {relation}: -")
-        if summary[-1] == f"relations:":
-            summary[-1] = (
-                f"relations[{ppliststr(['broader', 'narrower', 'related', 'sameas'], last='or')}]: -"
-            )
 
         if getattr(self, "context", None) is not None:
             keys = list(self.context.keys())
             summary.append(f"context[{len(keys)}]: {ppliststr(keys)}")
         else:
             summary.append(
-                f"context: {'(not loaded yet, use key indexing to load)' if self._from == 'json' else '-'}"
+                f'context: {"(not loaded yet, use key indexing to load)" if self._from == "json" else "-"}'
             )
+
+        if getattr(self, "extra", None) is not None:
+            keys = list(self.extra.keys())
+            summary.append(f"extra[{len(keys)}]:")
+            for key in keys:
+                summary.append(f'  - "{key}": {self.extra[key]}')
+
         return "\n".join(summary)
 
     def __str__(self):

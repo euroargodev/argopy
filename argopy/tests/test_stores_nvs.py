@@ -10,9 +10,12 @@ from argopy.stores.nvs.utils import (
     id2urn,
     extract_local_attributes,
     extract_properties_section,
-    read_r03definition,
+    curate_r03definition,
+    curate_r14definition,
+    curate_r18definition,
     LocalAttributes,
     Properties,
+    TemplateValues,
 )
 
 from mocked_http import mocked_httpserver, mocked_server_address
@@ -290,27 +293,38 @@ class Test_Utils:
         definition = 'Raw fluorescence signal from chlorophyll-a fluorometer, reported by ECO3, FLNTU and FLBB sensors.'
         assert extract_properties_section(definition) is None
 
-    def test_read_r03definition(self):
+    def test_curate_r03definition(self):
         definition = 'Raw fluorescence signal from chlorophyll-a fluorometer, reported by ECO3, FLNTU and FLBB sensors. Local_Attributes:{long_name:Chlorophyll-A signal from fluorescence sensor; standard_name:-; units:count; valid_min:-; valid_max:-; fill_value:99999.f}. Properties:{category:ib; data_type:float}'
-        data = read_r03definition(definition)
+        data = curate_r03definition(definition)
         assert isinstance(data, dict)
-        assert 'local_attributes' in data
-        assert isinstance(data['local_attributes'], LocalAttributes)
-        assert 'properties' in data
-        assert isinstance(data['properties'], Properties)
+        assert 'Local_Attributes' in data
+        assert isinstance(data['Local_Attributes'], LocalAttributes)
+        assert 'Properties' in data
+        assert isinstance(data['Properties'], Properties)
 
         definition = 'Raw fluorescence signal from chlorophyll-a fluorometer, reported by ECO3, FLNTU and FLBB sensors. Properties:{category:ib; data_type:float}'
-        data = read_r03definition(definition)
+        data = curate_r03definition(definition)
         assert isinstance(data, dict)
-        assert data['local_attributes'] is None
-        assert 'properties' in data
-        assert isinstance(data['properties'], Properties)
+        assert data['Local_Attributes'] is None
+        assert 'Properties' in data
+        assert isinstance(data['Properties'], Properties)
 
         definition = 'Raw fluorescence signal from chlorophyll-a fluorometer, reported by ECO3, FLNTU and FLBB sensors. Local_Attributes:{long_name:Chlorophyll-A signal from fluorescence sensor; standard_name:-; units:count; valid_min:-; valid_max:-; fill_value:99999.f}.'
-        data = read_r03definition(definition)
+        data = curate_r03definition(definition)
         assert isinstance(data, dict)
-        assert 'local_attributes' in data
-        assert isinstance(data['local_attributes'], LocalAttributes)
-        assert 'properties' in data
-        assert data['properties'] is None
+        assert 'Local_Attributes' in data
+        assert isinstance(data['Local_Attributes'], LocalAttributes)
+        assert 'Properties' in data
+        assert data['Properties'] is None
 
+    def test_curate_r14definition(self):
+        definition = 'Median of the mixed layer samples taken. Template_Values:{unit:[degC, mdegC]}.'
+        data = curate_r14definition(definition)
+        assert isinstance(data, dict)
+        assert 'Template_Values' in data
+
+    def test_curate_r18definition(self):
+        definition = 'Threshold between depth zone #<N> and depth zone #<N+1> for <short_sensor_name>. Template_Values:{short_sensor_name:[Crover, Ctd, Eco, Flbb, Flntu, Ocr, Optode, Sfet, Suna];N:[1..4];unit:[bar, dbar, cbar, mbar, inHg]}.'
+        data = curate_r18definition(definition)
+        assert isinstance(data, dict)
+        assert 'Template_Values' in data
