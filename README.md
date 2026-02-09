@@ -50,21 +50,21 @@ from argopy import DataFetcher
 ```python
 # Define what you want to fetch... 
 # a region:
-ArgoSet = DataFetcher().region([-85,-45,10.,20.,0,10.])
+f = DataFetcher().region([-85,-45,10.,20.,0,10.])
 # floats:
-ArgoSet = DataFetcher().float([6902746, 6902747, 6902757, 6902766])
+f = DataFetcher().float([6902746, 6902747, 6902757, 6902766])
 # or specific profiles:
-ArgoSet = DataFetcher().profile(6902746, 34)
+f = DataFetcher().profile(6902746, 34)
 ```
 ```python
 # then fetch and get data as xarray datasets:
-ds = ArgoSet.load().data
+ds = f.load().data
 # or
-ds = ArgoSet.to_xarray()
+ds = f.to_xarray()
 ```
 ```python
 # you can even plot some information:
-ArgoSet.plot('trajectory')    
+f.plot('trajectory')    
 ```
 
 They are many more usages and fine-tuning to allow you to access and manipulate Argo data:
