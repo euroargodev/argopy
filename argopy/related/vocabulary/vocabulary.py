@@ -136,13 +136,16 @@ class ArgoReferenceTable:
         from argopy import ArgoReferenceTable
         art = ArgoReferenceTable('SENSOR')
 
+        # Export table attributes to a dictionary (rq: this is not to export values):
+        art.to_dict()
+        art.to_dict(keys=['parameter', 'date', 'uri'])  # Select Table attributes to export in dictionary keys
+
         # Export table values to a pd.DataFrame:
         art.to_dataframe()
         art.to_dataframe(columns=['name', 'deprecated'])  # Select value attributes to export in columns
 
-        # Export to a dictionary:
-        art.to_dict()
-        art.to_dict(keys=['name', 'deprecated'])  # Select value attributes to export in dictionary keys
+        # Export table values to a dictionary, use pd.DataFrame:
+        art.to_dataframe(columns=['name', 'deprecated']).to_dict(orient='records')
 
     .. code-block:: python
         :caption: Search the table
