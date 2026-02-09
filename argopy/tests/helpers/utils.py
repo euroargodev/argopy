@@ -49,12 +49,13 @@ from mocked_http import mocked_server_address, serve_mocked_httpserver
 log = logging.getLogger("argopy.tests.utils")
 log.debug("%s TESTS UTILS %s" % ("="*50, "="*50))
 
-def _importorskip(modname):
-    try:
-        importlib.import_module(modname)  # noqa: E402
-        has = True
-    except ImportError:
-        has = False
+def _importorskip(modname, has: bool | None = None):
+    if bool is None:
+        try:
+            importlib.import_module(modname)  # noqa: E402
+            has = True
+        except ImportError:
+            has = False
     func = pytest.mark.skipif(not has, reason="Requires {}".format(modname))
     return has, func
 
@@ -204,6 +205,16 @@ has_pyco2sys, requires_pyco2sys = _importorskip("PyCO2SYS")
 #     isconnected(OceanOPSDeployments().api_server_check), "a live Ocean-OPS server"
 # )
 has_oops, requires_oops = _connectskip(1, "a live Ocean-OPS server")  # Always ON with the mocked server
+
+
+##########
+# AWS S3 #
+##########
+has_s3, _ = _importorskip("s3fs")
+if has_s3:
+    log.debug("All unit tests for S3 GDAC are disabled manually !")
+    has_s3, requires_s3 = _importorskip("s3fs", has=False)
+
 
 ############
 # Fix for issues discussed here:
