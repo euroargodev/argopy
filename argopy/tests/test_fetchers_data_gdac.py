@@ -20,7 +20,7 @@ from argopy.errors import (
     CacheFileNotFound,
 )
 from argopy.utils.checkers import is_list_of_strings, check_gdac_path
-from utils import requires_gdac, create_temp_folder, patch_ftp
+from utils import requires_gdac, create_temp_folder, patch_ftp, has_s3
 from mocked_http import mocked_httpserver
 from mocked_http import mocked_server_address as MOCKHTTP
 
@@ -38,8 +38,7 @@ HOSTS = [
          'MOCKFTP',
         ]
 
-HAS_S3FS = importlib.util.find_spec("s3fs") is not None
-if HAS_S3FS:
+if has_s3:
     # todo Create a mocked server for s3 tests
     HOSTS.append("s3://argo-gdac-sandbox/pub")  # todo: How do we mock a s3 server ?
 
