@@ -1,6 +1,3 @@
-import inspect
-import warnings
-
 import pandas as pd
 import numpy as np
 from pandas import DataFrame
@@ -8,7 +5,7 @@ from typing import Any
 from dataclasses import dataclass
 
 from argopy.errors import NoDataLeft, OptionValueError
-from argopy.utils.locals import Asset
+from argopy.utils.locals import Asset, caller_function
 from argopy.utils.format import ppliststr, urnparser
 from argopy.utils.checkers import to_list
 from argopy.stores.nvs import NVS, id2urn
@@ -232,8 +229,7 @@ class ArgoReferenceTable:
         """Set attribute value, with read-only policy after instantiation for public attributes"""
         if (
             attr in self.__slots__
-            and attr[0] != "_"
-            and inspect.stack()[1][3] != "__init__"
+            and not caller_function().startswith("__init")
         ):
             raise AttributeError(f"'{attr}' is read-only after instantiation.")
         ArgoReferenceTable.__dict__[attr].__set__(self, value)

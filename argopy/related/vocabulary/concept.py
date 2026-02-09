@@ -1,4 +1,3 @@
-import inspect
 import pandas as pd
 from typing import Any, TypeAlias
 from os import PathLike
@@ -7,7 +6,7 @@ import json
 from dataclasses import dataclass
 
 from argopy.errors import OptionValueError
-from argopy.utils.locals import Asset
+from argopy.utils.locals import Asset, caller_function
 from argopy.utils.format import urnparser, ppliststr
 from argopy.utils.checkers import to_list
 from argopy.utils.casting import Encoder
@@ -22,6 +21,8 @@ from argopy.stores.nvs.utils import (
 )
 
 FilePath: TypeAlias = str | PathLike[str]
+
+
 
 
 @dataclass(frozen=True)
@@ -303,7 +304,7 @@ class ArgoReferenceValue:
 
     def __setattr__(self, attr, value):
         """Set attribute value, with read-only after instantiation policy for public attributes"""
-        if attr in self.attrs and not inspect.stack()[1][3].startswith("__init"):
+        if attr in self.attrs and not caller_function().startswith("__init"):
             raise AttributeError(f"'{attr}' is read-only after instantiation.")
         ArgoReferenceValue.__dict__[attr].__set__(self, value)
 
