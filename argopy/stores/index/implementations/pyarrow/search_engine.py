@@ -187,7 +187,35 @@ class SearchEngine(ArgoIndexSearchEngine):
             self._obj.search_type.update(namer(BOX))
             return search_filter
 
-    def lat(self, BOX, nrows=None, composed=False):
+    def lat(self, BOX=None, nrows=None, composed=False, **kwargs):
+        # Case 1: classic BOX format (at least 6 elements)
+        if BOX is not None and isinstance(BOX, list) and len(BOX) >= 6:
+            pass
+
+        # Case 2: range format [vmin, vmax]
+        elif BOX is not None and isinstance(BOX, (list, tuple)) and len(BOX) == 2:
+            vmin, vmax = BOX
+            BOX = [-180, 180, vmin, vmax, '1900-01-01', '2100-12-31']
+
+        # Case 3: keyword arguments (vmin / vmax)
+        elif 'vmin' in kwargs or 'vmax' in kwargs:
+            vmin = kwargs.get('vmin', None)
+            vmax = kwargs.get('vmax', None)
+            if vmin is None : vmin=-90
+            if vmax is None : vmax=90
+            BOX = [-180, 180, vmin, vmax, '1900-01-01', '2100-12-31']
+
+        # No arguments provided
+        elif BOX is None and not kwargs:
+            raise ValueError("Invalid arguments")
+
+        # Single numeric value (ex: idx.query.lat(vmin=12))
+        else:
+            if isinstance(BOX, (int, float)):
+                BOX = [-180, 180, BOX, 90, '1900-01-01', '2100-12-31']
+            else:
+                ValueError("Unsupported argument format")
+
         def checker(BOX):
             if "latitude" not in self._obj.convention_columns:
                 raise InvalidDatasetStructure("Cannot search for latitude in this index")
@@ -234,6 +262,8 @@ class SearchEngine(ArgoIndexSearchEngine):
         elif 'vmin' in kwargs or 'vmax' in kwargs:
             vmin = kwargs.get('vmin', None)
             vmax = kwargs.get('vmax', None)
+            if vmin is None : vmin=-180
+            if vmax is None : vmax=180
             BOX = [vmin, vmax, -90, 90, '1900-01-01', '2100-12-31']
     
         # No arguments provided
