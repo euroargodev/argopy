@@ -286,7 +286,7 @@ class SearchEngine(ArgoIndexSearchEngine):
         if BOX is not None and isinstance(BOX, list) and len(BOX) >= 6:
             pass
 
-        elif BOX is not None and isinstance(BOX, list) and len(BOX) == 4:
+        elif BOX is not None and isinstance(BOX, (list, tuple)) and len(BOX) == 4:
             xmin, xmax, ymin, ymax = BOX
             BOX = [xmin, xmax, ymin, ymax, '1900-01-01', '2100-12-31']
 
