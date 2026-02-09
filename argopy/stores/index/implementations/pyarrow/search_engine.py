@@ -282,7 +282,31 @@ class SearchEngine(ArgoIndexSearchEngine):
             self._obj.search_type.update(namer(BOX))
             return search_filter
         
-    def lon_lat(self, BOX, nrows=None, composed=False):
+    def lon_lat(self, BOX=None, nrows=None, composed=False, **kwargs):
+        if BOX is not None and isinstance(BOX, list) and len(BOX) >= 6:
+            pass
+
+        elif BOX is not None and isinstance(BOX, list) and len(BOX) == 4:
+            xmin, xmax, ymin, ymax = BOX
+            BOX = [xmin, xmax, ymin, ymax, '1900-01-01', '2100-12-31']
+
+        elif any(k in kwargs for k in ('xmin', 'xmax', 'ymin', 'ymax')):
+            xmin = kwargs.get('xmin', None)
+            xmax = kwargs.get('xmax', None)
+            ymin = kwargs.get('ymin', None)
+            ymax = kwargs.get('ymax', None)
+            # Fill missing bounds with "include all"
+            if xmin is None : xmin=-180
+            if xmax is None : xmax=180
+            if ymin is None : ymin=-90
+            if ymax is None : ymax=90
+            BOX = [xmin, xmax, ymin, ymax, '1900-01-01', '2100-12-31']
+    
+        elif BOX is None and not kwargs:
+            raise ValueError("Invalid arguments")
+        else:
+            raise ValueError("Unsupported argument format")
+
         def checker(BOX):
             if "longitude" not in self._obj.convention_columns:
                 raise InvalidDatasetStructure("Cannot search for lon/lat in this index")
