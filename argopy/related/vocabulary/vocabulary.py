@@ -223,14 +223,11 @@ class ArgoReferenceTable:
 
     @classmethod
     def valid_identifier(cls):
-        return Asset.load("vocabulary:description")["data"]['valid_ref']
+        return Asset.load("vocabulary:description")["data"]["valid_ref"]
 
     def __setattr__(self, attr, value):
         """Set attribute value, with read-only policy after instantiation for public attributes"""
-        if (
-            attr in self.__slots__
-            and not caller_function().startswith("__init")
-        ):
+        if attr in self.attrs and not caller_function().startswith("__init"):
             raise AttributeError(f"'{attr}' is read-only after instantiation.")
         ArgoReferenceTable.__dict__[attr].__set__(self, value)
 
@@ -362,8 +359,8 @@ class ArgoReferenceTable:
 
         if len(keys) == 0:
             raise OptionValueError(
-                        f"No valid search key. Valid values are: {ppliststr(ArgoReferenceValue.keys)}"
-                    )
+                f"No valid search key. Valid values are: {ppliststr(ArgoReferenceValue.keys)}"
+            )
 
         # Search using the dataframe view of this reference table:
         df = self.to_dataframe()
@@ -374,7 +371,9 @@ class ArgoReferenceTable:
                     df[key].str.contains(str(kwargs[key]), regex=True, case=False)
                 )
             elif df[key].dtype == "datetime64[ns]":
-                raise OptionValueError("No search method implemented for a datetime ArgoReferenceValue attribute")
+                raise OptionValueError(
+                    "No search method implemented for a datetime ArgoReferenceValue attribute"
+                )
             elif df[key].dtype == "bool":
                 filters.append(df[key] == kwargs[key])
         mask = np.logical_and.reduce(filters)

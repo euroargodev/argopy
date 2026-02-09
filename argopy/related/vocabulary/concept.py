@@ -23,8 +23,6 @@ from argopy.stores.nvs.utils import (
 FilePath: TypeAlias = str | PathLike[str]
 
 
-
-
 @dataclass(frozen=True)
 class Props:
     """:class:`ArgoReferenceValue` property holder
