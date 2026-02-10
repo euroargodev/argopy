@@ -8,6 +8,7 @@ try:
     import pyarrow as pa
     import pyarrow.parquet as pq  # noqa: F401
     import pyarrow.compute as pc  # noqa: F401
+    import datetime as dt
 except ModuleNotFoundError:
     pass
 
@@ -160,10 +161,8 @@ class SearchEngine(ArgoIndexSearchEngine):
 
         # Case 3: keyword arguments (vmin / vmax)
         elif 'vmin' in kwargs or 'vmax' in kwargs:
-            vmin = kwargs.get('vmin', None)
-            vmax = kwargs.get('vmax', None)
-            if vmin is None : vmin='1900-01-01'
-            if vmax is None : vmax='2100-12-31'
+            vmin = kwargs.get('vmin', '1900-01-01')
+            vmax = kwargs.get('vmax', '2100-12-31')
             BOX = [-180, 180, -90, 90, vmin, vmax]
 
         # No arguments provided
@@ -172,7 +171,7 @@ class SearchEngine(ArgoIndexSearchEngine):
 
         # Single value (ex: idx.query.date('1900-01-01')
         else:
-            if isinstance(BOX, str):
+            if isinstance(BOX, (str, dt.datetime, pd.Timestamp)):
                 BOX = [-180, 180, -90, 90, BOX, '2100-12-31']
             else:
                 raise ValueError("Unsupported argument format")
@@ -227,10 +226,8 @@ class SearchEngine(ArgoIndexSearchEngine):
 
         # Case 3: keyword arguments (vmin / vmax)
         elif 'vmin' in kwargs or 'vmax' in kwargs:
-            vmin = kwargs.get('vmin', None)
-            vmax = kwargs.get('vmax', None)
-            if vmin is None : vmin=-90
-            if vmax is None : vmax=90
+            vmin = kwargs.get('vmin', -90.)
+            vmax = kwargs.get('vmax', 90.)
             BOX = [-180, 180, vmin, vmax, '1900-01-01', '2100-12-31']
 
         # No arguments provided
@@ -288,10 +285,8 @@ class SearchEngine(ArgoIndexSearchEngine):
     
         # Case 3: keyword arguments (vmin / vmax)
         elif 'vmin' in kwargs or 'vmax' in kwargs:
-            vmin = kwargs.get('vmin', None)
-            vmax = kwargs.get('vmax', None)
-            if vmin is None : vmin=-180
-            if vmax is None : vmax=180
+            vmin = kwargs.get('vmin', -180.)
+            vmax = kwargs.get('vmax', 180.)
             BOX = [vmin, vmax, -90, 90, '1900-01-01', '2100-12-31']
     
         # No arguments provided
@@ -349,15 +344,10 @@ class SearchEngine(ArgoIndexSearchEngine):
             BOX = [xmin, xmax, ymin, ymax, '1900-01-01', '2100-12-31']
 
         elif any(k in kwargs for k in ('xmin', 'xmax', 'ymin', 'ymax')):
-            xmin = kwargs.get('xmin', None)
-            xmax = kwargs.get('xmax', None)
-            ymin = kwargs.get('ymin', None)
-            ymax = kwargs.get('ymax', None)
-            # Fill missing bounds with "include all"
-            if xmin is None : xmin=-180
-            if xmax is None : xmax=180
-            if ymin is None : ymin=-90
-            if ymax is None : ymax=90
+            xmin = kwargs.get('xmin', -180.)
+            xmax = kwargs.get('xmax', 180.)
+            ymin = kwargs.get('ymin', -90.)
+            ymax = kwargs.get('ymax', 90.)
             BOX = [xmin, xmax, ymin, ymax, '1900-01-01', '2100-12-31']
     
         elif BOX is None and not kwargs:
