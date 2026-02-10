@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Callable
-import inspect
+from argopy.utils.locals import caller_function
 
 
 class NVSProto(ABC):
@@ -12,10 +12,7 @@ class NVSProto(ABC):
 
     def __setattr__(self, attr, value):
         """Set attribute value, with a 'read-only after instantiation' policy for public attributes"""
-        if (
-            attr in [key for key in self.__dir__() if key[0] != "_"]
-            and inspect.stack()[1][3] != "__init__"
-        ):
+        if attr in [key for key in self.__dir__() if key[0] != "_"] and not caller_function().startswith("__init"):
             raise AttributeError(f"'{attr}' is read-only after instantiation.")
         self.__dict__[f"{attr}"] = value
 
