@@ -150,32 +150,25 @@ class SearchEngine(ArgoIndexSearchEngine):
             return search_filter
 
     def date(self, BOX=None, nrows=None, composed=False, **kwargs):
-        # Case 1: classic BOX format (at least 6 elements)
-        if BOX is not None and isinstance(BOX, list) and len(BOX) >= 6:
-            pass
+        if 'ge' in kwargs or 'le' in kwargs:
+            ge = kwargs.get('ge', '1900-01-01')
+            le = kwargs.get('le', '2100-12-31')
+            BOX = [-180, 180, -90, 90, ge, le]
 
-        # Case 2: range format [vmin, vmax]
-        elif BOX is not None and isinstance(BOX, (list, tuple)) and len(BOX) == 2:
-            vmin, vmax = BOX
-            BOX = [-180, 180, -90, 90, vmin, vmax]
-
-        # Case 3: keyword arguments (vmin / vmax)
-        elif 'vmin' in kwargs or 'vmax' in kwargs:
-            vmin = kwargs.get('vmin', '1900-01-01')
-            vmax = kwargs.get('vmax', '2100-12-31')
-            BOX = [-180, 180, -90, 90, vmin, vmax]
-
-        # No arguments provided
-        elif BOX is None and not kwargs:
-            raise ValueError("Invalid arguments")
-
-        # Single value (ex: idx.query.date('1900-01-01')
         else:
-            if isinstance(BOX, (str, dt.datetime, pd.Timestamp)):
-                BOX = [-180, 180, -90, 90, BOX, '2100-12-31']
-            else:
-                raise ValueError("Unsupported argument format")
-
+            match BOX:
+                case list() if len(BOX) >= 6:
+                    pass
+                case [vmin, vmax]:
+                    BOX = [-180, 180, -90, 90, vmin, vmax]
+                case None:
+                    raise ValueError("Invalid arguments")
+                case _:
+                    if isinstance(BOX, str):
+                        BOX = [-180, 180, -90, 90, BOX, '2100-12-31']
+                    else:
+                        raise ValueError("Unsupported argument format")
+                    
         def checker(BOX):
             if "date" not in self._obj.convention_columns:
                 raise InvalidDatasetStructure("Cannot search for date in this index")
@@ -215,31 +208,22 @@ class SearchEngine(ArgoIndexSearchEngine):
             return search_filter
 
     def lat(self, BOX=None, nrows=None, composed=False, **kwargs):
-        # Case 1: classic BOX format (at least 6 elements)
-        if BOX is not None and isinstance(BOX, list) and len(BOX) >= 6:
-            pass
-
-        # Case 2: range format [vmin, vmax]
-        elif BOX is not None and isinstance(BOX, (list, tuple)) and len(BOX) == 2:
-            vmin, vmax = BOX
-            BOX = [-180, 180, vmin, vmax, '1900-01-01', '2100-12-31']
-
-        # Case 3: keyword arguments (vmin / vmax)
-        elif 'vmin' in kwargs or 'vmax' in kwargs:
-            vmin = kwargs.get('vmin', -90.)
-            vmax = kwargs.get('vmax', 90.)
-            BOX = [-180, 180, vmin, vmax, '1900-01-01', '2100-12-31']
-
-        # No arguments provided
-        elif BOX is None and not kwargs:
-            raise ValueError("Invalid arguments")
-
-        # Single numeric value (ex: idx.query.lat(12))
+        if 'ge' in kwargs or 'le' in kwargs:
+            ge = kwargs.get('ge', -90.)
+            le = kwargs.get('le', 90.)
+            BOX = [-180, 180, ge, le, '1900-01-01', '2100-12-31']
         else:
-            if isinstance(BOX, (int, float)):
-                BOX = [-180, 180, BOX, 90, '1900-01-01', '2100-12-31']
-            else:
-                raise ValueError("Unsupported argument format")
+            match BOX:
+                case list() if len(BOX) >= 6:
+                    pass
+                case [vmin, vmax]:
+                    BOX = [-180, 180, vmin, vmax, '1900-01-01', '2100-12-31']
+                case None:
+                    raise ValueError("Invalid arguments")
+                case int() | float():
+                    BOX = [-180, 180, BOX, 90, '1900-01-01', '2100-12-31']
+                case _:
+                    raise ValueError("Unsupported argument format")
 
         def checker(BOX):
             if "latitude" not in self._obj.convention_columns:
@@ -269,36 +253,23 @@ class SearchEngine(ArgoIndexSearchEngine):
             return search_filter
 
     def lon(self, BOX=None, nrows=None, composed=False, **kwargs):
-        # BOX can be the classic list format, e.g.:
-        # [-60, -55, 40., 45., '2007-08-01', '2007-09-01']
-        # or a simple range [vmin, vmax]
-        # or a single value (vmin or vmax)
-    
-        # Case 1: classic BOX format (at least 6 elements)
-        if BOX is not None and isinstance(BOX, list) and len(BOX) >= 6:
-            pass
-    
-        # Case 2: range format [vmin, vmax]
-        elif BOX is not None and isinstance(BOX, (list, tuple)) and len(BOX) == 2:
-            vmin, vmax = BOX
-            BOX = [vmin, vmax, -90, 90, '1900-01-01', '2100-12-31']
-    
-        # Case 3: keyword arguments (vmin / vmax)
-        elif 'vmin' in kwargs or 'vmax' in kwargs:
-            vmin = kwargs.get('vmin', -180.)
-            vmax = kwargs.get('vmax', 180.)
-            BOX = [vmin, vmax, -90, 90, '1900-01-01', '2100-12-31']
-    
-        # No arguments provided
-        elif BOX is None and not kwargs:
-            raise ValueError("Invalid arguments")
-    
-        # Single numeric value (ex: idx.query.lon(12))
+        if 'ge' in kwargs or 'le' in kwargs:
+            ge = kwargs.get('ge', -180.)
+            le = kwargs.get('le', 180.)
+            BOX = [ge, le, -90, 90, '1900-01-01', '2100-12-31']
         else:
-            if isinstance(BOX, (int, float)):
-                BOX = [BOX, 180, -90, 90, '1900-01-01', '2100-12-31']
-            else:
-                ValueError("Unsupported argument format")
+            match BOX:
+                case list() if len(BOX) >= 6:
+                    pass
+                case [vmin, vmax]:
+                    BOX = [vmin, vmax, -90, 90, '1900-01-01', '2100-12-31']
+                case None:
+                    raise ValueError("Invalid arguments")
+                case _:
+                    if isinstance(BOX, (int, float)):
+                        BOX = [BOX, 180, -90, 90, '1900-01-01', '2100-12-31']
+                    else:
+                        raise ValueError("Unsupported argument format")
     
         def checker(BOX):
             if "longitude" not in self._obj.convention_columns:
@@ -336,25 +307,6 @@ class SearchEngine(ArgoIndexSearchEngine):
             return search_filter
         
     def lon_lat(self, BOX=None, nrows=None, composed=False, **kwargs):
-        if BOX is not None and isinstance(BOX, list) and len(BOX) >= 6:
-            pass
-
-        elif BOX is not None and isinstance(BOX, (list, tuple)) and len(BOX) == 4:
-            xmin, xmax, ymin, ymax = BOX
-            BOX = [xmin, xmax, ymin, ymax, '1900-01-01', '2100-12-31']
-
-        elif any(k in kwargs for k in ('xmin', 'xmax', 'ymin', 'ymax')):
-            xmin = kwargs.get('xmin', -180.)
-            xmax = kwargs.get('xmax', 180.)
-            ymin = kwargs.get('ymin', -90.)
-            ymax = kwargs.get('ymax', 90.)
-            BOX = [xmin, xmax, ymin, ymax, '1900-01-01', '2100-12-31']
-    
-        elif BOX is None and not kwargs:
-            raise ValueError("Invalid arguments")
-        else:
-            raise ValueError("Unsupported argument format")
-
         def checker(BOX):
             if "longitude" not in self._obj.convention_columns:
                 raise InvalidDatasetStructure("Cannot search for lon/lat in this index")
