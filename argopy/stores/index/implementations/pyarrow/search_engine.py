@@ -148,7 +148,35 @@ class SearchEngine(ArgoIndexSearchEngine):
             self._obj.search_type.update(namer(WMOs, CYCs))
             return search_filter
 
-    def date(self, BOX, nrows=None, composed=False):
+    def date(self, BOX=None, nrows=None, composed=False, **kwargs):
+        # Case 1: classic BOX format (at least 6 elements)
+        if BOX is not None and isinstance(BOX, list) and len(BOX) >= 6:
+            pass
+
+        # Case 2: range format [vmin, vmax]
+        elif BOX is not None and isinstance(BOX, (list, tuple)) and len(BOX) == 2:
+            vmin, vmax = BOX
+            BOX = [-180, 180, -90, 90, vmin, vmax]
+
+        # Case 3: keyword arguments (vmin / vmax)
+        elif 'vmin' in kwargs or 'vmax' in kwargs:
+            vmin = kwargs.get('vmin', None)
+            vmax = kwargs.get('vmax', None)
+            if vmin is None : vmin='1900-01-01'
+            if vmax is None : vmax='2100-12-31'
+            BOX = [-180, 180, -90, 90, vmin, vmax]
+
+        # No arguments provided
+        elif BOX is None and not kwargs:
+            raise ValueError("Invalid arguments")
+
+        # Single value (ex: idx.query.date('1900-01-01')
+        else:
+            if isinstance(BOX, str):
+                BOX = [-180, 180, -90, 90, BOX, '2100-12-31']
+            else:
+                raise ValueError("Unsupported argument format")
+
         def checker(BOX):
             if "date" not in self._obj.convention_columns:
                 raise InvalidDatasetStructure("Cannot search for date in this index")
@@ -209,12 +237,12 @@ class SearchEngine(ArgoIndexSearchEngine):
         elif BOX is None and not kwargs:
             raise ValueError("Invalid arguments")
 
-        # Single numeric value (ex: idx.query.lat(vmin=12))
+        # Single numeric value (ex: idx.query.lat(12))
         else:
             if isinstance(BOX, (int, float)):
                 BOX = [-180, 180, BOX, 90, '1900-01-01', '2100-12-31']
             else:
-                ValueError("Unsupported argument format")
+                raise ValueError("Unsupported argument format")
 
         def checker(BOX):
             if "latitude" not in self._obj.convention_columns:
@@ -270,7 +298,7 @@ class SearchEngine(ArgoIndexSearchEngine):
         elif BOX is None and not kwargs:
             raise ValueError("Invalid arguments")
     
-        # Single numeric value (ex: idx.query.lon(vmin=12))
+        # Single numeric value (ex: idx.query.lon(12))
         else:
             if isinstance(BOX, (int, float)):
                 BOX = [BOX, 180, -90, 90, '1900-01-01', '2100-12-31']
