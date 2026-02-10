@@ -7,6 +7,15 @@ What's New
 
 |pypi dwn| |conda dwn|
 
+
+Coming up next (unreleased)
+---------------------------
+
+Features and front-end API
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- **Full Argo vocabulary support** for reference tables and values. (:pr:`575`) by |gmaze|.
+
 v1.4.0 (5 Jan. 2026)
 --------------------
 
