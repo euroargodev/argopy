@@ -94,6 +94,9 @@ class Props:
     )
     """A subset of attrs, to be used to validate export/search possible values"""
 
+    extra = ('R03', 'R14', 'R18')
+    """List of Vocabularies for which Concept definition string provides 'extra' meta-data"""
+
 
 class ArgoReferenceValue:
     """A class to work with an Argo Reference Value, i.e. a NVS vocabulary "concept"
@@ -362,6 +365,9 @@ class ArgoReferenceValue:
             summary.append(f"extra[{len(keys)}]:")
             for key in keys:
                 summary.append(f'  - "{key}": {self.extra[key]}')
+        else:
+            summary.append("extra: (no extra attributes from definition string)")
+
 
         return "\n".join(summary)
 
