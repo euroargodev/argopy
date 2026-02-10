@@ -8,7 +8,6 @@ try:
     import pyarrow as pa
     import pyarrow.parquet as pq  # noqa: F401
     import pyarrow.compute as pc  # noqa: F401
-    import datetime as dt
 except ModuleNotFoundError:
     pass
 
@@ -163,11 +162,18 @@ class SearchEngine(ArgoIndexSearchEngine):
                     BOX = [-180, 180, -90, 90, vmin, vmax]
                 case None:
                     raise ValueError("Invalid arguments")
+                case str():
+                    # Single date [date, date+1)
+                    d0 = pd.to_datetime(BOX)
+                    d1 = d0 + pd.Timedelta(days=1)
+
+                    # Convert to strings to satisfy is_indexbox validation
+                    ge = d0.strftime("%Y-%m-%d")
+                    le = d1.strftime("%Y-%m-%d")
+
+                    BOX = [-180, 180, -90, 90, ge, le]
                 case _:
-                    if isinstance(BOX, str):
-                        BOX = [-180, 180, -90, 90, BOX, '2100-12-31']
-                    else:
-                        raise ValueError("Unsupported argument format")
+                    raise ValueError("Unsupported argument format")
                     
         def checker(BOX):
             if "date" not in self._obj.convention_columns:
@@ -265,11 +271,10 @@ class SearchEngine(ArgoIndexSearchEngine):
                     BOX = [vmin, vmax, -90, 90, '1900-01-01', '2100-12-31']
                 case None:
                     raise ValueError("Invalid arguments")
+                case int() | float():
+                    BOX = [BOX, 180, -90, 90, '1900-01-01', '2100-12-31']
                 case _:
-                    if isinstance(BOX, (int, float)):
-                        BOX = [BOX, 180, -90, 90, '1900-01-01', '2100-12-31']
-                    else:
-                        raise ValueError("Unsupported argument format")
+                    raise ValueError("Unsupported argument format")
     
         def checker(BOX):
             if "longitude" not in self._obj.convention_columns:
