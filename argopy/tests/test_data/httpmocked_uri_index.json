@@ -1,5 +1,12 @@
 [
     {
+        "uri": "https://vocab.nerc.ac.uk/collection/R27/current/?_profile=nvs&_mediatype=application/ld+json",
+        "ext": "json",
+        "sha": "27d7b1ef7aaa76798f7f8eedc7fec0eb510c808949d926dc2ffa754fe958b870",
+        "type": "application/json",
+        "ts": "2026-01-25 15:29:19"
+    },
+    {
         "uri": "https://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3835/?_profile=nvs&_mediatype=application/ld+json",
         "ext": "json",
         "sha": "b2c87b867baacd01cf414ed142fa809b07141e58a8250898156f086fe5715adf",
@@ -2719,13 +2726,6 @@
         "uri": "https://vocab.nerc.ac.uk/collection/R26/current/?_profile=nvs&_mediatype=application/ld+json",
         "ext": "json",
         "sha": "1555ff843864b325ce6547cc4608ca86db5770ca2955d99c48da940563e932e2",
-        "type": "application/json",
-        "ts": "2025-12-08 15:00:33"
-    },
-    {
-        "uri": "https://vocab.nerc.ac.uk/collection/R27/current/?_profile=nvs&_mediatype=application/ld+json",
-        "ext": "json",
-        "sha": "27d7b1ef7aaa76798f7f8eedc7fec0eb510c808949d926dc2ffa754fe958b870",
         "type": "application/json",
         "ts": "2025-12-08 15:00:33"
     },

@@ -166,7 +166,7 @@ def setup_args():
        topo             - URIs accessed by TopoFetcher with ds='gebco' from test_related/Test_TopoFetcher
        oops             - URIs accessed by OceanOPSDeployments from test_related/Test_OceanOPSDeployments
        nvs              - URIs accessed by ArgoNVSReferenceTables from test_related/Test_ArgoNVSReferenceTables
-       nvs_store        - URIs accessed from test_stores_nvs
+       nvs_store        - URIs accessed by NVS from test_stores_nvs
        docs             - URIs accessed by ArgoDocs from test_related/Test_ArgoDocs
        altim            - URIs accessed by open_sat_altim_report from test_related/Test_open_sat_altim_report
        
@@ -885,6 +885,7 @@ class Lister:
         for fmt in fmts.keys():
             url = nvs._vocabulary2uri('R27', fmt=fmt)
             this_URI.commit(self.dfile(unquote(url), fmts[fmt]))
+
             url = nvs._concept2uri('AANDERAA_OPTODE_3835', fmt=fmt)
             this_URI.commit(self.dfile(unquote(url), fmts[fmt]))
 

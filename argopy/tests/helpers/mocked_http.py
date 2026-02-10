@@ -91,7 +91,7 @@ if DB_FILE.exists():
             "https://www.ocean-ops.org/api/1",
             "https://dataselection.euro-argo.eu/api",
             "https://fleetmonitoring.euro-argo.eu",
-            "https://vocab.nerc.ac.uk/collection",
+            "https://vocab.nerc.ac.uk",
             "https://argovis-api.colorado.edu",
             # "https://argovisbeta02.colorado.edu",
             "https://dx.doi.org",

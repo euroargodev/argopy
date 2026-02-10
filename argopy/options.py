@@ -70,7 +70,7 @@ OPTIONS = {
     PARALLEL: False,
     PARALLEL_DEFAULT_METHOD: "thread",
     LON: "180",
-    NVS: "https://vocab.nerc.ac.uk/collection",
+    NVS: "https://vocab.nerc.ac.uk",
 }
 DEFAULT = OPTIONS.copy()
 

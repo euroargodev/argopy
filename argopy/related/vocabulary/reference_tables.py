@@ -87,7 +87,7 @@ class NVScollection:
 
     @lru_cache
     def _FullCollection(self):
-        url = f"{self.nvs}/?_profile=nvs&_mediatype=application/ld+json"
+        url = f"{self.nvs}/collection/?_profile=nvs&_mediatype=application/ld+json"
         js = self.fs.open_json(url)
         return pd.DataFrame(self._jsFullCollection(js), columns=['ID', 'title', 'name', 'description', 'url'])
 
@@ -116,7 +116,7 @@ class NVScollection:
             raise ValueError(
                 "Invalid format. Must be in: 'ld+json', 'rdf+xml' or 'text/turtle'."
             )
-        url = "{}/{}/current/{}".format
+        url = "{}/collection/{}/current/{}".format
         return url(self.nvs, rtid, fmt_ext)
 
     @lru_cache

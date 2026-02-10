@@ -68,7 +68,7 @@ class NVS(NVSProto):
         return self._fs.open_json(*args, **kwargs)
 
     def _vocabulary2uri(self, rtid: str, fmt: str = "json") -> str:
-        """Return URI of a given vocabulary with a given format
+        """Return URI of a given vocabulary in a given format
 
         Parameters
         ----------
@@ -81,7 +81,7 @@ class NVS(NVSProto):
         -------
         str
         """
-        url = "{}/{}/current/{}".format
+        url = "{}/collection/{}/current/{}".format
         return url(self.nvs, rtid, fmt2urlparams(fmt))
 
     @lru_cache
@@ -116,7 +116,7 @@ class NVS(NVSProto):
             else:
                 rtid = reftable[0]
 
-        url = "{}/{}/current/{}/{}".format
+        url = "{}/collection/{}/current/{}/{}".format
         return url(self.nvs, rtid, conceptid, fmt2urlparams(fmt))
 
     @lru_cache
