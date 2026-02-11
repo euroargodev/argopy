@@ -7,21 +7,10 @@ import numpy as np
 from argopy.options import OPTIONS
 from argopy.stores.nvs import NVS
 from argopy.stores.nvs.utils import bindings2df, id2urn, url2predicate
+from argopy.stores.nvs.utils import known_mappings 
 from argopy.utils.format import ppliststr, urnparser
 from argopy.utils.locals import Asset
 
-
-# List of valid semantic relations:
-valid_relations: list[tuple((str, str))] = [
-    ("R08", "R23"),
-    ("R24", "R23"),
-    ("RMC", "R15"),
-    ("RTV", "R15"),
-    ("R25", "R27"),
-    ("R26", "R27"),
-]
-# Include reciprocate:
-valid_relations.extend([(o, s) for s, o in valid_relations])
 
 id2concept = lambda x: urnparser(id2urn(x))["termid"]
 
@@ -134,9 +123,9 @@ class ArgoReferenceMapping:
                 f"Unknown object Reference Table '{obj}'. Possible values are: \nIDs like: {ppliststr([k for k in self._Vocabulary2Parameter], last='or')}\nNames like: {ppliststr([k for k in self._Vocabulary2Parameter.values()], last='or')}"
             )
 
-        if (self.sub_id, self.obj_id) not in valid_relations:
+        if (self.sub_id, self.obj_id) not in known_mappings():
             warnings.warn(
-                f"This mapping '{(self.sub_id, self.obj_id)}'is not known to the AVTT ! Known mappings are {valid_relations}"
+                f"This mapping '{(self.sub_id, self.obj_id)}'is not known to the AVTT ! Known mappings are {known_mappings()}"
             )
 
         # Retrieve NVS raw data
