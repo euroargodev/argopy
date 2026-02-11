@@ -5,7 +5,7 @@ import urllib
 from argopy.options import OPTIONS
 from argopy.stores.implementations.http import httpstore
 from argopy.stores.nvs.spec import NVSProto
-from argopy.stores.nvs.utils import concept2vocabulary
+from argopy.stores.nvs.utils import concept2vocabulary, sparql_mapping_request
 
 
 def fmt2urlparams(fmt):
@@ -130,29 +130,10 @@ class NVS(NVSProto):
         url = self._concept2uri(conceptid, rtid, fmt=fmt)
         return self._downloader(fmt)(url)
 
-
     def _mapping2uri(self, subjectid: str, objectid: str) -> str:
-        """Return URI of a given suvject/object relationship mapping"""
-        def sparql_request(id_subject, id_object):
-            sparql_request_template: str = """
-            PREFIX dc: <http://purl.org/dc/elements/1.1/>
-            PREFIX sssom: <https://w3id.org/sssom/schema/>
-            PREFIX text: <http://jena.apache.org/text#>
-            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-
-            select ?subj ?pred ?obj where { ?a a sssom:Mapping .
-            ?a sssom:subject_id ?subj .
-            <http://vocab.nerc.ac.uk/collection/subject_NVS_table/current/> skos:member ?subj.
-            ?a sssom:predicate_id ?pred .
-            ?a sssom:object_id ?obj .
-            <http://vocab.nerc.ac.uk/collection/object_NVS_table/current/> skos:member ?obj.}
-            """
-
-            return sparql_request_template.replace(
-                "object_NVS_table", id_object
-            ).replace("subject_NVS_table", id_subject)
-
-        return f"{self.nvs}/sparql?query={urllib.parse.quote(sparql_request(subjectid, objectid))}"
+        """Return URI of a given subject/object relationship mapping"""
+        sparql = sparql_mapping_request(subjectid, objectid)
+        return f"{self.nvs}/sparql?query={urllib.parse.quote(sparql)}"
 
     @lru_cache
     def load_mapping(self, subjectid: str, objectid: str, fmt: str = "json") -> dict:

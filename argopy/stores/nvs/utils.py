@@ -35,7 +35,7 @@ def concept2vocabulary(name: str) -> list[str] | None:
 
     """
     name = name.strip().upper()
-    found : list[str] = []
+    found: list[str] = []
     for vocabulary in Vocabulary2Concept:
         if name in Vocabulary2Concept[vocabulary]:
             found.append(vocabulary)
@@ -222,8 +222,10 @@ def extract_template_values(s):
     if "unit" in attributes_dict:
         attributes_dict["unit"] = attributes_dict["unit"].strip("[]").split(", ")
 
-    if 'short_sensor_name' in attributes_dict:
-        attributes_dict['short_sensor_name'] = attributes_dict['short_sensor_name'].strip("[]").split(", ")
+    if "short_sensor_name" in attributes_dict:
+        attributes_dict["short_sensor_name"] = (
+            attributes_dict["short_sensor_name"].strip("[]").split(", ")
+        )
 
     return attributes_dict
 
@@ -250,7 +252,9 @@ class TemplateValues:
     pass
 
 
-def curate_r03definition(definition: str) -> dict[str, LocalAttributes | Properties] | None:
+def curate_r03definition(
+    definition: str,
+) -> dict[str, LocalAttributes | Properties] | None:
     la, attrs = None, extract_local_attributes(definition)
     if attrs is not None:
         la = LocalAttributes(
@@ -273,25 +277,29 @@ def curate_r03definition(definition: str) -> dict[str, LocalAttributes | Propert
     return {"Local_Attributes": la, "Properties": pr}
 
 
-def curate_r14definition(definition: str) -> dict[str, 'TemplateValues'] | None:
+def curate_r14definition(definition: str) -> dict[str, "TemplateValues"] | None:
     attrs = extract_template_values(definition)
     if attrs is not None:
-        tv = make_dataclass('TemplateValues', [(key, type(val)) for key, val in attrs.items()])(**attrs)
-        return {'Template_Values': tv}
+        tv = make_dataclass(
+            "TemplateValues", [(key, type(val)) for key, val in attrs.items()]
+        )(**attrs)
+        return {"Template_Values": tv}
     return None
 
 
-def curate_r18definition(definition: str) -> dict[str, 'TemplateValues'] | None:
+def curate_r18definition(definition: str) -> dict[str, "TemplateValues"] | None:
     attrs = extract_template_values(definition)
     if attrs is not None:
-        tv = make_dataclass('TemplateValues', [(key, type(val)) for key, val in attrs.items()])(**attrs)
-        return {'Template_Values': tv}
+        tv = make_dataclass(
+            "TemplateValues", [(key, type(val)) for key, val in attrs.items()]
+        )(**attrs)
+        return {"Template_Values": tv}
     return None
 
 
 def bindings2df(data: list[dict]) -> pd.DataFrame:
     """Transform a list of bindings to a :class:`pd.DataFrame`"""
-    id2concept = lambda x: urnparser(id2urn(x))['termid']
+    id2concept = lambda x: urnparser(id2urn(x))["termid"]
     b = []
     for binding in data:
         b.append(
@@ -311,3 +319,36 @@ def bindings2df(data: list[dict]) -> pd.DataFrame:
     )
     return df
 
+
+def known_mappings():
+    # List of valid semantic relations:
+    mappings: list[tuple((str, str))] = [
+        ("R08", "R23"),
+        ("R24", "R23"),
+        ("RMC", "R15"),
+        ("RTV", "R15"),
+        ("R25", "R27"),
+        ("R26", "R27"),
+    ]
+    # Include reciprocate:
+    mappings.extend([(o, s) for s, o in mappings])
+    return mappings
+
+
+def sparql_mapping_request(id_subject: str, id_object: str) -> str:
+    template: str = """
+    PREFIX dc: <http://purl.org/dc/elements/1.1/>
+    PREFIX sssom: <https://w3id.org/sssom/schema/>
+    PREFIX text: <http://jena.apache.org/text#>
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+    select ?subj ?pred ?obj where { ?a a sssom:Mapping .
+    ?a sssom:subject_id ?subj .
+    <http://vocab.nerc.ac.uk/collection/subject_NVS_table/current/> skos:member ?subj.
+    ?a sssom:predicate_id ?pred .
+    ?a sssom:object_id ?obj .
+    <http://vocab.nerc.ac.uk/collection/object_NVS_table/current/> skos:member ?obj.}
+    """
+    return template.replace("object_NVS_table", id_object).replace(
+        "subject_NVS_table", id_subject
+    )
