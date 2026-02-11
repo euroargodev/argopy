@@ -215,28 +215,29 @@ class SearchEngine(ArgoIndexSearchEngine):
             return search_filter
 
     def lat(self, BOX=None, nrows=None, composed=False, **kwargs):
-        if 'ge' in kwargs or 'le' in kwargs:
-            ge = kwargs.get('ge', -90.)
-            le = kwargs.get('le', 90.)
-            BOX = [-180, 180, ge, le, '1900-01-01', '2100-12-31']
-        else:
-            match BOX:
-                case list() if len(BOX) >= 6:
-                    pass
-                case [vmin, vmax]:
-                    BOX = [-180, 180, vmin, vmax, '1900-01-01', '2100-12-31']
-                case None:
-                    raise ValueError("Invalid arguments")
-                case int() | float():
-                    BOX = [-180, 180, BOX, 90, '1900-01-01', '2100-12-31']
-                case _:
-                    raise ValueError("Unsupported argument format")
+        def checker(BOX, **kwargs):
+            if 'ge' in kwargs or 'le' in kwargs:
+                ge = kwargs.get('ge', -90.)
+                le = kwargs.get('le', 90.)
+                BOX = [-180, 180, ge, le, '1900-01-01', '2100-12-31']
+            else:
+                match BOX:
+                    case list() if len(BOX) >= 6:
+                        pass
+                    case [vmin, vmax]:
+                        BOX = [-180, 180, vmin, vmax, '1900-01-01', '2100-12-31']
+                    case None:
+                        raise ValueError("Invalid arguments")
+                    case int() | float():
+                        BOX = [-180, 180, BOX, 90, '1900-01-01', '2100-12-31']
+                    case _:
+                        raise ValueError("Unsupported argument format")
 
-        def checker(BOX):
             if "latitude" not in self._obj.convention_columns:
                 raise InvalidDatasetStructure("Cannot search for latitude in this index")
             is_indexbox(BOX)
             log.debug("Argo index searching for latitude in BOX=%s ..." % BOX)
+            return BOX
 
         def namer(BOX):
             return {"LAT": BOX[2:4]}
@@ -247,7 +248,7 @@ class SearchEngine(ArgoIndexSearchEngine):
             filt.append(pa.compute.less_equal(self._obj.index["latitude"], BOX[3]))
             return self._obj._reduce_a_filter_list(filt, op="and")
 
-        checker(BOX)
+        BOX = checker(BOX, **kwargs)
         self._obj.load(nrows=self._obj._nrows_index)
         search_filter = composer(BOX)
         if not composed:
