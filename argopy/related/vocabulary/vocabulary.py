@@ -4,6 +4,7 @@ from pandas import DataFrame
 from typing import Any
 from dataclasses import dataclass
 
+from argopy.options import OPTIONS
 from argopy.errors import NoDataLeft, OptionValueError
 from argopy.utils.locals import Asset, caller_function
 from argopy.utils.format import ppliststr, urnparser
@@ -34,6 +35,7 @@ class Props:
         "_df",
         "_d",
         "_keys",
+        "_nvs_store",
     )
     """All possible class attributes"""
 
@@ -173,7 +175,7 @@ class ArgoReferenceTable:
             {}
         )  # Dictionary of ArgoReferenceValue for all table concept
 
-        if identifier in self._Vocabulary2Parameter:
+        if identifier in self._Vocabulary2Parameter.keys():
             self.identifier: str = identifier
             self.parameter: str = self._Vocabulary2Parameter[identifier]
         elif identifier in self._Vocabulary2Parameter.values():
@@ -187,7 +189,8 @@ class ArgoReferenceTable:
             )
 
         # Once we have an id in 'name' we can load raw data from NVS
-        self.nvs: dict[str, Any] = NVS().load_vocabulary(self.identifier)
+        self._nvs_store : NVS = NVS(nvs=kwargs.get("nvs", OPTIONS["nvs"]))
+        self.nvs: dict[str, Any] = self._nvs_store.load_vocabulary(self.identifier)
 
         # And populate all attributes:
         Collection: dict[str, str] = [

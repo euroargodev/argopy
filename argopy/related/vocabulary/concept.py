@@ -5,6 +5,7 @@ from pathlib import Path
 import json
 from dataclasses import dataclass
 
+from argopy.options import OPTIONS
 from argopy.errors import OptionValueError
 from argopy.utils.locals import Asset, caller_function
 from argopy.utils.format import urnparser, ppliststr
@@ -51,6 +52,7 @@ class Props:
         "_extra",
         "_nvs",
         "_from",
+        "_nvs_store",
     )
     """All possible class attributes"""
 
@@ -239,7 +241,7 @@ class ArgoReferenceValue:
             self.reference = reference  # eg 'R27'
 
         # Once we have a 'name' and a 'reference', we can load raw data from NVS
-        self._nvs = NVS().load_concept(self.name, self.reference)
+        self._nvs = self._nvs_store.load_concept(self.name, self.reference)
 
     def __init_explicit(self, data: Any) -> None:
         """Create instance with JSON data provided, typically using ArgoReferenceValue.from_dict()"""
@@ -253,6 +255,8 @@ class ArgoReferenceValue:
         ]  # eg 'dce:identifier' = 'SDN:R27::UNKNOWN'
 
     def __init__(self, name: str, reference: str | None = None, **kwargs) -> None:
+        self._nvs_store : NVS = NVS(nvs=kwargs.get("nvs", OPTIONS["nvs"]))
+
         if kwargs.get("data", None) is None:
             self.__init_implicit(name=name, reference=reference)
         else:
@@ -385,7 +389,7 @@ class ArgoReferenceValue:
             """
             if self.nvs.get("@context", None) is None:
                 # Update NVS data:
-                self._nvs: dict[str, str] = NVS().load_concept(
+                self._nvs: dict[str, str] = self._nvs_store.load_concept(
                     urnparser(self.urn)["termid"], self.reference
                 )
                 # Fill in context attribute:
