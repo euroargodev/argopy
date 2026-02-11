@@ -7,9 +7,10 @@ from urllib.parse import urlparse
 import re
 from dataclasses import dataclass, make_dataclass
 from typing import Any
+import pandas as pd
 
 from argopy.utils.locals import Asset
-
+from argopy.utils.format import urnparser
 
 Vocabulary2Concept = Asset.load("vocabulary:mapping")["data"]["Vocabulary2Concept"]
 Vocabulary2Parameter = Asset.load("vocabulary:mapping")["data"]["Vocabulary2Parameter"]
@@ -80,6 +81,10 @@ def id2urn(uri: str) -> str:
     uri: str
         The NVS concept ID (URL-like) to analyze.
 
+    Returns
+    -------
+    str
+
     Examples
     --------
     .. code-block:: python
@@ -109,6 +114,33 @@ def id2urn(uri: str) -> str:
     except:
         termid = ""
     return f"SDN:{listid}::{termid}"
+
+
+def url2predicate(uri: str) -> str | None:
+    """Return relation predicate from a NVS binding URL value
+
+    Parameters
+    ----------
+    uri: str
+
+    Returns
+    -------
+    str | None
+
+    Examples
+    --------
+    ..code-block: python
+
+        from argopy.stores.nvs.utils import url2predicate
+
+        url2predicate('http://www.w3.org/2002/07/owl#sameAs/') # owl:sameAs
+        url2predicate('http://www.w3.org/2004/02/skos/core#narrower/') # skos:narrower
+
+    """
+    try:
+        return uri.split("/")[-2].replace("#", ":").replace("core", "skos")
+    except:
+        return None
 
 
 def extract_local_attributes(s):
@@ -255,3 +287,27 @@ def curate_r18definition(definition: str) -> dict[str, 'TemplateValues'] | None:
         tv = make_dataclass('TemplateValues', [(key, type(val)) for key, val in attrs.items()])(**attrs)
         return {'Template_Values': tv}
     return None
+
+
+def bindings2df(data: list[dict]) -> pd.DataFrame:
+    """Transform a list of bindings to a :class:`pd.DataFrame`"""
+    id2concept = lambda x: urnparser(id2urn(x))['termid']
+    b = []
+    for binding in data:
+        b.append(
+            {
+                "subject": id2concept(binding["subj"]["value"]),
+                "predicate": url2predicate(binding["pred"]["value"]),
+                "object": id2concept(binding["obj"]["value"]),
+                "subject_uri": binding["subj"]["value"],
+                "object_uri": binding["obj"]["value"],
+            }
+        )
+    df = (
+        pd.DataFrame(b)
+        .sort_values(by=["subject", "object"], axis=0)
+        .reset_index(drop=True)
+        .astype("string")
+    )
+    return df
+

@@ -70,3 +70,22 @@ class NVSProto(ABC):
         When running offline, only the 'json' format is available.
         """
         raise NotImplementedError
+
+    @abstractmethod
+    def load_mapping(self, subjectid: str, objectid: str, fmt: str = "json") -> dict:
+        """Load a NVS mapping, i.e. relationships between SKOS concepts of SKOS collections, as a :class:`dict`
+
+        Parameters
+        ----------
+        subjectid: str
+            Table ID of the subject, SKOS collection, to retrieve. Eg: 'R27'
+        subjectid: str
+            Table ID of the object, SKOS collection, to retrieve. Eg: 'R25'
+        fmt: str, default: "json"
+            Format of the NVS server response. Only "json" is supported.
+
+        Returns
+        -------
+        dict
+        """
+        raise NotImplementedError
