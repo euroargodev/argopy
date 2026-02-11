@@ -148,6 +148,7 @@ class ArgoReferenceMapping:
         # Internal placeholders:
         self._subjects: list[str] | None = None
         self._objects: list[str] | None = None
+        self._predicates: list[str] | None = None
         self._d: dict[str, pd.DataFrame] | None = {}
 
     def __repr__(self):

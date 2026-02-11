@@ -88,3 +88,6 @@ class NVS(NVSProto):
     def load_concept(self, conceptid: str, rtid: str | None = None, fmt: str = "json") -> dict:
         url = self._concept2uri(conceptid, rtid, fmt=fmt)
         return Asset().load(url)['data']
+
+    def load_mapping(self, subjectid: str, objectid: str, fmt: str = "json") -> dict:
+        raise NotImplementedError()

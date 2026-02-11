@@ -196,11 +196,6 @@ class ArgoReferenceValue:
         arv.to_json('reference_value.json')  # To a json file
         arv.to_json('reference_value.json', keys=['name', 'deprecated'])  # Select attributes to export
 
-        # Export relationships with other concept as :class:`pd.DataFrame`
-        arv.to_mapping(predicate=['related'])
-        arv.to_mapping(predicate=['broader', 'narrower'])
-        arv.to_mapping(predicate=['context'])
-
     """
 
     __slots__ = Props.slots
@@ -511,6 +506,3 @@ class ArgoReferenceValue:
                     return json.dump(data, fp, **kwargs)
             else:
                 return json.dump(data, path, **kwargs)
-
-    def to_mapping(self, *args, **kwargs):
-        raise NotImplementedError("Coming up soon !")

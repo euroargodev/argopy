@@ -10,7 +10,7 @@ from argopy.utils.locals import Asset, caller_function
 from argopy.utils.format import ppliststr, urnparser
 from argopy.utils.checkers import to_list
 from argopy.stores.nvs import NVS, id2urn
-from argopy.related.vocabulary.concept import ArgoReferenceValue
+from argopy.reference.concept import ArgoReferenceValue
 
 
 @dataclass(frozen=True)

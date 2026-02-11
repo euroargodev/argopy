@@ -1,4 +1,3 @@
-import json
 import pytest
 import pandas as pd
 from collections import OrderedDict
@@ -12,9 +11,9 @@ from utils import (
     create_temp_folder,
 )
 from argopy.errors import OptionValueError, NoDataLeft
-from argopy.related.vocabulary.reference_tables import ArgoNVSReferenceTables
-from argopy.related.vocabulary.concept import ArgoReferenceValue
-from argopy.related.vocabulary.vocabulary import ArgoReferenceTable
+from argopy.reference.reference_tables import ArgoNVSReferenceTables
+from argopy.reference.concept import ArgoReferenceValue
+from argopy.reference.vocabulary import ArgoReferenceTable
 from argopy.stores.nvs.implementations.offline.nvs import NVS
 from argopy.utils.checkers import is_list_of_strings
 
