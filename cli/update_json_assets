@@ -806,7 +806,7 @@ def asset_vocabulary_offline_concepts():
                 url = f"{k['@id']}?_profile=nvs&_mediatype=application/ld+json"
                 to_retrieve.append(url)
 
-    print(f"Will now retrieve NVS for {len(to_retrieve)} concepts")  # = 2048
+    print(f"Will now retrieve NVS data for {len(to_retrieve)} concepts")  # = 2048
 
     def func(data):
         urn = urnparser(data['skos:notation'])
@@ -827,6 +827,10 @@ def asset_vocabulary_offline_concepts():
         errors = 'raise',
     )
     return None
+
+
+def asset_vocabulary_offline_mappings():
+    pass
 
 
 def main():
