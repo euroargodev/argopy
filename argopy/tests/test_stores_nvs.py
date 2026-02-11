@@ -15,7 +15,6 @@ from argopy.stores.nvs.utils import (
     curate_r18definition,
     LocalAttributes,
     Properties,
-    TemplateValues,
 )
 
 from mocked_http import mocked_httpserver, mocked_server_address
@@ -168,7 +167,6 @@ class Test_NVS_Online:
     # TESTS #
     #########
     def test_init(self, nvs):
-        print(nvs)
         assert nvs.online == True
 
     def test_uniqueinstance(self, mocked_httpserver):
