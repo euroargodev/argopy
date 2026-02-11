@@ -239,6 +239,7 @@ class SearchEngine(ArgoIndexSearchEngine):
             log.debug("Argo index searching for latitude in BOX=%s ..." % BOX)
             return BOX
 
+        BOX = checker(BOX, **kwargs)
         def namer(BOX):
             return {"LAT": BOX[2:4]}
 
@@ -248,7 +249,6 @@ class SearchEngine(ArgoIndexSearchEngine):
             filt.append(pa.compute.less_equal(self._obj.index["latitude"], BOX[3]))
             return self._obj._reduce_a_filter_list(filt, op="and")
 
-        BOX = checker(BOX, **kwargs)
         self._obj.load(nrows=self._obj._nrows_index)
         search_filter = composer(BOX)
         if not composed:
@@ -261,28 +261,30 @@ class SearchEngine(ArgoIndexSearchEngine):
             return search_filter
 
     def lon(self, BOX=None, nrows=None, composed=False, **kwargs):
-        if 'ge' in kwargs or 'le' in kwargs:
-            ge = kwargs.get('ge', -180.)
-            le = kwargs.get('le', 180.)
-            BOX = [ge, le, -90, 90, '1900-01-01', '2100-12-31']
-        else:
-            match BOX:
-                case list() if len(BOX) >= 6:
-                    pass
-                case [vmin, vmax]:
-                    BOX = [vmin, vmax, -90, 90, '1900-01-01', '2100-12-31']
-                case None:
-                    raise ValueError("Invalid arguments")
-                case int() | float():
-                    BOX = [BOX, 180, -90, 90, '1900-01-01', '2100-12-31']
-                case _:
-                    raise ValueError("Unsupported argument format")
-    
-        def checker(BOX):
+        def checker(BOX, **kwargs):
+            if 'ge' in kwargs or 'le' in kwargs:
+                ge = kwargs.get('ge', -180.)
+                le = kwargs.get('le', 180.)
+                BOX = [ge, le, -90, 90, '1900-01-01', '2100-12-31']
+            else:
+                match BOX:
+                    case list() if len(BOX) >= 6:
+                        pass
+                    case [vmin, vmax]:
+                        BOX = [vmin, vmax, -90, 90, '1900-01-01', '2100-12-31']
+                    case None:
+                        raise ValueError("Invalid arguments")
+                    case int() | float():
+                        BOX = [BOX, 180, -90, 90, '1900-01-01', '2100-12-31']
+                    case _:
+                        raise ValueError("Unsupported argument format")
+                    
             if "longitude" not in self._obj.convention_columns:
                 raise InvalidDatasetStructure("Cannot search for longitude in this index")
             is_indexbox(BOX)
             log.debug("Argo index searching for longitude in BOX=%s ..." % BOX)
+            return BOX
+        BOX = checker(BOX, **kwargs)
 
         def namer(BOX):
             return {"LON": BOX[0:2]}
@@ -301,7 +303,6 @@ class SearchEngine(ArgoIndexSearchEngine):
                     filt.append(pc.less_equal(self._obj.index["longitude"], conv_lon(BOX[1], '180')))
             return self._obj._reduce_a_filter_list(filt, op="and")
 
-        checker(BOX)
         self._obj.load(nrows=self._obj._nrows_index)
         search_filter = composer(BOX)
         if not composed:
