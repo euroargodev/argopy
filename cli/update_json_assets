@@ -11,12 +11,14 @@ import numpy as np
 from pathlib import Path
 import os
 from fsspec import filesystem
+import urllib
 
 import argopy
-from argopy import ArgoNVSReferenceTables
+from argopy.reference import ArgoNVSReferenceTables
 from argopy.stores import httpstore, filestore
 from argopy.options import OPTIONS
 from argopy.utils.format import urnparser
+from argopy.stores.nvs.utils import sparql_mapping_request, known_mappings
 
 
 # Locate the static/assets folder of the library:
@@ -785,9 +787,9 @@ def asset_vocabulary_offline_vocabs():
 
 def asset_vocabulary_offline_concepts():
     fs = httpstore()
-    nvs = "https://vocab.nerc.ac.uk/collection"
+    nvs = OPTIONS['nvs']
 
-    data = fs.open_json(f'{nvs}/?_profile=nvs&_mediatype=application/ld+json')
+    data = fs.open_json(f'{nvs}/collection/?_profile=nvs&_mediatype=application/ld+json')
 
     def is_admt(item):
         return item['dc:creator'] == 'Argo Data Management Team'
@@ -830,8 +832,25 @@ def asset_vocabulary_offline_concepts():
 
 
 def asset_vocabulary_offline_mappings():
-    pass
+    fs = httpstore(client_kwargs={
+                    "headers": {
+                        "Accept": "application/ld+json, application/sparql-results+json"
+                    }
+                })
+    nvs = OPTIONS['nvs']
 
+    for (sub, obj) in known_mappings():
+        sparql = sparql_mapping_request(sub, obj)
+        url = f"{nvs}/sparql?query={urllib.parse.quote(sparql)}"
+        content = fs.open_json(url)
+        file = f"vocabulary:offline:mapping:{sub}_{obj}"
+        save_data(
+            file = file,
+            name = f"{sub}_{obj}",
+            long_name = f"Mapping of subject={sub} with object={obj}",
+            data = {'sparql': sparql,
+                    'content': content}
+        )
 
 def main():
     argopy.clear_cache()
@@ -849,7 +868,8 @@ def main():
     # asset_vocabulary_description()
     # asset_vocabulary_mapping()
     # asset_vocabulary_offline_vocabs()
-    asset_vocabulary_offline_concepts()
+    # asset_vocabulary_offline_concepts()
+    asset_vocabulary_offline_mappings()
 
 if __name__ == "__main__":
     main()

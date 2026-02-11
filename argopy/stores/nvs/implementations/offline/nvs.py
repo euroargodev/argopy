@@ -90,4 +90,5 @@ class NVS(NVSProto):
         return Asset().load(url)['data']
 
     def load_mapping(self, subjectid: str, objectid: str, fmt: str = "json") -> dict:
-        raise NotImplementedError()
+        url = f"vocabulary:offline:mapping:{subjectid}_{objectid}"
+        return Asset().load(url)['data']['content']
