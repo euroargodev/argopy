@@ -15,9 +15,11 @@ One possible value for "SENSOR_MODEL" is "AANDERAA_OPTODE_3930", which is one NV
 
 But since the Argo's user manual refers to "Argo reference table", we shall adopt this convention and avoid the NVS jargon of vocabulary, collection, concept.
 
-This sub-module provides classes to work with this framework:
+This submodule provides classes to work with this framework:
 
 ArgoReference > ArgoReferenceTable > ArgoReferenceValue
+
+ArgoReferenceMapping provides direct access to relationships between ArgoReferenceValue(s) from 2 ArgoReferenceTables
 
 
 .. note::

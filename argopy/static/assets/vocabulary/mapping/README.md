@@ -1,3 +1,7 @@
+This is a temporary static set.
+
+It will be deprecated in favor of static:assets:vocabulary:offline:mapping
+
 # Mappings
 
 Description:
