@@ -249,14 +249,34 @@ class SearchEngine(ArgoIndexSearchEngine):
             self._obj.search_type.update(namer(BOX))
             return search_filter
 
-    def lon(self, BOX, nrows=None, composed=False):
-        def checker(BOX):
+    def lon(self, BOX=None, nrows=None, composed=False, **kwargs):
+        def checker(BOX, **kwargs):
+            if 'ge' in kwargs or 'le' in kwargs:
+                ge = kwargs.get('ge', -180.)
+                le = kwargs.get('le', 180.)
+                BOX = [ge, le, -90, 90, '1900-01-01', '2100-12-31']
+            else:
+                match BOX:
+                    case list() if len(BOX) >= 6:
+                        pass
+                    case [vmin, vmax]:
+                        BOX = [vmin, vmax, -90, 90, '1900-01-01', '2100-12-31']
+                    case None:
+                        raise ValueError("Invalid arguments")
+                    case int() | float():
+                        BOX = [BOX, 180, -90, 90, '1900-01-01', '2100-12-31']
+                    case _:
+                        raise ValueError("Unsupported argument format")
+                    
             if "longitude" not in self._obj.convention_columns:
                 raise InvalidDatasetStructure(
                     "Cannot search for longitude in this index"
                 )
             is_indexbox(BOX)
             log.debug("Argo index searching for longitude in BOX=%s ..." % BOX)
+            return BOX
+        
+        BOX = checker(BOX, **kwargs)
 
         def namer(BOX):
             return {"LON": BOX[0:2]}
@@ -274,8 +294,7 @@ class SearchEngine(ArgoIndexSearchEngine):
                 filt.append(self._obj.index["longitude"].ge(conv_lon(BOX[0], "180")))
                 filt.append(self._obj.index["longitude"].le(conv_lon(BOX[1], "180")))
             return self._obj._reduce_a_filter_list(filt, op="and")
-
-        checker(BOX)
+        
         self._obj.load(nrows=self._obj._nrows_index)
         search_filter = composer(BOX)
         if not composed:
