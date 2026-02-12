@@ -50,7 +50,7 @@ log = logging.getLogger("argopy.tests.utils")
 log.debug("%s TESTS UTILS %s" % ("="*50, "="*50))
 
 def _importorskip(modname, has: bool | None = None):
-    if bool is None:
+    if has is None:
         try:
             importlib.import_module(modname)  # noqa: E402
             has = True
