@@ -200,7 +200,7 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
 
         Parameters
         ----------
-        BOX : list()
+        BOX : list(), tuple() int, float
             An index box to search Argo records for.
 
         Returns
