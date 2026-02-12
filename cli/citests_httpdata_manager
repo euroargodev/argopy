@@ -69,9 +69,9 @@ from argopy import DataFetcher, clear_cache, ArgoFloat
 from argopy.related import (
     TopoFetcher,
     OceanOPSDeployments,
-    ArgoNVSReferenceTables,
     ArgoDocs,
 )
+from argopy.reference import ArgoNVSReferenceTables
 from argopy.stores.nvs.implementations.online.nvs import NVS as NVS_online
 
 
@@ -872,6 +872,7 @@ class Lister:
 
         RTID_TESTED = ['R27']
         CONCEPTID_TESTED = ['AANDERAA_OPTODE_3835']
+        MAPPING_TESTED = [("R08", "R23")]
 
         for rtid in RTID_TESTED:
             uri = nvs._vocabulary2uri(rtid)
@@ -888,6 +889,12 @@ class Lister:
 
             url = nvs._concept2uri('AANDERAA_OPTODE_3835', fmt=fmt)
             this_URI.commit(self.dfile(unquote(url), fmts[fmt]))
+
+        for s, o in MAPPING_TESTED:
+            uri = nvs._mapping2uri(s, o)
+            this_URI.commit(self.dfile(unquote(uri), "json"))
+
+        print(this_URI)
 
         return self.respond(this_URI)
 

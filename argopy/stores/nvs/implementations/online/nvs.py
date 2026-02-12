@@ -11,14 +11,17 @@ from argopy.stores.nvs.utils import concept2vocabulary, sparql_mapping_request
 def fmt2urlparams(fmt):
     d = {
         "json": "application/ld+json",
+        "ld+json": "application/ld+json",
         "xml": "application/rdf+xml",
+        "rdf+xml": "application/rdf+xml",
         "turtle": "text/turtle",
+        "text/turtle": "text/turtle",
     }
 
     if fmt in d.keys():
         return f"?_profile=nvs&_mediatype={d[fmt]}"
 
-    raise ValueError("Invalid format. Must be in: 'json', 'xml' or 'turtle'.")
+    raise ValueError(f"Invalid format '{fmt}'. Must be in: {d.keys()}.")
 
 
 class NVS(NVSProto):

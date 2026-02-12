@@ -1,5 +1,6 @@
 import pytest
 import logging
+import numpy as np
 
 from argopy.stores.nvs.implementations.offline.nvs import NVS as NVS_offline
 from argopy.stores.nvs.implementations.online.nvs import NVS as NVS_online
@@ -15,6 +16,8 @@ from argopy.stores.nvs.utils import (
     curate_r18definition,
     LocalAttributes,
     Properties,
+    known_mappings,
+    sparql_mapping_request,
 )
 
 from mocked_http import mocked_httpserver, mocked_server_address
@@ -29,6 +32,7 @@ USE_MOCKED_SERVER = True
 RTID_TESTED = ["R27"]
 CONCEPTID_TESTED = ["AANDERAA_OPTODE_3835"]
 FMT_TESTED = ["json", "xml", "turtle"]
+MAPPING_TESTED = [("R08", "R23")]
 DATA_VALIDATOR = {
     "json": lambda x: isinstance(x, dict),
     "xml": lambda x: x.startswith("<?xml"),
@@ -148,6 +152,15 @@ class Test_NVS_Offline:
     def test_load_concept(self, nvs, conceptid, rtid, fmt):
         assert DATA_VALIDATOR[fmt](nvs.load_concept(conceptid, rtid, fmt))
 
+    @pytest.mark.parametrize(
+        "sub_obj",
+        MAPPING_TESTED,
+        indirect=False,
+        ids=[f"subject_id='{x}', object_id='{y}'" for x, y in MAPPING_TESTED],
+    )
+    def test_load_mapping(self, nvs, sub_obj):
+        assert DATA_VALIDATOR['json'](nvs.load_mapping(sub_obj[0], sub_obj[1]))
+
 
 @skip_online
 class Test_NVS_Online:
@@ -249,6 +262,15 @@ class Test_NVS_Online:
     def test_load_concept(self, nvs, conceptid, rtid, fmt):
         assert DATA_VALIDATOR[fmt](nvs.load_concept(conceptid, rtid, fmt))
 
+    # @pytest.mark.parametrize(
+    #     "sub_obj",
+    #     MAPPING_TESTED,
+    #     indirect=False,
+    #     ids=[f"subject_id='{x}', object_id='{y}'" for x, y in MAPPING_TESTED],
+    # )
+    # def test_load_mapping(self, nvs, sub_obj):
+    #     assert DATA_VALIDATOR['json'](nvs.load_mapping(sub_obj[0], sub_obj[1]))
+
 
 def test_NVS_Spec():
     class DummyClass(NVS):
@@ -326,3 +348,11 @@ class Test_Utils:
         data = curate_r18definition(definition)
         assert isinstance(data, dict)
         assert 'Template_Values' in data
+
+    def test_known_mappings(self):
+        maps = known_mappings()
+        assert isinstance(maps, list)
+        assert all([isinstance(m, tuple) for m in maps])
+
+    def test_sparql_mapping_request(self):
+        assert 'R26' in sparql_mapping_request('R26', 'R27')

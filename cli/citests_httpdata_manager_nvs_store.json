@@ -4,41 +4,48 @@
         "ext": "json",
         "sha": "27d7b1ef7aaa76798f7f8eedc7fec0eb510c808949d926dc2ffa754fe958b870",
         "type": "application/json",
-        "ts": "2026-01-25 15:29:19"
+        "ts": "2026-02-11 19:52:23"
     },
     {
         "uri": "https://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3835/?_profile=nvs&_mediatype=application/ld+json",
         "ext": "json",
         "sha": "b2c87b867baacd01cf414ed142fa809b07141e58a8250898156f086fe5715adf",
         "type": "application/json",
-        "ts": "2026-01-25 15:29:19"
+        "ts": "2026-02-11 19:52:23"
     },
     {
         "uri": "https://vocab.nerc.ac.uk/collection/R27/current/?_profile=nvs&_mediatype=application/rdf+xml",
         "ext": "xml",
         "sha": "f12f9f2ab65033fdd55ab183255f6bcbcf7d9f239e2b8b8b5c06261139b340ef",
         "type": "application/rdf+xml",
-        "ts": "2026-01-25 15:29:19"
+        "ts": "2026-02-11 19:52:23"
     },
     {
         "uri": "https://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3835/?_profile=nvs&_mediatype=application/rdf+xml",
         "ext": "xml",
         "sha": "3823c13a9c9530a61a32a5c9de3778bbd879c02fd4a02a4867ef637be9278f90",
         "type": "application/rdf+xml",
-        "ts": "2026-01-25 15:29:19"
+        "ts": "2026-02-11 19:52:23"
     },
     {
         "uri": "https://vocab.nerc.ac.uk/collection/R27/current/?_profile=nvs&_mediatype=text/turtle",
         "ext": "txt",
         "sha": "09464cd6d5d7894199e81b714470d8cea9d4af635c4f5916259cf16b9c3f896e",
         "type": "text/plain",
-        "ts": "2026-01-25 15:29:19"
+        "ts": "2026-02-11 19:52:23"
     },
     {
         "uri": "https://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3835/?_profile=nvs&_mediatype=text/turtle",
         "ext": "txt",
         "sha": "e18972636a59b71b32490395fb80cf1f820b25e539340428c7bcc77ae7282630",
         "type": "text/plain",
-        "ts": "2026-01-25 15:29:19"
+        "ts": "2026-02-11 19:52:23"
+    },
+    {
+        "uri": "https://vocab.nerc.ac.uk/sparql?query=\n    PREFIX dc: <http://purl.org/dc/elements/1.1/>\n    PREFIX sssom: <https://w3id.org/sssom/schema/>\n    PREFIX text: <http://jena.apache.org/text#>\n    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n\n    select ?subj ?pred ?obj where { ?a a sssom:Mapping .\n    ?a sssom:subject_id ?subj .\n    <http://vocab.nerc.ac.uk/collection/R08/current/> skos:member ?subj.\n    ?a sssom:predicate_id ?pred .\n    ?a sssom:object_id ?obj .\n    <http://vocab.nerc.ac.uk/collection/R23/current/> skos:member ?obj.}\n    ",
+        "ext": "json",
+        "sha": "eca3c0f2ed469fbe7f150c9e557e5003e8d171b12cbb4c66de1e997c9270cb96",
+        "type": "application/json",
+        "ts": "2026-02-11 19:52:23"
     }
 ]

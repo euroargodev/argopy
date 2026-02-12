@@ -1,5 +1,12 @@
 [
     {
+        "uri": "https://vocab.nerc.ac.uk/sparql?query=\n    PREFIX dc: <http://purl.org/dc/elements/1.1/>\n    PREFIX sssom: <https://w3id.org/sssom/schema/>\n    PREFIX text: <http://jena.apache.org/text#>\n    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n\n    select ?subj ?pred ?obj where { ?a a sssom:Mapping .\n    ?a sssom:subject_id ?subj .\n    <http://vocab.nerc.ac.uk/collection/R08/current/> skos:member ?subj.\n    ?a sssom:predicate_id ?pred .\n    ?a sssom:object_id ?obj .\n    <http://vocab.nerc.ac.uk/collection/R23/current/> skos:member ?obj.}\n    ",
+        "ext": "json",
+        "sha": "eca3c0f2ed469fbe7f150c9e557e5003e8d171b12cbb4c66de1e997c9270cb96",
+        "type": "application/json",
+        "ts": "2026-02-11 19:52:23"
+    },
+    {
         "uri": "https://vocab.nerc.ac.uk/collection/R27/current/?_profile=nvs&_mediatype=application/ld+json",
         "ext": "json",
         "sha": "27d7b1ef7aaa76798f7f8eedc7fec0eb510c808949d926dc2ffa754fe958b870",
