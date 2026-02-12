@@ -240,6 +240,7 @@ class SearchEngine(ArgoIndexSearchEngine):
             return BOX
 
         BOX = checker(BOX, **kwargs)
+        
         def namer(BOX):
             return {"LAT": BOX[2:4]}
 
@@ -284,6 +285,7 @@ class SearchEngine(ArgoIndexSearchEngine):
             is_indexbox(BOX)
             log.debug("Argo index searching for longitude in BOX=%s ..." % BOX)
             return BOX
+        
         BOX = checker(BOX, **kwargs)
 
         def namer(BOX):
