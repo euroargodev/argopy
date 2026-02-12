@@ -142,13 +142,41 @@ class SearchEngine(ArgoIndexSearchEngine):
             self._obj.search_type.update(namer(WMOs, CYCs))
             return search_filter
 
-    def date(self, BOX, nrows=None, composed=False):
-        def checker(BOX):
+    def date(self, BOX=None, nrows=None, composed=False, **kwargs):
+        def checker(BOX, **kwargs):
+            if 'ge' in kwargs or 'le' in kwargs:
+                ge = kwargs.get('ge', '1900-01-01')
+                le = kwargs.get('le', '2100-12-31')
+                BOX = [-180, 180, -90, 90, ge, le]
+
+            else:
+                match BOX:
+                    case list() if len(BOX) >= 6:
+                        pass
+                    case [vmin, vmax]:
+                        BOX = [-180, 180, -90, 90, vmin, vmax]
+                    case None:
+                        raise ValueError("Invalid arguments")
+                    case str():
+                        # Single date [date, date+1)
+                        d0 = pd.to_datetime(BOX)
+                        d1 = d0 + pd.Timedelta(days=1)
+
+                        # Convert to strings to satisfy is_indexbox validation
+                        ge = d0.strftime("%Y-%m-%d")
+                        le = d1.strftime("%Y-%m-%d")
+                        print("its pandas")
+                        BOX = [-180, 180, -90, 90, ge, le]
+                    case _:
+                        raise ValueError("Unsupported argument format")
+
             if "date" not in self._obj.convention_columns:
                 raise InvalidDatasetStructure("Cannot search for date in this index")
             is_indexbox(BOX)
             log.debug("Argo index searching for date in BOX=%s ..." % BOX)
-            return "date"  # Return key to use for time axis
+            return ("date", BOX)   # Return key to use for time axis
+
+        key, BOX = checker(BOX, **kwargs)
 
         def namer(BOX):
             return {"DATE": BOX[4:6]}
@@ -161,7 +189,6 @@ class SearchEngine(ArgoIndexSearchEngine):
             filt.append(self._obj.index[key].le(tim_max))
             return self._obj._reduce_a_filter_list(filt, op="and")
 
-        key = checker(BOX)
         self._obj.load(nrows=self._obj._nrows_index)
         search_filter = composer(BOX, key)
         if not composed:
