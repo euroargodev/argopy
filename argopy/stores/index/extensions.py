@@ -234,8 +234,10 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
 
         Parameters
         ----------
-        BOX : list()
+        BOX : list(), tuple(), int, float
             An index box to search Argo records for.
+            Use ``ge``/``le`` keyword bounds for lower/upper limits; a single value
+            (e.g., ``lat(40)``) is treated as ``ge=40``.
 
         Returns
         -------
@@ -253,7 +255,10 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
             idx = ArgoIndex(index_file='core')
 
             idx.query.lat([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
-
+            idx.query.lat([40, 45])
+            idx.query.lat(ge=40)
+            idx.query.lat(le=45)
+            idx.query.lat(40)
         """
         raise NotImplementedError("Not implemented")
 
