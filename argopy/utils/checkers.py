@@ -290,6 +290,60 @@ def is_box(box: list, errors: str = "raise"):
 
     return True
 
+def parse_indexbox(dimension, BOX=None, **kwargs):
+    if 'ge' in kwargs or 'le' in kwargs:
+        match dimension:
+            case "lon" :
+                ge = kwargs.get('ge', -180.)
+                le = kwargs.get('le', 180.)
+                BOX = [ge, le, -90, 90, '1900-01-01', '2100-12-31']
+            case "lat" :
+                ge = kwargs.get('ge', -90.)
+                le = kwargs.get('le', 90.)
+                BOX = [-180, 180, ge, le, '1900-01-01', '2100-12-31']
+            case "date" :
+                ge = kwargs.get('ge', '1900-01-01')
+                le = kwargs.get('le', '2100-12-31')
+                BOX = [-180, 180, -90, 90, ge, le]    
+    else:
+        match BOX:
+            case list() if len(BOX) >= 6:
+                pass
+            case [vmin, vmax]:
+                match dimension:
+                    case "lon" :
+                        BOX = [vmin, vmax, -90, 90, '1900-01-01', '2100-12-31']
+                    case "lat" :
+                        BOX = [-180, 180, vmin, vmax, '1900-01-01', '2100-12-31']
+                    case "date" :
+                        BOX = [-180, 180, -90, 90, vmin, vmax]
+            case None:
+                raise ValueError("Invalid arguments")
+            case int() | float():
+                match dimension:
+                    case "lon" :
+                        BOX = [BOX, 180, -90, 90, '1900-01-01', '2100-12-31']
+                    case "lat" :
+                        BOX = [-180, 180, BOX, 90, '1900-01-01', '2100-12-31']
+                    case "date" : 
+                        raise TypeError(
+                                f"Date argument must be a string (e.g., '2007-09-01'), "
+                                f"not {type(BOX).__name__}. "
+                                f"Use ge='YYYY-MM-DD' and/or le='YYYY-MM-DD' for date filtering."
+                            )
+            case str():
+                # Single date [date, date+1)
+                d0 = pd.to_datetime(BOX)
+                d1 = d0 + pd.Timedelta(days=1)
+
+                # Convert to strings to satisfy is_indexbox validation
+                ge = d0.strftime("%Y-%m-%d")
+                le = d1.strftime("%Y-%m-%d")
+
+                BOX = [-180, 180, -90, 90, ge, le]
+            case _:
+                raise ValueError("Unsupported argument format")
+    return BOX
 
 def is_list_of_strings(lst):
     return isinstance(lst, list) and all(isinstance(elem, str) for elem in lst)
