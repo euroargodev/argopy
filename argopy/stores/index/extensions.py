@@ -200,7 +200,7 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
 
         Parameters
         ----------
-        BOX : list, tuple, int, or float, optional
+        BOX : list, tuple, int, float, optional
             An index box to search Argo records for. Can be:
             
             - Full 6-element list: [lon_min, lon_max, lat_min, lat_max, date_min, date_max]
@@ -247,7 +247,7 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
 
         Parameters
         ----------
-        BOX : list, tuple, int, or float, optional
+        BOX : list, tuple, int, float, optional
             An index box to search Argo records for. Can be:
             
             - Full 6-element list: [lon_min, lon_max, lat_min, lat_max, date_min, date_max]
