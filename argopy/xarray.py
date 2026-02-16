@@ -1,11 +1,10 @@
 import os
 import warnings
-
 import numpy as np
 import pandas as pd
 import xarray as xr
 import logging
-from typing import Union, Any
+from typing import Union, Any, Literal
 from xarray.backends import BackendEntrypoint  # For xarray > 0.18
 from xarray.backends import ZarrStore
 
@@ -26,10 +25,6 @@ except ModuleNotFoundError:
 
 
 from argopy.errors import InvalidDatasetStructure, OptionValueError, NoData, NoDataLeft
-from argopy.utils.computers import (
-    linear_interpolation_remap,
-    groupby_remap,
-)
 from argopy.utils.mappers import map_vars_to_dict
 from argopy.utils.checkers import is_list_of_strings
 from argopy.utils.casting import (
@@ -37,8 +32,14 @@ from argopy.utils.casting import (
     DATA_TYPES,
     to_list,
 )
+from argopy.utils.computers import (
+    linear_interpolation_remap,
+    pchip_interpolation_remap,
+    groupby_remap,
+)
 from argopy.utils.lists import list_core_parameters
 from argopy.utils.geo import toYearFraction
+
 
 log = logging.getLogger("argopy.xarray")
 
@@ -177,7 +178,7 @@ class ArgoAccessor:
                 )
                 N_PROF = len(np.unique(dummy_argo_uid))
             else:
-                N_PROF = 0.
+                N_PROF = 0.0
         else:
             N_PROF = len(np.unique(self._obj["N_PROF"]))
         return N_PROF
@@ -209,7 +210,7 @@ class ArgoAccessor:
                     .values
                 )
             else:
-                N_LEVELS = 0.
+                N_LEVELS = 0.0
         else:
             N_LEVELS = len(np.unique(self._obj["N_LEVELS"]))
         return N_LEVELS
@@ -221,7 +222,7 @@ class ArgoAccessor:
             if self.N_PROF > 0:
                 N_POINTS = self.N_PROF * self.N_LEVELS
             else:
-                N_POINTS = 0.
+                N_POINTS = 0.0
         else:
             N_POINTS = len(np.unique(self._obj["N_POINTS"]))
         return N_POINTS
@@ -517,7 +518,9 @@ class ArgoAccessor:
             i_uid, prof = grp
             for iv, vname in enumerate(this.data_vars):
                 try:
-                    count[i_prof, iv] = len(np.unique(prof[vname]))  # This is very long because it must read all the data !
+                    count[i_prof, iv] = len(
+                        np.unique(prof[vname])
+                    )  # This is very long because it must read all the data !
                 except Exception:
                     log.error(
                         "point2profile: An error happened when dealing with the '%s' data variable"
@@ -629,7 +632,9 @@ class ArgoAccessor:
                 "Method only available for a collection of profiles (N_PROF dimension)"
             )
         ds = self._obj
-        ds = ds.argo.datamode.split()  # Otherwise this method will fail with BGC netcdf files
+        ds = (
+            ds.argo.datamode.split()
+        )  # Otherwise this method will fail with BGC netcdf files
 
         # Remove all variables for which a dimension is length=0 (eg: N_HISTORY)
         # todo: We should be able to find a way to keep them somewhere in the data structure
@@ -916,7 +921,9 @@ class ArgoAccessor:
             core_params.remove("PSAL")
 
         # Apply transforms and filters:
-        this = this.argo.filter_qc(QC_list=1, QC_fields=["POSITION_QC", f"{self._TNAME}_QC"])
+        this = this.argo.filter_qc(
+            QC_list=1, QC_fields=["POSITION_QC", f"{self._TNAME}_QC"]
+        )
         this = this.argo.datamode.merge(params=core_params)
         this = this.argo.datamode.filter(params=core_params, dm="D")
 
@@ -942,7 +949,7 @@ class ArgoAccessor:
             this = this.argo.cast_types()
         return this
 
-    def interp_std_levels(
+    def interp_std_levels_legacy(
         self, std_lev: list or np.array, axis: str = "PRES"
     ) -> xr.Dataset:
         """Interpolate measurements to standard pressure levels
@@ -1061,6 +1068,189 @@ class ArgoAccessor:
 
         # if to_point:
         #     ds_out = ds_out.argo.profile2point()
+
+        return ds_out
+
+    def interp_std_levels(
+        self,
+        std_lev: list[list, np.array, str] = "EasyOneArgoLite", 
+        axis: str = "PRES",
+        method: Literal['pchip', 'mrst-pchip', 'linear'] = 'pchip',
+    ) -> xr.Dataset:
+        """Interpolate measurements to standard pressure levels
+
+        Parameters
+        ----------
+        std_lev: list or np.array or str, optional, default = 'EasyOneArgoLite'
+            Standard pressure levels used for interpolation. It has to be 1-dimensional and monotonic.
+
+            Some pre-defined levels are available with keywords:
+
+            - ``EasyOneArgoLite`` (default)
+
+            See Notes for details.
+
+        axis: str, default: ``PRES``
+            The dataset variable to use as pressure axis. This can be ``PRES`` or ``PRES_ADJUSTED``.
+
+        method: str, LiteralString['pchip', 'mrst-pchip', 'linear'], default='pchip
+            The interpolation method:
+
+            - ``pchip``: Apply the Piecewise Cubic Hermite Interpolating Polynomial method on all parameters
+            - ``linear``: Apply :class:`scipy.interpolate.interp1d` on all parameters
+            - ``mrst-pchip``: Apply:
+
+                - Multiply-Rotated Salinity-Temperature PCHIP Method on temperature and salinity (Barker and McDougall, 2020)
+                - Piecewise Cubic Hermite Interpolating Polynomial method on all other parameters
+
+        Returns
+        -------
+        :class:`xarray.Dataset`
+
+        Notes
+        -----
+        Pre-defined standard pressure levels are available for:
+
+        - ``EasyOneArgoLite``: 107 vertical levels from 2dbar to 6000 decibar.
+            The spacings between the vertical levels are:
+
+            - 2dbar@0-2dbar,
+            - 5dbar@5-250dbar,
+            - 10dbar@250-350dbar,
+            - 25dbar@350-500dbar,
+            - 50dbar@500-1000dbar,
+            - 100dbar@1000-2000dbar,
+            - 200dbar@2000-6000dbar.
+
+        - ``GLORYS``
+        - ``ISAS``
+        - ``IPRC``
+        - ``ECCO V4``
+        - ``RG``
+        - ``MOAA``
+        - ``CORA5``
+
+        References
+        ----------
+        Barker, P. M., and T. J. McDougall, 2020: Two Interpolation Methods Using Multiply-Rotated 
+        Piecewise Cubic Hermite Interpolating Polynomials. J. Atmos. Oceanic Technol., 37, 605-619, 
+        https://doi.org/10.1175/JTECH-D-19-0211.1.
+
+        """
+        pTolerance = None
+        if isinstance(std_lev, str):
+            if std_lev == "EasyOneArgoLite":
+                std = [2.]
+                [std.append(z) for z in np.arange(5, 250, 5.)]
+                [std.append(z) for z in np.arange(250, 350, 10.)]
+                [std.append(z) for z in np.arange(350, 500, 25.)]
+                [std.append(z) for z in np.arange(500, 1000, 50.)]
+                [std.append(z) for z in np.arange(1000, 2000, 100.)]
+                [std.append(z) for z in np.arange(2000, 6000, 200.)]
+
+                # [std.append(z) for z in np.arange(5, 100, 5.)]
+                # [std.append(z) for z in np.arange(100, 350, 10.)]
+                # [std.append(z) for z in np.arange(350, 500, 25.)]
+                # [std.append(z) for z in np.arange(500, 2000, 50.)]
+                # [std.append(z) for z in np.arange(2000, 6000, 200.)]
+
+                std.append(6000.)
+                std_lev = np.array(std, dtype=np.float32)
+
+                scale = 3.
+                pTolerance = [scale * (std_lev[0] - 0.)]  # 1st level near surface
+                for ip, _ in enumerate(std_lev[0:-1]):
+                    local_spacing = std_lev[ip + 1] - std_lev[ip]
+                    pTolerance.append(scale * local_spacing)
+                pTolerance = np.array(pTolerance, dtype=np.float32)
+
+        elif (type(std_lev) is np.ndarray) | (type(std_lev) is list):
+            std_lev = np.array(std_lev)
+            if (np.any(sorted(std_lev) != std_lev)) | (np.any(std_lev < 0)):
+                raise ValueError(
+                    "Standard levels must be a list or a numpy array of positive and sorted values"
+                )
+        else:
+            raise ValueError(
+                "Standard levels must be a string for pre-defined values or list or a numpy array of positive and sorted values."
+            )
+
+        if axis not in ["PRES", "PRES_ADJUSTED"]:
+            raise ValueError("'axis' option must be 'PRES' or 'PRES_ADJUSTED'")
+
+        # Handle input data structure: points or profiles
+        # (we need to work with profiles)
+        to_point = False
+        if self._obj.argo._type == "point":
+            to_point = True
+            this_dsp = self._obj.argo.point2profile()
+        else:
+            this_dsp = self._obj.copy(deep=True)
+
+        # Add new vertical dimensions, this has to be in the datasets to apply ufunc later
+        this_dsp["Z_LEVELS"] = xr.DataArray(std_lev, dims={"Z_LEVELS": std_lev})
+
+        # Create a dataset that will hold interpolation results:
+        ds_out = xr.Dataset()
+
+        # List all variables to interpolate:
+        datavars = [
+            dv
+            for dv in list(this_dsp.variables)
+            if set(["N_LEVELS", "N_PROF"]) == set(this_dsp[dv].dims)
+            and "QC" not in dv
+            and "ERROR" not in dv
+            and "DATA_MODE" not in dv
+        ]
+        # List coordinates to preserve:
+        coords = [dv for dv in list(this_dsp.coords)]
+
+        # List variables depending on N_PROF only
+        # (not needing interpolation and duplicated in output dataset):
+        solovars = [
+            dv
+            for dv in list(this_dsp.variables)
+            if dv not in datavars
+            and dv not in coords
+            and "QC" not in dv
+            and "ERROR" not in dv
+        ]
+
+        # Run the interpolation:
+        for dv in datavars:
+            ds_out[dv] = pchip_interpolation_remap(
+                this_dsp[axis],
+                this_dsp[dv],
+                this_dsp["Z_LEVELS"],
+                z_dim="N_LEVELS",
+                z_regridded_dim="Z_LEVELS",
+                output_dim="remapped",
+                zTolerance=pTolerance,
+            )
+            ds_out[dv].attrs = this_dsp[dv].attrs  # Preserve attributes
+            if "long_name" in ds_out[dv].attrs:
+                ds_out[dv].attrs["long_name"] = (
+                    "Interpolated %s" % ds_out[dv].attrs["long_name"]
+                )
+
+        ds_out = ds_out.rename({"remapped": "%s_INTERPOLATED" % axis})
+        ds_out["%s_INTERPOLATED" % axis].attrs = this_dsp[axis].attrs
+        if "long_name" in ds_out["%s_INTERPOLATED" % axis].attrs:
+            ds_out["%s_INTERPOLATED" % axis].attrs["long_name"] = (
+                "Standard %s levels" % axis
+            )
+
+        for sv in solovars:
+            ds_out[sv] = this_dsp[sv]
+
+        for co in coords:
+            ds_out.coords[co] = this_dsp[co]
+
+        ds_out = ds_out.drop_vars(["N_LEVELS", "Z_LEVELS"])
+        ds_out = ds_out[np.sort(ds_out.data_vars)]
+        ds_out = ds_out.argo.cast_types()
+        ds_out.attrs = self.attrs  # Preserve original attributes
+        ds_out.argo.add_history("Interpolated on standard %s levels" % axis)
 
         return ds_out
 
@@ -1482,9 +1672,9 @@ class ArgoAccessor:
 
         if "SIG0" in vlist:
             SIG0 = xr.DataArray(sig0, coords=this["TEMP"].coords, name="SIG0")
-            SIG0.attrs[
-                "long_name"
-            ] = "Potential density anomaly with reference pressure of 0 dbar"
+            SIG0.attrs["long_name"] = (
+                "Potential density anomaly with reference pressure of 0 dbar"
+            )
             SIG0.attrs["standard_name"] = "sea_water_sigma_theta"
             SIG0.attrs["unit"] = "kg/m^3"
             that.append(SIG0)
@@ -1523,7 +1713,7 @@ class ArgoAccessor:
             that.append(CS)
 
         # Create a dataset with all new variables:
-        that = xr.merge(that, compat='no_conflicts')
+        that = xr.merge(that, compat="no_conflicts")
         # Add to the dataset essential Argo variables (allows to keep using the argo accessor):
         that = that.assign(
             {
@@ -1811,7 +2001,10 @@ class ArgoAccessor:
             # Compute fractional year:
             # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L334
             DATES = np.array(
-                [toYearFraction(d) for d in pd.to_datetime(this_one[self._TNAME].values)]
+                [
+                    toYearFraction(d)
+                    for d in pd.to_datetime(this_one[self._TNAME].values)
+                ]
             )[np.newaxis, :]
 
             # Read measurements:
@@ -2009,11 +2202,12 @@ class ArgoAccessor:
         # Add zarr compression to encoding:
         if "encoding" not in kwargs:
             from numcodecs import Blosc
+
             compressor = Blosc(cname="zstd", clevel=3, shuffle=2)
             encoding = {}
             for v in self._obj:
                 encoding.update({v: {"compressor": compressor}})
-            kwargs.update({'encoding': encoding})
+            kwargs.update({"encoding": encoding})
 
         # Convert to a zarr file using compression:
         return self._obj.to_zarr(*args, **kwargs)
@@ -2105,8 +2299,10 @@ class ArgoAccessor:
         for param in plist:
             if param not in self._obj:
                 raise ValueError(f"Parameter {param} not in dataset")
-            if 'N_LEVELS' not in self._obj[param].dims:
-                raise ValueError(f"Parameter {param} must have the 'N_LEVELS' dimension")
+            if "N_LEVELS" not in self._obj[param].dims:
+                raise ValueError(
+                    f"Parameter {param} must have the 'N_LEVELS' dimension"
+                )
 
         # There should be one input core dimension 'N_LEVELS' for each argument of the reduce function
         input_core_dims = [["N_LEVELS"] for _ in plist]
@@ -2119,11 +2315,9 @@ class ArgoAccessor:
         ufunc_kwargs = dict(
             kwargs=kwargs,  # Keywords arguments to be passed to the reduce function
             input_core_dims=input_core_dims,
-
             # dimensions allowed to change size. Must be set!
             # must also appear in ``input_core_dims`` for at least one argument
             exclude_dims=set(("N_LEVELS",)),
-
             vectorize=True,  # loop over non-core dims
             dask="parallelized",
         )
@@ -2140,7 +2334,13 @@ class ArgoAccessor:
 
 def open_Argo_dataset(filename_or_obj):
     time_coder = xr.coders.CFDatetimeCoder(use_cftime=False)
-    ds = xr.open_dataset(filename_or_obj, decode_cf=1, decode_times=time_coder, mask_and_scale=1, decode_timedelta=True)
+    ds = xr.open_dataset(
+        filename_or_obj,
+        decode_cf=1,
+        decode_times=time_coder,
+        mask_and_scale=1,
+        decode_timedelta=True,
+    )
     ds = cast_Argo_variable_type(ds)
     return ds
 

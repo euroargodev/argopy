@@ -54,7 +54,7 @@ from .geo import (
     YearFraction_to_datetime,
     point_in_polygon,
 )
-from .computers import linear_interpolation_remap, groupby_remap
+from .computers import linear_interpolation_remap, groupby_remap, pchip_interpolation_remap
 from .transformers import (
     fill_variables_not_in_all_datasets,
     drop_variables_not_in_all_datasets,
@@ -139,6 +139,7 @@ __all__ = (
     "point_in_polygon",
     # Computation with datasets:
     "linear_interpolation_remap",
+    "pchip_interpolation_remap",
     "groupby_remap",
     # Transform datasets:
     "fill_variables_not_in_all_datasets",
