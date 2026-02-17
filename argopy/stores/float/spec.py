@@ -91,12 +91,14 @@ class FloatStoreProto(ABC):
         # self.load_index()
 
         # Init Internal placeholder for this instance:
-        self._dataset = {}  # xarray datasets
-        self._metadata = None  # Float meta-data dictionary
-        self._dac = None  # DAC name (string)
-        self._ls: list[str] | None = None
-        self._lsp: dict[str|int, str] | None = None
-        self._df_profiles = None  # Dataframe with profiles index
+        self._metadata: dict | None = None  # filled by self.load_metadata(), returned by self.metadata
+        self._dac: str | None = None  # filled by self.load_dac(), returned by self.dac
+        self._dataset = {}  # filled/returned by self.open_dataset(), returned by self.dataset()
+        self._ls: list[str] | None = None # filled/returned by self.ls()
+
+        self._lsp: dict[str|int, str] | None = None # fill by self.ls_profiles()
+        self._profile = {} # filled/returned by self.open_profile(), (mono-profile file xarray datasets)
+        self._df_profiles = None  # filled/returned by self.describe_profiles()
 
     def __repr__(self):
         backend = "online" if self._online else "offline"
@@ -336,7 +338,7 @@ class FloatStoreProto(ABC):
             Determine if the dataset variables should be cast or not. This is similar to opening the dataset directly with :class:`xr.open_dataset` using the ``engine=`argo``` option.
             This will be ignored if the ``netCDF4` kwarg is set to True.
         **kwargs
-            All the other parameters are passed to the GDAC store `open_dataset` method.
+            All the other arguments are passed to the GDAC store `open_dataset` method.
 
         Returns
         -------
@@ -531,18 +533,124 @@ class FloatStoreProto(ABC):
 
     def open_profile(
         self,
-        name: str | list[str],
+        name: str,
         cast: bool = True,
         **kwargs,
     ) -> xr.Dataset | Any | list[xr.Dataset | Any]:
+        """Open and decode a single profile file dataset
+
+        Parameters
+        ----------
+        name: str
+            Name of the profile file to open.
+
+            It can be any key from the dictionary returned by :class:`ArgoFloat.ls_profiles`.
+        cast: bool, optional, default = True
+            Determine if dataset variables should be cast or not.
+
+            This is similar to opening the dataset directly with :class:`xr.open_dataset` using the ``engine=`argo``` option.
+            This will be ignored if the ``netCDF4` kwarg is set to True.
+        **kwargs:
+            All the other arguments are passed to the GDAC store `open_dataset` method.
+
+        Returns
+        -------
+        :class:`xarray.Dataset`
+
+        Notes
+        -----
+        Use the ``netCDF4=True`` option to return a :class:`netCDF4.Dataset` object instead of a :class:`xarray.Dataset`.
+
+        See Also
+        --------
+        :class:`ArgoFloat.ls_profiles`
+
+        Examples
+        --------
+        ..code-block: python
+            :caption: Open a 'core' profile file
+
+            from argopy import ArgoFloat
+
+            WMO = 6903076 # A 'core' float
+            af = ArgoFloat(WMO)
+
+            # Open the ascending profile file for cycle number 12:
+            ds = af.open_profile(12)
+
+            # Open the descending profile file, for cycle number 1:
+            ds = af.open_profile('1D')
+
+        ..code-block: python
+            :caption: Open a 'BGC' profile file
+
+            from argopy import ArgoFloat
+
+            WMO = 6903091 # A 'BGC' float
+            af = ArgoFloat(WMO)
+
+            # Open the ascending 'BGC' profile file for cycle number 12:
+            ds = af.open_profile('B12')
+
+            # Open the descending 'BGC' profile file for cycle number 1:
+            ds = af.open_profile('B1D')
+
+        ..code-block: python
+            :caption: Open a BGC 'Synthetic' profile file
+
+            from argopy import ArgoFloat
+
+            WMO = 6903091 # A 'BGC' float
+            af = ArgoFloat(WMO)
+
+            # Open the BGC 'Synthetic' profile file for cycle number 12:
+            ds = af.open_profile('S12')
+        """
+        d2s = lambda x: str(x).replace("'", "").replace(":", "_").replace("{", "").replace("}", "").replace(" ", "")
+
+        if name not in self.ls_profiles():
+            raise ValueError(f"This profile key {name} does not match any of the known profile files ({self.ls_profiles().keys()})")
+
+        if "xr_opts" not in kwargs and cast is True:
+            kwargs.update({"xr_opts": {"engine": "argo"}})
+
+        key = f"{name}-{d2s(kwargs)}"
+
+        if key not in self._profile:
+            file = self.ls_profiles()[name]
+            ds = self.fs.open_dataset(file, **kwargs)
+
+            self._profile[key] = ds
+
+        return self._profile[key]
+
+    def open_profiles(
+            self,
+            cycle_number: int | list[int] | None = None,
+            dataset: Literal['B', 'S'] | None = None,
+            direction: Literal['A', 'D'] = "A",
+            cast: bool = True,
+            **kwargs,
+    ):
         """Open and decode one or more profile file dataset
 
         Parameters
         ----------
-        name: str | list[str]
-            Name, or list of names, of profile files to open.
+        cycle_number: int | list[int], optional, default = None
+            The cycle number, or list, to return files for.
 
-            It can be any key from the dictionary returned by :class:`ArgoFloat.ls_profiles`.
+            If set to None (default), all cycle numbers are returned.
+        dataset: Literal['B', 'S'] | None, optional, default = None
+            The profile dataset to return files for.
+
+            - None: 'core' profile files (default),
+            - 'B': BGC mono-cycle profile files,
+            - 'S': Synthetic BGC mono-cycle profile files.
+        direction: Literal['A', 'D'], optional, default = 'A'
+            The profile direction to return files for.
+
+            - 'A' (default): Ascending profile files,
+            - 'D': Descending profile files.
         cast: bool, optional, default = True
             Determine if dataset variables should be cast or not.
 
@@ -557,56 +665,70 @@ class FloatStoreProto(ABC):
             - 'errors' to control what to do if an error occur with one profile file,
             - 'open_dataset_opts' to provide options when opening each netcdf files, in particular 'netCDF4' to return a legacy netcdf dataset instead of a :class:`xr.Dataset`.
 
-            Depending on the GDAC host, more details can be found at: :class:`argopy.stores.httpstore.open_mfdataset`, :class:`argopy.stores.local.open_mfdataset`, :class:`argopy.stores.ftppstore.open_mfdataset` or :class:`argopy.stores.s3store.open_mfdataset`.
+            Depending on the GDAC host, more details can be found from: :class:`argopy.stores.httpstore.open_mfdataset`, :class:`argopy.stores.local.open_mfdataset`, :class:`argopy.stores.ftppstore.open_mfdataset` or :class:`argopy.stores.s3store.open_mfdataset`.
 
         Returns
         -------
         xr.Dataset | Any | list[xr.Dataset | Any]
-            If no pre-processing is done with profile files, return one or a list of :class:`xr.Dataset`. Otherwise, return the pre-processing output.
+            If no pre-processing is done with profile files, return one, or a list, of :class:`xr.Dataset`. Otherwise, return the list of pre-processing output.
+
+        Notes
+        -----
+        When called on 1 profile file, this method return the same :class:`xr.Dataset` as the :class:`ArgoFloat.open_profile` method.
+
+        ..code-block: python
+            from argopy import ArgoFloat
+
+            WMO = 6903076 # some float
+            af = ArgoFloat(WMO)
+
+            ds1 = af.open_profile(1)
+            ds2 = af.open_profiles(1, dataset=None, direction='A')
+            assert ds1.equals(ds2)
+
+            ds1 = af.open_profile('1D')
+            ds2 = af.open_profiles(1, dataset=None, direction='D')
+            assert ds1.equals(ds2)
+
+        See Also
+        --------
+        :class:`ArgoFloat.ls_profiles_for`
 
         Examples
         --------
         ..code-block: python
-            :caption: Open 'core' profile file(s)
+            :caption: Open 'core' profile files
 
             from argopy import ArgoFloat
 
-            WMO = 6903076 # Some 'core' float
+            WMO = 6903076 # A 'core' float
             af = ArgoFloat(WMO)
 
-            # Open one ascending profile file, for cycle number 12:
-            ds = af.open_profile(12)
+            # Open some core ascending profile files (default):
+            ds_list = af.open_profiles([1, 2])
 
-            # Open one descending profile file, for cycle number 1:
-            ds = af.open_profile('1D')
+            # Open some descending profile files:
+            ds_list = af.open_profiles([1, 2], direction='D')
 
-            # Open more than one profile file:
-            ds_list = af.open_profile([1,2,3])
-
-            # Open **all** profile files:
-            name_list = af.ls_profiles_for(dataset=None, direction='A').keys()
-            ds_list = af.open_profile(name_list, progress=True)
+            # Open *all* profile files (only ascending):
+            ds_list = af.open_profiles()
 
         ..code-block: python
             :caption: Open 'BGC' profile file(s)
 
             from argopy import ArgoFloat
 
-            WMO = 6903091 # Some 'BGC' float
+            WMO = 6903091 # A 'BGC' float
             af = ArgoFloat(WMO)
 
-            # Open one ascending profile file, for cycle number 12:
-            ds = af.open_profile('B12')
+            # Open some 'BGC' ascending profile files (default):
+            ds_list = af.open_profiles([1, 2], dataset='B')
 
-            # Open one descending profile file, for cycle number 1:
-            ds = af.open_profile('B1D')
+            # Open some 'BGC' descending profile files:
+            ds_list = af.open_profiles([1, 2], dataset='B', direction='D')
 
-            # Open more than one profile file:
-            ds_list = af.open_profile(['B1', 'B2', 'B3'])
-
-            # Open **all** profile files:
-            name_list = af.ls_profiles_for(dataset='B', direction='A').keys()
-            ds_list = af.open_profile(name_list, progress=True)
+            # Open *all* 'BGC' profile files (only ascending):
+            ds_list = af.open_profiles(dataset='B')
 
         ..code-block: python
             :caption: Open BGC 'Synthetic' profile file(s)
@@ -616,22 +738,14 @@ class FloatStoreProto(ABC):
             WMO = 6903091 # Some 'BGC' float
             af = ArgoFloat(WMO)
 
-            # Open one ascending profile file, for cycle number 12:
-            ds = af.open_profile('S12')
+            # Open some BGC 'Synthetic' ascending profile files:
+            ds_list = af.open_profiles([1, 2], dataset='S')
 
-            # Open more than one profile file:
-            ds_list = af.open_profile(['S1', 'S2', 'S3'])
-
-            # Open **all** profile files:
-            name_list = af.ls_profiles_for(dataset='S').keys()
-            ds_list = af.open_profile(name_list, progress=True)
+            # Open *all* BGC 'Synthetic' profile files:
+            ds_list = af.open_profiles(dataset='S')
 
         """
-        flist: list[str] = []
-        names = to_list(name)
-        [flist.append(n) for n in names if n in self.ls_profiles()]
-        if len(flist) == 0:
-            raise ValueError(f"This profile key {names} does not match any of the known profile files ({self.ls_profiles().keys()})")
+        fnames = list(self.ls_profiles_for(cycle_number=cycle_number, dataset=dataset, direction=direction).values())
 
         if "xr_opts" not in kwargs and cast is True:
             if 'open_dataset_opts' in kwargs:
@@ -641,8 +755,7 @@ class FloatStoreProto(ABC):
         if "concat" not in kwargs:
             kwargs.update({"concat": False})
 
-        urilist = [self.ls_profiles()[f] for f in flist]
-        results: xr.Dataset | Any | list[xr.Dataset | Any] = self.fs.open_mfdataset(urilist, **kwargs)
+        results: xr.Dataset | Any | list[xr.Dataset | Any] = self.fs.open_mfdataset(fnames, **kwargs)
 
         if isinstance(results, list) and len(results) == 1:
             return results[0]
