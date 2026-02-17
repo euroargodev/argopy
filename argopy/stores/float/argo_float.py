@@ -44,10 +44,10 @@ class ArgoFloat(FloatStore):
         af = ArgoFloat(WMO, host='s3')     # Shortcut for s3://argo-gdac-sandbox/pub
 
     .. code-block:: python
-        :caption: Load/read GDAC netcdf files as a :class:`xarray.Dataset` or :class:`netCDF4.Dataset`
+        :caption: Load/read GDAC netcdf files
 
         af.ls_dataset() # Return a dictionary with all available datasets for this float
-        ds = af.open_dataset('prof') # Use keys from the available datasets dictionary
+        ds = af.open_dataset('prof') # Use keys from .ls_dataset()
         ds = af.open_dataset('meta')
         ds = af.open_dataset('tech')
         ds = af.open_dataset('Rtraj')
@@ -56,19 +56,38 @@ class ArgoFloat(FloatStore):
         ds = af.open_dataset('Sprof', netCDF4=True)  # Return a netCDF4 Dataset instead of an xarray
 
     .. code-block:: python
+        :caption: Load/read GDAC netcdf mono-cycle profile files
+
+        af.describe_profiles()  # Pandas DataFrame describing all available profile files
+
+        af.ls_profiles() # Return a dictionary with all available mono-cycle profile files (everything under the 'profiles' sub-folder)
+
+        # Load one single file, use keys from af.ls_profiles():
+        ds = af.open_profile(12) # cycle number 12, core file
+        ds = af.open_profile('1D') # cycle number 1, descending core file
+        ds = af.open_profile('B15') # cycle number 15, BGC file
+        ds = af.open_profile('B1D') # cycle number 1, descending BGC file
+        ds = af.open_profile('S28') # cycle number 28, BGC synthetic file
+
+        # Load one or more files:
+        ds_list = af.open_profiles([1,2,3])
+        ds_list = af.open_profiles([1,2,3], direction='D')
+        ds_list = af.open_profiles([1,2,3], dataset='B') # Return 'BGC' B files
+        ds_list = af.open_profiles([1,2,3], dataset='B', direction='D') # Return 'BGC' B files, descending
+        ds_list = af.open_profiles([1,2,3], dataset='S') # Return 'BGC' Synthetic files
+
+        ds_list = af.open_profiles(direction='D') # Return *all* core descending files
+
+
+    .. code-block:: python
         :caption: Other attributes and methods
 
-        af.N_CYCLES  # Number of cycles (estimated)
+        af.N_CYCLES  # Number of unique cycle number (estimated)
         af.path  # root path for all float datasets
         af.dac   # name of the DAC this float belongs to
         af.metadata  # a dictionary with all available metadata for this file (from netcdf or fleetmonitoring API)
         af.ls()  # list af.path folder content
 
-    .. code-block:: python
-        :caption: Working with float profiles
-
-        af.lsprofiles() # list float "profiles" folder content
-        af.describe_profiles()  # Pandas DataFrame describing all available float profile files
 
     .. code-block:: python
         :caption: Quick plotting methods
