@@ -227,10 +227,9 @@ def argo_split_path(this_path):  # noqa C901
             output["type"] = "B, BGC Mono-cycle profile file"
 
         suffix = filename_parts[-1].split(output["wmo"])[-1]
+        output["direction"] = "A, ascending profile (implicit)"
         if "D" in suffix:
-            output["direction"] = "D, descending profiles"
-        elif suffix == "" and "Mono" in output["type"]:
-            output["direction"] = "A, ascending profiles (implicit)"
+            output["direction"] = "D, descending profile"
 
     else:
         typ = filename_parts[-1].split(".nc")[0]
