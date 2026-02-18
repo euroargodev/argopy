@@ -16,7 +16,7 @@ except ModuleNotFoundError:
 from argopy.options import OPTIONS
 from argopy.errors import InvalidDatasetStructure, OptionValueError
 from argopy.utils.monitored_threadpool import pmap
-from argopy.utils.checkers import is_indexbox, check_wmo, check_cyc
+from argopy.utils.checkers import is_indexbox, parse_indexbox, check_wmo, check_cyc
 from argopy.utils.casting import to_list
 from argopy.utils.geo import conv_lon
 from argopy.stores.index.extensions import (
@@ -160,13 +160,16 @@ class SearchEngine(ArgoIndexSearchEngine):
             self._obj.search_type.update(namer(WMOs, CYCs))
             return search_filter
 
-    def date(self, BOX, nrows=None, composed=False):
-        def checker(BOX):
+    def date(self, BOX=None, nrows=None, composed=False, **kwargs):
+        def checker(BOX, **kwargs):
+            BOX = parse_indexbox("date", BOX, **kwargs)
             if "date" not in self._obj.convention_columns:
                 raise InvalidDatasetStructure("Cannot search for date in this index")
             is_indexbox(BOX)
             log.debug("Argo index searching for date in BOX=%s ..." % BOX)
-            return "date"  # Return key to use for time axis
+            return ("date", BOX)  # Return key to use for time axis
+
+        key, BOX = checker(BOX, **kwargs)
 
         def namer(BOX):
             return {"DATE": BOX[4:6]}
@@ -187,7 +190,6 @@ class SearchEngine(ArgoIndexSearchEngine):
             )
             return self._obj._reduce_a_filter_list(filt, op="and")
 
-        key = checker(BOX)
         self._obj.load(nrows=self._obj._nrows_index)
         search_filter = composer(BOX, key)
         if not composed:
@@ -199,14 +201,18 @@ class SearchEngine(ArgoIndexSearchEngine):
             self._obj.search_type.update(namer(BOX))
             return search_filter
 
-    def lat(self, BOX, nrows=None, composed=False):
-        def checker(BOX):
+    def lat(self, BOX=None, nrows=None, composed=False, **kwargs):
+        def checker(BOX, **kwargs):
+            BOX = parse_indexbox("lat", BOX, **kwargs)
             if "latitude" not in self._obj.convention_columns:
                 raise InvalidDatasetStructure(
                     "Cannot search for latitude in this index"
                 )
             is_indexbox(BOX)
             log.debug("Argo index searching for latitude in BOX=%s ..." % BOX)
+            return BOX
+
+        BOX = checker(BOX, **kwargs)
 
         def namer(BOX):
             return {"LAT": BOX[2:4]}
@@ -217,7 +223,6 @@ class SearchEngine(ArgoIndexSearchEngine):
             filt.append(pa.compute.less_equal(self._obj.index["latitude"], BOX[3]))
             return self._obj._reduce_a_filter_list(filt, op="and")
 
-        checker(BOX)
         self._obj.load(nrows=self._obj._nrows_index)
         search_filter = composer(BOX)
         if not composed:
@@ -229,45 +234,36 @@ class SearchEngine(ArgoIndexSearchEngine):
             self._obj.search_type.update(namer(BOX))
             return search_filter
 
-    def lon(self, BOX, nrows=None, composed=False):
-        def checker(BOX):
+    def lon(self, BOX=None, nrows=None, composed=False, **kwargs):
+        def checker(BOX, **kwargs):
+            BOX = parse_indexbox("lon", BOX, **kwargs)
             if "longitude" not in self._obj.convention_columns:
                 raise InvalidDatasetStructure(
                     "Cannot search for longitude in this index"
                 )
             is_indexbox(BOX)
             log.debug("Argo index searching for longitude in BOX=%s ..." % BOX)
+            return BOX
+
+        BOX = checker(BOX, **kwargs)
 
         def namer(BOX):
             return {"LON": BOX[0:2]}
 
         def composer(BOX):
             filt = []
-            if OPTIONS["longitude_convention"] == "360":
-                filt.append(
-                    pa.compute.greater_equal(
-                        self._obj.index["longitude_360"], conv_lon(BOX[0], "360")
-                    )
-                )
-                filt.append(
-                    pa.compute.less_equal(
-                        self._obj.index["longitude_360"], conv_lon(BOX[1], "360")
-                    )
-                )
-            elif OPTIONS["longitude_convention"] == "180":
-                filt.append(
-                    pa.compute.greater_equal(
-                        self._obj.index["longitude"], conv_lon(BOX[0], "180")
-                    )
-                )
-                filt.append(
-                    pa.compute.less_equal(
-                        self._obj.index["longitude"], conv_lon(BOX[1], "180")
-                    )
-                )
+            if OPTIONS['longitude_convention'] == '360':
+                if BOX[0] is not None:
+                    filt.append(pc.greater_equal(self._obj.index["longitude_360"], conv_lon(BOX[0], '360')))
+                if BOX[1] is not None:
+                    filt.append(pc.less_equal(self._obj.index["longitude_360"], conv_lon(BOX[1], '360')))
+            elif OPTIONS['longitude_convention'] == '180':
+                if BOX[0] is not None:
+                    filt.append(pc.greater_equal(self._obj.index["longitude"], conv_lon(BOX[0], '180')))
+                if BOX[1] is not None:
+                    filt.append(pc.less_equal(self._obj.index["longitude"], conv_lon(BOX[1], '180')))
             return self._obj._reduce_a_filter_list(filt, op="and")
 
-        checker(BOX)
         self._obj.load(nrows=self._obj._nrows_index)
         search_filter = composer(BOX)
         if not composed:
