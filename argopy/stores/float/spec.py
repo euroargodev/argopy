@@ -95,8 +95,8 @@ class FloatStoreProto(ABC):
         self._dac: str | None = None  # filled by self.load_dac(), returned by self.dac
         self._dataset: dict[str, xr.Dataset | Any] = {}  # filled/returned by self.open_dataset(), returned by self.dataset()
 
-        self._ls: list[str] | None = None # filled/returned by self.ls()
-        self._lsp: list[str] | None = None # filled/returned by self.lsp()
+        self._ls: list[str] | None = None  # filled/returned by self.ls(), 'ls <WMO>/*'
+        self._lsp: list[str] | None = None # filled/returned by self.lsp(),'ls <WMO>/profiles/*'
 
         self._ls_prof: dict[str|int, str] | None = None # filled/returned by self.ls_profiles()
         self._profile : dict[str, xr.Dataset | Any] = {} # filled/returned by self.open_profile(), (mono-profile file xarray datasets)
