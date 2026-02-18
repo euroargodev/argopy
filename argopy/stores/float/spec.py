@@ -1,7 +1,5 @@
-from typing import Union
-
+from typing import Union, Any, Literal
 import fsspec.core
-
 import xarray as xr
 from pathlib import Path
 import pandas as pd
@@ -9,11 +7,14 @@ from abc import ABC, abstractmethod
 import logging
 import numpy as np
 
-from ...errors import InvalidOption
-from ...plot import dashboard
-from ...utils import check_wmo, argo_split_path, shortcut2gdac
-from ...options import OPTIONS
-from .. import ArgoIndex
+from argopy.options import OPTIONS
+from argopy.errors import InvalidOption
+from argopy.plot import dashboard
+from argopy.stores import ArgoIndex
+from argopy.utils.format import argo_split_path
+from argopy.utils.lists import shortcut2gdac
+from argopy.utils.checkers import check_wmo, check_cyc, to_list
+from argopy.utils.decorators import deprecated
 
 
 log = logging.getLogger("argopy.stores.ArgoFloat")
@@ -55,12 +56,12 @@ class FloatStoreProto(ABC):
         timeout: int, optional, default: OPTIONS['api_timeout']
             Time out in seconds to connect to a remote host (ftp or http).
         """
-        self.WMO = check_wmo(wmo)[0]
-        self.host = OPTIONS["gdac"] if host is None else shortcut2gdac(host)
-        self.cache = bool(cache)
-        self.cachedir = OPTIONS["cachedir"] if cachedir == "" else cachedir
-        self.timeout = OPTIONS["api_timeout"] if timeout == 0 else timeout
-        self._aux = bool(aux)
+        self.WMO : int = check_wmo(wmo)[0]
+        self.host : str = OPTIONS["gdac"] if host is None else shortcut2gdac(host)
+        self.cache : bool = bool(cache)
+        self.cachedir : str = OPTIONS["cachedir"] if cachedir == "" else cachedir
+        self.timeout : int = OPTIONS["api_timeout"] if timeout == 0 else timeout
+        self._aux : bool = bool(aux)
 
         if not self._online and (
             self.host.startswith("http")
@@ -73,7 +74,7 @@ class FloatStoreProto(ABC):
             )
 
         if "idx" not in kwargs:
-            self.idx = ArgoIndex(
+            self.idx : ArgoIndex = ArgoIndex(
                 index_file="core",
                 host=self.host,
                 cache=self.cache,
@@ -81,19 +82,54 @@ class FloatStoreProto(ABC):
                 timeout=self.timeout,
             )
         else:
-            self.idx = kwargs["idx"]
+            self.idx : ArgoIndex = kwargs["idx"]
 
-        self.host = self.idx.host  # Fix host shortcuts with correct values
+        self.host : str = self.idx.host  # Fix host shortcuts with correct values
         self.fs = self.idx.fs["src"]
 
         # Load some data (in a perfect world, this should be done asynchronously):
         # self.load_index()
 
         # Init Internal placeholder for this instance:
-        self._dataset = {}  # xarray datasets
-        self._metadata = None  # Float meta-data dictionary
-        self._dac = None  # DAC name (string)
-        self._df_profiles = None  # Dataframe with profiles index
+        self._metadata: dict | None = None  # filled by self.load_metadata(), returned by self.metadata
+        self._dac: str | None = None  # filled by self.load_dac(), returned by self.dac
+        self._dataset: dict[str, xr.Dataset | Any] = {}  # filled/returned by self.open_dataset(), returned by self.dataset()
+
+        self._ls: list[str] | None = None  # filled/returned by self.ls(), 'ls <WMO>/*'
+        self._lsp: list[str] | None = None # filled/returned by self.lsp(),'ls <WMO>/profiles/*'
+
+        self._ls_prof: dict[str|int, str] | None = None # filled/returned by self.ls_profiles()
+        self._profile : dict[str, xr.Dataset | Any] = {} # filled/returned by self.open_profile(), (mono-profile file xarray datasets)
+        self._df_profiles : pd.DataFrame | None = None  # filled/returned by self.describe_profiles()
+
+    def __repr__(self):
+        backend = "online" if self._online else "offline"
+        summary = ["<argofloat.%i.%s.%s>" % (self.WMO, self.host_protocol, backend)]
+        # status = "online ✅" if isconnected(self.path, maxtry=1) else "offline 🚫"
+        # summary.append("GDAC host: %s [%s]" % (self.host, status))
+        summary.append("GDAC host: %s" % self.host)
+        summary.append("DAC name: %s" % self.dac)
+        summary.append("Network(s): %s" % self.metadata["networks"])
+
+        launchDate = self.metadata["deployment"]["launchDate"]
+        today = pd.to_datetime("now", utc=True)
+        summary.append(
+            "Deployment date: %s [%s days ago]"
+            % (launchDate.strftime("%Y-%m-%d %H:%M"), (today - launchDate).days)
+        )
+        summary.append(
+            "Float type and manufacturer: %s [%s]"
+            % (
+                self.metadata["platform"]["type"],
+                self.metadata["maker"],
+            )
+        )
+        summary.append("Number of cycles: %s" % self.N_CYCLES)
+        if self._online:
+            summary.append("Dashboard: %s" % dashboard(wmo=self.WMO, url_only=True))
+        summary.append("Netcdf dataset available: %s" % list(self.ls_dataset().keys()))
+
+        return "\n".join(summary)
 
     def load_index(self):
         """Load the Argo full index in memory and trigger search for this float"""
@@ -198,10 +234,10 @@ class FloatStoreProto(ABC):
         """
         return self.host_sep.join([self.host, "dac", self.dac, "%i" % self.WMO])
 
-    def ls(self) -> list:
-        """Return the list of files in float path
+    def ls(self) -> list[str]:
+        """Return the list of files in float root path
 
-        Protocol is included
+        Protocol is included, all files are listed (not only netcdf, if any).
 
         Examples
         --------
@@ -224,46 +260,36 @@ class FloatStoreProto(ABC):
         --------
         :class:`ArgoFloat.ls_dataset`
         """
-        paths = self.fs.glob(self.host_sep.join([self.path, "*"]))
+        if self._ls is None:
+            paths = self.fs.glob(self.host_sep.join([self.path, "*"]))
 
-        if self._aux:
-            paths += self.fs.glob(
-                self.host_sep.join(
-                    [
-                        self.path.replace(
-                            f"{self.host_sep}dac{self.host_sep}",
-                            f"{self.host_sep}aux{self.host_sep}",
-                        ),
-                        "*",
-                    ]
+            if self._aux:
+                paths += self.fs.glob(
+                    self.host_sep.join(
+                        [
+                            self.path.replace(
+                                f"{self.host_sep}dac{self.host_sep}",
+                                f"{self.host_sep}aux{self.host_sep}",
+                            ),
+                            "*",
+                        ]
+                    )
                 )
-            )
 
-        paths = [p for p in paths if Path(p).suffix != ""]
+            paths = [p for p in paths if Path(p).suffix != ""]
 
-        # Ensure the protocol is included for non-local files on FTP server:
-        for ip, p in enumerate(paths):
-            if self.host_protocol == "ftp":
-                paths[ip] = (
-                    "ftp://" + self.fs.fs.host + fsspec.core.split_protocol(p)[-1]
-                )
-            if self.host_protocol == "s3":
-                paths[ip] = "s3://" + fsspec.core.split_protocol(p)[-1]
+            # Ensure the protocol is included for non-local files on FTP and S3 servers:
+            for ip, p in enumerate(paths):
+                if self.host_protocol == "ftp":
+                    paths[ip] = (
+                        "ftp://" + self.fs.fs.host + fsspec.core.split_protocol(p)[-1]
+                    )
+                if self.host_protocol == "s3":
+                    paths[ip] = "s3://" + fsspec.core.split_protocol(p)[-1]
 
-        paths.sort()
-        return paths
-
-    def lsprofiles(self) -> list:
-        """Return the list of files in float profiles path
-
-        See Also
-        --------
-        :class:`ArgoFloat.ls`
-        """
-        paths = self.fs.glob(self.host_sep.join([self.path, "profiles", "*"]))
-        paths = [p for p in paths if Path(p).suffix != ""]
-        paths.sort()
-        return paths
+            paths.sort()
+            self._ls = paths
+        return self._ls
 
     def ls_dataset(self) -> dict:
         """List all available dataset for this float in a dictionary
@@ -314,7 +340,7 @@ class FloatStoreProto(ABC):
             Determine if the dataset variables should be cast or not. This is similar to opening the dataset directly with :class:`xr.open_dataset` using the ``engine=`argo``` option.
             This will be ignored if the ``netCDF4` kwarg is set to True.
         **kwargs
-            All the other parameters are passed to the GDAC store `open_dataset` method.
+            All the other arguments are passed to the GDAC store `open_dataset` method.
 
         Returns
         -------
@@ -351,13 +377,84 @@ class FloatStoreProto(ABC):
 
         If the float is still active, this is the current value.
         """
-        return len(np.unique([c['id'] for c in self.metadata["cycles"]]))
+        return len(np.unique([c["id"] for c in self.metadata["cycles"]]))
+
+    @deprecated("Superseded by the 'lsp' method", 'v1.5.0')
+    def lsprofiles(self) -> list:
+        """Return the list of files in float profiles path
+
+        See Also
+        --------
+        :class:`ArgoFloat.ls`
+        """
+        return self.lsp()
+
+    def lsp(self) -> list[str]:
+        """Return the list of files in float 'profiles' path
+
+        Protocol is included, all files are listed (not only netcdf, if any).
+
+        Examples
+        --------
+        >>> ArgoFloat(4902640).lsp()
+        >>> ArgoFloat(4902640, aux=True).lsp()
+        """
+        if self._lsp is None:
+
+            paths = self.fs.glob(self.host_sep.join([self.path, "profiles", "*"]))
+
+            if self._aux:
+                paths += self.fs.glob(
+                    self.host_sep.join(
+                        [
+                            self.path.replace(
+                                f"{self.host_sep}dac{self.host_sep}",
+                                f"{self.host_sep}aux{self.host_sep}",
+                            ),
+                            "profiles",
+                            "*",
+                        ]
+                    )
+                )
+
+            # Ensure the protocol is included for non-local files on FTP and S3 servers:
+            for ip, p in enumerate(paths):
+                if self.host_protocol == "ftp":
+                    paths[ip] = (
+                        "ftp://" + self.fs.fs.host + fsspec.core.split_protocol(p)[-1]
+                    )
+                if self.host_protocol == "s3":
+                    paths[ip] = "s3://" + fsspec.core.split_protocol(p)[-1]
+
+            paths = [p for p in paths if Path(p).suffix != ""]
+            paths.sort()
+            self._lsp = paths
+
+        return self._lsp
 
     def describe_profiles(self) -> pd.DataFrame:
-        """Return a :class:`pandas.DataFrame` describing profile files"""
+        """Return a :class:`pandas.DataFrame` describing all profile files
+
+        Here we use the *profile* word to designate a mono-cycle netcdf file under the GDAC 'profiles' folder of a WMO.
+
+        Returns
+        -------
+        :class:`pandas.DataFrame`
+            A DataFrame with ["cycle_number", "dataset", "direction", "data_mode", "stem", "path"] columns for each mono-cycle netcdf files.
+
+        Notes
+        -----
+        This method is mandatory to work with profile methods :class:`ArgoFloat.ls_profiles_for`, class:`ArgoFloat.ls_profiles`, class:`ArgoFloat.open_profile` and class:`ArgoFloat.ls_profiles`.
+
+        """
         if self._df_profiles is None:
+            # Read the list of netcdf files under '<wmo>/profiles/*':
+            paths = self.lsp()
+            paths = [p for p in paths if p.split(".")[-1]=='nc']
+
+            # Scan each file name to extract information:
             prof = []
-            for file in self.lsprofiles():
+            for file in paths:
                 desc = {}
                 desc["stem"] = Path(file).stem
                 desc = {**desc, **argo_split_path(file)}
@@ -365,6 +462,8 @@ class FloatStoreProto(ABC):
                     desc.pop(v)
                 desc["path"] = file
                 prof.append(desc)
+
+            # Package all information as a DataFrame:
             df = pd.DataFrame(data=prof)
             stem2cyc = lambda s: (  # noqa: E731
                 int(s.split("_")[-1][0:-1])
@@ -373,39 +472,346 @@ class FloatStoreProto(ABC):
             )
             row2cyc = lambda row: stem2cyc(row["stem"])  # noqa: E731
             df["cyc"] = df.apply(row2cyc, axis=1)
-            df["long_type"] = df.apply(
-                lambda row: row["type"].split(",")[-1].lstrip(), axis=1
-            )
-            df["type"] = df.apply(lambda row: row["type"][0], axis=1)
-            df["data_mode"] = df.apply(lambda row: row["data_mode"][0], axis=1)
+            df = df[["cyc", "type", "direction", "data_mode", "stem", "path"]]
+            df = df.rename({"cyc": "cycle_number", "type": "dataset"}, axis=1)
+            df = df.sort_values(by=["cycle_number", "dataset", "direction"], axis=0)
+            df = df.reset_index(drop=True)
             self._df_profiles = df
+
         return self._df_profiles
 
-    def __repr__(self):
-        backend = "online" if self._online else "offline"
-        summary = ["<argofloat.%i.%s.%s>" % (self.WMO, self.host_protocol, backend)]
-        # status = "online ✅" if isconnected(self.path, maxtry=1) else "offline 🚫"
-        # summary.append("GDAC host: %s [%s]" % (self.host, status))
-        summary.append("GDAC host: %s" % self.host)
-        summary.append("DAC name: %s" % self.dac)
-        summary.append("Network(s): %s" % self.metadata["networks"])
+    def ls_profiles_for(
+        self,
+        cycle_number: int | list[int] | None = None,
+        dataset: Literal['B', 'S'] | None = None,
+        direction: Literal['A', 'D'] = "A",
+    ) -> dict[int|str, str]:
+        """List all available profile files 'for' specific dataset and direction
 
-        launchDate = self.metadata["deployment"]["launchDate"]
-        today = pd.to_datetime("now", utc=True)
-        summary.append(
-            "Deployment date: %s [%s days ago]"
-            % (launchDate.strftime("%Y-%m-%d %H:%M"), (today - launchDate).days)
-        )
-        summary.append(
-            "Float type and manufacturer: %s [%s]"
-            % (
-                self.metadata["platform"]["type"],
-                self.metadata["maker"],
-            )
-        )
-        summary.append("Number of cycles: %s" % self.N_CYCLES)
-        if self._online:
-            summary.append("Dashboard: %s" % dashboard(wmo=self.WMO, url_only=True))
-        summary.append("Netcdf dataset available: %s" % list(self.ls_dataset().keys()))
+        Notes
+        -----
+        Since mono-cycle profile files are either 'R' for real-time or 'D' for adjusted or delayed-mode data, there is no need to select one or the other, they can't exist at the same time.
 
-        return "\n".join(summary)
+        Parameters
+        ----------
+        cycle_number: int | list[int] | None, optional, default = None
+            The cycle number, or list, to return files for.
+
+            If set to None (default), all cycle numbers are returned.
+        dataset: Literal['B', 'S'] | None, optional, default = None
+            The profile dataset to return files for.
+
+            - None: 'core' profile files (default),
+            - 'B': BGC mono-cycle profile files,
+            - 'S': Synthetic BGC mono-cycle profile files.
+        direction: Literal['A', 'D'], optional, default = 'A'
+            The profile direction to return files for.
+
+            - 'A' (default): Ascending profile files,
+            - 'D': Descending profile files.
+
+        Returns
+        -------
+        dict[int|str, str]
+            A dictionary where:
+            - keys are file short name to be used with :class:`ArgoFloat.open_profile`,
+            - values are absolute path toward profile files.
+        """
+        CYCs = [c+1 for c in np.arange(self.N_CYCLES).tolist()] if cycle_number is None else cycle_number
+        CYCs: list[int] = check_cyc(CYCs)
+        if dataset not in [None, 'b', 's', 'B', 'S']:
+            raise ValueError(
+                f"Invalid profile dataset '{dataset}' (type of mono-cycle file), must be None, 'B' or 'S'.")
+        else:
+            ds: str = '' if dataset is None else dataset.upper()
+            ds: str = {'': 'M', 'B': 'B', 'S': 'S'}[ds]
+
+        if direction not in ['a', 'd', 'A', 'D']:
+            raise ValueError(f"Invalid profile direction '{direction}', must be 'A' or 'D'.")
+        else:
+            direction = direction.upper()
+
+        df = self.describe_profiles()
+
+        results = {}
+        for cycle_number in CYCs:
+            if cycle_number in df['cycle_number']:
+                this_df = df[df['cycle_number'] == cycle_number]
+                this_df = this_df[this_df['dataset'].apply(lambda x: x[0]) == ds]
+                this_df = this_df[this_df['direction'].apply(lambda x: x[0]) == direction]
+                if this_df.shape[0] == 1:
+                    pds = {'M': '', 'B': 'B', 'S': 'S'}[ds]
+                    pdi = {'A': '', 'D': 'D'}[direction]
+                    if pds == '' and pdi == '':
+                        key = cycle_number
+                    else:
+                        key = f"{pds}{cycle_number}{pdi}"
+                    results[key] = this_df['path'].item()
+
+        if len(results) >= 1:
+            return results
+
+        raise ValueError(f"No mono-cycle file matches this description: cycle_number={CYCs}, dataset='{dataset}' and direction='{direction}' !")
+
+    def ls_profiles(self) -> dict[int|str, str]:
+        """List all available profile files, whatever the profile dataset and direction
+
+        Notes
+        -----
+        In the output dictionary:
+        - keys are integer for 'core' and ascending profile files (eg: 12 for '<R/D>6903076_012.nc'),
+        - keys are string for all other profile files, with the following convention:
+            - '<cycle>D'  for 'core' descending profile files (eg: '1D' for '<R/D>6903076_001D.nc'),
+            - 'B<cycle>'  for BGC ascending profile files (eg: 'B12' for 'B<R/D>6903091_012.nc'),
+            - 'B<cycle>D' for BGC descending profile files (eg: 'B12D' for 'B<R/D>6903091_012D.nc'),
+            - 'S<cycle>'  for Synthetic ascending profile files (eg: 'S134' for 'S<R/D>6903091_134.nc').
+
+        Returns
+        -------
+        dict[int|str, str]
+            A dictionary where:
+            - keys are file short name to be used with :class:`ArgoFloat.open_profile`,
+            - values are absolute path toward profile files.
+        """
+        if self._ls_prof is None:
+            self._ls_prof = {}
+            for ds in [None, 'B', 'S']:
+                for di in ['A', 'D']:
+                    try:
+                        fl = self.ls_profiles_for(dataset=ds, direction=di)
+                        for key, uri in fl.items():
+                            self._ls_prof.update({key: uri})
+                    except:
+                        pass
+        return self._ls_prof
+
+    def open_profile(
+        self,
+        name: str,
+        cast: bool = True,
+        **kwargs,
+    ) -> xr.Dataset | Any | list[xr.Dataset | Any]:
+        """Open and decode a single profile file dataset
+
+        Parameters
+        ----------
+        name: str
+            Name of the profile file to open.
+
+            It can be any key from the dictionary returned by :class:`ArgoFloat.ls_profiles`.
+        cast: bool, optional, default = True
+            Determine if dataset variables should be cast or not.
+
+            This is similar to opening the dataset directly with :class:`xr.open_dataset` using the ``engine=`argo``` option.
+            This will be ignored if the ``netCDF4` kwarg is set to True.
+        **kwargs:
+            All the other arguments are passed to the GDAC store `open_dataset` method.
+
+        Returns
+        -------
+        :class:`xarray.Dataset`
+
+        Notes
+        -----
+        Use the ``netCDF4=True`` option to return a :class:`netCDF4.Dataset` object instead of a :class:`xarray.Dataset`.
+
+        See Also
+        --------
+        :class:`ArgoFloat.ls_profiles`
+
+        Examples
+        --------
+        ..code-block: python
+            :caption: Open a 'core' profile file
+
+            from argopy import ArgoFloat
+
+            WMO = 6903076 # A 'core' float
+            af = ArgoFloat(WMO)
+
+            # Open the ascending profile file for cycle number 12:
+            ds = af.open_profile(12)
+
+            # Open the descending profile file, for cycle number 1:
+            ds = af.open_profile('1D')
+
+        ..code-block: python
+            :caption: Open a 'BGC' profile file
+
+            from argopy import ArgoFloat
+
+            WMO = 6903091 # A 'BGC' float
+            af = ArgoFloat(WMO)
+
+            # Open the ascending 'BGC' profile file for cycle number 12:
+            ds = af.open_profile('B12')
+
+            # Open the descending 'BGC' profile file for cycle number 1:
+            ds = af.open_profile('B1D')
+
+        ..code-block: python
+            :caption: Open a BGC 'Synthetic' profile file
+
+            from argopy import ArgoFloat
+
+            WMO = 6903091 # A 'BGC' float
+            af = ArgoFloat(WMO)
+
+            # Open the BGC 'Synthetic' profile file for cycle number 12:
+            ds = af.open_profile('S12')
+        """
+        d2s = lambda x: str(x).replace("'", "").replace(":", "_").replace("{", "").replace("}", "").replace(" ", "")
+
+        if name not in self.ls_profiles():
+            raise ValueError(f"This profile key {name} does not match any of the known profile files ({self.ls_profiles().keys()})")
+
+        if "xr_opts" not in kwargs and cast is True:
+            kwargs.update({"xr_opts": {"engine": "argo"}})
+
+        key = f"{name}-{d2s(kwargs)}"
+
+        if key not in self._profile:
+            file = self.ls_profiles()[name]
+            ds = self.fs.open_dataset(file, **kwargs)
+
+            self._profile[key] = ds
+
+        return self._profile[key]
+
+    def open_profiles(
+            self,
+            cycle_number: int | list[int] | None = None,
+            dataset: Literal['B', 'S'] | None = None,
+            direction: Literal['A', 'D'] = "A",
+            cast: bool = True,
+            **kwargs,
+    ):
+        """Open and decode one or more profile file dataset
+
+        Parameters
+        ----------
+        cycle_number: int | list[int], optional, default = None
+            The cycle number, or list, to return files for.
+
+            If set to None (default), all cycle numbers are returned.
+        dataset: Literal['B', 'S'] | None, optional, default = None
+            The profile dataset to return files for.
+
+            - None: 'core' profile files (default),
+            - 'B': BGC mono-cycle profile files,
+            - 'S': Synthetic BGC mono-cycle profile files.
+        direction: Literal['A', 'D'], optional, default = 'A'
+            The profile direction to return files for.
+
+            - 'A' (default): Ascending profile files,
+            - 'D': Descending profile files.
+        cast: bool, optional, default = True
+            Determine if dataset variables should be cast or not.
+
+            This is similar to opening the dataset directly with :class:`xr.open_dataset` using the ``engine=`argo``` option.
+            This will be ignored if the ``netCDF4` kwarg is set to True.
+        **kwargs
+            All the other arguments are passed to the file store `open_mfdataset` method. Interesting arguments are:
+
+            - 'preprocess' and 'preprocess_opts' to apply some pre-processing function to each profile file,
+            - 'progress' to display a fetching progress bar,
+            - 'method' to impose a parallelization method,
+            - 'errors' to control what to do if an error occur with one profile file,
+            - 'open_dataset_opts' to provide options when opening each netcdf files, in particular 'netCDF4' to return a legacy netcdf dataset instead of a :class:`xr.Dataset`.
+
+            Depending on the GDAC host, more details can be found from: :class:`argopy.stores.httpstore.open_mfdataset`, :class:`argopy.stores.local.open_mfdataset`, :class:`argopy.stores.ftppstore.open_mfdataset` or :class:`argopy.stores.s3store.open_mfdataset`.
+
+        Returns
+        -------
+        xr.Dataset | Any | list[xr.Dataset | Any]
+            If no pre-processing is done with profile files, return one, or a list, of :class:`xr.Dataset`. Otherwise, return the list of pre-processing output.
+
+        Notes
+        -----
+        When called on 1 profile file, this method return the same :class:`xr.Dataset` as the :class:`ArgoFloat.open_profile` method.
+
+        ..code-block: python
+            from argopy import ArgoFloat
+
+            WMO = 6903076 # some float
+            af = ArgoFloat(WMO)
+
+            ds1 = af.open_profile(1)
+            ds2 = af.open_profiles(1, dataset=None, direction='A')
+            assert ds1.equals(ds2)
+
+            ds1 = af.open_profile('1D')
+            ds2 = af.open_profiles(1, dataset=None, direction='D')
+            assert ds1.equals(ds2)
+
+        See Also
+        --------
+        :class:`ArgoFloat.ls_profiles_for`
+
+        Examples
+        --------
+        ..code-block: python
+            :caption: Open 'core' profile files
+
+            from argopy import ArgoFloat
+
+            WMO = 6903076 # A 'core' float
+            af = ArgoFloat(WMO)
+
+            # Open some core ascending profile files (default):
+            ds_list = af.open_profiles([1, 2])
+
+            # Open some descending profile files:
+            ds_list = af.open_profiles([1, 2], direction='D')
+
+            # Open *all* profile files (only ascending):
+            ds_list = af.open_profiles()
+
+        ..code-block: python
+            :caption: Open 'BGC' profile file(s)
+
+            from argopy import ArgoFloat
+
+            WMO = 6903091 # A 'BGC' float
+            af = ArgoFloat(WMO)
+
+            # Open some 'BGC' ascending profile files (default):
+            ds_list = af.open_profiles([1, 2], dataset='B')
+
+            # Open some 'BGC' descending profile files:
+            ds_list = af.open_profiles([1, 2], dataset='B', direction='D')
+
+            # Open *all* 'BGC' profile files (only ascending):
+            ds_list = af.open_profiles(dataset='B')
+
+        ..code-block: python
+            :caption: Open BGC 'Synthetic' profile file(s)
+
+            from argopy import ArgoFloat
+
+            WMO = 6903091 # Some 'BGC' float
+            af = ArgoFloat(WMO)
+
+            # Open some BGC 'Synthetic' ascending profile files:
+            ds_list = af.open_profiles([1, 2], dataset='S')
+
+            # Open *all* BGC 'Synthetic' profile files:
+            ds_list = af.open_profiles(dataset='S')
+
+        """
+        fnames = list(self.ls_profiles_for(cycle_number=cycle_number, dataset=dataset, direction=direction).values())
+
+        if "xr_opts" not in kwargs and cast is True:
+            if 'open_dataset_opts' in kwargs:
+                kwargs['open_dataset_opts'].update({"xr_opts": {"engine": "argo"}})
+            else:
+                kwargs.update({"open_dataset_opts": {"xr_opts": {"engine": "argo"}}})
+        if "concat" not in kwargs:
+            kwargs.update({"concat": False})
+
+        results: xr.Dataset | Any | list[xr.Dataset | Any] = self.fs.open_mfdataset(fnames, **kwargs)
+
+        if isinstance(results, list) and len(results) == 1:
+            return results[0]
+
+        return results
