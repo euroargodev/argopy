@@ -154,14 +154,12 @@ class SearchEngine(ArgoIndexSearchEngine):
 
     def date(self, BOX=None, nrows=None, composed=False, **kwargs):
         def checker(BOX, **kwargs):
-            BOX = parse_indexbox("date", BOX, **kwargs)
             if "date" not in self._obj.convention_columns:
                 raise InvalidDatasetStructure("Cannot search for date in this index")
+            BOX = parse_indexbox("date", BOX, **kwargs)
             is_indexbox(BOX)
             log.debug("Argo index searching for date in BOX=%s ..." % BOX)
             return ("date", BOX)   # Return key to use for time axis
-
-        key, BOX = checker(BOX, **kwargs)
 
         def namer(BOX):
             return {"DATE": BOX[4:6]}
@@ -174,7 +172,7 @@ class SearchEngine(ArgoIndexSearchEngine):
             filt.append(self._obj.index[key].le(tim_max))
             return self._obj._reduce_a_filter_list(filt, op="and")
 
-        key = checker(BOX)
+        key, BOX = checker(BOX, **kwargs)
         self._obj.load(nrows=self._obj._nrows_index)
         search_filter = composer(BOX, key)
         if not composed:
@@ -188,16 +186,14 @@ class SearchEngine(ArgoIndexSearchEngine):
 
     def lat(self, BOX=None, nrows=None, composed=False, **kwargs):
         def checker(BOX, **kwargs):
-            BOX = parse_indexbox("lat", BOX, **kwargs)
             if "latitude" not in self._obj.convention_columns:
                 raise InvalidDatasetStructure(
                     "Cannot search for latitude in this index"
                 )
+            BOX = parse_indexbox("lat", BOX, **kwargs)
             is_indexbox(BOX)
             log.debug("Argo index searching for latitude in BOX=%s ..." % BOX)
             return BOX
-
-        BOX = checker(BOX, **kwargs)
 
         def namer(BOX):
             return {"LAT": BOX[2:4]}
@@ -208,6 +204,7 @@ class SearchEngine(ArgoIndexSearchEngine):
             filt.append(self._obj.index["latitude"].le(BOX[3]))
             return self._obj._reduce_a_filter_list(filt, op="and")
 
+        BOX = checker(BOX, **kwargs)
         self._obj.load(nrows=self._obj._nrows_index)
         search_filter = composer(BOX)
         if not composed:
@@ -221,16 +218,14 @@ class SearchEngine(ArgoIndexSearchEngine):
 
     def lon(self, BOX=None, nrows=None, composed=False, **kwargs):
         def checker(BOX, **kwargs):
-            BOX = parse_indexbox("lon", BOX, **kwargs)
             if "longitude" not in self._obj.convention_columns:
                 raise InvalidDatasetStructure(
                     "Cannot search for longitude in this index"
                 )
+            BOX = parse_indexbox("lon", BOX, **kwargs)
             is_indexbox(BOX)
             log.debug("Argo index searching for longitude in BOX=%s ..." % BOX)
             return BOX
-
-        BOX = checker(BOX, **kwargs)
 
         def namer(BOX):
             return {"LON": BOX[0:2]}
@@ -249,6 +244,7 @@ class SearchEngine(ArgoIndexSearchEngine):
                 filt.append(self._obj.index["longitude"].le(conv_lon(BOX[1], "180")))
             return self._obj._reduce_a_filter_list(filt, op="and")
 
+        BOX = checker(BOX, **kwargs)
         self._obj.load(nrows=self._obj._nrows_index)
         search_filter = composer(BOX)
         if not composed:
@@ -266,6 +262,7 @@ class SearchEngine(ArgoIndexSearchEngine):
                 raise InvalidDatasetStructure("Cannot search for lon/lat in this index")
             is_indexbox(BOX)
             log.debug("Argo index searching for lon/lat in BOX=%s ..." % BOX)
+            return BOX
 
         def namer(BOX):
             return {"LON": BOX[0:2], "LAT": BOX[2:4]}
@@ -286,7 +283,7 @@ class SearchEngine(ArgoIndexSearchEngine):
             filt.append(self._obj.index["latitude"].le(BOX[3]))
             return self._obj._reduce_a_filter_list(filt, op="and")
 
-        checker(BOX)
+        BOX = checker(BOX)
         self._obj.load(nrows=self._obj._nrows_index)
         search_filter = composer(BOX)
         if not composed:
