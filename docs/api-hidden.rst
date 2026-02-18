@@ -389,15 +389,19 @@
 
     argopy.stores.float.spec.FloatStoreProto
     argopy.stores.ArgoFloat
-    argopy.ArgoFloat.open_dataset
-    argopy.ArgoFloat.ls_dataset
-    argopy.ArgoFloat.path
     argopy.ArgoFloat.ls
-    argopy.ArgoFloat.lsprofiles
+    argopy.ArgoFloat.ls_dataset
+    argopy.ArgoFloat.open_dataset
+    argopy.ArgoFloat.lsp
+    argopy.ArgoFloat.ls_profiles
+    argopy.ArgoFloat.ls_profiles_for
+    argopy.ArgoFloat.open_profile
+    argopy.ArgoFloat.open_profiles
     argopy.ArgoFloat.describe_profiles
     argopy.ArgoFloat.metadata
     argopy.ArgoFloat.N_CYCLES
     argopy.ArgoFloat.dac
+    argopy.ArgoFloat.path
 
     argopy.stores.ArgoFloat.plot
     argopy.stores.ArgoFloat.plot.trajectory

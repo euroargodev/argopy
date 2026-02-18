@@ -60,22 +60,25 @@ class ArgoFloat(FloatStore):
 
         af.describe_profiles()  # Pandas DataFrame describing all available profile files
 
+        af.lsp() # Return the full list of profile files
+
         af.ls_profiles() # Return a dictionary with all available mono-cycle profile files (everything under the 'profiles' sub-folder)
 
-        # Load one single file, use keys from af.ls_profiles():
+        # To load one single file, use keys from af.ls_profiles():
         ds = af.open_profile(12) # cycle number 12, core file
         ds = af.open_profile('1D') # cycle number 1, descending core file
         ds = af.open_profile('B15') # cycle number 15, BGC file
         ds = af.open_profile('B1D') # cycle number 1, descending BGC file
         ds = af.open_profile('S28') # cycle number 28, BGC synthetic file
 
-        # Load one or more files:
+        # To load one or more files, provide cycle number(s) and other attributes:
         ds_list = af.open_profiles([1,2,3])
         ds_list = af.open_profiles([1,2,3], direction='D')
         ds_list = af.open_profiles([1,2,3], dataset='B') # Return 'BGC' B files
         ds_list = af.open_profiles([1,2,3], dataset='B', direction='D') # Return 'BGC' B files, descending
         ds_list = af.open_profiles([1,2,3], dataset='S') # Return 'BGC' Synthetic files
 
+        # If you don't specify cycle numbers, all cycles are loaded:
         ds_list = af.open_profiles(direction='D') # Return *all* core descending files
 
 

@@ -7,6 +7,14 @@ What's New
 
 |pypi dwn| |conda dwn|
 
+Coming up next (unreleased)
+---------------------------
+
+Features and front-end API
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- **New methods to load any mono-cycle profile files**, using the :class:`ArgoFloat.open_profile` and :class:`ArgoFloat.open_profiles` methods. See also :class:`ArgoFloat.ls_profiles` :class:`ArgoFloat.ls_profiles_for`. (:pr:`590`) by |gmaze|.
+
 v1.4.0 (5 Jan. 2026)
 --------------------
 
