@@ -5,7 +5,7 @@ from typing import List
 
 from .....options import OPTIONS
 from .....errors import InvalidDatasetStructure, OptionValueError
-from .....utils import is_indexbox, check_wmo, check_cyc, to_list, conv_lon
+from .....utils import is_indexbox, parse_indexbox, check_wmo, check_cyc, to_list, conv_lon
 from ...extensions import register_ArgoIndex_accessor, ArgoIndexSearchEngine
 from ..index_s3 import search_s3
 from .index import indexstore
@@ -144,32 +144,7 @@ class SearchEngine(ArgoIndexSearchEngine):
 
     def date(self, BOX=None, nrows=None, composed=False, **kwargs):
         def checker(BOX, **kwargs):
-            if 'ge' in kwargs or 'le' in kwargs:
-                ge = kwargs.get('ge', '1900-01-01')
-                le = kwargs.get('le', '2100-12-31')
-                BOX = [-180, 180, -90, 90, ge, le]
-
-            else:
-                match BOX:
-                    case list() if len(BOX) >= 6:
-                        pass
-                    case [vmin, vmax]:
-                        BOX = [-180, 180, -90, 90, vmin, vmax]
-                    case None:
-                        raise ValueError("Invalid arguments")
-                    case str():
-                        # Single date [date, date+1)
-                        d0 = pd.to_datetime(BOX)
-                        d1 = d0 + pd.Timedelta(days=1)
-
-                        # Convert to strings to satisfy is_indexbox validation
-                        ge = d0.strftime("%Y-%m-%d")
-                        le = d1.strftime("%Y-%m-%d")
-                        print("its pandas")
-                        BOX = [-180, 180, -90, 90, ge, le]
-                    case _:
-                        raise ValueError("Unsupported argument format")
-
+            BOX = parse_indexbox("date", BOX, **kwargs)
             if "date" not in self._obj.convention_columns:
                 raise InvalidDatasetStructure("Cannot search for date in this index")
             is_indexbox(BOX)
@@ -202,23 +177,7 @@ class SearchEngine(ArgoIndexSearchEngine):
 
     def lat(self, BOX=None, nrows=None, composed=False, **kwargs):
         def checker(BOX, **kwargs):
-            if 'ge' in kwargs or 'le' in kwargs:
-                ge = kwargs.get('ge', -90.)
-                le = kwargs.get('le', 90.)
-                BOX = [-180, 180, ge, le, '1900-01-01', '2100-12-31']
-            else:
-                match BOX:
-                    case list() if len(BOX) >= 6:
-                        pass
-                    case [vmin, vmax]:
-                        BOX = [-180, 180, vmin, vmax, '1900-01-01', '2100-12-31']
-                    case None:
-                        raise ValueError("Invalid arguments")
-                    case int() | float():
-                        BOX = [-180, 180, BOX, 90, '1900-01-01', '2100-12-31']
-                    case _:
-                        raise ValueError("Unsupported argument format")
-
+            BOX = parse_indexbox("lat", BOX, **kwargs)
             if "latitude" not in self._obj.convention_columns:
                 raise InvalidDatasetStructure(
                     "Cannot search for latitude in this index"
@@ -251,23 +210,7 @@ class SearchEngine(ArgoIndexSearchEngine):
 
     def lon(self, BOX=None, nrows=None, composed=False, **kwargs):
         def checker(BOX, **kwargs):
-            if 'ge' in kwargs or 'le' in kwargs:
-                ge = kwargs.get('ge', -180.)
-                le = kwargs.get('le', 180.)
-                BOX = [ge, le, -90, 90, '1900-01-01', '2100-12-31']
-            else:
-                match BOX:
-                    case list() if len(BOX) >= 6:
-                        pass
-                    case [vmin, vmax]:
-                        BOX = [vmin, vmax, -90, 90, '1900-01-01', '2100-12-31']
-                    case None:
-                        raise ValueError("Invalid arguments")
-                    case int() | float():
-                        BOX = [BOX, 180, -90, 90, '1900-01-01', '2100-12-31']
-                    case _:
-                        raise ValueError("Unsupported argument format")
-                    
+            BOX = parse_indexbox("lon", BOX, **kwargs)
             if "longitude" not in self._obj.convention_columns:
                 raise InvalidDatasetStructure(
                     "Cannot search for longitude in this index"

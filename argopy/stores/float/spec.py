@@ -351,7 +351,7 @@ class FloatStoreProto(ABC):
 
         If the float is still active, this is the current value.
         """
-        return len(self.metadata["cycles"])
+        return len(np.unique([c['id'] for c in self.metadata["cycles"]]))
 
     def describe_profiles(self) -> pd.DataFrame:
         """Return a :class:`pandas.DataFrame` describing profile files"""

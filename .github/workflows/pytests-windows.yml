@@ -99,23 +99,13 @@ jobs:
         run: |
           pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}} --junitxml=junit.xml -o junit_family=legacy
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./cov.xml
-          report_type: coverage
-          flags: core, pinned, py${{matrix.python-version}}
-          name: codecov-github
-          fail_ci_if_error: false
-          env_vars: RUNNER_OS,PYTHON_VERSION
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           report_type: test_results
-          flags: core, pinned, py${{matrix.python-version}}
+          flags: core, pinned, py${{matrix.python-version}}, ${{matrix.os}}
           fail_ci_if_error: false
           env_vars: RUNNER_OS,PYTHON_VERSION
       - name: Save tests log as artifact
@@ -190,23 +180,13 @@ jobs:
         run: |
           pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}} --junitxml=junit.xml -o junit_family=legacy
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./cov.xml
-          report_type: coverage
-          flags: all, pinned, py${{matrix.python-version}}
-          name: codecov-github
-          fail_ci_if_error: false
-          env_vars: RUNNER_OS,PYTHON_VERSION
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           report_type: test_results
-          flags: all, pinned, py${{matrix.python-version}}
+          flags: all, pinned, py${{matrix.python-version}}, ${{matrix.os}}
           fail_ci_if_error: false
           env_vars: RUNNER_OS,PYTHON_VERSION
       - name: Upload tests log to GA
