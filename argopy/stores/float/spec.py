@@ -56,12 +56,12 @@ class FloatStoreProto(ABC):
         timeout: int, optional, default: OPTIONS['api_timeout']
             Time out in seconds to connect to a remote host (ftp or http).
         """
-        self.WMO = check_wmo(wmo)[0]
-        self.host = OPTIONS["gdac"] if host is None else shortcut2gdac(host)
-        self.cache = bool(cache)
-        self.cachedir = OPTIONS["cachedir"] if cachedir == "" else cachedir
-        self.timeout = OPTIONS["api_timeout"] if timeout == 0 else timeout
-        self._aux = bool(aux)
+        self.WMO : int = check_wmo(wmo)[0]
+        self.host : str = OPTIONS["gdac"] if host is None else shortcut2gdac(host)
+        self.cache : bool = bool(cache)
+        self.cachedir : str = OPTIONS["cachedir"] if cachedir == "" else cachedir
+        self.timeout : int = OPTIONS["api_timeout"] if timeout == 0 else timeout
+        self._aux : bool = bool(aux)
 
         if not self._online and (
             self.host.startswith("http")
@@ -74,7 +74,7 @@ class FloatStoreProto(ABC):
             )
 
         if "idx" not in kwargs:
-            self.idx = ArgoIndex(
+            self.idx : ArgoIndex = ArgoIndex(
                 index_file="core",
                 host=self.host,
                 cache=self.cache,
@@ -82,9 +82,9 @@ class FloatStoreProto(ABC):
                 timeout=self.timeout,
             )
         else:
-            self.idx = kwargs["idx"]
+            self.idx : ArgoIndex = kwargs["idx"]
 
-        self.host = self.idx.host  # Fix host shortcuts with correct values
+        self.host : str = self.idx.host  # Fix host shortcuts with correct values
         self.fs = self.idx.fs["src"]
 
         # Load some data (in a perfect world, this should be done asynchronously):
@@ -93,12 +93,14 @@ class FloatStoreProto(ABC):
         # Init Internal placeholder for this instance:
         self._metadata: dict | None = None  # filled by self.load_metadata(), returned by self.metadata
         self._dac: str | None = None  # filled by self.load_dac(), returned by self.dac
-        self._dataset = {}  # filled/returned by self.open_dataset(), returned by self.dataset()
-        self._ls: list[str] | None = None # filled/returned by self.ls()
+        self._dataset: dict[str, xr.Dataset | Any] = {}  # filled/returned by self.open_dataset(), returned by self.dataset()
 
-        self._lsp: dict[str|int, str] | None = None # fill by self.ls_profiles()
-        self._profile = {} # filled/returned by self.open_profile(), (mono-profile file xarray datasets)
-        self._df_profiles = None  # filled/returned by self.describe_profiles()
+        self._ls: list[str] | None = None # filled/returned by self.ls()
+        self._lsp: list[str] | None = None # filled/returned by self.lsp()
+
+        self._ls_prof: dict[str|int, str] | None = None # filled/returned by self.ls_profiles()
+        self._profile : dict[str, xr.Dataset | Any] = {} # filled/returned by self.open_profile(), (mono-profile file xarray datasets)
+        self._df_profiles : pd.DataFrame | None = None  # filled/returned by self.describe_profiles()
 
     def __repr__(self):
         backend = "online" if self._online else "offline"
@@ -232,10 +234,10 @@ class FloatStoreProto(ABC):
         """
         return self.host_sep.join([self.host, "dac", self.dac, "%i" % self.WMO])
 
-    def ls(self) -> list:
-        """Return the list of files in float path
+    def ls(self) -> list[str]:
+        """Return the list of files in float root path
 
-        Protocol is included
+        Protocol is included, all files are listed (not only netcdf, if any).
 
         Examples
         --------
@@ -276,7 +278,7 @@ class FloatStoreProto(ABC):
 
             paths = [p for p in paths if Path(p).suffix != ""]
 
-            # Ensure the protocol is included for non-local files on FTP server:
+            # Ensure the protocol is included for non-local files on FTP and S3 servers:
             for ip, p in enumerate(paths):
                 if self.host_protocol == "ftp":
                     paths[ip] = (
@@ -377,7 +379,7 @@ class FloatStoreProto(ABC):
         """
         return len(np.unique([c["id"] for c in self.metadata["cycles"]]))
 
-    @deprecated("Superseded by the 'ls_profiles' method", 'v1.5.0')
+    @deprecated("Superseded by the 'lsp' method", 'v1.5.0')
     def lsprofiles(self) -> list:
         """Return the list of files in float profiles path
 
@@ -385,18 +387,70 @@ class FloatStoreProto(ABC):
         --------
         :class:`ArgoFloat.ls`
         """
-        paths = self.fs.glob(self.host_sep.join([self.path, "profiles", "*"]))
-        paths = [p for p in paths if Path(p).suffix != ""]
-        paths.sort()
-        return paths
+        return self.lsp()
 
-    def describe_profiles(self) -> pd.DataFrame:
-        """Return a :class:`pandas.DataFrame` describing profile files"""
-        if self._df_profiles is None:
-            # Read the list of netcdf files under '<wmo>/profiles/*':
-            paths = self.fs.glob(self.host_sep.join([self.path, "profiles", "*.nc"]))
+    def lsp(self) -> list[str]:
+        """Return the list of files in float 'profiles' path
+
+        Protocol is included, all files are listed (not only netcdf, if any).
+
+        Examples
+        --------
+        >>> ArgoFloat(4902640).lsp()
+        >>> ArgoFloat(4902640, aux=True).lsp()
+        """
+        if self._lsp is None:
+
+            paths = self.fs.glob(self.host_sep.join([self.path, "profiles", "*"]))
+
+            if self._aux:
+                paths += self.fs.glob(
+                    self.host_sep.join(
+                        [
+                            self.path.replace(
+                                f"{self.host_sep}dac{self.host_sep}",
+                                f"{self.host_sep}aux{self.host_sep}",
+                            ),
+                            "profiles",
+                            "*",
+                        ]
+                    )
+                )
+
+            # Ensure the protocol is included for non-local files on FTP and S3 servers:
+            for ip, p in enumerate(paths):
+                if self.host_protocol == "ftp":
+                    paths[ip] = (
+                        "ftp://" + self.fs.fs.host + fsspec.core.split_protocol(p)[-1]
+                    )
+                if self.host_protocol == "s3":
+                    paths[ip] = "s3://" + fsspec.core.split_protocol(p)[-1]
+
             paths = [p for p in paths if Path(p).suffix != ""]
             paths.sort()
+            self._lsp = paths
+
+        return self._lsp
+
+    def describe_profiles(self) -> pd.DataFrame:
+        """Return a :class:`pandas.DataFrame` describing all profile files
+
+        Here we use the *profile* word to designate a mono-cycle netcdf file under the GDAC 'profiles' folder of a WMO.
+
+        Returns
+        -------
+        :class:`pandas.DataFrame`
+            A DataFrame with ["cycle_number", "dataset", "direction", "data_mode", "stem", "path"] columns for each mono-cycle netcdf files.
+
+        Notes
+        -----
+        This method is mandatory to work with profile methods :class:`ArgoFloat.ls_profiles_for`, class:`ArgoFloat.ls_profiles`, class:`ArgoFloat.open_profile` and class:`ArgoFloat.ls_profiles`.
+
+        """
+        if self._df_profiles is None:
+            # Read the list of netcdf files under '<wmo>/profiles/*':
+            paths = self.lsp()
+            paths = [p for p in paths if p.split(".")[-1]=='nc']
 
             # Scan each file name to extract information:
             prof = []
@@ -418,10 +472,10 @@ class FloatStoreProto(ABC):
             )
             row2cyc = lambda row: stem2cyc(row["stem"])  # noqa: E731
             df["cyc"] = df.apply(row2cyc, axis=1)
-            df = df[["cyc", "type", "data_mode", "direction", "stem", "path"]]
-            df = df.sort_values(by=["cyc", "type", "data_mode", "direction"], axis=0)
+            df = df[["cyc", "type", "direction", "data_mode", "stem", "path"]]
+            df = df.rename({"cyc": "cycle_number", "type": "dataset"}, axis=1)
+            df = df.sort_values(by=["cycle_number", "dataset", "direction"], axis=0)
             df = df.reset_index(drop=True)
-            df = df.rename({"type": "dataset"}, axis=1)
             self._df_profiles = df
 
         return self._df_profiles
@@ -481,8 +535,8 @@ class FloatStoreProto(ABC):
 
         results = {}
         for cycle_number in CYCs:
-            if cycle_number in df['cyc']:
-                this_df = df[df['cyc'] == cycle_number]
+            if cycle_number in df['cycle_number']:
+                this_df = df[df['cycle_number'] == cycle_number]
                 this_df = this_df[this_df['dataset'].apply(lambda x: x[0]) == ds]
                 this_df = this_df[this_df['direction'].apply(lambda x: x[0]) == direction]
                 if this_df.shape[0] == 1:
@@ -519,17 +573,17 @@ class FloatStoreProto(ABC):
             - keys are file short name to be used with :class:`ArgoFloat.open_profile`,
             - values are absolute path toward profile files.
         """
-        if self._lsp is None:
-            self._lsp = {}
+        if self._ls_prof is None:
+            self._ls_prof = {}
             for ds in [None, 'B', 'S']:
                 for di in ['A', 'D']:
                     try:
                         fl = self.ls_profiles_for(dataset=ds, direction=di)
                         for key, uri in fl.items():
-                            self._lsp.update({key: uri})
+                            self._ls_prof.update({key: uri})
                     except:
                         pass
-        return self._lsp
+        return self._ls_prof
 
     def open_profile(
         self,
