@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:reg="http://purl.org/linked-data/registry#"
+    xmlns:sssom="https://w3id.org/sssom/schema/"
+    xmlns:cpm="http://purl.org/voc/cpm#"
+    xmlns:qudt="https://qudt.org/2.1/schema/qudt#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:void="http://rdfs.org/ns/void#"
+    xmlns:dce="http://purl.org/dc/elements/1.1/"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:iop="https://w3id.org/iadopt/ont#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:semapv="http://w3id.org/semapv/vocab/"
+    xmlns:grg="http://www.isotc211.org/schemas/grg/"
+    xmlns:ns0="http://www.w3.org/ns/dx/conneg/altr#"
+    xmlns:pav="http://purl.org/pav/"
+    xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+    xmlns:prov="https://www.w3.org/ns/prov#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#"
+    xmlns:ns1="http://www.w3.org/ns/dx/prof/"
+    xmlns:puv="https://w3id.org/env/puv#" > 
+  <rdf:Description rdf:about="http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3835/">
+    <pav:authoredOn>2021-05-26 09:01:46.0</pav:authoredOn>
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+    <skos:related rdf:resource="http://vocab.nerc.ac.uk/collection/R25/current/OPTODE_DOXY/"/>
+    <skos:definition xml:lang="en">A stand-alone oxygen optode with integrated temperature sensor, manufactured by Aanderaa. This instrument exploits the physio-chemical principle of dynamic fluorescence quenching to measure absolute oxygen concentration and percent saturation. Depth rating: 300 m; oxygen concentration accuracy of &lt; 8 uM or 5 %, and resolution of &lt; 1 uM; air saturation accuracy of &lt; 5 %, and resolution of 0.4 %; settling time (63 %): &lt; 25 s.</skos:definition>
+    <void:inDataset rdf:resource="http://vocab.nerc.ac.uk/.well-known/void"/>
+    <owl:deprecated>false</owl:deprecated>
+    <skos:note xml:lang="en">accepted</skos:note>
+    <dc:identifier>SDN:R27::AANDERAA_OPTODE_3835</dc:identifier>
+    <skos:prefLabel xml:lang="en">Aanderaa 3835 oxygen optode</skos:prefLabel>
+    <owl:versionInfo>1</owl:versionInfo>
+    <dc:date>2021-05-26 09:01:46.0</dc:date>
+    <skos:altLabel>AANDERAA_OPTODE_3835</skos:altLabel>
+    <skos:notation>SDN:R27::AANDERAA_OPTODE_3835</skos:notation>
+    <skos:broader rdf:resource="http://vocab.nerc.ac.uk/collection/R26/current/AANDERAA/"/>
+    <pav:version>1</pav:version>
+    <dce:identifier>SDN:R27::AANDERAA_OPTODE_3835</dce:identifier>
+    <pav:hasCurrentVersion rdf:resource="http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3835/1/"/>
+  </rdf:Description>
+</rdf:RDF>

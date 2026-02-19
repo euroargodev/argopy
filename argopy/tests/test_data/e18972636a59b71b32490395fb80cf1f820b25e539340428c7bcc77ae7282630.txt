@@ -1,0 +1,40 @@
+PREFIX cpm:    <http://purl.org/voc/cpm#>
+PREFIX dc:     <http://purl.org/dc/terms/>
+PREFIX dcat:   <http://www.w3.org/ns/dcat#>
+PREFIX dce:    <http://purl.org/dc/elements/1.1/>
+PREFIX dct:    <http://purl.org/dc/terms/>
+PREFIX grg:    <http://www.isotc211.org/schemas/grg/>
+PREFIX iop:    <https://w3id.org/iadopt/ont#>
+PREFIX ns0:    <http://www.w3.org/ns/dx/conneg/altr#>
+PREFIX ns1:    <http://www.w3.org/ns/dx/prof/>
+PREFIX owl:    <http://www.w3.org/2002/07/owl#>
+PREFIX pav:    <http://purl.org/pav/>
+PREFIX prov:   <https://www.w3.org/ns/prov#>
+PREFIX puv:    <https://w3id.org/env/puv#>
+PREFIX qudt:   <https://qudt.org/2.1/schema/qudt#>
+PREFIX rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX reg:    <http://purl.org/linked-data/registry#>
+PREFIX semapv: <http://w3id.org/semapv/vocab/>
+PREFIX skos:   <http://www.w3.org/2004/02/skos/core#>
+PREFIX sssom:  <https://w3id.org/sssom/schema/>
+PREFIX void:   <http://rdfs.org/ns/void#>
+
+<http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3835/>
+        rdf:type               skos:Concept;
+        dce:identifier         "SDN:R27::AANDERAA_OPTODE_3835";
+        dc:date                "2021-05-26 09:01:46.0";
+        dc:identifier          "SDN:R27::AANDERAA_OPTODE_3835";
+        pav:authoredOn         "2021-05-26 09:01:46.0";
+        pav:hasCurrentVersion  <http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3835/1/>;
+        pav:version            "1";
+        void:inDataset         <http://vocab.nerc.ac.uk/.well-known/void>;
+        owl:deprecated         "false";
+        owl:versionInfo        "1";
+        skos:altLabel          "AANDERAA_OPTODE_3835";
+        skos:broader           <http://vocab.nerc.ac.uk/collection/R26/current/AANDERAA/>;
+        skos:definition        "A stand-alone oxygen optode with integrated temperature sensor, manufactured by Aanderaa. This instrument exploits the physio-chemical principle of dynamic fluorescence quenching to measure absolute oxygen concentration and percent saturation. Depth rating: 300 m; oxygen concentration accuracy of < 8 uM or 5 %, and resolution of < 1 uM; air saturation accuracy of < 5 %, and resolution of 0.4 %; settling time (63 %): < 25 s."@en;
+        skos:notation          "SDN:R27::AANDERAA_OPTODE_3835";
+        skos:note              "accepted"@en;
+        skos:prefLabel         "Aanderaa 3835 oxygen optode"@en;
+        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/OPTODE_DOXY/> .

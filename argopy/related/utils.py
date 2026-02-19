@@ -2,7 +2,7 @@ import importlib
 import os
 import json
 import logging
-from . import ArgoNVSReferenceTables
+from argopy.reference import ArgoNVSReferenceTables
 
 
 log = logging.getLogger("argopy.related.utils")

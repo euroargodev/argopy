@@ -1,0 +1,41 @@
+import logging
+from argopy.utils.checkers import isconnected
+
+
+log = logging.getLogger("argopy.related.vocabulary.nvs")
+
+if isconnected():
+    from .implementations.online.nvs import NVS as Implementation
+
+    log.info("Using ONLINE NVS implementation")
+else:
+    from .implementations.offline.nvs import NVS as Implementation
+
+    log.info("Using OFFLINE NVS implementation")
+
+
+class NVS(Implementation):
+    """NVS data manager
+
+    Used by other classes to handle NVS download for a table/vocabulary/collection or a value/concept.
+
+    This class will always try to work with online data directly from a NVS server.
+
+    But if **argopy** is loaded offline, this class will fall back on using static assets and still return NVS data.
+
+    .. code-block:: python
+
+        nvs = NVS()
+        nvs.load_vocabulary('R27')
+        nvs.load_concept('AANDERAA_OPTODE_3835')
+        nvs.load_concept('1', rtid='R05')  # Need to specify the vocabulary for a concept seen in more than one
+
+        nvs.vocabulary  # Return the list of available vocabulary identifier
+
+    Notes
+    -----
+    This class has a singleton design, i.e. only one instance creation is done and will be return on all subsequent instantiations.
+
+    """
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)

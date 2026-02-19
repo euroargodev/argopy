@@ -1,0 +1,78 @@
+{
+  "name": "SUNA_V2",
+  "long_name": "Submersible Ultraviolet Nitrate Analyser (SUNA) V2 nitrate sensor",
+  "last_update": "2026-01-25T11:14:13.534845+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SUNA_V2/",
+    "pav:hasVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SUNA_V2/1/"
+    },
+    "pav:authoredOn": "2021-08-19 11:48:30.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SUNA_V2/2/"
+    },
+    "dce:identifier": "SDN:R27::SUNA_V2",
+    "@type": "skos:Concept",
+    "skos:related": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/SPECTROPHOTOMETER_NITRATE/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/SPECTROPHOTOMETER_BISULFIDE/"
+      }
+    ],
+    "skos:definition": {
+      "@language": "en",
+      "@value": "A sensor using ultraviolet absorption spectroscopy to measure in-situ nitrate (NO3) concentration in real time and over clear to high turbidity/suspended sedimentation waters, depth-rated to 500 m. A deuterium lamp provides a light source of 10 mm path length (or 5 mm for high turbidity conditions); the measured spectrum falls within the Ultraviolet (UV) 190 nm - 370 nm wavelength range. The instrument is based on the MBARI-ISUS technology; it was originally developed and manufactured at Satlantic, and was rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2011."
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R27::SUNA_V2",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "Submersible Ultraviolet Nitrate Analyser (SUNA) V2 nitrate sensor"
+    },
+    "owl:versionInfo": "2",
+    "dc:date": "2021-08-19 11:48:30.0",
+    "skos:altLabel": "SUNA_V2",
+    "skos:notation": "SDN:R27::SUNA_V2",
+    "skos:broader": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SATLANTIC/"
+      }
+    ],
+    "pav:version": "2",
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

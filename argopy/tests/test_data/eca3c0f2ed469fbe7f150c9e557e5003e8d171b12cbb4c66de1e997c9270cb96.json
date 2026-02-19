@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>NVS</title>
+  <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="/static/favicon.ico">
+  <link rel="stylesheet" href="/static/nvs_vocprez.css">
+  <style> .group-row.hidden-row { display: none; } </style>
+</head>
+<body>
+  <div id="vocprez">
+    made by <a href="http://github.com/rdflib/VocPrez">VocPrez</a>&nbsp;
+    <a id="versionlink" href="https://github.com/surroundaustralia/NvsVocPrez/releases/tag/1.0.0">for NVS</a>
+  </div>
+  <div id="header" style="grid-column:2; display:grid; grid-template-rows: 140px 50px;">
+    <div id="header-logos" style="grid-row:1;">
+      <a href="https://eds.ukri.org/"><img src="/static/eds.svg" alt="UK RI logo" style="height:110px; float:left ;" /></a>
+      <a href="https://www.bodc.ac.uk/"><img src="/static/bodc-bw.svg" alt="BODC logo" style="height:110px; float:right ;" /></a>
+    </div>
+    <div id="header-title" style="grid-row:2;">
+    
+      <span>The NERC Vocabulary Server (NVS)</span>
+      <a href="https://sdc.ui.argo.grnet.gr/sdc/dashboard/Critical/VOCABULARY">Service Status</a>
+    </div>
+    <div>
+    
+    </div>
+
+  </div><!-- #header -->
+  <div id="mainmenu" style="grid-column:2;">
+        <style>
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown > a {
+            cursor: default;
+            text-decoration: none;
+        }
+        .dropdown-child {
+            display: none;
+            position: absolute;
+            left:-7px;
+            transition: all 0.5s ease;
+            background-color: rgb(19, 50, 77);
+            min-width: 220px;
+            text-align: left;
+            padding-top: 10px;
+        }
+        .dropdown-child a {
+            padding: 20px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown-child a:hover {
+            text-decoration: underline;
+        }
+        .dropdown:hover .dropdown-child {
+            display: block;
+        }
+        .dropdown-child:hover {
+            display: block;
+        }
+        /* for the bottom main menu */
+        #footer-top > .dropdown > .dropdown-child {
+            background-color: rgb(53, 80, 119);
+            top: -248px;
+            min-width: 270px;
+        }
+    </style>
+    <a href="/">NVS Home</a> |
+    <a href="/collection/">Vocabularies</a> |
+    <a href="/scheme/">Thesauri</a> |
+    <a href="/search_nvs/">Search NVS</a> |
+    <a href="/sparql">SPARQL</a> |
+    <div class="dropdown">
+      <a>Other Tools</a>
+      <div class="dropdown-child">
+        <a href="/editor/">Vocab Editor</a>
+        <a href="https://www.bodc.ac.uk/resources/vocabularies/vocabulary_builder/" target="_blank">Vocab Builder</a>
+        <a href="https://vocab.seadatanet.org/p01-facet-search" target="_blank">P01 Facet Search</a>
+        <a href="https://vocab.seadatanet.org/search" target="_blank">SeaDataNet Search UI</a>
+        <a href="https://semantics.bodc.ac.uk/" target="_blank" title="Explore term matches and mappings using the Semantic Analyser">Semantic Analyser</a>
+      </div>
+    </div> |
+    <a href="/about">About NVS</a>
+  </div>
+  <div id="content" style="grid-column:2;">
+      
+    <h1>SPARQL</h1>
+    <p>
+        This page allows you to lodge <a href="https://en.wikipedia.org/wiki/SPARQL">SPARQL</a> queries against the
+        <a href="https://en.wikipedia.org/wiki/Triplestore">triplestore</a> (graph database) that stores all of this
+        systems' vocabularies'.
+    </p>
+    <p>Use the interactive Query UI below to lodge queries interactively or send queries directly to the system using the instructions below that.</p>
+    <p>For some <b>help with sparql</b> please visit our github <a href="https://github.com/nvs-vocabs/nvsSPARQL">repo</a>.</p>
+    <div style="display: grid;">
+      <div style="grid-row:1; grid-column:1/3;">
+        <h2>Interactive UI</h2>
+        <p>Enter SPARQL queries in the text box below to lodge them interactively:</p>
+        <div id="yasgui" style="margin-bottom: 25px;"></div>
+      </div>
+      <div style="grid-row:2; grid-column:1; padding-right:10px;">
+        <h3>Example Queries</h3>
+        <h4>Collection Count</h4>
+        <p>
+          Here is an example query you can copy 'n paste into the Query UI text area above to test with. It counts the number of
+          <em>Collections</em> (i.e. vocabularies) in this system and will return an integer:
+        </p>
+        <p><pre>
+PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;
+
+SELECT (COUNT(?c) AS ?count)
+WHERE {
+    ?c a skos:Collection .
+}
+        </pre></p>
+        <p>It should return something like <code>286</code>.</p>
+        <h4>Concept Labels</h4>
+        <p>
+          Here is another example. It returns the URI and prefLabel(s) of 5 random Concepts on this system:
+        </p>
+        <p><pre>
+PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;
+
+SELECT ?c ?pl
+WHERE {
+    ?c a skos:Concept ;
+       skos:prefLabel ?pl .
+}
+LIMIT 5
+        </pre></p>
+        <h4>Concept Schemes</h4>
+        <p>
+          This query returns a sorted list of NVS' Concept Schemes (thesauri)' URIs and their titles (prefLabels):
+        </p>
+        <p><pre>
+PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;
+
+SELECT ?c ?pl
+WHERE {
+    ?c a skos:ConceptScheme ;
+       skos:prefLabel ?pl .
+}
+ORDER BY ?pl
+        </pre></p>
+      </div>
+      <div style="grid-row:2; grid-column:2;">
+        <h3>Direct Queries</h3>
+        <p>
+          The SPARQL endpoint for this system is:
+        </p>
+        <p><pre>
+http://vocab.nerc.ac.uk/sparql/sparql
+        </pre></p>
+        <p>
+          If you would like to lodge queries directly against this SPARQL endpoint without using the Query UI
+          above, first create the query, URL-encode it, and lodge it like this:
+        </p>
+        <p><pre>
+http://vocab.nerc.ac.uk/sparql/sparql?query={YOUR_QUERY_URL_ENCODED}
+        </pre></p>
+        <p>You can use the query encoder below to URL-encode your query.</p>
+        <h4>Machine-readable responses</h4>
+        <p>If you lodge your query as above with a web browser, the system will place it in the interactive UI text area (above) and you will see the result below that.</p>
+        <p>To obtain a machine-readable response to your query, you must supply an HTTP Accept header for the type of response you would like, in accordance with the <a href="https://www.w3.org/TR/sparql11-protocol/">SPARQL Protocol standard</a>.</p>
+        <p>For example, to get a SPARQL JSON format response for <code>{YOUR_QUERY_URL_ENCODED}</code>, use the <a href="https://curl.haxx.se/">curl</a> program like this:</p>
+        <p><pre>
+curl 'http://vocab.nerc.ac.uk/sparql/sparql?query={YOUR_QUERY_URL_ENCODED}'<br />-H 'Accept: application/sparql-results+json'
+        </pre></p>
+        <p><strong>SPARQL response Accept Headers</strong></p>
+        <p>The following Media Types are to be used for machine-readable responses:</p>
+        <ul>
+          <li>SPARQL response formats:
+            <ul>
+              <li><code>application/sparql-results+json</code></li>
+              <li><code>text/csv</code></li>
+              <li><code>text/tab-separated-values</code></li>
+            </ul>
+          </li>
+          <li>RDF response formats:
+            <ul>
+              <li><code>text/turtle</code></li>
+              <li><code>application/rdf+xml</code></li>
+              <li><code>application/ld+json</code></li>
+              <li><code>text/n3</code></li>
+              <li><code>application/n-triples</code></li>
+            </ul>
+        </ul>
+        <p>If you omit one of the above headers, your query will be placed into this page and the result displayed interactively.</p>
+        <p>If the header you've included doesn't match the format of the SPARQL response type, you will receive that response type's default format, e.g. <code>text/turtle</code> for <code>CONSTRUCT</code> queries, <code>application/sparql-results+json</code> for <code>SELECT</code> queries.</p>
+        <p><strong>GET &amp; POST queries</strong></p>
+        <p>You can lodge both <code>GET</code> and <code>POST</code> queries against this system, as per the <a href="https://www.w3.org/TR/sparql11-protocol/">SPARQL Protocol standard</a>.</p>
+        <h4>Query Encoder</h4>
+        <p>
+          Enter your SPARQL query into this text box and click "URL Encode" to URL encode it. That will
+          generate a single encoded string with spaces replaced by "%20" and other character replacements
+          which you can then use in place of <code>{YOUR_QUERY_URL_ENCODED}</code> above.
+        </p>
+        <p>
+            You might like to test out your query first using the Query UI above too.
+        </p>
+        <textarea id="encoding_query" style="width:100%; min-height:100px;"></textarea>
+        <button id="url_encode">URL Encode</button> <button id="url_decode">URL Decode</button>
+      </div>
+    </div>
+    <p>&nbsp;</p>
+    <link href='https://unpkg.com/@triply/yasgui/build/yasgui.min.css' rel='stylesheet' type='text/css'/>
+    <style>
+        .yasgui .autocompleteWrapper {
+          display: none !important;
+        }
+
+        pre {
+            background-color: #eee;
+            padding:5px;
+        }
+    </style>
+    <script src='https://unpkg.com/@triply/yasgui/build/yasgui.min.js'></script>
+    <script type="text/javascript">
+        const yasgui = new Yasgui(document.getElementById("yasgui"), {
+          requestConfig: { endpoint: "/sparql" },
+          copyEndpointOnNewTab: false
+        });
+
+        document.getElementById("url_encode").addEventListener("click", function() {
+          document.getElementById("encoding_query").value = encodeURIComponent(document.getElementById("encoding_query").value);
+        });
+
+        document.getElementById("url_decode").addEventListener("click", function() {
+          document.getElementById("encoding_query").value = decodeURIComponent(document.getElementById("encoding_query").value);
+        });
+    </script>
+
+  </div><!-- #content -->
+  <div id="footer" style="grid-column:1/4;">
+    <div id="footer-top">
+          <style>
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown > a {
+            cursor: default;
+            text-decoration: none;
+        }
+        .dropdown-child {
+            display: none;
+            position: absolute;
+            left:-7px;
+            transition: all 0.5s ease;
+            background-color: rgb(19, 50, 77);
+            min-width: 220px;
+            text-align: left;
+            padding-top: 10px;
+        }
+        .dropdown-child a {
+            padding: 20px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown-child a:hover {
+            text-decoration: underline;
+        }
+        .dropdown:hover .dropdown-child {
+            display: block;
+        }
+        .dropdown-child:hover {
+            display: block;
+        }
+        /* for the bottom main menu */
+        #footer-top > .dropdown > .dropdown-child {
+            background-color: rgb(53, 80, 119);
+            top: -248px;
+            min-width: 270px;
+        }
+    </style>
+    <a href="/">NVS Home</a> |
+    <a href="/collection/">Vocabularies</a> |
+    <a href="/scheme/">Thesauri</a> |
+    <a href="/search_nvs/">Search NVS</a> |
+    <a href="/sparql">SPARQL</a> |
+    <div class="dropdown">
+      <a>Other Tools</a>
+      <div class="dropdown-child">
+        <a href="/editor/">Vocab Editor</a>
+        <a href="https://www.bodc.ac.uk/resources/vocabularies/vocabulary_builder/" target="_blank">Vocab Builder</a>
+        <a href="https://vocab.seadatanet.org/p01-facet-search" target="_blank">P01 Facet Search</a>
+        <a href="https://vocab.seadatanet.org/search" target="_blank">SeaDataNet Search UI</a>
+        <a href="https://semantics.bodc.ac.uk/" target="_blank" title="Explore term matches and mappings using the Semantic Analyser">Semantic Analyser</a>
+      </div>
+    </div> |
+    <a href="/about">About NVS</a>
+    </div>
+    <div id="footer-bottom">
+      <a href="https://noc.ac.uk" style="background-color: none; padding: 0px; border: none; margin-left: 0px;">
+        <img src="/static/noc.svg" alt="NOC logo" style="height:80px; float:left;" />
+      </a>
+      <a href="https://noc.ac.uk/disclaimer">Disclaimer</a>
+      <!-- https://www.bodc.ac.uk/resources/help_and_hints/using_this_web_site/disclaimer/ -->
+      <p class="copyright">&copy; National Oceanography Centre, 2023</p>
+    </div>
+    <div id="vocprez2">
+      <span>made by</span> <a id="bottom-vocprez" href="http://github.com/rdflib/VocPrez">VocPrez</a>&nbsp;<a id="versionlink2" href="https://github.com/surroundaustralia/NvsVocPrez/releases/tag/1.0.0">for NVS</a>
+    </div>
+    <div id="footer-bottom-border"></div>
+  </div><!-- #footer -->
+</body>
+</html>

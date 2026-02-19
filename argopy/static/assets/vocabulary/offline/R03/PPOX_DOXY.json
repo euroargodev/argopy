@@ -1,0 +1,73 @@
+{
+  "name": "PPOX_DOXY",
+  "long_name": "Partial pressure of oxygen",
+  "last_update": "2026-01-25T11:11:28.365227+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R03/current/PPOX_DOXY/",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/PPOX_DOXY/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/PPOX_DOXY/2/"
+      }
+    ],
+    "pav:authoredOn": "2025-11-25 10:14:03.0",
+    "@type": "skos:Concept",
+    "skos:related": {
+      "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UPBB/"
+    },
+    "skos:definition": {
+      "@language": "en",
+      "@value": "Oxygen partial pressure, alternative oxygen quantity of oxygen optodes (for in-air measurements). Local_Attributes:{long_name:Partial pressure of oxygen; standard_name:-; units:millibar; valid_min:-5.f; valid_max:5000.f; fill_value:99999.f}. Properties:{category:ib; data_type:float}"
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R03::PPOX_DOXY",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "Partial pressure of oxygen"
+    },
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-25 10:14:03.0",
+    "skos:altLabel": "PPOX_DOXY",
+    "skos:notation": "SDN:R03::PPOX_DOXY",
+    "owl:sameAs": {
+      "@id": "http://vocab.nerc.ac.uk/collection/P01/current/PPOXZZ01/"
+    },
+    "pav:version": "3",
+    "dce:identifier": "SDN:R03::PPOX_DOXY",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/PPOX_DOXY/3/"
+    },
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

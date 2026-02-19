@@ -1,0 +1,245 @@
+{
+  "name": "RTV_R15",
+  "long_name": "Mapping of subject=RTV with object=R15",
+  "last_update": "2026-02-11T18:48:28.017181+00:00",
+  "data": {
+    "sparql": "\n    PREFIX dc: <http://purl.org/dc/elements/1.1/>\n    PREFIX sssom: <https://w3id.org/sssom/schema/>\n    PREFIX text: <http://jena.apache.org/text#>\n    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n\n    select ?subj ?pred ?obj where { ?a a sssom:Mapping .\n    ?a sssom:subject_id ?subj .\n    <http://vocab.nerc.ac.uk/collection/RTV/current/> skos:member ?subj.\n    ?a sssom:predicate_id ?pred .\n    ?a sssom:object_id ?obj .\n    <http://vocab.nerc.ac.uk/collection/R15/current/> skos:member ?obj.}\n    ",
+    "content": {
+      "head": {
+        "vars": [
+          "subj",
+          "pred",
+          "obj"
+        ]
+      },
+      "results": {
+        "bindings": [
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/RTV/current/PET/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2002/07/owl#sameAs/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R15/current/300/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/RTV/current/PST/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2002/07/owl#sameAs/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R15/current/250/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/RTV/current/DET/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2002/07/owl#sameAs/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R15/current/200/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/RTV/current/LMT/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2002/07/owl#sameAs/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R15/current/704/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/RTV/current/TET/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2002/07/owl#sameAs/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R15/current/800/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/RTV/current/FST/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2002/07/owl#sameAs/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R15/current/150/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/RTV/current/DPST/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2002/07/owl#sameAs/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R15/current/450/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/RTV/current/DST/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2002/07/owl#sameAs/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R15/current/100/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/RTV/current/LLT/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#related/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R15/current/703/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/RTV/current/FLT/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#related/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R15/current/703/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/RTV/current/DDET/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2002/07/owl#sameAs/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R15/current/400/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/RTV/current/TST/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2002/07/owl#sameAs/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R15/current/700/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/RTV/current/AST/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2002/07/owl#sameAs/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R15/current/500/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/RTV/current/FMT/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2002/07/owl#sameAs/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R15/current/702/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/RTV/current/DAST/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2002/07/owl#sameAs/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R15/current/550/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/RTV/current/AET/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2002/07/owl#sameAs/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R15/current/600/"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

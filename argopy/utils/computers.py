@@ -24,7 +24,7 @@ log = logging.getLogger("argopy.utils.compute")
 
 #
 #  From xarrayutils : https://github.com/jbusecke/xarrayutils/blob/master/xarrayutils/vertical_coordinates.py
-#  Direct integration of those 2 functions to minimize dependencies and possibility of tuning them to our needs
+#  Direct integration of those 2 functions to minimize dependencies and possibility of tuning them to our needs
 #
 
 

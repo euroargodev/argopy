@@ -1,0 +1,59 @@
+{
+  "name": "149",
+  "long_name": "FST-1",
+  "last_update": "2026-01-25T11:14:27.267013+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R15/current/149/",
+    "pav:authoredOn": "2021-11-30 09:53:34.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R15/current/149/1/"
+    },
+    "dce:identifier": "SDN:R15::149",
+    "pav:version": "1",
+    "skos:notation": "SDN:R15::149",
+    "skos:altLabel": "149",
+    "dc:date": "2021-11-30 09:53:34.0",
+    "owl:versionInfo": "1",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "FST-1"
+    },
+    "dc:identifier": "SDN:R15::149",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "owl:deprecated": "false",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "skos:definition": {
+      "@language": "en",
+      "@value": "Any single measurement transitioning towards FST (see FST-10 for a 'series' of measurements)."
+    },
+    "@type": "skos:Concept",
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

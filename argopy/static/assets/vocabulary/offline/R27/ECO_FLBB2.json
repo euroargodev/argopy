@@ -1,0 +1,81 @@
+{
+  "name": "ECO_FLBB2",
+  "long_name": "ECO FLBB2 sensor package with one fluorometer and two scattering meters",
+  "last_update": "2026-01-25T11:14:13.533689+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB2/",
+    "pav:authoredOn": "2021-08-09 12:23:38.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB2/1/"
+    },
+    "dce:identifier": "SDN:R27::ECO_FLBB2",
+    "pav:version": "1",
+    "skos:broader": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:related": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP532/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP470/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/"
+      }
+    ],
+    "skos:definition": {
+      "@language": "en",
+      "@value": "A three optical-sensor instrument fitted with one fluorometer and two scattering meters, depth-rated to 600 m. The fluorometer is configured to detect chlorophyll-a fluorescence at 470 nm (excitation) / 695 nm (emission) wavelengths, whereas the two scattering meters (in-water centroid angle of 124 deg) can be configured to measure backscattering at a user-defined choice of 470 nm, 532 nm, 650 nm or 700 nm each. The instrument is part of the Environmental Characterization Optics (ECO) series tools, originally developed and manufactured at WET Labs and rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2010."
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R27::ECO_FLBB2",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "ECO FLBB2 sensor package with one fluorometer and two scattering meters"
+    },
+    "owl:versionInfo": "1",
+    "dc:date": "2021-08-09 12:23:38.0",
+    "skos:altLabel": "ECO_FLBB2",
+    "skos:notation": "SDN:R27::ECO_FLBB2",
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}
