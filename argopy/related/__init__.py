@@ -14,6 +14,7 @@ __all__ = (
     "ArgoNVSReferenceTables",
     "ArgoDocs",
     "ArgoDOI",
+    # "Assistant",
 
     # Functions:
     "get_coriolis_profile_id",
