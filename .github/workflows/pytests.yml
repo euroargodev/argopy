@@ -76,6 +76,7 @@ jobs:
           role-duration-seconds: 7200
 
       - name: Increase swapfile
+        if: ${{matrix.os == 'ubuntu-latest'}}
         run: |
           sudo swapoff -a
           sudo fallocate -l 8G /swapfile
@@ -207,6 +208,7 @@ jobs:
           role-duration-seconds: 7200
 
       - name: Increase swapfile
+        if: ${{matrix.os == 'ubuntu-latest'}}
         run: |
           sudo swapoff -a
           sudo fallocate -l 8G /swapfile
