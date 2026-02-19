@@ -405,7 +405,7 @@ class indexstore(ArgoIndexStoreProto):
             ]
         else:
             if not hasattr(self, "index"):
-                self.load()
+                self.load(nrows=self._nrows_index)
             return [
                 xmin(self.index),
                 xmax(self.index),
@@ -423,6 +423,8 @@ class indexstore(ArgoIndexStoreProto):
                 for f in self.search["file"]
             ]
         else:
+            if not hasattr(self, "index"):
+                self.load(nrows=self._nrows_index)
             flist = [
                 sep.join(["dac", f.as_py().replace("/", sep)])
                 for f in self.index["file"]

@@ -102,7 +102,7 @@ class filestore(ArgoStoreProto):
         path: str
             The local path of the netcdf file to open
 
-        errors:
+        errors: str, "raise", "ignore", "silent", default = "raise"
 
         lazy: bool, default=False
             Define if we should try to open the netcdf dataset lazily or not
@@ -137,6 +137,12 @@ class filestore(ArgoStoreProto):
                     raise e
                 elif errors == "ignore":
                     log.error("FileNotFoundError raised from: %s" % path)
+            except Exception as e:
+                if errors == "raise":
+                    raise e
+                elif errors == "ignore":
+                    log.error(f"{str(e)} raised from: {path}")
+
             return None, None
 
         def load_lazily(path, errors="raise", xr_opts={}, akoverwrite: bool = False):
