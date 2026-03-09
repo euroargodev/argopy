@@ -384,8 +384,6 @@ class FloatStoreProto(ABC):
     def __repr__(self):
         backend = "online" if self._online else "offline"
         summary = ["<argofloat.%i.%s.%s>" % (self.WMO, self.host_protocol, backend)]
-        # status = "online ✅" if isconnected(self.path, maxtry=1) else "offline 🚫"
-        # summary.append("GDAC host: %s [%s]" % (self.host, status))
         summary.append("GDAC host: %s" % self.host)
         summary.append("DAC name: %s" % self.dac)
         summary.append("Network(s): %s" % self.metadata["networks"])

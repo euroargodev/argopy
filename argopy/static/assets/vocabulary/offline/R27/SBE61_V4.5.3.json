@@ -1,0 +1,84 @@
+{
+  "name": "SBE61_V4.5.3",
+  "long_name": "Sea-Bird Scientific SBE 61 CTD V4.5.3",
+  "last_update": "2026-01-25T11:14:06.835682+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.3/",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.3/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.3/2/"
+      }
+    ],
+    "pav:authoredOn": "2025-04-03 11:54:30.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.3/3/"
+    },
+    "dce:identifier": "SDN:R27::SBE61_V4.5.3",
+    "pav:version": "3",
+    "@type": "skos:Concept",
+    "skos:related": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+      }
+    ],
+    "skos:definition": {
+      "@language": "en",
+      "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on Deep Argo profiling floats reaching 7000 m depth. This SBE61 model has firmware version 4.5.3."
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "true",
+    "skos:note": {
+      "@language": "en",
+      "@value": "deprecated"
+    },
+    "dc:identifier": "SDN:R27::SBE61_V4.5.3",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "Sea-Bird Scientific SBE 61 CTD V4.5.3"
+    },
+    "owl:versionInfo": "3",
+    "dc:date": "2025-04-03 11:54:30.0",
+    "skos:altLabel": "SBE61_V4.5.3",
+    "skos:notation": "SDN:R27::SBE61_V4.5.3",
+    "skos:broader": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+    },
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}
