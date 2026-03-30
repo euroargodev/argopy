@@ -136,7 +136,7 @@ jobs:
           label: 'pytest core-pinned'
         continue-on-error: true
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./cov.xml
@@ -147,7 +147,7 @@ jobs:
           env_vars: RUNNER_OS,PYTHON_VERSION
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           report_type: test_results
@@ -268,7 +268,7 @@ jobs:
           label: 'pytest all-pinned'
         continue-on-error: true
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./cov.xml
@@ -279,7 +279,7 @@ jobs:
           env_vars: RUNNER_OS,PYTHON_VERSION
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           report_type: test_results
