@@ -4,6 +4,10 @@
 Contributions are highly welcomed and appreciated. So, if you are interested in contributing, please consult the
 :doc:`contributing` guide.
 
+.. important::
+
+    If some links get broken in the table above, please refer to **all possible Argopy tutorials available on the dedicated repository at:** https://github.com/euroargodev/argopy-training
+
 Tutorials
 ---------
 
@@ -42,9 +46,6 @@ Tutorials
     * -
       - `web-API requests <https://github.com/euroargodev/argopy-training/blob/main/content/low-level-tools/web-API.ipynb>`_
 
-.. important::
-
-    If some links get broken in the table above, please refer to **all possible Argopy tutorials available on the dedicated repository at:** https://github.com/euroargodev/argopy-training
 
 Training sessions
 -----------------
