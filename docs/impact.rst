@@ -30,6 +30,8 @@ Oceanographic Conditions in the Labrador Sea in 2024", Can. Tech. Rep. Fish. Aqu
 
 - Huda, Md Nurul  (2023). "Machine Learning for Improvement of Ocean Data Resolution for Weather Forecasting and Climatological Research", Thesis and Dissertations, Virginia Tech, http://hdl.handle.net/10919/116504
 
+- Kerhalkar, S., Tandon, A., & MacKinnon, J. A. (2026). "Impacts of salinity stratification on sub-seasonal SST warming in the Northern Indian Ocean", Journal of Geophysical Research: Oceans, 131, e2025JC023486. https://doi.org/10.1029/2025JC023486
+
 - Singh, Shikha and Sapkal, Mayur (2025). "A machine learning approach to identify upper ocean water masses in the Indian Ocean", CSI Transactions on ICT. https://doi.org/10.1007/s40012-025-00417-9.
 
 - Steinberg, J. M., Piecuch, C. G., Hamlington, B. D., Thompson, P. R., & Coats, S. (2024). "Influence of deep-ocean warming on coastal sea-level decadal trends in the Gulf of Mexico", Journal of Geophysical Research: Oceans, 129, e2023JC019681. https://doi.org/10.1029/2023JC019681
