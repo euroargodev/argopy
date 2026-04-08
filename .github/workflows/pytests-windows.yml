@@ -109,7 +109,7 @@ jobs:
           fail_ci_if_error: false
           env_vars: RUNNER_OS,PYTHON_VERSION
       - name: Save tests log as artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: Argopy-Tests-Core-${{matrix.python-version}}-${{matrix.os}}
           path: ${{env.LOG_FILE}}
@@ -190,7 +190,7 @@ jobs:
           fail_ci_if_error: false
           env_vars: RUNNER_OS,PYTHON_VERSION
       - name: Upload tests log to GA
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: Argopy-Tests-All-${{matrix.python-version}}-${{matrix.os}}
           path: ${{env.LOG_FILE}}
