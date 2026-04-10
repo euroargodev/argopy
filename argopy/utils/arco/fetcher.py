@@ -33,6 +33,22 @@ class MassFetcher(object):
     Examples
     --------
     ..code-block:: python
+        :caption: Creating a Massfetcher
+
+        from argopy.utils.arco import MassFetcher
+        from argopy import ArgoIndex
+
+        # It needs an instance of ArgoIndex search with a box:
+        idx = ArgoIndex().query.box([-180, 180, -90, 90, '20251001', '20251101'])
+
+        # Create the MassFetcher:
+        MassFetcher(idx)
+
+        # Possibly select user mode, otherwise use the global OPTIONS
+        MassFetcher(idx, mode='standard')
+        MassFetcher(idx, mode='research')
+
+    ..code-block:: python
         :caption: Fetch to load global Argo dataset for a given month
 
         from dask.distributed import Client
@@ -504,7 +520,7 @@ class MassFetcher(object):
                     ds = self._add_dsattributes(
                         ds,
                         title="Argo float profiles interpolated onto Standard Pressure Levels",
-                        self.mode,
+                        mode=self.mode,
                     )
                     ds.attrs["DAC"] = dac_wmo[0]
                     ds.attrs["PLATFORM_NUMBER"] = int(dac_wmo[1])
@@ -564,7 +580,7 @@ class MassFetcher(object):
 
                 # Preserve Argo attributes:
                 ds = self._add_dsattributes(
-                    ds, title="Argo float profiles ravelled data", self.mode,
+                    ds, title="Argo float profiles ravelled data", mode=self.mode,
                 )
                 ds.attrs["DAC"] = dac_wmo[0]
                 ds.attrs["PLATFORM_NUMBER"] = int(dac_wmo[1])
@@ -762,6 +778,7 @@ class MassFetcher(object):
                     ds = self._add_dsattributes(
                         ds,
                         title="Argo float profiles interpolated onto Standard Pressure Levels",
+                        mode=self.mode,
                     )
                     ds.attrs["DAC"] = dac_wmo[0]
                     ds.attrs["PLATFORM_NUMBER"] = int(dac_wmo[1])
@@ -828,7 +845,8 @@ class MassFetcher(object):
 
                 # Preserve Argo attributes:
                 ds = self._add_dsattributes(
-                    ds, title="Argo float profiles ravelled data"
+                    ds, title="Argo float profiles ravelled data",
+                    mode=self.mode,
                 )
                 ds.attrs["DAC"] = dac_wmo[0]
                 ds.attrs["PLATFORM_NUMBER"] = int(dac_wmo[1])
