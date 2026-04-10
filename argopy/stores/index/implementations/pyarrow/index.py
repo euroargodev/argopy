@@ -6,6 +6,7 @@ import gzip
 from packaging import version
 from pathlib import Path
 from typing import List
+import concurrent.futures
 
 try:
     import pyarrow.csv as csv  # noqa: F401
@@ -415,7 +416,7 @@ class indexstore(ArgoIndexStoreProto):
                 tmax(self.index["date"]),
             ]
 
-    def read_files(self, index : bool = False, multi : bool = False) -> List[str]:
+    def read_files(self, index: bool = False, multi: bool = False) -> List[str]:
         sep = self.fs["src"].fs.sep
         if hasattr(self, "search") and not index:
             flist = [
@@ -432,7 +433,7 @@ class indexstore(ArgoIndexStoreProto):
         else:
             return mono2multi(flist, convention=self.convention, sep=sep)
 
-    def records_per_wmo(self, index=False):
+    def records_per_wmo_legacy(self, index=False):
         """Return the number of records per unique WMOs in search results
 
         Fall back on full index if search not triggered
@@ -452,6 +453,45 @@ class indexstore(ArgoIndexStoreProto):
                     self.index["file"], pattern="/%i/" % wmo
                 )
                 count[wmo] = self.index.filter(search_filter).shape[0]
+        return count
+
+    def records_per_wmo(self, index=False):
+        """Return the number of records per unique WMOs in search results
+
+        Fall back on full index if search not triggered
+
+        Notes
+        -----
+        Computation is parallelized over all WMOs with a ThreadPoolExecutor
+        """
+
+        def count_wmo(self, wmo: int, index: bool):
+            if hasattr(self, "search") and not index:
+                search_filter = pa.compute.match_substring_regex(
+                    self.search["file"], pattern="/%i/" % wmo
+                )
+                return wmo, self.search.filter(search_filter).shape[0]
+            else:
+                if not hasattr(self, "index"):
+                    self.load(nrows=self._nrows_index)
+                search_filter = pa.compute.match_substring_regex(
+                    self.index["file"], pattern="/%i/" % wmo
+                )
+                return wmo, self.index.filter(search_filter).shape[0]
+
+        ulist = self.read_wmo()
+        count = {}
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            # Submit tasks for each WMO
+            futures = {
+                executor.submit(count_wmo, self, wmo, index): wmo for wmo in ulist
+            }
+
+            # Process results as they complete
+            for future in concurrent.futures.as_completed(futures):
+                wmo, cnt = future.result()
+                count[wmo] = cnt
+
         return count
 
     def to_indexfile(self, file):

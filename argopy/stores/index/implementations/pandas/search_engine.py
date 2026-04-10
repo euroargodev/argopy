@@ -1,16 +1,47 @@
+import warnings
 import logging
 import pandas as pd
 import numpy as np
 from typing import List
+from functools import lru_cache
 
-from .....options import OPTIONS
-from .....errors import InvalidDatasetStructure, OptionValueError
-from .....utils import is_indexbox, parse_indexbox, check_wmo, check_cyc, to_list, conv_lon
-from ...extensions import register_ArgoIndex_accessor, ArgoIndexSearchEngine
-from ..index_s3 import search_s3
-from .index import indexstore
+from argopy.options import OPTIONS
+from argopy.errors import InvalidDatasetStructure, OptionValueError
+from argopy.utils.monitored_threadpool import pmap
+from argopy.utils.checkers import is_indexbox, parse_indexbox, check_wmo, check_cyc
+from argopy.utils.casting import to_list
+from argopy.utils.geo import conv_lon
+from argopy.stores.index.extensions import register_ArgoIndex_accessor, ArgoIndexSearchEngine
+from argopy.stores.index.implementations.index_s3 import search_s3
+from argopy.stores.index.implementations.pandas.index import indexstore
 
 log = logging.getLogger("argopy.stores.index.pd")
+
+
+@lru_cache(maxsize=25_000)
+def compute_wmo(wmo: int, obj):
+    return obj.index["file"].str.contains("/%i/" % wmo, regex=False, case=True)
+
+
+@lru_cache(maxsize=25_000)
+def compute_cyc(cyc: int, obj):
+    pattern = "_%0.3d.nc" % cyc
+    if cyc >= 1000:
+        pattern = "_%0.4d.nc" % cyc
+    return obj.index["file"].str.contains(pattern, regex=False, case=True)
+
+
+@lru_cache(maxsize=25_000)
+def compute_wmo_cyc(wmo: int, obj, cyc=None):
+    filt = []
+    for c in cyc:
+        filt.append(compute_cyc(c, obj))
+    return np.logical_and.reduce([compute_wmo(wmo, obj), np.logical_or.reduce(filt)])
+
+
+@lru_cache(maxsize=1_000)
+def compute_params(param: str, obj):
+    return obj.index["variables"].apply(lambda x: param in x)
 
 
 @register_ArgoIndex_accessor("query", indexstore)
@@ -24,24 +55,20 @@ class SearchEngine(ArgoIndexSearchEngine):
                 "Argo index searching for WMOs=[%s] ..."
                 % ";".join([str(wmo) for wmo in WMOs])
             )
+            if len(WMOs) > 30:
+                warnings.warn("Searching a large amount of Argo floats with the Pandas backend is quite slow. We strongly recommend to install Pyarrow to improve performances ! Pyarrow is about 10 times faster than Pandas for this use-case.")
             return WMOs
 
         def namer(WMOs):
             return {"WMO": WMOs}
 
-        def composer(WMOs):
-            filt = []
-            for wmo in WMOs:
-                filt.append(
-                    self._obj.index["file"].str.contains(
-                        "/%i/" % wmo, regex=True, case=False
-                    )
-                )
-            return self._obj._reduce_a_filter_list(filt, op="or")
+        def composer(obj, WMOs):
+            filt = pmap(obj, compute_wmo, WMOs)
+            return obj._reduce_a_filter_list(filt, op="or")
 
         WMOs = checker(WMOs)
         self._obj.load(nrows=self._obj._nrows_index)
-        search_filter = composer(WMOs)
+        search_filter = composer(self._obj, WMOs)
         if not composed:
             self._obj.search_type = namer(WMOs)
             self._obj.search_filter = search_filter
@@ -63,28 +90,20 @@ class SearchEngine(ArgoIndexSearchEngine):
                 "Argo index searching for CYCs=[%s] ..."
                 % (";".join([str(cyc) for cyc in CYCs]))
             )
+            if len(CYCs) > 50:
+                warnings.warn("Searching a large amount of Argo float cycles with the Pandas backend is quite slow. We strongly recommend to install Pyarrow to improve performances ! Pyarrow is about 10 times faster than Pandas for this use-case.")
             return CYCs
 
         def namer(CYCs):
             return {"CYC": CYCs}
 
-        def composer(CYCs):
-            filt = []
-            for cyc in CYCs:
-                if cyc < 1000:
-                    pattern = "_%0.3d.nc" % (cyc)
-                else:
-                    pattern = "_%0.4d.nc" % (cyc)
-                filt.append(
-                    self._obj.index["file"].str.contains(
-                        pattern, regex=True, case=False
-                    )
-                )
-            return self._obj._reduce_a_filter_list(filt, op="or")
+        def composer(obj, CYCs):
+            filt = pmap(obj, compute_cyc, CYCs)
+            return obj._reduce_a_filter_list(filt)
 
         CYCs = checker(CYCs)
         self._obj.load(nrows=self._obj._nrows_index)
-        search_filter = composer(CYCs)
+        search_filter = composer(self._obj, CYCs)
         if not composed:
             self._obj.search_type = namer(CYCs)
             self._obj.search_filter = search_filter
@@ -110,29 +129,20 @@ class SearchEngine(ArgoIndexSearchEngine):
                     ";".join([str(cyc) for cyc in CYCs]),
                 )
             )
+            if len(WMOs) > 30 or len(CYCs) > 50:
+                warnings.warn("Searching a large amount of Argo float cycles with the Pandas backend is quite slow. We strongly recommend to install Pyarrow to improve performances ! Pyarrow is about 10 times faster than Pandas for this use-case.")
             return WMOs, CYCs
 
         def namer(WMOs, CYCs):
             return {"WMO": WMOs, "CYC": CYCs}
 
-        def composer(WMOs, CYCs):
-            filt = []
-            for wmo in WMOs:
-                for cyc in CYCs:
-                    if cyc < 1000:
-                        pattern = "%i_%0.3d.nc" % (wmo, cyc)
-                    else:
-                        pattern = "%i_%0.4d.nc" % (wmo, cyc)
-                    filt.append(
-                        self._obj.index["file"].str.contains(
-                            pattern, regex=True, case=False
-                        )
-                    )
-            return self._obj._reduce_a_filter_list(filt, op="or")
+        def composer(obj, WMOs, CYCs):
+            filt = pmap(obj, compute_wmo_cyc, WMOs, kw={"cyc": tuple(CYCs)})
+            return obj._reduce_a_filter_list(filt)
 
         WMOs, CYCs = checker(WMOs, CYCs)
         self._obj.load(nrows=self._obj._nrows_index)
-        search_filter = composer(WMOs, CYCs)
+        search_filter = composer(self._obj, WMOs, CYCs)
         if not composed:
             self._obj.search_type = namer(WMOs, CYCs)
             self._obj.search_filter = search_filter
@@ -144,14 +154,12 @@ class SearchEngine(ArgoIndexSearchEngine):
 
     def date(self, BOX=None, nrows=None, composed=False, **kwargs):
         def checker(BOX, **kwargs):
-            BOX = parse_indexbox("date", BOX, **kwargs)
             if "date" not in self._obj.convention_columns:
                 raise InvalidDatasetStructure("Cannot search for date in this index")
+            BOX = parse_indexbox("date", BOX, **kwargs)
             is_indexbox(BOX)
             log.debug("Argo index searching for date in BOX=%s ..." % BOX)
             return ("date", BOX)   # Return key to use for time axis
-
-        key, BOX = checker(BOX, **kwargs)
 
         def namer(BOX):
             return {"DATE": BOX[4:6]}
@@ -164,6 +172,7 @@ class SearchEngine(ArgoIndexSearchEngine):
             filt.append(self._obj.index[key].le(tim_max))
             return self._obj._reduce_a_filter_list(filt, op="and")
 
+        key, BOX = checker(BOX, **kwargs)
         self._obj.load(nrows=self._obj._nrows_index)
         search_filter = composer(BOX, key)
         if not composed:
@@ -177,16 +186,14 @@ class SearchEngine(ArgoIndexSearchEngine):
 
     def lat(self, BOX=None, nrows=None, composed=False, **kwargs):
         def checker(BOX, **kwargs):
-            BOX = parse_indexbox("lat", BOX, **kwargs)
             if "latitude" not in self._obj.convention_columns:
                 raise InvalidDatasetStructure(
                     "Cannot search for latitude in this index"
                 )
+            BOX = parse_indexbox("lat", BOX, **kwargs)
             is_indexbox(BOX)
             log.debug("Argo index searching for latitude in BOX=%s ..." % BOX)
             return BOX
-
-        BOX = checker(BOX, **kwargs)
 
         def namer(BOX):
             return {"LAT": BOX[2:4]}
@@ -197,6 +204,7 @@ class SearchEngine(ArgoIndexSearchEngine):
             filt.append(self._obj.index["latitude"].le(BOX[3]))
             return self._obj._reduce_a_filter_list(filt, op="and")
 
+        BOX = checker(BOX, **kwargs)
         self._obj.load(nrows=self._obj._nrows_index)
         search_filter = composer(BOX)
         if not composed:
@@ -210,16 +218,14 @@ class SearchEngine(ArgoIndexSearchEngine):
 
     def lon(self, BOX=None, nrows=None, composed=False, **kwargs):
         def checker(BOX, **kwargs):
-            BOX = parse_indexbox("lon", BOX, **kwargs)
             if "longitude" not in self._obj.convention_columns:
                 raise InvalidDatasetStructure(
                     "Cannot search for longitude in this index"
                 )
+            BOX = parse_indexbox("lon", BOX, **kwargs)
             is_indexbox(BOX)
             log.debug("Argo index searching for longitude in BOX=%s ..." % BOX)
             return BOX
-        
-        BOX = checker(BOX, **kwargs)
 
         def namer(BOX):
             return {"LON": BOX[0:2]}
@@ -237,7 +243,8 @@ class SearchEngine(ArgoIndexSearchEngine):
                 filt.append(self._obj.index["longitude"].ge(conv_lon(BOX[0], "180")))
                 filt.append(self._obj.index["longitude"].le(conv_lon(BOX[1], "180")))
             return self._obj._reduce_a_filter_list(filt, op="and")
-        
+
+        BOX = checker(BOX, **kwargs)
         self._obj.load(nrows=self._obj._nrows_index)
         search_filter = composer(BOX)
         if not composed:
@@ -255,6 +262,7 @@ class SearchEngine(ArgoIndexSearchEngine):
                 raise InvalidDatasetStructure("Cannot search for lon/lat in this index")
             is_indexbox(BOX)
             log.debug("Argo index searching for lon/lat in BOX=%s ..." % BOX)
+            return BOX
 
         def namer(BOX):
             return {"LON": BOX[0:2], "LAT": BOX[2:4]}
@@ -275,7 +283,7 @@ class SearchEngine(ArgoIndexSearchEngine):
             filt.append(self._obj.index["latitude"].le(BOX[3]))
             return self._obj._reduce_a_filter_list(filt, op="and")
 
-        checker(BOX)
+        BOX = checker(BOX)
         self._obj.load(nrows=self._obj._nrows_index)
         search_filter = composer(BOX)
         if not composed:
@@ -346,19 +354,17 @@ class SearchEngine(ArgoIndexSearchEngine):
         def namer(PARAMs, logical):
             return {"PARAMS": (PARAMs, logical)}
 
-        def composer(PARAMs, logical):
-            filt = []
-            self._obj.index["variables"] = self._obj.index["parameters"].apply(
+        def composer(obj, PARAMs, logical):
+            obj.index["variables"] = obj.index["parameters"].apply(
                 lambda x: x.split()
             )
-            for param in PARAMs:
-                filt.append(self._obj.index["variables"].apply(lambda x: param in x))
-            self._obj.index = self._obj.index.drop("variables", axis=1)
-            return self._obj._reduce_a_filter_list(filt, op=logical)
+            filt = pmap(obj, compute_params, PARAMs)
+            obj.index = obj.index.drop("variables", axis=1)
+            return obj._reduce_a_filter_list(filt, op=logical)
 
         PARAMs = checker(PARAMs)
         self._obj.load(nrows=self._obj._nrows_index)
-        search_filter = composer(PARAMs, logical)
+        search_filter = composer(self._obj, PARAMs, logical)
         if not composed:
             self._obj.search_type = namer(PARAMs, logical)
             self._obj.search_filter = search_filter
@@ -490,15 +496,21 @@ class SearchEngine(ArgoIndexSearchEngine):
     def institution_code(self, institution_code: List[str], nrows=None, composed=False):
         def checker(institution_code):
             if "institution" not in self._obj.convention_columns:
-                raise InvalidDatasetStructure("Cannot search for institution codes in this index)")
-            log.debug("Argo index searching for institution code in %s ..." % institution_code)
+                raise InvalidDatasetStructure(
+                    "Cannot search for institution codes in this index)"
+                )
+            log.debug(
+                "Argo index searching for institution code in %s ..." % institution_code
+            )
             institution_code = to_list(institution_code)
             valid_codes = []
             for code in institution_code:
-                if self._obj.valid('institution_code', code):
+                if self._obj.valid("institution_code", code):
                     valid_codes.append(code.upper())
             if len(valid_codes) == 0:
-                raise OptionValueError(f"No valid codes found for institution in {institution_code}. Valid codes are: {self._obj.valid.institution_code}")
+                raise OptionValueError(
+                    f"No valid codes found for institution in {institution_code}. Valid codes are: {self._obj.valid.institution_code}"
+                )
             else:
                 return valid_codes
 
@@ -506,11 +518,7 @@ class SearchEngine(ArgoIndexSearchEngine):
             return {"INST_CODE": institution_code}
 
         def composer(institution_code):
-            return (
-                self._obj.index["institution"]
-                .fillna("")
-                .isin(institution_code)
-            )
+            return self._obj.index["institution"].fillna("").isin(institution_code)
 
         institution_code = checker(institution_code)
         self._obj.load(nrows=self._obj._nrows_index)
