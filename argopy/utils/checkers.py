@@ -290,6 +290,100 @@ def is_box(box: list, errors: str = "raise"):
 
     return True
 
+def parse_indexbox(dimension, BOX=None, **kwargs):
+    """ Parse and standardize user arguments for index box queries.x
+
+    This utility converts various user input formats (full BOX, range list, single value, or ge/le keywords)
+    into a standard 6-element index box: [lon_min, lon_max, lat_min, lat_max, date_min, date_max].
+    Used to simplify argument handling for ArgoIndex query methods (lon, lat, date).
+
+    Parameters
+    ----------
+    dimension : {'lon', 'lat', 'date'}
+        The dimension to parse. Determines which elements are set in the output box.
+    BOX : list, tuple, int, float, str, or None, optional
+        User input for the query. Can be:
+        - Full 6-element list: [lon_min, lon_max, lat_min, lat_max, date_min, date_max]
+        - 2-element list: [vmin, vmax] for the selected dimension
+        - Single value: int/float for lon/lat, str for date (interpreted as day-only)
+        - None, if using ge/le keywords
+    ge : int, float, or str, optional
+        Lower bound for the selected dimension (alternative to BOX).
+    le : int, float, or str, optional
+        Upper bound for the selected dimension (alternative to BOX).
+
+    Returns
+    -------
+    list : standardized 6-element index box.
+
+    Raises
+    ------
+    ValueError
+        If arguments are missing or unsupported.
+    TypeError
+        If a numeric value is passed for a date dimension.
+
+    Notes
+    -----
+    Either BOX or ge/le keywords must be provided.
+    For date, a single string is interpreted as a day-only filter.
+
+    Examples
+    --------
+    >>> parse_indexbox('lon', [-60, -55])
+    [-60, -55, -90, 90, '1900-01-01', '2100-12-31']
+    >>> parse_indexbox('lat', ge=40, le=45)
+    [-180, 180, 40, 45, '1900-01-01', '2100-12-31']
+    >>> parse_indexbox('date', '2007-09-01')
+    [-180, 180, -90, 90, '2007-09-01', '2007-09-02']
+
+    """
+
+    # Templates for each dimension: (lon_min, lon_max, lat_min, lat_max, date_min, date_max)
+    templates = {
+        "lon":   lambda ge, le:   [ge, le, -90., 90., '1900-01-01', '2100-12-31'],
+        "lat":   lambda ge, le:   [-180., 180., ge, le, '1900-01-01', '2100-12-31'],
+        "date":  lambda ge, le:   [-180., 180., -90., 90., ge, le],
+    }
+    # Defaults for ge/le per dimension
+    defaults = {
+        "lon":   (-180., 180.),
+        "lat":   (-90., 90.),
+        "date":  ('1900-01-01', '2100-12-31'),
+    }
+
+    if 'ge' in kwargs or 'le' in kwargs:
+        ge = kwargs.get('ge', defaults[dimension][0])
+        le = kwargs.get('le', defaults[dimension][1])
+        BOX = templates[dimension](ge, le)
+    else:
+        match BOX:
+            case list() if len(BOX) >= 6:
+                pass
+            case [vmin, vmax]:
+                BOX = templates[dimension](vmin, vmax)
+            case None:
+                raise ValueError("Invalid arguments")
+            case int() | float():
+                if dimension == "date":
+                    raise TypeError(
+                        f"Date argument must be a string (e.g., '2007-09-01'), "
+                        f"not {type(BOX).__name__}. "
+                        f"Use ge='YYYY-MM-DD' and/or le='YYYY-MM-DD' for date filtering."
+                    )
+                else:
+                    ge, le = (BOX, defaults[dimension][1])
+                    BOX = templates[dimension](ge, le)                    
+            case str():
+                # Single date [date, date+1)
+                d0 = pd.to_datetime(BOX)
+                d1 = d0 + pd.Timedelta(days=1)
+                ge = d0.strftime("%Y-%m-%d")
+                le = d1.strftime("%Y-%m-%d")
+                BOX = templates["date"](ge, le)
+            case _:
+                raise ValueError("Unsupported argument format")
+    return BOX
 
 def is_list_of_strings(lst):
     return isinstance(lst, list) and all(isinstance(elem, str) for elem in lst)

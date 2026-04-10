@@ -413,7 +413,7 @@ intersphinx_mapping = {
     'pyarrow': ('https://arrow.apache.org/docs/', None),
     'IPython': ('https://ipython.readthedocs.io/en/stable/', None),
     'virtualfleet': ('https://virtualfleet.readthedocs.io/en/latest/', None),
-    'boto3': ('https://boto3.amazonaws.com/v1/documentation/api/latest/', None),
+    'boto3': ('https://docs.aws.amazon.com/boto3/latest/', None),
     's3fs': ('https://s3fs.readthedocs.io/en/latest/', None),
     'kerchunk': ('https://fsspec.github.io/kerchunk/', None),
     'numcodecs': ('https://numcodecs.readthedocs.io/en/stable/', None),

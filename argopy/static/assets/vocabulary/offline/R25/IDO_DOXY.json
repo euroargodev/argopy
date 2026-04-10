@@ -1,0 +1,88 @@
+{
+  "name": "IDO_DOXY",
+  "long_name": "Integrated Dissolved Oxygen (IDO) sensor measuring dissolved oxygen",
+  "last_update": "2026-01-25T11:15:15.990748+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/IDO_DOXY/",
+    "pav:authoredOn": "2019-10-11 15:06:36.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R25/current/IDO_DOXY/1/"
+    },
+    "dce:identifier": "SDN:R25::IDO_DOXY",
+    "pav:version": "1",
+    "skos:notation": "SDN:R25::IDO_DOXY",
+    "skos:altLabel": "IDO_DOXY",
+    "dc:date": "2019-10-11 15:06:36.0",
+    "owl:versionInfo": "1",
+    "@type": "skos:Concept",
+    "skos:related": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE43I/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V3.0/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE43_IDO/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V1.0c/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V2.0/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE43F_IDO/"
+      }
+    ],
+    "skos:definition": {
+      "@language": "en",
+      "@value": "A type of electrochemical dissolved oxygen sensor called Integrated Dissolved Oxygen (IDO)"
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R25::IDO_DOXY",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "Integrated Dissolved Oxygen (IDO) sensor measuring dissolved oxygen"
+    },
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "name": "T000053",
+  "long_name": "CLOCK_EndDescentToProfile_hours",
+  "last_update": "2026-01-25T11:13:32.122607+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000053/",
+    "pav:hasVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000053/1/"
+    },
+    "pav:authoredOn": "2025-12-11 11:04:16.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000053/2/"
+    },
+    "dce:identifier": "SDN:R14::T000053",
+    "pav:version": "2",
+    "skos:notation": "SDN:R14::T000053",
+    "skos:altLabel": "53",
+    "dc:date": "2025-12-11 11:04:16.0",
+    "owl:versionInfo": "2",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "CLOCK_EndDescentToProfile_hours"
+    },
+    "dc:identifier": "SDN:R14::T000053",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "owl:deprecated": "false",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "skos:definition": {
+      "@language": "en",
+      "@value": "Time when float reaches profile pressure. The raw values can be in the tech file only if it is not possible to calculate the final JULD in real time. JULD_DEEP_DESCENT_END or JULD_DEEP_PARK_START and JULD with MC=400 or JULD with MC=450. Template_Values:{unit:[days, hours, minutes, seconds, FloatDay, YYYYMMDD, HHMMSS, YYYYMMDDHHMMSS, HHMM, MMSS, YYYY, DD, HH, MM]}."
+    },
+    "@type": "skos:Concept",
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

@@ -1,4 +1,3 @@
-import importlib
 from urllib.parse import urlparse
 import pytest
 import tempfile
@@ -9,7 +8,7 @@ import logging
 import argopy
 from argopy.stores import gdacfs
 from mocked_http import mocked_httpserver, mocked_server_address
-from utils import patch_ftp
+from utils import patch_ftp, has_s3
 
 
 log = logging.getLogger("argopy.tests.gdacfs")
@@ -25,8 +24,7 @@ VALID_HOSTS = {
     'ftp': "MOCKFTP",  # keyword to use a fake/mocked ftp server (running on localhost)
 }
 
-HAS_S3FS = importlib.util.find_spec("s3fs") is not None
-if HAS_S3FS:
+if has_s3:
     VALID_HOSTS.update({'s3': 's3://argo-gdac-sandbox/pub'})
 
 def id_for_host(host):
@@ -90,7 +88,7 @@ class Test_Gdacfs:
         # cache = request.param[1]
 
         xfail, reason = False, ""
-        if not HAS_S3FS and 's3' in host:
+        if not has_s3 and 's3' in host:
             xfail, reason = True, 's3fs not available'
         # elif 's3' in host:
         #     xfail, reason = True, 's3 is experimental'

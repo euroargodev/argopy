@@ -1,0 +1,137 @@
+{
+  "targetLevel": "Novice",
+  "metadata": {
+    "version": "1.0",
+    "tool": "EuroArgo Software Evaluator"
+  },
+  "repository": {
+    "owner": "euroargodev",
+    "repo": "argopy",
+    "url": "https://github.com/euroargodev/argopy"
+  },
+  "evaluation": {
+    "level": "Novice",
+    "targetLevel": "Novice",
+    "achievedLevel": "Expert",
+    "score": 1,
+    "stats": {
+      "totalCriteria": 8,
+      "metCriteria": 8,
+      "unmetCriteria": 0,
+      "weightedScore": 8,
+      "totalWeight": 8,
+      "autoCriteria": 5,
+      "manualCriteria": 3,
+      "targetLevel": "Novice"
+    }
+  },
+  "details": {
+    "4": {
+      "title": "The software uses an open-source programming language (https://en.wikipedia.org/wiki/List_of_open-source_programming_languages)",
+      "level": "Novice",
+      "category": "General",
+      "group": "General",
+      "status": "met",
+      "weight": 1,
+      "type": "auto",
+      "evidence": [
+        "Python",
+        "CSS",
+        "Shell"
+      ]
+    },
+    "5": {
+      "title": "The software uses a programming language adopted within the Argo community (e.g. Matlab, Python, R, Java, Julia)",
+      "level": "Novice",
+      "category": "Community",
+      "group": "Argo specific",
+      "status": "met",
+      "weight": 1,
+      "type": "auto",
+      "evidence": [
+        "Python"
+      ]
+    },
+    "10": {
+      "title": "The software is released under an open-source license (include an open-source LICENSE file with the license content to the codebase)",
+      "level": "Novice",
+      "category": "Licensing",
+      "group": "General",
+      "status": "met",
+      "weight": 1,
+      "type": "auto",
+      "evidence": [
+        "LICENSE"
+      ]
+    },
+    "11": {
+      "title": "The project includes a basic documentation (e.g. a README file)",
+      "level": "Novice",
+      "category": "Documentation",
+      "group": "General",
+      "status": "met",
+      "weight": 1,
+      "type": "manual",
+      "evidence": "https://github.com/euroargodev/argopy/blob/master/README.md"
+    },
+    "22": {
+      "title": "Other Data used by the software should be accessible online",
+      "level": "Novice",
+      "category": "Argo Compliance",
+      "group": "General",
+      "status": "met",
+      "weight": 1,
+      "type": "manual",
+      "evidence": "Done and documented wherever possible"
+    },
+    "32": {
+      "title": "The project includes a README file",
+      "level": "Novice",
+      "category": "Documentation",
+      "group": "General",
+      "status": "met",
+      "weight": 1,
+      "type": "auto",
+      "evidence": [
+        "README detected via API"
+      ]
+    },
+    "33": {
+      "title": "The project includes a LICENSE file",
+      "level": "Novice",
+      "category": "Licensing",
+      "group": "General",
+      "status": "met",
+      "weight": 1,
+      "type": "auto",
+      "evidence": [
+        "LICENSE"
+      ]
+    },
+    "58": {
+      "title": "The codebase includes comments and is documented to explain the purpose and functionality of each module, class, and function",
+      "level": "Novice",
+      "category": "General",
+      "group": "General",
+      "status": "met",
+      "weight": 1,
+      "type": "manual",
+      "evidence": "We use docstrings and comments"
+    }
+  },
+  "userAnswers": {
+    "11": {
+      "status": "met",
+      "evidence": "https://github.com/euroargodev/argopy/blob/master/README.md"
+    },
+    "22": {
+      "status": "met",
+      "evidence": "Done and documented wherever possible"
+    },
+    "58": {
+      "status": "met",
+      "evidence": "We use docstrings and comments"
+    }
+  },
+  "feedback": []
+}
