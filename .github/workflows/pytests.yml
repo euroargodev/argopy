@@ -40,6 +40,12 @@ jobs:
     name: Core - Pinned - Py${{matrix.python-version}} - ${{ matrix.os }}
     needs: detect-ci-skip
     runs-on: ${{ matrix.os }}
+    env:
+      JOBLIB_TEMP_FOLDER: /tmp
+      OMP_NUM_THREADS: 1
+      OPENBLAS_NUM_THREADS: 1
+      MKL_NUM_THREADS: 1
+      NUMEXPR_NUM_THREADS: 1
     if: needs.detect-ci-skip.outputs.skipped == 'false'
     defaults:
       run:
@@ -174,6 +180,12 @@ jobs:
     name: All - Pinned - Py${{matrix.python-version}} - ${{ matrix.os }}
     needs: detect-ci-skip
     runs-on: ${{ matrix.os }}
+    env:
+      JOBLIB_TEMP_FOLDER: /tmp
+      OMP_NUM_THREADS: 1
+      OPENBLAS_NUM_THREADS: 1
+      MKL_NUM_THREADS: 1
+      NUMEXPR_NUM_THREADS: 1
     if: needs.detect-ci-skip.outputs.skipped == 'false'
     defaults:
       run:
