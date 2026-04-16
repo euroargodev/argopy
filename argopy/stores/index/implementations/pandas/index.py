@@ -408,13 +408,6 @@ class indexstore(ArgoIndexStoreProto):
 
         ulist = self.read_wmo()
         count = {}
-
-        if len(ulist) < 10:
-            for wmo in ulist:
-                w, cnt = count_wmo(self, wmo, index)
-                count[w] = cnt
-            return count
-
         with concurrent.futures.ThreadPoolExecutor() as executor:
             # Submit tasks for each WMO
             futures = {
