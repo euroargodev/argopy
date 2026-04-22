@@ -3,6 +3,6 @@ setuptools_scm
 twine
 wheel
 pytest
-tqdm>=4.46.0
+tqdm>=4.67.3
 ipython>=5.0.0
 ipywidgets>=7.5.1
