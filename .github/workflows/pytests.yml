@@ -41,6 +41,7 @@ jobs:
     needs: detect-ci-skip
     runs-on: ${{ matrix.os }}
     env:
+      JOBLIB_MULTIPROCESSING: 0
       JOBLIB_TEMP_FOLDER: /tmp
       OMP_NUM_THREADS: 1
       OPENBLAS_NUM_THREADS: 1
