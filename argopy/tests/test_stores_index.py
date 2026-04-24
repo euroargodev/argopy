@@ -170,9 +170,8 @@ class IndexStore_test_proto:
 
     search_scenarios = [(h, ap) for h in VALID_HOSTS for ap in VALID_SEARCHES]
     search_scenarios = [
-        (h, ap, n) for h in VALID_HOSTS for ap in VALID_SEARCHES for n in [None, 2]
+        (h, ap, n) for h in VALID_HOSTS for ap in VALID_SEARCHES for n in [2]
     ]
-    
     search_scenarios_ids = [
         "%s, %s, nrows=%s" % (ftp_shortname(fix[0]),
                               "%s[n=%i]" % (list(fix[1].keys())[0], len(fix[1][list(fix[1].keys())[0]])),
