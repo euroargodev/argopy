@@ -4,5 +4,5 @@ twine
 wheel
 pytest
 tqdm>=4.46.0
-ipython>=5.0.0
+ipython>=9.12.0
 ipywidgets>=7.5.1
