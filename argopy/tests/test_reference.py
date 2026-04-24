@@ -1,3 +1,4 @@
+import sys
 import pytest
 import pandas as pd
 from collections import OrderedDict
@@ -249,8 +250,14 @@ class Test_ArgoReferenceValue:
     )
     def test_to_json(self, name, path, keys):
         arv = ArgoReferenceValue(name)
-        with path as p:
-            arv.to_json(path=p, keys=keys)
+        try:
+            with path as p:
+                arv.to_json(path=p, keys=keys)
+        except PermissionError:
+            if sys.platform.startswith('win32') or sys.platform.startswith('cygwin'):
+                pytest.xfail("Fails because of Windows permissions error that can't be fixed (e.g. https://github.com/python/cpython/issues/66305)")
+            else:
+                raise
 
     @pytest.mark.parametrize(
         "name", ['BBP470', 'T000015', 'CB00001'], indirect=False, ids=[f"name='{x}'" for x in ['BBP470', 'T000015', 'CB00001']]
