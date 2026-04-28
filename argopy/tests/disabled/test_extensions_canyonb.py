@@ -45,24 +45,18 @@ def ds(fetcher, mocked_erddapserver):
 def test_predict(ds, what, mocked_erddapserver):
     """Test CANYON-B predictions for various parameters"""
     ds = ds.argo.canyon_b.predict(what)    
-    try:
-        assert "CANYON-B" in ds.attrs["Processing_history"]
+    assert "CANYON-B" in ds.attrs["Processing_history"]
 
-        if what is not None:
-            if isinstance(what, list):
-                for param in what:
-                    assert param in ds
-            else:
-                assert what in ds
-        else:
-            # Check that all parameters are predicted
-            for param in ["PO4", "NO3", "SiOH4", "AT", "DIC", "pHT", "pCO2"]:
+    if what is not None:
+        if isinstance(what, list):
+            for param in what:
                 assert param in ds
-    except PermissionError:
-        if sys.platform.startswith('win32') or sys.platform.startswith('cygwin'):
-            pytest.xfail("Fails because of Windows permissions error that can't be fixed (e.g. https://github.com/python/cpython/issues/66305)")
         else:
-            raise
+            assert what in ds
+    else:
+        # Check that all parameters are predicted
+        for param in ["PO4", "NO3", "SiOH4", "AT", "DIC", "pHT", "pCO2"]:
+            assert param in ds
 
 
 @pytest.mark.parametrize(
