@@ -45,6 +45,7 @@ def ds(fetcher, mocked_erddapserver):
 def test_predict(ds, what, mocked_erddapserver):
     """Test CANYON-B predictions for various parameters"""
     ds = ds.argo.canyon_b.predict(what)
+    
     try:
         assert "CANYON-B" in ds.attrs["Processing_history"]
 
