@@ -9,4 +9,4 @@ toolz>=0.8.2
 requests>=2.28
 aiohttp>=3.7,<=3.12.15
 decorator>=5.1
-packaging>=20.4
+packaging>=26.2
