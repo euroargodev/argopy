@@ -1,3 +1,4 @@
+import sys
 import pytest
 import logging
 import numpy as np
@@ -43,8 +44,7 @@ def ds(fetcher, mocked_erddapserver):
 )
 def test_predict(ds, what, mocked_erddapserver):
     """Test CANYON-B predictions for various parameters"""
-    ds = ds.argo.canyon_b.predict(what)
-
+    ds = ds.argo.canyon_b.predict(what)    
     assert "CANYON-B" in ds.attrs["Processing_history"]
 
     if what is not None:
