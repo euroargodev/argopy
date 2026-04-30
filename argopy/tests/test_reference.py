@@ -258,7 +258,6 @@ class Test_ArgoReferenceValue:
                 pytest.xfail("Fails because of Windows permissions error that can't be fixed (e.g. https://github.com/python/cpython/issues/66305)")
             else:
                 raise
-
     @pytest.mark.parametrize(
         "name", ['BBP470', 'T000015', 'CB00001'], indirect=False, ids=[f"name='{x}'" for x in ['BBP470', 'T000015', 'CB00001']]
     )
