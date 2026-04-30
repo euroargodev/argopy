@@ -1,18 +1,3 @@
-#!/usr/bin/env python3
-"""
-resource_monitor.py
-
-Universal resource monitor for any shell command.
-
-Usage:
-    python resource_monitor.py "pytest -ra -v -s -c argopy/tests/pytest.ini"
-    python resource_monitor.py "git push"
-    python resource_monitor.py "pip install -r requirements.txt"
-
-Requires:
-    pip install psutil
-"""
-
 import subprocess
 import threading
 import time
@@ -20,12 +5,21 @@ import statistics
 import psutil
 import json
 import sys
-import shlex
+import platform
+import shutil
 from datetime import datetime
 
 
 SAMPLE_INTERVAL = 1.0
 OUTPUT_JSON = "resource_summary.json"
+
+
+# --------------------------------------------------
+# Helpers
+# --------------------------------------------------
+
+def gb(value):
+    return round(value / (1024 ** 3), 2)
 
 
 def format_seconds(seconds):
@@ -39,11 +33,51 @@ def format_seconds(seconds):
     return f"{sec}s"
 
 
-def gb(value):
-    return round(value / (1024 ** 3), 2)
+def gha_group_start(title):
+    print(f"::group::{title}")
 
+
+def gha_group_end():
+    print("::endgroup::")
+
+
+# --------------------------------------------------
+# System summary mode
+# --------------------------------------------------
+
+def print_system_summary():
+    mem = psutil.virtual_memory()
+    disk = shutil.disk_usage("/")
+    cpu_phys = psutil.cpu_count(logical=False)
+    cpu_log = psutil.cpu_count(logical=True)
+
+    gha_group_start("System Resource Summary")
+
+    print("=" * 60)
+    print("SYSTEM RESOURCE SUMMARY")
+    print("=" * 60)
+    print(f"Timestamp        : {datetime.now().isoformat()}")
+    print(f"Platform         : {platform.system()} {platform.release()}")
+    print(f"Python           : {platform.python_version()}")
+    print(f"CPU physical     : {cpu_phys}")
+    print(f"CPU logical      : {cpu_log}")
+    print(f"RAM total        : {gb(mem.total)} GB")
+    print(f"RAM available    : {gb(mem.available)} GB")
+    print(f"RAM usage        : {mem.percent} %")
+    print(f"Disk total       : {gb(disk.total)} GB")
+    print(f"Disk free        : {gb(disk.free)} GB")
+    print("=" * 60)
+
+    gha_group_end()
+
+
+# --------------------------------------------------
+# Monitoring
+# --------------------------------------------------
 
 def monitor(stop_event, samples):
+    psutil.cpu_percent(interval=0.1)
+
     while not stop_event.is_set():
         cpu = psutil.cpu_percent(interval=None)
         mem = psutil.virtual_memory()
@@ -59,6 +93,10 @@ def monitor(stop_event, samples):
         time.sleep(SAMPLE_INTERVAL)
 
 
+# --------------------------------------------------
+# Run command
+# --------------------------------------------------
+
 def run_command(command):
     process = subprocess.Popen(
         command,
@@ -69,6 +107,10 @@ def run_command(command):
     return process
 
 
+# --------------------------------------------------
+# Summary
+# --------------------------------------------------
+
 def summarize(command, start_time, end_time, returncode, samples):
     duration = end_time - start_time
 
@@ -76,7 +118,7 @@ def summarize(command, start_time, end_time, returncode, samples):
     ram_values = [s["ram_used_gb"] for s in samples] or [0]
     ram_pct_values = [s["ram_percent"] for s in samples] or [0]
 
-    summary = {
+    return {
         "timestamp": datetime.now().isoformat(),
         "command": command,
         "duration_seconds": round(duration, 2),
@@ -100,30 +142,34 @@ def summarize(command, start_time, end_time, returncode, samples):
         "samples_collected": len(samples)
     }
 
-    return summary
-
 
 def print_summary(summary):
-    print("\n" + "=" * 50)
+    gha_group_start("Resource Usage Summary")
+
+    print("=" * 60)
     print("RESOURCE SUMMARY")
-    print("=" * 50)
-    print(f"Command      : {summary['command']}")
-    print(f"Duration     : {summary['duration_human']}")
-    print(f"Exit code    : {summary['exit_code']}")
+    print("=" * 60)
+    print(f"Command          : {summary['command']}")
+    print(f"Duration         : {summary['duration_human']}")
+    print(f"Exit code        : {summary['exit_code']}")
     print("")
     print("CPU")
-    print(f"  Avg        : {summary['cpu']['avg_percent']} %")
-    print(f"  Max        : {summary['cpu']['max_percent']} %")
+    print(f"  Avg            : {summary['cpu']['avg_percent']} %")
+    print(f"  Max            : {summary['cpu']['max_percent']} %")
+    print(f"  Min            : {summary['cpu']['min_percent']} %")
     print("")
     print("Memory")
-    print(f"  Avg used   : {summary['memory']['avg_used_gb']} GB")
-    print(f"  Peak used  : {summary['memory']['peak_used_gb']} GB")
-    print(f"  Avg usage  : {summary['memory']['avg_percent']} %")
-    print(f"  Max usage  : {summary['memory']['max_percent']} %")
+    print(f"  Avg used       : {summary['memory']['avg_used_gb']} GB")
+    print(f"  Peak used      : {summary['memory']['peak_used_gb']} GB")
+    print(f"  Min used       : {summary['memory']['min_used_gb']} GB")
+    print(f"  Avg usage      : {summary['memory']['avg_percent']} %")
+    print(f"  Max usage      : {summary['memory']['max_percent']} %")
     print("")
-    print(f"Samples      : {summary['samples_collected']}")
-    print(f"Saved JSON   : {OUTPUT_JSON}")
-    print("=" * 50)
+    print(f"Samples          : {summary['samples_collected']}")
+    print(f"Saved JSON       : {OUTPUT_JSON}")
+    print("=" * 60)
+
+    gha_group_end()
 
 
 def save_json(summary):
@@ -131,15 +177,24 @@ def save_json(summary):
         json.dump(summary, f, indent=4)
 
 
+# --------------------------------------------------
+# Main
+# --------------------------------------------------
+
 def main():
     if len(sys.argv) < 2:
         print("Usage:")
-        print('python resource_monitor.py "your command here"')
+        print("python resource_summary.py --system")
+        print('python resource_summary.py "pytest ..."')
         sys.exit(1)
+
+    if sys.argv[1] == "--system":
+        print_system_summary()
+        sys.exit(0)
 
     command = " ".join(sys.argv[1:])
 
-    print(f"Launching command:\n{command}\n")
+    print(f"\nLaunching command:\n{command}\n")
 
     samples = []
     stop_event = threading.Event()
@@ -154,6 +209,7 @@ def main():
     process.wait()
 
     end_time = time.time()
+
     stop_event.set()
     watcher.join(timeout=2)
 

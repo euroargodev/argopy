@@ -124,9 +124,9 @@ jobs:
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-      - name: Test with pytest
+      - name: Test with pytest + Resource Summary
         run: |
-          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}} --junitxml=junit.xml -o junit_family=legacy
+          python ci/resource_summary.py "pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}} --junitxml=junit.xml -o junit_family=legacy"
 
       - name: Energy Estimation - Measure Tests Exec
         if: ${{matrix.os == 'ubuntu-latest'}}
