@@ -107,9 +107,7 @@ def run_command(command):
     return process
 
 
-# --------------------------------------------------
 # Summary
-# --------------------------------------------------
 
 def summarize(command, start_time, end_time, returncode, samples):
     duration = end_time - start_time
