@@ -92,10 +92,7 @@ def monitor(stop_event, samples):
 
         time.sleep(SAMPLE_INTERVAL)
 
-
-# --------------------------------------------------
 # Run command
-# --------------------------------------------------
 
 def run_command(command):
     process = subprocess.Popen(
