@@ -1,4 +1,3 @@
-import sys
 import pytest
 import logging
 import numpy as np
