@@ -176,9 +176,7 @@ def save_json(summary):
     with open(OUTPUT_JSON, "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=4)
 
-# --------------------------------------------------
 # Main
-# --------------------------------------------------
 
 def main():
     if len(sys.argv) < 2:
