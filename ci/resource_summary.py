@@ -176,27 +176,6 @@ def save_json(summary):
     with open(OUTPUT_JSON, "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=4)
 
-def print_system_info():
-    import psutil
-    import shutil
-    import os
-
-    print("\n" + "=" * 50)
-    print("SYSTEM INFO (BEFORE TESTS)")
-    print("=" * 50)
-
-    cpu_count = psutil.cpu_count(logical=True)
-    mem = psutil.virtual_memory()
-    disk = shutil.disk_usage("/")
-
-    print(f"CPU cores        : {cpu_count}")
-    print(f"RAM total        : {round(mem.total / (1024**3), 2)} GB")
-    print(f"RAM available    : {round(mem.available / (1024**3), 2)} GB")
-    print(f"Disk total       : {round(disk.total / (1024**3), 2)} GB")
-    print(f"Disk free        : {round(disk.free / (1024**3), 2)} GB")
-
-    print("=" * 50 + "\n")
-    
 # --------------------------------------------------
 # Main
 # --------------------------------------------------
@@ -240,7 +219,6 @@ def main():
         returncode=process.returncode,
         samples=samples
     )
-    print_system_info()
     print_summary(summary)
     save_json(summary)
 

@@ -45,7 +45,6 @@ def test_predict(ds, what, mocked_erddapserver):
     """Test CANYON-B predictions for various parameters"""
     ds = ds.argo.canyon_b.predict(what)    
     assert "CANYON-B" in ds.attrs["Processing_history"]
-
     if what is not None:
         if isinstance(what, list):
             for param in what:
