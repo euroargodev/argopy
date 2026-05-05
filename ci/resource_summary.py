@@ -71,9 +71,7 @@ def print_system_summary():
     gha_group_end()
 
 
-# --------------------------------------------------
 # Monitoring
-# --------------------------------------------------
 
 def monitor(stop_event, samples):
     psutil.cpu_percent(interval=0.1)
