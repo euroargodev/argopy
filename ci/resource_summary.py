@@ -41,9 +41,7 @@ def gha_group_end():
     print("::endgroup::")
 
 
-# --------------------------------------------------
 # System summary mode
-# --------------------------------------------------
 
 def print_system_summary():
     mem = psutil.virtual_memory()
