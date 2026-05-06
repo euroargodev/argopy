@@ -14,9 +14,7 @@ SAMPLE_INTERVAL = 1.0
 OUTPUT_JSON = "resource_summary.json"
 
 
-# --------------------------------------------------
 # Helpers
-# --------------------------------------------------
 
 def gb(value):
     return round(value / (1024 ** 3), 2)
