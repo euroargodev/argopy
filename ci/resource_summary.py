@@ -16,9 +16,7 @@ OUTPUT_DIR = "ci/artifacts"
 OUTPUT_JSON = f"{OUTPUT_DIR}/resource_summary.json"
 
 
-# ============================================================
 # Helpers
-# ============================================================
 
 def gb(value):
     return round(value / (1024 ** 3), 2)
