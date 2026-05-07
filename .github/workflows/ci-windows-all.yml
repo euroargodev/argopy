@@ -96,12 +96,27 @@ jobs:
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-      - name: Show system resources
-        run: python ci/resource_available.py
-    
-      - name: Test with pytest + Resource Summary
+      - name: Show available system resources
         run: |
-          python ci/resource_summary.py "pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}} --junitxml=junit.xml -o junit_family=legacy"
+          python ci/resource_summary.py --system
+    
+      - name: Test with pytest
+        run: |
+          python ci/resource_summary.py pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}} --junitxml=junit.xml -o junit_family=legacy
+ 
+      - name: Display resource summary
+        if: always()
+        run: |
+          cat ci/artifacts/resource_summary.json    
+      
+      - name: Upload resource summary
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: Resource-Summary-${{matrix.python-version}}-${{matrix.os}}
+          path: ci/artifacts/resource_summary.json
+          retention-days: 90
+
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
         uses: codecov/codecov-action@v6
@@ -111,6 +126,7 @@ jobs:
           flags: all, pinned, py${{matrix.python-version}}, ${{matrix.os}}
           fail_ci_if_error: false
           env_vars: RUNNER_OS,PYTHON_VERSION
+          
       - name: Upload tests log to GA
         uses: actions/upload-artifact@v7
         with:

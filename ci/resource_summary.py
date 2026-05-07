@@ -7,14 +7,18 @@ import json
 import sys
 import platform
 import shutil
+import os
 from datetime import datetime
 
 
 SAMPLE_INTERVAL = 1.0
-OUTPUT_JSON = "resource_summary.json"
+OUTPUT_DIR = "ci/artifacts"
+OUTPUT_JSON = f"{OUTPUT_DIR}/resource_summary.json"
 
 
+# ============================================================
 # Helpers
+# ============================================================
 
 def gb(value):
     return round(value / (1024 ** 3), 2)
@@ -28,46 +32,53 @@ def format_seconds(seconds):
         return f"{hrs:02d}h{mins:02d}m{sec:02d}s"
     elif mins > 0:
         return f"{mins:02d}m{sec:02d}s"
+
     return f"{sec}s"
 
 
-def gha_group_start(title):
-    print(f"::group::{title}")
-
-
-def gha_group_end():
-    print("::endgroup::")
-
-
-# System summary mode
-
-def print_system_summary():
+def get_system_info():
     mem = psutil.virtual_memory()
     disk = shutil.disk_usage("/")
-    cpu_phys = psutil.cpu_count(logical=False)
-    cpu_log = psutil.cpu_count(logical=True)
 
-    gha_group_start("System Resource Summary")
+    return {
+        "platform": f"{platform.system()} {platform.release()}",
+        "python_version": platform.python_version(),
+        "cpu_physical": psutil.cpu_count(logical=False),
+        "cpu_logical": psutil.cpu_count(logical=True),
+        "ram_total_gb": gb(mem.total),
+        "ram_available_gb": gb(mem.available),
+        "ram_percent": mem.percent,
+        "disk_total_gb": gb(disk.total),
+        "disk_free_gb": gb(disk.free),
+    }
 
-    print("=" * 60)
+
+# ============================================================
+# System summary mode
+# ============================================================
+
+def print_system_summary():
+    info = get_system_info()
+
+    print("\n" + "=" * 60)
     print("SYSTEM RESOURCE SUMMARY")
     print("=" * 60)
     print(f"Timestamp        : {datetime.now().isoformat()}")
-    print(f"Platform         : {platform.system()} {platform.release()}")
-    print(f"Python           : {platform.python_version()}")
-    print(f"CPU physical     : {cpu_phys}")
-    print(f"CPU logical      : {cpu_log}")
-    print(f"RAM total        : {gb(mem.total)} GB")
-    print(f"RAM available    : {gb(mem.available)} GB")
-    print(f"RAM usage        : {mem.percent} %")
-    print(f"Disk total       : {gb(disk.total)} GB")
-    print(f"Disk free        : {gb(disk.free)} GB")
+    print(f"Platform         : {info['platform']}")
+    print(f"Python           : {info['python_version']}")
+    print(f"CPU physical     : {info['cpu_physical']}")
+    print(f"CPU logical      : {info['cpu_logical']}")
+    print(f"RAM total        : {info['ram_total_gb']} GB")
+    print(f"RAM available    : {info['ram_available_gb']} GB")
+    print(f"RAM usage        : {info['ram_percent']} %")
+    print(f"Disk total       : {info['disk_total_gb']} GB")
+    print(f"Disk free        : {info['disk_free_gb']} GB")
     print("=" * 60)
 
-    gha_group_end()
 
-
+# ============================================================
 # Monitoring
+# ============================================================
 
 def monitor(stop_event, samples):
     psutil.cpu_percent(interval=0.1)
@@ -86,19 +97,23 @@ def monitor(stop_event, samples):
 
         time.sleep(SAMPLE_INTERVAL)
 
+
+# ============================================================
 # Run command
+# ============================================================
 
 def run_command(command):
-    process = subprocess.Popen(
+    return subprocess.Popen(
         command,
         shell=True,
         stdout=sys.stdout,
         stderr=sys.stderr
     )
-    return process
 
 
+# ============================================================
 # Summary
+# ============================================================
 
 def summarize(command, start_time, end_time, returncode, samples):
     duration = end_time - start_time
@@ -109,6 +124,9 @@ def summarize(command, start_time, end_time, returncode, samples):
 
     return {
         "timestamp": datetime.now().isoformat(),
+
+        "system": get_system_info(),
+
         "command": command,
         "duration_seconds": round(duration, 2),
         "duration_human": format_seconds(duration),
@@ -132,51 +150,35 @@ def summarize(command, start_time, end_time, returncode, samples):
     }
 
 
-def print_summary(summary):
-    gha_group_start("Resource Usage Summary")
-
-    print("=" * 60)
-    print("RESOURCE SUMMARY")
-    print("=" * 60)
-    print(f"Command          : {summary['command']}")
-    print(f"Duration         : {summary['duration_human']}")
-    print(f"Exit code        : {summary['exit_code']}")
-    print("")
-    print("CPU")
-    print(f"  Avg            : {summary['cpu']['avg_percent']} %")
-    print(f"  Max            : {summary['cpu']['max_percent']} %")
-    print(f"  Min            : {summary['cpu']['min_percent']} %")
-    print("")
-    print("Memory")
-    print(f"  Avg used       : {summary['memory']['avg_used_gb']} GB")
-    print(f"  Peak used      : {summary['memory']['peak_used_gb']} GB")
-    print(f"  Min used       : {summary['memory']['min_used_gb']} GB")
-    print(f"  Avg usage      : {summary['memory']['avg_percent']} %")
-    print(f"  Max usage      : {summary['memory']['max_percent']} %")
-    print("")
-    print(f"Samples          : {summary['samples_collected']}")
-    print(f"Saved JSON       : {OUTPUT_JSON}")
-    print("=" * 60)
-
-    gha_group_end()
-
-
 def save_json(summary):
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+
     with open(OUTPUT_JSON, "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=4)
 
+
+# ============================================================
 # Main
+# ============================================================
 
 def main():
     if len(sys.argv) < 2:
         print("Usage:")
-        print("python resource_summary.py --system")
-        print('python resource_summary.py "pytest ..."')
+        print("python ci/resource_summary.py --system")
+        print('python ci/resource_summary.py "pytest ..."')
         sys.exit(1)
+
+    # --------------------------------------------------------
+    # System mode
+    # --------------------------------------------------------
 
     if sys.argv[1] == "--system":
         print_system_summary()
         sys.exit(0)
+
+    # --------------------------------------------------------
+    # Monitoring mode
+    # --------------------------------------------------------
 
     command = " ".join(sys.argv[1:])
 
@@ -185,10 +187,15 @@ def main():
     samples = []
     stop_event = threading.Event()
 
-    watcher = threading.Thread(target=monitor, args=(stop_event, samples))
+    watcher = threading.Thread(
+        target=monitor,
+        args=(stop_event, samples)
+    )
+
     watcher.daemon = True
 
     start_time = time.time()
+
     watcher.start()
 
     process = run_command(command)
@@ -206,7 +213,7 @@ def main():
         returncode=process.returncode,
         samples=samples
     )
-    print_summary(summary)
+
     save_json(summary)
 
     sys.exit(process.returncode)
