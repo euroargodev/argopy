@@ -119,6 +119,7 @@ jobs:
           task: get-measurement
           label: 'setup core-pinned'
         continue-on-error: true
+
       - name: Lint with flake8
         run: |
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
@@ -132,10 +133,36 @@ jobs:
         run: |
           python ci/resource_summary.py pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}} --junitxml=junit.xml -o junit_family=legacy
 
-      - name: Display resource summary
+      - name: Resource summary
         if: always()
         run: |
-          cat ci/artifacts/resource_summary.json    
+          python - <<'PY'
+          import json
+
+          with open("ci/artifacts/resource_summary.json") as f:
+              data = json.load(f)
+
+          print("=" * 60)
+          print("RESOURCE USAGE SUMMARY")
+          print("=" * 60)
+
+          print(f"Duration       : {data['duration_minutes']}")
+          print(f"Exit code      : {data['exit_code']}")
+
+          print("\nCPU")
+          print(f"  Avg          : {data['cpu']['avg_percent']} %")
+          print(f"  Max          : {data['cpu']['max_percent']} %")
+
+          print("\nMemory")
+          print(f"  Avg used     : {data['memory']['avg_used_gb']} GB")
+          print(f"  Peak used    : {data['memory']['peak_used_gb']} GB")
+          print(f"  Avg usage    : {data['memory']['avg_percent']} %")
+          print(f"  Max usage    : {data['memory']['max_percent']} %")
+
+          print("\nSamples")
+          print(f"  Collected    : {data['samples_collected']}")
+          print("=" * 60)
+          PY 
       
       - name: Upload resource summary
         if: always()
@@ -180,7 +207,7 @@ jobs:
           name: Argopy-Tests-Core-${{matrix.python-version}}-${{matrix.os}}
           path: ${{env.LOG_FILE}}
           retention-days: 90
-          
+
       - name: Energy Estimation - Show Results
         if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-solutions/eco-ci-energy-estimation@v5

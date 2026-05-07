@@ -129,7 +129,7 @@ def summarize(command, start_time, end_time, returncode, samples):
 
         "command": command,
         "duration_seconds": round(duration, 2),
-        "duration_human": format_seconds(duration),
+        "duration_minutes": format_seconds(duration),
         "exit_code": returncode,
 
         "cpu": {
