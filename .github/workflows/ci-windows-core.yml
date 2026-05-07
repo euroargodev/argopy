@@ -133,7 +133,7 @@ jobs:
           print("\nSamples")
           print(f"  Collected    : {data['samples_collected']}")
           print("=" * 60)
-          PY 
+          PY
       
       - name: Upload resource summary
         if: always()
