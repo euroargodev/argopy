@@ -1,0 +1,75 @@
+{
+  "name": "ECO_FLNTU",
+  "long_name": "ECO FLntu sensor package with fluorometer and scattering meter",
+  "last_update": "2026-01-25T11:14:12.912329+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLNTU/",
+    "pav:authoredOn": "2021-08-09 12:23:38.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLNTU/1/"
+    },
+    "dce:identifier": "SDN:R27::ECO_FLNTU",
+    "@type": "skos:Concept",
+    "skos:related": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_TURBIDITY/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/"
+      }
+    ],
+    "skos:definition": {
+      "@language": "en",
+      "@value": "A dual-channel optical sensor fitted with a single-wavelength fluorometer and a scattering meter calibrated to determine turbidity, depth-rated to 600 m. The sensor operates by flashing blue (470 nm) and red (700 nm) beams in alternation from two light-emitting diodes (LEDs), to respectively stimulate chlorophyll fluorescence and illuminate the total particle field. The scattering sensor has an in-water centroid angle of 142 deg. The instrument is part of the Environmental Characterization Optics (ECO) series tools, originally developed and manufactured at WET Labs and rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2010."
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R27::ECO_FLNTU",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "ECO FLntu sensor package with fluorometer and scattering meter"
+    },
+    "owl:versionInfo": "1",
+    "dc:date": "2021-08-09 12:23:38.0",
+    "skos:altLabel": "ECO_FLNTU",
+    "skos:notation": "SDN:R27::ECO_FLNTU",
+    "skos:broader": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
+      }
+    ],
+    "pav:version": "1",
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

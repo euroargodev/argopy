@@ -62,7 +62,11 @@ class FloatStoreProto(ABC):
         self.timeout = OPTIONS["api_timeout"] if timeout == 0 else timeout
         self._aux = bool(aux)
 
-        if not self._online and (self.host.startswith('http') or self.host.startswith('ftp') or self.host.startswith('s3')):
+        if not self._online and (
+            self.host.startswith("http")
+            or self.host.startswith("ftp")
+            or self.host.startswith("s3")
+        ):
             raise InvalidOption(
                 "Trying to work with remote host '%s' without a web connection. Check your connection parameters or try to work with a local GDAC path."
                 % self.host
@@ -179,7 +183,7 @@ class FloatStoreProto(ABC):
     @property
     def host_protocol(self) -> str:
         """Protocol of the GDAC host"""
-        return self.idx.fs["src"].protocol
+        return self.fs.protocol
 
     @property
     def host_sep(self) -> str:
@@ -223,15 +227,27 @@ class FloatStoreProto(ABC):
         paths = self.fs.glob(self.host_sep.join([self.path, "*"]))
 
         if self._aux:
-            paths += self.fs.glob(self.host_sep.join([self.path.replace('dac', 'aux'), "*"]))
+            paths += self.fs.glob(
+                self.host_sep.join(
+                    [
+                        self.path.replace(
+                            f"{self.host_sep}dac{self.host_sep}",
+                            f"{self.host_sep}aux{self.host_sep}",
+                        ),
+                        "*",
+                    ]
+                )
+            )
 
         paths = [p for p in paths if Path(p).suffix != ""]
 
         # Ensure the protocol is included for non-local files on FTP server:
         for ip, p in enumerate(paths):
-            if self.host_protocol == 'ftp':
-                paths[ip] = "ftp://" + self.fs.fs.host + fsspec.core.split_protocol(p)[-1]
-            if self.host_protocol == 's3':
+            if self.host_protocol == "ftp":
+                paths[ip] = (
+                    "ftp://" + self.fs.fs.host + fsspec.core.split_protocol(p)[-1]
+                )
+            if self.host_protocol == "s3":
                 paths[ip] = "s3://" + fsspec.core.split_protocol(p)[-1]
 
         paths.sort()
@@ -285,7 +301,9 @@ class FloatStoreProto(ABC):
                     avail.update({name: file})
         return dict(sorted(avail.items()))
 
-    def open_dataset(self, name: str = "prof", cast: bool = True, **kwargs) -> xr.Dataset:
+    def open_dataset(
+        self, name: str = "prof", cast: bool = True, **kwargs
+    ) -> xr.Dataset:
         """Open and decode a dataset
 
         Parameters
@@ -315,8 +333,8 @@ class FloatStoreProto(ABC):
         else:
             file = self.ls_dataset()[name]
 
-            if 'xr_opts' not in kwargs and cast is True:
-                kwargs.update({'xr_opts': {"engine": "argo"}})
+            if "xr_opts" not in kwargs and cast is True:
+                kwargs.update({"xr_opts": {"engine": "argo"}})
 
             ds = self.fs.open_dataset(file, **kwargs)
             self._dataset[name] = ds
@@ -333,7 +351,7 @@ class FloatStoreProto(ABC):
 
         If the float is still active, this is the current value.
         """
-        return len(self.metadata["cycles"])
+        return len(np.unique([c['id'] for c in self.metadata["cycles"]]))
 
     def describe_profiles(self) -> pd.DataFrame:
         """Return a :class:`pandas.DataFrame` describing profile files"""
@@ -366,8 +384,6 @@ class FloatStoreProto(ABC):
     def __repr__(self):
         backend = "online" if self._online else "offline"
         summary = ["<argofloat.%i.%s.%s>" % (self.WMO, self.host_protocol, backend)]
-        # status = "online ✅" if isconnected(self.path, maxtry=1) else "offline 🚫"
-        # summary.append("GDAC host: %s [%s]" % (self.host, status))
         summary.append("GDAC host: %s" % self.host)
         summary.append("DAC name: %s" % self.dac)
         summary.append("Network(s): %s" % self.metadata["networks"])
@@ -388,8 +404,6 @@ class FloatStoreProto(ABC):
         summary.append("Number of cycles: %s" % self.N_CYCLES)
         if self._online:
             summary.append("Dashboard: %s" % dashboard(wmo=self.WMO, url_only=True))
-        summary.append(
-            "Netcdf dataset available: %s" % list(self.ls_dataset().keys())
-        )
+        summary.append("Netcdf dataset available: %s" % list(self.ls_dataset().keys()))
 
         return "\n".join(summary)

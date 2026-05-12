@@ -1,6 +1,7 @@
 from .checkers import (  # noqa: F401
     is_box,
     is_indexbox,
+    parse_indexbox,
     is_list_of_strings,
     is_list_of_dicts,
     is_list_of_datasets,

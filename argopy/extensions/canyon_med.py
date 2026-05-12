@@ -51,9 +51,9 @@ class CanyonMED(ArgoAccessorExtension):
 
     References
     ----------
-    .. [1] Fourrier, M., Coppola, L., Claustre, H., D’Ortenzio, F., Sauzède, R., and Gattuso, J.-P. (2020). A Regional Neural Network Approach to Estimate Water-Column Nutrient Concentrations and Carbonate System Variables in the Mediterranean Sea: CANYON-MED. Frontiers in Marine Science 7. doi:10.3389/fmars.2020.00620.
+    .. [1] Fourrier, M., Coppola, L., Claustre, H., D'Ortenzio, F., Sauzede, R., and Gattuso, J.-P. (2020). A Regional Neural Network Approach to Estimate Water-Column Nutrient Concentrations and Carbonate System Variables in the Mediterranean Sea: CANYON-MED. Frontiers in Marine Science 7. doi:10.3389/fmars.2020.00620.
 
-    .. [2] Fourrier, M., Coppola, L., Claustre, H., D’Ortenzio, F., Sauzède, R., and Gattuso, J.-P. (2021). Corrigendum: A Regional Neural Network Approach to Estimate Water-Column Nutrient Concentrations and Carbonate System Variables in the Mediterranean Sea: CANYON-MED. Frontiers in Marine Science 8. doi:10.3389/fmars.2021.650509.
+    .. [2] Fourrier, M., Coppola, L., Claustre, H., D'Ortenzio, F., Sauzede, R., and Gattuso, J.-P. (2021). Corrigendum: A Regional Neural Network Approach to Estimate Water-Column Nutrient Concentrations and Carbonate System Variables in the Mediterranean Sea: CANYON-MED. Frontiers in Marine Science 8. doi:10.3389/fmars.2021.650509.
     """
 
     # todo This class work with pandas dataframe, but we should keep xarray dataset internally for the predictions
@@ -327,7 +327,7 @@ class CanyonMED(ArgoAccessorExtension):
 
         # Normalisation
         # See Eq. 2 in 10.3389/fmars.2020.00620
-        # (The factor 2/3 brings at least 80% of the data in the range [−1;1])
+        # (The factor 2/3 brings at least 80% of the data in the range [-1;1])
         data_N = df.iloc[:, : self.ne].copy()
         for i in range(self.ne):
             data_N.iloc[:, i] = (2 / 3) * ((df.iloc[:, i] - moy_F[:, i]) / std_F[:, i])

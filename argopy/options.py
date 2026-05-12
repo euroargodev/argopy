@@ -70,7 +70,7 @@ OPTIONS = {
     PARALLEL: False,
     PARALLEL_DEFAULT_METHOD: "thread",
     LON: "180",
-    NVS: "https://vocab.nerc.ac.uk/collection",
+    NVS: "https://vocab.nerc.ac.uk",
 }
 DEFAULT = OPTIONS.copy()
 
@@ -136,7 +136,7 @@ _VALIDATORS = {
     PARALLEL: validate_parallel,
     PARALLEL_DEFAULT_METHOD: validate_parallel_method,
     LON: lambda x: x in ['180', '360'],
-    NVS: lambda x: isinstance(x, str) or x is None,
+    NVS: lambda x: (isinstance(x, str) and x.startswith('http')) or x is None,
 }
 
 
@@ -225,7 +225,7 @@ class set_options:
                 - ``process``: use `multi-processing <https://en.wikipedia.org/wiki/Multiprocessing>`_ with a :class:`concurrent.futures.ProcessPoolExecutor`
                 -  :class:`distributed.Client`: Use a `Dask Cluster <https://docs.dask.org/en/stable/deploying.html>`_ `client <https://distributed.dask.org/en/latest/client.html>`_.
 
-    longitude_convention: str, default: '180',
+    longitude_convention: str, default: '180'
         The longitude convention to use when longitudes are compared.
 
             Possible values:
@@ -233,7 +233,7 @@ class set_options:
                 - '360': longitude goes from 0 to 360
 
     nvs: str, default: 'https://vocab.nerc.ac.uk/collection'
-        Argo NVS server
+        URL to use for the NVS Argo reference vocabulary server.
 
     Other Parameters
     ----------------

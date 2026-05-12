@@ -1,0 +1,67 @@
+{
+  "name": "883",
+  "long_name": "APEX_D deep float with RBR conductivity sensor",
+  "last_update": "2026-01-25T11:14:20.506893+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/883/",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R08/current/883/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R08/current/883/1/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
+      "@language": "en",
+      "@value": "APEX_D deep profiling float with RBR conductivity sensor (Code marked as 'Reserved' in WMO 1770 table)."
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R08::883",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "APEX_D deep float with RBR conductivity sensor"
+    },
+    "owl:versionInfo": "3",
+    "dc:date": "2024-11-11 09:32:23.0",
+    "skos:altLabel": "883",
+    "skos:notation": "SDN:R08::883",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R08::883",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R08/current/883/3/"
+    },
+    "pav:authoredOn": "2024-11-11 09:32:23.0",
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

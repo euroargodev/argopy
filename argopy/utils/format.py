@@ -526,9 +526,20 @@ def mono2multi(flist : list[str], convention : str = 'core', sep :str = '/') -> 
     return new_uri
 
 
-def urnparser(urn):
+def urnparser(urn: str) -> dict[str]:
     """Parsing RFC 8141 compliant uniform resource names (URN) from NVS
+
     SDN stands for SeaDataNet
+
+    Parameters
+    ----------
+    urn: str
+        Uniform resource names of the 'SDN:{listid}:{version}:{termid}' or 'SDN:{listid}::{termid}'
+
+    Returns
+    -------
+    dict[str, str]
+        Components of the URN: 'listid', 'version' and 'termid'
     """
     pp = urn.split(":")
     if len(pp) == 4 and pp[0] == 'SDN':
@@ -553,7 +564,9 @@ def ppliststr(l: list[str], last : str = 'and', n : int | None = None) -> str:
     if n == 0:
         return ""
 
-    s, ii, m = "", 0, len(l)
+    s: str = ""
+    ii: int = 0
+    m: int = len(l)
     while ii < m:
         item = l[ii]
         if ii == n:
@@ -567,4 +580,3 @@ def ppliststr(l: list[str], last : str = 'and', n : int | None = None) -> str:
             s += f", '{item}'"
         ii += 1
     return s
-

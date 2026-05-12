@@ -119,7 +119,7 @@ class ArgoFloatAnyConfigParametersProto(ArgoFloatExtension):
 class ArgoFloatLaunchConfigParametersProto(ArgoFloatAnyConfigParametersProto):
     """Extension providing access to LAUNCH configuration parameters
 
-    Pre-deployment or launch configuration parameters are the ‘configured’ start settings of the float and the initial mission configuration parameters for the first cycle.
+    Pre-deployment or launch configuration parameters are the 'configured' start settings of the float and the initial mission configuration parameters for the first cycle.
 
     Warnings
     --------

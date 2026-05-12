@@ -15,6 +15,7 @@ from pathlib import Path
 import pandas as pd
 
 from argopy.options import OPTIONS
+from argopy.utils.loggers import frame_info
 
 
 PIP_INSTALLED = {}
@@ -306,7 +307,7 @@ def modified_environ(*remove, **update):
 
 
 def show_options(file=sys.stdout):  # noqa: C901
-    """Print options of argopy
+    """Print options of Argopy
 
     Parameters
     ----------
@@ -318,7 +319,9 @@ def show_options(file=sys.stdout):  # noqa: C901
     opts = copy.deepcopy(OPTIONS)
     opts = dict(sorted(opts.items()))
     for k, v in opts.items():
-        print(f"{k}: {v}", file=file)
+        if 'password' in k.lower() or 'api_key' in k.lower() and v is not None:
+            v = "***"
+        print(f"{k:<20}: {v}", file=file)
 
 
 class Asset:
@@ -394,3 +397,8 @@ class Asset:
         For all other asset `name`, the :meth:`argopy.stores.filestore.load_json` is used by default.
         """
         return cls()._load(name=name, **kwargs)
+
+
+def caller_function():
+    """Return the name of the function calling wherever ``caller_function()`` is called"""
+    return frame_info(2).function
