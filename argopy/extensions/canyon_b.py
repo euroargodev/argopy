@@ -66,7 +66,7 @@ class CanyonB(ArgoAccessorExtension):
         ds = ArgoSet.to_xarray()
 
     Once input data are loaded, make all or selected parameters predictions with or without specifying input errors
-    on pressure (epres, in dbar), temperature (etemp, in °C), salinity (epsal, in PSU) and oxygen (edoxy, in micromole/kg).
+    on pressure (epres, in dbar), temperature (etemp, in degC), salinity (epsal, in PSU) and oxygen (edoxy, in micromole/kg).
     For interested users, uncertainties on predicted parameters can also be included.
 
     .. code-block:: python
@@ -80,20 +80,20 @@ class CanyonB(ArgoAccessorExtension):
 
     By default, if no input errors are specified, the following default values are used:
         - epres = 0.5 dbar
-        - etemp = 0.005 °C
+        - etemp = 0.005 degC
         - epsal = 0.005 PSU
         - edoxy = 1% of DOXY value
 
     Notes
     -----
-    This Python implementation is largely inspired by work from Raphaël Bajon (https://github.com/RaphaelBajon)
+    This Python implementation is largely inspired by work from Raphael Bajon (https://github.com/RaphaelBajon)
     which is available at https://github.com/RaphaelBajon/canyonbpy and from the EuroGO-SHIP organization (https://github.com/EuroGO-SHIP/AtlantOS_QC/blob/master/atlantos_qc/data_models/extra/pycanyonb.py)
 
     References
     ----------
-    .. [1] Bittig, H. C., Steinhoff, T., Claustre, H., Fiedler, B., Williams, N. L., Sauzède, R., Körtzinger, A., and Gattuso, J. P. (2018). An alternative to static climatologies: Robust estimation of open ocean CO2 variables and nutrient concentrations from T, S, and O2 data using Bayesian neural networks. Frontiers in Marine Science, 5, 328. https://doi.org/10.3389/fmars.2018.00328
+    .. [1] Bittig, H. C., Steinhoff, T., Claustre, H., Fiedler, B., Williams, N. L., Sauzede, R., Kortzinger, A., and Gattuso, J. P. (2018). An alternative to static climatologies: Robust estimation of open ocean CO2 variables and nutrient concentrations from T, S, and O2 data using Bayesian neural networks. Frontiers in Marine Science, 5, 328. https://doi.org/10.3389/fmars.2018.00328
 
-    .. [2] Sauzède, R., Bittig, H. C., Claustre, H., Pasqueron de Fommervault, O., Gattuso, J. P., Legendre, L., and Johnson, K. S. (2017). Estimates of water-column nutrient concentrations and carbonate system parameters in the global ocean: A novel approach based on neural networks. Frontiers in Marine Science, 4, 128. https://doi.org/10.3389/fmars.2017.00128
+    .. [2] Sauzede, R., Bittig, H. C., Claustre, H., Pasqueron de Fommervault, O., Gattuso, J. P., Legendre, L., and Johnson, K. S. (2017). Estimates of water-column nutrient concentrations and carbonate system parameters in the global ocean: A novel approach based on neural networks. Frontiers in Marine Science, 4, 128. https://doi.org/10.3389/fmars.2017.00128
     """
 
     n_inputs = (
@@ -292,14 +292,14 @@ class CanyonB(ArgoAccessorExtension):
             - 'lat': Latitude in degrees North (Arctic-adjusted if applicable)
             - 'lon': Longitude in degrees East
             - 'dec_year': Decimal year
-            - 'temp': Temperature (°C)
+            - 'temp': Temperature (degC)
             - 'psal': Salinity (PSU)
-            - 'doxy': Dissolved oxygen (µmol/kg)
+            - 'doxy': Dissolved oxygen (umol/kg)
             - 'pres': Modified pressure for CANYON-B input (dimensionless)
 
         References
         ----------
-        .. [1] Fourrier, M., Coppola, L., Claustre, H., D’Ortenzio, F., Sauzède, R., and Gattuso, J.-P. (2020). A Regional Neural Network Approach to Estimate Water-Column Nutrient Concentrations and Carbonate System Variables in the Mediterranean Sea: CANYON-MED. Frontiers in Marine Science 7. https://doi.org/10.3389/fmars.2020.00620
+        .. [1] Fourrier, M., Coppola, L., Claustre, H., D'Ortenzio, F., Sauzede, R., and Gattuso, J.-P. (2020). A Regional Neural Network Approach to Estimate Water-Column Nutrient Concentrations and Carbonate System Variables in the Mediterranean Sea: CANYON-MED. Frontiers in Marine Science 7. https://doi.org/10.3389/fmars.2020.00620
         """
         if self._obj.argo.N_POINTS > 1:
             df = pd.DataFrame(
@@ -353,14 +353,14 @@ class CanyonB(ArgoAccessorExtension):
             - Decimal year
             - Normalized latitude
             - Transformed longitude (see eq. (1) in [1]_)
-            - Temperature (°C)
+            - Temperature (degC)
             - Practical salinity (PSU)
-            - Dissolved oxygen (μmol/kg)
+            - Dissolved oxygen (umol/kg)
             - Transformed pressure (dimensionless)
 
         References
         ----------
-        .. [1] Bittig, H. C., Steinhoff, T., Claustre, H., Fiedler, B., Williams, N. L., Sauzède, R., Körtzinger, A., and Gattuso, J. P. (2018). An alternative to static climatologies: Robust estimation of open ocean CO2 variables and nutrient concentrations from T, S, and O2 data using Bayesian neural networks. Frontiers in Marine Science, 5, 328. https://doi.org/10.3389/fmars.2018.00328
+        .. [1] Bittig, H. C., Steinhoff, T., Claustre, H., Fiedler, B., Williams, N. L., Sauzede, R., Kortzinger, A., and Gattuso, J. P. (2018). An alternative to static climatologies: Robust estimation of open ocean CO2 variables and nutrient concentrations from T, S, and O2 data using Bayesian neural networks. Frontiers in Marine Science, 5, 328. https://doi.org/10.3389/fmars.2018.00328
         """
         df = self.ds2df()
 
@@ -402,7 +402,7 @@ class CanyonB(ArgoAccessorExtension):
 
         References
         ----------
-        .. [1] Bittig, H. C., Steinhoff, T., Claustre, H., Fiedler, B., Williams, N. L., Sauzède, R., Körtzinger, A., and Gattuso, J. P. (2018). An alternative to static climatologies: Robust estimation of open ocean CO2 variables and nutrient concentrations from T, S, and O2 data using Bayesian neural networks. Frontiers in Marine Science, 5, 328. https://doi.org/10.3389/fmars.2018.00328
+        .. [1] Bittig, H. C., Steinhoff, T., Claustre, H., Fiedler, B., Williams, N. L., Sauzede, R., Kortzinger, A., and Gattuso, J. P. (2018). An alternative to static climatologies: Robust estimation of open ocean CO2 variables and nutrient concentrations from T, S, and O2 data using Bayesian neural networks. Frontiers in Marine Science, 5, 328. https://doi.org/10.3389/fmars.2018.00328
         """
         # Points for Arctic basin 'West' of Lomonosov ridge
         plon = np.array(
@@ -568,21 +568,21 @@ class CanyonB(ArgoAccessorExtension):
         ----------
         param : str
             Parameter to predict. Must be one of:
-            - 'AT': Total alkalinity (μmol/kg)
-            - 'DIC': Dissolved inorganic carbon (μmol/kg)
+            - 'AT': Total alkalinity (umol/kg)
+            - 'DIC': Dissolved inorganic carbon (umol/kg)
             - 'pHT': Total pH
-            - 'pCO2': Partial pressure of CO₂ (μatm)
-            - 'NO3': Nitrate concentration (μmol/kg)
-            - 'PO4': Phosphate concentration (μmol/kg)
-            - 'SiOH4': Silicate concentration (μmol/kg)
+            - 'pCO2': Partial pressure of CO2 (uatm)
+            - 'NO3': Nitrate concentration (umol/kg)
+            - 'PO4': Phosphate concentration (umol/kg)
+            - 'SiOH4': Silicate concentration (umol/kg)
         epres : float, optional
             Pressure measurement uncertainty in dbar (default: 0.5 dbar)
         etemp : float, optional
-            Temperature measurement uncertainty in °C (default: 0.005 °C)
+            Temperature measurement uncertainty in degC (default: 0.005 degC)
         epsal : float, optional
             Salinity measurement uncertainty (PSU, default: 0.005)
         edoxy : float or np.ndarray, optional
-            Oxygen measurement uncertainty in μmol/kg. If not provided,
+            Oxygen measurement uncertainty in umol/kg. If not provided,
             defaults to 1% of measured oxygen values. Can be a scalar
             applied to all points or an array matching data dimensions.
         data : np.ndarray, optional
@@ -828,24 +828,24 @@ class CanyonB(ArgoAccessorExtension):
         params : str, list of str, or None, optional
             Parameter(s) to predict. Valid options:
 
-            - 'AT': Total alkalinity (μmol/kg)
-            - 'DIC': Dissolved inorganic carbon (μmol/kg)
+            - 'AT': Total alkalinity (umol/kg)
+            - 'DIC': Dissolved inorganic carbon (umol/kg)
             - 'pHT': Total pH
-            - 'pCO2': Partial pressure of CO₂ (μatm)
-            - 'NO3': Nitrate concentration (μmol/kg)
-            - 'PO4': Phosphate concentration (μmol/kg)
-            - 'SiOH4': Silicate concentration (μmol/kg)
+            - 'pCO2': Partial pressure of CO2 (uatm)
+            - 'NO3': Nitrate concentration (umol/kg)
+            - 'PO4': Phosphate concentration (umol/kg)
+            - 'SiOH4': Silicate concentration (umol/kg)
 
             If None (default), all seven parameters are predicted.
 
         epres : float, optional
             Pressure measurement uncertainty in dbar (default: 0.5 dbar)
         etemp : float, optional
-            Temperature measurement uncertainty in °C (default: 0.005 °C)
+            Temperature measurement uncertainty in degC (default: 0.005 degC)
         epsal : float, optional
             Salinity measurement uncertainty in PSU (default: 0.005)
         edoxy : float or np.ndarray, optional
-            Oxygen measurement uncertainty in μmol/kg. If not provided,
+            Oxygen measurement uncertainty in umol/kg. If not provided,
             defaults to 1% of measured oxygen values. Can be a scalar
             applied to all points or an array matching data dimensions.
         include_uncertainties : bool, optional

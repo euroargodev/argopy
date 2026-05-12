@@ -1,0 +1,70 @@
+{
+  "name": "TEMP_PH",
+  "long_name": "Sea temperature from pH sensor",
+  "last_update": "2026-01-25T11:11:31.333727+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_PH/",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_PH/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_PH/2/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:related": {
+      "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UPAA/"
+    },
+    "skos:definition": {
+      "@language": "en",
+      "@value": "Temperature of seawater, reported by the pH sensor. Local_Attributes:{long_name:Sea temperature from pH sensor; standard_name:-; units:degree_Celsius; valid_min:-2.f; valid_max:40.f; fill_value:99999.f}. Properties:{category:ib; data_type:float}"
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R03::TEMP_PH",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "Sea temperature from pH sensor"
+    },
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-25 10:14:00.0",
+    "skos:altLabel": "TEMP_PH",
+    "skos:notation": "SDN:R03::TEMP_PH",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R03::TEMP_PH",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_PH/3/"
+    },
+    "pav:authoredOn": "2025-11-25 10:14:00.0",
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}
