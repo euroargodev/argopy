@@ -51,9 +51,7 @@ def get_system_info():
     }
 
 
-# ============================================================
 # System summary mode
-# ============================================================
 
 def print_system_summary():
     info = get_system_info()
