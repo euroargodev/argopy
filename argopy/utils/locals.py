@@ -15,6 +15,7 @@ from pathlib import Path
 import pandas as pd
 
 from argopy.options import OPTIONS
+from argopy.utils.loggers import frame_info
 
 
 PIP_INSTALLED = {}
@@ -396,3 +397,8 @@ class Asset:
         For all other asset `name`, the :meth:`argopy.stores.filestore.load_json` is used by default.
         """
         return cls()._load(name=name, **kwargs)
+
+
+def caller_function():
+    """Return the name of the function calling wherever ``caller_function()`` is called"""
+    return frame_info(2).function

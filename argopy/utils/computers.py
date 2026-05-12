@@ -41,7 +41,7 @@ class Msg:
 
 #
 #  From xarrayutils : https://github.com/jbusecke/xarrayutils/blob/master/xarrayutils/vertical_coordinates.py
-#  Direct integration of those 2 functions to minimize dependencies and possibility of tuning them to our needs
+#  Direct integration of those 2 functions to minimize dependencies and possibility of tuning them to our needs
 #
 
 def _linear_interp_legacy(x: np.ndarray, y: np.ndarray, xi: np.ndarray) -> np.ndarray:

@@ -312,6 +312,17 @@ List of extensions:
     ArgoIndex.plot.trajectory
     ArgoIndex.plot.bar
 
+Argo vocabulary: referencing system
+===================================
+
+.. autosummary::
+   :toctree: generated/
+
+    ArgoReferenceValue
+    ArgoReferenceTable
+    ArgoReferenceMapping
+    ArgoNVSReferenceTables
+
 Other Argo related data
 =======================
 
@@ -321,7 +332,6 @@ Other Argo related data
    status
    ArgoDocs
    ArgoDOI
-   ArgoNVSReferenceTables
    OceanOPSDeployments
    CTDRefDataFetcher
    TopoFetcher

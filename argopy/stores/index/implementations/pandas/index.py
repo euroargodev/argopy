@@ -4,6 +4,7 @@ import logging
 import gzip
 from pathlib import Path
 from typing import List
+import concurrent.futures
 
 from argopy.options import OPTIONS
 from argopy.errors import DataNotFound, InvalidDatasetStructure
@@ -355,7 +356,7 @@ class indexstore(ArgoIndexStoreProto):
         else:
             return mono2multi(flist, convention=self.convention, sep=sep)
 
-    def records_per_wmo(self, index=False):
+    def records_per_wmo_legacy(self, index=False):
         """Return the number of records per unique WMOs in search results
 
             Fall back on full index if search not triggered
@@ -377,6 +378,47 @@ class indexstore(ArgoIndexStoreProto):
                     "/%i/" % wmo, regex=True, case=False
                 )
                 count[wmo] = self.index[search_filter].shape[0]
+        return count
+
+    def records_per_wmo(self, index=False):
+        """Return the number of records per unique WMOs in search results
+
+        Fall back on full index if search not triggered
+
+        Returns
+        -------
+        dict
+
+        Notes
+        -----
+        Computation is parallelized over all WMOs with a ThreadPoolExecutor
+        """
+
+        def count_wmo(self, wmo: int, index: bool):
+            if hasattr(self, "search") and not index:
+                search_filter = self.search["file"].str.contains(
+                    "/%i/" % wmo, regex=True, case=False
+                )
+                return wmo, self.search[search_filter].shape[0]
+            else:
+                search_filter = self.index["file"].str.contains(
+                    "/%i/" % wmo, regex=True, case=False
+                )
+                return wmo, self.index[search_filter].shape[0]
+
+        ulist = self.read_wmo()
+        count = {}
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            # Submit tasks for each WMO
+            futures = {
+                executor.submit(count_wmo, self, wmo, index): wmo for wmo in ulist
+            }
+
+            # Process results as they complete
+            for future in concurrent.futures.as_completed(futures):
+                wmo, cnt = future.result()
+                count[wmo] = cnt
+
         return count
 
     def to_indexfile(self, outputfile):

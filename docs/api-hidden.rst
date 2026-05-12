@@ -433,3 +433,24 @@
     argopy.ArgoFloat.launchconfig.n_params
     argopy.ArgoFloat.launchconfig.parameters
     argopy.ArgoFloat.launchconfig.to_dataframe
+
+    argopy.reference.concept.ArgoReferenceValue
+    argopy.ArgoReferenceValue.from_urn
+    argopy.ArgoReferenceValue.from_dict
+    argopy.ArgoReferenceValue.to_json
+    argopy.ArgoReferenceValue.nvs
+
+    argopy.reference.vocabulary.ArgoReferenceTable
+    argopy.ArgoReferenceTable.valid_identifier
+    argopy.ArgoReferenceTable.search
+    argopy.ArgoReferenceTable.from_urn
+    argopy.ArgoReferenceTable.to_dataframe
+    argopy.ArgoReferenceTable.to_dict
+    argopy.ArgoReferenceTable.nvs
+
+    argopy.reference.mapping.ArgoReferenceMapping
+    argopy.ArgoReferenceMapping.subjects
+    argopy.ArgoReferenceMapping.objects
+    argopy.ArgoReferenceMapping.predicates
+    argopy.ArgoReferenceMapping.to_dataframe
+    argopy.ArgoReferenceMapping.nvs

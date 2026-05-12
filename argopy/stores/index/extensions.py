@@ -200,8 +200,19 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
 
         Parameters
         ----------
-        BOX : list()
-            An index box to search Argo records for.
+        BOX : list, tuple, int, float, optional
+            An index box to search Argo records for. Can be:
+            
+            - Full 6-element list: [lon_min, lon_max, lat_min, lat_max, date_min, date_max]
+            - 2-element list: [lon_min, lon_max]
+            - Single value: interpreted as lower bound (ge)
+            
+        ge : int or float, optional
+            Greater or equal bound for longitude filtering (lower limit).
+            Default: -180
+        le : int or float, optional
+            Less or equal bound for longitude filtering (upper limit).
+            Default: 180
 
         Returns
         -------
@@ -211,6 +222,10 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         --------
         Only longitude bounds are used from the index box.
 
+        Notes
+        -----
+        Either ``BOX`` or ``ge``/``le`` keywords must be provided.
+
         Examples
         --------
         .. code-block:: python
@@ -219,7 +234,10 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
             idx = ArgoIndex(index_file='core')
 
             idx.query.lon([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
-
+            idx.query.lon([-60, -55])
+            idx.query.lon(ge=-60)
+            idx.query.lon(le=-55)
+            idx.query.lon(-60)
         """
         raise NotImplementedError("Not implemented")
 
@@ -229,8 +247,19 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
 
         Parameters
         ----------
-        BOX : list()
-            An index box to search Argo records for.
+        BOX : list, tuple, int, float, optional
+            An index box to search Argo records for. Can be:
+            
+            - Full 6-element list: [lon_min, lon_max, lat_min, lat_max, date_min, date_max]
+            - 2-element list: [lat_min, lat_max]
+            - Single value: interpreted as lower bound (ge)
+            
+        ge : int or float, optional
+            Greater or equal bound for latitude filtering (lower limit).
+            Default: -90
+        le : int or float, optional
+            Less or equal bound for latitude filtering (upper limit).
+            Default: 90
 
         Returns
         -------
@@ -240,6 +269,10 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         --------
         Only latitude bounds are used from the index box.
 
+        Notes
+        -----
+        Either ``BOX`` or ``ge``/``le`` keywords must be provided.
+
         Examples
         --------
         .. code-block:: python
@@ -248,7 +281,10 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
             idx = ArgoIndex(index_file='core')
 
             idx.query.lat([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
-
+            idx.query.lat([40, 45])
+            idx.query.lat(ge=40)
+            idx.query.lat(le=45)
+            idx.query.lat(40)
         """
         raise NotImplementedError("Not implemented")
 
@@ -258,8 +294,19 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
 
         Parameters
         ----------
-        BOX : list()
-            An index box to search Argo records for.
+        BOX : list or str, optional
+            An index box to search Argo records for. Can be:
+            
+            - Full 6-element list: [lon_min, lon_max, lat_min, lat_max, date_min, date_max]
+            - 2-element list: [date_min, date_max]
+            - Single date string: interpreted as day-only (profiles on that specific date)
+            
+        ge : str, optional
+            Greater or equal bound for date filtering (lower limit).
+            Default: '1900-01-01'
+        le : str, optional
+            Less or equal bound for date filtering (upper limit).
+            Default: '2100-12-31'
 
         Returns
         -------
@@ -269,6 +316,10 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         --------
         Only date bounds are used from the index box.
 
+        Notes
+        -----
+        Either ``BOX`` or ``ge``/``le`` keywords must be provided.
+
         Examples
         --------
         .. code-block:: python
@@ -277,6 +328,9 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
             idx = ArgoIndex(index_file='core')
 
             idx.query.date([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
+            idx.query.date(ge='2007-08-01', le='2007-09-01')
+            idx.query.date(['2007-08-01', '2007-09-01'])
+            idx.query.date('2007-09-01')
 
         """
         raise NotImplementedError("Not implemented")
