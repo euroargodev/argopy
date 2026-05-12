@@ -4,39 +4,41 @@ Impact of Argopy
 Papers & proceedings citing Argopy
 ----------------------------------
 
-- Bartlett, Jenna  (2022). "An investigation of geostationary satellite imagery to compare developing and non-developing African easterly waves", Thesis and Dissertations. 5600. https://scholarsjunction.msstate.edu/td/5600
+#. Bartlett, Jenna  (2022). "An investigation of geostationary satellite imagery to compare developing and non-developing African easterly waves", Thesis and Dissertations. 5600. https://scholarsjunction.msstate.edu/td/5600
 
-- Chafik, et.al (2023). "The Faroe-Shetland Channel Jet: Structure, Variability, and Driving Mechanisms", Journal of Geophysical Research: Oceans. https://doi.org/10.1029/2022JC019083
+#. Chafik, et.al (2023). "The Faroe-Shetland Channel Jet: Structure, Variability, and Driving Mechanisms", Journal of Geophysical Research: Oceans. https://doi.org/10.1029/2022JC019083
 
-- Chevillard C, Juza M, Dıaz-Barroso L, Reyes E, Escudier R and Tintore J (2024). "Capability of the Mediterranean Argo network to monitor sub-regional climate change indicators", Front. Mar. Sci. 11:1416486. https://doi.org/10.3389/fmars.2024.1416486
+#. Chevillard C, Juza M, Dıaz-Barroso L, Reyes E, Escudier R and Tintore J (2024). "Capability of the Mediterranean Argo network to monitor sub-regional climate change indicators", Front. Mar. Sci. 11:1416486. https://doi.org/10.3389/fmars.2024.1416486
 
-- Clay, S., Ringuette, M., Devred, E., Azetsu-Scott, K., Wang, Z., Greenan, B., Gordon, C., Gabriel, C.E., Childs, D., and Layton, C. (2026). "Physical, Chemical, Biological, and Optical Oceanographic Conditions in the Labrador Sea in 2024", Can. Tech. Rep. Fish. Aquat. Sci. 3752: vii + 58 p. https://doi.org/10.60825/327m-sm93
+#. Clay, S., Ringuette, M., Devred, E., Azetsu-Scott, K., Wang, Z., Greenan, B., Gordon, C., Gabriel, C.E., Childs, D., and Layton, C. (2026). "Physical, Chemical, Biological, and Optical Oceanographic Conditions in the Labrador Sea in 2024", Can. Tech. Rep. Fish. Aquat. Sci. 3752: vii + 58 p. https://doi.org/10.60825/327m-sm93
 
-- Dan E. Kelley, Jaimie Harbin, Clark Richards (2021). "argoFloats: An R Package for Analyzing Argo Data", Frontiers in Marine Science, https://doi.org/10.3389/fmars.2021.635922
+#. Dan E. Kelley, Jaimie Harbin, Clark Richards (2021). "argoFloats: An R Package for Analyzing Argo Data", Frontiers in Marine Science, https://doi.org/10.3389/fmars.2021.635922
 
-- Danilo Augusto Silva, Avijit Gangopadhyay, Dalton Kei Sasaki, et al. (2026). "Evidence of Synoptic Cross-shelf Pathways of Mid-depth Salinity Maximum Intrusions in the South Brazil Bight", ESS Open Archive, https://doi.org/10.22541/essoar.176771720.05845924/v1
+#. Danilo Augusto Silva, Avijit Gangopadhyay, Dalton Kei Sasaki, et al. (2026). "Evidence of Synoptic Cross-shelf Pathways of Mid-depth Salinity Maximum Intrusions in the South Brazil Bight", ESS Open Archive, https://doi.org/10.22541/essoar.176771720.05845924/v1
 
-- de Solo, Sofia M. (2021). "What makes a hurricane fall apart? A multi-platform assessment of tropical cyclone weakening By", Thesis and Dissertations. 5274. https://scholarsjunction.msstate.edu/td/5274
+#. de Solo, Sofia M. (2021). "What makes a hurricane fall apart? A multi-platform assessment of tropical cyclone weakening By", Thesis and Dissertations. 5274. https://scholarsjunction.msstate.edu/td/5274
 
-- Dunnington et al., (2021). "argodata: An R interface to oceanographic data from the International Argo Program", Journal of Open Source Software, 6(68), 3659, https://doi.org/10.21105/joss.03659
+#. Dunnington et al., (2021). "argodata: An R interface to oceanographic data from the International Argo Program", Journal of Open Source Software, 6(68), 3659, https://doi.org/10.21105/joss.03659
 
-- Elipot S. , P Miron, M Curcic, K Santana, R Lumpkin (2024). "Clouddrift: a Python package to accelerate the use of Lagrangian data for atmospheric, oceanic, and climate sciences", Journal of Open Source Software, 9(99), 6742,  https://joss.theoj.org/papers/10.21105/joss.06742
+#. Elipot S. , P Miron, M Curcic, K Santana, R Lumpkin (2024). "Clouddrift: a Python package to accelerate the use of Lagrangian data for atmospheric, oceanic, and climate sciences", Journal of Open Source Software, 9(99), 6742,  https://joss.theoj.org/papers/10.21105/joss.06742
 
-- Glaubke, R.H., Sikes, E.L., Sosdian, S.M. et al. (2025). "Elevated shallow water salinity in the deglacial Indian Ocean was sourced from the deep", Nat. Geosci. 18, 893–900, https://doi.org/10.1038/s41561-025-01756-7
+#. Glaubke, R.H., Sikes, E.L., Sosdian, S.M. et al. (2025). "Elevated shallow water salinity in the deglacial Indian Ocean was sourced from the deep", Nat. Geosci. 18, 893–900, https://doi.org/10.1038/s41561-025-01756-7
 
-- Gonzalez A. (2023). "The Argo Online School: An e-learning tool to get started with Argo", The Journal of Open Source Education, 7(80), 193, https://jose.theoj.org/papers/10.21105/jose.00193
+#. Gonzalez A. (2023). "The Argo Online School: An e-learning tool to get started with Argo", The Journal of Open Source Education, 7(80), 193, https://jose.theoj.org/papers/10.21105/jose.00193
 
-- Huda, Md Nurul  (2023). "Machine Learning for Improvement of Ocean Data Resolution for Weather Forecasting and Climatological Research", Thesis and Dissertations, Virginia Tech, http://hdl.handle.net/10919/116504
+#. Huda, Md Nurul  (2023). "Machine Learning for Improvement of Ocean Data Resolution for Weather Forecasting and Climatological Research", Thesis and Dissertations, Virginia Tech, http://hdl.handle.net/10919/116504
 
-- Kerhalkar, S., Tandon, A., & MacKinnon, J. A. (2026). "Impacts of salinity stratification on sub-seasonal SST warming in the Northern Indian Ocean", Journal of Geophysical Research: Oceans, 131, e2025JC023486. https://doi.org/10.1029/2025JC023486
+#. Kerhalkar, S., Tandon, A., & MacKinnon, J. A. (2026). "Impacts of salinity stratification on sub-seasonal SST warming in the Northern Indian Ocean", Journal of Geophysical Research: Oceans, 131, e2025JC023486. https://doi.org/10.1029/2025JC023486
 
-- Singh, Shikha and Sapkal, Mayur (2025). "A machine learning approach to identify upper ocean water masses in the Indian Ocean", CSI Transactions on ICT. https://doi.org/10.1007/s40012-025-00417-9.
+#. Lehmann, N., Aybar, C., Shah, A., Passaro, M., Bamber, J. L., and Zhu, X. X. (2026): "OceanTACO: A Multi-Sensor Global Ocean Sea Surface State Dataset", Earth Syst. Sci. Data Discuss. [preprint], https://doi.org/10.5194/essd-2026-232, in review, 2026.
 
-- Steinberg, J. M., Piecuch, C. G., Hamlington, B. D., Thompson, P. R., & Coats, S. (2024). "Influence of deep-ocean warming on coastal sea-level decadal trends in the Gulf of Mexico", Journal of Geophysical Research: Oceans, 129, e2023JC019681. https://doi.org/10.1029/2023JC019681
+#. Singh, Shikha and Sapkal, Mayur (2025). "A machine learning approach to identify upper ocean water masses in the Indian Ocean", CSI Transactions on ICT. https://doi.org/10.1007/s40012-025-00417-9.
 
-- Yao, L., Taylor, J.R. (2026). "Global climatology of submesoscale restratification using machine learning". Sci Rep (2026). https://doi.org/10.1038/s41598-026-41929-x
+#. Steinberg, J. M., Piecuch, C. G., Hamlington, B. D., Thompson, P. R., & Coats, S. (2024). "Influence of deep-ocean warming on coastal sea-level decadal trends in the Gulf of Mexico", Journal of Geophysical Research: Oceans, 129, e2023JC019681. https://doi.org/10.1029/2023JC019681
 
-- Zhang, Y. (2023). "Python Data Analysis Techniques in Administrative Information Integration Management System". In: Atiquzzaman, M., Yen, N.Y., Xu, Z. (eds) Proceedings of the 4th International Conference on Big Data Analytics for Cyber-Physical System in Smart City - Volume 2. BDCPS 2022. Lecture Notes on Data Engineering and Communications Technologies, vol 168. Springer, Singapore. https://doi.org/10.1007/978-981-99-1157-8_35
+#. Yao, L., Taylor, J.R. (2026). "Global climatology of submesoscale restratification using machine learning". Sci Rep (2026). https://doi.org/10.1038/s41598-026-41929-x
+
+#. Zhang, Y. (2023). "Python Data Analysis Techniques in Administrative Information Integration Management System". In: Atiquzzaman, M., Yen, N.Y., Xu, Z. (eds) Proceedings of the 4th International Conference on Big Data Analytics for Cyber-Physical System in Smart City - Volume 2. BDCPS 2022. Lecture Notes on Data Engineering and Communications Technologies, vol 168. Springer, Singapore. https://doi.org/10.1007/978-981-99-1157-8_35
 
 
 Other interesting mentions
