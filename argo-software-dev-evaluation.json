@@ -1,5 +1,5 @@
 {
-  "targetLevel": "Beginner",
+  "targetLevel": "Intermediate",
   "metadata": {
     "version": "1.0",
     "tool": "EuroArgo Software Evaluator"
@@ -10,19 +10,19 @@
     "url": "https://github.com/euroargodev/argopy"
   },
   "evaluation": {
-    "level": "Beginner",
-    "targetLevel": "Beginner",
+    "level": "Intermediate",
+    "targetLevel": "Intermediate",
     "achievedLevel": "Novice",
-    "score": 0.9591836734693878,
+    "score": 0.9820627802690582,
     "stats": {
-      "totalCriteria": 26,
-      "metCriteria": 25,
+      "totalCriteria": 51,
+      "metCriteria": 50,
       "unmetCriteria": 1,
-      "weightedScore": 28.199999999999996,
-      "totalWeight": 29.399999999999995,
-      "autoCriteria": 10,
-      "manualCriteria": 16,
-      "targetLevel": "Beginner"
+      "weightedScore": 65.70000000000002,
+      "totalWeight": 66.90000000000002,
+      "autoCriteria": 15,
+      "manualCriteria": 36,
+      "targetLevel": "Intermediate"
     }
   },
   "details": {
@@ -105,6 +105,55 @@
       "evidence": "Argopy does not produce official netcdf files",
       "url": "https://github.com/euroargodev/software_guidelines/issues/9"
     },
+    "10": {
+      "title": "Each collaborator is clearly identified within the project",
+      "level": "Intermediate",
+      "category": "General",
+      "group": "General",
+      "status": "met",
+      "weight": 1.5,
+      "type": "manual",
+      "evidence": "https://github.com/euroargodev/argopy/graphs/contributors",
+      "url": "https://github.com/euroargodev/software_guidelines/issues/10"
+    },
+    "12": {
+      "title": "Every significant change within the code is managed through a pull (or merge) request",
+      "level": "Intermediate",
+      "category": "General",
+      "group": "General",
+      "status": "met",
+      "weight": 1.5,
+      "type": "auto",
+      "evidence": [
+        "PR #620"
+      ],
+      "url": "https://github.com/euroargodev/software_guidelines/issues/12"
+    },
+    "14": {
+      "title": "Issues or bugs are explicitly referencing the concerned Argo mission (e.g. core, deep, BGC, ...) or component (e.g. trajectories, decoding,...)",
+      "level": "Intermediate",
+      "category": "Continuous Integration",
+      "group": "Argo specific",
+      "status": "met",
+      "weight": 1.5,
+      "type": "manual",
+      "evidence": "In the guidelines to contribute and report issues/bugs",
+      "url": "https://github.com/euroargodev/software_guidelines/issues/14"
+    },
+    "15": {
+      "title": "Issues or bugs are managed through the web-based development platform (e.g., GitHub or GitLab issues)",
+      "level": "Intermediate",
+      "category": "General",
+      "group": "General",
+      "status": "met",
+      "weight": 1.5,
+      "type": "auto",
+      "evidence": [
+        "issues_enabled",
+        ".github/ISSUE_TEMPLATE"
+      ],
+      "url": "https://github.com/euroargodev/software_guidelines/issues/15"
+    },
     "16": {
       "title": "Metadata produced by the software follow Argo conventions (as in reference tables provided by the NVS server)",
       "level": "Beginner",
@@ -170,6 +219,112 @@
       "type": "manual",
       "evidence": "We use black and flake8 to implement this guidelines",
       "url": "https://github.com/euroargodev/software_guidelines/issues/23"
+    },
+    "24": {
+      "title": "The codebase is designed with modular components to facilitate reuse, testing and maintenance",
+      "level": "Intermediate",
+      "category": "Continuous Integration",
+      "group": "General",
+      "status": "met",
+      "weight": 1.5,
+      "type": "manual",
+      "evidence": "that is design we tried to implement",
+      "url": "https://github.com/euroargodev/software_guidelines/issues/24"
+    },
+    "25": {
+      "title": "The codebase is formatted following referenced standards (e.g. black in Python)",
+      "level": "Intermediate",
+      "category": "General",
+      "group": "General",
+      "status": "met",
+      "weight": 1.5,
+      "type": "auto",
+      "evidence": [
+        ".flake8",
+        "pyproject.toml"
+      ],
+      "url": "https://github.com/euroargodev/software_guidelines/issues/25"
+    },
+    "26": {
+      "title": "The methodology implemented by the software has been presented to the Argo community (e.g. Data Management Team meeting)",
+      "level": "Intermediate",
+      "category": "Community",
+      "group": "Argo specific",
+      "status": "met",
+      "weight": 1.5,
+      "type": "manual",
+      "evidence": "Presented in ADMT24 and ASW7",
+      "url": "https://github.com/euroargodev/software_guidelines/issues/26"
+    },
+    "27": {
+      "title": "The project allows any user to submit an issue or bug report and ease the process (e.g. provide list of labels, issue templates)",
+      "level": "Intermediate",
+      "category": "General",
+      "group": "General",
+      "status": "met",
+      "weight": 1.5,
+      "type": "manual",
+      "evidence": "Done and possible on the Github web service",
+      "url": "https://github.com/euroargodev/software_guidelines/issues/27"
+    },
+    "28": {
+      "title": "The project clearly list all software identifiers in the README file (e.g. DOI, SWHID)",
+      "level": "Intermediate",
+      "category": "Documentation",
+      "group": "General",
+      "status": "met",
+      "weight": 1.5,
+      "type": "manual",
+      "evidence": "Done with badges",
+      "url": "https://github.com/euroargodev/software_guidelines/issues/28"
+    },
+    "29": {
+      "title": "The project defines expected standards of conduct when engaging in the project (e.g. includes a CODE_OF_CONDUCT file to the codebase)",
+      "level": "Intermediate",
+      "category": "General",
+      "group": "General",
+      "status": "met",
+      "weight": 1.5,
+      "type": "manual",
+      "evidence": "https://github.com/euroargodev/argopy?tab=coc-ov-file#readme",
+      "url": "https://github.com/euroargodev/software_guidelines/issues/29"
+    },
+    "31": {
+      "title": "The project has multiple collaborators from the Argo community",
+      "level": "Intermediate",
+      "category": "Community",
+      "group": "Argo specific",
+      "status": "met",
+      "weight": 1.5,
+      "type": "manual",
+      "evidence": "Yes and from multiple laboratories",
+      "url": "https://github.com/euroargodev/software_guidelines/issues/31"
+    },
+    "32": {
+      "title": "The project include a CITATION.cff file to indicate how to cite the software",
+      "level": "Intermediate",
+      "category": "FAIR Data",
+      "group": "General",
+      "status": "met",
+      "weight": 1.5,
+      "type": "auto",
+      "evidence": [
+        "CITATION.cff"
+      ],
+      "url": "https://github.com/euroargodev/software_guidelines/issues/32"
+    },
+    "33": {
+      "title": "The project includes a CONTRIBUTING file",
+      "level": "Intermediate",
+      "category": "General",
+      "group": "General",
+      "status": "met",
+      "weight": 1.5,
+      "type": "auto",
+      "evidence": [
+        "CONTRIBUTING.md"
+      ],
+      "url": "https://github.com/euroargodev/software_guidelines/issues/33"
     },
     "34": {
       "title": "The project includes a LICENSE file",
@@ -247,6 +402,50 @@
       ],
       "url": "https://github.com/euroargodev/software_guidelines/issues/41"
     },
+    "42": {
+      "title": "The software documentation has an API reference section automatically generated",
+      "level": "Intermediate",
+      "category": "Documentation",
+      "group": "General",
+      "status": "met",
+      "weight": 1.5,
+      "type": "manual",
+      "evidence": "https://argopy.readthedocs.io/en/latest/api.html",
+      "url": "https://github.com/euroargodev/software_guidelines/issues/42"
+    },
+    "43": {
+      "title": "The software documentation includes installation guidelines",
+      "level": "Intermediate",
+      "category": "Documentation",
+      "group": "General",
+      "status": "met",
+      "weight": 1.5,
+      "type": "manual",
+      "evidence": "https://argopy.readthedocs.io/en/latest/install.html",
+      "url": "https://github.com/euroargodev/software_guidelines/issues/43"
+    },
+    "44": {
+      "title": "The software documentation includes the definition of the execution environment supported",
+      "level": "Intermediate",
+      "category": "Documentation",
+      "group": "General",
+      "status": "met",
+      "weight": 1.5,
+      "type": "manual",
+      "evidence": "https://argopy.readthedocs.io/en/latest/install.html",
+      "url": "https://github.com/euroargodev/software_guidelines/issues/44"
+    },
+    "46": {
+      "title": "The software documentation includes the list of operating systems supported",
+      "level": "Intermediate",
+      "category": "Documentation",
+      "group": "General",
+      "status": "met",
+      "weight": 1.5,
+      "type": "manual",
+      "evidence": "https://argopy.readthedocs.io/en/latest/install.html",
+      "url": "https://github.com/euroargodev/software_guidelines/issues/46"
+    },
     "47": {
       "title": "The software documentation includes usage guidelines and examples",
       "level": "Beginner",
@@ -258,6 +457,28 @@
       "evidence": "See README and full documentation at https://argopy.readthedocs.io",
       "url": "https://github.com/euroargodev/software_guidelines/issues/47"
     },
+    "48": {
+      "title": "The software documentation is hosted on the web",
+      "level": "Intermediate",
+      "category": "Documentation",
+      "group": "General",
+      "status": "met",
+      "weight": 1.5,
+      "type": "manual",
+      "evidence": "https://argopy.readthedocs.io",
+      "url": "https://github.com/euroargodev/software_guidelines/issues/48"
+    },
+    "49": {
+      "title": "The software has a unique persistent identifier (e.g. DOI from paper or Zenodo, SWHID)",
+      "level": "Intermediate",
+      "category": "FAIR Data",
+      "group": "General",
+      "status": "met",
+      "weight": 1.5,
+      "type": "manual",
+      "evidence": "10.21105/joss.02425",
+      "url": "https://github.com/euroargodev/software_guidelines/issues/49"
+    },
     "50": {
       "title": "The software has been presented to the Argo community (e.g. Data Management Team meeting)",
       "level": "Beginner",
@@ -268,6 +489,61 @@
       "type": "manual",
       "evidence": "Argopy was presented to the Argo community during the ADMT24 and ASW7 meetings",
       "url": "https://github.com/euroargodev/software_guidelines/issues/50"
+    },
+    "51": {
+      "title": "The software ensures timely distribution of updates",
+      "level": "Intermediate",
+      "category": "General",
+      "group": "General",
+      "status": "met",
+      "weight": 1.5,
+      "type": "manual",
+      "evidence": "https://github.com/euroargodev/argopy/releases",
+      "url": "https://github.com/euroargodev/software_guidelines/issues/51"
+    },
+    "52": {
+      "title": "The software is tested and implements continuous integration",
+      "level": "Intermediate",
+      "category": "Continuous Integration",
+      "group": "General",
+      "status": "met",
+      "weight": 1.5,
+      "type": "manual",
+      "evidence": "https://github.com/euroargodev/argopy/actions",
+      "url": "https://github.com/euroargodev/software_guidelines/issues/52"
+    },
+    "53": {
+      "title": "The software is distributed via well-known services (e.g., pip or conda for Python)",
+      "level": "Intermediate",
+      "category": "General",
+      "group": "General",
+      "status": "met",
+      "weight": 1.5,
+      "type": "manual",
+      "evidence": "https://pypi.org/project/argopy/ and https://anaconda.org/conda-forge/argopy",
+      "url": "https://github.com/euroargodev/software_guidelines/issues/53"
+    },
+    "54": {
+      "title": "The software is registered in an Argo software registry (e.g. AST and Argo-BGC dedicated webpages)",
+      "level": "Intermediate",
+      "category": "Argo Compliance",
+      "group": "Argo specific",
+      "status": "met",
+      "weight": 1.5,
+      "type": "manual",
+      "evidence": "Registered on both AST and Argo-BGC websites",
+      "url": "https://github.com/euroargodev/software_guidelines/issues/54"
+    },
+    "55": {
+      "title": "The software is registered in at least one public software registry (e.g., Zenodo, Seanoe, Research Software Directory)",
+      "level": "Intermediate",
+      "category": "General",
+      "group": "General",
+      "status": "met",
+      "weight": 1.5,
+      "type": "manual",
+      "evidence": "Registered on Zenodo, Software Heritage and Research Software Directory",
+      "url": "https://github.com/euroargodev/software_guidelines/issues/55"
     },
     "56": {
       "title": "The software is released under an open-source license",
@@ -325,6 +601,17 @@
       ],
       "url": "https://github.com/euroargodev/software_guidelines/issues/59"
     },
+    "60": {
+      "title": "The software uses the Argo vocabulary server (to enforce conventions as defined in Argo reference tables)",
+      "level": "Intermediate",
+      "category": "Argo Compliance",
+      "group": "Argo specific",
+      "status": "met",
+      "weight": 1.5,
+      "type": "manual",
+      "evidence": "Yes, it also provides APIs to work with the AVTT",
+      "url": "https://github.com/euroargodev/software_guidelines/issues/60"
+    },
     "66": {
       "title": "The project includes a basic description of what it does with or to the Argo dataset (e.g. read index file, calibrate salinity, plot trajectory, assess BGC variables,...)",
       "level": "Novice",
@@ -362,6 +649,14 @@
       "status": "met",
       "evidence": "Argopy does not produce official netcdf files"
     },
+    "10": {
+      "status": "met",
+      "evidence": "https://github.com/euroargodev/argopy/graphs/contributors"
+    },
+    "14": {
+      "status": "met",
+      "evidence": "In the guidelines to contribute and report issues/bugs"
+    },
     "16": {
       "status": "met",
       "evidence": "Argo conventions are respected wherever relevant"
@@ -386,17 +681,89 @@
       "status": "met",
       "evidence": "We use black and flake8 to implement this guidelines"
     },
+    "24": {
+      "status": "met",
+      "evidence": "that is design we tried to implement"
+    },
+    "26": {
+      "status": "met",
+      "evidence": "Presented in ADMT24 and ASW7"
+    },
+    "27": {
+      "status": "met",
+      "evidence": "Done and possible on the Github web service"
+    },
+    "28": {
+      "status": "met",
+      "evidence": "Done with badges"
+    },
+    "29": {
+      "status": "met",
+      "evidence": "https://github.com/euroargodev/argopy?tab=coc-ov-file#readme"
+    },
+    "31": {
+      "status": "met",
+      "evidence": "Yes and from multiple laboratories"
+    },
     "36": {
       "status": "met",
       "evidence": "https://github.com/euroargodev/argopy/blob/master/README.md"
+    },
+    "42": {
+      "status": "met",
+      "evidence": "https://argopy.readthedocs.io/en/latest/api.html"
+    },
+    "43": {
+      "status": "met",
+      "evidence": "https://argopy.readthedocs.io/en/latest/install.html"
+    },
+    "44": {
+      "status": "met",
+      "evidence": "https://argopy.readthedocs.io/en/latest/install.html"
+    },
+    "46": {
+      "status": "met",
+      "evidence": "https://argopy.readthedocs.io/en/latest/install.html"
     },
     "47": {
       "status": "met",
       "evidence": "See README and full documentation at https://argopy.readthedocs.io"
     },
+    "48": {
+      "status": "met",
+      "evidence": "https://argopy.readthedocs.io"
+    },
+    "49": {
+      "status": "met",
+      "evidence": "10.21105/joss.02425"
+    },
     "50": {
       "status": "met",
       "evidence": "Argopy was presented to the Argo community during the ADMT24 and ASW7 meetings"
+    },
+    "51": {
+      "status": "met",
+      "evidence": "https://github.com/euroargodev/argopy/releases"
+    },
+    "52": {
+      "status": "met",
+      "evidence": "https://github.com/euroargodev/argopy/actions"
+    },
+    "53": {
+      "status": "met",
+      "evidence": "https://pypi.org/project/argopy/ and https://anaconda.org/conda-forge/argopy"
+    },
+    "54": {
+      "status": "met",
+      "evidence": "Registered on both AST and Argo-BGC websites"
+    },
+    "55": {
+      "status": "met",
+      "evidence": "Registered on Zenodo, Software Heritage and Research Software Directory"
+    },
+    "60": {
+      "status": "met",
+      "evidence": "Yes, it also provides APIs to work with the AVTT"
     },
     "66": {
       "status": "met",
