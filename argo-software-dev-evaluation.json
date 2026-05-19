@@ -1,5 +1,5 @@
 {
-  "targetLevel": "Advanced",
+  "targetLevel": "Expert",
   "metadata": {
     "version": "1.0",
     "tool": "EuroArgo Software Evaluator"
@@ -11,18 +11,18 @@
   },
   "evaluation": {
     "level": "Advanced",
-    "targetLevel": "Advanced",
+    "targetLevel": "Expert",
     "achievedLevel": "Novice",
-    "score": 0.9190101237345332,
+    "score": 0.8993775933609959,
     "stats": {
-      "totalCriteria": 62,
-      "metCriteria": 58,
-      "unmetCriteria": 4,
-      "weightedScore": 81.70000000000002,
-      "totalWeight": 88.90000000000002,
+      "totalCriteria": 65,
+      "metCriteria": 60,
+      "unmetCriteria": 5,
+      "weightedScore": 86.70000000000002,
+      "totalWeight": 96.40000000000002,
       "autoCriteria": 16,
-      "manualCriteria": 46,
-      "targetLevel": "Advanced"
+      "manualCriteria": 49,
+      "targetLevel": "Expert"
     }
   },
   "details": {
@@ -241,6 +241,17 @@
       "type": "manual",
       "evidence": null,
       "url": "https://github.com/euroargodev/software_guidelines/issues/19"
+    },
+    "20": {
+      "title": "Software training sessions are periodically organized",
+      "level": "Expert",
+      "category": "General",
+      "group": "General",
+      "status": "met",
+      "weight": 2.5,
+      "type": "manual",
+      "evidence": "More details at https://argopy.readthedocs.io/en/latest/tutorials.html#training-sessions",
+      "url": "https://github.com/euroargodev/software_guidelines/issues/20"
     },
     "21": {
       "title": "The codebase includes comments and is documented following referenced standards (e.g. numpy style docstrings in Python)",
@@ -711,6 +722,17 @@
       "evidence": "Yes, it also provides APIs to work with the AVTT",
       "url": "https://github.com/euroargodev/software_guidelines/issues/60"
     },
+    "61": {
+      "title": "There is a published paper associated with the software (e.g. JOSS article)",
+      "level": "Expert",
+      "category": "Referencing",
+      "group": "General",
+      "status": "met",
+      "weight": 2.5,
+      "type": "manual",
+      "evidence": "https://doi.org/10.21105/joss.02425",
+      "url": "https://github.com/euroargodev/software_guidelines/issues/61"
+    },
     "62": {
       "title": "Unit tests cover multiple operating systems",
       "level": "Advanced",
@@ -721,6 +743,17 @@
       "type": "manual",
       "evidence": "https://github.com/euroargodev/argopy/actions",
       "url": "https://github.com/euroargodev/software_guidelines/issues/62"
+    },
+    "63": {
+      "title": "User meetings or workshops are held and communicated within the Argo community",
+      "level": "Expert",
+      "category": "Community",
+      "group": "Argo specific",
+      "status": "unmet",
+      "weight": 2.5,
+      "type": "manual",
+      "evidence": null,
+      "url": "https://github.com/euroargodev/software_guidelines/issues/63"
     },
     "66": {
       "title": "The project includes a basic description of what it does with or to the Argo dataset (e.g. read index file, calibrate salinity, plot trajectory, assess BGC variables,...)",
@@ -809,6 +842,10 @@
     "19": {
       "status": "unmet",
       "evidence": ""
+    },
+    "20": {
+      "status": "met",
+      "evidence": "More details at https://argopy.readthedocs.io/en/latest/tutorials.html#training-sessions"
     },
     "21": {
       "status": "met",
@@ -918,9 +955,17 @@
       "status": "met",
       "evidence": "Yes, it also provides APIs to work with the AVTT"
     },
+    "61": {
+      "status": "met",
+      "evidence": "https://doi.org/10.21105/joss.02425"
+    },
     "62": {
       "status": "met",
       "evidence": "https://github.com/euroargodev/argopy/actions"
+    },
+    "63": {
+      "status": "unmet",
+      "evidence": ""
     },
     "66": {
       "status": "met",
@@ -972,6 +1017,19 @@
           "id": 6,
           "level": "Beginner",
           "title": "Argo papers and DOIs are referenced in the software metadata",
+          "isBlocker": true
+        }
+      ]
+    },
+    {
+      "category": "Community",
+      "priority": "high",
+      "message": "Critical: Improve your Community practices to reach the next level",
+      "missing": [
+        {
+          "id": 63,
+          "level": "Expert",
+          "title": "User meetings or workshops are held and communicated within the Argo community",
           "isBlocker": true
         }
       ]
