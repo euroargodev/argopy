@@ -48,7 +48,7 @@ def compute_params(param: str, obj):
 class SearchEngine(ArgoIndexSearchEngine):
 
     @search_s3
-    def wmo(self, WMOs, nrows=None, composed=False) -> indexstore:
+    def wmo(self, WMOs, nrows=None, composed=False):
         def checker(WMOs):
             WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
             log.debug(
@@ -79,7 +79,7 @@ class SearchEngine(ArgoIndexSearchEngine):
             return search_filter
 
     @search_s3
-    def cyc(self, CYCs, nrows=None, composed=False) -> indexstore:
+    def cyc(self, CYCs, nrows=None, composed=False):
         def checker(CYCs):
             if self._obj.convention in ["ar_index_global_meta"]:
                 raise InvalidDatasetStructure(
