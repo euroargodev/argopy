@@ -456,7 +456,7 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
     def profiler_type(self):
         """Search index for profiler types
 
-        The list of valid types is given by IDs of `Argo reference table 8 <http://vocab.nerc.ac.uk/collection/R08/current/>`_.
+        The list of valid types is given in `Argo reference table 8 / ARGO_WMO_INST_TYPE <http://vocab.nerc.ac.uk/collection/R08/current/>`_.
 
         Parameters
         ----------
@@ -479,8 +479,8 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         .. code-block:: python
             :caption: List valid types
 
-            from argopy import ArgoNVSReferenceTables
-            valid_types = ArgoNVSReferenceTables().tbl(8)['altLabel']
+            from argopy import ArgoReferenceTable
+            valid_types : list[str] = ArgoReferenceTable('ARGO_WMO_INST_TYPE').keys()
 
         See Also
         --------
@@ -491,12 +491,12 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
     def profiler_label(self, profiler_label: str, nrows=None, composed=False):
         """Search index for profiler types with a given string in their long name
 
-        Will search for string occurrences in the preferred label of `Argo reference table 8 <http://vocab.nerc.ac.uk/collection/R08/current/>`_.
+        Will search for string occurrences in the preferred label of `Argo reference table 8/ARGO_WMO_INST_TYPE <http://vocab.nerc.ac.uk/collection/R08/current/>`_.
 
         Parameters
         ----------
         profiler_label: str, list(str)
-            The string (not exact) to be found in profiler preferred labels.
+            The string (not necessarily exact) to be found in profiler preferred labels.
 
         Returns
         -------
@@ -514,8 +514,9 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         .. code-block:: python
             :caption: List valid labels
 
-            from argopy import ArgoNVSReferenceTables
-            valid_labels = ArgoNVSReferenceTables().tbl(8)['prefLabel']
+            from argopy import ArgoReferenceTable
+            df = ar.ArgoReferenceTable('ARGO_WMO_INST_TYPE').to_dataframe()
+            valid_labels : list[str] = list(df['long_name'].to_dict().values())
 
         See Also
         --------
@@ -587,7 +588,7 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
     def institution_code(self, institution_code,  nrows=None, composed=False):
         """Search index for institution codes
 
-        The list of valid codes is given by IDs of `Argo reference table 4 <http://vocab.nerc.ac.uk/collection/R04/current/>`_.
+        The list of valid codes is given in `Argo reference table 4/DATA_CENTRE_CODES <http://vocab.nerc.ac.uk/collection/R04/current/>`_.
 
         Parameters
         ----------
@@ -611,8 +612,8 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         .. code-block:: python
             :caption: List valid codes
 
-            from argopy import ArgoNVSReferenceTables
-            valid_codes = ArgoNVSReferenceTables().tbl(4)['altLabel']
+            from argopy import ArgoReferenceTable
+            valid_codes : list[str] = ArgoReferenceTable('DATA_CENTRE_CODES').keys()
 
         See Also
         --------
@@ -624,12 +625,12 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
     def institution_name(self, institution_name: str, nrows=None, composed=False):
         """Search index for institutions with a given string in their long name
 
-        Will search for string occurrences in the preferred label of `Argo reference table 4 <http://vocab.nerc.ac.uk/collection/R04/current/>`_.
+        Will search for string occurrences in the preferred label of `Argo reference table 4/DATA_CENTRE_CODES <http://vocab.nerc.ac.uk/collection/R04/current/>`_.
 
         Parameters
         ----------
         institution_name: str, list(str)
-            The string (not exact) to be found in institution preferred labels.
+            The string (not necessarily exact) to be found in institution preferred labels.
 
         Returns
         -------
@@ -648,8 +649,9 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         .. code-block:: python
             :caption: List valid names
 
-            from argopy import ArgoNVSReferenceTables
-            valid_names = ArgoNVSReferenceTables().tbl(4)['prefLabel']
+            from argopy import ArgoReferenceTable
+            df = ar.ArgoReferenceTable('DATA_CENTRE_CODES').to_dataframe()
+            valid_names : list[str] = list(df['long_name'].to_dict().values())
 
         See Also
         --------
