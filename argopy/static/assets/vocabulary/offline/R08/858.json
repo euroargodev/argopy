@@ -1,0 +1,62 @@
+{
+  "name": "858",
+  "long_name": "NINJA float with TSK conductivity sensor",
+  "last_update": "2026-01-25T11:14:19.874217+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/858/",
+    "pav:authoredOn": "2020-05-03 20:28:54.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R08/current/858/1/"
+    },
+    "dce:identifier": "SDN:R08::858",
+    "pav:version": "1",
+    "skos:broader": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R23/current/NINJA/"
+    },
+    "skos:notation": "SDN:R08::858",
+    "skos:altLabel": "858",
+    "dc:date": "2020-05-03 20:28:54.0",
+    "owl:versionInfo": "1",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "NINJA float with TSK conductivity sensor"
+    },
+    "dc:identifier": "SDN:R08::858",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "owl:deprecated": "false",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "skos:definition": {
+      "@language": "en",
+      "@value": "NINJA profiling float with Tsurumi-Seiki Co., Ltd (TSK) conductivity sensor"
+    },
+    "@type": "skos:Concept",
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

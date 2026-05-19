@@ -12,8 +12,8 @@ from ....utils.checkers import (
     has_aws_credentials,
     HAS_BOTO3,
 )
-from ....utils import redact
-from ....errors import InvalidDatasetStructure
+from ....utils import redact, to_list
+from ....errors import InvalidDatasetStructure, OptionValueError
 from ... import s3store
 
 try:
@@ -97,6 +97,14 @@ class s3index:
         "search_wmo_cyc": {
             "split": "SELECT * FROM s3object s WHERE s._1 LIKE '%/{wmo}/profiles/%_{cyc:03d}.nc'".format,
             "single": "s._1 LIKE '%/{wmo}/profiles/%_{cyc:03d}.nc'".format,
+        },
+        "search_institution_code": {
+            "split": "SELECT * FROM s3object s WHERE s._7 LIKE '{code}'".format,
+            "single": "s._7 LIKE '{code}'".format,
+        },
+        "search_dac": {
+            "split": "SELECT * FROM s3object s WHERE s._1 LIKE '{dac}/%'".format,
+            "single": "s._1 LIKE '{dac}/%'".format,
         },
     }
     """SQL syntax formatters for all search methods and for each strategy"""
@@ -317,6 +325,52 @@ class s3index:
                     )
                 else:
                     sql += self.sql_formaters['search_wmo_cyc']['single'](wmo=WMOs[0], cyc=CYCs[0])
+
+        if nrows is not None:
+            sql += " LIMIT %i" % nrows
+
+        self.sql_expression = sql
+        self.run()
+        return self
+
+    def search_institution_code(self, institution_code: list[str],  nrows=None):
+        CODEs = to_list(institution_code)
+
+        if self._sql_logic == "split":
+            sql = []
+            for code in CODEs:
+                sql.append(self.sql_formaters['search_institution_code']['split'](code=code))
+
+        elif self._sql_logic == "single":
+            sql = "SELECT * FROM s3object s WHERE "
+            if len(CODEs) > 1:
+                sql += " OR ".join([self.sql_formaters['search_institution_code']['single'](code=code) for code in CODEs])
+
+            else:
+                sql += self.sql_formaters['search_institution_code']['single'](code=CODEs[0])
+
+        if nrows is not None:
+            sql += " LIMIT %i" % nrows
+
+        self.sql_expression = sql
+        self.run()
+        return self
+
+    def search_dac(self, dac: list[str],  nrows=None):
+        DACs = to_list(dac)
+
+        if self._sql_logic == "split":
+            sql = []
+            for dac in DACs:
+                sql.append(self.sql_formaters['search_dac']['split'](dac=dac))
+
+        elif self._sql_logic == "single":
+            sql = "SELECT * FROM s3object s WHERE "
+            if len(DACs) > 1:
+                sql += " OR ".join([self.sql_formaters['search_dac']['single'](dac=dac) for dac in DACs])
+
+            else:
+                sql += self.sql_formaters['search_dac']['single'](dac=DACs[0])
 
         if nrows is not None:
             sql += " LIMIT %i" % nrows
@@ -592,6 +646,90 @@ def search_s3(func, *args, **kwargs):
             )
             idx.fs["s3"].search_wmo_cyc(WMOs, CYCs, nrows=nrows)
             idx.search_type = {"WMO": WMOs, "CYC": CYCs}
+            idx.search_filter = idx.fs["s3"].sql_expression
+            idx.search = getattr(idx.fs["s3"], idx.ext)
+            return idx
+        else:
+            log.debug("Argo index searching using boto3 SQL request not available for composition")
+
+    if (
+        func.__name__ == "institution_code"
+        and not hasattr(idx, "index")
+        and isinstance(idx.fs["src"], s3store)
+    ):
+        CODEs, nrows, composed = args[1], args[2], args[3]
+        if not composed:
+            CODEs = to_list(CODEs)
+            log.debug(
+                "Argo index searching for INSTITUTION CODEs=[%s] using boto3 SQL request ..."
+                % (
+                    ";".join([str(code) for code in CODEs]),
+                )
+            )
+            valid_codes = []
+            for code in CODEs:
+                if idx.valid('institution_code', code):
+                    valid_codes.append(code.upper())
+            if len(valid_codes) == 0:
+                raise OptionValueError(f"No valid codes found for institution in {CODEs}. Valid codes are: {idx.valid.institution_code}")
+
+            idx.fs["s3"].search_institution_code(valid_codes, nrows=nrows)
+            idx.search_type = {"INST_CODE": valid_codes}
+            idx.search_filter = idx.fs["s3"].sql_expression
+            idx.search = getattr(idx.fs["s3"], idx.ext)
+            return idx
+        else:
+            log.debug("Argo index search using boto3 SQL request not available for composition")
+
+    if (
+        func.__name__ == "institution_name"
+        and not hasattr(idx, "index")
+        and isinstance(idx.fs["src"], s3store)
+    ):
+        NAMEs, nrows, composed = args[1], args[2], args[3]
+        if not composed:
+            NAMEs = to_list(NAMEs)
+            log.debug(
+                "Argo index searching for INSTITUTION NAMEs=[%s] using boto3 SQL request ..."
+                % (
+                    ";".join([str(name) for name in NAMEs]),
+                )
+            )
+            # Get codes matching names:
+            CODEs = []
+            for code, long_name in idx._r4.items():
+                for name in NAMEs:
+                    if name.lower() in long_name.lower():
+                        CODEs.append(code)
+            if len(CODEs) == 0:
+                valid_names = ", ".join(idx.valid.institution_name)
+                raise OptionValueError(f"No valid institution name found in {NAMEs}. Valid names are any string in: '{valid_names}'")
+
+            idx.fs["s3"].search_institution_code(CODEs, nrows=nrows)
+            idx.search_type = {"INST_NAME": NAMEs}
+            idx.search_filter = idx.fs["s3"].sql_expression
+            idx.search = getattr(idx.fs["s3"], idx.ext)
+            return idx
+        else:
+            log.debug("Argo index search using boto3 SQL request not available for composition")
+
+
+    if (
+        func.__name__ == "dac"
+        and not hasattr(idx, "index")
+        and isinstance(idx.fs["src"], s3store)
+    ):
+        DACs, nrows, composed = args[1], args[2], args[3]
+        if not composed:
+            DACs = to_list(DACs)
+            log.debug(
+                "Argo index searching for DACs=[%s] using boto3 SQL request ..."
+                % (
+                    ";".join([str(dac) for dac in DACs]),
+                )
+            )
+            idx.fs["s3"].search_dac(DACs, nrows=nrows)
+            idx.search_type = {"DAC": DACs}
             idx.search_filter = idx.fs["s3"].sql_expression
             idx.search = getattr(idx.fs["s3"], idx.ext)
             return idx

@@ -112,7 +112,7 @@ class ArgoNVSReferenceTables:
             elif k["@type"] == "skos:Concept":
                 content["altLabel"].append(k["skos:altLabel"])
                 content["prefLabel"].append(k["skos:prefLabel"]["@value"])
-                content["definition"].append(k["skos:definition"]["@value"])
+                content["definition"].append(k["skos:definition"]["@value"] if k["skos:definition"] != '' else None)
                 content["deprecated"].append(k["owl:deprecated"])
                 content["id"].append(k["@id"])
         df = pd.DataFrame.from_dict(content)

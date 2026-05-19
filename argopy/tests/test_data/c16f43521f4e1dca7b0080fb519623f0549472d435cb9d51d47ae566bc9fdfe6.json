@@ -1,37 +1,6 @@
 {
     "@graph": [
         {
-            "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/N/",
-            "pav:authoredOn": "2020-04-04 15:05:33.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/N/1/"
-            },
-            "dce:identifier": "SDN:RP2::N",
-            "pav:version": "1",
-            "skos:notation": "SDN:RP2::N",
-            "skos:altLabel": "N",
-            "dc:date": "2020-04-04 15:05:33.0",
-            "owl:versionInfo": "1",
-            "skos:prefLabel": {
-                "@language": "en",
-                "@value": "No QC"
-            },
-            "dc:identifier": "SDN:RP2::N",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
-            },
-            "owl:deprecated": "false",
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "skos:definition": {
-                "@language": "en",
-                "@value": "No quality control (QC) was performed on any of the profile levels."
-            },
-            "@type": "skos:Concept"
-        },
-        {
             "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/C/",
             "pav:authoredOn": "2020-04-04 15:05:33.0",
             "pav:hasCurrentVersion": {
@@ -156,6 +125,40 @@
             "@type": "skos:Concept"
         },
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/N/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/N/1/"
+            },
+            "pav:authoredOn": "2025-08-28 11:45:51.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/N/2/"
+            },
+            "dce:identifier": "SDN:RP2::N",
+            "pav:version": "2",
+            "skos:notation": "SDN:RP2::N",
+            "skos:altLabel": "N",
+            "dc:date": "2025-08-28 11:45:51.0",
+            "owl:versionInfo": "2",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "No QC"
+            },
+            "dc:identifier": "SDN:RP2::N",
+            "skos:note": {
+                "@language": "en",
+                "@value": "deprecated"
+            },
+            "owl:deprecated": "true",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "No quality control (QC) was performed on any of the profile levels."
+            },
+            "@type": "skos:Concept"
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/B/",
             "pav:authoredOn": "2020-04-04 15:05:33.0",
             "pav:hasCurrentVersion": {
@@ -221,9 +224,6 @@
             "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/",
             "skos:member": [
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/N/"
-                },
-                {
                     "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/C/"
                 },
                 {
@@ -234,6 +234,9 @@
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/F/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/N/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/RP2/current/A/"
@@ -247,8 +250,8 @@
             "dc:description": "Quality control flag scale for whole profiles. Argo netCDF variables PROFILE_<PARAMETER>_QC are populated by RP2 altLabel.",
             "dc:title": "Argo profile quality control flags",
             "skos:prefLabel": "Argo profile quality control flags",
-            "owl:versionInfo": "0",
-            "dc:date": "2020-04-04 15:31:03.0",
+            "owl:versionInfo": "1",
+            "dc:date": "2025-08-29 03:00:01.0",
             "skos:altLabel": "PROF_QC_FLAG",
             "dc:creator": "Argo Data Management Team",
             "dc:alternative": "PROF_QC_FLAG",
@@ -256,7 +259,7 @@
             "grg:RE_RegisterOwner": "Argo Data Management Team",
             "grg:RE_RegisterManager": "British Oceanographic Data Centre",
             "rdfs:seeAlso": {
-                "@id": "https://github.com/nvs-vocabs/RP2"
+                "@id": "https://github.com/OneArgo/ArgoVocabs"
             }
         }
     ],

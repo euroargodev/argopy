@@ -57,7 +57,7 @@ class CONTENT(ArgoAccessorExtension):
         ds = ArgoSet.to_xarray()
 
     Once input data are loaded, make parameters predictions with or without specifying input errors
-    on pressure (epres, in dbar), temperature (etemp, in °C), salinity (epsal, in PSU) and oxygen (edoxy, in micromole/kg).
+    on pressure (epres, in dbar), temperature (etemp, in degC), salinity (epsal, in PSU) and oxygen (edoxy, in micromole/kg).
     For interested users, uncertainties on predicted parameters can also be included.
 
     .. code-block:: python
@@ -70,7 +70,7 @@ class CONTENT(ArgoAccessorExtension):
 
     By default, if no input errors are specified, the following default values are used:
         - epres = 0.5 dbar
-        - etemp = 0.005 °C
+        - etemp = 0.005 degC
         - epsal = 0.005 PSU
         - edoxy = 1% of DOXY value
 
@@ -85,7 +85,7 @@ class CONTENT(ArgoAccessorExtension):
     References
     ----------
 
-    .. [1] Bittig, H. C., Steinhoff, T., Claustre, H., Fiedler, B., Williams, N. L., Sauzède, R., Körtzinger, A., and Gattuso, J. P. (2018). An alternative to static climatologies: Robust estimation of open ocean CO2 variables and nutrient concentrations from T, S, and O2 data using Bayesian neural networks. Frontiers in Marine Science, 5, 328. doi:10.3389/fmars.2018.00328
+    .. [1] Bittig, H. C., Steinhoff, T., Claustre, H., Fiedler, B., Williams, N. L., Sauzede, R., Kortzinger, A., and Gattuso, J. P. (2018). An alternative to static climatologies: Robust estimation of open ocean CO2 variables and nutrient concentrations from T, S, and O2 data using Bayesian neural networks. Frontiers in Marine Science, 5, 328. doi:10.3389/fmars.2018.00328
     .. [2] Humphreys, M. P., Lewis, E. R., Sharp, J. D., & Pierrot, D. (2022). PyCO2SYS v1.8: Marine carbonate system calculations in Python. Geoscientific Model Development, 15(1), 15-43. doi:10.5194/gmd-15-15-2022
     .. [3] Lewis, E. R., & Wallace, D. W. R. (1998). Program developed for CO2 system calculations (No. cdiac: CDIAC-105). Environmental System Science Data Infrastructure for a Virtual Ecosystem (ESS-DIVE)(United States). doi:10.15485/1464255
     .. [4] Van Heuven, S. M. A. C., Pierrot, D., Rae, J. W. B., Lewis, E., & Wallace, D. W. R. (2011). MATLAB program developed for CO2 system calculations. doi: 10.3334/CDIAC/otg.CO2SYS_MATLAB_v1.1
@@ -285,9 +285,9 @@ class CONTENT(ArgoAccessorExtension):
             return param, out
 
         # Get raw predictions for each parameter (in parallel)
-        results = Parallel(n_jobs=n_jobs, backend="loky")(
-            delayed(predict_param)(param) for param in params
-        )
+        with Parallel(n_jobs=n_jobs, prefer=None) as parallel:
+            results = parallel(delayed(predict_param)(param) for param in params)
+
         # Convert results list to dict
         raw_outputs = {param: out for param, out in results}
 
@@ -505,9 +505,8 @@ class CONTENT(ArgoAccessorExtension):
             return (p, deriv, out_param1, out_param2)
 
         # Compute derivatives for all 6 parameter pairs (in parallel)
-        results = Parallel(n_jobs=n_jobs, backend="loky")(
-            delayed(compute_pair_derivatives)(p) for p in range(6)
-        )
+        with Parallel(n_jobs=n_jobs, prefer=None) as parallel:
+            results = parallel(delayed(compute_pair_derivatives)(p) for p in range(6))
 
         # Store results in dcout array
         for p, deriv, out_param1, out_param2 in results:
@@ -622,9 +621,8 @@ class CONTENT(ArgoAccessorExtension):
             return (p, deriv, uncertainties, out_param1, out_param2)
 
         # Compute uncertainties for all 6 parameter combinations (in parallel)
-        results = Parallel(n_jobs=n_jobs, backend="loky")(
-            delayed(compute_pair_uncertainties)(p) for p in range(6)
-        )
+        with Parallel(n_jobs=n_jobs, prefer=None) as parallel:
+            results = parallel(delayed(compute_pair_uncertainties)(p) for p in range(6))
 
         # Store results
         for p, deriv, uncertainties, out_param1, out_param2 in results:
@@ -805,7 +803,7 @@ class CONTENT(ArgoAccessorExtension):
 
         Reference
         ---------
-        .. [1] Bittig, H. C., Steinhoff, T., Claustre, H., Fiedler, B., Williams, N. L., Sauzède, R., Körtzinger, A., and Gattuso, J. P. (2018). An alternative to static climatologies: Robust estimation of open ocean CO2 variables and nutrient concentrations from T, S, and O2 data using Bayesian neural networks. Frontiers in Marine Science, 5, 328. doi:10.3389/fmars.2018.00328
+        .. [1] Bittig, H. C., Steinhoff, T., Claustre, H., Fiedler, B., Williams, N. L., Sauzede, R., Kortzinger, A., and Gattuso, J. P. (2018). An alternative to static climatologies: Robust estimation of open ocean CO2 variables and nutrient concentrations from T, S, and O2 data using Bayesian neural networks. Frontiers in Marine Science, 5, 328. doi:10.3389/fmars.2018.00328
         """
 
         # Number of observations

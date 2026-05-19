@@ -1,12 +1,12 @@
-| <img src="https://raw.githubusercontent.com/euroargodev/argopy/master/docs/_static/argopy_logo_long.png" alt="argopy logo" width="200"/><br>``argopy`` is a python library dedicated to Argo data access, visualisation and manipulation for regular users as well as Argo experts and operators |
-|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-|                                                                            [![DOI][joss-badge]][joss-link] [![Documentation][rtd-badge]][rtd-link] [![Pypi][pip-badge]][pip-link] [![Conda][conda-badge]][conda-link]                                                                            |
-|                                                                                             [![codecov][cov-badge]][conda-link]  ![CI][ci-badge] [![CI Energy][ci-energy-badge-co2]][ci-energy-link]                                                                                             |
-|                                                                                                                               [![Open-SSF][ossf-badge]][ossf-link]                                                                                                                               |
+|                                                                                                                                                                              <img src="https://raw.githubusercontent.com/euroargodev/argopy/master/docs/_static/argopy_logo_long.png" alt="argopy logo" width="200"/><br>``argopy`` is a python library dedicated to Argo data access, visualisation and manipulation for regular users as well as Argo experts and operators                                                                                                                                                                               |
+|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+|                                                                                                                                                                                                                                                         [![DOI][joss-badge]][joss-link] [![Documentation][rtd-badge]][rtd-link] [![Pypi][pip-badge]][pip-link] [![Conda][conda-badge]][conda-link]                                                                                                                                                                                                                                                          |
+|                                                                                                                                                                                                                                                                          [![codecov][cov-badge]][conda-link]  ![CI][ci-badge] [![CI Energy][ci-energy-badge-co2]][ci-energy-link]                                                                                                                                                                                                                                                                           |
+|                                                                                                                    [![Open-SSF][ossf-badge]][ossf-link]                      [![</> Argo Software Dev. Guidelines: 🚀 Advanced level: 91.9% complete](https://img.shields.io/badge/%3C%2F%3E%20Argo%20Software%20Dev.%20Guidelines-%F0%9F%9A%80%20Advanced%20level%3A%2091.9%25%20complete-16a34a?style=flat&labelColor=0c5d8d)](https://euroargodev.github.io/Software-Evaluator/?repo=https%3A%2F%2Fgithub.com%2Feuroargodev%2Fargopy)                                                                                                                    |
 
 [joss-badge]: https://img.shields.io/badge/DOI-10.21105%2Fjoss.02425-brightgreen
 [joss-link]: https://dx.doi.org/10.21105/joss.02425
-[ci-badge]: https://github.com/euroargodev/argopy/actions/workflows/pytests.yml/badge.svg
+[ci-badge]: https://github.com/euroargodev/argopy/actions/workflows/ci-ubuntu-all.yml/badge.svg
 [cov-badge]: https://codecov.io/gh/euroargodev/argopy/branch/master/graph/badge.svg
 [cov-link]: https://codecov.io/gh/euroargodev/argopy
 [rtd-badge]: https://img.shields.io/readthedocs/argopy?logo=readthedocs
@@ -17,26 +17,30 @@
 [conda-link]: https://anaconda.org/conda-forge/argopy
 [ossf-badge]: https://www.bestpractices.dev/projects/5939/badge
 [ossf-link]: https://www.bestpractices.dev/projects/5939
+[repostatus-badge-active]: http://www.repostatus.org/badges/latest/active.svg
+[repostatus-link-active]: http://www.repostatus.org/#active
 
+### Documentation 
 
-### Documentation
+The official documentation is hosted on ReadTheDocs.org here: https://argopy.readthedocs.io
 
-The official documentation is hosted on ReadTheDocs.org: https://argopy.readthedocs.io
+If you can't wait, click the [MyBinder](https://euroargodev.github.io/binder-links-creator/) button below to open a jupyter notebook ready to play with Argopy:
 
-### Install
+[![Binder](https://img.shields.io/static/v1.svg?logo=Jupyter&label=Argopy&message=Start%20online%20playground%20notebook&color=blue)](https://2i2c.mybinder.org/v2/gh/euroargodev/binder-sandbox/main?urlpath=git-pull%3Frepo%3Dhttps%253A%252F%252Fgithub.com%252Feuroargodev%252Fargopy%26urlpath%3Dlab%252Ftree%252Fargopy%252Fdocs%252Ftutorials%252Fplayground.ipynb%26branch%3Dmaster)
+
+### Installation
 
 Binary installers for the latest released version are available at the [Python Package Index (PyPI)](https://pypi.org/project/argopy/) and on [Conda](https://anaconda.org/conda-forge/argopy).
-
+```bash
+# PyPI
+pip install argopy
+```
 ```bash
 # conda
 conda install -c conda-forge argopy
-````
-```bash
-# or PyPI
-pip install argopy
-````
+```
 
-``argopy`` is continuously tested to work under most OS (Linux, Mac, Windows) and with python versions >= 3.8
+Argopy is continuously tested to work under most OS (Linux, Mac, Windows) and with python versions 3.11 and 3.12.
 
 ### Usage
 
@@ -47,21 +51,21 @@ from argopy import DataFetcher
 ```python
 # Define what you want to fetch... 
 # a region:
-ArgoSet = DataFetcher().region([-85,-45,10.,20.,0,10.])
+f = DataFetcher().region([-85,-45,10.,20.,0,10.])
 # floats:
-ArgoSet = DataFetcher().float([6902746, 6902747, 6902757, 6902766])
+f = DataFetcher().float([6902746, 6902747, 6902757, 6902766])
 # or specific profiles:
-ArgoSet = DataFetcher().profile(6902746, 34)
+f = DataFetcher().profile(6902746, 34)
 ```
 ```python
 # then fetch and get data as xarray datasets:
-ds = ArgoSet.load().data
+ds = f.load().data
 # or
-ds = ArgoSet.to_xarray()
+ds = f.to_xarray()
 ```
 ```python
 # you can even plot some information:
-ArgoSet.plot('trajectory')    
+f.plot('trajectory')    
 ```
 
 They are many more usages and fine-tuning to allow you to access and manipulate Argo data:
@@ -75,6 +79,12 @@ They are many more usages and fine-tuning to allow you to access and manipulate 
 
 Just check out [the documentation for more](https://argopy.readthedocs.io) ! 
 
+## Tutorials
+
+Some tutorials, as jupyter notebooks, are available to get you started. 
+
+See here more for all details: https://argopy.readthedocs.io/en/latest/tutorials.html
+
 ## 🌿 Energy impact of **argopy** development
 
 [ci-energy-link]: https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&branch=master&workflow=22344160
@@ -85,24 +95,14 @@ Just check out [the documentation for more](https://argopy.readthedocs.io) !
 [ci-energy-badge-upstream]: https://api.green-coding.io/v1/ci/badge/get?repo=euroargodev/argopy&branch=master&workflow=25052179&mode=totals&duration_days=30
 [ci-energy-badge-upstream-co2]: https://api.green-coding.io/v1/ci/badge/get?repo=euroargodev/argopy&branch=master&workflow=25052179&mode=totals&duration_days=30&metric=carbon
 
-The **argopy** team is concerned about the environmental impact of your favorite software development. Starting June 1st 2024, we're experimenting with the [Green Metrics Tools](https://metrics.green-coding.io) from [Green Coding](https://www.green-coding.io/) to get an estimate of the energy used and CO2eq emitted by our development activities on Github infrastructure. Results:
+The **Argopy** team is concerned about the environmental impact of your favorite software development. Starting June 1st 2024, we're experimenting with the [Green Metrics Tools](https://metrics.green-coding.io) from [Green Coding](https://www.green-coding.io/) to get an estimate of the energy used and CO2eq emitted by our development activities on Github infrastructure. Results:
 
-| Activity                         | Green Coding tool                                                                                                                       |
-|----------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
-| CI tests running on each commit  | [![CI Energy][ci-energy-badge]][ci-energy-link] [![CI Energy][ci-energy-badge-co2]][ci-energy-link]                                     |
-| Upstream CI tests, running daily | [![CI Energy][ci-energy-badge-upstream]][ci-energy-link-upstream] [![CI Energy][ci-energy-badge-upstream-co2]][ci-energy-link-upstream] |
-
-
+[![CI Energy][ci-energy-badge]][ci-energy-link] [![CI Energy][ci-energy-badge-co2]][ci-energy-link]
 
 ## Development and contributions 
 
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed][repostatus-badge-active]][repostatus-link-active] 
+
 See our software management dashboard here: https://github.com/orgs/euroargodev/projects/19
 
-And if you want to get involved and help maintain or develop ``argopy``, please checkout [the contribution page](https://argopy.readthedocs.io/en/latest/contributing.html).
-
-
-## Tutorials
-
-Some tutorials, as jupyter notebooks, are available to get you started:
-
-- https://github.com/euroargodev/argopy/blob/master/docs/tutorials/basic_features_core_01.ipynb
+And if you want to get involved and help maintain or develop **Argopy**, please check out [the contribution page](https://argopy.readthedocs.io/en/latest/contributing.html).

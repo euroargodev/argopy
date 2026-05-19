@@ -138,13 +138,13 @@ def deprecated(reason: str = None, version: str = None, ignore_caller: List = []
                         raise_deprec = False
 
                 if raise_deprec:
-                    warnings.simplefilter("always", DeprecationWarning)
+                    warnings.simplefilter("always", FutureWarning)
                     warnings.warn(
                         fmt.format(name=func.__qualname__, reason=reason, version=version),
-                        category=DeprecationWarning,
+                        category=FutureWarning,
                         stacklevel=2,
                     )
-                    warnings.simplefilter("default", DeprecationWarning)
+                    warnings.simplefilter("default", FutureWarning)
                 else:
                     log.warning(fmt.format(name=func.__qualname__, reason=reason, version=version))
 
@@ -173,13 +173,13 @@ def deprecated(reason: str = None, version: str = None, ignore_caller: List = []
                     raise_deprec = False
 
             if raise_deprec:
-                warnings.simplefilter("always", DeprecationWarning)
+                warnings.simplefilter("always", FutureWarning)
                 warnings.warn(
                     fmt.format(name=func.__qualname__),
-                    category=DeprecationWarning,
+                    category=FutureWarning,
                     stacklevel=2,
                 )
-                warnings.simplefilter("default", DeprecationWarning)
+                warnings.simplefilter("default", FutureWarning)
             else:
                 log.warning(fmt.format(name=func.__qualname__, reason=reason))
 

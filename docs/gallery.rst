@@ -1,8 +1,10 @@
-Gallery and tutorials
-=====================
+Gallery of examples
+===================
 
-Here's a list of examples and tutorials on how to use **argopy**. Contributions are highly welcomed and appreciated. So, if you are interested in contributing, please consult the
+Here's a list of examples on how to use **Argopy**. Contributions are highly welcomed and appreciated. So, if you are interested in contributing, please consult the
 :doc:`contributing` guide.
+
+Tutorials and information on training sessions can be found on the dedicated page here: :doc:`tutorials`.
 
 
 Examples
@@ -110,14 +112,6 @@ Examples
                     :outline:
 
                     :fas:`file-arrow-down` Download notebook
-
-
-Tutorials
----------
-
-.. important::
-
-    **For all possible Argopy tutorials, please visit the dedicated repository at:** https://github.com/euroargodev/argopy-training
 
 
 .. dropdown:: Notebook tags Legend

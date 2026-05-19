@@ -91,7 +91,11 @@ Choose a release tag vX.Y.Z, fill in the release title and click on the `Auto-ge
   ```
   
 #### Library static assets
-- [ ] Update [static asset files](https://github.com/euroargodev/argopy/tree/master/argopy/static/assets) using the CLI [update_json_assets](https://github.com/euroargodev/argopy/tree/master/argopy/cli/update_json_assets) command.
+- [ ] Update [static asset files](https://github.com/euroargodev/argopy/tree/master/argopy/static/assets) using the CLI [update_json_assets](https://github.com/euroargodev/argopy/tree/master/argopy/cli/update_json_assets) command:
+```bash
+  cd cli
+  ./update_json_assets
+```  
 - [ ] Update [cheatsheet PDF](https://github.com/euroargodev/argopy/blob/master/docs/_static/argopy-cheatsheet.pdf) with all new release features.
 
 ### Code clean-up and update

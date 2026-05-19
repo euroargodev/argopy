@@ -1,0 +1,67 @@
+{
+  "name": "NB_SAMPLE_STM",
+  "long_name": "Number of STM samples in each pressure bin",
+  "last_update": "2026-01-25T11:11:25.663309+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_STM/",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_STM/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_STM/2/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
+      "@language": "en",
+      "@value": "Not Used. Number of samples in each pressure bin. Local_Attributes:{long_name:Number of samples in each pressure bin; standard_name:-; units:count; valid_min:-; valid_max:-; fill_value:NC_FILL_SHORT}. Properties:{category:ic; data_type:short}."
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "true",
+    "skos:note": {
+      "@language": "en",
+      "@value": "deprecated"
+    },
+    "dc:identifier": "SDN:R03::NB_SAMPLE_STM",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "Number of STM samples in each pressure bin"
+    },
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-26 10:16:04.0",
+    "skos:altLabel": "NB_SAMPLE_STM",
+    "skos:notation": "SDN:R03::NB_SAMPLE_STM",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R03::NB_SAMPLE_STM",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_STM/3/"
+    },
+    "pav:authoredOn": "2025-11-26 10:16:04.0",
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

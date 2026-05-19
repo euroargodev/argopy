@@ -7,6 +7,7 @@ import importlib
 import json
 import logging
 from copy import deepcopy
+from typing import Any
 
 
 log = logging.getLogger("argopy.utils.casting")
@@ -19,7 +20,7 @@ with open(os.path.join(path2assets, "data_types.json"), "r") as f:
     DATA_TYPES = json.load(f)
 
 
-def cast_Argo_variable_type(ds, overwrite=True):
+def cast_Argo_variable_type(ds: xr.Dataset, overwrite=True) -> xr.Dataset:
     """Ensure that all dataset variables are of the appropriate types according to Argo references
 
     Parameter
@@ -208,10 +209,43 @@ def cast_Argo_variable_type(ds, overwrite=True):
 def to_list(obj):
     """Make sure that an expected list is indeed a list"""
     if not isinstance(obj, list):
-        if isinstance(obj, np.ndarray):
+        if isinstance(obj, np.ndarray) or str(type(obj)).endswith("'dict_keys'>"):
             obj = list(obj)
         elif isinstance(obj, tuple):
             obj = [o for o in obj]
         else:
             obj = [obj]
     return obj
+
+
+def to_bool(obj: Any) -> bool:
+    """Make sure that an expected boolean is indeed a boolean
+
+    Parameters
+    ----------
+    obj: Any
+        Any type but boolean is expected.
+
+    Returns
+    -------
+    bool
+        Any value in [True, False, 1 , 0, 'True', 'False', '1', '0'] will return a boolean. Everything else will return False.
+    """
+    return bool(eval(str(obj)) if str(obj) in ['True', 'False', '1', '0'] else None)
+
+
+class Encoder(json.JSONEncoder):
+    """A custom JSON encoder that is robust to pandas and numpy data types"""
+    def default(self, obj):
+        dtypes = (np.datetime64, np.complexfloating, pd.Timestamp)
+        if isinstance(obj, dtypes):
+            return str(obj)
+        elif isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            if any([np.issubdtype(obj.dtype, i) for i in dtypes]):
+                return obj.astype(str).tolist()
+            return obj.tolist()
+        return super(Encoder, self).default(obj)

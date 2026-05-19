@@ -1,0 +1,889 @@
+{
+  "name": "R08_R23",
+  "long_name": "Mapping of subject=R08 with object=R23",
+  "last_update": "2026-02-11T18:48:27.551644+00:00",
+  "data": {
+    "sparql": "\n    PREFIX dc: <http://purl.org/dc/elements/1.1/>\n    PREFIX sssom: <https://w3id.org/sssom/schema/>\n    PREFIX text: <http://jena.apache.org/text#>\n    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n\n    select ?subj ?pred ?obj where { ?a a sssom:Mapping .\n    ?a sssom:subject_id ?subj .\n    <http://vocab.nerc.ac.uk/collection/R08/current/> skos:member ?subj.\n    ?a sssom:predicate_id ?pred .\n    ?a sssom:object_id ?obj .\n    <http://vocab.nerc.ac.uk/collection/R23/current/> skos:member ?obj.}\n    ",
+    "content": {
+      "head": {
+        "vars": [
+          "subj",
+          "pred",
+          "obj"
+        ]
+      },
+      "results": {
+        "bindings": [
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/855/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/NINJA/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/888/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/849/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/APEX_D/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/860/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/NEMO/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/857/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/NINJA/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/882/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/XUANWU/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/839/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_II/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/850/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/850/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_W/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/846/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/APEX/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/872/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/S2X/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/865/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/NOVA/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/880/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/S2A/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/840/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/840/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_MT/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/854/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/S2A/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/862/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_D/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/887/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_BGC_MRV/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/887/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_BGC/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/884/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_BGC/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/856/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/NINJA/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/852/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/852/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_W/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/871/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/COPEX/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/874/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_D_MRV/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/845/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/APEX/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/842/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/842/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_MT/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/869/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_EBR/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/864/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/NINJA_D/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/853/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_II/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/886/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_BGC_MRV/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/886/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_BGC/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/876/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/ALTO/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/879/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_II/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/844/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/863/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_A/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/834/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/834/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/885/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_BGC/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/878/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/873/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/ALTO/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/843/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/POPS_PROVOR/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/836/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/858/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/NINJA/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/861/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/NEMO/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/859/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/NEMO/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/870/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/HM2000/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/837/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_C/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/835/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_IV/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/848/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/APEX_EM/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/847/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/APEX/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/851/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/851/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_W/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/881/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/HM4000/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/877/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/APEX/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/875/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/ALTO/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/889/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/831/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/PALACE/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/838/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_D/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/841/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/"
+            }
+          },
+          {
+            "subj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R08/current/841/"
+            },
+            "pred": {
+              "type": "uri",
+              "value": "http://www.w3.org/2004/02/skos/core#broader/"
+            },
+            "obj": {
+              "type": "uri",
+              "value": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_MT/"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

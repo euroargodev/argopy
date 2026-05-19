@@ -1,0 +1,73 @@
+{
+  "name": "SATLANTIC_OCR507_ICSW",
+  "long_name": "OCR-507 multispectral radiometer (downwelling irradiance)",
+  "last_update": "2026-01-25T11:14:03.174190+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSW/",
+    "pav:hasVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSW/1/"
+    },
+    "pav:authoredOn": "2025-08-28 11:45:52.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSW/2/"
+    },
+    "@type": "skos:Concept",
+    "skos:related": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_PAR/"
+    },
+    "skos:definition": {
+      "@language": "en",
+      "@value": "A cosine-response, multispectral radiometer configured to measure downwelling irradiance in water. Number of channels: 7; bandwidth range: 400 nm to 865 nm (standard), or 305 nm, 325 nm, 340 nm, 380 nm (UV); sampling rate: 7 Hz \u2013 24 Hz; spectral bandwidth: 10 nm or 20 nm. The instrument was originally developed and manufactured at Satlantic, and was rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2011."
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "true",
+    "skos:note": {
+      "@language": "en",
+      "@value": "deprecated"
+    },
+    "dc:identifier": "SDN:R27::SATLANTIC_OCR507_ICSW",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "OCR-507 multispectral radiometer (downwelling irradiance)"
+    },
+    "owl:versionInfo": "2",
+    "dc:date": "2025-08-28 11:45:52.0",
+    "skos:altLabel": "SATLANTIC_OCR507_ICSW",
+    "skos:notation": "SDN:R27::SATLANTIC_OCR507_ICSW",
+    "skos:broader": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SATLANTIC/"
+      }
+    ],
+    "pav:version": "2",
+    "dce:identifier": "SDN:R27::SATLANTIC_OCR507_ICSW",
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

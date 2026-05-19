@@ -4,11 +4,14 @@ import logging
 import gzip
 from pathlib import Path
 from typing import List
+import concurrent.futures
 
-from .....options import OPTIONS
-from .....errors import DataNotFound, InvalidDatasetStructure
-from .....utils import check_index_cols, conv_lon
-from ...spec import ArgoIndexStoreProto
+from argopy.options import OPTIONS
+from argopy.errors import DataNotFound, InvalidDatasetStructure
+from argopy.utils.checkers import check_index_cols
+from argopy.utils.geo import conv_lon
+from argopy.utils.format import mono2multi
+from argopy.stores.index.spec import ArgoIndexStoreProto
 
 
 log = logging.getLogger("argopy.stores.index.pd")
@@ -334,7 +337,7 @@ class indexstore(ArgoIndexStoreProto):
                 tmax(self.index["date"]),
             ]
 
-    def read_files(self, index=False) -> List[str]:
+    def read_files(self, index : bool = False, multi : bool = False) -> List[str]:
         """File paths listed in index or search results
 
         Fall back on full index if search not triggered
@@ -345,11 +348,15 @@ class indexstore(ArgoIndexStoreProto):
         """
         sep = self.fs["src"].fs.sep
         if hasattr(self, "search") and not index:
-            return [sep.join(["dac", f.replace("/", sep)]) for f in self.search["file"]]
+            flist = [sep.join(["dac", f.replace("/", sep)]) for f in self.search["file"]]
         else:
-            return [sep.join(["dac", f.replace("/", sep)]) for f in self.index["file"]]
+            flist = [sep.join(["dac", f.replace("/", sep)]) for f in self.index["file"]]
+        if not multi:
+            return flist
+        else:
+            return mono2multi(flist, convention=self.convention, sep=sep)
 
-    def records_per_wmo(self, index=False):
+    def records_per_wmo_legacy(self, index=False):
         """Return the number of records per unique WMOs in search results
 
             Fall back on full index if search not triggered
@@ -371,6 +378,47 @@ class indexstore(ArgoIndexStoreProto):
                     "/%i/" % wmo, regex=True, case=False
                 )
                 count[wmo] = self.index[search_filter].shape[0]
+        return count
+
+    def records_per_wmo(self, index=False):
+        """Return the number of records per unique WMOs in search results
+
+        Fall back on full index if search not triggered
+
+        Returns
+        -------
+        dict
+
+        Notes
+        -----
+        Computation is parallelized over all WMOs with a ThreadPoolExecutor
+        """
+
+        def count_wmo(self, wmo: int, index: bool):
+            if hasattr(self, "search") and not index:
+                search_filter = self.search["file"].str.contains(
+                    "/%i/" % wmo, regex=True, case=False
+                )
+                return wmo, self.search[search_filter].shape[0]
+            else:
+                search_filter = self.index["file"].str.contains(
+                    "/%i/" % wmo, regex=True, case=False
+                )
+                return wmo, self.index[search_filter].shape[0]
+
+        ulist = self.read_wmo()
+        count = {}
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            # Submit tasks for each WMO
+            futures = {
+                executor.submit(count_wmo, self, wmo, index): wmo for wmo in ulist
+            }
+
+            # Process results as they complete
+            for future in concurrent.futures.as_completed(futures):
+                wmo, cnt = future.result()
+                count[wmo] = cnt
+
         return count
 
     def to_indexfile(self, outputfile):

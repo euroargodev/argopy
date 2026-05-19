@@ -150,13 +150,13 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/RMC/current/SECMC/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/RMC/current/RGENC/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/RMC/current/RSPEC/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/RMC/current/PRIMC/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/RMC/current/RGENC/"
                 }
             ],
             "@type": "skos:Collection",
@@ -171,7 +171,10 @@
             "dc:alternative": "MEASUREMENT_CODE_CATEGORY",
             "rdfs:comment": "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
             "grg:RE_RegisterOwner": "Argo Data Management Team",
-            "grg:RE_RegisterManager": "British Oceanographic Data Centre"
+            "grg:RE_RegisterManager": "British Oceanographic Data Centre",
+            "rdfs:seeAlso": {
+                "@id": "https://github.com/OneArgo/ArgoVocabs"
+            }
         }
     ],
     "@context": {

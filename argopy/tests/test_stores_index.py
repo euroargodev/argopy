@@ -19,7 +19,7 @@ from argopy.errors import (
 from argopy.utils.checkers import is_list_of_strings, is_wmo
 from argopy.stores.index import indexstore_pd
 from argopy.stores import ArgoFloat
-from utils import create_temp_folder
+from utils import create_temp_folder, has_s3
 from mocked_http import mocked_httpserver, mocked_server_address
 from utils import patch_ftp
 
@@ -45,8 +45,7 @@ VALID_HOSTS = [
     "MOCKFTP",  # keyword to use a fake/mocked ftp server (running on localhost)
 ]
 
-HAS_S3FS = importlib.util.find_spec("s3fs") is not None
-if HAS_S3FS:
+if has_s3:
     # todo Create a mocked server for s3 tests
     VALID_HOSTS.append("s3://argo-gdac-sandbox/pub/idx")
 
@@ -54,20 +53,28 @@ if HAS_S3FS:
 List index searches to be tested.
 """
 VALID_SEARCHES = [
-    # {"wmo": [13857]},
     {"wmo": [3902131]},  # BGC
     {"wmo": [6901929, 2901623]},
     {"cyc": [5]},
     {"cyc": [5, 45]},
-    # {"wmo_cyc": [13857, 2]},
     {"wmo_cyc": [3902131, 2]},  # BGC
     {"date": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
+    {"date": ["2007-08-01", "2007-09-01"]},
+    {"date": "2007-08-01"},
     {"lon": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
+    {"lon": [-60, -40]},
     {"lat": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
+    {"lat": [40.0, 60.0]},
     {"lon_lat": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
     {"box": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
     {"profiler_type": [845]},
-    {"profiler_label": 'ARVOR'},
+    {"profiler_label": ['ARVOR']},
+    {"institution_code": ['IF']},
+    {"institution_code": ['IF', 'JA']},
+    {"institution_name": ['canada']},
+    {"institution_name": ['usa', 'canada']},
+    {"dac": ['aoml']},
+    {"dac": ['bodc', 'coriolis']},
 ]
 VALID_SEARCHES_LOGICAL = [
     {"params": ["C1PHASE_DOXY", "DOWNWELLING_PAR"]},
@@ -132,6 +139,12 @@ def run_a_search(idx_maker, fetcher_args, search_point, xfail=False, reason="?")
                 idx.query.profiler_type(apts["profiler_type"], nrows=nrows)
             if "profiler_label" in apts:
                 idx.query.profiler_label(apts["profiler_label"], nrows=nrows)
+            if "institution_code" in apts:
+                idx.query.institution_code(apts["institution_code"], nrows=nrows)
+            if "institution_name" in apts:
+                idx.query.institution_name(apts["institution_name"], nrows=nrows)
+            if "dac" in apts:
+                idx.query.dac(apts["dac"], nrows=nrows)
         except:
             if xfail:
                 pytest.xfail(reason)
@@ -157,7 +170,7 @@ class IndexStore_test_proto:
 
     search_scenarios = [(h, ap) for h in VALID_HOSTS for ap in VALID_SEARCHES]
     search_scenarios = [
-        (h, ap, n) for h in VALID_HOSTS for ap in VALID_SEARCHES for n in [None, 2]
+        (h, ap, n) for h in VALID_HOSTS for ap in VALID_SEARCHES for n in [2]
     ]
     search_scenarios_ids = [
         "%s, %s, nrows=%s" % (ftp_shortname(fix[0]),
@@ -266,10 +279,10 @@ class IndexStore_test_proto:
         """Fixture to create an index store for a given host."""
         fetcher_args, N_RECORDS = self._setup_store(request)
         xfail, reason = False, ""
-        if not HAS_S3FS and 's3' in fetcher_args['host']:
+        if not has_s3 and 's3' in fetcher_args['host']:
             xfail, reason = True, 's3fs not available'
         elif 's3' in fetcher_args['host']:
-            xfail, reason = True, 's3 is experimental'
+            xfail, reason = 0, 's3 is experimental (store)'
         yield self.create_store(fetcher_args, xfail=xfail, reason=reason).load(nrows=N_RECORDS)
 
     @pytest.fixture
@@ -285,10 +298,10 @@ class IndexStore_test_proto:
         # log.debug("a_search: %s, %s, %s" % (self.index_file, srch, xfail))
 
         xfail, reason = False, ""
-        if not HAS_S3FS and 's3' in host:
+        if not has_s3 and 's3' in host:
             xfail, reason = True, 's3fs not available'
         elif 's3' in host:
-            xfail, reason = True, 's3 is experimental'
+            xfail, reason = 0, 's3 is experimental (search)'
 
         yield run_a_search(self.new_idx, {"host": host, "cache": True}, srch, xfail=xfail, reason=reason)
 

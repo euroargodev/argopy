@@ -1,0 +1,144 @@
+from typing import Any
+from functools import lru_cache
+import urllib
+
+from argopy.options import OPTIONS
+from argopy.stores.implementations.http import httpstore
+from argopy.stores.nvs.spec import NVSProto
+from argopy.stores.nvs.utils import concept2vocabulary, sparql_mapping_request
+
+
+def fmt2urlparams(fmt):
+    d = {
+        "json": "application/ld+json",
+        "ld+json": "application/ld+json",
+        "xml": "application/rdf+xml",
+        "rdf+xml": "application/rdf+xml",
+        "turtle": "text/turtle",
+        "text/turtle": "text/turtle",
+    }
+
+    if fmt in d.keys():
+        return f"?_profile=nvs&_mediatype={d[fmt]}"
+
+    raise ValueError(f"Invalid format '{fmt}'. Must be in: {d.keys()}.")
+
+
+class NVS(NVSProto):
+    online = True
+
+    nvs: str = None
+    """Url to NVS"""
+
+    _fs: Any = None
+    _instance: "NVS | None" = None
+    _initialized: bool = False
+
+    def __new__(cls, *args: Any, **kwargs: Any) -> "NVS":
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
+    def __init__(self, *args, **kwargs) -> None:
+        if not self._initialized:
+            self._fs: httpstore = httpstore(
+                cache=kwargs.get("cache", True),
+                cachedir=kwargs.get("cachedir", OPTIONS["cachedir"]),
+                timeout=kwargs.get("timeout", OPTIONS["api_timeout"]),
+                client_kwargs={
+                    "headers": {
+                        "Accept": "application/ld+json, application/sparql-results+json"
+                    }
+                },
+            )
+            self.nvs = kwargs.get("nvs", OPTIONS["nvs"])
+            self._initialized = True
+        self.uid = id(self)
+
+    def _downloader(self, fmt: str = "json"):
+        d = {"json": self.open_json, "xml": self.open_xml, "turtle": self.open_turtle}
+        return d[fmt]
+
+    @lru_cache
+    def open_turtle(self, *args, **kwargs):
+        return self._fs.download_url(*args, **kwargs).decode("utf-8")
+
+    @lru_cache
+    def open_xml(self, *args, **kwargs):
+        return self._fs.download_url(*args, **kwargs).decode("utf-8")
+
+    @lru_cache
+    def open_json(self, *args, **kwargs):
+        return self._fs.open_json(*args, **kwargs)
+
+    def _vocabulary2uri(self, rtid: str, fmt: str = "json") -> str:
+        """Return URI of a given vocabulary in a given format
+
+        Parameters
+        ----------
+        rtid: str
+            Name of the vocabulary (SKOS collection) to address. Eg: 'R01'.
+        fmt: str, default: "json"
+            Format of the NVS server response. Can be: "json", "xml" or "turtle".
+
+        Returns
+        -------
+        str
+        """
+        url = "{}/collection/{}/current/{}".format
+        return url(self.nvs, rtid, fmt2urlparams(fmt))
+
+    @lru_cache
+    def load_vocabulary(self, rtid: str, fmt: str = "json") -> dict | Any:
+        url = self._vocabulary2uri(rtid, fmt=fmt)
+        return self._downloader(fmt)(url)
+
+    def _concept2uri(
+        self, conceptid: str, rtid: str | None = None, fmt: str = "json"
+    ) -> str:
+        """Return URI of a given concept, with a given format
+
+        Parameters
+        ----------
+        conceptid: str
+            Name of the concept (SKOS concept) to retrieve. Eg: 'AANDERAA_OPTODE_3835'
+        rtid: str, optional, default = None
+            Name of the vocabulary (SKOS collection) for this concept. Eg: 'R27'.
+            If set to None, we try to guess it, but if the concept is not found or can be found in more than one vocabulary, an error is raised.
+        fmt: str, default: "json"
+            Format of the NVS server response. Can be: "json", "xml" or "turtle".
+
+        Returns
+        -------
+        str
+        """
+        if rtid is None:
+            reftable = concept2vocabulary(conceptid)
+            if reftable is None:
+                raise ValueError("Invalid Concept")
+            if len(reftable) > 1:
+                raise ValueError(
+                    f"This Concept appears in more than one Vocabulary: {reftable}. You must specified with the 'rtid' argument which one to use."
+                )
+            else:
+                rtid = reftable[0]
+
+        url = "{}/collection/{}/current/{}/{}".format
+        return url(self.nvs, rtid, conceptid, fmt2urlparams(fmt))
+
+    @lru_cache
+    def load_concept(
+        self, conceptid: str, rtid: str | None = None, fmt: str = "json"
+    ) -> dict | Any:
+        url = self._concept2uri(conceptid, rtid, fmt=fmt)
+        return self._downloader(fmt)(url)
+
+    def _mapping2uri(self, subjectid: str, objectid: str) -> str:
+        """Return URI of a given subject/object relationship mapping"""
+        sparql = sparql_mapping_request(subjectid, objectid)
+        return f"{self.nvs}/sparql?query={urllib.parse.quote(sparql)}"
+
+    @lru_cache
+    def load_mapping(self, subjectid: str, objectid: str, fmt: str = "json") -> dict:
+        url = self._mapping2uri(subjectid, objectid)
+        return self._downloader('json')(url)

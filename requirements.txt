@@ -1,12 +1,12 @@
-xarray>=2025.7  # https://github.com/pydata/xarray/issues/8909
+xarray>=2025.7,<=2025.9.0
 scipy>=1.5
-numpy # because xarray <2024.3
-erddapy>=2.2.1  # only compatible with python >= 3.10
-netCDF4>=1.5.3 #<1.5.9
+numpy
+erddapy>=2.2.1
+netCDF4>=1.5.3
 h5netcdf>=1.4.0
-fsspec>=2025.5.1  # https://github.com/euroargodev/argopy/issues/459
+fsspec>=2025.5.1
 toolz>=0.8.2
 requests>=2.28
-aiohttp>=3.7
+aiohttp>=3.7,<=3.12.15
 decorator>=5.1
-packaging>=20.4  # Using 'version' to make API compatible with several fsspec releases
+packaging>=20.4

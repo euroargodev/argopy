@@ -1,0 +1,2128 @@
+{
+  "name": "SENSOR",
+  "long_name": "Argo sensor types",
+  "last_update": "2026-01-25T10:44:16.308963+00:00",
+  "data": {
+    "@graph": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR/",
+        "pav:authoredOn": "2025-08-28 11:45:52.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR/1/"
+        },
+        "dce:identifier": "SDN:R25::RADIOMETER_DOWN_IRR",
+        "pav:version": "1",
+        "skos:notation": "SDN:R25::RADIOMETER_DOWN_IRR",
+        "skos:altLabel": "RADIOMETER_DOWN_IRR",
+        "dc:date": "2025-08-28 11:45:52.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Radiometer measuring downwelling irradiance"
+        },
+        "dc:identifier": "SDN:R25::RADIOMETER_DOWN_IRR",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Radiometer measuring downwelling irradiance (hypersprectral radiometer)."
+        },
+        "skos:related": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RAMSES_ACC/"
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/",
+        "pav:authoredOn": "2023-11-24 09:35:13.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/1/"
+        },
+        "dce:identifier": "SDN:R25::CTD_TEMP_CNDC",
+        "pav:version": "1",
+        "skos:notation": "SDN:R25::CTD_TEMP_CNDC",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP4K/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Specific temperature sensor used with conductivity to calculate salinity on a CTD"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R25::CTD_TEMP_CNDC",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Temperature sensor for conductivity on a CTD"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2023-11-24 09:35:13.0",
+        "skos:altLabel": ""
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/",
+        "pav:authoredOn": "2019-10-11 15:06:36.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/1/"
+        },
+        "dce:identifier": "SDN:R25::FLUOROMETER_CHLA",
+        "pav:version": "1",
+        "skos:notation": "SDN:R25::FLUOROMETER_CHLA",
+        "skos:altLabel": "FLUOROMETER_CHLA",
+        "dc:date": "2019-10-11 15:06:36.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Fluorometer measuring chlorophyll-a"
+        },
+        "dc:identifier": "SDN:R25::FLUOROMETER_CHLA",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/CYCLOPS_7_FLUOROMETER/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_AP2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBBCD/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLNTU/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBB2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FL/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_2K/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD_AP2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL_AP2/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Fluorometer measuring chlorophyll-a concentration"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        }
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/EM/",
+        "pav:authoredOn": "2019-10-11 15:06:36.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/EM/1/"
+        },
+        "dce:identifier": "SDN:R25::EM",
+        "pav:version": "1",
+        "skos:notation": "SDN:R25::EM",
+        "skos:altLabel": "EM",
+        "dc:date": "2019-10-11 15:06:36.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Electromagnetic sensor"
+        },
+        "dc:identifier": "SDN:R25::EM",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Electromagnetic sensor package measuring velocity and turbulence"
+        },
+        "skos:related": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R27/current/EM/"
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP470/",
+        "pav:authoredOn": "2021-02-09 15:34:44.0",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB3/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Backscattering meter measuring backscattering at 470 nm wavelength"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R25::BACKSCATTERINGMETER_BBP470",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Backscattering meter measuring backscattering at 470 nanometers"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2021-02-09 15:34:44.0",
+        "skos:altLabel": "BACKSCATTERINGMETER_BBP470",
+        "skos:notation": "SDN:R25::BACKSCATTERINGMETER_BBP470",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R25::BACKSCATTERINGMETER_BBP470",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP470/1/"
+        }
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/",
+        "pav:authoredOn": "2021-02-09 15:34:44.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/1/"
+        },
+        "dce:identifier": "SDN:R25::BACKSCATTERINGMETER_BBP700",
+        "pav:version": "1",
+        "skos:notation": "SDN:R25::BACKSCATTERINGMETER_BBP700",
+        "skos:altLabel": "BACKSCATTERINGMETER_BBP700",
+        "dc:date": "2021-02-09 15:34:44.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Backscattering meter measuring backscattering at 700 nanometers"
+        },
+        "dc:identifier": "SDN:R25::BACKSCATTERINGMETER_BBP700",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_AP2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBBCD/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBB2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_2K/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD_AP2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL_AP2/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Backscattering meter measuring backscattering at 700 nm wavelength"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        }
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/SPECTROPHOTOMETER_BISULFIDE/",
+        "pav:authoredOn": "2019-10-11 15:06:36.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/SPECTROPHOTOMETER_BISULFIDE/1/"
+        },
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SUNA_V2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SUNA/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OPUS_DS/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Spectrophotometer measuring bisulfide concentration"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R25::SPECTROPHOTOMETER_BISULFIDE",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Spectrophotometer measuring bisulfide"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2019-10-11 15:06:36.0",
+        "skos:altLabel": "SPECTROPHOTOMETER_BISULFIDE",
+        "skos:notation": "SDN:R25::SPECTROPHOTOMETER_BISULFIDE",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R25::SPECTROPHOTOMETER_BISULFIDE"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLOATCLOCK_MTIME/",
+        "pav:authoredOn": "2019-10-11 15:06:36.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLOATCLOCK_MTIME/1/"
+        },
+        "dce:identifier": "SDN:R25::FLOATCLOCK_MTIME",
+        "pav:version": "1",
+        "skos:notation": "SDN:R25::FLOATCLOCK_MTIME",
+        "skos:altLabel": "FLOATCLOCK_MTIME",
+        "dc:date": "2019-10-11 15:06:36.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Clock on float measuring time"
+        },
+        "dc:identifier": "SDN:R25::FLOATCLOCK_MTIME",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Fractional day of the individual measurement relative to JULD of the station"
+        },
+        "skos:related": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R27/current/FLOATCLOCK/"
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/SPECTROPHOTOMETER_NITRATE/",
+        "pav:authoredOn": "2019-10-11 15:06:36.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/SPECTROPHOTOMETER_NITRATE/1/"
+        },
+        "dce:identifier": "SDN:R25::SPECTROPHOTOMETER_NITRATE",
+        "pav:version": "1",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SUNA_V2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SUNA/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ISUS/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OPUS_DS/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ISUS_V3/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Spectrophotometer measuring nitrate concentration"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R25::SPECTROPHOTOMETER_NITRATE",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Spectrophotometer measuring nitrate"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2019-10-11 15:06:36.0",
+        "skos:altLabel": "SPECTROPHOTOMETER_NITRATE",
+        "skos:notation": "SDN:R25::SPECTROPHOTOMETER_NITRATE"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/IDO_DOXY/",
+        "pav:authoredOn": "2019-10-11 15:06:36.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/IDO_DOXY/1/"
+        },
+        "dce:identifier": "SDN:R25::IDO_DOXY",
+        "pav:version": "1",
+        "skos:notation": "SDN:R25::IDO_DOXY",
+        "skos:altLabel": "IDO_DOXY",
+        "dc:date": "2019-10-11 15:06:36.0",
+        "owl:versionInfo": "1",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE43I/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V3.0/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE43_IDO/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V1.0c/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V2.0/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE43F_IDO/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "A type of electrochemical dissolved oxygen sensor called Integrated Dissolved Oxygen (IDO)"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R25::IDO_DOXY",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Integrated Dissolved Oxygen (IDO) sensor measuring dissolved oxygen"
+        }
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR490/",
+        "pav:authoredOn": "2021-02-09 15:34:44.0",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Radiometer measuring downwelling irradiance at 490 nm wavelength"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R25::RADIOMETER_DOWN_IRR490",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Radiometer measuring downwelling irradiance at 490 nanometers"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2021-02-09 15:34:44.0",
+        "skos:altLabel": "RADIOMETER_DOWN_IRR490",
+        "skos:notation": "SDN:R25::RADIOMETER_DOWN_IRR490",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R25::RADIOMETER_DOWN_IRR490",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR490/1/"
+        }
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/",
+        "pav:authoredOn": "2019-10-11 15:06:36.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/1/"
+        },
+        "dce:identifier": "SDN:R25::CTD_CNDC",
+        "pav:version": "1",
+        "skos:notation": "SDN:R25::CTD_CNDC",
+        "skos:altLabel": "CTD_CNDC",
+        "dc:date": "2019-10-11 15:06:36.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Conductivity Temperature Depth (CTD) sensors package measuring conductivity"
+        },
+        "dc:identifier": "SDN:R25::CTD_CNDC",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Conductivity Temperature Depth (CTD) sensors package measuring conductivity"
+        },
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/CTD_F01/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/FSI/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP4K/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.12/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.0.1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0a/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.4/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V4.4.0/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.8/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.4/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.0/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.5/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V2.0/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9a/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V1.0c/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE37/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.0/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.6/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.5/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V3.0/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.10/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2a/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3b/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.5/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.9/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.0/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.7/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0c/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.4.0/"
+          }
+        ],
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/ACOUSTIC_GEOLOCATION/",
+        "pav:authoredOn": "2019-10-11 15:06:36.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/ACOUSTIC_GEOLOCATION/1/"
+        },
+        "dce:identifier": "SDN:R25::ACOUSTIC_GEOLOCATION",
+        "pav:version": "1",
+        "skos:notation": "SDN:R25::ACOUSTIC_GEOLOCATION",
+        "skos:altLabel": "ACOUSTIC_GEOLOCATION",
+        "dc:date": "2019-10-11 15:06:36.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Acoustic sensor measuring geolocation"
+        },
+        "dc:identifier": "SDN:R25::ACOUSTIC_GEOLOCATION",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Acoustic sensor for geolocation"
+        },
+        "skos:related": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RAFOS/"
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/ACOUSTIC/",
+        "pav:authoredOn": "2019-10-11 15:06:36.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/ACOUSTIC/1/"
+        },
+        "dce:identifier": "SDN:R25::ACOUSTIC",
+        "pav:version": "1",
+        "skos:notation": "SDN:R25::ACOUSTIC",
+        "skos:altLabel": "ACOUSTIC",
+        "dc:date": "2019-10-11 15:06:36.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Acoustic sensor"
+        },
+        "dc:identifier": "SDN:R25::ACOUSTIC",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Acoustic sensor"
+        },
+        "skos:related": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R27/current/PAL_UW/"
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/STS_TEMP/",
+        "pav:authoredOn": "2019-10-11 15:06:36.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/STS_TEMP/1/"
+        },
+        "dce:identifier": "SDN:R25::STS_TEMP",
+        "pav:version": "1",
+        "skos:notation": "SDN:R25::STS_TEMP",
+        "skos:altLabel": "STS_TEMP",
+        "dc:date": "2019-10-11 15:06:36.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Surface Temperature and Salinity (STS) sensor measuring temperature"
+        },
+        "dc:identifier": "SDN:R25::STS_TEMP",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Surface Temperature and Salinity (STS) sensor measuring temperature"
+        },
+        "skos:related": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE_STS/"
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_TURBIDITY/",
+        "pav:authoredOn": "2019-10-11 15:06:36.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_TURBIDITY/1/"
+        },
+        "dce:identifier": "SDN:R25::BACKSCATTERINGMETER_TURBIDITY",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/CYCLOPS_7_FLUOROMETER/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_NTU/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLNTU/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SEAPOINT_TURBIDITY_METER/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Backscattering meter measuring turbidity"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R25::BACKSCATTERINGMETER_TURBIDITY",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Backscattering meter measuring turbidity"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2019-10-11 15:06:36.0",
+        "skos:altLabel": "BACKSCATTERINGMETER_TURBIDITY",
+        "skos:notation": "SDN:R25::BACKSCATTERINGMETER_TURBIDITY",
+        "pav:version": "1"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD412/",
+        "pav:authoredOn": "2021-02-09 15:34:44.0",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_R10W/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_R10W/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Radiometer measuring upwelling radiance at 412 nm wavelength"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R25::RADIOMETER_UP_RAD412",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Radiometer measuring upwelling radiance at 412 nanometers"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2021-02-09 15:34:44.0",
+        "skos:altLabel": "RADIOMETER_UP_RAD412",
+        "skos:notation": "SDN:R25::RADIOMETER_UP_RAD412",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R25::RADIOMETER_UP_RAD412",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD412/1/"
+        }
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/TRANSISTOR_PH/",
+        "pav:authoredOn": "2019-10-11 15:06:36.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/TRANSISTOR_PH/1/"
+        },
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SEAFET/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/DURA/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/GDF/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Transistor measuring pH"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R25::TRANSISTOR_PH",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Transistor measuring pH"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2019-10-11 15:06:36.0",
+        "skos:altLabel": "TRANSISTOR_PH",
+        "skos:notation": "SDN:R25::TRANSISTOR_PH",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R25::TRANSISTOR_PH"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CDOM/",
+        "pav:authoredOn": "2019-10-11 15:06:36.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CDOM/1/"
+        },
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBBCD/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD_AP2/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Fluorometer measuring Colored Dissolved Organic Matter (CDOM)"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R25::FLUOROMETER_CDOM",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Fluorometer measuring Colored Dissolved Organic Matter (CDOM)"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2019-10-11 15:06:36.0",
+        "skos:altLabel": "FLUOROMETER_CDOM",
+        "skos:notation": "SDN:R25::FLUOROMETER_CDOM",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R25::FLUOROMETER_CDOM"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR443/",
+        "pav:authoredOn": "2021-02-09 15:34:44.0",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Radiometer measuring downwelling irradiance at 443 nm wavelength"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R25::RADIOMETER_DOWN_IRR443",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Radiometer measuring downwelling irradiance at 443 nanometers"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2021-02-09 15:34:44.0",
+        "skos:altLabel": "RADIOMETER_DOWN_IRR443",
+        "skos:notation": "SDN:R25::RADIOMETER_DOWN_IRR443",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R25::RADIOMETER_DOWN_IRR443",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR443/1/"
+        }
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_PAR/",
+        "pav:authoredOn": "2019-10-11 15:06:36.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_PAR/1/"
+        },
+        "dce:identifier": "SDN:R25::RADIOMETER_PAR",
+        "pav:version": "1",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_PAR/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSWR10W/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSW/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RAMSES_ACC/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Radiometer measuring Photosynthetically Active Radiation (PAR)"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R25::RADIOMETER_PAR",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Radiometer measuring Photosynthetically Active Radiation (PAR)"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2019-10-11 15:06:36.0",
+        "skos:altLabel": "RADIOMETER_PAR",
+        "skos:notation": "SDN:R25::RADIOMETER_PAR"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/",
+        "pav:authoredOn": "2019-10-11 15:06:36.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/1/"
+        },
+        "dce:identifier": "SDN:R25::CTD_TEMP",
+        "pav:version": "1",
+        "skos:notation": "SDN:R25::CTD_TEMP",
+        "skos:altLabel": "CTD_TEMP",
+        "dc:date": "2019-10-11 15:06:36.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Conductivity Temperature Depth (CTD) sensors package measuring temperature"
+        },
+        "dc:identifier": "SDN:R25::CTD_TEMP",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Conductivity Temperature Depth (CTD) sensors package measuring temperature"
+        },
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/CTD_F01/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/FSI/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP4K/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.12/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.0.1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0a/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.4/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V4.4.0/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.8/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.4/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.0/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.5/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V2.0/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9a/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V1.0c/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE37/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.0/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.6/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.5/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V3.0/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.10/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2a/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3b/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.5/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.9/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.0/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.7/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0c/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.4.0/"
+          }
+        ],
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR412/",
+        "pav:authoredOn": "2021-02-09 15:34:44.0",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Radiometer measuring downwelling irradiance at 412 nm wavelength"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R25::RADIOMETER_DOWN_IRR412",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Radiometer measuring downwelling irradiance at 412 nanometers"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2021-02-09 15:34:44.0",
+        "skos:altLabel": "RADIOMETER_DOWN_IRR412",
+        "skos:notation": "SDN:R25::RADIOMETER_DOWN_IRR412",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R25::RADIOMETER_DOWN_IRR412",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR412/1/"
+        }
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD490/",
+        "pav:authoredOn": "2021-02-09 15:34:44.0",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_R10W/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_R10W/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Radiometer measuring upwelling radiance at 490 nm wavelength"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R25::RADIOMETER_UP_RAD490",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Radiometer measuring upwelling radiance at 490 nanometers"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2021-02-09 15:34:44.0",
+        "skos:altLabel": "RADIOMETER_UP_RAD490",
+        "skos:notation": "SDN:R25::RADIOMETER_UP_RAD490",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R25::RADIOMETER_UP_RAD490",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD490/1/"
+        }
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/STS_CNDC/",
+        "pav:authoredOn": "2019-10-11 15:06:36.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/STS_CNDC/1/"
+        },
+        "dce:identifier": "SDN:R25::STS_CNDC",
+        "pav:version": "1",
+        "skos:notation": "SDN:R25::STS_CNDC",
+        "skos:altLabel": "STS_CNDC",
+        "dc:date": "2019-10-11 15:06:36.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Surface Temperature and Salinity (STS) sensor measuring conductivity"
+        },
+        "dc:identifier": "SDN:R25::STS_CNDC",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Surface Temperature and Salinity (STS) sensor measuring conductivity"
+        },
+        "skos:related": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE_STS/"
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/OPTODE_DOXY/",
+        "pav:authoredOn": "2019-10-11 15:06:36.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/OPTODE_DOXY/1/"
+        },
+        "dce:identifier": "SDN:R25::OPTODE_DOXY",
+        "pav:version": "1",
+        "skos:notation": "SDN:R25::OPTODE_DOXY",
+        "skos:altLabel": "OPTODE_DOXY",
+        "dc:date": "2019-10-11 15:06:36.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Optode measuring dissolved oxygen"
+        },
+        "dc:identifier": "SDN:R25::OPTODE_DOXY",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE63_OPTODE/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CODA_T_ODO/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/AROD_FT/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ARO_FT/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3930/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4330F/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3835/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4831/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3830/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4831F/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4330/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "An optical dissolved oxygen sensor, also known as optode"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        }
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR555/",
+        "pav:authoredOn": "2021-02-09 15:34:44.0",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Radiometer measuring downwelling irradiance at 555 nm wavelength"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R25::RADIOMETER_DOWN_IRR555",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Radiometer measuring downwelling irradiance at 555 nanometers"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2021-02-09 15:34:44.0",
+        "skos:altLabel": "RADIOMETER_DOWN_IRR555",
+        "skos:notation": "SDN:R25::RADIOMETER_DOWN_IRR555",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R25::RADIOMETER_DOWN_IRR555",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR555/1/"
+        }
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/",
+        "pav:authoredOn": "2019-10-11 15:06:36.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/1/"
+        },
+        "dce:identifier": "SDN:R25::CTD_PRES",
+        "pav:version": "1",
+        "skos:notation": "SDN:R25::CTD_PRES",
+        "skos:altLabel": "CTD_PRES",
+        "dc:date": "2019-10-11 15:06:36.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Conductivity Temperature Depth (CTD) sensors package measuring pressure"
+        },
+        "dc:identifier": "SDN:R25::CTD_PRES",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Conductivity Temperature Depth (CTD) sensors package measuring pressure"
+        },
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/DSB301-10-C85/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/CTD_F01/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_2900PSIA/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/PAINE/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_1500PSIA/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_1600PSIA/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_3000PSIA/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_2000PSIA/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/KISTLER_10153PSIA/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/KISTLER_2900PSIA/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/KISTLER/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/KELLER_PA8/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SEASCAN_SSTD/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/DRUCK_10153PSIA/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/DRUCK/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/DRUCK_2900PSIA/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/FSI/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES_A/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP4K/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/MENSOR/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/MP40_C_2000_G/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/AMETEK_3000PSIA/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/AMETEK/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.12/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.0.1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0a/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.4/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V4.4.0/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.8/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.4/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.0/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.5/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V2.0/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9a/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V1.0c/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE37/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.0/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.6/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.5/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V3.0/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.10/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2a/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3b/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.5/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.9/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.0/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.7/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0c/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.4.0/"
+          }
+        ],
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/TRANSMISSOMETER_CP660/",
+        "pav:authoredOn": "2021-02-09 15:34:44.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/TRANSMISSOMETER_CP660/1/"
+        },
+        "dce:identifier": "SDN:R25::TRANSMISSOMETER_CP660",
+        "pav:version": "1",
+        "skos:notation": "SDN:R25::TRANSMISSOMETER_CP660",
+        "skos:altLabel": "TRANSMISSOMETER_CP660",
+        "dc:date": "2021-02-09 15:34:44.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Transmissometer measuring attenuation at 660 nanometers"
+        },
+        "dc:identifier": "SDN:R25::TRANSMISSOMETER_CP660",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Transmissometer measuring attenuation at 660 nm wavelength"
+        },
+        "skos:related": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R27/current/C_ROVER/"
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP532/",
+        "pav:authoredOn": "2021-02-09 15:34:44.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP532/1/"
+        },
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBB2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB3/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Backscattering meter measuring backscattering at 532 nm wavelength"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R25::BACKSCATTERINGMETER_BBP532",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Backscattering meter measuring backscattering at 532 nanometers"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2021-02-09 15:34:44.0",
+        "skos:altLabel": "BACKSCATTERINGMETER_BBP532",
+        "skos:notation": "SDN:R25::BACKSCATTERINGMETER_BBP532",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R25::BACKSCATTERINGMETER_BBP532"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD555/",
+        "pav:authoredOn": "2021-02-09 15:34:44.0",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_R10W/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_R10W/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Radiometer measuring upwelling radiance at 555 nm wavelength"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R25::RADIOMETER_UP_RAD555",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Radiometer measuring upwelling radiance at 555 nanometers"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2021-02-09 15:34:44.0",
+        "skos:altLabel": "RADIOMETER_UP_RAD555",
+        "skos:notation": "SDN:R25::RADIOMETER_UP_RAD555",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R25::RADIOMETER_UP_RAD555",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD555/1/"
+        }
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD443/",
+        "pav:authoredOn": "2021-02-09 15:34:44.0",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_R10W/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_R10W/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Radiometer measuring upwelling radiance at 443 nm wavelength"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R25::RADIOMETER_UP_RAD443",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Radiometer measuring upwelling radiance at 443 nanometers"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2021-02-09 15:34:44.0",
+        "skos:altLabel": "RADIOMETER_UP_RAD443",
+        "skos:notation": "SDN:R25::RADIOMETER_UP_RAD443",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R25::RADIOMETER_UP_RAD443",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD443/1/"
+        }
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR380/",
+        "pav:authoredOn": "2021-02-09 15:34:44.0",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Radiometer measuring downwelling irradiance at 380 nm wavelength"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R25::RADIOMETER_DOWN_IRR380",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Radiometer measuring downwelling irradiance at 380 nanometers"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2021-02-09 15:34:44.0",
+        "skos:altLabel": "RADIOMETER_DOWN_IRR380",
+        "skos:notation": "SDN:R25::RADIOMETER_DOWN_IRR380",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R25::RADIOMETER_DOWN_IRR380",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR380/1/"
+        }
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/",
+        "skos:member": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/EM/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP470/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/SPECTROPHOTOMETER_BISULFIDE/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLOATCLOCK_MTIME/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/SPECTROPHOTOMETER_NITRATE/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/IDO_DOXY/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR490/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/ACOUSTIC_GEOLOCATION/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/ACOUSTIC/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/STS_TEMP/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_TURBIDITY/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD412/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/TRANSISTOR_PH/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CDOM/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR443/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_PAR/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR412/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD490/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/STS_CNDC/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/OPTODE_DOXY/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR555/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/TRANSMISSOMETER_CP660/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP532/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD555/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR380/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD443/"
+          }
+        ],
+        "@type": "skos:Collection",
+        "dc:publisher": "Natural Environment Research Council",
+        "dc:description": "Terms describing sensor types mounted on Argo floats. Argo netCDF variable SENSOR is populated by R25 altLabel.",
+        "dc:title": "Argo sensor types",
+        "skos:prefLabel": "Argo sensor types",
+        "owl:versionInfo": "4",
+        "dc:date": "2025-08-29 03:00:01.0",
+        "skos:altLabel": "SENSOR",
+        "dc:creator": "Argo Data Management Team",
+        "dc:alternative": "SENSOR",
+        "rdfs:comment": "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
+        "grg:RE_RegisterOwner": "Argo Data Management Team",
+        "grg:RE_RegisterManager": "British Oceanographic Data Centre",
+        "rdfs:seeAlso": {
+          "@id": "https://github.com/OneArgo/ArgoVocabs"
+        }
+      }
+    ],
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

@@ -24,6 +24,7 @@ Use this script to download all possible tests data to be used by the local http
 >>> citests_httpdata_manager -a download -t topo
 >>> citests_httpdata_manager -a download -t oops
 >>> citests_httpdata_manager -a download -t nvs
+>>> citests_httpdata_manager -a download -t nvs_store
 >>> citests_httpdata_manager -a download -t docs
 
 >>> citests_httpdata_manager -a download -t ea_dataselection
@@ -68,9 +69,10 @@ from argopy import DataFetcher, clear_cache, ArgoFloat
 from argopy.related import (
     TopoFetcher,
     OceanOPSDeployments,
-    ArgoNVSReferenceTables,
     ArgoDocs,
 )
+from argopy.reference import ArgoNVSReferenceTables
+from argopy.stores.nvs.implementations.online.nvs import NVS as NVS_online
 
 
 log = logging.getLogger("argopy.cli.test_data")
@@ -110,6 +112,7 @@ DEFAULT_TARGETS = [
     "topo",
     "oops",
     "nvs",
+    "nvs_store",
     "docs",
     "altim",
     "ea_dataselection",
@@ -119,11 +122,8 @@ DEFAULT_TARGETS = [
     "argofloat",
 ]
 
-
-start_with = lambda f, x: (
-    f[0 : len(x)] == x if len(x) <= len(f) else False
-)  # noqa: E731
-
+# Http requests time out in seconds:
+TIMEOUT = 60 * 10
 
 def setup_args():
     icons_help_string = """CI Tests data manager for the http mocked server"""
@@ -166,6 +166,7 @@ def setup_args():
        topo             - URIs accessed by TopoFetcher with ds='gebco' from test_related/Test_TopoFetcher
        oops             - URIs accessed by OceanOPSDeployments from test_related/Test_OceanOPSDeployments
        nvs              - URIs accessed by ArgoNVSReferenceTables from test_related/Test_ArgoNVSReferenceTables
+       nvs_store        - URIs accessed by NVS from test_stores_nvs
        docs             - URIs accessed by ArgoDocs from test_related/Test_ArgoDocs
        altim            - URIs accessed by open_sat_altim_report from test_related/Test_open_sat_altim_report
        
@@ -175,22 +176,7 @@ def setup_args():
     """
 
     def target_getChoices():
-        return [
-            "erddap",
-            "erddap_bgc",
-            "ifremer_gdac",
-            "ifremer_gdac_bgc",
-            "argovis",
-            "topo",
-            "oops",
-            "nvs",
-            "docs",
-            "altim",
-            "ea_dataselection",
-            "ifremer_api",
-            "github",
-            "argofloat",
-        ]
+        return DEFAULT_TARGETS
 
     parser.add_argument(
         "-t",
@@ -249,11 +235,11 @@ def log_file_desc(file, data, src):
     # elif "github.com/euroargodev/argopy-data" in src['uri']:
     #     msg.append("🤖 GITHUB ARGOPY-DATA: %s" % parse_qs(src["uri"]))
 
-    elif start_with(src["uri"], "https://www.ocean-ops.org/api/1"):
+    elif src["uri"].startswith("https://www.ocean-ops.org/api/1"):
         # msg.append("🤖 Ocean-OPS API: %s" % unquote(src["uri"]))
         msg.append("🤖 Ocean-OPS API: %s" % parse_qs(src["uri"]))
 
-    elif start_with(src["uri"], "https://argovis-api.colorado.edu"):
+    elif src["uri"].startswith("https://argovis-api.colorado.edu"):
         msg.append("🤖 Argovis API: %s" % unquote(src["uri"]))
 
     else:
@@ -376,7 +362,7 @@ async def place_file(session: aiohttp.ClientSession, source: dict) -> None:
     """Download remote file and save it locally"""
     test_data_file = os.path.join(DATA_FOLDER, "%s.%s" % (source["sha"], source["ext"]))
     if OVERWRITE or not os.path.exists(test_data_file):
-        async with session.get(source["uri"], ssl=False, timeout=60 * 10) as r:
+        async with session.get(source["uri"], ssl=False, timeout=TIMEOUT) as r:
             if r.content_type not in CONTENT_TYPE.values():
                 print(
                     "Unexpected content type (%s) with this GET request: %s (%s extension)"
@@ -880,6 +866,39 @@ class Lister:
         return self.respond(this_URI)
 
     @property
+    def nvs_store(self):
+        this_URI = UriRegistry(name="nvs_store")
+        nvs = NVS_online()
+
+        RTID_TESTED = ['R27']
+        CONCEPTID_TESTED = ['AANDERAA_OPTODE_3835']
+        MAPPING_TESTED = [("R08", "R23")]
+
+        for rtid in RTID_TESTED:
+            uri = nvs._vocabulary2uri(rtid)
+            this_URI.commit(self.dfile(unquote(uri), "json"))
+
+        for rtid in CONCEPTID_TESTED:
+            uri = nvs._concept2uri(rtid)
+            this_URI.commit(self.dfile(unquote(uri), "json"))
+
+        fmts = {"ld+json": "json", "rdf+xml": "xml", "text/turtle": "txt"}
+        for fmt in fmts.keys():
+            url = nvs._vocabulary2uri('R27', fmt=fmt)
+            this_URI.commit(self.dfile(unquote(url), fmts[fmt]))
+
+            url = nvs._concept2uri('AANDERAA_OPTODE_3835', fmt=fmt)
+            this_URI.commit(self.dfile(unquote(url), fmts[fmt]))
+
+        for s, o in MAPPING_TESTED:
+            uri = nvs._mapping2uri(s, o)
+            this_URI.commit(self.dfile(unquote(uri), "json"))
+
+        print(this_URI)
+
+        return self.respond(this_URI)
+
+    @property
     def docs(self):
         this_URI = UriRegistry(name="docs")
 
@@ -1005,7 +1024,7 @@ async def fetch_download_links(session: aiohttp.ClientSession, target=None):
 async def download(target=None):
     connector = aiohttp.TCPConnector(limit=1, force_close=True)
     async with aiohttp.ClientSession(
-        connector=connector, timeout=aiohttp.ClientTimeout(total=60 * 10)
+        connector=connector, timeout=aiohttp.ClientTimeout(total=TIMEOUT)
     ) as session:
         urls = await fetch_download_links(session, target=target)
         return await asyncio.gather(*[place_file(session, url) for url in urls])
@@ -1014,7 +1033,7 @@ async def download(target=None):
 async def dry_download(target=None):
     connector = aiohttp.TCPConnector(limit=1, force_close=True)
     async with aiohttp.ClientSession(
-        connector=connector, timeout=aiohttp.ClientTimeout(total=60 * 10)
+        connector=connector, timeout=aiohttp.ClientTimeout(total=TIMEOUT)
     ) as session:
         return await fetch_download_links(session, target=target)
 
@@ -1090,6 +1109,9 @@ def consolidate(target=None):
                 recommended = 'r'
 
                 if b"<title>502 Proxy Error</title>" in data:
+                    recommended = 'r'
+
+                if b"The proxy server could not handle the request" in data:
                     recommended = 'r'
 
                 if b"Not Found: Your query produced no matching results. (nRows = 0)" in data:

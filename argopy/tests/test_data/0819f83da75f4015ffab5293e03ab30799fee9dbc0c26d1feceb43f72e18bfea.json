@@ -587,13 +587,13 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/PST/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/FST/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/LMT/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/FLT/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/FST/"
                 }
             ],
             "@type": "skos:Collection",
@@ -608,7 +608,10 @@
             "dc:alternative": "CYCLE_TIMING_VARIABLE",
             "rdfs:comment": "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
             "grg:RE_RegisterOwner": "Argo Data Management Team",
-            "grg:RE_RegisterManager": "British Oceanographic Data Centre"
+            "grg:RE_RegisterManager": "British Oceanographic Data Centre",
+            "rdfs:seeAlso": {
+                "@id": "https://github.com/OneArgo/ArgoVocabs"
+            }
         }
     ],
     "@context": {

@@ -10,7 +10,7 @@ from typing import Literal
 from netCDF4 import Dataset
 
 from ...errors import InvalidMethod, DataNotFound
-from ...utils.transform import drop_variables_not_in_all_datasets
+from ...utils.transformers import drop_variables_not_in_all_datasets
 from ..filesystems import has_distributed, distributed
 from ..filesystems import tqdm
 from .http import httpstore
