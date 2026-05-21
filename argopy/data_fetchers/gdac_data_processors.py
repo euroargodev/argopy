@@ -11,6 +11,7 @@ def pre_process_multiprof(
     ds: xr.Dataset,
     access_point: str,
     access_point_opts: {},
+    params_list: list = None,
     pre_filter_points: bool = False,
     dimension: Literal['point', 'profile'] = 'point',
     # dataset_id: str = "phy",
@@ -74,6 +75,11 @@ def pre_process_multiprof(
 
     if pre_filter_points:
         ds = filter_points(ds, access_point=access_point, **access_point_opts)
+
+    # keep only requested params if specified (for bgc datasets)
+    if params_list is not None:
+        params_list = [p for p in params_list if p in ds.data_vars]
+        ds = ds[params_list]
 
     return ds
 

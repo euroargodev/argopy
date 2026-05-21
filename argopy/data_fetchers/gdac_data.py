@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 from abc import abstractmethod
+from typing import Union
 import warnings
 import getpass
 import logging
@@ -16,6 +17,8 @@ from typing import Literal
 
 from ..utils.format import argo_split_path
 from ..options import OPTIONS, check_gdac_option, PARALLEL_SETUP
+from ..utils.lists import list_bgc_s_variables, list_core_parameters
+from ..utils import is_list_of_strings, to_list
 from ..errors import DataNotFound
 from ..stores import ArgoIndex, has_distributed, distributed
 from .proto import ArgoDataFetcherProto
@@ -64,6 +67,7 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         dimension: Literal["point", "profile"] = "point",
         errors: str = "raise",
         api_timeout: int = 0,
+        params: Union[str, list] = "all",
         **kwargs
     ):
         """Init fetcher
@@ -94,6 +98,10 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
             Show a progress bar or not when fetching data.
         api_timeout: int (optional)
             Server request time out in seconds. Set to OPTIONS['api_timeout'] by default.
+        params: Union[str, list] (optional, default='all')
+            List of BGC essential variables to retrieve, i.e. that will be in the output :class:`xr.DataSet``.
+            By default, this is set to ``all``, i.e. any variable found in at least of the profile in the data
+            selection will be included in the output.
 
         Other parameters
         ----------------
@@ -125,6 +133,46 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         )
         self.fs = self.indexfs.fs["src"]  # Reuse the appropriate file system
 
+        if self.dataset_id in ["bgc", "bgc-s"]:
+            self._bgc_vlist_gdac = [v.lower() for v in list_bgc_s_variables()]
+            # Handle the 'params' argument:
+            self._bgc_params = to_list(params)
+            if isinstance(params, str):
+                if params == "all":
+                    params = self._bgc_vlist_avail
+                else:
+                    params = to_list(params)
+            elif params is None:
+                raise ValueError()
+            elif params[0] == "all":
+                params = self._bgc_vlist_avail
+            elif not is_list_of_strings(params):
+                raise ValueError("'params' argument must be a list of strings")
+                # raise ValueError("'params' argument must be a list of strings (possibly with a * wildcard)")
+            self._bgc_vlist_params = [p.upper() for p in params]
+            # self._bgc_vlist_params = self._bgc_handle_wildcard(self._bgc_vlist_params)
+
+            for v in self._bgc_vlist_params:
+                if v not in self._bgc_vlist_avail:
+                    raise ValueError(
+                        "'%s' not available for this access point. The 'params' argument must have values in [%s]"
+                        % (v, ",".join(self._bgc_vlist_avail))
+                    )
+
+            for p in list_core_parameters():
+                if p not in self._bgc_vlist_params:
+                    self._bgc_vlist_params.append(p)
+
+            if (
+                self.user_mode in ["standard", "research"]
+                and "CDOM" in self._bgc_vlist_params
+            ):
+                self._bgc_vlist_params.remove("CDOM")
+                log.warning(
+                    "CDOM was requested but was removed from the fetcher because executed in '%s' user mode"
+                    % self.user_mode
+                )
+
         nrows = None
         if "N_RECORDS" in kwargs:
             nrows = kwargs["N_RECORDS"]
@@ -143,6 +191,8 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         summary.append(self._repr_data_source)
         summary.append(self._repr_access_point)
         summary.append(self._repr_server)
+        if self.dataset_id in ["bgc", "bgc-s"]:
+            summary.append("📗 Parameters: %s" % self._bgc_vlist_params)
         if hasattr(self.indexfs, "index"):
             summary.append(
                 "📗 Index: %s (%i records)" % (self.indexfs.index_file, self.N_RECORDS)
@@ -226,6 +276,38 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         new_uri = [mono2multi(uri) for uri in URIs]
         new_uri = list(set(new_uri))
         return new_uri
+    
+    @property
+    def _bgc_vlist_avail(self):
+        """Return the list of the gdac BGC dataset available for this access point
+
+        Apply search criteria in the index, then retrieve the list of parameters
+        """
+        if hasattr(self, "WMO"):
+            if hasattr(self, "CYC") and self.CYC is not None:
+                self.indexfs.query.wmo_cyc(self.WMO, self.CYC)
+            else:
+                self.indexfs.query.wmo(self.WMO)
+        elif hasattr(self, "BOX"):
+            if len(self.indexBOX) == 4:
+                self.indexfs.query.lon_lat(self.indexBOX)
+            else:
+                self.indexfs.query.box(self.indexBOX)
+        params = self.indexfs.read_params()
+
+        # Temporarily remove from params those missing on the erddap server:
+        # params = [p for p in params if p.lower() in self._bgc_vlist_erddap]
+        results = []
+        for p in params:
+            if p.lower() in self._bgc_vlist_gdac:
+                results.append(p)
+            # else:
+            #     log.error(
+            #         "Removed '%s' because it is not available on the erddap server (%s), but it should !"
+            #         % (p, self._server)
+            #     )
+
+        return results
 
     @property
     def cachepath(self):
@@ -298,6 +380,7 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
             "access_point_opts": access_point_opts,
             "pre_filter_points": self._post_filter_points,
             "dimension": dimension,
+            "params_list": self._bgc_vlist_params if self.dataset_id in ["bgc", "bgc-s"] else None,
         }
 
         # Download and pre-process data:
@@ -309,6 +392,10 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
             "preprocess": pre_process_multiprof,
             "preprocess_opts": preprocess_opts,
         }
+        # ATTEMPT TO HANDLE BGC PARAMS SELECTION FOR GDAC
+        if self.dataset_id in ["bgc", "bgc-s"]:
+            opts["data_vars"] = self._bgc_vlist_params
+
         if self.parallel_method in ["thread"]:
             opts["method"] = "thread"
             opts["open_dataset_opts"] = {"xr_opts": {"engine": "argo"}}
