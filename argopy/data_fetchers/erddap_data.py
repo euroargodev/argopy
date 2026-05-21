@@ -359,7 +359,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             ]
             [vlist.append(p) for p in plist]
 
-            # Core/Deep variables:
+            # BGC/Core/Deep variables:
             plist = [p.lower() for p in list_core_parameters()]
             [vlist.append(p) for p in plist]
             [vlist.append(p + "_qc") for p in plist]
