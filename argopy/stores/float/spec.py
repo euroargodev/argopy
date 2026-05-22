@@ -14,6 +14,7 @@ from ...plot import dashboard
 from ...utils import check_wmo, argo_split_path, shortcut2gdac
 from ...options import OPTIONS
 from .. import ArgoIndex
+from .bgcargo_plus import BGCArgoPlusStore, BGCARGO_PLUS_DEFAULT_VERSION
 
 
 log = logging.getLogger("argopy.stores.ArgoFloat")
@@ -301,20 +302,29 @@ class FloatStoreProto(ABC):
                     avail.update({name: file})
         return dict(sorted(avail.items()))
 
-    def open_dataset(
-        self, name: str = "prof", cast: bool = True, **kwargs
-    ) -> xr.Dataset:
+    def open_dataset(self, name: str = "prof", cast: bool = True, **kwargs) -> xr.Dataset:
         """Open and decode a dataset
 
         Parameters
         ----------
         name: str, optional, default = "prof"
-            Name of the dataset to open. It can be any key from the dictionary returned by :class:`ArgoFloat.ls_dataset`.
+            Name of the dataset to open. It can be any key from the dictionary
+            returned by :class:`ArgoFloat.ls_dataset`, or the special value
+            ``"BGCArgoPlus"`` to load the QC-processed file from the BGC-Argo+
+            dataset (https://www.bgc-argo-plus.info) served on the SOEST FTP.
         cast: bool, optional, default = True
-            Determine if the dataset variables should be cast or not. This is similar to opening the dataset directly with :class:`xr.open_dataset` using the ``engine=`argo``` option.
-            This will be ignored if the ``netCDF4` kwarg is set to True.
+            Determine if the dataset variables should be cast or not. This is similar
+            to opening the dataset directly with :class:`xr.open_dataset` using the
+            ``engine="argo"`` option.
+            This will be ignored if the ``netCDF4`` kwarg is set to True.
+            Note: ``cast`` is **not** applied when ``name="BGCArgoPlus"``.
+        bgcplus_version: str, optional
+            BGC-Argo+ dataset version tag (only used when ``name='BGCArgoPlus'``).
+            Defaults to :data:`argopy.stores.float.bgcargo_plus.BGCARGO_PLUS_DEFAULT_VERSION`.
         **kwargs
-            All the other parameters are passed to the GDAC store `open_dataset` method.
+            All the other parameters are passed to the GDAC store ``open_dataset``
+            method (or to :class:`argopy.stores.float.bgcargo_plus.BGCArgoPlusStore`
+            when ``name="BGCArgoPlus"``).
 
         Returns
         -------
@@ -322,9 +332,41 @@ class FloatStoreProto(ABC):
 
         Notes
         -----
-        Use the ``netCDF4=True`` option to return a :class:`netCDF4.Dataset` object instead of a :class:`xarray.Dataset`.
+        Use the ``netCDF4=True`` option to return a :class:`netCDF4.Dataset` object
+        instead of a :class:`xarray.Dataset`.
+
+        When ``name="BGCArgoPlus"``, the file is fetched from the SOEST FTP server::
+
+            ftp://ftp.soest.hawaii.edu/bgc_argo_plus/Individual_Floats/outliers_removed/
+
+        and a :class:`FileNotFoundError` is raised if the float is not (yet) part
+        of the BGC-Argo+ dataset.
+
+        Examples
+        --------
+        .. code-block:: python
+
+            from argopy import ArgoFloat
+            ds = ArgoFloat(6903091).open_dataset('BGCArgoPlus')
+            # Pin to a specific version:
+            ds = ArgoFloat(6903091).open_dataset('BGCArgoPlus', bgcplus_version='v0.1_2025_12')
 
         """
+        # ---- BGC-Argo+ special case -----------------------------------------
+        if name == "BGCArgoPlus":
+            version = kwargs.pop("bgcplus_version", BGCARGO_PLUS_DEFAULT_VERSION)
+            store = BGCArgoPlusStore(
+                self.WMO,
+                version=version,
+                cache=self.cache,
+                cachedir=self.cachedir,
+                timeout=self.timeout,
+            )
+            ds = store.open_dataset(**kwargs)
+            self._dataset["BGCArgoPlus"] = ds
+            return ds
+        # ---------------------------------------------------------------------
+
         if name not in self.ls_dataset():
             raise ValueError(
                 "Dataset '%s' not found. Available dataset for this float are: %s"
@@ -404,6 +446,8 @@ class FloatStoreProto(ABC):
         summary.append("Number of cycles: %s" % self.N_CYCLES)
         if self._online:
             summary.append("Dashboard: %s" % dashboard(wmo=self.WMO, url_only=True))
-        summary.append("Netcdf dataset available: %s" % list(self.ls_dataset().keys()))
+        summary.append(
+            "Netcdf dataset available: %s" % list(self.ls_dataset().keys())
+        )
 
         return "\n".join(summary)
