@@ -308,6 +308,86 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
             #     )
 
         return results
+    
+    @property
+    def _minimal_vlist(self):
+        """Return the list of variables to retrieve measurements for"""
+        vlist = list()
+        if self.dataset_id == "phy":
+            plist = [
+                "data_mode",
+                "latitude",
+                "longitude",
+                "position_qc",
+                "time",
+                "time_qc",
+                "direction",
+                "platform_number",
+                "cycle_number",
+                "config_mission_number",
+                "vertical_sampling_scheme",
+            ]
+            [vlist.append(p) for p in plist]
+
+            # BGC/Core/Deep variables:
+            plist = [p.lower() for p in list_core_parameters()]
+            [vlist.append(p) for p in plist]
+            [vlist.append(p + "_qc") for p in plist]
+            [vlist.append(p + "_adjusted") for p in plist]
+            [vlist.append(p + "_adjusted_qc") for p in plist]
+            [vlist.append(p + "_adjusted_error") for p in plist]
+
+        if self.dataset_id in ["bgc", "bgc-s"]:
+            plist = [
+                # "parameter_data_mode",  # never !!!
+                "latitude",
+                "longitude",
+                "position_qc",
+                "time",
+                "time_qc",
+                "direction",
+                "platform_number",
+                "cycle_number",
+                "config_mission_number",
+            ]
+            [vlist.append(p) for p in plist]
+
+            # Search in the profile index the list of parameters to load:
+            params = self._bgc_vlist_params  # rq: include 'core' variables
+            # log.debug("erddap-bgc parameters to load: %s" % params)
+
+            for p in params:
+                vname = p.lower()
+                if self.user_mode in ["expert"]:
+                    vlist.append("%s" % vname)
+                    vlist.append("%s_qc" % vname)
+                    vlist.append("%s_adjusted" % vname)
+                    vlist.append("%s_adjusted_qc" % vname)
+                    vlist.append("%s_adjusted_error" % vname)
+
+                elif self.user_mode in ["standard"]:
+                    vlist.append("%s" % vname)
+                    vlist.append("%s_qc" % vname)
+                    vlist.append("%s_adjusted" % vname)
+                    vlist.append("%s_adjusted_qc" % vname)
+                    vlist.append("%s_adjusted_error" % vname)
+
+                elif self.user_mode in ["research"]:
+                    vlist.append("%s_adjusted" % vname)
+                    vlist.append("%s_adjusted_qc" % vname)
+                    vlist.append("%s_adjusted_error" % vname)
+
+                # vlist.append("profile_%s_qc" % vname)  # not in the database
+
+        if self.dataset_id == "ref":
+            plist = ["latitude", "longitude", "time", "platform_number", "cycle_number"]
+            [vlist.append(p) for p in plist]
+            plist = ["pres", "temp", "psal", "ptmp"]
+            [vlist.append(p) for p in plist]
+
+        vlist.sort()
+        vlist = [p.upper() for p in vlist]
+        return vlist
 
     @property
     def cachepath(self):
@@ -380,7 +460,7 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
             "access_point_opts": access_point_opts,
             "pre_filter_points": self._post_filter_points,
             "dimension": dimension,
-            "params_list": self._bgc_vlist_params if self.dataset_id in ["bgc", "bgc-s"] else None,
+            "params_list": self._minimal_vlist,
         }
 
         # Download and pre-process data:
