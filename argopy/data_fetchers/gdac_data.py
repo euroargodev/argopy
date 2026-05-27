@@ -155,8 +155,6 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
             self._bgc_vlist_params = [p.upper() for p in params]
             # self._bgc_vlist_params = self._bgc_handle_wildcard(self._bgc_vlist_params)
 
-            print("H1", self._bgc_vlist_params)
-            print("H2", self._bgc_vlist_avail)
             for v in self._bgc_vlist_params:
                 if v not in self._bgc_vlist_avail:
                     raise ValueError(
