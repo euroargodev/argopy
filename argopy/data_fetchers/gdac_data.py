@@ -116,6 +116,8 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         self.errors = errors
         self.dimension = dimension
 
+        self.init(**kwargs)
+
         # Validate server, raise GdacPathError if not valid.
         check_gdac_option(self.server, errors="raise")
 
@@ -131,6 +133,7 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
             cachedir=cachedir,
             timeout=self.timeout,
         )
+
         self.fs = self.indexfs.fs["src"]  # Reuse the appropriate file system
 
         if self.dataset_id in ["bgc", "bgc-s"]:
@@ -152,6 +155,8 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
             self._bgc_vlist_params = [p.upper() for p in params]
             # self._bgc_vlist_params = self._bgc_handle_wildcard(self._bgc_vlist_params)
 
+            print("H1", self._bgc_vlist_params)
+            print("H2", self._bgc_vlist_avail)
             for v in self._bgc_vlist_params:
                 if v not in self._bgc_vlist_avail:
                     raise ValueError(
@@ -183,8 +188,6 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         # Set method to download data:
         self.parallelize, self.parallel_method = PARALLEL_SETUP(parallel)
         self.progress = progress
-
-        self.init(**kwargs)
 
     def __repr__(self):
         summary = ["<datafetcher.gdac>"]
@@ -276,7 +279,7 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         new_uri = [mono2multi(uri) for uri in URIs]
         new_uri = list(set(new_uri))
         return new_uri
-    
+
     @property
     def _bgc_vlist_avail(self):
         """Return the list of the gdac BGC dataset available for this access point
@@ -293,10 +296,9 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
                 self.indexfs.query.lon_lat(self.indexBOX)
             else:
                 self.indexfs.query.box(self.indexBOX)
+
         params = self.indexfs.read_params()
 
-        # Temporarily remove from params those missing on the erddap server:
-        # params = [p for p in params if p.lower() in self._bgc_vlist_erddap]
         results = []
         for p in params:
             if p.lower() in self._bgc_vlist_gdac:
@@ -308,7 +310,7 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
             #     )
 
         return results
-    
+
     @property
     def _minimal_vlist(self):
         """Return the list of variables to retrieve measurements for"""
