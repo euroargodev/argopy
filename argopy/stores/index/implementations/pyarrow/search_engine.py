@@ -1,7 +1,7 @@
 import logging
 import pandas as pd
 import numpy as np
-from typing import List
+from typing import List, Literal, Optional, Tuple
 from functools import lru_cache
 
 
@@ -169,8 +169,6 @@ class SearchEngine(ArgoIndexSearchEngine):
             log.debug("Argo index searching for date in BOX=%s ..." % BOX)
             return ("date", BOX)  # Return key to use for time axis
 
-        key, BOX = checker(BOX, **kwargs)
-
         def namer(BOX):
             return {"DATE": BOX[4:6]}
 
@@ -190,6 +188,7 @@ class SearchEngine(ArgoIndexSearchEngine):
             )
             return self._obj._reduce_a_filter_list(filt, op="and")
 
+        key, BOX = checker(BOX, **kwargs)
         self._obj.load(nrows=self._obj._nrows_index)
         search_filter = composer(BOX, key)
         if not composed:
@@ -212,8 +211,6 @@ class SearchEngine(ArgoIndexSearchEngine):
             log.debug("Argo index searching for latitude in BOX=%s ..." % BOX)
             return BOX
 
-        BOX = checker(BOX, **kwargs)
-
         def namer(BOX):
             return {"LAT": BOX[2:4]}
 
@@ -223,6 +220,7 @@ class SearchEngine(ArgoIndexSearchEngine):
             filt.append(pa.compute.less_equal(self._obj.index["latitude"], BOX[3]))
             return self._obj._reduce_a_filter_list(filt, op="and")
 
+        BOX = checker(BOX, **kwargs)
         self._obj.load(nrows=self._obj._nrows_index)
         search_filter = composer(BOX)
         if not composed:
@@ -245,25 +243,40 @@ class SearchEngine(ArgoIndexSearchEngine):
             log.debug("Argo index searching for longitude in BOX=%s ..." % BOX)
             return BOX
 
-        BOX = checker(BOX, **kwargs)
-
         def namer(BOX):
             return {"LON": BOX[0:2]}
 
         def composer(BOX):
             filt = []
-            if OPTIONS['longitude_convention'] == '360':
+            if OPTIONS["longitude_convention"] == "360":
                 if BOX[0] is not None:
-                    filt.append(pc.greater_equal(self._obj.index["longitude_360"], conv_lon(BOX[0], '360')))
+                    filt.append(
+                        pc.greater_equal(
+                            self._obj.index["longitude_360"], conv_lon(BOX[0], "360")
+                        )
+                    )
                 if BOX[1] is not None:
-                    filt.append(pc.less_equal(self._obj.index["longitude_360"], conv_lon(BOX[1], '360')))
-            elif OPTIONS['longitude_convention'] == '180':
+                    filt.append(
+                        pc.less_equal(
+                            self._obj.index["longitude_360"], conv_lon(BOX[1], "360")
+                        )
+                    )
+            elif OPTIONS["longitude_convention"] == "180":
                 if BOX[0] is not None:
-                    filt.append(pc.greater_equal(self._obj.index["longitude"], conv_lon(BOX[0], '180')))
+                    filt.append(
+                        pc.greater_equal(
+                            self._obj.index["longitude"], conv_lon(BOX[0], "180")
+                        )
+                    )
                 if BOX[1] is not None:
-                    filt.append(pc.less_equal(self._obj.index["longitude"], conv_lon(BOX[1], '180')))
+                    filt.append(
+                        pc.less_equal(
+                            self._obj.index["longitude"], conv_lon(BOX[1], "180")
+                        )
+                    )
             return self._obj._reduce_a_filter_list(filt, op="and")
 
+        BOX = checker(BOX, **kwargs)
         self._obj.load(nrows=self._obj._nrows_index)
         search_filter = composer(BOX)
         if not composed:
@@ -617,15 +630,21 @@ class SearchEngine(ArgoIndexSearchEngine):
     def profile_qc(self, PARAMs: dict, logical="and", nrows=None, composed=False):
         def checker(PARAMs):
             if "profile_temp_qc" not in self._obj.convention_columns:
-                raise InvalidDatasetStructure("Cannot search for profile QC in this index)")
+                raise InvalidDatasetStructure(
+                    "Cannot search for profile QC in this index)"
+                )
             # Validate PARAMs
-            [
-                PARAMs.update({p: to_list(PARAMs[p])}) for p in PARAMs
-            ]
+            [PARAMs.update({p: to_list(PARAMs[p])}) for p in PARAMs]
             if not np.all(
-                [v in ['', ' ', '1', 'A', 'B', 'C', 'D', 'E', 'F'] for vals in PARAMs.values() for v in vals]
+                [
+                    v in ["", " ", "1", "A", "B", "C", "D", "E", "F"]
+                    for vals in PARAMs.values()
+                    for v in vals
+                ]
             ):
-                raise ValueError("Profile QC must be a value in '', 'A', 'B', 'C', 'D', 'E', 'F'")
+                raise ValueError(
+                    "Profile QC must be a value in '', 'A', 'B', 'C', 'D', 'E', 'F'"
+                )
             log.debug("Argo index searching for profile QC: %s ..." % PARAMs)
             return PARAMs
 
@@ -637,9 +656,12 @@ class SearchEngine(ArgoIndexSearchEngine):
 
             for param in PARAMs:
                 qcflags = PARAMs[param]
-                filt.append(pa.compute.is_in(
-                    self._obj.index[f"profile_{param.lower()}_qc"], pa.array(qcflags)
-                ))
+                filt.append(
+                    pa.compute.is_in(
+                        self._obj.index[f"profile_{param.lower()}_qc"],
+                        pa.array(qcflags),
+                    )
+                )
 
             return self._obj._reduce_a_filter_list(filt, op=logical)
 
@@ -653,4 +675,103 @@ class SearchEngine(ArgoIndexSearchEngine):
             return self._obj
         else:
             self._obj.search_type.update(namer(PARAMs, logical))
+            return search_filter
+
+    def psal_adj(
+        self,
+        where: Literal["mean", "std"] = "mean",
+        ge: Optional[float] = 0.0,
+        le: Optional[float] = None,
+        nrows=None,
+        composed=False,
+    ):
+        def checker(where: str, ge: Optional[float], le: Optional[float])-> [str, Optional[float], Optional[float]]:
+            if where.lower() not in ['mean', 'std']:
+                raise ValueError(f"'{where}': The 'where' argument must be 'mean' or 'std'.")
+            if "ad_psal_adjustment_mean" not in self._obj.convention_columns:
+                raise InvalidDatasetStructure(
+                    "Cannot search for salinity adjustment mean in this index"
+                )
+            if "ad_psal_adjustment_deviation" not in self._obj.convention_columns:
+                raise InvalidDatasetStructure(
+                    "Cannot search for salinity adjustment standard deviation in this index"
+                )
+
+            bounds = [where.lower(), ge, le]
+
+            if bounds[0] == 'std' and bounds[2] is not None and bounds[2] < 0:
+                raise ValueError(f"Standard deviation lower limit must be zero or positive")
+
+            return bounds
+
+        def namer(bounds):
+            return {f"PSAL_ADJ_{bounds[0].upper()}": bounds[1:]}
+
+        def composer(obj, bounds):
+            filt = []
+            pname: str = (
+                "ad_psal_adjustment_mean"
+                if bounds[0] == "mean"
+                else "ad_psal_adjustment_deviation"
+            )
+            if bounds[1] is not None:
+                filt.append(pc.greater_equal(obj.index[pname], bounds[1]))
+            if bounds[2] is not None:
+                filt.append(pc.less_equal(obj.index[pname], bounds[2]))
+            return obj._reduce_a_filter_list(filt, op="and")
+
+        bounds = checker(where, ge, le)
+        self._obj.load(nrows=self._obj._nrows_index)
+        search_filter = composer(self._obj, bounds)
+        if not composed:
+            self._obj.search_type = namer(bounds)
+            self._obj.search_filter = search_filter
+            self._obj.run(nrows=nrows)
+            return self._obj
+        else:
+            self._obj.search_type.update(namer(bounds))
+            return search_filter
+
+    def n_levels(
+        self,
+        ge: Optional[int] = None,
+        le: Optional[int] = None,
+        nrows=None,
+        composed=False,
+    ):
+        def checker(ge: Optional[int], le: Optional[int])-> [Optional[int], Optional[int]]:
+            if "n_levels" not in self._obj.convention_columns:
+                raise InvalidDatasetStructure(
+                    "Cannot search for number of levels in this index)"
+                )
+            bounds = [ge, le]
+            if bounds[0] is not None and bounds[0] <= 0:
+                raise ValueError(f"The minimum number of levels 'ge' must be positive, {bounds[0]} provided")
+            if bounds[1] is not None and bounds[1] <= 0:
+                raise ValueError(f"The maximum number of levels 'le' must be positive, {bounds[1]} provided")
+            if bounds[0] is not None and bounds[1] is not None and bounds[0] > bounds[1]:
+                raise ValueError(f"Upper bound le={bounds[1]} must be small than the lower bound ge={bounds[0]}")
+            return bounds
+
+        def namer(bounds):
+            return {f"NLEVELS": bounds}
+
+        def composer(obj, bounds):
+            filt = []
+            if bounds[0] is not None:
+                filt.append(pc.greater_equal(obj.index['n_levels'], bounds[0]))
+            if bounds[1] is not None:
+                filt.append(pc.less_equal(obj.index['n_levels'], bounds[1]))
+            return obj._reduce_a_filter_list(filt, op="and")
+
+        bounds = checker(ge, le)
+        self._obj.load(nrows=self._obj._nrows_index)
+        search_filter = composer(self._obj, bounds)
+        if not composed:
+            self._obj.search_type = namer(bounds)
+            self._obj.search_filter = search_filter
+            self._obj.run(nrows=nrows)
+            return self._obj
+        else:
+            self._obj.search_type.update(namer(bounds))
             return search_filter

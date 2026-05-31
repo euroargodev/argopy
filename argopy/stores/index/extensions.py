@@ -721,6 +721,24 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         """
         raise NotImplementedError("Not implemented")
 
+    @abstractmethod
+    def psal_adj(self):
+        """Search (detailed) index for salinity adjustment values
+
+        Defined for for delayed mode or adjusted mode profiles only.
+
+        - Mean of psal_adjusted – psal on the deepest 500 meters with good psal_adjusted_qc (equal to 1)
+        - Standard deviation of psal_adjusted – psal on the deepest 500 meters with good psal_adjusted_qc (equal to 1)
+
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def n_levels(self):
+        """Search index profiles using the maximum number of pressure levels contained in a profile
+        """
+        raise NotImplementedError("Not implemented")
+
     def compose(self, query: dict, nrows=None):
         """Compose query with multiple search methods
 

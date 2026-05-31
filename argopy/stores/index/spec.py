@@ -440,6 +440,25 @@ class ArgoIndexStoreProto(ABC):
                     ["%s_%s" % (p, "".join(PROFQC[p])) for p in PROFQC]
                 )
 
+            elif "PSAL_ADJ_MEAN" == key:
+                log.debug(self.search_type)
+                ADJ = self.search_type["PSAL_ADJ_MEAN"]
+                cname = []
+                if ADJ[0] is not None:
+                    cname.append(f"MEAN_PSAL_ADJ>={ADJ[0]}")
+                if ADJ[1] is not None:
+                    cname.append(f"MEAN_PSAL_ADJ<={ADJ[1]}")
+                cname = "_and_".join(cname)
+
+            elif key == "NLEVELS":
+                N = self.search_type[key]
+                if N[0] is not None and N[1] is not None:
+                    cname = f"n={N[0]}/{N[1]}"
+                elif N[0] is not None and N[1] is None:
+                    cname = f"n>={N[0]}"
+                elif N[1] is not None and N[0] is None:
+                    cname = f"n<={N[1]}"
+
             C.append(cname)
 
         return "_and_".join(C)
