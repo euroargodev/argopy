@@ -54,7 +54,7 @@ Blog post & personal pages :
 
 - Samapriya Roy : https://samapriyaroy.medium.com/open-ocean-data-with-argofloats-tool-50efef6c4f05
 
-Some academic python env :
+Academic references:
 
 - Sydney univ academic conda env : http://climate-cms.wikis.unsw.edu.au/Conda
 
@@ -62,4 +62,4 @@ Some academic python env :
 
 - Heliocloud : https://git.smce.nasa.gov/heliocloud/heliocloud-docker-images/-/blob/main/environment_pangeo_base_min.yml?ref_type=heads
 
-- Stackoverflow : https://stackoverflow.com/search?q=argopy
+- `NMFS Hack days <https://nmfs-opensci.github.io/NMFSHackDays-2026/>`_: `Video <https://www.youtube.com/watch?v=0c5tHHZaaV4&t=660s>`_ and Notebooks to `load Argo-BGC data <https://nmfs-opensci.github.io/NMFSHackDays-2026/topics/2026-04-10/argopy.html>`_ and perform `Rrs data matchup <https://nmfs-opensci.github.io/NMFSHackDays-2026/topics/2026-04-10/argo-matchups.html>`_.
