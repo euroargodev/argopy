@@ -60,7 +60,7 @@ class ArgoFloat(FloatStore):
         # Fetch QC-processed, outlier-removed BGC data from the SOEST FTP server:
         ds = af.open_dataset('BGCArgoPlus')
         # Pin to a specific version:
-        ds = af.open_dataset('BGCArgoPlus', bgcplus_version='v0.1_2025_12')
+        ds = af.open_dataset('BGCArgoPlus', version='v0.1_2026_04')
 
     .. code-block:: python
         :caption: Other attributes and methods

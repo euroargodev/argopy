@@ -318,7 +318,7 @@ class FloatStoreProto(ABC):
             ``engine="argo"`` option.
             This will be ignored if the ``netCDF4`` kwarg is set to True.
             Note: ``cast`` is **not** applied when ``name="BGCArgoPlus"``.
-        bgcplus_version: str, optional
+        version: str, optional
             BGC-Argo+ dataset version tag (only used when ``name='BGCArgoPlus'``).
             Defaults to :data:`argopy.stores.float.bgcargo_plus.BGCARGO_PLUS_DEFAULT_VERSION`.
         **kwargs
@@ -347,14 +347,14 @@ class FloatStoreProto(ABC):
         .. code-block:: python
 
             from argopy import ArgoFloat
-            ds = ArgoFloat(6903091).open_dataset('BGCArgoPlus')
+            ds = ArgoFloat(6903091).open_dataset('BGCArgoPlus') # default version is 'v0.1_2026_04'
             # Pin to a specific version:
-            ds = ArgoFloat(6903091).open_dataset('BGCArgoPlus', bgcplus_version='v0.1_2025_12')
+            ds = ArgoFloat(6903091).open_dataset('BGCArgoPlus', version='v0.1_2025_12')
 
         """
         # ---- BGC-Argo+ special case -----------------------------------------
         if name == "BGCArgoPlus":
-            version = kwargs.pop("bgcplus_version", BGCARGO_PLUS_DEFAULT_VERSION)
+            version = kwargs.pop("version", BGCARGO_PLUS_DEFAULT_VERSION)
             store = BGCArgoPlusStore(
                 self.WMO,
                 version=version,

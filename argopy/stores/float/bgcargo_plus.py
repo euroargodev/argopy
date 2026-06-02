@@ -39,11 +39,13 @@ BGCARGO_PLUS_FTP_HOST = "ftp.soest.hawaii.edu"
 #: Path template on the FTP server.
 #: ``{version}`` can be overridden via :attr:`BGCArgoPlusStore.version`.
 BGCARGO_PLUS_PATH_TEMPLATE = (
-    "/bgc_argo_plus/outliers_removed/{version}/{wmo}_Sprof_BGCArgoPlus.nc"
+    "/bgc_argo_plus/outliers_removed/{version}/{wmo}_Sprof_BGCArgoPlus.nc" # for versions v0.1_2025_12 and earlier
+    # "/bgc_argo_plus/outliers_removed/{version}/Individual_Floats/{wmo}_Sprof_BGCArgoPlus.nc" # for version v0.1_2026_04 and later, this is managed in the url function
 )
 
 #: Default version tag that maps to the latest production release on the FTP.
 BGCARGO_PLUS_DEFAULT_VERSION = "v0.1_2026_04"
+SUPPORTED_VERSIONS = {BGCARGO_PLUS_DEFAULT_VERSION, 'v0.1_2025_12', 'v0.0_2025_09'}
 
 
 def bgcargo_plus_url(wmo: int, version: str = BGCARGO_PLUS_DEFAULT_VERSION) -> str:
@@ -67,7 +69,7 @@ def bgcargo_plus_url(wmo: int, version: str = BGCARGO_PLUS_DEFAULT_VERSION) -> s
     >>> bgcargo_plus_url(6903091)
     'ftp://ftp.soest.hawaii.edu/bgc_argo_plus/outliers_removed/v0.1_2026_04/6903091_Sprof_BGCArgoPlus.nc'
     """
-    path = BGCARGO_PLUS_PATH_TEMPLATE.format(wmo=wmo, version=version)
+    path = BGCARGO_PLUS_PATH_TEMPLATE.format(wmo=wmo, version=version) if version != 'v0.1_2026_04' else BGCARGO_PLUS_PATH_TEMPLATE.format(wmo=wmo, version=version+"/Individual_Floats")
     return f"ftp://{BGCARGO_PLUS_FTP_HOST}{path}"
 
 
@@ -109,6 +111,12 @@ class BGCArgoPlusStore:
         self.cache = cache
         self.cachedir = cachedir
         self.timeout = timeout
+
+        if self.version not in SUPPORTED_VERSIONS:
+            raise ValueError(
+                f"Unsupported BGC-Argo+ version '{self.version}'. "
+                f"Supported versions: {sorted(SUPPORTED_VERSIONS)}"
+            )
 
         # Build the FTP store pointing at the SOEST server
         ftp_root = f"{BGCARGO_PLUS_FTP_HOST}"

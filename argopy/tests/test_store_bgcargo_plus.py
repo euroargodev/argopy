@@ -19,7 +19,6 @@ Run all (requires internet access to the SOEST FTP)::
     pytest tests/test_store_bgcargo_plus.py
 """
 
-import os
 from unittest.mock import MagicMock, patch
 
 import numpy as np
@@ -39,12 +38,8 @@ from argopy.stores.float.bgcargo_plus import (
 # ---------------------------------------------------------------------------
 
 TEST_WMO = 6903091
-TEST_VERSION = "v0.1_2025_12"
+TEST_VERSION = "v0.1_2026_04"
 
-REQUIRES_CONNECTION = pytest.mark.skipif(
-    os.environ.get("ARGOPY_SKIP_NETWORK_TESTS", "0") == "1",
-    reason="Network tests disabled via ARGOPY_SKIP_NETWORK_TESTS=1",
-)
 
 
 def _make_dummy_dataset() -> xr.Dataset:
@@ -91,7 +86,7 @@ class TestBGCArgoPlusURL:
         assert BGCARGO_PLUS_DEFAULT_VERSION in url
 
     def test_custom_version(self):
-        custom = "v0.2_2026_01"
+        custom = "v0.1_2025_12"
         url = bgcargo_plus_url(TEST_WMO, version=custom)
         assert custom in url
         assert BGCARGO_PLUS_DEFAULT_VERSION not in url
@@ -125,8 +120,8 @@ class TestBGCArgoPlusStoreUnit:
         assert store.version == BGCARGO_PLUS_DEFAULT_VERSION
 
     def test_custom_version(self):
-        store = BGCArgoPlusStore(TEST_WMO, version="v0.2_2026_01")
-        assert store.version == "v0.2_2026_01"
+        store = BGCArgoPlusStore(TEST_WMO, version="v0.1_2025_12")
+        assert store.version == "v0.1_2025_12"
 
     def test_url_property(self):
         store = BGCArgoPlusStore(TEST_WMO)
@@ -164,7 +159,7 @@ class TestBGCArgoPlusStoreUnit:
         store = BGCArgoPlusStore(TEST_WMO)
 
         with patch.object(
-            store._fs, "open_dataset", side_effect=Exception("550 File not found")
+            store._fs, "open_dataset", side_effect=FileNotFoundError("550 File not found")
         ):
             with pytest.raises(FileNotFoundError, match=str(TEST_WMO)):
                 store.open_dataset()
@@ -225,16 +220,16 @@ class TestArgoFloatOpenDatasetBGCArgoPlus:
             assert "BGCArgoPlus" in af._dataset
 
     def test_bgcplus_version_kwarg_forwarded(self):
-        """bgcplus_version kwarg must reach BGCArgoPlusStore constructor."""
+        """version kwarg must reach BGCArgoPlusStore constructor."""
         dummy_ds = _make_dummy_dataset()
         af = self._make_mock_argofloat()
-        custom_version = "v0.2_2026_01"
+        custom_version = "v0.1_2025_12"
         mock_store_cls = MagicMock(
             return_value=MagicMock(open_dataset=MagicMock(return_value=dummy_ds))
         )
 
         with patch("argopy.stores.float.spec.BGCArgoPlusStore", mock_store_cls):
-            af.open_dataset("BGCArgoPlus", bgcplus_version=custom_version)
+            af.open_dataset("BGCArgoPlus", version=custom_version)
             call_kwargs = mock_store_cls.call_args[1]
             assert call_kwargs.get("version") == custom_version
 
@@ -252,7 +247,6 @@ class TestArgoFloatOpenDatasetBGCArgoPlus:
 # Integration tests (network required)
 # ---------------------------------------------------------------------------
 
-@pytest.mark.requires_connection
 class TestBGCArgoPlusIntegration:
     """Live FTP tests — skipped unless ARGOPY_SKIP_NETWORK_TESTS != 1."""
 
