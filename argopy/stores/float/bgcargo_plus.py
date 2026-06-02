@@ -28,8 +28,54 @@ import logging
 
 import xarray as xr
 
+import numpy as np
+
 from ...stores.implementations.ftp import ftpstore
 from ...utils import check_wmo
+
+
+def _decode_bytes_dataset(ds: xr.Dataset) -> xr.Dataset:
+    """Decode byte-string variables to str.
+
+    h5py returns fixed-length HDF5 string variables as numpy bytes dtype
+    (``'|S...'``) instead of str.  This normalises the whole dataset at load
+    time so that all downstream argopy code can use ordinary string operations.
+    """
+    updates = {}
+    for name, var in ds.data_vars.items():
+        if var.dtype.kind == 'S':  # fixed-length bytes, e.g. dtype='|S64'
+            decoded = np.char.decode(var.values, 'utf-8')
+            updates[name] = var.copy(data=decoded)
+        elif var.dtype.kind == 'O':  # object array — may contain variable-length bytes
+            first = next(
+                (
+                    x for x in var.values.flat
+                    if x is not None and not (isinstance(x, float) and np.isnan(x))
+                ),
+                None,
+            )
+            if isinstance(first, bytes):
+                decoded = np.vectorize(
+                    lambda x: x.decode('utf-8') if isinstance(x, bytes) else x
+                )(var.values)
+                updates[name] = var.copy(data=decoded)
+    if updates:
+        ds = ds.assign(updates)
+
+    # PLATFORM_NUMBER is stored as a numeric string in HDF5 (e.g. '6903091')
+    # but argopy's uid() arithmetic requires it as an integer.
+    if 'PLATFORM_NUMBER' in ds.data_vars:
+        try:
+            pn = ds['PLATFORM_NUMBER']
+            ds = ds.assign({
+                'PLATFORM_NUMBER': pn.copy(
+                    data=np.char.strip(pn.values.astype(str)).astype(np.int64)
+                )
+            })
+        except (ValueError, TypeError):
+            pass  # leave as-is if conversion fails (e.g. non-numeric WMO)
+
+    return ds
 
 log = logging.getLogger("argopy.stores.BGCArgoPlusStore")
 
@@ -153,7 +199,7 @@ class BGCArgoPlusStore:
         """
         log.debug("BGCArgoPlusStore: fetching %s", self.url)
         try:
-            ds = self._fs.open_dataset(self.url, **kwargs)
+            ds = _decode_bytes_dataset(self._fs.open_dataset(self.url, **kwargs))
         except FileNotFoundError as exc:
             raise FileNotFoundError(
                 f"Could not retrieve BGC-Argo+ file for WMO {self.WMO} "

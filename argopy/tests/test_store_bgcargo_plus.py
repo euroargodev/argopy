@@ -272,3 +272,24 @@ class TestBGCArgoPlusIntegration:
         from argopy import ArgoFloat
         ds = ArgoFloat(TEST_WMO).open_dataset("BGCArgoPlus")
         assert isinstance(ds, xr.Dataset)
+
+    def test_profile2point_returns_point_dataset(self):
+        """profile2point() should convert the profile dataset to a point cloud."""
+        store = BGCArgoPlusStore(TEST_WMO)
+        ds = store.open_dataset()
+        ds_point = ds.argo.profile2point()
+        assert isinstance(ds_point, xr.Dataset)
+        assert "N_POINTS" in ds_point.dims
+        assert ds_point.sizes["N_POINTS"] > 0
+
+    def test_point2profile_roundtrip(self):
+        """profile2point() followed by point2profile() should recover the same
+        number of profiles and be free of TypeError from bytes/str mixing."""
+        store = BGCArgoPlusStore(TEST_WMO)
+        ds = store.open_dataset()
+        n_prof_original = ds.sizes["N_PROF"]
+        ds_point = ds.argo.profile2point()
+        ds_back = ds_point.argo.point2profile()
+        assert isinstance(ds_back, xr.Dataset)
+        assert "N_PROF" in ds_back.dims
+        assert ds_back.sizes["N_PROF"] == n_prof_original
