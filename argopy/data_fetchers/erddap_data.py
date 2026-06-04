@@ -29,7 +29,6 @@ from ..utils import is_list_of_strings, to_list, Chunker
 from .proto import ArgoDataFetcherProto
 from .erddap_data_processors import pre_process
 
-
 log = logging.getLogger("argopy.erddap.data")
 
 access_points = ["wmo", "box"]
@@ -49,6 +48,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     This class is a prototype not meant to be instantiated directly
 
     """
+
     data_source = "erddap"
 
     ###
@@ -147,8 +147,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         self.fs = kwargs["fs"] if "fs" in kwargs else httpstore(**self.store_opts)
 
         self.parallelize, self.parallel_method = PARALLEL_SETUP(parallel)
-        if self.parallelize and self.parallel_method == 'thread':
-            self.parallel_method = 'erddap'  # Use our custom filestore
+        if self.parallelize and self.parallel_method == "thread":
+            self.parallel_method = "erddap"  # Use our custom filestore
         self.progress = progress
         self.chunks = chunks
         self.chunks_maxsize = chunks_maxsize
@@ -238,6 +238,17 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                         "'%s' not available for this access point. The 'measured' argument must have values in [%s]"
                         % (v, ", ".join(self._bgc_vlist_avail))
                     )
+
+            if (
+                self._bgc_vlist_params is not None
+                and self._bgc_vlist_measured is not None
+            ):
+                for v in self._bgc_vlist_measured:
+                    if v not in self._bgc_vlist_params:
+                        raise ValueError(
+                            "'%s' can't be in the 'measured' list if it is not in the 'params' list. Please check your arguments."
+                            % v
+                        )
 
     def __repr__(self):
         summary = ["<datafetcher.erddap>"]
@@ -521,7 +532,9 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 if "Your query produced no matching results. (nRows = 0)" in ncHeader:
                     return 0
                 else:
-                    lines = [line for line in ncHeader.splitlines() if "row = " in line][0]
+                    lines = [
+                        line for line in ncHeader.splitlines() if "row = " in line
+                    ][0]
                     return int(lines.split("=")[1].split(";")[0])
             except Exception:
                 raise ErddapServerError(
@@ -944,6 +957,6 @@ class Fetch_box(ErddapArgoDataFetcher):
                 except DataNotFound:
                     log.debug("This box fetcher will contain no data")
                 except ValueError as e:
-                    if 'not available for this access point' in str(e):
+                    if "not available for this access point" in str(e):
                         log.debug("This box fetcher does not contained required data")
             return urls
