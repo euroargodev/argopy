@@ -68,6 +68,7 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         errors: str = "raise",
         api_timeout: int = 0,
         params: Union[str, list] = "all",
+        measured: Union[str, list] = None,
         **kwargs
     ):
         """Init fetcher
@@ -102,6 +103,10 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
             List of BGC essential variables to retrieve, i.e. that will be in the output :class:`xr.DataSet``.
             By default, this is set to ``all``, i.e. any variable found in at least of the profile in the data
             selection will be included in the output.
+        measured: Union[str, list] (optional, default=None)
+            List of BGC essential variables that can't be NaN. If set to 'all', this is an easy way to reduce the size of the
+            :class:`xr.DataSet`` to points where all variables have been measured. Otherwise, provide a simple list of
+            variables.
 
         Other parameters
         ----------------
@@ -176,6 +181,38 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
                     % self.user_mode
                 )
 
+            # Handle the 'measured' criteria for BGC requests:
+            self._bgc_measured = to_list(measured)
+            if isinstance(measured, str):
+                if measured == "all":
+                    measured = self._bgc_vlist_params
+                else:
+                    measured = to_list(measured)
+            elif self._bgc_measured[0] is None:
+                measured = []
+            elif self._bgc_measured[0] == "all":
+                measured = self._bgc_vlist_params
+            elif not is_list_of_strings(self._bgc_measured):
+                raise ValueError("'measured' argument must be a list of strings")
+                # raise ValueError("'measured' argument must be a list of strings (possibly with a * wildcard)")
+            self._bgc_vlist_measured = [m.upper() for m in measured]
+            # self._bgc_vlist_measured = self._bgc_handle_wildcard(self._bgc_vlist_measured)
+
+            for v in self._bgc_vlist_measured:
+                if v not in self._bgc_vlist_avail:
+                    raise ValueError(
+                        "'%s' not available for this access point. The 'measured' argument must have values in [%s]"
+                        % (v, ", ".join(self._bgc_vlist_avail))
+                    )
+
+            if self._bgc_vlist_params is not None and self._bgc_vlist_measured is not None:
+                for v in self._bgc_vlist_measured:
+                    if v not in self._bgc_vlist_params:
+                        raise ValueError(
+                            "'%s' can't be in the 'measured' list if it is not in the 'params' list. Please check your arguments."
+                            % v
+                        )
+
         nrows = None
         if "N_RECORDS" in kwargs:
             nrows = kwargs["N_RECORDS"]
@@ -194,6 +231,9 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         summary.append(self._repr_server)
         if self.dataset_id in ["bgc", "bgc-s"]:
             summary.append("📗 Parameters: %s" % self._bgc_vlist_params)
+            summary.append(
+                "📕 BGC 'must be measured' parameters: %s" % self._bgc_vlist_measured
+            )
         if hasattr(self.indexfs, "index"):
             summary.append(
                 "📗 Index: %s (%i records)" % (self.indexfs.index_file, self.N_RECORDS)
@@ -461,6 +501,7 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
             "pre_filter_points": self._post_filter_points,
             "dimension": dimension,
             "params_list": self._minimal_vlist,
+            "measured_params": self._bgc_vlist_measured
         }
 
         # Download and pre-process data:

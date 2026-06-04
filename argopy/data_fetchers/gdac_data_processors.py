@@ -3,7 +3,6 @@ import xarray as xr
 from typing import Literal
 import logging
 
-
 log = logging.getLogger("argopy.gdac.data")
 
 
@@ -12,8 +11,9 @@ def pre_process_multiprof(
     access_point: str,
     access_point_opts: {},
     params_list: list = None,
+    measured_params: list = None,
     pre_filter_points: bool = False,
-    dimension: Literal['point', 'profile'] = 'point',
+    dimension: Literal["point", "profile"] = "point",
     # dataset_id: str = "phy",
     # cname: str = '?',
 ) -> xr.Dataset:
@@ -49,7 +49,7 @@ def pre_process_multiprof(
     # ds = ds.assign_coords(N_PROF=np.arange(0, len(ds["N_PROF"])))
     ds = ds.reset_coords()
     coords = ("LATITUDE", "LONGITUDE", "TIME", "N_PROF")
-    ds = ds.assign_coords({'N_PROF': np.arange(0, len(ds['N_PROF']))})
+    ds = ds.assign_coords({"N_PROF": np.arange(0, len(ds["N_PROF"]))})
     ds = ds.set_coords(coords)
 
     # Cast data types:
@@ -66,7 +66,7 @@ def pre_process_multiprof(
         if len(list(ds[v].dims)) == 0:
             ds = ds.drop_vars(v)
 
-    if dimension == 'point':
+    if dimension == "point":
         ds = (
             ds.argo.profile2point()
         )  # Default output is a collection of points, along N_POINTS
@@ -81,6 +81,45 @@ def pre_process_multiprof(
         params_list = [p for p in params_list if p in ds.data_vars]
         ds = ds[params_list]
 
+    # Apply the 'measured' criteria for BGC requests:
+    if measured_params is not None:
+        ds = filter_measured(ds, measured_params=measured_params)
+
+    return ds
+
+
+def filter_measured(ds: xr.Dataset, measured_params: list = None) -> xr.Dataset:
+    """Re-enforce the 'measured' criteria for BGC requests
+
+    Parameters
+    ----------
+    ds: :class:`xr.Dataset`
+
+    """
+    # Enforce the 'measured' argument for BGC:
+    if len(measured_params) == 0:
+        return ds
+    elif len(ds["N_POINTS"]) > 0:
+        log.debug("Keep only samples without NaN in %s" % measured_params)
+        for v in measured_params:
+            this_mask = None
+            if v in ds and "%s_ADJUSTED" % v in ds:
+                this_mask = np.logical_or.reduce(
+                    (ds[v].notnull(), ds["%s_ADJUSTED" % v].notnull())
+                )
+            elif v in ds:
+                this_mask = ds[v].notnull()
+            elif "%s_ADJUSTED" % v in ds:
+                this_mask = ds["%s_ADJUSTED" % v].notnull()
+            else:
+                log.debug(
+                    "'%s' or '%s_ADJUSTED' not in the dataset to apply the 'filter_measured' method"
+                    % (v, v)
+                )
+            if this_mask is not None:
+                ds = ds.loc[dict(N_POINTS=this_mask)]
+
+    ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
     return ds
 
 
@@ -92,8 +131,8 @@ def filter_points(ds: xr.Dataset, access_point: str = None, **kwargs) -> xr.Data
     """
     dim = "N_PROF" if "N_PROF" in ds.dims else "N_POINTS"
     ds = ds.assign_coords({dim: np.arange(0, len(ds[dim]))})
-    if 'N_LEVELS' in ds.dims:
-        ds = ds.assign_coords({'N_LEVELS': np.arange(0, len(ds['N_LEVELS']))})
+    if "N_LEVELS" in ds.dims:
+        ds = ds.assign_coords({"N_LEVELS": np.arange(0, len(ds["N_LEVELS"]))})
 
     if access_point == "BOX":
         BOX = kwargs["BOX"]
