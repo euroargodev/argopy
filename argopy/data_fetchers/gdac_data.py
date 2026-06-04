@@ -254,6 +254,11 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
             summary.append("📷 Index searched: False")
         return "\n".join(summary)
 
+    @property
+    def bgc_vlist_measured(self):
+        """Return the list of BGC variables to apply the 'measured' criteria to"""
+        return self._bgc_vlist_measured
+
     def cname(self):
         """Return a unique string defining the constraints"""
         return self._cname()
@@ -501,7 +506,7 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
             "pre_filter_points": self._post_filter_points,
             "dimension": dimension,
             "params_list": self._minimal_vlist,
-            "measured_params": self._bgc_vlist_measured
+            "measured_params": self.bgc_vlist_measured
         }
 
         # Download and pre-process data:
