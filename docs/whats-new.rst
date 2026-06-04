@@ -16,6 +16,11 @@ Features and front-end API
 
 - **Full Argo vocabulary support** for reference tables (:class:`ArgoReferenceTable`), values (:class:`ArgoReferenceValue`) and mappings (:class:`ArgoReferenceMapping`) (:pr:`575`) by |gmaze|.
 
+Internals
+^^^^^^^^^
+
+- **Fix bug** whereby :meth:`Dataset.argo.point2profile` left the ``N_PROF`` coordinate with permuted index labels instead of a clean ``0..N_PROF-1`` range, because the final sorting by time carried the pre-sort labels along. :issue:`632`. (:pr:`636`) by |gaoflow|.
+
 v1.4.0 (5 Jan. 2026)
 --------------------
 
@@ -1522,6 +1527,7 @@ v0.1.0 (17 Mar. 2020)
 .. |gmaze| replace:: `G. Maze <http://www.github.com/gmaze>`__
 .. |quai20| replace:: `K. Balem <http://www.github.com/quai20>`__
 .. |fricour| replace:: `F. Ricour <https://www.github.com/fricour>`__
+.. |gaoflow| replace:: `gaoflow <https://github.com/gaoflow>`__
 
 .. |pypi dwn| image:: https://img.shields.io/pypi/dm/argopy?label=Pypi%20downloads
    :target: //pypi.org/project/argopy/
