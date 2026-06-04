@@ -16,6 +16,11 @@ Features and front-end API
 
 - **Full Argo vocabulary support** for reference tables (:class:`ArgoReferenceTable`), values (:class:`ArgoReferenceValue`) and mappings (:class:`ArgoReferenceMapping`) (:pr:`575`) by |gmaze|.
 
+Internals
+^^^^^^^^^
+
+- **Update USA GDAC url** :issue:`624` by |gmaze|.
+
 v1.4.0 (5 Jan. 2026)
 --------------------
 
