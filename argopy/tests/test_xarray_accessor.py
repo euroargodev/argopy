@@ -58,6 +58,64 @@ def test_point2profile2point(ds_pts):
     assert ds_pts['standard'].argo.point2profile().argo.profile2point().equals(ds_pts['standard'])
 
 
+def test_point2profile_reindexes_N_PROF():
+    """point2profile must reset N_PROF to a clean 0..N-1 range (gh #632).
+
+    The profiles are built in UID (WMO/CYCLE) order but the final dataset is
+    sorted by time; the N_PROF coordinate used to keep its pre-sort labels,
+    leaving e.g. [0, 3, 1, 2] instead of [0, 1, 2, 3].
+    """
+    N_LEVELS = 3
+    # (platform, cycle, time offset in days) — deliberately so that time order
+    # differs from UID order, which is what triggers the bug:
+    profiles = [(6902, 2, 10), (6902, 1, 30), (6901, 5, 5), (6901, 9, 20)]
+    platform, cycle, day, level = [], [], [], []
+    for wmo, cyc, t in profiles:
+        for lev in range(N_LEVELS):
+            platform.append(wmo)
+            cycle.append(cyc)
+            day.append(t)
+            level.append(lev)
+    n = len(platform)
+    day = np.array(day)
+    ds = xr.Dataset(
+        {
+            "PLATFORM_NUMBER": ("N_POINTS", np.array(platform, "float64")),
+            "CYCLE_NUMBER": ("N_POINTS", np.array(cycle, "int64")),
+            "DIRECTION": ("N_POINTS", np.array(["A"] * n)),
+            "PRES": ("N_POINTS", np.array(level, "float64") + 1),
+            # vary with level so TEMP stays a [N_PROF, N_LEVELS] variable, and
+            # encode the profile time so association can be checked after sorting
+            "TEMP": ("N_POINTS", day.astype("float64") * 10 + np.array(level)),
+            "TIME": (
+                "N_POINTS",
+                np.array(
+                    [np.datetime64("2004-01-01") + np.timedelta64(int(t), "D") for t in day]
+                ),
+            ),
+            "LATITUDE": ("N_POINTS", np.ones(n)),
+            "LONGITUDE": ("N_POINTS", np.ones(n) * 2),
+        },
+        coords={"N_POINTS": np.arange(n)},
+    )
+    ds = ds.argo.cast_types()
+    ds.argo._type = "point"
+
+    profile = ds.argo.point2profile()
+
+    # N_PROF is a clean contiguous range, not the permuted pre-sort labels
+    np.testing.assert_array_equal(
+        profile["N_PROF"].values, np.arange(profile.sizes["N_PROF"])
+    )
+    # profiles are still ordered by time ...
+    assert (np.diff(profile["TIME"].values) >= np.timedelta64(0)).all()
+    # ... and each profile's data still travels with it (TEMP encodes the day)
+    expected_days = np.sort(np.unique(day))
+    np.testing.assert_array_equal(
+        profile["TEMP"].isel(N_LEVELS=0).values, expected_days * 10
+    )
+
+
 class Test_interp_std_levels:
     def test_interpolation(self, ds_pts):
         """Run with success"""

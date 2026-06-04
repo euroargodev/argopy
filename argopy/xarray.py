@@ -584,7 +584,6 @@ class ArgoAccessor:
 
         # Restore coordinate variables:
         new_ds = new_ds.set_coords([c for c in coords_list if c in new_ds])
-        new_ds["N_PROF"] = np.arange(N_PROF)
         if "N_LEVELS" in new_ds["LATITUDE"].dims:
             new_ds["LATITUDE"] = new_ds["LATITUDE"].isel(
                 N_LEVELS=0
@@ -593,6 +592,9 @@ class ArgoAccessor:
 
         # Misc formatting
         new_ds = new_ds.sortby(self._TNAME)
+        # sortby reorders profiles along N_PROF, carrying the old index labels
+        # with them; reset N_PROF to a clean 0..N_PROF-1 range (gh #632)
+        new_ds["N_PROF"] = np.arange(N_PROF)
         new_ds = (
             new_ds.argo.cast_types() if not drop else cast_Argo_variable_type(new_ds)
         )
