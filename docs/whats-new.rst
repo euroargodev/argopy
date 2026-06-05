@@ -19,7 +19,7 @@ Features and front-end API
 Internals
 ^^^^^^^^^
 
-- **Update USA GDAC url** :issue:`624` by |gmaze|.
+- **Update USA GDAC url** :issue:`624` (:pr:`624`) by |gmaze|.
 
 v1.4.0 (5 Jan. 2026)
 --------------------
