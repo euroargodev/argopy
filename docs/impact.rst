@@ -6,6 +6,8 @@ Papers & proceedings citing Argopy
 
 #. Bartlett, Jenna  (2022). "An investigation of geostationary satellite imagery to compare developing and non-developing African easterly waves", Thesis and Dissertations. 5600. https://scholarsjunction.msstate.edu/td/5600
 
+#. Broullón, E., Williams, R. G., Naveira Garabato, A. C., Clément, L., & Fernández Castro, B. (2026). "The lifecycle of tracer variance in the North Atlantic". Geophysical Research Letters, 53, e2026GL122823. https://doi.org/10.1029/2026GL122823
+
 #. Chafik, et.al (2023). "The Faroe-Shetland Channel Jet: Structure, Variability, and Driving Mechanisms", Journal of Geophysical Research: Oceans. https://doi.org/10.1029/2022JC019083
 
 #. Chevillard C, Juza M, Dıaz-Barroso L, Reyes E, Escudier R and Tintore J (2024). "Capability of the Mediterranean Argo network to monitor sub-regional climate change indicators", Front. Mar. Sci. 11:1416486. https://doi.org/10.3389/fmars.2024.1416486
