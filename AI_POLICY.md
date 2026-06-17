@@ -33,6 +33,6 @@ It is for us a fundamental aspect of the project that discussions (in issues or 
 
 ## Ethics, Ecology & Expertise
 
-For more than 20 years, Argo program has become a key element in the observation and understanding of climate change, through ocean warming monitoring. We like to think that **argopy** is part of that ecosystem, and with that in mind, 2 things to keep in mind when contributing to the developement of **argopy** : 
+For more than 20 years, Argo program has become a key element in the observation and understanding of climate change, through ocean warming monitoring. We like to think that **argopy** is part of that ecosystem, and with that, 2 things to keep in mind when contributing to the developement of **argopy** : 
 - **Ethics & Ecology** : Knowing the impact of generative AI on CO2 emissions, it seems important to us that we apply a best effort approach regarding the limitation of AI usage in argopy development. 
 - **Expertise** : argopy, as part of a research environment, is not really constrained by time, and has the luxury to evolve at its own pace. We believe that keeping a low level of AI-usage allow us to keep a good level of human expertise regarding the procuded code, and hopefully, the associated quality in terms of user assistance.
