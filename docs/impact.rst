@@ -56,7 +56,7 @@ Blog post & personal pages :
 
 - Samapriya Roy : https://samapriyaroy.medium.com/open-ocean-data-with-argofloats-tool-50efef6c4f05
 
-Academic references:
+Academic referencing/use-cases:
 
 - Sydney univ academic conda env : http://climate-cms.wikis.unsw.edu.au/Conda
 
@@ -65,3 +65,5 @@ Academic references:
 - Heliocloud : https://git.smce.nasa.gov/heliocloud/heliocloud-docker-images/-/blob/main/environment_pangeo_base_min.yml?ref_type=heads
 
 - `NMFS Hack days <https://nmfs-opensci.github.io/NMFSHackDays-2026/>`_: `Video <https://www.youtube.com/watch?v=0c5tHHZaaV4&t=660s>`_ and Notebooks to `load Argo-BGC data <https://nmfs-opensci.github.io/NMFSHackDays-2026/topics/2026-04-10/argopy.html>`_ and perform `Rrs data matchup <https://nmfs-opensci.github.io/NMFSHackDays-2026/topics/2026-04-10/argo-matchups.html>`_.
+
+- DTU M.Sc. course 25340 Digital Ocean: https://kurser.dtu.dk/course/25340, 38 students, 2026, ArgoPy with Jupyter notebooks, with markedly better outcomes than with Matlab (two 4 hours sessions). “...the coding exercises relating to the argo float were great and i learned a lot by doing..” “...Very good hands-on exercises. …(ArgoPy) more students moved forward faster instead of fighting with the computer….”.
