@@ -67,10 +67,14 @@ class FloatStoreProto(ABC):
             or self.host.startswith("ftp")
             or self.host.startswith("s3")
         ):
-            raise InvalidOption(
-                "Trying to work with remote host '%s' without a web connection. Check your connection parameters or try to work with a local GDAC path."
-                % self.host
-            )
+            if self.host.startswith("http://127.0.0.1"):
+                pass
+                # Keep using online implementation with a local server.
+            else:
+                raise InvalidOption(
+                    "Trying to work with remote host '%s' without a web connection. Check your connection parameters or try to work with a local GDAC path."
+                    % self.host
+                )
 
         if "idx" not in kwargs:
             self.idx = ArgoIndex(

@@ -21,6 +21,9 @@ Internals
 
 - **Update USA GDAC url** :issue:`624` (:pr:`624`) by |gmaze|.
 
+- **Fix bug** where by some unit tests would raise  `fsspec.exceptions.FSTimeoutError`, :issue:`593`. (:pr:`640`) by |gmaze|.
+
+
 v1.4.0 (5 Jan. 2026)
 --------------------
 

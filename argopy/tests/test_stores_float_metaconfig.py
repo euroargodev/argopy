@@ -4,8 +4,13 @@ import numpy as np
 import pandas as pd
 import tempfile
 
-import argopy
-from argopy.stores import ArgoFloat
+import argopy as ar
+
+# Load both implementations:
+# (this import method does not register the static extensions)
+from argopy.stores.float.implementations.online.float import FloatStore as OnlineArgoFloat
+from argopy.stores.float.implementations.offline.float import FloatStore as OfflineArgoFloat
+
 from argopy.stores.float.implementations.online.meta_config import (
     ConfigParameters as config_on,
 )
@@ -19,7 +24,7 @@ from utils import (
 from mocked_http import mocked_httpserver, mocked_server_address
 
 log = logging.getLogger("argopy.tests.floatstore.config")
-argopy.clear_cache()
+ar.clear_cache()
 
 skip_offline = pytest.mark.skipif(0, reason="Skipped tests for offline implementation")
 skip_online = pytest.mark.skipif(0, reason="Skipped tests for online implementation")
@@ -28,6 +33,7 @@ skip_online = pytest.mark.skipif(0, reason="Skipped tests for online implementat
 List WMO to be tested, one for each mission
 """
 VALID_WMO = [13857, 3902131]
+# VALID_WMO = [13857]
 
 
 class FloatStore_Config_Proto:
@@ -99,15 +105,15 @@ class FloatStore_Config_Proto:
 @skip_offline
 @requires_gdac
 class Test_FloatStore_Config_Offline(FloatStore_Config_Proto):
-    af: dict[int, ArgoFloat] = {}
+    af: dict[int, OfflineArgoFloat] = {}
 
     # Define a fixture for an offline ArgoFloat instance (local store)
     @pytest.fixture
     def argo_float(self, wmo):
         if wmo not in self.af:
-            self.af[wmo] = ArgoFloat(
+            self.af[wmo] = OfflineArgoFloat(
                 wmo,
-                host=argopy.tutorial.open_dataset("gdac")[0],
+                host=ar.tutorial.open_dataset("gdac")[0],
                 cache=True,
                 cachedir=self.cachedir,
             )
@@ -121,13 +127,13 @@ class Test_FloatStore_Config_Offline(FloatStore_Config_Proto):
 
 @skip_online
 class Test_FloatStore_Config_Online(FloatStore_Config_Proto):
-    af: dict[int, ArgoFloat] = {}
+    af: dict[int, OnlineArgoFloat] = {}
 
     # Define a fixture for an online ArgoFloat instance (but using mocked http)
     @pytest.fixture
     def argo_float(self, wmo, mocked_httpserver):
         if wmo not in self.af:
-            self.af[wmo] = ArgoFloat(
+            self.af[wmo] = OnlineArgoFloat(
                 wmo,
                 host=mocked_server_address,
                 cache=True,
