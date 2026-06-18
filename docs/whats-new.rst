@@ -17,6 +17,10 @@ Features and front-end API
 
 - **Full Argo vocabulary support** for reference tables (:class:`ArgoReferenceTable`), values (:class:`ArgoReferenceValue`) and mappings (:class:`ArgoReferenceMapping`) (:pr:`575`) by |gmaze|.
 
+Internals
+^^^^^^^^^
+- **Fix bug** where by some unit tests would raise  `fsspec.exceptions.FSTimeoutError`, :issue:`593`. (:pr:`640`) by |gmaze|.
+
 v1.4.0 (5 Jan. 2026)
 --------------------
 
