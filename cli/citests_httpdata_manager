@@ -61,7 +61,6 @@ import logging
 import hashlib
 import numpy as np
 from pathlib import Path
-import glob
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 import argopy
@@ -124,6 +123,7 @@ DEFAULT_TARGETS = [
 
 # Http requests time out in seconds:
 TIMEOUT = 60 * 10
+
 
 def setup_args():
     icons_help_string = """CI Tests data manager for the http mocked server"""
@@ -210,7 +210,13 @@ def setup_args():
 def can_xr_be_opened(src, file):
     try:
         time_coder = xr.coders.CFDatetimeCoder(use_cftime=False)
-        xr.open_dataset(file, decode_cf=1, decode_times=time_coder, mask_and_scale=1, decode_timedelta=True)
+        xr.open_dataset(
+            file,
+            decode_cf=1,
+            decode_times=time_coder,
+            mask_and_scale=1,
+            decode_timedelta=True,
+        )
         return src
     except:
         # print("This source can't be opened with xarray: %s" % src)
@@ -653,6 +659,9 @@ class Lister:
         this_URI = UriRegistry(name="ifremer_gdac")
         server = "https://data-argo.ifremer.fr"
 
+        def add_to_URI(facade):
+            [this_URI.commit(self.dfile(uri, "nc")) for uri in facade.uri]
+
         requests_seq = {
             "float": [[13857]],
             "profile": [[13857, 90]],
@@ -661,9 +670,6 @@ class Lister:
                 [-20, -16.0, 0, 1, 0, 100.0, "1997-07-01", "1997-09-01"],
             ],
         }
-
-        def add_to_URI(facade):
-            [this_URI.commit(self.dfile(uri, "nc")) for uri in facade.uri]
 
         fetcher = DataFetcher(src="gdac", gdac=server, ds="phy", MAX_FILES=100)
         for access_point in requests_seq:
@@ -680,6 +686,40 @@ class Lister:
             [
                 add_to_URI(fetcher.region(cfg))
                 for cfg in requests_seq[access_point]
+                if access_point == "region"
+            ]
+
+        # Parallel data fetching:
+        # Only used by test_fetchers_dask_cluster.py
+        # Parallel option is not implemented under test_fetchers_data_gdac.py !
+        # Only 'thread' is used by test_fetchers_dask_cluster.py
+        requests_par = {
+            "region": [
+                [-60, -55, 40.0, 45.0, 0.0, 20.0, "2007-08-01", "2007-09-01"],
+            ],
+        }
+
+        fetcher = DataFetcher(
+            src="gdac",
+            gdac=server,
+            ds="phy",
+            parallel="thread",
+            chunks_maxsize={"lon": 2.5, "lat": 2.5},
+        )
+        for access_point in requests_par:
+            [
+                add_to_URI(fetcher.profile(*cfg))
+                for cfg in requests_par[access_point]
+                if access_point == "profile"
+            ]
+            [
+                add_to_URI(fetcher.float(cfg))
+                for cfg in requests_par[access_point]
+                if access_point == "float"
+            ]
+            [
+                add_to_URI(fetcher.region(cfg))
+                for cfg in requests_par[access_point]
                 if access_point == "region"
             ]
 
@@ -870,8 +910,8 @@ class Lister:
         this_URI = UriRegistry(name="nvs_store")
         nvs = NVS_online()
 
-        RTID_TESTED = ['R27']
-        CONCEPTID_TESTED = ['AANDERAA_OPTODE_3835']
+        RTID_TESTED = ["R27"]
+        CONCEPTID_TESTED = ["AANDERAA_OPTODE_3835"]
         MAPPING_TESTED = [("R08", "R23")]
 
         for rtid in RTID_TESTED:
@@ -884,10 +924,10 @@ class Lister:
 
         fmts = {"ld+json": "json", "rdf+xml": "xml", "text/turtle": "txt"}
         for fmt in fmts.keys():
-            url = nvs._vocabulary2uri('R27', fmt=fmt)
+            url = nvs._vocabulary2uri("R27", fmt=fmt)
             this_URI.commit(self.dfile(unquote(url), fmts[fmt]))
 
-            url = nvs._concept2uri('AANDERAA_OPTODE_3835', fmt=fmt)
+            url = nvs._concept2uri("AANDERAA_OPTODE_3835", fmt=fmt)
             this_URI.commit(self.dfile(unquote(url), fmts[fmt]))
 
         for s, o in MAPPING_TESTED:
@@ -981,7 +1021,7 @@ class Lister:
         this_URI = UriRegistry(name="argofloat")
 
         for wmo in [13857, 3902131]:
-            af = ArgoFloat(wmo, host='https')
+            af = ArgoFloat(wmo, host="https")
             this_URI.commit(self.dfile(af.path, "html"))
 
             uri = af.host_sep.join([af.path, "profiles"])
@@ -1098,35 +1138,39 @@ def consolidate(target=None):
         with open(DB_FILE, "r") as f:
             URIs = json.load(f)
         for item in URIs:
-            file_path = Path(DATA_FOLDER).joinpath(
-                "%s.%s" % (item["sha"], item["ext"])
-            )
+            file_path = Path(DATA_FOLDER).joinpath("%s.%s" % (item["sha"], item["ext"]))
             with open(file_path, mode="rb") as file:
                 data = file.read()
             # if data[0:3] in [b"Err", b"<!D"] and item["ext"] in ["nc"]:
 
             if item["ext"] in ["nc"] and data[0:3] not in [b"CDF", b"\x89HD"]:
-                recommended = 'r'
+                recommended = "r"
 
                 if b"<title>502 Proxy Error</title>" in data:
-                    recommended = 'r'
+                    recommended = "r"
 
                 if b"The proxy server could not handle the request" in data:
-                    recommended = 'r'
+                    recommended = "r"
 
-                if b"Not Found: Your query produced no matching results. (nRows = 0)" in data:
-                    recommended = 'k'
+                if (
+                    b"Not Found: Your query produced no matching results. (nRows = 0)"
+                    in data
+                ):
+                    recommended = "k"
 
                 print("🚨 Unexpected %s content in: %s" % (item["type"], file_path))
                 print("▶ Record: ", item)
                 print("▶ Content[0:100] = ", data[0:100])
                 txt = "?"
                 while txt.lower() not in ["k", "r", ""]:
-                    txt = input("What do you want to do with this record ? [k]eep or [r]emove (we recommend '%s')" % recommended)
-                if txt == "" and recommended == 'r':
+                    txt = input(
+                        "What do you want to do with this record ? [k]eep or [r]emove (we recommend '%s')"
+                        % recommended
+                    )
+                if txt == "" and recommended == "r":
                     txt = "r"
 
-                if txt == 'r':
+                if txt == "r":
                     n_delete += 1
                     file_path.unlink()
                     URIs.remove(item)
