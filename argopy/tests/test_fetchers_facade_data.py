@@ -11,7 +11,7 @@ from argopy.errors import (
     OptionValueError,
 )
 from argopy.utils import is_list_of_strings
-from utils import (
+from argopy.tests.helpers.utils import (
     requires_fetcher,
     requires_connection,
     requires_connected_erddap_phy,
@@ -25,7 +25,11 @@ from utils import (
     has_seaborn,
     has_cartopy,
     has_ipython,
+
 )
+
+from mocked_http import mocked_httpserver
+from mocked_http import mocked_server_address as MOCKHTTP
 
 
 if has_matplotlib:
@@ -101,24 +105,15 @@ class Test_Facade:
         with pytest.raises(InvalidFetcher):
             assert self.__get_fetcher()[0].to_dataframe()
 
-    params = [(p, c) for p in [True, False] for c in [False]]
+    params = [(p, c) for p in [True, False] for c in [False, True]]
     ids_params = ["full=%s, coriolis_id=%s" % (p[0], p[1]) for p in params]
     @pytest.mark.parametrize("params", params,
                              indirect=False,
                              ids=ids_params)
-    def test_to_index(self, params):
+    def test_to_index(self, params, mocked_httpserver):
         full, coriolis_id = params
-        assert isinstance(self.__get_fetcher()[1].to_index(full=full, coriolis_id=coriolis_id), pd.core.frame.DataFrame)
-
-    params = [(p, c) for p in [True, False] for c in [True]]
-    ids_params = ["full=%s, coriolis_id=%s" % (p[0], p[1]) for p in params]
-    @pytest.mark.parametrize("params", params,
-                             indirect=False,
-                             ids=ids_params)
-    @requires_connection
-    def test_to_index_coriolis(self, params):
-        full, coriolis_id = params
-        assert isinstance(self.__get_fetcher()[1].to_index(full=full, coriolis_id=coriolis_id), pd.core.frame.DataFrame)
+        with argopy.set_options(server=MOCKHTTP):
+            assert isinstance(self.__get_fetcher()[1].to_index(full=full, coriolis_id=coriolis_id), pd.core.frame.DataFrame)
 
     def test_load(self):
         f, fetcher = self.__get_fetcher(pt='float')
@@ -178,13 +173,14 @@ class Test_Facade:
         f, fetcher = self.__get_fetcher(pt='float')
         fetcher.domain
 
-    def test_dashboard(self):
-        f, fetcher = self.__get_fetcher(pt='float')
-        assert isinstance(fetcher.dashboard(url_only=True), str)
+    def test_dashboard(self, mocked_httpserver):
+        with argopy.set_options(server=MOCKHTTP):
+            f, fetcher = self.__get_fetcher(pt='float')
+            assert isinstance(fetcher.dashboard(url_only=True), str)
 
-        f, fetcher = self.__get_fetcher(pt='profile')
-        assert isinstance(fetcher.dashboard(url_only=True), str)
+            f, fetcher = self.__get_fetcher(pt='profile')
+            assert isinstance(fetcher.dashboard(url_only=True), str)
 
-        with pytest.warns(UserWarning):
-            f, fetcher = self.__get_fetcher(pt='region')
-            fetcher.dashboard(url_only=True)
+            with pytest.warns(UserWarning):
+                f, fetcher = self.__get_fetcher(pt='region')
+                fetcher.dashboard(url_only=True)
