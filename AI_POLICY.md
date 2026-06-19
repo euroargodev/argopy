@@ -20,19 +20,26 @@ These rules apply to all contributors, including maintainers.
 If you submit a Pull Request that includes AI-generated code, documentation, or
 comments:
 
-- You must **fully understand** the code you submit, and the context in which it is included inside the global project or **argopy**.
+- You must **fully understand** the code you submit, and the context in which it is included inside the global project or **Argopy**.
 - You must be able to explain the "**why**" behind the implementation during the
   review process.
 - You are responsible for the long-term maintenance of that code.
 
 ## The people 
 
-Please keep in mind that argopy is developed and maintained by humans being.
+Please keep in mind that **Argopy** is developed and maintained by humans being.
 
-It is for us a fundamental aspect of the project that discussions (in issues or PR), even if happenning on github, are made between humans. Knowing this, it will be considered impolite to approach the argopy dev community with AI-agent.
+It is for us a fundamental aspect of the project that discussions (in issues or PR), even if happenning on github, are made between humans. Knowing this, it will be considered impolite to approach the **Argopy** dev community with AI-agent.
 
 ## Ethics, Ecology & Expertise
 
-For more than 20 years, Argo program has become a key element in the observation and understanding of climate change, through ocean warming monitoring. We like to think that **argopy** is part of that ecosystem, and with that, 2 things to keep in mind when contributing to the developement of **argopy** : 
-- **Ethics & Ecology** : Knowing the impact of generative AI on CO2 emissions, it seems important to us that we apply a best effort approach regarding the limitation of AI usage in argopy development. 
-- **Expertise** : argopy, as part of a research environment, is not really constrained by time, and has the luxury to evolve at its own pace. We believe that keeping a low level of AI-usage allow us to keep a good level of human expertise regarding the procuded code, and hopefully, the associated quality in terms of user assistance.
+For more than 20 years, the Argo program has been a key element in the observation and understanding of climate change and its impact on the ocean. Argo is incremental in monitoring how the human-driven climate change negatively impact the ocean state and marine life ([check the IPCC special report on ocean](https://www.ipcc.ch/srocc/) or [that brief overview also from the IPCC](https://www.ipcc.ch/report/ar6/wg1/downloads/factsheets/IPCC_AR6_WGI_Sectoral_Fact_Sheet_Marine_Ecosystems_Fisheries.pdf)). So, it is of primary and inherent concern to Argo to limit its environmental footprint.
+
+We like to think that **Argopy** is part of the Argo ecosystem.
+
+As sustainable software developers, the **Argopy** team aims to better understand the generative AI’s environmental impact, following our preliminary work in [monitoring the carbon footprint of maintaining and developing **Argopy**](https://argopy.readthedocs.io/en/latest/energy.html). But very little information are available on the generative AI’s environmental impact and "current GAI models are deployed mainly in carbon-intensive regions" ([Ding et al, 2025](https://doi.org/10.1016/j.xinn.2025.100866)).
+
+With that, 2 things to keep in mind when contributing to the development of **Argopy** :
+
+- **Ethics & Ecology** : Not knowing the - presumably very large - impact of generative AI on CO2 emissions (and use of limited Earth resources), it is important to us that we adopt a conservative and limited approach regarding GAI usage in contributing to **Argopy** in order to limit its environmental footprint.
+- **Expertise** : **Argopy**, as part of a public research infrastructure, has more duty in developing/preserving a technical and scientific expertise for the public good, than participating in the endless race to productivity gain (in the [social acceleration sense](https://en.wikipedia.org/wiki/Social_acceleration), an argument echoing the [slow science](https://en.wikipedia.org/wiki/Slow_science) approach at work within **Argopy**). It is thus also important to us that we adopt a conservative and limited approach regarding GAI usage in contributing to **Argopy** to preserve a good level of human expertise regarding the produced code and our associated ability to disseminate our expertise to the end-users.
