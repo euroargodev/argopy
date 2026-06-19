@@ -1,4 +1,4 @@
-from typing import Union, Any, Literal
+from typing import Union, Any, Literal, Optional, List
 import fsspec.core
 import xarray as xr
 from pathlib import Path
@@ -56,12 +56,12 @@ class FloatStoreProto(ABC):
         timeout: int, optional, default: OPTIONS['api_timeout']
             Time out in seconds to connect to a remote host (ftp or http).
         """
-        self.WMO : int = check_wmo(wmo)[0]
-        self.host : str = OPTIONS["gdac"] if host is None else shortcut2gdac(host)
-        self.cache : bool = bool(cache)
-        self.cachedir : str = OPTIONS["cachedir"] if cachedir == "" else cachedir
-        self.timeout : int = OPTIONS["api_timeout"] if timeout == 0 else timeout
-        self._aux : bool = bool(aux)
+        self.WMO: int = check_wmo(wmo)[0]
+        self.host: str = OPTIONS["gdac"] if host is None else shortcut2gdac(host)
+        self.cache: bool = bool(cache)
+        self.cachedir: str = OPTIONS["cachedir"] if cachedir == "" else cachedir
+        self.timeout: int = OPTIONS["api_timeout"] if timeout == 0 else timeout
+        self._aux: bool = bool(aux)
 
         if not self._online and (
             self.host.startswith("http")
@@ -78,7 +78,7 @@ class FloatStoreProto(ABC):
                 )
 
         if "idx" not in kwargs:
-            self.idx : ArgoIndex = ArgoIndex(
+            self.idx: ArgoIndex = ArgoIndex(
                 index_file="core",
                 host=self.host,
                 cache=self.cache,
@@ -86,25 +86,37 @@ class FloatStoreProto(ABC):
                 timeout=self.timeout,
             )
         else:
-            self.idx : ArgoIndex = kwargs["idx"]
+            self.idx: ArgoIndex = kwargs["idx"]
 
-        self.host : str = self.idx.host  # Fix host shortcuts with correct values
+        self.host: str = self.idx.host  # Fix host shortcuts with correct values
         self.fs = self.idx.fs["src"]
 
         # Load some data (in a perfect world, this should be done asynchronously):
         # self.load_index()
 
         # Init Internal placeholder for this instance:
-        self._metadata: dict | None = None  # filled by self.load_metadata(), returned by self.metadata
+        self._metadata: dict | None = (
+            None  # filled by self.load_metadata(), returned by self.metadata
+        )
         self._dac: str | None = None  # filled by self.load_dac(), returned by self.dac
-        self._dataset: dict[str, xr.Dataset | Any] = {}  # filled/returned by self.open_dataset(), returned by self.dataset()
+        self._dataset: dict[str, xr.Dataset | Any] = (
+            {}
+        )  # filled/returned by self.open_dataset(), returned by self.dataset()
 
         self._ls: list[str] | None = None  # filled/returned by self.ls(), 'ls <WMO>/*'
-        self._lsp: list[str] | None = None # filled/returned by self.lsp(),'ls <WMO>/profiles/*'
+        self._lsp: list[str] | None = (
+            None  # filled/returned by self.lsp(),'ls <WMO>/profiles/*'
+        )
 
-        self._ls_prof: dict[str|int, str] | None = None # filled/returned by self.ls_profiles()
-        self._profile : dict[str, xr.Dataset | Any] = {} # filled/returned by self.open_profile(), (mono-profile file xarray datasets)
-        self._df_profiles : pd.DataFrame | None = None  # filled/returned by self.describe_profiles()
+        self._ls_prof: dict[str | int, str] | None = (
+            None  # filled/returned by self.ls_profiles()
+        )
+        self._profile: dict[str, xr.Dataset | Any] = (
+            {}
+        )  # filled/returned by self.open_profile(), (mono-profile file xarray datasets)
+        self._df_profiles: pd.DataFrame | None = (
+            None  # filled/returned by self.describe_profiles()
+        )
 
     def __repr__(self):
         backend = "online" if self._online else "offline"
@@ -202,7 +214,10 @@ class FloatStoreProto(ABC):
 
         data.update({"networks": infer_network(ds)})
 
-        data.update({"cycles": np.unique(self.open_dataset("prof")["CYCLE_NUMBER"])})
+        cycles_ldict = []
+        for cyc in np.unique(self.open_dataset("prof")["CYCLE_NUMBER"]):
+            cycles_ldict.append({'id': int(cyc)})
+        data.update({"cycles": cycles_ldict})
 
         self._metadata = data
 
@@ -376,14 +391,23 @@ class FloatStoreProto(ABC):
         return self._dataset[name]
 
     @property
+    def CYCLE_NUMBERS(self)-> List[int]:
+        """List of cycle numbers
+
+        The list is computed from the analysis of the GDAC 'profiles' folder of the float.
+        So this relies on :meth:`ArgoFloat.describe_profiles()` that in turns relies on :meth:`ArgoFloat.lsp()`.
+        """
+        return [int(c) for c in self.describe_profiles()["cycle_number"].unique()]
+
+    @property
     def N_CYCLES(self) -> int:
         """Number of cycles
 
         If the float is still active, this is the current value.
         """
-        return len(np.unique([c["id"] for c in self.metadata["cycles"]]))
+        return len(self.CYCLE_NUMBERS)
 
-    @deprecated("Superseded by the 'lsp' method", 'v1.5.0')
+    @deprecated("Superseded by the 'lsp' method", "v1.5.0")
     def lsprofiles(self) -> list:
         """Return the list of files in float profiles path
 
@@ -451,10 +475,18 @@ class FloatStoreProto(ABC):
         This method is mandatory to work with profile methods :class:`ArgoFloat.ls_profiles_for`, class:`ArgoFloat.ls_profiles`, class:`ArgoFloat.open_profile` and class:`ArgoFloat.ls_profiles`.
 
         """
+
+        def stem2cyc(s) -> int:
+            ii = -2 if "aux" in s else -1
+            if s.split("_")[ii][-1] == "D":
+                return int(s.split("_")[ii][0:-1])
+            else:
+                return int(s.split("_")[ii][:])
+
         if self._df_profiles is None:
             # Read the list of netcdf files under '<wmo>/profiles/*':
             paths = self.lsp()
-            paths = [p for p in paths if p.split(".")[-1]=='nc']
+            paths = [p for p in paths if p.split(".")[-1] == "nc"]
 
             # Scan each file name to extract information:
             prof = []
@@ -469,14 +501,12 @@ class FloatStoreProto(ABC):
 
             # Package all information as a DataFrame:
             df = pd.DataFrame(data=prof)
-            stem2cyc = lambda s: (  # noqa: E731
-                int(s.split("_")[-1][0:-1])
-                if s.split("_")[-1][-1] == "D"
-                else int(s.split("_")[-1][:])
-            )
             row2cyc = lambda row: stem2cyc(row["stem"])  # noqa: E731
             df["cyc"] = df.apply(row2cyc, axis=1)
-            df = df[["cyc", "type", "direction", "data_mode", "stem", "path"]]
+            columns = ["cyc", "type", "direction", "data_mode", "stem", "path"]
+            if self._aux:
+                columns.append("auxiliary")
+            df = df[columns]
             df = df.rename({"cyc": "cycle_number", "type": "dataset"}, axis=1)
             df = df.sort_values(by=["cycle_number", "dataset", "direction"], axis=0)
             df = df.reset_index(drop=True)
@@ -486,10 +516,11 @@ class FloatStoreProto(ABC):
 
     def ls_profiles_for(
         self,
-        cycle_number: int | list[int] | None = None,
-        dataset: Literal['B', 'S'] | None = None,
-        direction: Literal['A', 'D'] = "A",
-    ) -> dict[int|str, str]:
+        cycle_number: Optional[int | list[int]] = None,
+        dataset: Literal["C", "B", "S"] = "C",
+        direction: Literal["A", "D"] = "A",
+        auxiliary: bool = False,
+    ) -> dict[int | str, str]:
         """List all available profile files 'for' specific dataset and direction
 
         Notes
@@ -502,17 +533,19 @@ class FloatStoreProto(ABC):
             The cycle number, or list, to return files for.
 
             If set to None (default), all cycle numbers are returned.
-        dataset: Literal['B', 'S'] | None, optional, default = None
+        dataset: Literal['C', 'B', 'S'], default = 'C'
             The profile dataset to return files for.
 
-            - None: 'core' profile files (default),
+            - 'C': 'core' profile files (default),
             - 'B': BGC mono-cycle profile files,
             - 'S': Synthetic BGC mono-cycle profile files.
-        direction: Literal['A', 'D'], optional, default = 'A'
+        direction: Literal['A', 'D'], default = 'A'
             The profile direction to return files for.
 
             - 'A' (default): Ascending profile files,
             - 'D': Descending profile files.
+        auxiliary: Bool, default = False
+            Return files from the auxiliary folder. This requires the object to have been instanciated with the `aux=True` option.
 
         Returns
         -------
@@ -521,43 +554,75 @@ class FloatStoreProto(ABC):
             - keys are file short name to be used with :class:`ArgoFloat.open_profile`,
             - values are absolute path toward profile files.
         """
-        CYCs = [c+1 for c in np.arange(self.N_CYCLES).tolist()] if cycle_number is None else cycle_number
+        CYCs = (
+            self.CYCLE_NUMBERS
+            if cycle_number is None
+            else cycle_number
+        )
         CYCs: list[int] = check_cyc(CYCs)
-        if dataset not in [None, 'b', 's', 'B', 'S']:
-            raise ValueError(
-                f"Invalid profile dataset '{dataset}' (type of mono-cycle file), must be None, 'B' or 'S'.")
-        else:
-            ds: str = '' if dataset is None else dataset.upper()
-            ds: str = {'': 'M', 'B': 'B', 'S': 'S'}[ds]
 
-        if direction not in ['a', 'd', 'A', 'D']:
-            raise ValueError(f"Invalid profile direction '{direction}', must be 'A' or 'D'.")
+        if dataset.upper() not in ["C", "B", "S"]:
+            raise ValueError(
+                f"Invalid profile dataset '{dataset}' (type of mono-cycle file), must be None, 'B' or 'S'."
+            )
         else:
-            direction = direction.upper()
+            ds: str = dataset[0].upper()
+            ds: str = {"C": "M", "B": "B", "S": "S"}[
+                ds
+            ]  # 'C' > 'M' because describe_profiles['dataset'] starts with a 'M' for 'C'ore profiles.
+
+        direction = direction[0].upper()
+        if direction not in ["A", "D"]:
+            raise ValueError(
+                f"Invalid profile direction '{direction}', must be 'A' or 'D'."
+            )
+
+        if auxiliary and not self._aux:
+            raise ValueError(
+                "To list auxiliary profile files, you need to create the ArgoFloat object with `aux=True` option, which was not the case with this instance."
+            )
 
         df = self.describe_profiles()
 
         results = {}
         for cycle_number in CYCs:
-            if cycle_number in df['cycle_number']:
-                this_df = df[df['cycle_number'] == cycle_number]
-                this_df = this_df[this_df['dataset'].apply(lambda x: x[0]) == ds]
-                this_df = this_df[this_df['direction'].apply(lambda x: x[0]) == direction]
+            if cycle_number in df["cycle_number"].values:
+                this_df = df[df["cycle_number"] == cycle_number]
+                this_df = this_df[
+                    this_df["dataset"].apply(
+                        lambda x: x.replace("Auxiliary", "").strip()[0]
+                    )
+                    == ds
+                ]
+                this_df = this_df[
+                    this_df["direction"].apply(lambda x: x[0]) == direction
+                ]
+
+                if "auxiliary" in this_df:
+                    this_df = this_df[this_df["auxiliary"] == auxiliary]
+
                 if this_df.shape[0] == 1:
-                    pds = {'M': '', 'B': 'B', 'S': 'S'}[ds]
-                    pdi = {'A': '', 'D': 'D'}[direction]
-                    if pds == '' and pdi == '':
+                    pds = {"M": "", "B": "B", "S": "S"}[ds]
+                    pdi = {"A": "", "D": "D"}[direction]
+                    if pds == "" and pdi == "":
                         key = cycle_number
+                        # key = f"{cycle_number}"
                     else:
                         key = f"{pds}{cycle_number}{pdi}"
-                    results[key] = this_df['path'].item()
+                    if auxiliary:
+                        key = f"{key}aux"
+                    results[key] = this_df["path"].item()
 
         if len(results) >= 1:
             return results
 
-        raise ValueError(f"No mono-cycle file matches this description: cycle_number={CYCs}, dataset='{dataset}' and direction='{direction}' !")
+        if not self._aux:
+            msg = f"No mono-cycle file matches this description: cycle_number={CYCs}, dataset='{dataset}' and direction='{direction}' !"
+        else:
+            msg = f"No mono-cycle file matches this description: cycle_number={CYCs}, dataset='{dataset}', direction='{direction}' and auxiliary={auxiliary} !"
+        raise ValueError(msg)
 
-    def ls_profiles(self) -> dict[int|str, str]:
+    def ls_profiles(self) -> dict[int | str, str]:
         """List all available profile files, whatever the profile dataset and direction
 
         Notes
@@ -569,6 +634,7 @@ class FloatStoreProto(ABC):
             - 'B<cycle>'  for BGC ascending profile files (eg: 'B12' for 'B<R/D>6903091_012.nc'),
             - 'B<cycle>D' for BGC descending profile files (eg: 'B12D' for 'B<R/D>6903091_012D.nc'),
             - 'S<cycle>'  for Synthetic ascending profile files (eg: 'S134' for 'S<R/D>6903091_134.nc').
+        - Data from the auxiliary folder have regular keys with `aux` appended at the end.
 
         Returns
         -------
@@ -579,14 +645,30 @@ class FloatStoreProto(ABC):
         """
         if self._ls_prof is None:
             self._ls_prof = {}
-            for ds in [None, 'B', 'S']:
-                for di in ['A', 'D']:
+
+            for ds in ["C", "B", "S"]:
+                for di in ["A", "D"]:
                     try:
-                        fl = self.ls_profiles_for(dataset=ds, direction=di)
+                        fl = self.ls_profiles_for(
+                            dataset=ds, direction=di,
+                        )
                         for key, uri in fl.items():
-                            self._ls_prof.update({key: uri})
+                            self._ls_prof[key] = uri
                     except:
                         pass
+
+            if self._aux:
+                for ds in ["C", "B", "S"]:
+                    for di in ["A", "D"]:
+                        try:
+                            fl = self.ls_profiles_for(
+                                dataset=ds, direction=di, auxiliary=True
+                            )
+                            for key, uri in fl.items():
+                                self._ls_prof[key] = uri
+                        except:
+                            pass
+
         return self._ls_prof
 
     def open_profile(
@@ -664,10 +746,19 @@ class FloatStoreProto(ABC):
             # Open the BGC 'Synthetic' profile file for cycle number 12:
             ds = af.open_profile('S12')
         """
-        d2s = lambda x: str(x).replace("'", "").replace(":", "_").replace("{", "").replace("}", "").replace(" ", "")
+        d2s = (
+            lambda x: str(x)
+            .replace("'", "")
+            .replace(":", "_")
+            .replace("{", "")
+            .replace("}", "")
+            .replace(" ", "")
+        )
 
         if name not in self.ls_profiles():
-            raise ValueError(f"This profile key {name} does not match any of the known profile files ({self.ls_profiles().keys()})")
+            raise ValueError(
+                f"This profile key {name} does not match any of the known profile files ({self.ls_profiles().keys()})"
+            )
 
         if "xr_opts" not in kwargs and cast is True:
             kwargs.update({"xr_opts": {"engine": "argo"}})
@@ -683,12 +774,12 @@ class FloatStoreProto(ABC):
         return self._profile[key]
 
     def open_profiles(
-            self,
-            cycle_number: int | list[int] | None = None,
-            dataset: Literal['B', 'S'] | None = None,
-            direction: Literal['A', 'D'] = "A",
-            cast: bool = True,
-            **kwargs,
+        self,
+        cycle_number: int | list[int] | None = None,
+        dataset: Literal["B", "S"] | None = None,
+        direction: Literal["A", "D"] = "A",
+        cast: bool = True,
+        **kwargs,
     ):
         """Open and decode one or more profile file dataset
 
@@ -803,17 +894,23 @@ class FloatStoreProto(ABC):
             ds_list = af.open_profiles(dataset='S')
 
         """
-        fnames = list(self.ls_profiles_for(cycle_number=cycle_number, dataset=dataset, direction=direction).values())
+        fnames = list(
+            self.ls_profiles_for(
+                cycle_number=cycle_number, dataset=dataset, direction=direction
+            ).values()
+        )
 
         if "xr_opts" not in kwargs and cast is True:
-            if 'open_dataset_opts' in kwargs:
-                kwargs['open_dataset_opts'].update({"xr_opts": {"engine": "argo"}})
+            if "open_dataset_opts" in kwargs:
+                kwargs["open_dataset_opts"].update({"xr_opts": {"engine": "argo"}})
             else:
                 kwargs.update({"open_dataset_opts": {"xr_opts": {"engine": "argo"}}})
         if "concat" not in kwargs:
             kwargs.update({"concat": False})
 
-        results: xr.Dataset | Any | list[xr.Dataset | Any] = self.fs.open_mfdataset(fnames, **kwargs)
+        results: xr.Dataset | Any | list[xr.Dataset | Any] = self.fs.open_mfdataset(
+            fnames, **kwargs
+        )
 
         if isinstance(results, list) and len(results) == 1:
             return results[0]
