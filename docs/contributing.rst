@@ -351,6 +351,11 @@ Data fetchers
 
 Introduction
 ^^^^^^^^^^^^
+
+.. warning::
+
+    This section needs to be updated with new requirements for data fetchers.
+
 If you want to add your own data fetcher for a new service, then, keep in mind that:
 
 * Data fetchers are responsible for:
@@ -393,8 +398,8 @@ This enforces minimal internal design compliance.
 Auto-discovery of fetcher properties
 """"""""""""""""""""""""""""""""""""
 
-The new fetcher must come with the ``access_points``, ``exit_formats`` and ``dataset_ids`` properties at the top of the
-file, e.g.:
+
+The new fetcher must come with the ``access_points``, ``exit_formats``, ``dataset_ids`` and ``api_server_check`` properties at the top of the file, e.g.:
 
 .. code-block:: python
 
@@ -410,6 +415,8 @@ implement. A good start is with the ``wmo`` access point and the
 required. These variables are used by the facade
 to auto-discover the fetcher capabilities. The ``dataset_ids``
 property is used to determine which variables can be retrieved.
+
+The ``api_server_check`` property is used to ping the data source and monitor for availability.
 
 Auto-discovery of fetcher access points
 """""""""""""""""""""""""""""""""""""""
@@ -484,3 +491,11 @@ that whatever the data source set by users, the output xarray or
 dataframe will be formatted and contain the same variables. This will
 also ensure that other argopy features can be used on the new fetcher
 output, like plotting or xarray data manipulation.
+
+
+.. _product_data_fetchers:
+
+Data fetchers for third-party products
+--------------------------------------
+
+[TBD]
