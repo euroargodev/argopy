@@ -13,7 +13,7 @@ Coming up next (unreleased)
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- **New methods to load any mono-cycle profile files**, using the :class:`ArgoFloat.open_profile` and :class:`ArgoFloat.open_profiles` methods. See also :class:`ArgoFloat.ls_profiles` :class:`ArgoFloat.ls_profiles_for`. (:pr:`590`) by |gmaze|.
+- **New methods to load any mono-cycle profile files**, using the :class:`ArgoFloat.open_profile` and :class:`ArgoFloat.open_profiles` methods. See also :class:`ArgoFloat.ls_profiles` and :class:`ArgoFloat.ls_profiles_for`. (:pr:`590`) by |gmaze|.
 
 - **Full Argo vocabulary support** for reference tables (:class:`ArgoReferenceTable`), values (:class:`ArgoReferenceValue`) and mappings (:class:`ArgoReferenceMapping`) (:pr:`575`) by |gmaze|.
 
