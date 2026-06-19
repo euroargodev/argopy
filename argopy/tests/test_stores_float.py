@@ -1,5 +1,6 @@
 import pytest
 import tempfile
+from typing import Generator
 
 import xarray as xr
 import pandas as pd
@@ -10,7 +11,7 @@ from urllib.parse import urlparse
 import random
 
 import argopy
-from argopy.utils.checkers import is_list_of_strings
+from argopy.utils.checkers import is_list_of_strings, is_cyc
 
 from argopy.stores.float.implementations.offline.float import FloatStore as ArgoFloatOffline
 from argopy.stores.float.implementations.online.float import FloatStore as ArgoFloatOnline
@@ -100,7 +101,7 @@ class Test_FloatStore_Online():
             pytest.skip("Skip this test with 's3' because there is no internet connection")
         return patch_ftp(host)
 
-    def call_floatstore(self, WMO, store_args, xfail=False, reason="?"):
+    def call_floatstore(self, WMO, store_args, xfail=False, reason="?")->ArgoFloat:
         def core(WMO, fargs):
             try:
                 log.debug(f"Instantiating a FloatStore with: {fargs}")
@@ -114,7 +115,7 @@ class Test_FloatStore_Online():
 
         return core(WMO, store_args)
 
-    def get_a_floatstore(self, WMO, host, cache=False, **kwargs):
+    def get_a_floatstore(self, WMO, host, cache=False, **kwargs)-> ArgoFloat:
         store_args = {'host': host,
                       'eafleetmonitoring_server': mocked_server_address  # Use mocked server for Euro-Argo meta data API calls
                       }
@@ -126,7 +127,7 @@ class Test_FloatStore_Online():
         return self.call_floatstore(WMO, store_args, **kwargs)
 
     @pytest.fixture
-    def store_maker(self, request):
+    def store_maker(self, request)->Generator[ArgoFloat]:
         """Fixture to create a Float store instance for a given wmo and host"""
         log.debug("-"*50)
         log.debug(request)
@@ -156,6 +157,7 @@ class Test_FloatStore_Online():
         assert hasattr(this_af, "api_point")
         assert isinstance(this_af.api_point, dict)
 
+        assert is_cyc(this_af.CYCLE_NUMBERS)
         assert isinstance(this_af.N_CYCLES, int)
         assert isinstance(this_af.path, str)
         assert isinstance(this_af.host_sep, str)
