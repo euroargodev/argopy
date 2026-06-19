@@ -165,9 +165,15 @@ def argo_split_path(this_path):  # noqa C901
     try:
         # Adjust origin and path for local files:
         # This ensures that output['path'] is agnostic to users and can be reused on any gdac compliant architecture
-        output["origin"] = sep.join(path_parts[0 : path_parts.index("dac")])
+        if 'dac' in path_parts:
+            idac = path_parts.index("dac")
+        elif 'aux' in path_parts:
+            idac = path_parts.index("aux")
+        else:
+            raise ValueError("This is not a Argo GDAC compliant file path (no 'dac' or 'aux'")
+        output["origin"] = sep.join(path_parts[0 : idac])
         output["origin"] = sep if output["origin"] == "" else output["origin"]
-        output["path"] = sep.join(path_parts[path_parts.index("dac") :])
+        output["path"] = sep.join(path_parts[idac :])
 
         # Extract file information
         if path_parts[-1] == "profiles":
@@ -252,6 +258,11 @@ def argo_split_path(this_path):  # noqa C901
                 output["data_mode"] = "R, Real-time data"
             else:
                 output["data_mode"] = "R, Real-time data (implicit)"
+
+    output["auxiliary"] = False
+    if 'aux' in path_parts:
+        output["type"] = f"Auxiliary {output['type']}"
+        output["auxiliary"] = True
 
     return dict(sorted(output.items()))
 
