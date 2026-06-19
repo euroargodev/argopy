@@ -529,7 +529,7 @@ class FloatStoreProto(ABC):
 
         Parameters
         ----------
-        cycle_number: int | list[int] | None, optional, default = None
+        cycle_number: int | list[int], optional, default = None
             The cycle number, or list, to return files for.
 
             If set to None (default), all cycle numbers are returned.
@@ -634,7 +634,7 @@ class FloatStoreProto(ABC):
             - 'B<cycle>'  for BGC ascending profile files (eg: 'B12' for 'B<R/D>6903091_012.nc'),
             - 'B<cycle>D' for BGC descending profile files (eg: 'B12D' for 'B<R/D>6903091_012D.nc'),
             - 'S<cycle>'  for Synthetic ascending profile files (eg: 'S134' for 'S<R/D>6903091_134.nc').
-        - Data from the auxiliary folder have regular keys with `aux` appended at the end.
+        - Data from the auxiliary folder have regular keys with `aux` appended at the end of the key (eg: '11aux' for 'aux/coriolis/2903797/profiles/R2903797_011_aux.nc').
 
         Returns
         -------
@@ -775,9 +775,10 @@ class FloatStoreProto(ABC):
 
     def open_profiles(
         self,
-        cycle_number: int | list[int] | None = None,
-        dataset: Literal["B", "S"] | None = None,
+        cycle_number: Optional[int | list[int]] = None,
+        dataset: Literal["C", "B", "S"] = "C",
         direction: Literal["A", "D"] = "A",
+        auxiliary: bool = False,
         cast: bool = True,
         **kwargs,
     ):
@@ -789,17 +790,19 @@ class FloatStoreProto(ABC):
             The cycle number, or list, to return files for.
 
             If set to None (default), all cycle numbers are returned.
-        dataset: Literal['B', 'S'] | None, optional, default = None
+        dataset: Literal['C', 'B', 'S'], default = 'C'
             The profile dataset to return files for.
 
-            - None: 'core' profile files (default),
+            - 'C': 'core' profile files (default),
             - 'B': BGC mono-cycle profile files,
             - 'S': Synthetic BGC mono-cycle profile files.
-        direction: Literal['A', 'D'], optional, default = 'A'
+        direction: Literal['A', 'D'], default = 'A'
             The profile direction to return files for.
 
             - 'A' (default): Ascending profile files,
             - 'D': Descending profile files.
+        auxiliary: Bool, default = False
+            Return files from the auxiliary folder. This requires the object to have been instanciated with the `aux=True` option.
         cast: bool, optional, default = True
             Determine if dataset variables should be cast or not.
 
@@ -832,11 +835,11 @@ class FloatStoreProto(ABC):
             af = ArgoFloat(WMO)
 
             ds1 = af.open_profile(1)
-            ds2 = af.open_profiles(1, dataset=None, direction='A')
+            ds2 = af.open_profiles(1, dataset='C', direction='A')
             assert ds1.equals(ds2)
 
             ds1 = af.open_profile('1D')
-            ds2 = af.open_profiles(1, dataset=None, direction='D')
+            ds2 = af.open_profiles(1, dataset='C', direction='D')
             assert ds1.equals(ds2)
 
         See Also
@@ -850,7 +853,7 @@ class FloatStoreProto(ABC):
 
             from argopy import ArgoFloat
 
-            WMO = 6903076 # A 'core' float
+            WMO = 6903076 # a 'core' float
             af = ArgoFloat(WMO)
 
             # Open some core ascending profile files (default):
@@ -867,7 +870,7 @@ class FloatStoreProto(ABC):
 
             from argopy import ArgoFloat
 
-            WMO = 6903091 # A 'BGC' float
+            WMO = 6903091 # a 'BGC' float
             af = ArgoFloat(WMO)
 
             # Open some 'BGC' ascending profile files (default):
@@ -896,7 +899,7 @@ class FloatStoreProto(ABC):
         """
         fnames = list(
             self.ls_profiles_for(
-                cycle_number=cycle_number, dataset=dataset, direction=direction
+                cycle_number=cycle_number, dataset=dataset, direction=direction, auxiliary=auxiliary
             ).values()
         )
 
