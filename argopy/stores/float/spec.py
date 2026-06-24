@@ -396,18 +396,30 @@ class FloatStoreProto(ABC):
 
     @property
     def CYCLE_NUMBERS(self)-> List[int]:
-        """List of cycle numbers
+        """List of cycle numbers, according to mono-profile files.
 
         The list is computed from the analysis of the GDAC 'profiles' folder of the float.
         So this relies on :meth:`ArgoFloat.describe_profiles()` that in turns relies on :meth:`ArgoFloat.lsp()`.
+
+        Notes
+        -----
+        This `CYCLE_NUMBERS` attribute is not to be confused with the netcdf variable `CYCLE_NUMBER` that is the
+        float cycle number of the measurement in the context of a specific netcdf file. That's why we're using
+        the extra `s` at the end.
         """
         return [int(c) for c in self.describe_profiles()["cycle_number"].unique()]
 
     @property
     def N_CYCLES(self) -> int:
-        """Number of cycles
+        """Number of cycles, according to mono-profile files.
 
-        If the float is still active, this is the current value.
+        This is simply the length of :attr:`ArgoFloat.CYCLE_NUMBERS`.
+
+        Notes
+        -----
+        This `N_CYCLES` attribute is not to be confused with the netcdf dimension `N_CYCLE` that is the
+        index for cycles in the context of a specific netcdf file (eg: trajectory file_. That's why we're using
+        the extra `s` at the end.
         """
         return len(self.CYCLE_NUMBERS)
 
@@ -424,7 +436,7 @@ class FloatStoreProto(ABC):
     def lsp(self) -> list[str]:
         """Return the list of files in float 'profiles' path
 
-        Protocol is included, all files are listed (not only netcdf, if any).
+        The GDAC host protocol is included, all files are listed (not only netcdf, if any other exist).
 
         Examples
         --------
@@ -472,12 +484,11 @@ class FloatStoreProto(ABC):
         Returns
         -------
         :class:`pandas.DataFrame`
-            A DataFrame with ["cycle_number", "dataset", "direction", "data_mode", "stem", "path"] columns for each mono-cycle netcdf files.
+            A DataFrame with ["cycle_number", "dataset", "direction", "data_mode", "stem", "path"] columns for each mono-cycle netcdf files. The extra columns `auxiliary` is added if necessary.
 
         Notes
         -----
-        This method is mandatory to work with profile methods :class:`ArgoFloat.ls_profiles_for`, class:`ArgoFloat.ls_profiles`, class:`ArgoFloat.open_profile` and class:`ArgoFloat.ls_profiles`.
-
+        This method is used by all profile methods :class:`ArgoFloat.ls_profiles_for`, class:`ArgoFloat.ls_profiles`, class:`ArgoFloat.open_profile` and class:`ArgoFloat.ls_profiles`.
         """
 
         def stem2cyc(s) -> int:
@@ -525,7 +536,7 @@ class FloatStoreProto(ABC):
         direction: Literal["A", "D"] = "A",
         auxiliary: bool = False,
     ) -> dict[int | str, str]:
-        """List all available profile files 'for' specific dataset and direction
+        """List all available profile files 'for' a specific dataset and direction
 
         Notes
         -----
@@ -681,7 +692,7 @@ class FloatStoreProto(ABC):
         cast: bool = True,
         **kwargs,
     ) -> xr.Dataset | Any | list[xr.Dataset | Any]:
-        """Open and decode a single profile file dataset
+        """Open and decode a single profile file
 
         Parameters
         ----------
@@ -786,7 +797,7 @@ class FloatStoreProto(ABC):
         cast: bool = True,
         **kwargs,
     ):
-        """Open and decode one or more profile file dataset
+        """Open and decode one or more profile files
 
         Parameters
         ----------

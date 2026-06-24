@@ -51,19 +51,22 @@ the instantiation of the class:
     af = ArgoFloat(WMO, aux=True)
     af
 
-List dataset and loading
-------------------------
+List and load datasets
+----------------------
 
-Once you created an :class:`ArgoFloat` instance, you can list all available dataset with:
+.. note::
+    We consider _datasets_ any file that is NOT under the float `profiles` folder of the GDAC.
+
+Once you created an :class:`ArgoFloat` instance, you can list all available datasets with:
 
 .. ipython:: python
     :okwarning:
 
     af.ls_datasets()
 
-Note that dataset from the auxiliary GDAC folder are included in this store, and referenced with the `_aux` suffix.
+Note that datasets from the auxiliary GDAC folder are included in this store, and referenced with the `_aux` suffix.
 
-So finally, you can open any of these dataset using their keyword:
+So finally, you can open any of these datasets using their keyword:
 
 .. ipython:: python
     :okwarning:
@@ -83,6 +86,16 @@ Note that you can open a dataset lazily, this is explained in the :ref:`lazy-arg
         :okwarning:
 
         af.open_dataset('meta', netCDF4=True)
+
+List and load profiles
+----------------------
+
+.. note::
+    We consider _profiles_ any file that IS under the float `profiles` folder of the GDAC.
+
+
+[TBC]
+
 
 Integration within **argopy**
 -----------------------------

@@ -399,6 +399,7 @@
     argopy.ArgoFloat.open_profiles
     argopy.ArgoFloat.describe_profiles
     argopy.ArgoFloat.metadata
+    argopy.ArgoFloat.CYCLE_NUMBERS
     argopy.ArgoFloat.N_CYCLES
     argopy.ArgoFloat.dac
     argopy.ArgoFloat.path
