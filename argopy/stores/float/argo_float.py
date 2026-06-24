@@ -27,9 +27,9 @@ else:
 
 
 class ArgoFloat(FloatStore):
-    """Argo GDAC float store
+    """Argo float store
 
-    This store makes it easy to load/read/visualize data for a given float from any GDAC location and netcdf files
+    This store makes it easy to load/read/visualize data for a given float from any GDAC location and netcdf files.
 
     Examples
     --------
@@ -47,6 +47,7 @@ class ArgoFloat(FloatStore):
         :caption: Load/read GDAC netcdf files
 
         af.ls_datasets() # Return a dictionary with all available datasets for this float
+
         ds = af.open_dataset('prof') # Use keys from .ls_datasets()
         ds = af.open_dataset('meta')
         ds = af.open_dataset('tech')
@@ -55,12 +56,11 @@ class ArgoFloat(FloatStore):
 
         ds = af.open_dataset('Sprof', netCDF4=True)  # Return a netCDF4 Dataset instead of an xarray
 
+        af.ls() # Return the full list of dataset files
+
+
     .. code-block:: python
         :caption: Load/read GDAC netcdf mono-cycle profile files
-
-        af.describe_profiles()  # Pandas DataFrame describing all available profile files
-
-        af.lsp() # Return the full list of profile files
 
         af.ls_profiles() # Return a dictionary with all available mono-cycle profile files (everything under the 'profiles' sub-folder)
 
@@ -81,15 +81,20 @@ class ArgoFloat(FloatStore):
         # If you don't specify cycle numbers, all cycles are loaded:
         ds_list = af.open_profiles(direction='D') # Return *all* core descending files
 
+        af.describe_profiles()  # Pandas DataFrame describing all available profile files
+
 
     .. code-block:: python
         :caption: Other attributes and methods
 
-        af.N_CYCLES  # Number of unique cycle number (estimated)
+        af.CYCLE_NUMBERS  # List of unique cycle numbers (as given by file names under 'profiles' GDAC folder)
+        af.N_CYCLES  # Number of cycles
         af.path  # root path for all float datasets
         af.dac   # name of the DAC this float belongs to
         af.metadata  # a dictionary with all available metadata for this file (from netcdf or fleetmonitoring API)
+
         af.ls()  # list af.path folder content
+        af.lsp() # list af.path+'profiles' folder content
 
 
     .. code-block:: python

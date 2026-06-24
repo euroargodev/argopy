@@ -175,11 +175,11 @@ class FloatStoreProto(ABC):
 
     @abstractmethod
     def load_metadata(self):
-        """Method to load float meta-data"""
+        """Load float meta-data"""
         raise NotImplementedError("Not implemented")
 
     def load_metadata_from_meta_file(self):
-        """Method to load float meta-data from the netcdf file"""
+        """Load float meta-data from the netcdf file as a dictionary"""
         data = {}
 
         ds = self.dataset("meta")
@@ -247,7 +247,7 @@ class FloatStoreProto(ABC):
 
     @property
     def path(self) -> str:
-        """Return root path for all float datasets
+        """Root path of float datasets
 
         Since path type depends on the host protocol, this property is always a string
         """
@@ -312,10 +312,11 @@ class FloatStoreProto(ABC):
 
     @deprecated("Replaced by the 'ls_datasets' method", "v1.5.0")
     def ls_dataset(self) -> dict:
+        """Deprecated, see ``ls_datasets()``"""
         return self.ls_datasets()
 
     def ls_datasets(self) -> dict:
-        """List all available datasets for this float in a dictionary
+        """List all available datasets as a dictionary
 
         Note that:
 
@@ -353,7 +354,9 @@ class FloatStoreProto(ABC):
     def open_dataset(
         self, name: str = "prof", cast: bool = True, **kwargs
     ) -> xr.Dataset:
-        """Open and decode a dataset
+        """Open and decode a dataset file
+
+        The dataset is fetched and loaded in memory on every call. For performances, please consider using the :meth:`ArgoFloat.dataset` method instead.
 
         Parameters
         ----------
@@ -362,7 +365,7 @@ class FloatStoreProto(ABC):
         cast: bool, optional, default = True
             Determine if the dataset variables should be cast or not. This is similar to opening the dataset directly with :class:`xr.open_dataset` using the ``engine=`argo``` option.
             This will be ignored if the ``netCDF4` kwarg is set to True.
-        **kwargs
+        \**kwargs
             All the other arguments are passed to the GDAC store `open_dataset` method.
 
         Returns
@@ -372,7 +375,6 @@ class FloatStoreProto(ABC):
         Notes
         -----
         Use the ``netCDF4=True`` option to return a :class:`netCDF4.Dataset` object instead of a :class:`xarray.Dataset`.
-
         """
         if name not in self.ls_datasets():
             raise ValueError(
@@ -389,14 +391,30 @@ class FloatStoreProto(ABC):
             self._dataset[name] = ds
             return self.dataset(name)
 
-    def dataset(self, name: str = "prof"):
+    def dataset(self, name: str = "prof", **kwargs)->xr.Dataset:
+        """Open and decode a dataset file, once
+
+        This method is similar to :meth:`ArgoFloat.open_dataset` except that data are fetched only once to improve performances.
+
+        Parameters
+        ----------
+        name: str, optional, default = "prof"
+            Name of the dataset to open. It can be any key from the dictionary returned by :class:`ArgoFloat.ls_datasets`.
+        \**kwargs
+            All the other arguments are passed to the :meth:`ArgoFloat.open_dataset` method.
+
+        Returns
+        -------
+        :class:`xarray.Dataset`
+
+        """
         if name not in self._dataset:
-            self.open_dataset(name)  # will commit this dataset to self._dataset dict
+            self.open_dataset(name, **kwargs)  # will commit this dataset to self._dataset dict
         return self._dataset[name]
 
     @property
     def CYCLE_NUMBERS(self)-> List[int]:
-        """List of cycle numbers, according to mono-profile files.
+        """List of cycle numbers, according to list of mono-profile files.
 
         The list is computed from the analysis of the GDAC 'profiles' folder of the float.
         So this relies on :meth:`ArgoFloat.describe_profiles()` that in turns relies on :meth:`ArgoFloat.lsp()`.
@@ -411,7 +429,7 @@ class FloatStoreProto(ABC):
 
     @property
     def N_CYCLES(self) -> int:
-        """Number of cycles, according to mono-profile files.
+        """Number of cycles, according to list of mono-profile files.
 
         This is simply the length of :attr:`ArgoFloat.CYCLE_NUMBERS`.
 
@@ -425,12 +443,7 @@ class FloatStoreProto(ABC):
 
     @deprecated("Superseded by the 'lsp' method", "v1.5.0")
     def lsprofiles(self) -> list:
-        """Return the list of files in float profiles path
-
-        See Also
-        --------
-        :class:`ArgoFloat.ls`
-        """
+        """Deprecated, see ``lsp()``"""
         return self.lsp()
 
     def lsp(self) -> list[str]:
@@ -554,11 +567,13 @@ class FloatStoreProto(ABC):
             - 'C': 'core' profile files (default),
             - 'B': BGC mono-cycle profile files,
             - 'S': Synthetic BGC mono-cycle profile files.
+
         direction: Literal['A', 'D'], default = 'A'
             The profile direction to return files for.
 
             - 'A' (default): Ascending profile files,
             - 'D': Descending profile files.
+
         auxiliary: Bool, default = False
             Return files from the auxiliary folder. This requires the object to have been instanciated with the `aux=True` option.
 
@@ -566,6 +581,7 @@ class FloatStoreProto(ABC):
         -------
         dict[int|str, str]
             A dictionary where:
+
             - keys are file short name to be used with :class:`ArgoFloat.open_profile`,
             - values are absolute path toward profile files.
         """
@@ -638,23 +654,28 @@ class FloatStoreProto(ABC):
         raise ValueError(msg)
 
     def ls_profiles(self) -> dict[int | str, str]:
-        """List all available profile files, whatever the profile dataset and direction
+        """List all available profile files as a dictionary
 
         Notes
         -----
         In the output dictionary:
-        - keys are integer for 'core' and ascending profile files (eg: 12 for '<R/D>6903076_012.nc'),
+
+        - keys are integer for 'core' and ascending profile files (eg: 12 for 'R6903076_012.nc'),
         - keys are string for all other profile files, with the following convention:
-            - '<cycle>D'  for 'core' descending profile files (eg: '1D' for '<R/D>6903076_001D.nc'),
-            - 'B<cycle>'  for BGC ascending profile files (eg: 'B12' for 'B<R/D>6903091_012.nc'),
-            - 'B<cycle>D' for BGC descending profile files (eg: 'B12D' for 'B<R/D>6903091_012D.nc'),
-            - 'S<cycle>'  for Synthetic ascending profile files (eg: 'S134' for 'S<R/D>6903091_134.nc').
-        - Data from the auxiliary folder have regular keys with `aux` appended at the end of the key (eg: '11aux' for 'aux/coriolis/2903797/profiles/R2903797_011_aux.nc').
+
+            - ends with a 'D' for 'core' descending profile files (eg: '1D' for 'R6903076_001D.nc'),
+            - starts with a 'B' for BGC ascending profile files (eg: 'B12' for 'BD6903091_012.nc'),
+            - starts with a 'B' and ends with a 'D' for BGC descending profile files (eg: 'B12D' for 'BD6903091_012D.nc'),
+            - starts with a 'S' for Synthetic profile files (eg: 'S134' for 'S6903091_134.nc').
+            - starts with a 'S' and ends with a 'D' for Synthetic descending profile files (eg: 'S2D' for 'SR3902492_002D.nc').
+
+        - Data from the auxiliary folder have regular keys with ``aux`` appended at the end of the key (eg: '11aux' for 'aux/coriolis/2903797/profiles/R2903797_011_aux.nc').
 
         Returns
         -------
         dict[int|str, str]
             A dictionary where:
+
             - keys are file short name to be used with :class:`ArgoFloat.open_profile`,
             - values are absolute path toward profile files.
         """
@@ -722,7 +743,7 @@ class FloatStoreProto(ABC):
 
         Examples
         --------
-        ..code-block: python
+        .. code-block:: python
             :caption: Open a 'core' profile file
 
             from argopy import ArgoFloat
@@ -736,7 +757,7 @@ class FloatStoreProto(ABC):
             # Open the descending profile file, for cycle number 1:
             ds = af.open_profile('1D')
 
-        ..code-block: python
+        .. code-block:: python
             :caption: Open a 'BGC' profile file
 
             from argopy import ArgoFloat
@@ -750,7 +771,7 @@ class FloatStoreProto(ABC):
             # Open the descending 'BGC' profile file for cycle number 1:
             ds = af.open_profile('B1D')
 
-        ..code-block: python
+        .. code-block:: python
             :caption: Open a BGC 'Synthetic' profile file
 
             from argopy import ArgoFloat
@@ -841,20 +862,25 @@ class FloatStoreProto(ABC):
 
         Notes
         -----
-        When called on 1 profile file, this method return the same :class:`xr.Dataset` as the :class:`ArgoFloat.open_profile` method.
+        When called on 1 profile file, this method return the same :class:`xarray.Dataset` as the :class:`ArgoFloat.open_profile` method.
 
-        ..code-block: python
+        .. code-block:: python
+
             from argopy import ArgoFloat
 
             WMO = 6903076 # some float
             af = ArgoFloat(WMO)
 
             ds1 = af.open_profile(1)
+            # or
             ds2 = af.open_profiles(1, dataset='C', direction='A')
+            # is similar:
             assert ds1.equals(ds2)
 
             ds1 = af.open_profile('1D')
+            # or
             ds2 = af.open_profiles(1, dataset='C', direction='D')
+            # is similar:
             assert ds1.equals(ds2)
 
         See Also
@@ -863,7 +889,7 @@ class FloatStoreProto(ABC):
 
         Examples
         --------
-        ..code-block: python
+        .. code-block:: python
             :caption: Open 'core' profile files
 
             from argopy import ArgoFloat
@@ -880,7 +906,7 @@ class FloatStoreProto(ABC):
             # Open *all* profile files (only ascending):
             ds_list = af.open_profiles()
 
-        ..code-block: python
+        .. code-block:: python
             :caption: Open 'BGC' profile file(s)
 
             from argopy import ArgoFloat
@@ -897,7 +923,7 @@ class FloatStoreProto(ABC):
             # Open *all* 'BGC' profile files (only ascending):
             ds_list = af.open_profiles(dataset='B')
 
-        ..code-block: python
+        .. code-block:: python
             :caption: Open BGC 'Synthetic' profile file(s)
 
             from argopy import ArgoFloat
