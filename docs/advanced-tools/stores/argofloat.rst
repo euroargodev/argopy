@@ -59,7 +59,7 @@ Once you created an :class:`ArgoFloat` instance, you can list all available data
 .. ipython:: python
     :okwarning:
 
-    af.ls_dataset()
+    af.ls_datasets()
 
 Note that dataset from the auxiliary GDAC folder are included in this store, and referenced with the `_aux` suffix.
 

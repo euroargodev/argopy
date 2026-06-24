@@ -390,7 +390,7 @@
     argopy.stores.float.spec.FloatStoreProto
     argopy.stores.ArgoFloat
     argopy.ArgoFloat.ls
-    argopy.ArgoFloat.ls_dataset
+    argopy.ArgoFloat.ls_datasets
     argopy.ArgoFloat.open_dataset
     argopy.ArgoFloat.lsp
     argopy.ArgoFloat.ls_profiles

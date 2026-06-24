@@ -111,7 +111,7 @@ class ArgoFloatPlot(ArgoFloatPlotProto):
         param : str
             Name of the dataset parameter to map.
         ds: str, default='prof'
-            Argo dataset name to load the parameter to plot. Must be valid key from :meth:`ArgoFloat.ls_dataset`.
+            Argo dataset name to load the parameter to plot. Must be valid key from :meth:`ArgoFloat.ls_datasets`.
         pres: float, optional, default=0
             If the parameter has a N_LEVELS dimension, this is the pressure value to slice the vertical dimension of the parameter to plot.
 
@@ -171,7 +171,7 @@ class ArgoFloatPlot(ArgoFloatPlotProto):
         if param not in this_ds:
             raise ValueError(
                 "'%s' parameter is not available in the '%s' dataset (%s)"
-                % (param, ds, self._obj.ls_dataset()[ds])
+                % (param, ds, self._obj.ls_datasets()[ds])
             )
         param_toplot : str = param
 
@@ -254,7 +254,7 @@ class ArgoFloatPlot(ArgoFloatPlotProto):
         param : str
             Name of the dataset parameter to map.
         ds: str, default='prof'
-            Argo dataset name to load the parameter to plot. Must be valid key from :meth:`ArgoFloat.ls_dataset`.
+            Argo dataset name to load the parameter to plot. Must be valid key from :meth:`ArgoFloat.ls_datasets`.
 
         Returns
         -------
@@ -291,7 +291,7 @@ class ArgoFloatPlot(ArgoFloatPlotProto):
         if param not in this_ds:
             raise ValueError(
                 "'%s' parameter is not available in the '%s' dataset (%s)"
-                % (param, ds, self._obj.ls_dataset()[ds])
+                % (param, ds, self._obj.ls_datasets()[ds])
             )
 
         default_kwargs = {"x": "JULD", "cbar": True}

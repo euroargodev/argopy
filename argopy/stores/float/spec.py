@@ -143,7 +143,7 @@ class FloatStoreProto(ABC):
         summary.append("Number of cycles: %s" % self.N_CYCLES)
         if self._online:
             summary.append("Dashboard: %s" % dashboard(wmo=self.WMO, url_only=True))
-        summary.append("Netcdf dataset available: %s" % list(self.ls_dataset().keys()))
+        summary.append("Netcdf dataset available: %s" % list(self.ls_datasets().keys()))
 
         return "\n".join(summary)
 
@@ -277,7 +277,7 @@ class FloatStoreProto(ABC):
 
         See Also
         --------
-        :class:`ArgoFloat.ls_dataset`
+        :class:`ArgoFloat.ls_datasets`
         """
         if self._ls is None:
             paths = self.fs.glob(self.host_sep.join([self.path, "*"]))
@@ -310,23 +310,27 @@ class FloatStoreProto(ABC):
             self._ls = paths
         return self._ls
 
-    def ls_dataset(self) -> dict:
-        """List all available dataset for this float in a dictionary
+    @deprecated("Replaced by the 'ls_datasets' method", "v1.5.0")
+    def ls_datasets(self) -> dict:
+        return self.ls_datasets()
+
+    def ls_datasets(self) -> dict:
+        """List all available datasets for this float in a dictionary
 
         Note that:
 
-        - Dictionary keys are dataset short name to be used with :class:`ArgoFloat.open_dataset`.
-        - Dictionary values hold absolute path toward the dataset file.
+        - Dictionary keys are dataset short names to be used with :class:`ArgoFloat.open_dataset`.
+        - Dictionary values hold absolute paths to the dataset files.
 
         Examples
         --------
-        >>> ArgoFloat(4902640).ls_dataset()
+        >>> ArgoFloat(4902640).ls_datasets()
         {'Sprof': 'https://data-argo.ifremer.fr/dac/meds/4902640/4902640_Sprof.nc',
          'meta': 'https://data-argo.ifremer.fr/dac/meds/4902640/4902640_meta.nc',
          'prof': 'https://data-argo.ifremer.fr/dac/meds/4902640/4902640_prof.nc',
          'tech': 'https://data-argo.ifremer.fr/dac/meds/4902640/4902640_tech.nc'}
 
-        >>> ArgoFloat(4902640, aux=True).ls_dataset()
+        >>> ArgoFloat(4902640, aux=True).ls_datasets()
         {'Rtraj': 'https://data-argo.ifremer.fr/dac/coriolis/3901682/3901682_Rtraj.nc',
          'Rtraj_aux': 'https://data-argo.ifremer.fr/aux/coriolis/3901682/3901682_Rtraj_aux.nc',
          'meta': 'https://data-argo.ifremer.fr/dac/coriolis/3901682/3901682_meta.nc',
@@ -354,7 +358,7 @@ class FloatStoreProto(ABC):
         Parameters
         ----------
         name: str, optional, default = "prof"
-            Name of the dataset to open. It can be any key from the dictionary returned by :class:`ArgoFloat.ls_dataset`.
+            Name of the dataset to open. It can be any key from the dictionary returned by :class:`ArgoFloat.ls_datasets`.
         cast: bool, optional, default = True
             Determine if the dataset variables should be cast or not. This is similar to opening the dataset directly with :class:`xr.open_dataset` using the ``engine=`argo``` option.
             This will be ignored if the ``netCDF4` kwarg is set to True.
@@ -370,13 +374,13 @@ class FloatStoreProto(ABC):
         Use the ``netCDF4=True`` option to return a :class:`netCDF4.Dataset` object instead of a :class:`xarray.Dataset`.
 
         """
-        if name not in self.ls_dataset():
+        if name not in self.ls_datasets():
             raise ValueError(
                 "Dataset '%s' not found. Available dataset for this float are: %s"
-                % (name, self.ls_dataset().keys())
+                % (name, self.ls_datasets().keys())
             )
         else:
-            file = self.ls_dataset()[name]
+            file = self.ls_datasets()[name]
 
             if "xr_opts" not in kwargs and cast is True:
                 kwargs.update({"xr_opts": {"engine": "argo"}})
