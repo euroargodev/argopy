@@ -6,9 +6,10 @@ import pandas as pd
 from abc import ABC, abstractmethod
 import logging
 import numpy as np
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from argopy.options import OPTIONS
-from argopy.errors import InvalidOption
+from argopy.errors import InvalidOption, DataNotFound
 from argopy.plot import dashboard
 from argopy.stores import ArgoIndex
 from argopy.utils.format import argo_split_path
@@ -91,10 +92,8 @@ class FloatStoreProto(ABC):
         self.host: str = self.idx.host  # Fix host shortcuts with correct values
         self.fs = self.idx.fs["src"]
 
-        # Load some data (in a perfect world, this should be done asynchronously):
-        # self.load_index()
+        # Init All Internal placeholder for this instance
 
-        # Init Internal placeholder for this instance:
         self._metadata: dict | None = (
             None  # filled by self.load_metadata(), returned by self.metadata
         )
@@ -117,6 +116,10 @@ class FloatStoreProto(ABC):
         self._df_profiles: pd.DataFrame | None = (
             None  # filled/returned by self.describe_profiles()
         )
+
+        # Load some data (in a perfect world, this should be done asynchronously):
+        # self.load_index()
+        # self.ls_profiles()
 
     def __repr__(self):
         backend = "online" if self._online else "offline"
@@ -381,15 +384,15 @@ class FloatStoreProto(ABC):
                 "Dataset '%s' not found. Available dataset for this float are: %s"
                 % (name, self.ls_datasets().keys())
             )
-        else:
-            file = self.ls_datasets()[name]
 
-            if "xr_opts" not in kwargs and cast is True:
-                kwargs.update({"xr_opts": {"engine": "argo"}})
+        file = self.ls_datasets()[name]
 
-            ds = self.fs.open_dataset(file, **kwargs)
-            self._dataset[name] = ds
-            return self.dataset(name)
+        if "xr_opts" not in kwargs and cast is True:
+            kwargs.update({"xr_opts": {"engine": "argo"}})
+
+        ds = self.fs.open_dataset(file, **kwargs)
+        self._dataset[name] = ds
+        return ds
 
     def dataset(self, name: str = "prof", **kwargs)->xr.Dataset:
         """Open and decode a dataset file, once
@@ -425,7 +428,7 @@ class FloatStoreProto(ABC):
         float cycle number of the measurement in the context of a specific netcdf file. That's why we're using
         the extra `s` at the end.
         """
-        return [int(c) for c in self.describe_profiles()["cycle_number"].unique()]
+        return sorted([int(c) for c in self.describe_profiles()["cycle_number"].unique()])
 
     @property
     def N_CYCLES(self) -> int:
@@ -715,6 +718,8 @@ class FloatStoreProto(ABC):
     ) -> xr.Dataset | Any | list[xr.Dataset | Any]:
         """Open and decode a single profile file
 
+        Data are fetched on every call to this method.
+
         Parameters
         ----------
         name: str
@@ -782,32 +787,49 @@ class FloatStoreProto(ABC):
             # Open the BGC 'Synthetic' profile file for cycle number 12:
             ds = af.open_profile('S12')
         """
-        d2s = (
-            lambda x: str(x)
-            .replace("'", "")
-            .replace(":", "_")
-            .replace("{", "")
-            .replace("}", "")
-            .replace(" ", "")
-        )
+        # d2s = (
+        #     lambda x: str(x)
+        #     .replace("'", "")
+        #     .replace(":", "_")
+        #     .replace("{", "")
+        #     .replace("}", "")
+        #     .replace(" ", "")
+        # )
 
         if name not in self.ls_profiles():
             raise ValueError(
-                f"This profile key {name} does not match any of the known profile files ({self.ls_profiles().keys()})"
+                f"The profile key '{name}' does not match any of the known profile files ({self.ls_profiles().keys()})"
             )
 
         if "xr_opts" not in kwargs and cast is True:
             kwargs.update({"xr_opts": {"engine": "argo"}})
 
-        key = f"{name}-{d2s(kwargs)}"
+        # key = f"{name}-{d2s(kwargs)}"
+        file = self.ls_profiles()[name]
+        ds = self.fs.open_dataset(file, **kwargs)
+        self._profile[name] = ds
+        return ds
 
-        if key not in self._profile:
-            file = self.ls_profiles()[name]
-            ds = self.fs.open_dataset(file, **kwargs)
+    def profile(self, name: str, **kwargs)->xr.Dataset:
+        """Open and decode a profile file, once
 
-            self._profile[key] = ds
+        This method is similar to :meth:`ArgoFloat.open_profile` except that data are fetched only once to improve performances.
 
-        return self._profile[key]
+        Parameters
+        ----------
+        name: str
+            Name of the profile file to open. It can be any key from the dictionary returned by :class:`ArgoFloat.ls_profiles`.
+        \**kwargs
+            All the other arguments are passed to the :meth:`ArgoFloat.open_profile` method.
+
+        Returns
+        -------
+        :class:`xarray.Dataset`
+
+        """
+        if name not in self._profile:
+            self.open_profile(name, **kwargs)  # will commit this dataset to self._profile dict
+        return self._profile[name]
 
     def open_profiles(
         self,
@@ -938,6 +960,14 @@ class FloatStoreProto(ABC):
             ds_list = af.open_profiles(dataset='S')
 
         """
+        self.ls_profiles() # Just making sure the instance as the internal placeholder filled
+
+        def fname2key(file_name):
+            for k, v in self.ls_profiles().items():
+                if v == file_name:
+                    return k
+            raise ValueError(f"This file name '{file_name}' is not a valid profile file.")
+
         fnames = list(
             self.ls_profiles_for(
                 cycle_number=cycle_number, dataset=dataset, direction=direction, auxiliary=auxiliary
@@ -952,11 +982,133 @@ class FloatStoreProto(ABC):
         if "concat" not in kwargs:
             kwargs.update({"concat": False})
 
+        _myprocessing = False
+        if 'preprocess' not in kwargs:
+            # Create a pre-processing function that will simply return the dataset in a dictionary
+            # where the key will be used to commit the dataset in the internal placeholder later on.
+            _myprocessing = True
+            kwargs['preprocess'] = lambda ds: {ds.encoding['source']: ds}
+            kwargs['concat'] = False
+
         results: xr.Dataset | Any | list[xr.Dataset | Any] = self.fs.open_mfdataset(
             fnames, **kwargs
         )
+
+        if _myprocessing:
+            # results: list[dict[str, xr.Dataset]]
+            # Commit data we just loaded and reformat the output as a list of dataset
+            r = []
+            for res in results:
+                for fname in res.keys():
+                    key = fname2key(fname)
+                    self._profile[key] = res[fname]
+                    r.append(res[fname])
 
         if isinstance(results, list) and len(results) == 1:
             return results[0]
 
         return results
+
+    def _ipython_key_completions_(self):
+        """Provide method for key-autocompletions in IPython."""
+        keys = self.ls_datasets().copy()
+        keys.update(self.ls_profiles())
+        return [k for k in keys.keys()]
+
+    def __getitem__(
+        self, args
+    ) -> int | str | list[int | str]:
+        """Retrieve netcdf file(s)
+
+        .. code-block:: python
+
+            from argopy import ArgoFloat
+
+            af = ArgoFloat(3902492)
+
+            # Get any dataset or profile:
+            af['prof']
+            af[4]
+            af['B3']
+
+            # Get a slice of profiles:
+            af[1:4]
+            af[::2]
+            af[:]
+
+            # Get profile from last available cycle:
+            af[af.CYCLE_NUMBERS[-1]]
+        """
+        if isinstance(args, str) or isinstance(args, int) or isinstance(args, slice):
+            obj = args
+
+            if isinstance(obj, str) or isinstance(obj, int):
+                if obj in self.ls_datasets():
+                    return self.dataset(obj)
+                elif obj in self.ls_profiles():
+                    return self.profile(obj)
+                else:
+                    raise DataNotFound
+
+            elif isinstance(obj, slice):
+                cycs = []
+                for cyc in range(
+                        self.CYCLE_NUMBERS[0] if not obj.start else obj.start,
+                        self.CYCLE_NUMBERS[-1] + 1 if not obj.stop else obj.stop,
+                        1 if not obj.step else obj.step,
+                ):
+                    if cyc in self.CYCLE_NUMBERS:
+                        cycs.append(cyc)
+
+                # Small optimisation to handle a large number of cycles:
+                results = []
+                ConcurrentExecutor = ThreadPoolExecutor()
+                with ConcurrentExecutor as executor:
+                    future_todo = {
+                        executor.submit(self.profile, cyc): cyc
+                        for cyc in cycs
+                    }
+                    futures = as_completed(future_todo)
+                    for future in futures:
+                        results.append(future.result())
+
+                return results
+
+        elif isinstance(args, tuple):
+            obj : int | slice = args[0]
+            dataset : str = args[1]
+
+            if isinstance(obj, str) and obj in self.ls_datasets():
+                raise ValueError("This syntax is for profiles only")
+
+            elif isinstance(obj, int):
+                key = list(self.ls_profiles_for(obj, dataset=dataset).keys())[0]
+                return self.profile(key)
+
+            elif isinstance(obj, slice):
+                cycs = []
+                for cyc in range(
+                        self.CYCLE_NUMBERS[0] if not obj.start else obj.start,
+                        self.CYCLE_NUMBERS[-1] + 1 if not obj.stop else obj.stop,
+                        1 if not obj.step else obj.step,
+                ):
+                    if cyc in self.CYCLE_NUMBERS:
+                        cycs.append(cyc)
+
+                keys = list(self.ls_profiles_for(cycs, dataset=dataset).keys())
+
+                # Small optimisation to handle a large number of cycles:
+                results = []
+                ConcurrentExecutor = ThreadPoolExecutor()
+                with ConcurrentExecutor as executor:
+                    future_todo = {
+                        executor.submit(self.profile, key): key
+                        for key in keys
+                    }
+                    futures = as_completed(future_todo)
+                    for future in futures:
+                        results.append(future.result())
+
+                return results
+
+        raise NotImplementedError
