@@ -1030,6 +1030,9 @@ class Lister:
             for key, uri in af.ls_dataset().items():
                 this_URI.commit(self.dfile(uri, "nc"))
 
+            for key, uri in af.ls_profiles().items():
+                this_URI.commit(self.dfile(uri, "nc"))
+
             for key, uri in af.api_point.items():
                 this_URI.commit(self.dfile(uri, "json"))
 

@@ -1,5 +1,4359 @@
 [
     {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_004.nc",
+        "ext": "nc",
+        "sha": "56087384dfeaad1df931d6f6f7ee1a047e3dbd5fed96133e58d4bbe11e1f7637",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_005.nc",
+        "ext": "nc",
+        "sha": "5389e9691127902d4b6d8b7cf48574ebb016889fe2c151c7875ff11428f8f390",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_006.nc",
+        "ext": "nc",
+        "sha": "cc8287055ce2ab159fa844d0267c5c7edcd437fc85543d3f93fdfbaba2ee212a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_007.nc",
+        "ext": "nc",
+        "sha": "690f8de8371d0cdd2455a05cb44aca56018f41e2b831460ed06bff94b8997a3a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_008.nc",
+        "ext": "nc",
+        "sha": "81cadace9f87008df32c02cb4df454f0fe29773a2959704f0832ed20bd800a17",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_009.nc",
+        "ext": "nc",
+        "sha": "15e9ceab84630c9c15b0ff84dcb5f6789ab6f1ec7864d3b45aeefebfdf69c1b5",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_010.nc",
+        "ext": "nc",
+        "sha": "d47026ad48b07ca20d3f17800468a7e791198d784849520ed0ec4845ba051638",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_011.nc",
+        "ext": "nc",
+        "sha": "faa873df926feaed4afe341369c6c6f01067b7f16b298cbd1c3ded31fe341976",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_012.nc",
+        "ext": "nc",
+        "sha": "c4a627983cb3be45c0e70ded6328b612101c31fc208fe89efc0100468f73436e",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_013.nc",
+        "ext": "nc",
+        "sha": "9837bebd347dba2b7ab1a6410c4810969460fc89fda93ad5d486bafd93199efd",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_014.nc",
+        "ext": "nc",
+        "sha": "e347cbb258c9b5c6c08790cedb66ff76338c70061551a5de184abaa4c0530cb9",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_015.nc",
+        "ext": "nc",
+        "sha": "d034433914ce674bdf0bee11896bc39e7126b354c9b3eddf8b3ed1aafcb2435d",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_016.nc",
+        "ext": "nc",
+        "sha": "2e78c447cf9890d63144a33911a1c1f8ece04a86f4b7a7c7c6cde1e3a9d8947d",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_017.nc",
+        "ext": "nc",
+        "sha": "19d86836d4b1305a0aa285dad314706e7c1586fb6e44f3ac75d359aa26272276",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_018.nc",
+        "ext": "nc",
+        "sha": "8dc5925a4348cc45dda0caec11188ec003d3d446a25d7d19440a80942c2529b9",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_019.nc",
+        "ext": "nc",
+        "sha": "46099e9a0f1207cdb919dc37e81280c73b5b690a689f7c3ba96aa2c4ceb008a6",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_020.nc",
+        "ext": "nc",
+        "sha": "75521b10a1e106b42e57ddc901d651d8dc26df9bbf3d6a2794daf31b61157d57",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_021.nc",
+        "ext": "nc",
+        "sha": "03d32a4710e51faaac2c9d12f62f78d60442f90bf0ed6fd2740a936899525f29",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_022.nc",
+        "ext": "nc",
+        "sha": "8fdbdc310916d29ce42d0d0d78d293f6ffdc727d7353ba97d9997d345a05f223",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_023.nc",
+        "ext": "nc",
+        "sha": "f8da7302991ce6961d44dc12366009ba3afa1beb145ded7e0aae96409180206f",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_024.nc",
+        "ext": "nc",
+        "sha": "759599c6e4ac5b56e00bcbb05a4e5b89ab1332f5031eb2329285d95316289f65",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_025.nc",
+        "ext": "nc",
+        "sha": "e3f176a3769c1ae5357c6392bc2f2db7ad831319584f0b7340551e4d8737d038",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_026.nc",
+        "ext": "nc",
+        "sha": "49736b2ced44fa4b082e63c5b8b1c06a892757cce09623bde8bf37e92bf52d63",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_027.nc",
+        "ext": "nc",
+        "sha": "4aee408d7649dd18d4f42783d10e8d07658a6cf6930ecf5aeba4ea44bcf57dbe",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_028.nc",
+        "ext": "nc",
+        "sha": "dc05081c1ef6ecc1f9c4e6d46747f1bb8a43d87c63bc933732446b2ab6fde4b9",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_029.nc",
+        "ext": "nc",
+        "sha": "ac5864f6272c59ad98ebe51349cc9ebe861829ec171b5875ee655cbf12f9840f",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_030.nc",
+        "ext": "nc",
+        "sha": "0dd4081bd14b641f7b96f932b5cd843b874313053e00627393060718bba30409",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_031.nc",
+        "ext": "nc",
+        "sha": "55e2d037f30e9cfb0b9d142f703fe06ad603b1665fae05f94840176ab53ef481",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_032.nc",
+        "ext": "nc",
+        "sha": "c72af445340ae56ef50748b1fde340ffa82ad6f44ccf9127280f36f2e0638c3e",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_033.nc",
+        "ext": "nc",
+        "sha": "282d28d1a4bc8239511bfe57637c6b567b716012349041a57ea7790047abf031",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_034.nc",
+        "ext": "nc",
+        "sha": "74bc5aba81ab5a5800dec762e1fa6430d1a87af6b487eb23d3ac20aa4afbc086",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_035.nc",
+        "ext": "nc",
+        "sha": "70aeed6eb18595a95b118d9d6153ee40bfb6da61bc18c845a0efee9bf7b3f68a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_036.nc",
+        "ext": "nc",
+        "sha": "66e3e26765750bf47f7126d64110e503d7784ca5a50e5ec33a978229cdd70772",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_037.nc",
+        "ext": "nc",
+        "sha": "ebdf3d7a0f6c02b2f7ee4cb13b12b141d148ff3f44f9e0a43abcc8be3a56d9ba",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_038.nc",
+        "ext": "nc",
+        "sha": "fe1de80cfd6e50b0b2b5ce6aae02e665b60b710647eb40ff49e2479b938467d4",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_039.nc",
+        "ext": "nc",
+        "sha": "adfe8d6758122f11843e7e2f056f8a4af1b89f8058290f247886646251111bb3",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_040.nc",
+        "ext": "nc",
+        "sha": "b43d2bb071c2d44ba7e1834ebf7ec91a83483f63247ad2c279432da46f12a54a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_041.nc",
+        "ext": "nc",
+        "sha": "0244087169188be2f9939552c6adeff3f092a3b71ba4e5fa10dc1e32bca33ded",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_042.nc",
+        "ext": "nc",
+        "sha": "7adec97ba20fe1c32b43f3f355b398643999d04dd3d0c984e7c8db41dd27a516",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_043.nc",
+        "ext": "nc",
+        "sha": "40b4ebd2f8aa548248a90d35c4154694e28daf734bc8fef684334da013832b72",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_044.nc",
+        "ext": "nc",
+        "sha": "27133ad75be1cf73d8bde7f8ed40da895235c9f5928e82a708852f6513763697",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_045.nc",
+        "ext": "nc",
+        "sha": "6e2035ed27a6e7883b96341847eeffda4a5d61e3bd38f34b4e76246e76593266",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_046.nc",
+        "ext": "nc",
+        "sha": "21d2f199c2743da8bb9bf615580b84ffb0adebef613c8e0d925cd465702440e0",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_047.nc",
+        "ext": "nc",
+        "sha": "9bc4180c8eb3832846ebc7bf076ff7b9a6eecc3822e6420785db1cb04f56c613",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_048.nc",
+        "ext": "nc",
+        "sha": "9a4a559ae51b738c4a850de695d384d0bad520c2bdd58f06c93d16c5538a5cda",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_049.nc",
+        "ext": "nc",
+        "sha": "fa2b6db203bb617640888aeaa3534d1a82de6b4d10505ea694fccd0b37dca93d",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_050.nc",
+        "ext": "nc",
+        "sha": "942c833a4a1a0580b20cd4b79d6a9860a7a585c1702292c748fe3a4921ec3e33",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_051.nc",
+        "ext": "nc",
+        "sha": "c5c17b8791a6c5748dbbbd9b99fa201bd728e0c8cd0eb018be3986f032c78f47",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_052.nc",
+        "ext": "nc",
+        "sha": "16278ebefd6e9671bc0a899d06913c52c9991a50adc908b58ee8fa82c33a4567",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_053.nc",
+        "ext": "nc",
+        "sha": "4e502fc080d12079e56322bb9fb1dff8fada8b8a7303fb3a93b345a9b266c734",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_054.nc",
+        "ext": "nc",
+        "sha": "a980eb74f854a44ba35b2db89294440367b1d2175677fed77782f83242dcd7cb",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_055.nc",
+        "ext": "nc",
+        "sha": "10fe6f23d68f830b4010fb01bda8578eec8d2f251d5f82b59a4521689f82e3e3",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_056.nc",
+        "ext": "nc",
+        "sha": "de415b1e354ef1e5718d128d8ea14578bc543ca4da67f62b055851018fb142d0",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_057.nc",
+        "ext": "nc",
+        "sha": "a61ec473ecbfbea6093d78228ac8fde73f2452aec3de769d71cb3f9627424d37",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_058.nc",
+        "ext": "nc",
+        "sha": "02e097a17d0bf05a7be9f33dd0f3762e6bf4d05956b0bb4815c158c708a09553",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_059.nc",
+        "ext": "nc",
+        "sha": "5a65bc6413388b6ca88d246ee27400e83fd2be2e170059531bacdb47f7069ef4",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_060.nc",
+        "ext": "nc",
+        "sha": "b30021097919bceca0e7a2da789bf9b00bf42a5bf0a88437b2577847ea2ad398",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_061.nc",
+        "ext": "nc",
+        "sha": "00cde452c876f1f9752be35784352bd28f931f77df2ef36b081f4825246dbcf7",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_062.nc",
+        "ext": "nc",
+        "sha": "59f75e6cecdbe79a03f1a4f3648d0f020adc331fc0af7857f123317924345506",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_063.nc",
+        "ext": "nc",
+        "sha": "98d1c1a8a7345946e7b9aaf717f3cf7db75fce15b2a05167269d94baecf0b057",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_064.nc",
+        "ext": "nc",
+        "sha": "9ff62f130215a50fc4d01fda9a92f10486a476860d90389bef7fb2a7703229b5",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_065.nc",
+        "ext": "nc",
+        "sha": "12cfbe3e643b69e50b22e7936569baecdd57756a7b6e4ff1d9894c77f2282e46",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_066.nc",
+        "ext": "nc",
+        "sha": "4f3197ed93eeaee6526d0964d68c5fb31d908eaa458f33db09ef06a331ea8f58",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_067.nc",
+        "ext": "nc",
+        "sha": "ec3a1bdd7e362327189fcf2820e776b5385b41a05556bab28ce96e267000aed3",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_068.nc",
+        "ext": "nc",
+        "sha": "b1eb6bab530d8279756a5b3b9fb5a907848c424b4939f307a1554378bba95eda",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_069.nc",
+        "ext": "nc",
+        "sha": "cb29f414980b4a43a0b280f2515bf6bdf0629f8385abd1c7ba8eb3195cafcafc",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_070.nc",
+        "ext": "nc",
+        "sha": "feb3861ff9e704bce987fdfe4ba66168ae79b6868e728f3d8470d2694ec66c55",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_071.nc",
+        "ext": "nc",
+        "sha": "ea3a5dac49c7ac069129e795017ab1679ad42c1bd2ca6e68b4d1e753ebdf82ea",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_072.nc",
+        "ext": "nc",
+        "sha": "e00514e2e8e931814778302e813d2004d180927145ec25ca9f20834b012a8c91",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_073.nc",
+        "ext": "nc",
+        "sha": "f2ad413a9040c0bd9c83f8795e1d03b245e1491c8c1db2be85dd4b467c420230",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_074.nc",
+        "ext": "nc",
+        "sha": "0e5ebca495bf3c3f6e1f3d0ac658805afd7c8327afd37da6a71680bba0aecb6a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_075.nc",
+        "ext": "nc",
+        "sha": "dad1d4b8b1afa91781c28149e27e227709f6f6b56456ebe30b54950e2b14ff47",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_076.nc",
+        "ext": "nc",
+        "sha": "4e0c06b3e58013889385df888b0faa9865984b8f49a20e707e68303499da358d",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_077.nc",
+        "ext": "nc",
+        "sha": "0ed4e3c5b0762a32768d340ed81c72e349c4512d2d0746acf79b7e52707f0d99",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_078.nc",
+        "ext": "nc",
+        "sha": "a6fef2a3d242f06163510b6c0a630be9c5605eb939eea24316aa7d6ff0248472",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_079.nc",
+        "ext": "nc",
+        "sha": "f60f3b1fa436f0901f63d1dd886507f39bf1350a19ecc7adc7ed8efb276a201d",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_080.nc",
+        "ext": "nc",
+        "sha": "d5dd7e3e059ce345104c3e2f054e18af27097a93b32667f1ff2604d79b610b3e",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_081.nc",
+        "ext": "nc",
+        "sha": "5071054a4d819fc7e7669452f5717f2e5210c02ce2883565f208dc5ff07533e0",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_082.nc",
+        "ext": "nc",
+        "sha": "d175e6cabeb4c150d7d689abdebbf09a1da3c6aa2f1b8c4b9efdf610c5854c41",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_083.nc",
+        "ext": "nc",
+        "sha": "f046b2d564eedca3b5eefb3db02560e2308d3aaaa59ffdaa70f3a15c9fbdd534",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_084.nc",
+        "ext": "nc",
+        "sha": "42cdd54c63646f80f27f435101db6f1fa6bdf08b16c600785b3a0c8eff56e100",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_085.nc",
+        "ext": "nc",
+        "sha": "7ac5d4e2eca7c9795c19ec9d4a4c041c7ee66d67e505a38871182218cfa021ae",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_086.nc",
+        "ext": "nc",
+        "sha": "055ba4b9eef58bf7e0982aba4d23c31e32efdde7f906682e8edde92f4612952b",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_087.nc",
+        "ext": "nc",
+        "sha": "d4eb30c2f43077f0c82476b755df304084a359b925a4e974f17d62287efead57",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_088.nc",
+        "ext": "nc",
+        "sha": "f8023fd73099ee86d47cbd3a720e0067bd3cabea99367af160d0a4abeef4b162",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_089.nc",
+        "ext": "nc",
+        "sha": "24af3efb63c26489b507bfb08620ff425051960dcb1112e42beb3ba5fdae7859",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_091.nc",
+        "ext": "nc",
+        "sha": "33b8acc83f4f1ce7b807b9767adac0e6ed6388e816c90e10dd56939588d86acd",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_092.nc",
+        "ext": "nc",
+        "sha": "9c6acc10e1b7f1b4ecc3cc5be2fee49acbf03cdecf9af1dd97dd732194144cb1",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_093.nc",
+        "ext": "nc",
+        "sha": "8d1c93e628037ff5cdae824d8574a16d7522cedfc3e94283a92c7a3154a60b59",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_094.nc",
+        "ext": "nc",
+        "sha": "665fc6d6fac950224a64a62aacabdbe16fcf73eaf311ecce475681b45a65ab03",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_095.nc",
+        "ext": "nc",
+        "sha": "00fc6f2a5ef901577ccb68d8f5c5a464c5917823fbfb2f763c1ff884a0894892",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_096.nc",
+        "ext": "nc",
+        "sha": "a42488073f3035f11dc77e68dbbde29c67d7e3b0d3ce6a0bc19924a5a36b2e9f",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_097.nc",
+        "ext": "nc",
+        "sha": "92aaa5e975309c7bede743c548e6f63cbe366010abef453b017ae4170152d0aa",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_098.nc",
+        "ext": "nc",
+        "sha": "736dd2bf914cb74fc0c0dd8d217565af80f2548e187bc04a1ce17ce08b1b1126",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_099.nc",
+        "ext": "nc",
+        "sha": "23b860e653a5db01d78368dd2f4d492202c098f3dca5385def15ac53c87070ff",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_100.nc",
+        "ext": "nc",
+        "sha": "f6d2bd25af6060e4adac58eed0bcb282bfe0d1da7fb52e6088fbba1f7960a9a2",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_101.nc",
+        "ext": "nc",
+        "sha": "115303c83f91407f04562c45b1bdf117f81db9209a0c5bfe82dc75f6572f47a7",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_102.nc",
+        "ext": "nc",
+        "sha": "79c4dcee6e645b70101de9c0b565e14407ec75888cd7533cd7e2607e8e29e12d",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_103.nc",
+        "ext": "nc",
+        "sha": "a0bdf58fa609d5cb305f1b7b4d0d2c6a4e5e39b8bcb72284f0a3a9439ffa6040",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_104.nc",
+        "ext": "nc",
+        "sha": "64854ae50cfde9cd2285359cc628489293d350acc832a0242ec5d5eaa9012bf7",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_105.nc",
+        "ext": "nc",
+        "sha": "474a25a5687eaf661880d1298341da6da24966f18d1d0079780758f4e0d010fb",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_106.nc",
+        "ext": "nc",
+        "sha": "4aa077ea44a30a700d3ba32849588211deddb5f51a1918bb1f66a3ec8d5dab83",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_107.nc",
+        "ext": "nc",
+        "sha": "52b3b34aefc83af678a684cad13776f48c8897aa216313f2b84129fbcda9226b",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_108.nc",
+        "ext": "nc",
+        "sha": "c3d8a0028d547ceb4d0de4659125ae0a523e4540111a2b2232308c4413d2c682",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_109.nc",
+        "ext": "nc",
+        "sha": "efafc089e497cbc8e971012ebff17a596308f24f3801b6aed02b2d73ea7f23b1",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_110.nc",
+        "ext": "nc",
+        "sha": "9380d53c7569cb18a714980db254c3c8eb8df2451b1d3261f8b8ee635337d4d2",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_111.nc",
+        "ext": "nc",
+        "sha": "a212b855b6c1b0824e8dce42982b0666721412b8d7af99b20f27e1b56d3b8b01",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_112.nc",
+        "ext": "nc",
+        "sha": "848f20a4ceee3134ec2522278c9102680a71b73bb1941ffd822fd3ce9c209a01",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_113.nc",
+        "ext": "nc",
+        "sha": "5f96586c466b48fb46c36b7a56089c5781977cd26dbb62f3b9c6f8fc2216fec5",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_114.nc",
+        "ext": "nc",
+        "sha": "c5f773f2ce25896966a5cbc31d0c62ede59a1814fab6eefb8f89416b39a2738a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_115.nc",
+        "ext": "nc",
+        "sha": "32fad8f6093dbb4271b9b820df8fa21e6dc10d84d493a8a05a90cb3f317ac0a6",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_116.nc",
+        "ext": "nc",
+        "sha": "4f3137a7b1741845880c5dad94629c2b20deaf21227d7470c9698cd5e8a49826",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_117.nc",
+        "ext": "nc",
+        "sha": "6c9fc7fec63275e099f2139f6764543692fa92a2898d6ed954facc5f2981b6e9",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_118.nc",
+        "ext": "nc",
+        "sha": "d6d3c680ff35cc0599857623a480962f8ad55ab3d8b2562bec4783d321a20663",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_119.nc",
+        "ext": "nc",
+        "sha": "85200311100160612e0e81c3ef867e811a623b78250634dda16d05a2f94f853c",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_120.nc",
+        "ext": "nc",
+        "sha": "3972fb45b3b1314250599d33df1a72443788a57bdcd2820d94038f7d541a1553",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_121.nc",
+        "ext": "nc",
+        "sha": "ff264869da34eda5a3e3086ad9de22d287f71914597e38870095bf7138a3f82e",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_122.nc",
+        "ext": "nc",
+        "sha": "b9240951b746ae0e5deadc0f56d0f07784e7ec126202149aca4dd57cbdd270e0",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_123.nc",
+        "ext": "nc",
+        "sha": "d8b10126194b2302c98e0ea0c7c65dc11b4695c5f7689cb3259855706f489eff",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_124.nc",
+        "ext": "nc",
+        "sha": "cd42328f6a3e5eab4c58995b2ab8b07c6003260193d348fdbabd70fe26c81fa0",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_125.nc",
+        "ext": "nc",
+        "sha": "f172744743c3efbf0859e3a364b1076d834de9a9ffab533981febb3521559d30",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_126.nc",
+        "ext": "nc",
+        "sha": "8e070fc45fbbc03a57bae1621c3f156756ad97c4b3a7f2e1478105b5dd71143b",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_127.nc",
+        "ext": "nc",
+        "sha": "ccf95ab7aa965f4d62ebfd0e6cb412e7d978343ecc960e90c72a9c39a534dfcf",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_128.nc",
+        "ext": "nc",
+        "sha": "151cd971417b199c9ff78c1e583a95a1bde357bf14dd2a7af8520c38ec12bc64",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_129.nc",
+        "ext": "nc",
+        "sha": "09493c48df28bce6bc058e0dd27cb9271ddfe1ebf3f19d9b073b07e79a8f8fdf",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_130.nc",
+        "ext": "nc",
+        "sha": "441d2a47c6839dc1862bc601d842e516c46d5e4782a6239e30f040522e24a911",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_131.nc",
+        "ext": "nc",
+        "sha": "0264d3d689a38cf42f3cbbf4d19a0ce076f9c5482f54d8ad7469a5af0ece2f06",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_132.nc",
+        "ext": "nc",
+        "sha": "7e6304b2b34520dd95f67a6f7b21b62fccff17a0c828bffb0e5abbb3dced116a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_133.nc",
+        "ext": "nc",
+        "sha": "f09b2085bba237b75e22c7eb2d5e1c9976425f2f5f510e199d013e905e6ac065",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_134.nc",
+        "ext": "nc",
+        "sha": "e07f97570d2cfe9471461f8614d89bdda1e24cf599c31989dceee20c2344eb9f",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_135.nc",
+        "ext": "nc",
+        "sha": "6926b8e9de9c5d3eb75a2b990442b47c15edc46046d04d9c4a1e4b5e3262d130",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_136.nc",
+        "ext": "nc",
+        "sha": "dfde1f470c12dde8ca9beb759a0e001ab7d0165a481809b6d434ad477281c0a2",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_137.nc",
+        "ext": "nc",
+        "sha": "3305e8c9ce7dd869a879badaefd449d0040bd68896b3ee946ce64c0cba5914f0",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_138.nc",
+        "ext": "nc",
+        "sha": "6fce49983ad6d1e1291a43372d1710ab10a8613cd33d0465b52e1dbeb753cb5a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_139.nc",
+        "ext": "nc",
+        "sha": "a8d6c2886461432dfaa24ebbc9eab394c0cfb8dc96a3699e56d89b92408c08d7",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/D13857_140.nc",
+        "ext": "nc",
+        "sha": "589795bb0d87f79cc76ab93e989974de0ceb079cedd947621e3c6cf6183ccd65",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:39"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_001.nc",
+        "ext": "nc",
+        "sha": "b0502ccd5dbc1995eee72c4d4db7070333af7e3ade1299704e2fb23049167981",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_002.nc",
+        "ext": "nc",
+        "sha": "8b5d2d30979f483d137b84f20da02f4a490a6cfa0c6662ea3ea364b77049168a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_003.nc",
+        "ext": "nc",
+        "sha": "d2630b7f2ae8506980e3f3c9a34bdac16347d0f8ce5b434c758d591fdea90901",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_004.nc",
+        "ext": "nc",
+        "sha": "aab6d47d735e4dc6ae7ebe1c9af6ed73907c7553b7ace6a48177b27857cbfdee",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_005.nc",
+        "ext": "nc",
+        "sha": "1b399a715cd4228feec4b00cf6235d9ccb07dc5bc67a944f8780768de95ae05e",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_006.nc",
+        "ext": "nc",
+        "sha": "59860095feccdf8e5ea171c8483e1dd6c99bee8c347c38ce1fc5ead9a9ab8e4a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_007.nc",
+        "ext": "nc",
+        "sha": "1eb9acc81cff32e794c68be76f76576c4cf128990e6d6b495704f35a24df5042",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_008.nc",
+        "ext": "nc",
+        "sha": "d60ca21b750cf11f96ba5fec3d63282b22f64fd12105ed021a220b94b2d7749e",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_009.nc",
+        "ext": "nc",
+        "sha": "299897e6fe909aedc709f9ad78328718f722b2dfd35356aaff67698da2699019",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_010.nc",
+        "ext": "nc",
+        "sha": "73207d5d42453007400d84d6243591f727133764544e9555d4f5c48d638885f0",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_011.nc",
+        "ext": "nc",
+        "sha": "57354b096f58ba7e9683760acc77a1820b1b3db78e56e608b4ad75c7c697d150",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_012.nc",
+        "ext": "nc",
+        "sha": "1e30e92078eeef52bcd7cbf166079f141f9c11f110019be748da28290bd83078",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_013.nc",
+        "ext": "nc",
+        "sha": "0d411b28e82f47e578933a8221244c2a6d3187a3e1680ed72d97bbf3da46c85e",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_014.nc",
+        "ext": "nc",
+        "sha": "f0bf091c13f2bac581b157d736c8e3c17c38899573bc4dfd1312b694fc261c1a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_015.nc",
+        "ext": "nc",
+        "sha": "089c63b15667e413317037160657633aab4684390d13bb7142ac91b975e4637a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_016.nc",
+        "ext": "nc",
+        "sha": "5da2a95e9d100bf4bbc5dd5da6f9cf2ce4c44bb6494bee6bdb6f1b27977cd7dc",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_017.nc",
+        "ext": "nc",
+        "sha": "cad276537800ed886bc44210ce11aa997641a16be7cbb087d99fc35934276759",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_018.nc",
+        "ext": "nc",
+        "sha": "4b3f4cd10593ef6da707ccadc43a13819f216cb6c7514148c0a279266a46e010",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_019.nc",
+        "ext": "nc",
+        "sha": "5ec77434c174ee9bdb4da69a9cd1a969ea6ff20509e4c84a764662be5289212b",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_020.nc",
+        "ext": "nc",
+        "sha": "40a19e2f0db57cf841bdf3f33dbf8c86bcafd200eb0d204cf6d995934bfc3a16",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_021.nc",
+        "ext": "nc",
+        "sha": "e9f351a8aed5e5f6b802764230fc3b3b224e767fda2b48a277ed1fc784ea6b9a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_022.nc",
+        "ext": "nc",
+        "sha": "6ebb4852714afb63690d67ba42093344d80b80861270533554d01396a51a914b",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_023.nc",
+        "ext": "nc",
+        "sha": "7f036d910f64ec91958f0c1a1d56b6e5e4fc24c6d45a6418a6a8a61830172e35",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_024.nc",
+        "ext": "nc",
+        "sha": "b9008ed2ac5ff1718c2a9a52c47b9cd7fbb62fced7d0a2389972f1fa94770791",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_025.nc",
+        "ext": "nc",
+        "sha": "3a2f7edf373eff121599faff175382e1b497a279edd57251d46b734c7d9f16f6",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_026.nc",
+        "ext": "nc",
+        "sha": "bb67bb251a0b27a11920f29e3f1db93d0ec8d17412d824c5cbd65799669c5ffc",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_027.nc",
+        "ext": "nc",
+        "sha": "b12e58137056f8ebd74f2cb8bcd126c8529b662f11fbd78bcc292ab69fe72a15",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_028.nc",
+        "ext": "nc",
+        "sha": "3f42e105b67fc1e6d65bce29393db4e39e08eff68fb85d11c1a24ad5c31becda",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_029.nc",
+        "ext": "nc",
+        "sha": "e6838363902e493a0096937f53fe08d785a5a6d474729913c5b1fb7a937bddd8",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_030.nc",
+        "ext": "nc",
+        "sha": "be4e9aa6d54d167a78f369d423659a9e2d47e54cf5525006cb0131051833e3f8",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_031.nc",
+        "ext": "nc",
+        "sha": "4f753f96e229c5f90a34848700d62fadf76d3bf54685fd061232dee9b316789d",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_032.nc",
+        "ext": "nc",
+        "sha": "886bd2008fd6f41d81b087e8148dd973a4b51db252dd176f3636ba638ba36214",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_033.nc",
+        "ext": "nc",
+        "sha": "1e93eed3a8d13e50b560c5346b1ec035cb507650ca8f1e9b9cc4479ab8cc3cde",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_034.nc",
+        "ext": "nc",
+        "sha": "c1588d75382df41ff1e9527bf95dec6ba4317d43cdebbf70d2eb820d0826df8d",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_035.nc",
+        "ext": "nc",
+        "sha": "0a37bd0e748e29032fd808df619e1d8f86b5a3defcddf506f94fc472c85f0ee0",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_036.nc",
+        "ext": "nc",
+        "sha": "1e24b29ec7f9262e758003366830edd6ac52ed233ceb58ad85abc662846f10ac",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_037.nc",
+        "ext": "nc",
+        "sha": "26b89a3a733293e073b9c426927ac83416efce879c41217e5435a85f4f38b448",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_038.nc",
+        "ext": "nc",
+        "sha": "af2b14390f7a9d0298ff9ba60c76d51c4dd38db76ed9065ebc20f0353076e845",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_039.nc",
+        "ext": "nc",
+        "sha": "fb3cee56179176560ddc80ed225b3f87504d74399e2735c76d3e2f877e20d04b",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_040.nc",
+        "ext": "nc",
+        "sha": "74b5d98c7ff717b70691fc0d11bdd21d718dc6676636699cb738504af9772942",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_041.nc",
+        "ext": "nc",
+        "sha": "2f2042878486b09d9015da88348c10a18dafe617e10d476e543cf874eec2c663",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_042.nc",
+        "ext": "nc",
+        "sha": "9c3ea9d96ded702c0c19b476a9c6e84acab27ac6f26fe7080ec44fbf730960ac",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_043.nc",
+        "ext": "nc",
+        "sha": "46f83030b429cecf0ab742d78d89632b5db96052eea20cc286131d9a5b675937",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_044.nc",
+        "ext": "nc",
+        "sha": "9c7f505701a6bcf2c6b2f15b77a41c19e05129a8922e229070fe92333f05d98e",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_045.nc",
+        "ext": "nc",
+        "sha": "bf4384bbec60f55b1acd4f38faea89f39e98b3011847e59af3896db73c2104b2",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_046.nc",
+        "ext": "nc",
+        "sha": "91fbdc30a7b9c81d43941326a0612e7762ab7b55ca5b46c04efb9962163ef376",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_047.nc",
+        "ext": "nc",
+        "sha": "7dad6b1cfb33134378cbc39309ccb64f817f5036027822b9015531b0f5e16b06",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_048.nc",
+        "ext": "nc",
+        "sha": "5848070c069320946f1728d69f616f989e2780107e6d80bd3d89e8c425cd96f9",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_049.nc",
+        "ext": "nc",
+        "sha": "ab7ed9c51089ba21d7460efa34df59d34dac115333daef998ee4271d620d5dc6",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_050.nc",
+        "ext": "nc",
+        "sha": "d66be2d6f3676b56b07102a7cc27d3a3b08607a3d0380e942eb72ea6d38569ee",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_051.nc",
+        "ext": "nc",
+        "sha": "e1f2e41bf2c30b8722995ca129d520ed88d736efee3a6746021502cadebd95ed",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_052.nc",
+        "ext": "nc",
+        "sha": "bbc5d6b4e6f17df573434e9d25f50f7c59d45a0cb8e2dd2f1ff3596b299b638b",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_053.nc",
+        "ext": "nc",
+        "sha": "6d058f51cdbeccc258a88d8a37222e7d4a505d14e6f7ccb9ddf12958f80bd69e",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_054.nc",
+        "ext": "nc",
+        "sha": "b22a0153a048b24769d0659f4bd73833a7128ba3fda58cb704b02e901b2f657f",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_055.nc",
+        "ext": "nc",
+        "sha": "77724e04dad6eacc5411fe7308b23862f50f5cd63cd26f85ded17a8cff0274b3",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_056.nc",
+        "ext": "nc",
+        "sha": "98af29431981027cd756c624cf9899ad66c745a474d4fb16c78dc7674258a76e",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_057.nc",
+        "ext": "nc",
+        "sha": "e8023b893b340f38c8bd6745652217935fe5a545759effc42a94903eeea2addb",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_058.nc",
+        "ext": "nc",
+        "sha": "f3b4075d1c0ab5bc7e85ddc00dbe5f7429c316582e5b8eaf7b2fbea553452fd5",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_059.nc",
+        "ext": "nc",
+        "sha": "4ce6fc250b0809dd2659aa8c790cec44ffa36e3992f93cc30dd9413536bf23c2",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_060.nc",
+        "ext": "nc",
+        "sha": "1b91271a5ec8eac5f7814a485828c0f67325493c001769a4bc8c0eabb7bf246b",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_061.nc",
+        "ext": "nc",
+        "sha": "c683ff0e50db822240bc2ff08932b5c18fbe9050d34f1008b4db4aaba3012df8",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_062.nc",
+        "ext": "nc",
+        "sha": "49619116f92a025a3e688784f8bb8210917ab47643b9528196d79d79d985a3b9",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_063.nc",
+        "ext": "nc",
+        "sha": "5d7a6c725c2138da4751e2ce81c335fa1b8100ab070bd65623348509c8cc1462",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_064.nc",
+        "ext": "nc",
+        "sha": "10c0a0b5e62f5b461ee5352990562ff0d9f7d8c50300f154cff6098d2f513a66",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_065.nc",
+        "ext": "nc",
+        "sha": "55ba9a8270f9bfbf10af6bfbb5e5e3e67ee74d42e857a1b7a0f1e5d99ba64884",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_066.nc",
+        "ext": "nc",
+        "sha": "7afedf47aa1d13c0c9479cd683c048e0a62a5b4eb9799d706024eb8f42f40511",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_067.nc",
+        "ext": "nc",
+        "sha": "691452e09ec58aebf5b8996e1e5689c431cb05ebaf9a8ff21e5c7ab226408037",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_068.nc",
+        "ext": "nc",
+        "sha": "d5fed76d4e4b37eba014eff9fa1c85215fd3d762a100c03db5d31827062a545f",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_069.nc",
+        "ext": "nc",
+        "sha": "9bc77c19649fd1ac0104ebe760df614f4aa26ceefc934b38d45442732633115d",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_070.nc",
+        "ext": "nc",
+        "sha": "9e165f9535e6c086922988910d791682d123ee7b77cd1b0f7bb8df0991c23c1d",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_071.nc",
+        "ext": "nc",
+        "sha": "86f2776318969f0a264dc394eb26fc76f44fed1a4fe1a0d8db6da01d0e95510c",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_072.nc",
+        "ext": "nc",
+        "sha": "6d46f7e2e43921ac1c536bcd2d9197b67a874384970c223a25f9f129d899f6ed",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_073.nc",
+        "ext": "nc",
+        "sha": "476d23305bf10989e35e026c716afd5e8824781ab6febdcb84aece7b6053c7dd",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_074.nc",
+        "ext": "nc",
+        "sha": "a2b1ab152f9f39efab5e08f949bf5054d9a510ce71a3c2e973ccd222ea063c0e",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_075.nc",
+        "ext": "nc",
+        "sha": "7e5b7d5d2c5b801a9d79c266db92ed88479f3e92070152d2e04b0a2618334362",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_076.nc",
+        "ext": "nc",
+        "sha": "3f2f28cc1d38968317430aa1719cbf64f2e7daa3b189c6d6e956b3f28272aa06",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_077.nc",
+        "ext": "nc",
+        "sha": "13267df73d48a90dd348185887f8410dad7bbf9e60f9e4deede62c41c8aef2f6",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_078.nc",
+        "ext": "nc",
+        "sha": "cc02770d53a098d7cbd935ac79fc014c533462b42ca32bf99e5ec5e474e24006",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_079.nc",
+        "ext": "nc",
+        "sha": "a5c1fdf7dac7c178add75c11ca7f9c094d75fdc9cfe336ac1235d8b64ee6ff2f",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_080.nc",
+        "ext": "nc",
+        "sha": "87c638e9f0441df5139573de711a2d005f6f0f08cbbf4a4aeadce5751d1320d8",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_081.nc",
+        "ext": "nc",
+        "sha": "096fcf2ddc1d01524843c0060b2303534da1cdb393aa8d1dafc8964d17f8273b",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_082.nc",
+        "ext": "nc",
+        "sha": "22a468e2f439e82a2e05925e6eaf745f743a08840c034df4920e2153b8a3a257",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_083.nc",
+        "ext": "nc",
+        "sha": "5807a1eed9f569c4b4b0d591efa9f062d029bd8c189d511c473080375c5ddf06",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_084.nc",
+        "ext": "nc",
+        "sha": "a8ba5469bcf8faa6994dba236d888bb1f7c53c41d7bea9435c7fd02ca6d1e506",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_085.nc",
+        "ext": "nc",
+        "sha": "121b47aade88344a05a550741cd8c3f828f57d321a5543c28ad94f2ec7c16727",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_086.nc",
+        "ext": "nc",
+        "sha": "47c550936b22fe7049e3299a97caa3d6365b01f23e6d1e43d1702d189cc0095b",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_087.nc",
+        "ext": "nc",
+        "sha": "e2bf72c6bbac3a1fa5c8f522aac50e68df62ad3e7ee04ea9161c3ae6855450d8",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_088.nc",
+        "ext": "nc",
+        "sha": "187ec0a4820c116ce98de148ee09f92726f68b7b8f2d1555f98871539e1c08a8",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_089.nc",
+        "ext": "nc",
+        "sha": "8c30046a7d1421695451d87a67fcc42d4c4f750159b7d6dcef1fa24fc559a35b",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_090.nc",
+        "ext": "nc",
+        "sha": "01b8b134f260adec586cec7b7dac147041902ce4e6f8568f3f50084821a73185",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_091.nc",
+        "ext": "nc",
+        "sha": "f16150dae858260bd2627c92330bccdd325cd65a5f3aca658bffa3e537b334cf",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_092.nc",
+        "ext": "nc",
+        "sha": "725eb24364742a654d5bb7b53697664a0cea9869769a2f0f0eacd71185dcbd85",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_093.nc",
+        "ext": "nc",
+        "sha": "80620ab68ba7774104ea926e37b8ba4cd29f5736b2719d950eb820c7169ac03b",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_094.nc",
+        "ext": "nc",
+        "sha": "14b14a2277bf7ecd31b427f6d7363a4d001f9b5f4e0e56a410401dad2d9523ff",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_095.nc",
+        "ext": "nc",
+        "sha": "14fb2777dabf6477c0f1a58f7dc5e6cb5b3d4733fdc5f4eba183eafb191cd0cd",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_096.nc",
+        "ext": "nc",
+        "sha": "9437d03ceff09c4e33e5fb2c980c78899f26abcaba546d6802f95fe5ce859d68",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_097.nc",
+        "ext": "nc",
+        "sha": "b5167db815a29ca949bd9d1b499749a2b0826b8f2e2d94fcb409252e16db8555",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_098.nc",
+        "ext": "nc",
+        "sha": "72e9df3fc1c13f8b1b0f223468581a23024bfad452e25e63c087c0a1a5f91729",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_099.nc",
+        "ext": "nc",
+        "sha": "43748971d062a241e26b94ba840cd4da4f328eadff467a74ac34f8cd5803f871",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_100.nc",
+        "ext": "nc",
+        "sha": "1d9b28f35fafef325e728e52e8f15e65017bb1029677eeb5a631426060c2fcf1",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_101.nc",
+        "ext": "nc",
+        "sha": "5ab967c90d2ecc9d7eaec0de152e1a879b1ff75884c6aba6fd8f73242e299ccb",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_102.nc",
+        "ext": "nc",
+        "sha": "3f312019924ef4ed8478e1ca056bfdf91e9871972c35d886126219eff9f80224",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_103.nc",
+        "ext": "nc",
+        "sha": "bb0890386d6376e380ab74427fca24b59e417dccd183d0574317f3e34099842c",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_104.nc",
+        "ext": "nc",
+        "sha": "c2a5e91105bafa3c3e8aee585ec93c262bd13454f181f00c83c12e8c469bed46",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_105.nc",
+        "ext": "nc",
+        "sha": "44e39d431f466b5e8da9323c8fb4a02101500afb4e3ad510be8162d21b303a4c",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_106.nc",
+        "ext": "nc",
+        "sha": "6e265fba2cf3dc9c08f1984e52a1a8906a7c16688e51ee0c110a006bec64229c",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_107.nc",
+        "ext": "nc",
+        "sha": "eca06bdf21ce8d9995ca5b1c2550b10c6bc67c922e4d560624206ce6c611b99c",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_108.nc",
+        "ext": "nc",
+        "sha": "4baa12e47ab64752719903199a4fd32a87c3758b1a68042c11c8d40973d2efd0",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_109.nc",
+        "ext": "nc",
+        "sha": "96a82cb65aacb89626913b7f6124facae2c8aa687248cda08adeba90dd724364",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_110.nc",
+        "ext": "nc",
+        "sha": "6fb345711407b889e908fb3b989473d0b5d8137de317e0971cf89529cb1c5e2f",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_111.nc",
+        "ext": "nc",
+        "sha": "e619c1b8ec24a5f06b2d86de0f0f39f178c3b2ecdef0e5731f26e9358e4fd4bf",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_112.nc",
+        "ext": "nc",
+        "sha": "18bce9e1ef3014e32ef21b29ebdf3afe2d8baf4d173598edacd0d9a24693128c",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_113.nc",
+        "ext": "nc",
+        "sha": "c7bed4551d25dcfe47174d9e745d4b3c1a2dde735ea142e685084e1a0ba91388",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_114.nc",
+        "ext": "nc",
+        "sha": "14a19f1313d740846cc2377665ec405f66d33ed3f9359bd99f51387d4833203a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_115.nc",
+        "ext": "nc",
+        "sha": "4d4f3009f63b8d16c234670bfb97e234655651ab2bb0ff03e7589e3362b29759",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_116.nc",
+        "ext": "nc",
+        "sha": "7feea621e137abc4dbd145cc2abb368b284d5dab68ca9e1db3a25638be3e8a07",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_117.nc",
+        "ext": "nc",
+        "sha": "757e675110ae7ef9125b4c4503769cab66a19c276103c2c7ee30a5754d4ab446",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_118.nc",
+        "ext": "nc",
+        "sha": "776c03c06fb3572d98fe8fe2f4f3a9156cc30f88afd738ef28deac4b75a9d662",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_119.nc",
+        "ext": "nc",
+        "sha": "02a3299bc490eff5ddf30111426af1b1c4d0a6a6491b51a4fbfa942c2c3bc75d",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_120.nc",
+        "ext": "nc",
+        "sha": "840f40c3d585c04a88a260f8225d9d1d936743ec9d1cc1bef1c1ccb8a58060aa",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_121.nc",
+        "ext": "nc",
+        "sha": "c2b9e76684180512f527d0b7bfc8f3adab2310cb96357940c5661e9505b33d25",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_122.nc",
+        "ext": "nc",
+        "sha": "2f6886b7fddfc7e78de173c8c15fd8ba791ee4a5f385059412952ac6ac473994",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_123.nc",
+        "ext": "nc",
+        "sha": "d2ab1d235bf557e23d21f908d694fd4a51f74a6a56b70ed2cd4996361987bc3e",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_124.nc",
+        "ext": "nc",
+        "sha": "852356e8338595679ef8f73cd5ec2dc714d0cb062ef65aa56821b156434c12b6",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_125.nc",
+        "ext": "nc",
+        "sha": "2cec12d13774b91ce87d19921149acce8b34f17b4bff0910f9bccd29532795db",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_126.nc",
+        "ext": "nc",
+        "sha": "00b6b218fa44a9499559eaf5eb53f7088b7c30b67ed411acfdba2c6febdcc480",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_127.nc",
+        "ext": "nc",
+        "sha": "3d133814163bf36dedecee85c2ae0a983c51b8fade184fa799623eed66f96e53",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_128.nc",
+        "ext": "nc",
+        "sha": "640dfecefba2d77a40c5da0bb02587a1c3c77f2ce9a6573404e83f0e64771318",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_129.nc",
+        "ext": "nc",
+        "sha": "be7d3748cc2cb9a0523cb53d775ba7e32e132c91474be7ce11e5721df345eac2",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_130.nc",
+        "ext": "nc",
+        "sha": "586acc03583deb3adbcc048462365f8d90ca2296d731c8ca5fa5881aded8b0b1",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_131.nc",
+        "ext": "nc",
+        "sha": "9ae56d857880d481634e0051471e76dfbf9fedafe0e4672dd6409668c5f21347",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_132.nc",
+        "ext": "nc",
+        "sha": "c7bd61a5c69fa51b03325b01251ca2bca024d3b87d035ef9fffe8ca36f10649b",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_133.nc",
+        "ext": "nc",
+        "sha": "b19b6e78d418fa49330eca3cee7d822c4913d3cab6ac153e304fbd62d18afd71",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_134.nc",
+        "ext": "nc",
+        "sha": "d80b60ac6900ae4e4d1bac333b2305bfaa9c2c50bde5117ac7d4afbadddc9235",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_135.nc",
+        "ext": "nc",
+        "sha": "8869ff87536a09dfebb851e20355ba3133647c6b1a5db124b3050ea2296e9f50",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_136.nc",
+        "ext": "nc",
+        "sha": "19cb92e0896621d23ebc576a945936f41aacb4cca51711ead6d784c5d533ed3f",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_137.nc",
+        "ext": "nc",
+        "sha": "49bf84693e7b5a1c32c91d33f092b2bf5250376493865ebc7685de98db35c0b0",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_138.nc",
+        "ext": "nc",
+        "sha": "cd44c4c44a6f6a6994b0640d8d034697a734658e81de8d54e0b105548dbae95d",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_139.nc",
+        "ext": "nc",
+        "sha": "71b9eb4addb9647bddd8017857d6f56c7f6f2bd171dca54d09215780905026f7",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_140.nc",
+        "ext": "nc",
+        "sha": "69c7865049128be4c0f4310c2cdcb896af41822ad49e6fb58780a22752be164e",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_141.nc",
+        "ext": "nc",
+        "sha": "1193794e78ebf96c1c40afa1e36946bf644d0814b23a6fd3c77f4f4c9877312d",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_142.nc",
+        "ext": "nc",
+        "sha": "7a583c985300271b77557d8668a6a82641f417f5a970090c9e8b5efc548996a7",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_143.nc",
+        "ext": "nc",
+        "sha": "5e12ae6b266ad2ccde6a88ad94e777345c56990a4183ab22358db0c00f454500",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_144.nc",
+        "ext": "nc",
+        "sha": "216da22583e09e0d21374e9686032bcf49b4650983f79e5be2ee6059af378108",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_145.nc",
+        "ext": "nc",
+        "sha": "df47b35811629b77b463ec0b2941fe94c7db8d17f58f53acbef1954d7dd305ba",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_146.nc",
+        "ext": "nc",
+        "sha": "16f957b331c55ac49599065370989906f011a10992aaa9956fcdcc099afe7f89",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_147.nc",
+        "ext": "nc",
+        "sha": "1448824a8e2ddba9e20cfcef6671e51c772d53c2f77c3fd1889c2a9a6391ece0",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_148.nc",
+        "ext": "nc",
+        "sha": "e038797f4aed731834bb7020cd6c637257e5bc353503cf3e97a0824ba8712cf1",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_149.nc",
+        "ext": "nc",
+        "sha": "a50022ca00574acb71e36777829558ef363bfbbcded7d1aefbceb5b2a065d127",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_150.nc",
+        "ext": "nc",
+        "sha": "8dac026a9d73a8d74665d975a9aad0add1233ad37c047884441b628c3babc048",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_151.nc",
+        "ext": "nc",
+        "sha": "0c28921fc1195e054d164d5fe96ef7986e06434457164878eb2c805bd73c6396",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_152.nc",
+        "ext": "nc",
+        "sha": "17333fae04e7a97485b44906bac1c7fdd2f981378cc64ef49324f5209d6e38de",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_153.nc",
+        "ext": "nc",
+        "sha": "a56200ba7c4e8a9efd7aed86a9a8d0d7c7e8db41a94880a4de177c7a3689c7af",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_154.nc",
+        "ext": "nc",
+        "sha": "153633b81b03b464ea97d4f309147e88dcc12eacc62390451cf639e29c572b20",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_155.nc",
+        "ext": "nc",
+        "sha": "ae2dbf389668aee6207cfc51996cb5a070ed4678752929590f5e06d9f084e93c",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_156.nc",
+        "ext": "nc",
+        "sha": "6148740ed9e63cbc684e9d5adee7def94fd1f71c72f40d9177f8bd92cbac22ac",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_157.nc",
+        "ext": "nc",
+        "sha": "e5575ce5e0ff2c3887b420ce7660a3bfaf45fd9133329a60ce79226946be0293",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_158.nc",
+        "ext": "nc",
+        "sha": "ec795e25264bb21bba3f74de3521425b1aab69dead8670ea54a909385c39bc2a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_159.nc",
+        "ext": "nc",
+        "sha": "17af8d05a0232624444dee593edc2c0ece9f0e7f81f1dd5c03e73a983d59085f",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_160.nc",
+        "ext": "nc",
+        "sha": "e5802a84120166ac5184711f66aeae4609bc0a828a7e800463083c3000e1e54a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_161.nc",
+        "ext": "nc",
+        "sha": "4c4693141fe4098f9a3f80a698a4b3e6d8a9b69fb3fb7a86bdb29194d3a565e3",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/D3902131_001D.nc",
+        "ext": "nc",
+        "sha": "01d936329ad0320d26a1bc9ce26914da48e52de373168fa2d22d2cb9db4b14a0",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_001.nc",
+        "ext": "nc",
+        "sha": "1d3f9a765e85f05907c15bbefc9022f5f62bc05d7bc459561e206100aaf9ca63",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_002.nc",
+        "ext": "nc",
+        "sha": "9efc0e0c1395d5eeec974b2d6672dc4fbe7cd253c78cd4ce319de0c3ab3bcc34",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_003.nc",
+        "ext": "nc",
+        "sha": "6ff4a3e133000818e38cd2ebf5811b86fbf3822c8f2c7fe5addc9a0c372bb48d",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_004.nc",
+        "ext": "nc",
+        "sha": "5e817379bca97adfc7302356d0db69ef98a50743963d0bb4734fc59d2ecd1966",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_005.nc",
+        "ext": "nc",
+        "sha": "2318b2170d2789db70fa43195611e22a3cd5b68e09e904b063731ce6bf5d64cf",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_006.nc",
+        "ext": "nc",
+        "sha": "216326913d11daea29f95493f2998526d35a782dcc3999f19ed0b56cb55dbad0",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_007.nc",
+        "ext": "nc",
+        "sha": "8da087a90077a7056db11521be93a1aa2aae4c6f892502a7a05ce012f12fd79b",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_008.nc",
+        "ext": "nc",
+        "sha": "74a2f57445458657c603b4c0bd99feea4a4272fbca87706a7ae60e3cb552714c",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_009.nc",
+        "ext": "nc",
+        "sha": "a4ce158a0d1fb2d15e70734a518838af16c0e3f5d130d54c511aeee1cdcae322",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_010.nc",
+        "ext": "nc",
+        "sha": "6bfc6e8aac2bba0da95393678bc3a97159ea5de7f917eebca634975333c75f57",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_011.nc",
+        "ext": "nc",
+        "sha": "a3e6152f1bdbb4fa211b819b951f9f6aca2fa1d5b6fd487bf36dfbce400d54b2",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_012.nc",
+        "ext": "nc",
+        "sha": "663a230cc062d7d01bd921fd10e02cb9722aba15a39aad4cf1a88cc1431b874b",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_013.nc",
+        "ext": "nc",
+        "sha": "af591e877e29c7df7f15ce4e23366103c9f39fe28e3ae1ff3262867f3de92249",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_014.nc",
+        "ext": "nc",
+        "sha": "37e4d26bd0650a32265d568baf4a42503e3e399a9779a170f73dffbc96ae4907",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_015.nc",
+        "ext": "nc",
+        "sha": "b451cd20a5c5397b3fdc46dace363213088966ccf3cfae7e54d5d2c233a57141",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_016.nc",
+        "ext": "nc",
+        "sha": "7bcb6f7bd0413104d057a20a5f1048f53fb0cae9ef947ca93be415ae9cc51eeb",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_017.nc",
+        "ext": "nc",
+        "sha": "4c08485b064def6ffc8809bb0fb4b6ed1418a09b52a9c6f9c192872c1abb4268",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_018.nc",
+        "ext": "nc",
+        "sha": "2d75e5a92bc6b0a3d039c6d75161f95d014a6d46d8f847884c4e6d31ae055f04",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_019.nc",
+        "ext": "nc",
+        "sha": "d0d6fd4f4006e29bd7aefa7622947c827e734e39a21dfedf406c98ac63a5a90a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_020.nc",
+        "ext": "nc",
+        "sha": "80a4ffea084c8f5d2b2b03f05c86f09d7b514e2fe880028e529b1682541741eb",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_021.nc",
+        "ext": "nc",
+        "sha": "931ca9ad2f95af3b02616d2f523e308f48e638f2c94b3684b6b1960a2a496c0f",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_022.nc",
+        "ext": "nc",
+        "sha": "6dcb1a8dae4b77a77d372c14f6cddf684add60b3cb0a3b840d1698ae2229aacf",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_023.nc",
+        "ext": "nc",
+        "sha": "c6c1fac31a0d3bdb0d6a023c9499588ac3e2b52326211759dba49b3d76a142d1",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_024.nc",
+        "ext": "nc",
+        "sha": "01891aab8bbe408adfe821c9049fa70415cab0fd64ee240340a598ddd0758d0a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_025.nc",
+        "ext": "nc",
+        "sha": "3b8c019e685c4371af5404d5c590526354cec7dcc16bb656a3da7aba11f712d6",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_026.nc",
+        "ext": "nc",
+        "sha": "d5567f6321ef549970a1270bbf2a9f0dc4f761beeda6e4293dc6f25e946595a2",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_027.nc",
+        "ext": "nc",
+        "sha": "b65021aff8cf2416e7b1d47a07caf703b9e59b0525bc99fb70aca51efefb8c78",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_028.nc",
+        "ext": "nc",
+        "sha": "59a7c829eedc3ecac68fbc1a49f9b07c7b458ba0d2e6e1aa052198ca100d50c3",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_029.nc",
+        "ext": "nc",
+        "sha": "62c69b336551fed6b599cd30b4a07b5a042d0c90fe40b3f443c4d480bbf8ba09",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_030.nc",
+        "ext": "nc",
+        "sha": "d010bb5e5d81c3eff5a5dad5183d25109d9f40d34f6b3ce481e132d887f4159e",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_031.nc",
+        "ext": "nc",
+        "sha": "6f0d6f6d33a65c78f5b610aeb549fa102a50a9489476b6a9d2de131600162825",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_032.nc",
+        "ext": "nc",
+        "sha": "390e1c9bee5f4c0057a4638130724bdb11042f87072e756ef19c0c80536a13b8",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_033.nc",
+        "ext": "nc",
+        "sha": "4c31ea6d4313b3e5cadfe54737bf73524d3034c8b04b86a3ef74ecacc63838a3",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_034.nc",
+        "ext": "nc",
+        "sha": "3f7e732b89deb47e05a7f13bb38ccbd9c87d2b2efa78a6fcec831c1c13f55742",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_035.nc",
+        "ext": "nc",
+        "sha": "513bd78609444bb1eaf6ff1c10c463345f9b5ce0dbe5fb1c11df756760b2c05a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_036.nc",
+        "ext": "nc",
+        "sha": "39fa38710dc7c0f830d37962572f89984168f8932abf4fe5a74fa709ae3873c2",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_037.nc",
+        "ext": "nc",
+        "sha": "ac69b00d70903c261be6f26ae5246c5d6cdfb0060b7723ed6039d6d987ded0ab",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_038.nc",
+        "ext": "nc",
+        "sha": "6f602ce9302001cf122813e2351e37864d9802f7b4776eab53903436432a8242",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_039.nc",
+        "ext": "nc",
+        "sha": "ef7141693dee776282453f59dcc7247742e85aafb919b345643637c69df4f6ad",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_040.nc",
+        "ext": "nc",
+        "sha": "3a2e73913af29e5fbb0ff3199d94800e62212e8796b729a19cd69f1b78b29513",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_041.nc",
+        "ext": "nc",
+        "sha": "f268c173787fb207bd2030856e8f87738390a8fd248f703d9509b57e56775994",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_042.nc",
+        "ext": "nc",
+        "sha": "10cebab25a939b8eb4e0dd59327594276dcceed4b723254445976304393b7866",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_043.nc",
+        "ext": "nc",
+        "sha": "f5b64181e15776cc68e3e60a00135d83ae1fa41cd0c9b8c62c24daecc1608774",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_044.nc",
+        "ext": "nc",
+        "sha": "fccf879990696bb17e3a3c429a53a1905ef6770f9bfff45558c12639be1afe5e",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_045.nc",
+        "ext": "nc",
+        "sha": "d502fe59a1cf03b9db4e823c931f64da6f5323ebb7f52caa7f257c09f37382d0",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_046.nc",
+        "ext": "nc",
+        "sha": "a6661648cee2e42896ab2245ffb92811de6ace1f065f01f8d9447a38a36b9a95",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_047.nc",
+        "ext": "nc",
+        "sha": "301700dd631e4d12cd663aea029e117f91c862ceda5b790e46e2e6be0283439b",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_048.nc",
+        "ext": "nc",
+        "sha": "fabc214d704c8fcf42b792d652b2df22ce8706199c12940fff79d5ba446f71f6",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_049.nc",
+        "ext": "nc",
+        "sha": "362c902b2a6dec6076200fd3b9c9d4abb6792c0ff4ed28403adfdd7037e2cc36",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_050.nc",
+        "ext": "nc",
+        "sha": "8acd7c2f34d679163c6df3abc4c39225df6dcea98ac75fa157df066e8e973a27",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_051.nc",
+        "ext": "nc",
+        "sha": "9ec9f861da309d417d7d2cd66156738e3894b5a268ef135bc3855ccc34438fae",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_052.nc",
+        "ext": "nc",
+        "sha": "faa7cad607a20186e42620026523feb4670ad1067798f0c4438565c77770a6f9",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_053.nc",
+        "ext": "nc",
+        "sha": "12182108cad6a1f1eacc34137ae04795017dfdd0053b3403aca68247a361c4ba",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_054.nc",
+        "ext": "nc",
+        "sha": "32f94e86754425d4b8cf658fed47f1e4988319e7ce9565997839846396caa592",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_055.nc",
+        "ext": "nc",
+        "sha": "cde2d6d7705bc144fbb6608ce5015de4f82bbd603f435c2064ee32b6818c5b16",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_056.nc",
+        "ext": "nc",
+        "sha": "4f24fa4df398fc9702598dc5cda49ed60312a41966b58233297245bdef6b8cf0",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_057.nc",
+        "ext": "nc",
+        "sha": "6fd1cb6c9cea4f91503fc9a4eed734c09cfc27f963698fa6c9feb3ccb269b0a1",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_058.nc",
+        "ext": "nc",
+        "sha": "9ef149e897bb3c12a0b54f530b25efe2ffc08e319ae55524941a80d1b98f1ac0",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_059.nc",
+        "ext": "nc",
+        "sha": "a5ee8298f7bd80649a8b38863751618c393276eb35953eea121a91dfe8c6a5de",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_060.nc",
+        "ext": "nc",
+        "sha": "75f293c6cca2c49716b69d0d4a80dd0478c911ef504b40c04db5ce2b1aed378c",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_061.nc",
+        "ext": "nc",
+        "sha": "4c9c4c7568aa4eefa5a465e9b07410f4bfc22ac4844c0d278f541374269402c8",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_062.nc",
+        "ext": "nc",
+        "sha": "0307ec645fd05f071f2d449b190bd176c54ecb794af090fd78f9de59b4472448",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_063.nc",
+        "ext": "nc",
+        "sha": "c872c52e9b2088fc39d39e3375abd8b1c0aa67dec5fdb2ef64d529321638740b",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_064.nc",
+        "ext": "nc",
+        "sha": "956838e47044f05e12a3fa7cdacfb748a28bb908d19f5d404c81beced7dc6901",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_065.nc",
+        "ext": "nc",
+        "sha": "c3b73cb4fb8463662914211c893231f603419e93d697e27e066887a9da799277",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_066.nc",
+        "ext": "nc",
+        "sha": "72f99eafc6554afcc54d7f0570ce7e15833e29c642e6f68832fd9c43e5f25cec",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_067.nc",
+        "ext": "nc",
+        "sha": "ec316aa3118574d7695cabe2289a32adffbb11e17f9bf9dbe837973fd3756fab",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_068.nc",
+        "ext": "nc",
+        "sha": "159f6e86409bfa39063c0cef4dab9d2be9339293e856300c6c9ee08478fc422c",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_069.nc",
+        "ext": "nc",
+        "sha": "a3b7166ec6eb42412ec6a93f1029c80008f737639a52ae62a7145b9902864a28",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_070.nc",
+        "ext": "nc",
+        "sha": "7c7ea935392a1686009b67f003fd4efafeda0e07d8a87bb60c733978917305ce",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_071.nc",
+        "ext": "nc",
+        "sha": "b1ae2cf6d3eb98a1f3f5c33e9a253327ea00405ead3472b302a657b6816b43e3",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_072.nc",
+        "ext": "nc",
+        "sha": "955ec830d10ebdaf2fa339c08a1af887a59ba44a64172b97290531aeafed6deb",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_073.nc",
+        "ext": "nc",
+        "sha": "6176994c892fabfabcaf48910f912b46765afc48b07cf1974f3fea79f4e3c5f5",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_074.nc",
+        "ext": "nc",
+        "sha": "80dfaf6ed9d9f7a231001a6a6987d22ae849c4433582d514d0dbd8be950e0855",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_075.nc",
+        "ext": "nc",
+        "sha": "76b13eb2a58b7bedbc79e3da69f6e8a87192a7b3f41ec4bc051e34372c423205",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_076.nc",
+        "ext": "nc",
+        "sha": "14d0942b2941bd1185763d48916832820778f8443efd60bec18a969ea6be7747",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_077.nc",
+        "ext": "nc",
+        "sha": "de2b21985c93a71e3e332aa57a87d9fac8001960d6d61ffa43195f1de234dfa3",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_078.nc",
+        "ext": "nc",
+        "sha": "651b48cf036a7e21cbeb88e13be763f8297418c4fd862ab663a44e743b59716f",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_079.nc",
+        "ext": "nc",
+        "sha": "cae80e8785a28a27d453f72c1680d65c2a8a19f6868407bea12f628f6a89e9a0",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_080.nc",
+        "ext": "nc",
+        "sha": "e2e9bc97a23c3dfe273549be438291c93ac130f964b04a46ee92512509ecf7e4",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_081.nc",
+        "ext": "nc",
+        "sha": "171b22d35d4d8169806295fbfe52170057c743fcc0bdd224213883fcd4353136",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_082.nc",
+        "ext": "nc",
+        "sha": "ee9abb86e92ce56a0da9964814b57fae7575f034ac3f197f8159f11d6cb8a08e",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_083.nc",
+        "ext": "nc",
+        "sha": "24a897e4f515de53a3fbb222b5640c1c858729f65fafe6eeee43a24f0d7593cb",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_084.nc",
+        "ext": "nc",
+        "sha": "7226b276a2affa9b6861b490db29465ec9cf7bab5d890ef64dfead906526f855",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_085.nc",
+        "ext": "nc",
+        "sha": "c18a593c3eaffbda09d862302e7b2b5f249c9b2144adf56eb84e0e850beb1132",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_086.nc",
+        "ext": "nc",
+        "sha": "24449050fd866f71f3c8d2a6402ba1fb2d1f89757ec0c72d2108100cf43ed01b",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_087.nc",
+        "ext": "nc",
+        "sha": "623ce099cda347c35bc28f9bee9ab822e50fe7713bc94c01e58ff61f93eafec1",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_088.nc",
+        "ext": "nc",
+        "sha": "c1e9f9a846616572746454c65a1fda68032be7996675f6238007a0c262bb85f4",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_089.nc",
+        "ext": "nc",
+        "sha": "4ebc0a36a9ec0f9e633ab77439c0b074124990175e32bb08d5616766c356daa9",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_090.nc",
+        "ext": "nc",
+        "sha": "ac8d37fbf53b573d4bc447eb1c788f3c8033ed90f3493ce672010937453c7a45",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_091.nc",
+        "ext": "nc",
+        "sha": "02d6054acba92d51ebe5bef4ff6afc877b47cc951463d2f356b4ee3dc79ade6b",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_092.nc",
+        "ext": "nc",
+        "sha": "19d5642837f33ffe9e7ff3a02b199ef678529a474d1e953ce8fdf4210ad70d5b",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_093.nc",
+        "ext": "nc",
+        "sha": "e9aeeb4499c52f9bead673912f96c5cfb3b4c0ca443fa8b72e8083a72bb7661a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_094.nc",
+        "ext": "nc",
+        "sha": "61d8dc3833281d8a0a24d6f9ab32fea075fbfadb5fbf0073d784d1565a44d6e3",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_095.nc",
+        "ext": "nc",
+        "sha": "599fa0f4365e27e2a20dd16f6664b2d2b852a9f912bdcfada3beb1ca8bbd7533",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_096.nc",
+        "ext": "nc",
+        "sha": "f645a698fd1b12d814c285612f3297f6f5e50a2ff59a0f8c585ac7b5c4c7e161",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_097.nc",
+        "ext": "nc",
+        "sha": "be09ed5d1d511cfe8565877db858ac15c11eddca57819cd5e53914f50c43f099",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_098.nc",
+        "ext": "nc",
+        "sha": "1e689eb146fe1bf32e2616a841fb24b70b3f6ea5bdd1a503b8bf6f8420ae2d9c",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_099.nc",
+        "ext": "nc",
+        "sha": "52998cd71622da2008a5139d76e760f76d77457bec1f4fe334ae952f6b307105",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_100.nc",
+        "ext": "nc",
+        "sha": "eb12423e831df4e3255f993d972adc236b6965edbdc5816c28695b47262bba19",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_101.nc",
+        "ext": "nc",
+        "sha": "75aeab6e7b00e7f1c35c6aadc7b7ca2d1c77c23d8db4e4281fd410499bce90de",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_102.nc",
+        "ext": "nc",
+        "sha": "6b9bf77001f6cbd585598cb4655e58304a2aaac460578feb60214326a3778568",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_103.nc",
+        "ext": "nc",
+        "sha": "38ea60ab81ca35736df0393f81d3ec918dbde24db9c5bee483a05110e11c7eac",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_104.nc",
+        "ext": "nc",
+        "sha": "c2906958755cc110237b59fbd8a65327e8fad42daec5a9434b7fed582bd48fac",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_105.nc",
+        "ext": "nc",
+        "sha": "fa63e788e9e127db8d1791146eb20a6659dc02a6d3b937da6ff2274b4c3c31b4",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_106.nc",
+        "ext": "nc",
+        "sha": "924b4584b32209e8616053023a821bd649dbf5995aa603e26d0274b9584a6487",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_107.nc",
+        "ext": "nc",
+        "sha": "8fd2c78cb5c3f4507afb1108448f71b3d8ca53427940b3dde77c5a66209e8858",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_108.nc",
+        "ext": "nc",
+        "sha": "101d5f118a18cb92e872fe75c76fe28c431c4d69a176b050c9426f3482767564",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_109.nc",
+        "ext": "nc",
+        "sha": "08ee50ad39128e78b008c1c9d5217a1335fd018d1895324d5456a353871943d3",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_110.nc",
+        "ext": "nc",
+        "sha": "c24a5df42ecdec041b3b0c09112d8948f952bee1c7f3a6164ce348c79dd36af4",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_111.nc",
+        "ext": "nc",
+        "sha": "1b4abf60039b6d2c8b5a3351fe09f8701d583732a55891e82df913aa91e5f630",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_112.nc",
+        "ext": "nc",
+        "sha": "37e93598ae1cce6f54407eb76261d0cd5dcbc1d46391e7148b65291e745f20c5",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_113.nc",
+        "ext": "nc",
+        "sha": "cabdbf21a47183aea46001bb6f3c060bb839c9b2deeeb20e485503288a008f74",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_114.nc",
+        "ext": "nc",
+        "sha": "341d743d56fcfd98ca76db91832839adbc8c3fa6eecaaf6223241d5a59ce2160",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_115.nc",
+        "ext": "nc",
+        "sha": "2f1f37e5e6a309c3dc69cdc489335babbf12bf8969bcba65e75d22330a2d7005",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_116.nc",
+        "ext": "nc",
+        "sha": "083c1868e3e8b1546a67e113c5b41394cfb8c32e579286d25899cd0eee3aab86",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_117.nc",
+        "ext": "nc",
+        "sha": "67a317fbdbdaf59d40b41fd7496dec059bb8d126e5253861a0496d775b0c8698",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_118.nc",
+        "ext": "nc",
+        "sha": "abc46dbb314d45f81b524145913acadafeb9fc4f7c1f0d878aa8df33de535a61",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_119.nc",
+        "ext": "nc",
+        "sha": "c7c0dddcaf12d713a51d7dfe60c2c67e953715a031664ec2fdaa61ee269db8f4",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_120.nc",
+        "ext": "nc",
+        "sha": "7f8087667d8ab829c7babd28fa9b5332e238944b856b8119d015386f244be428",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_121.nc",
+        "ext": "nc",
+        "sha": "cc86de2c66c96b36cb6a6a095bcb3ed59e1ca55984b44871508b8f9768eaac83",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_122.nc",
+        "ext": "nc",
+        "sha": "40afcdeee136aa4566f4fb6e781615b99ac684d1a9318f260c45b5f14ecbcf15",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_123.nc",
+        "ext": "nc",
+        "sha": "94b4cac1077b0e3f9e2e48a0db9fd47d1b31d89834dc59c9e90b5bfda2c507ef",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_124.nc",
+        "ext": "nc",
+        "sha": "72a1c27eef8e6629a7d1e558bb18508c894b7e5db708ddec971a28d75e3675b5",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_125.nc",
+        "ext": "nc",
+        "sha": "30a5b3c678a5d6cb69608f1436ea686a9f51f4722935826a6ac241c6636b95c6",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_126.nc",
+        "ext": "nc",
+        "sha": "b670c31b2f59944d31782131a3a49b0fbbcbe67a5157cfd1db83a30c4d929625",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_127.nc",
+        "ext": "nc",
+        "sha": "9fcfd2fdab3d8e9b25ef0d63769b8fd0be9f4bdfd92c54afbe5d62c7aeae7ed6",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_128.nc",
+        "ext": "nc",
+        "sha": "6df1bbb55aebf47150dad5bc942c121e132c8c6e1cf097864bf6d5e7f543a7f2",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_129.nc",
+        "ext": "nc",
+        "sha": "5581e8539916252213b204164394341239ae6bd73e34b665bb4a7673ce741946",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_130.nc",
+        "ext": "nc",
+        "sha": "be9fc564506864c8704857bc0092fd7a2cde8538b8782327fed4743ec4f8d8ce",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_131.nc",
+        "ext": "nc",
+        "sha": "a7727cdbbacdad9da803bfbbf26cd4c6396ad61e593e96b3285d9ad76e263685",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_132.nc",
+        "ext": "nc",
+        "sha": "a8cacc1e72c9fd67cdaaefb448c59cd54b71675fbe0a5a48f612886ffb9c63f3",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_133.nc",
+        "ext": "nc",
+        "sha": "250ce71e8f78cbbac6432e4c7ad7e004d2aa4f98dc11b7d79961953dcd31aaf1",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_134.nc",
+        "ext": "nc",
+        "sha": "8771d0ac8c1b3a64615dc412f26475cdc55e00c81354c8c4fa8c6d2438428053",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_135.nc",
+        "ext": "nc",
+        "sha": "21da563ab0bc6b8da51d6655b8a9ebdd3348fb78ca5cdf0e7fb36fa38b78347c",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_136.nc",
+        "ext": "nc",
+        "sha": "0457355acb5df1c4dbfba6b0bde71129e831fc5de5cb92dda889f87b71b86e4c",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_137.nc",
+        "ext": "nc",
+        "sha": "e36b221e34f7c089286df0306f939f738bc6ceaf4485f99a438883e4022cf5e5",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_138.nc",
+        "ext": "nc",
+        "sha": "e78fc153106bc2e0eb9c94b2b9f9e8f3593cb32526885ce4bb945769aeb3af07",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_139.nc",
+        "ext": "nc",
+        "sha": "890fed8da90faccd8a66b5a56ab0dc3dee97d764d323b287d8a3c08af86741d4",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_140.nc",
+        "ext": "nc",
+        "sha": "80365b7a7be9d24f53219a98eac09e0ebbd8b6ec82f376339641ec9f632db8a7",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_141.nc",
+        "ext": "nc",
+        "sha": "519cd4224f66fb14e8dbeedca605a39ea490e746f432424bcc79c91fcda5caab",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_142.nc",
+        "ext": "nc",
+        "sha": "121bbe62b969a1a4afd705c2c38230fcb6539029af5965d909abc6f2f0386343",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_143.nc",
+        "ext": "nc",
+        "sha": "33b6bede3bbbc895ba58b6d20c202ce11e0a99a1296e7a40cfe19ff6b8c45bae",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_144.nc",
+        "ext": "nc",
+        "sha": "580b7c6546d10cccbdfda9624456f3b3f36727ea6bc7b651242138cebec3e8ce",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_145.nc",
+        "ext": "nc",
+        "sha": "3d887365a4726e4a147276a81208fac26fb1b6728ca590c400da17df1eea798a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_146.nc",
+        "ext": "nc",
+        "sha": "2b4901483a41e743d5ce5d4d8508ba8ecb3125b8f4f521b539d69a4f91d26b75",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_147.nc",
+        "ext": "nc",
+        "sha": "44242cab3bc4c2427e7d57f127980d4d3fb978280cf677e5fa793e3cf55b8b20",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_148.nc",
+        "ext": "nc",
+        "sha": "ea67d41406ea57143eacf0965d4136b52f6fa284798271c617f391d990be836d",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_149.nc",
+        "ext": "nc",
+        "sha": "e8a46779771b494e543b261aa0f9e2e7139be52ce4a121c646f58630cc80feab",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_150.nc",
+        "ext": "nc",
+        "sha": "74b64c2f5832b93505c2c3299a8753ef45d29ae313b1d31689874c7a5193dace",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_151.nc",
+        "ext": "nc",
+        "sha": "ab8e249dc24e5d7196b6ceeb0f102ccc71d930552136233e887f2093aa0d6da6",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_152.nc",
+        "ext": "nc",
+        "sha": "4c1a4acab676a0949e7891dd7f3115590a9c7b97a31e7eb9fb5a4d4ef9ac687e",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_153.nc",
+        "ext": "nc",
+        "sha": "d7c9a153a7e88aa19f539d7abc42a18f52a5c854936fac2f6a6b0f88e4c3fa3b",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_154.nc",
+        "ext": "nc",
+        "sha": "8acef2ea0f365a6148da5f02ec8492f590d6252c3bd8fb7568e80bb90296e4a1",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_155.nc",
+        "ext": "nc",
+        "sha": "92126e880824d262347d2d8fd2358546cfa74acf18cc265c82981373dded8f79",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_156.nc",
+        "ext": "nc",
+        "sha": "86a0dc50b186ffa2118f858fac2f4da4c339b05fb5c212c2617e708b399cbeeb",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_157.nc",
+        "ext": "nc",
+        "sha": "9f49feb56c78cd357b26b31b4eb341ea1cf1287fa5e3f6afa5de06f883d569ac",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_158.nc",
+        "ext": "nc",
+        "sha": "ddc502d41c2a58505e529ffd0dc901598a9581c79b5ae24bf12eb0658b22b28f",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_159.nc",
+        "ext": "nc",
+        "sha": "04c8cc31d741516e0476a57dbebc00c6e1f8afaa087694ebe676fd9a13ef4f13",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_160.nc",
+        "ext": "nc",
+        "sha": "c1b6ff3034a3ecbe0b399b181f09aebf2a9f6e08635295c841ed2e36495eda21",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_161.nc",
+        "ext": "nc",
+        "sha": "5310147d188128170c2b0410b9c10bb361ad236dd65ea7eeb05b53eb6813f62e",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/BD3902131_001D.nc",
+        "ext": "nc",
+        "sha": "ace892a9d5b949faff3e2bfc2ef232d25c6dd2754b690c581b296c2a686b3036",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_001.nc",
+        "ext": "nc",
+        "sha": "bfc75356d75728a4c648a96087efa4c25a873060ee921d423f942a2b24d771bb",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_002.nc",
+        "ext": "nc",
+        "sha": "06be5cdba2a98a35f0ebfe3f22c96774b9445e485e2265699cb53727b91b911b",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_003.nc",
+        "ext": "nc",
+        "sha": "4e3d1125f24bf959c02363374893957e4f9d390766ea7068793dc3fdb4f62a79",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_004.nc",
+        "ext": "nc",
+        "sha": "ccd44845957f9daaa8c0a5ba92fccb4a7aba9f7ad7416862b2b327302c907a0c",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_005.nc",
+        "ext": "nc",
+        "sha": "48e1c202bf497845cd363c4a26f52d74e53edd6d895726c15bb5a1d9c9bffabc",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_006.nc",
+        "ext": "nc",
+        "sha": "aae9f9e3ed5f60fb09b3e57b97407d10576858f7b725358373fb7647107b8fde",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_007.nc",
+        "ext": "nc",
+        "sha": "d52036f4d21358f45d6fd7451e21713a848697120bc9b58b7e955098e8f2c915",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_008.nc",
+        "ext": "nc",
+        "sha": "a32feee8e053703bf80ac3a2a35cc5be5ea71f14a39fa9f2a5c09209c1049dc5",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_009.nc",
+        "ext": "nc",
+        "sha": "31ecde9490f40341f30e1dfd6913270e8e0c5672ea735fbb81089a9e11106a46",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_010.nc",
+        "ext": "nc",
+        "sha": "2ea981ee8327599a078af295eb0bd391a86b445b32a1b2731a3f5d6842927fa0",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_011.nc",
+        "ext": "nc",
+        "sha": "97408ffc9026a5b07e920605dd41d259b266171d624a44ca083841010f0de402",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_012.nc",
+        "ext": "nc",
+        "sha": "502d49ff91e3d0c991629117e45ec3e1d7e2fcd86c33ed49dbc6a19a78e8cb39",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_013.nc",
+        "ext": "nc",
+        "sha": "f6a4aa1db152fc05c4a4d8b06b6281a5e36b9e93ab6b28ff7abbfe1b9e9c86c4",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_014.nc",
+        "ext": "nc",
+        "sha": "cd62b0fcb4626138e73de6f0540f706fcec2e3ce50151a12e55de8d6fb1f39ff",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_015.nc",
+        "ext": "nc",
+        "sha": "d8917b6aee8a39c0f5e9dff1e09a17354326e481cb920bb62f8c966fe8efc711",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_016.nc",
+        "ext": "nc",
+        "sha": "ecbfa3c65e96e26262ece1d244e6b0366df1410866735d059eed964c2d6f9173",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_017.nc",
+        "ext": "nc",
+        "sha": "31f65f34d91ec5bf682c976f471ab0572b7f38a76179dddbe9dcc2b6337e8c05",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_018.nc",
+        "ext": "nc",
+        "sha": "acdf9eff3fc52f7a42b5da7bc1eea9ca631f4c1c69ad408448530e6454810fe8",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_019.nc",
+        "ext": "nc",
+        "sha": "2b493a55c5218e424da40a53c3d541f53c104f7ff5c51fb61fa73514f5e21f5d",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_020.nc",
+        "ext": "nc",
+        "sha": "517cf8976c3e8184e7d7cf630ac6af8f3bee831b816fae66c2a9651932735336",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_021.nc",
+        "ext": "nc",
+        "sha": "7c7aa73eae280fcb26713dc52549c586ac663f49ddbd3226ad3997c85d1cfd68",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_022.nc",
+        "ext": "nc",
+        "sha": "f0f39866f151ed18de9b46dcb1e706dd0cb09d8a2099b700234a8ce736b0e339",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_023.nc",
+        "ext": "nc",
+        "sha": "a1544b138d2b3c7a9eb0392ff52d3711e212291d3f536a6ea9e85b5f5334cd17",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_024.nc",
+        "ext": "nc",
+        "sha": "a442602995e29fe4033e65aad66177c662b364f9c98bbaaa5878ee4aa0e3cf36",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_025.nc",
+        "ext": "nc",
+        "sha": "6eee4ef341fc87a0a1609179f89ea8f592bcf99e8f7ff8e9eb4fdc1b010c8e96",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_026.nc",
+        "ext": "nc",
+        "sha": "89c08a9f3a8e754f3ae94224b9c2f46ae4dcd5d8497a8fdb075d4f4cad26fedf",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_027.nc",
+        "ext": "nc",
+        "sha": "925cb96845ecb5e9790d4e8cf7e074814516c4650caf79dfa4c7b8dbbb5b8d40",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_028.nc",
+        "ext": "nc",
+        "sha": "38ab5298c371c28cd2f5a1f2183acad4c6a6649bc56d7728dbb7b70e1a7ebd6a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_029.nc",
+        "ext": "nc",
+        "sha": "7c908cb85f32b0d19a80de09dec8f7be835559def348056471cfcaf70d9b8d05",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_030.nc",
+        "ext": "nc",
+        "sha": "308a3b1c46ce3cf14d9dfdb52a6c2bbfc6c39579509d2d37260a8e8c4d5e5ae4",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_031.nc",
+        "ext": "nc",
+        "sha": "3de6dae1da83993e93ba7c7ccd701042518150ab302189eb03bcdbe3bdcf89d7",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_032.nc",
+        "ext": "nc",
+        "sha": "ade3c9572b0628cebdfd174df93de11a796ca37db3bd0d76ea93c7ca6259b302",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_033.nc",
+        "ext": "nc",
+        "sha": "40439f90e0b7459ce087b748458918c9600b4b8775e2100897bf7c69f0978500",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_034.nc",
+        "ext": "nc",
+        "sha": "d88c7a52ea2952de18fedc0a3ce9b77833384e163621b5b1984a56b12c4a5ac3",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_035.nc",
+        "ext": "nc",
+        "sha": "c38b4894a53576cd46c793bd38e950fc4a6ed44b062a012f6861e77ca27a23bc",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_036.nc",
+        "ext": "nc",
+        "sha": "195cd1fc3c5ad13df9e26242844a089e03fb328c5eabdfd18aea1aceb462654c",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_037.nc",
+        "ext": "nc",
+        "sha": "733894005354fce95b102d1f54585823afca61a9972675d7d425f553cd663b95",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_038.nc",
+        "ext": "nc",
+        "sha": "4cc942fe7827036ebb7f70fddfcc33585ace7d63c7d80a44bce31bc24582da3c",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_039.nc",
+        "ext": "nc",
+        "sha": "c0df37910b18605439abfda9bc3a6d4eea082880ee616ed385ba6d4b511e520a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_040.nc",
+        "ext": "nc",
+        "sha": "32f69b48971f14f967893e55ef1f692b4c39a1c7159868d2593b14977a54adba",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_041.nc",
+        "ext": "nc",
+        "sha": "761cd5510290e219d2a4844c35200415abe2014de636e1b68646efeb3b34eeba",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_042.nc",
+        "ext": "nc",
+        "sha": "87432558f49cc9234a08d117c94dd267539b8248d92269d9517beac04373ac5f",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_043.nc",
+        "ext": "nc",
+        "sha": "817f137d951b3013fd81f6143d82db17139fbc435be9a441b5e2286230f5bc32",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_044.nc",
+        "ext": "nc",
+        "sha": "53b7cf7a5f992693a16954286cfe2e106792b43905f659ceff587456d17e3d07",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_045.nc",
+        "ext": "nc",
+        "sha": "ebfb8956ff76da4a835e52c566f9c6247b32ad39aee9e68f7c38ff7c5d34fdef",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_046.nc",
+        "ext": "nc",
+        "sha": "0f2cd2ff84c1e5ee763981d66523d7586b06bef2fc18c46f74e97a0139a77c85",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_047.nc",
+        "ext": "nc",
+        "sha": "1cbbf74b559b9998b4cd93d097547c1cb066a22db8ec7f0352fff3edfa1d80c7",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_048.nc",
+        "ext": "nc",
+        "sha": "b769d90dacf909ca0d42e2611e52958fd5821ef165a1e5452911d2a208bd7eaa",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_049.nc",
+        "ext": "nc",
+        "sha": "6140020bc484ef173ae14b8c08f6590714ed9d4eba621728f8699cba3bf9e684",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_050.nc",
+        "ext": "nc",
+        "sha": "4b54f8eb74102c2b5f57689405c6b90a1596b2978d7e561f0995f3f2316bfef7",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_051.nc",
+        "ext": "nc",
+        "sha": "7a183657629abe3301d98db6ccd80e740127876adc83684ec433690519c2bb5f",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_052.nc",
+        "ext": "nc",
+        "sha": "edc2593995fd905c9832007c33259b4059357f24e1fd18aaf56a42d10884c8e2",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_053.nc",
+        "ext": "nc",
+        "sha": "f3a00b3917b8b63b6142cdb4f2cd585b9c31a9091bb4131b4e0e42e5f4443894",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_054.nc",
+        "ext": "nc",
+        "sha": "febadc88649aae233472b74a0dd9b28922bf6416569b210276e25d4c97e1682b",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_055.nc",
+        "ext": "nc",
+        "sha": "86eb01085eaa0533c0f912c257490beec94b58698433b9e46092216a77edc569",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_056.nc",
+        "ext": "nc",
+        "sha": "3b96378526341c766cfe77c6c49b41efa859cffd4737d6b62b0548be70864f97",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_057.nc",
+        "ext": "nc",
+        "sha": "509f163213d263a8a991a2f6d544737b2c472f9edd841d125c14d8c324ce493a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_058.nc",
+        "ext": "nc",
+        "sha": "9371b0821a9f029b9b0fa1c050679eacb76890b5c946906dc5c0e43907f1397b",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_059.nc",
+        "ext": "nc",
+        "sha": "f15317a32747d4656bd22f60791edf18fc272a9a86a8176a1762f9624dd8f75c",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_060.nc",
+        "ext": "nc",
+        "sha": "28afc135b4d145c7fdf7794bb5825ae0722c13471ae67b235a388280d19f58f9",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_061.nc",
+        "ext": "nc",
+        "sha": "a6abe4c17857a07ab601b3251564500bf6ec9b351cddf17d43222a7e36dc4258",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_062.nc",
+        "ext": "nc",
+        "sha": "ff1e17ce49d5ed643cb173f4cf0bd2182599d6022688a6fc7792b1be9bd26fb3",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_063.nc",
+        "ext": "nc",
+        "sha": "f1e818411f73fcc5a0982983022d4754663ef8485478e57688a1069e614f9883",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_064.nc",
+        "ext": "nc",
+        "sha": "15f2ea61c50dae797294800e1d3ee5f2a6a3c01bfd7fe5d49fa30c9c4caddeda",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_065.nc",
+        "ext": "nc",
+        "sha": "5fa998488be5457b7615a898839f6a6eec9f00ee4fcfb68211a1e90bd1cd081b",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_066.nc",
+        "ext": "nc",
+        "sha": "39155f2bc670b7c98e179fb1e232d946a074491705bb2a6d85e5af61830b747c",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_067.nc",
+        "ext": "nc",
+        "sha": "167b9ce6b7c503721d81c645dda04379b0f6fce2cf1e8ad4614c1f6de31646b4",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_068.nc",
+        "ext": "nc",
+        "sha": "09105d419b2bfabdc6a17ed3d4f4aebf8ff6e1a08465f506a1b595195547393c",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_069.nc",
+        "ext": "nc",
+        "sha": "a1cbcb7189fe15f0765d295df63a91b5d94911ed01066c306026fbf0f88fa856",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_070.nc",
+        "ext": "nc",
+        "sha": "4e8f2e4a5bdfd93d20b42b046a453fb5e3d902c4a302fee6d917b47bf4390b13",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_071.nc",
+        "ext": "nc",
+        "sha": "1d8796fa5274a7552d9b79234efbe513a10539b1367a75df4b967827c1b54790",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_072.nc",
+        "ext": "nc",
+        "sha": "41a745e476bd17cd594ee2179b321b28e937e94dec76b5623ee3dfdbf82890c0",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_073.nc",
+        "ext": "nc",
+        "sha": "f4fdb1eef766e91dacaa110be4fca7981ab30244732ce7dc675534e7f8068365",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_074.nc",
+        "ext": "nc",
+        "sha": "26d55a94e6719e4fb58aaddc1de638d4ff993a0bef765b89732916d9dcb3697e",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_075.nc",
+        "ext": "nc",
+        "sha": "2699a1385aa56f7ac5559d4fafc2ff1d7aad13f3e3206a816c4285530550bfff",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_076.nc",
+        "ext": "nc",
+        "sha": "6649ae85cdd0dcbc88675b2fdbf7231e61edf6d6f086ef844e1552fa0217cef9",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_077.nc",
+        "ext": "nc",
+        "sha": "49b11f60d2435b99babcbafbc2f549dbdae7c66ab097063d59cf0e1e6cb5f4eb",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_078.nc",
+        "ext": "nc",
+        "sha": "f2f5408a1b9163cbd5ac63e2bcd0782506d0ce678c84e83b09de696ada5a09a5",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_079.nc",
+        "ext": "nc",
+        "sha": "c4acc47ca2550aeefa243d5897514c43ba898c111dbdded289c5b0340c747e9e",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_080.nc",
+        "ext": "nc",
+        "sha": "bf859e9ef4f3a30fb1c86e02c78bc8c15877f644c7fc79a3acba3811f755f2a7",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_081.nc",
+        "ext": "nc",
+        "sha": "89d034e21e8d64f8c655ea4efb18158ffe4d3b75a094054aaf8f279617e3f47d",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_082.nc",
+        "ext": "nc",
+        "sha": "91d57b40fded31b34a6c157944f785398c932c8eadf90770e0b4694dfe4cfa1b",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_083.nc",
+        "ext": "nc",
+        "sha": "abbaf1de50e8c5f36f2e1e9257dbc59ebab6289b009baaf789f4b860e691fd61",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_084.nc",
+        "ext": "nc",
+        "sha": "b33b8683375242ca5081eefae178c084f20084231dedff7766908e0b68aeef8a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_085.nc",
+        "ext": "nc",
+        "sha": "4bc78dcf9500193998933fa32b8c76ee44a20ca0576cfc8e7ffe991713da89f7",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_086.nc",
+        "ext": "nc",
+        "sha": "924faf5acf2c1f870db1b50bf138139421bd215dff939b4536c6d614976f8a2f",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_087.nc",
+        "ext": "nc",
+        "sha": "64bad8a2c1b9a926f529c2b565212470e12a15d9684069cfddde9d2d6431ee6a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_088.nc",
+        "ext": "nc",
+        "sha": "db3d372f7c01ded0cd3619f8ffc80903def61fdfc47ca9d748a2361fe764e669",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_089.nc",
+        "ext": "nc",
+        "sha": "c6edbf0d1fda30ca75ac8289ceca3df85252439bc975da72fda97c5653d6e94e",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_090.nc",
+        "ext": "nc",
+        "sha": "3f50caa4e7b1f0b80fa1f369dd4fe0f3d27cc5949a01ee2e0f4583eba83ed180",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_091.nc",
+        "ext": "nc",
+        "sha": "1a510f07f8ac52859a9caf89552123a73abd7808fd125a11c7ae9e9ae5ae2f85",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_092.nc",
+        "ext": "nc",
+        "sha": "946ccfca95d433492b3d15ac2788e128f3cf610e1db1efcdbbf5023f4cd0bdfd",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_093.nc",
+        "ext": "nc",
+        "sha": "1894791980cba476589979b4a069c65c37dfe92d55c7de28f01953318f0b66b8",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_094.nc",
+        "ext": "nc",
+        "sha": "e9e83cd93effbe872cd359055413849c7faef2782188ec92f7bc64aefb93cfce",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_095.nc",
+        "ext": "nc",
+        "sha": "bfbb57d15995b610e19a2675c55bcf39c76d62430f6e594d8f79a7ac0b5e2ca5",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_096.nc",
+        "ext": "nc",
+        "sha": "67d231b1c5e35c5441a097951dfb1a2fbe362446610625aee86371ec7bceafcc",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_097.nc",
+        "ext": "nc",
+        "sha": "9273229f75e3805831b5e6011b566d0acc6b3d342b07d17614aed34bbbbcd349",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_098.nc",
+        "ext": "nc",
+        "sha": "9a66677529ef2b8376254da6cd1df04756c47cc00d891f3df247cefcda0d40e6",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_099.nc",
+        "ext": "nc",
+        "sha": "256f7e26ff4c817b07e89cd817f9c35f2ed61af544b52c480b15e31c9e8ce0ef",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_100.nc",
+        "ext": "nc",
+        "sha": "60e9fa28edb04695c65b7ed425f43c8c3d17cbc710d016e014ad886292dae322",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_101.nc",
+        "ext": "nc",
+        "sha": "a4beb73b5ec9579f8ec0de90d17044874dc1aecddbdaa682c042fc744423b550",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_102.nc",
+        "ext": "nc",
+        "sha": "28024e2d0b71f56302831e95457468eef2a517497fe1d35887ed7aaffabe2f20",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_103.nc",
+        "ext": "nc",
+        "sha": "9f85dd6160a0d77983bc6e85d3ab392dc30fecaea8a835cddbda042b7b51fc09",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_104.nc",
+        "ext": "nc",
+        "sha": "f982f660dc4c2aea3c4bd6498c94b9887e0ea20907d6d8683a94b7c426705949",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_105.nc",
+        "ext": "nc",
+        "sha": "4d6cbdd3b3fb3eb2501391c2a6a6c2f745458caadd4ebe83d2c1302d29aa5530",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_106.nc",
+        "ext": "nc",
+        "sha": "1258239ecf9c3d5c7847a6a26afbf0abe6837a102bb80b7ca1639b9fd4e69131",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_107.nc",
+        "ext": "nc",
+        "sha": "3dab94a563769f325782cf3bf4b4caedb3f699f5d62a2e4a2a65fb696dc6746e",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_108.nc",
+        "ext": "nc",
+        "sha": "6d3382e601e3468e25ebc82321f734372c0f6e0d1ce21cc7e21af2d7f2ae3955",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_109.nc",
+        "ext": "nc",
+        "sha": "0ab5200fa0bf766d026f9fdd66d413cb8e6bedfe00980d1a69e88bdd517bae4f",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_110.nc",
+        "ext": "nc",
+        "sha": "99b024d1b822fd69879ca3e32645ec9857f40759df913a2d2a435f91451ca41a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_111.nc",
+        "ext": "nc",
+        "sha": "d8d5fb9638463deec5eb3acff250f185032ac18facf63bafa1b28f8a07e2a946",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_112.nc",
+        "ext": "nc",
+        "sha": "953e3a6b811e52645177b99f92599e0092f724e7e839f6092ca72e83dd536049",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_113.nc",
+        "ext": "nc",
+        "sha": "c28a89c3ede5bc5c607844177c390a4e246135f79f9b0e234a6cfa948ca8de84",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_114.nc",
+        "ext": "nc",
+        "sha": "f06a5488ea4b64dc0c9bc0b2051be07587a0222b591dc6fe995ae6a1a1b995bf",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_115.nc",
+        "ext": "nc",
+        "sha": "67087cf441a665efe20bc9357ecf17fa419bf30fd9bac2ec2524e0ba94bf0b12",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_116.nc",
+        "ext": "nc",
+        "sha": "ba197998a8d2a0560fcc550cf8569fe7547966dd75b31f0697dfd87879efd952",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_117.nc",
+        "ext": "nc",
+        "sha": "f4d5f3f634996852603b5cdc7159b29f2528cf2caec656a5e6bd77e3c8ec310a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_118.nc",
+        "ext": "nc",
+        "sha": "f0bd79e366185159bc8a99513c1078dcebe53b9334cf16563151f923573f6091",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_119.nc",
+        "ext": "nc",
+        "sha": "0c67cfbdb722a8c522201ac9014c6d76c5f057ed8314cae1dcd9897a72f15d84",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_120.nc",
+        "ext": "nc",
+        "sha": "1365e029f491b919d0601f85ccc247327f831529c013fdf147d2f25c1eb03b1e",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_121.nc",
+        "ext": "nc",
+        "sha": "462ccaf815e22596ede08ec55a67efab08aa7b40729841372e7d33fb645c50cf",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_122.nc",
+        "ext": "nc",
+        "sha": "32cdd4c335dfd3c6c4a153934a41b3cb74ad049343fc9b7ba991e685a096b217",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_123.nc",
+        "ext": "nc",
+        "sha": "4d3b4fe7922b56e1fdfba736736e4ccea66d82dfe3a3bdb6a203061212f61f8d",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_124.nc",
+        "ext": "nc",
+        "sha": "aa4c080d6c2681afb000adb3158cfc958ddb47a8dff798ed43b4c1429a27f8aa",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_125.nc",
+        "ext": "nc",
+        "sha": "0a2947d22da03ae8ccbb5ba634e73fbf307c9f473fedfd32c05a4b47a40a6a3b",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_126.nc",
+        "ext": "nc",
+        "sha": "072e62a467adb1bcb638df5e5d8fa01991514073685609153f40d254e1b4786f",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_127.nc",
+        "ext": "nc",
+        "sha": "adfc512adea5560ffbabb933440a12ad69d215db549a4d9dcc1dceb215aa99a4",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_128.nc",
+        "ext": "nc",
+        "sha": "9f648a5dfd32318983b2d9668de0541ebdaea98b034b5635521d49ee1b6dd977",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_129.nc",
+        "ext": "nc",
+        "sha": "25c672fc1390b7a64b123bbe5a15fd8c5b2b78bbc6781f4006921cc11f434c95",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_130.nc",
+        "ext": "nc",
+        "sha": "e8e9ea94e79006e0c9b49b672574d51fcdf874bbfa25242509cfb8a0bdd20644",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_131.nc",
+        "ext": "nc",
+        "sha": "6e1a27838b30eb571607555b5e2081cfafba1d4aef25ae54fdf0811e134b3ad1",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_132.nc",
+        "ext": "nc",
+        "sha": "77697ecafd357da2c290eb3e32bde81275ddf27dc863de8fea71e387a1734e7f",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_133.nc",
+        "ext": "nc",
+        "sha": "8c703a7b5b6d95e9f19a96f5f5236081cae2155a1e350357f0f3771768711a6d",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_134.nc",
+        "ext": "nc",
+        "sha": "4190f3286adea2809dc8d1de9e844cd7d62908be700cef2677d83cf8d921f5b9",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_135.nc",
+        "ext": "nc",
+        "sha": "72d0b66530892dc113fca57aa6d0863ed87c07a83b6b3519c499fc03cb44e1b1",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_136.nc",
+        "ext": "nc",
+        "sha": "91bc24ec5428442a4a4460af4dcb69e8622d426bb698494636f9accbfb81ad6c",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_137.nc",
+        "ext": "nc",
+        "sha": "58def4aca219bc150708b998ea4cf74a02474f66bbfb4ae07c06e6269e5789ee",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_138.nc",
+        "ext": "nc",
+        "sha": "9642cc645ffe37020c6d61a4767ad69ad19002a4b8fd9e3b08c9cca7b58a6fa5",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_139.nc",
+        "ext": "nc",
+        "sha": "4d5e20085b06fca539a560f302e105a550e9e9f7c9d98396abe49475083e00a4",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_140.nc",
+        "ext": "nc",
+        "sha": "1ed325ae80db27f6b7046a20aa900ed426b1d6f6435840892a5af56d186ed45d",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_141.nc",
+        "ext": "nc",
+        "sha": "223aaddc275aaafcd609503ca7aa7762d0005591423987c495483bfba7c1252f",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_142.nc",
+        "ext": "nc",
+        "sha": "b4b8148c1bdfb4cfdad05b25cd49b19aba681d16661bd0b0431cde44d6ddb8ec",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_143.nc",
+        "ext": "nc",
+        "sha": "fbb01239ed5e1e76f585e06d43d26731a4ccc5c76eeb63be3f6b21ace6f484b4",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_144.nc",
+        "ext": "nc",
+        "sha": "3bab1027e1687628f419650ea11ec14fe5a6dc016be5cd16ee6d090531474b7a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_145.nc",
+        "ext": "nc",
+        "sha": "0412becf28e522dbc8967112c82228ec02de1a033e9f9abf3f34b6867f1219db",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_146.nc",
+        "ext": "nc",
+        "sha": "005ff3d158f2d97c8a62b02d983e6cfa3970e7621fbbfcb4eeb7aafc9c532320",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_147.nc",
+        "ext": "nc",
+        "sha": "756052c1403614486ee706e735a5696bf6b88fdb122078b852c8a8d112d08570",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_148.nc",
+        "ext": "nc",
+        "sha": "57093a37c69c8de28e5f0de821d2ba2a7f7d53c6685ae3a4945762d34ba5a7a4",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_149.nc",
+        "ext": "nc",
+        "sha": "d4a5811759d25393bba2c3cf2428660d1aa07ea7b7f6994adc96e6319ac58bff",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_150.nc",
+        "ext": "nc",
+        "sha": "7d64fe9a2e25617e5d34e150b19bac7896a3d897275b71199eb347f8840a02e8",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_151.nc",
+        "ext": "nc",
+        "sha": "5e91f4b6f482746c96493b2ea042c2e55b1b353d2fdfb7e69af0b9c1327bf4ca",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_152.nc",
+        "ext": "nc",
+        "sha": "cc642b6d8fb4f733af31e0c836867f92cbda39f96df5a73ecaec318fb6c8986e",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_153.nc",
+        "ext": "nc",
+        "sha": "8dc976f5ef6d96aa1e46f23d7cfbe057820406ae81aadf3b7996264c42dcb9c0",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_154.nc",
+        "ext": "nc",
+        "sha": "04550f79f30d615f9080dfb7373660d7fa2c1c66cea11cfec6e7642f64016a5a",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_155.nc",
+        "ext": "nc",
+        "sha": "99aded7beaf92bfc8739caf002825a59684168d9759dace0122a765291341356",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_156.nc",
+        "ext": "nc",
+        "sha": "2cb3a8aaa52634b5e3dea65606513a73243823f6a1407e6aadf8db5a988a2a48",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_157.nc",
+        "ext": "nc",
+        "sha": "ee01f01ab25eb969a68c572112db4b554233096c56a05971583427ccb888b3b7",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_158.nc",
+        "ext": "nc",
+        "sha": "c9a4bd3d995bca87c236366c4ca94563e77043e59b6111851fd8570cc6334cc0",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_159.nc",
+        "ext": "nc",
+        "sha": "dd4cc5d9e436aa8b0d1aeea83ac2c3ffc56992d383f2819fa2c478fe45dd4d92",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_160.nc",
+        "ext": "nc",
+        "sha": "224f1f07ef26be4a71e6d48cfb1fc5e109eee06c16a42ab3b6cc6240211818d3",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_161.nc",
+        "ext": "nc",
+        "sha": "8f44fa28ea1e24446ba39dedc38cc3354fb4957d80e5cda4dad711ca6047b9c8",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/SD3902131_001D.nc",
+        "ext": "nc",
+        "sha": "61179b2e325f5c25f9a0b76589314547577b9d98ffae1a5c5cbd3690985a8533",
+        "type": "application/x-netcdf",
+        "ts": "2026-06-23 14:47:40"
+    },
+    {
         "uri": "https://data-argo.ifremer.fr/dac/aoml/4900590/profiles/D4900590_097.nc",
         "ext": "nc",
         "sha": "080a17b21720d217a7133793e7ab59b63d25d6c906c9450fdfaccf3bc4a744db",

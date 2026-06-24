@@ -1,6 +1,6 @@
 import pytest
 import tempfile
-from typing import Generator
+from typing import Generator, Any
 
 import xarray as xr
 import pandas as pd
@@ -43,7 +43,8 @@ if has_s3:
 """
 List WMO to be tested, one for each mission
 """
-VALID_WMO = [13857, 3902131]
+VALID_WMO = [13857, 3902131] # core, bgc
+VALID_WMO = [13857] # core, bgc
 
 
 @skip_offline
@@ -101,36 +102,11 @@ class Test_FloatStore_Online():
             pytest.skip("Skip this test with 's3' because there is no internet connection")
         return patch_ftp(host)
 
-    def call_floatstore(self, WMO, store_args, xfail=False, reason="?")->ArgoFloat:
-        def core(WMO, fargs):
-            try:
-                log.debug(f"Instantiating a FloatStore with: {fargs}")
-                af = self.floatstore(WMO, **fargs)
-            except Exception:
-                if xfail:
-                    pytest.xfail(reason)
-                else:
-                    raise
-            return af
-
-        return core(WMO, store_args)
-
-    def get_a_floatstore(self, WMO, host, cache=False, **kwargs)-> ArgoFloat:
-        store_args = {'host': host,
-                      'eafleetmonitoring_server': mocked_server_address  # Use mocked server for Euro-Argo meta data API calls
-                      }
-        if cache:
-            store_args = {
-                **store_args,
-                **{"cache": True, "cachedir": self.cachedir},
-            }
-        return self.call_floatstore(WMO, store_args, **kwargs)
-
     @pytest.fixture
-    def store_maker(self, request)->Generator[ArgoFloat]:
+    def af(self, request)->Generator[ArgoFloatOnline, Any, None]:
         """Fixture to create a Float store instance for a given wmo and host"""
         log.debug("-"*50)
-        log.debug(request)
+        # log.debug(request)
         wmo = request.param[0]
         host = self._patch_host(VALID_HOSTS[request.param[1]])
         cache = request.param[2]
@@ -139,55 +115,80 @@ class Test_FloatStore_Online():
         if not has_s3 and 's3' in host:
             xfail, reason = True, 's3fs not available'
 
-        yield self.get_a_floatstore(wmo, host=host, cache=cache,
-                                    xfail=xfail, reason=reason)
+        store_args = {'host': host,
+                      'eafleetmonitoring_server': mocked_server_address
+                      # Use mocked server for Euro-Argo meta data API calls
+                      }
+        if cache:
+            store_args = {
+                **store_args,
+                **{"cache": True, "cachedir": self.cachedir},
+            }
 
-    def assert_float(self, this_af):
-        assert isinstance(this_af.load_index(), ArgoFloatOnline)
+        try:
+            log.debug(f"Instantiating a FloatStore with: {store_args}")
+            this_af = self.floatstore(wmo, **store_args)
+        except Exception:
+            if xfail:
+                pytest.xfail(reason)
+            else:
+                raise
 
-        assert hasattr(this_af, "dac")
-        assert isinstance(this_af.dac, str)
-
-        assert hasattr(this_af, "metadata")
-        assert isinstance(this_af.metadata, dict)
-
-        assert hasattr(this_af, "technicaldata")
-        assert isinstance(this_af.technicaldata, dict)
-
-        assert hasattr(this_af, "api_point")
-        assert isinstance(this_af.api_point, dict)
-
-        assert is_cyc(this_af.CYCLE_NUMBERS)
-        assert isinstance(this_af.N_CYCLES, int)
-        assert isinstance(this_af.path, str)
-        assert isinstance(this_af.host_sep, str)
-        assert isinstance(this_af.host_protocol, str)
-
-        assert isinstance(this_af.ls_dataset(), dict)
-        assert is_list_of_strings(this_af.ls())
-
-        assert is_list_of_strings(this_af.lsprofiles())
-        assert isinstance(this_af.describe_profiles(), pd.DataFrame)
-
-    def assert_open_dataset(self, this_af):
-        lds = this_af.ls_dataset()
-        dsname, _ = random.choice(list(lds.items()))
-        assert isinstance(this_af.open_dataset(dsname), xr.Dataset)
-
-        with pytest.raises(ValueError):
-            this_af.open_dataset('dummy_dsname')
+        yield this_af
 
     #########
     # TESTS #
     #########
     @pytest.mark.parametrize(
-        "store_maker", scenarios, indirect=True, ids=scenarios_ids
+        "af", scenarios, indirect=True, ids=scenarios_ids
     )
-    def test_wmo(self, mocked_httpserver, store_maker):
-        self.assert_float(store_maker)
+    def test_instance(self, mocked_httpserver, af):
+        assert isinstance(af.load_index(), ArgoFloatOnline)
+
+        assert hasattr(af, "dac")
+        assert isinstance(af.dac, str)
+
+        assert hasattr(af, "metadata")
+        assert isinstance(af.metadata, dict)
+
+        assert hasattr(af, "technicaldata")
+        assert isinstance(af.technicaldata, dict)
+
+        assert hasattr(af, "api_point")
+        assert isinstance(af.api_point, dict)
+
+        assert is_cyc(af.CYCLE_NUMBERS)
+        assert isinstance(af.N_CYCLES, int)
+        assert isinstance(af.path, str)
+        assert isinstance(af.host_sep, str)
+        assert isinstance(af.host_protocol, str)
+
+        assert isinstance(af.ls_dataset(), dict)
+        assert is_list_of_strings(af.ls())
+
+        assert isinstance(af.ls_profiles(), dict)
+        assert is_list_of_strings(af.lsp())
+        assert isinstance(af.describe_profiles(), pd.DataFrame)
 
     @pytest.mark.parametrize(
-        "store_maker", scenarios, indirect=True, ids=scenarios_ids
+        "af", scenarios, indirect=True, ids=scenarios_ids
     )
-    def test_open_dataset(self, mocked_httpserver, store_maker):
-        self.assert_open_dataset(store_maker)
+    def test_open_dataset(self, mocked_httpserver, af):
+        lds = af.ls_dataset()
+        dsname, _ = random.choice(list(lds.items()))
+        assert isinstance(af.open_dataset(dsname), xr.Dataset)
+
+        with pytest.raises(ValueError):
+            af.open_dataset('dummy_dsname')
+
+    @pytest.mark.parametrize(
+        "af", scenarios, indirect=True, ids=scenarios_ids
+    )
+    def test_open_profile(self, mocked_httpserver, af):
+        lds = af.ls_profiles()
+        dsname, _ = random.choice(list(lds.items()))
+        # dsname = list(lds)[0]
+        assert isinstance(af.open_profile(dsname), xr.Dataset)
+
+        with pytest.raises(ValueError):
+            af.open_dataset('dummy_dsname')
