@@ -311,7 +311,7 @@ class FloatStoreProto(ABC):
         return self._ls
 
     @deprecated("Replaced by the 'ls_datasets' method", "v1.5.0")
-    def ls_datasets(self) -> dict:
+    def ls_dataset(self) -> dict:
         return self.ls_datasets()
 
     def ls_datasets(self) -> dict:
