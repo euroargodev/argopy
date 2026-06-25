@@ -56,8 +56,6 @@ class ArgoFloat(FloatStore):
 
         ds = af.open_dataset('Sprof', netCDF4=True)  # Return a netCDF4 Dataset instead of an xarray
 
-        af._ls() # Return the full list of dataset files
-
 
     .. code-block:: python
         :caption: Load/read GDAC netcdf mono-cycle profile files
@@ -93,10 +91,6 @@ class ArgoFloat(FloatStore):
         af.dac   # name of the DAC this float belongs to
         af.metadata  # a dictionary with all available metadata for this file (from netcdf or fleetmonitoring API)
 
-        af._ls()  # list af.path folder content
-        af._lsp() # list af.path+'profiles' folder content
-
-
     .. code-block:: python
         :caption: Quick plotting methods
 
@@ -108,6 +102,74 @@ class ArgoFloat(FloatStore):
         af.plot.scatter('PSAL_QC')
         af.plot.scatter('DOXY', ds='Sprof')
         af.plot.scatter('MEASUREMENT_CODE', ds='Rtraj')
+
+    .. code-block:: python
+        :caption: Launch configuration parameters
+
+        from argopy import ArgoFloat
+        af = ArgoFloat(6903091)
+
+        # Total number and list of launch parameters:
+        af.launchconfig.n_params
+        af.launchconfig.parameters
+
+        # Read one parameter value, with explicit or implicit parameter name:
+        # ('CONFIG_' is not mandatory, but string is case-sensitive)
+        af.launchconfig['CONFIG_CycleTime_hours']
+        af.launchconfig['CycleTime_hours']
+
+        # Export to a DataFrame:
+        af.launchconfig.to_dataframe()
+
+
+    .. code-block:: python
+        :caption: Configuration parameters and missions
+
+        from argopy import ArgoFloat
+        af = ArgoFloat(6903091)
+
+        # Total number and list of configuration parameters:
+        af.config.n_params
+        af.config.parameters
+
+        # Total number and list of missions:
+        af.config.n_missions
+        af.config.missions
+
+        # Read one parameter value, with explicit or implicit parameter name:
+        # ('CONFIG_' is not mandatory, but string is case-sensitive)
+        af.config['CONFIG_CycleTime_hours']
+        af.config['CycleTime_hours']
+
+        # Read parameter value for one or more mission numbers:
+        # (! 2nd index is not 0-based, it's an integer key to look for in mission numbers)
+        af.config['CycleTime_hours', 1]
+        af.config['CycleTime_hours', 1:3]
+
+    .. code-block:: python
+        :caption: Configuration parameters and cycle numbers
+
+        from argopy import ArgoFloat
+        af = ArgoFloat(6903091)
+
+        # Get a dictionary mapping cycle on mission numbers:
+        af.config.cycles
+
+        # Read parameter value for one or more cycle numbers:
+        # (! 2nd index is not 0-based, it's an integer key to look for in cycle numbers)
+        af.config.for_cycles('CycleTime_hours', 1)
+        af.config.for_cycles('CycleTime_hours', [10, 11])
+
+    .. code-block:: python
+        :caption: Export configuration parameters
+
+        from argopy import ArgoFloat
+        af = ArgoFloat(6903091)
+
+        # Export to a DataFrame:
+        af.config.to_dataframe()
+        af.config.to_dataframe(missions=1)
+        af.config.to_dataframe(missions=[1, 2])
 
     """
 

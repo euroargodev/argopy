@@ -31,7 +31,8 @@ skip_spec = pytest.mark.skipif(0, reason="Skipped tests for specification")
 
 """
 List GDAC hosts to be tested. 
-Since the class is compatible with host from local, http, ftp or s3 protocols, we try to test them all:
+Since the ArgoFloat class is compatible with hosts from local, http, ftp or s3 protocols, we try to test them all.
+We use 2 dictionaries to be able to test implementations separately.
 """
 VALID_LOCAL_HOSTS = {
     "local": argopy.tutorial.open_dataset("gdac")[0],  # Use local files
@@ -44,6 +45,9 @@ VALID_REMOTE_HOSTS = {
 
 if has_s3:
     VALID_REMOTE_HOSTS.update({"s3": "s3://argo-gdac-sandbox/pub"})
+
+VALID_HOSTS = VALID_LOCAL_HOSTS.copy()
+VALID_HOSTS.update(VALID_REMOTE_HOSTS)
 
 """
 List WMO to be tested, one for each mission
@@ -65,6 +69,8 @@ def id_for_host(host):
 class Test_FloatStore_Offline:
     """
     Tests methods and attributes specific to the Offline implementation
+
+    Note that by directly using the implementation, and not the facade, un-cached extensions are not available (eg: 'plot'). Which is ok because extensions should have their own tests suite.
     """
 
     floatstore = ArgoFloatOffline
@@ -155,6 +161,8 @@ class Test_FloatStore_Offline:
 class Test_FloatStore_Online:
     """
     Tests methods and attributes specific to the Online implementation
+
+    Note that by directly using the implementation, and not the facade, un-cached extensions are not available (eg: 'plot'). Which is ok because extensions should have their own tests suite.
     """
 
     floatstore = ArgoFloatOnline
@@ -262,16 +270,14 @@ class Test_FloatStore_Online:
         assert "technical" in af.api_point
 
 
-VALID_HOSTS = VALID_LOCAL_HOSTS.copy()
-VALID_HOSTS.update(VALID_REMOTE_HOSTS)
-
-
 @skip_spec
 class Test_FloatStore_Spec:
     """
-    Tests methods and attributes of the facade, for both the offline/online implementations
+    Tests for methods and attributes shared by all implementations, hence from the specification prototype.
 
     The instance fixture `af` will rely on the appropriate implementation for a given host.
+
+    But note that by directly using the implementation, and not the facade, un-cached extensions are not available (eg: 'plot'). Which is ok because extensions should have their own tests suite.
     """
 
     scenarios = [
