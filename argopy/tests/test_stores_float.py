@@ -53,6 +53,7 @@ VALID_HOSTS.update(VALID_REMOTE_HOSTS)
 List WMO to be tested, one for each mission
 """
 VALID_WMO = [13857, 3902131]  # core, bgc
+# VALID_WMO = [13857]  # core, bgc
 
 
 def id_for_host(host):
@@ -411,6 +412,7 @@ class Test_FloatStore_Spec:
         with pytest.raises(ValueError):
             af.open_profile("dummy_ds_key")
 
-    # @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
-    # def test_open_profiles(self, mocked_httpserver, af):
-    #     assert False, "To be Implemented !"
+    @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
+    def test_open_profiles(self, mocked_httpserver, af):
+        ds_list = af.open_profiles(af.CYCLE_NUMBERS[0:2])
+        assert all([isinstance(ds, xr.Dataset) for ds in ds_list])
