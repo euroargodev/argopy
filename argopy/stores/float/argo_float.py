@@ -34,7 +34,7 @@ class ArgoFloat(FloatStore):
     Examples
     --------
     .. code-block:: python
-        :caption: A float store is instantiated with float WMO number and a host (any access path: local, http, ftp or s3) where float files are to be found.
+        :caption: Create a float store with a WMO number, and a host
 
         from argopy import ArgoFloat
         af = ArgoFloat(WMO)  # Use argopy 'gdac' option by default
@@ -44,7 +44,7 @@ class ArgoFloat(FloatStore):
         af = ArgoFloat(WMO, host='s3')     # Shortcut for s3://argo-gdac-sandbox/pub
 
     .. code-block:: python
-        :caption: Load/read GDAC netcdf files
+        :caption: Load GDAC netcdf files
 
         af.ls_datasets() # Return a dictionary with all available datasets for this float
 
@@ -58,7 +58,7 @@ class ArgoFloat(FloatStore):
 
 
     .. code-block:: python
-        :caption: Load/read GDAC netcdf mono-cycle profile files
+        :caption: Load GDAC netcdf mono-cycle profile files
 
         af.ls_profiles() # Return a dictionary with all available mono-cycle profile files (everything under the 'profiles' sub-folder)
 
@@ -106,9 +106,6 @@ class ArgoFloat(FloatStore):
     .. code-block:: python
         :caption: Launch configuration parameters
 
-        from argopy import ArgoFloat
-        af = ArgoFloat(6903091)
-
         # Total number and list of launch parameters:
         af.launchconfig.n_params
         af.launchconfig.parameters
@@ -124,9 +121,6 @@ class ArgoFloat(FloatStore):
 
     .. code-block:: python
         :caption: Configuration parameters and missions
-
-        from argopy import ArgoFloat
-        af = ArgoFloat(6903091)
 
         # Total number and list of configuration parameters:
         af.config.n_params
@@ -149,9 +143,6 @@ class ArgoFloat(FloatStore):
     .. code-block:: python
         :caption: Configuration parameters and cycle numbers
 
-        from argopy import ArgoFloat
-        af = ArgoFloat(6903091)
-
         # Get a dictionary mapping cycle on mission numbers:
         af.config.cycles
 
@@ -162,9 +153,6 @@ class ArgoFloat(FloatStore):
 
     .. code-block:: python
         :caption: Export configuration parameters
-
-        from argopy import ArgoFloat
-        af = ArgoFloat(6903091)
 
         # Export to a DataFrame:
         af.config.to_dataframe()

@@ -55,7 +55,10 @@ List and load datasets
 ----------------------
 
 .. note::
-    We name a *dataset* any file that is *not* under the float ``profiles`` folder of the GDAC.
+    We refer to a *dataset* any file that is *not* under the float ``profiles`` folder of the GDAC.
+
+Listing
+^^^^^^^
 
 Once you created an :class:`ArgoFloat` instance, you can list all available datasets with :meth:`ArgoFloat.ls_datasets`:
 
@@ -64,20 +67,23 @@ Once you created an :class:`ArgoFloat` instance, you can list all available data
 
     af.ls_datasets()
 
-Note that datasets from the auxiliary GDAC folder are included in this store, and referenced with the ``_aux`` suffix.
+Note that because we used ``aux=True``, datasets from the auxiliary GDAC folder are included in this store, and referenced with the ``_aux`` suffix.
 
-So finally, you can open any of these datasets using their corresponding keyword:
+Data loading
+^^^^^^^^^^^^
+
+So finally, you can open any of these datasets using the corresponding keyword:
 
 .. ipython:: python
     :okwarning:
 
-    ds = af.open_dataset('meta') # load <WMO>_meta.nc
+    ds = af.open_dataset('prof') # load <WMO>_prof.nc
+    print(ds)
+
     # or:
-    # ds = af.open_dataset('prof') # load <WMO>_prof.nc
+    # ds = af.open_dataset('meta') # load <WMO>_meta.nc
     # ds = af.open_dataset('tech') # load <WMO>_tech.nc
     # ds = af.open_dataset('Rtraj') # load <WMO>_Rtraj.nc
-
-Note that you can open a dataset lazily, this is explained in the :ref:`lazy-argofloat` documentation page.
 
 .. note::
     The :meth:`ArgoFloat.open_dataset` also support for direct file loading as a `netCDF4 Dataset object <https://unidata.github.io/netcdf4-python/#netCDF4.Dataset>`_. Just use the ``netCDF4=True`` option.
@@ -92,8 +98,10 @@ List and load profiles
 ----------------------
 
 .. note::
-    We consider a *profile* any file that *is* under the float ``profiles`` folder of the GDAC.
+    We refer to a *profile* any file that *is* under the float ``profiles`` folder of the GDAC and is technically a mono-profile file.
 
+Listing
+^^^^^^^
 
 Once you created an :class:`ArgoFloat` instance, you can list all available profile files with :meth:`ArgoFloat.ls_profiles`:
 
@@ -126,7 +134,13 @@ A more verbose description of all available profiles is provided with the :meth:
 
     af.profiles_to_dataframe()
 
-To load a single mono-profile file, one will use the :meth:`ArgoFloat.open_profile` method with one of the key, as returned by :meth:`ArgoFloat.ls_profiles`:
+Data loading
+^^^^^^^^^^^^
+
+For a single cycle
+""""""""""""""""""
+
+To load a single mono-profile file, one will use the :meth:`ArgoFloat.open_profile` method with one of the key returned by :meth:`ArgoFloat.ls_profiles`:
 
 
 .. ipython:: python
@@ -142,6 +156,84 @@ To load a single mono-profile file, one will use the :meth:`ArgoFloat.open_profi
     ds = af.open_profile('S2D') # cycle number 2, BGC Synthetic descending file
 
 
+For a collection of cycles
+""""""""""""""""""""""""""
+
+You may also need to load a collection of profile files, for a selection of cycles (or all), for a specific dataset (eg: all Synthetic files) and for a specific direction (ascendant or descend).
+
+To do so, **Argopy** provide the :meth:`ArgoFloat.open_profiles` method.
+
+To load a specific list of cycle numbers, just provide them as a first argument. If no other named arguments are provided, this will load (in parallel) all 'core' and ascending mono-profile files for the specified cycle numbers:
+
+.. ipython:: python
+    :okwarning:
+
+        ds_list = af.open_profiles([1,2])
+
+The method will return a list of :class:`xarray.Dataset`, one for each of the cycle numbers. Since data loading is done in parallel to improve performances, there is no guarantee that datasets will be ordered similarly to the list of cycle numbers.
+
+Also note that if you don't provide cycle numbers, by default **Argopy** will load all of them (which can be time consuming for some floats).
+
+If you want to load only descending profile files, use the ``direction`` argument:
+
+.. ipython:: python
+    :okwarning:
+
+        ds_list = af.open_profiles([1,2], direction='D')
+
+If you want to load only BGC ``B`` profile files, use the ``dataset`` argument (use ``S`` for BGC Synthetic files):
+
+.. ipython:: python
+    :okwarning:
+
+        ds_list = af.open_profiles([1,2,3], dataset='B')
+
+Note that the ``dataset`` and ``direction`` arguments can be used together and the availability of the ``progress=True`` argument to get a visual feedback of the processing.
+
+
+.. tip::
+
+    If you get lost or want to double check on the netcdf files that are loaded, you can check the absolute path of the data source in the `encoding` attribute of a :class:`xarray.Dataset`:
+
+    .. ipython:: python
+        :okwarning:
+
+        ds_list[0].encoding['source']
+
+
+Cycles batch processing
+^^^^^^^^^^^^^^^^^^^^^^^
+
+You can provide a pre-processing function to the :meth:`ArgoFloat.open_profiles` method that will be applied to each of the mono-profile files before being returned. Since there is no concatenation at the end of the process (the method return a list), the pre-processing function can return a modified dataset or anything else.
+
+For instance we could want to gather some properties of each profile in a dictionary to create a dataframe with the end results:
+
+.. ipython:: python
+    :okwarning:
+
+    import numpy as np
+
+    def ds2dict(ds_profile):
+        return {'cycle_number': ds_profile['CYCLE_NUMBER'].values[0],
+            'posqc': ds_profile['POSITION_QC'].values[0],
+            'time': ds_profile['JULD'].values[0],
+            'lon': ds_profile['LONGITUDE'].values[0],
+            'lat': ds_profile['LATITUDE'].values[0],
+            'max_pres': ds_profile['PRES'].max().values[np.newaxis][0],
+           }
+
+    data = af.open_profiles(direction='A', preprocess=ds2dict)
+    data[0]
+
+We can finally create a :class:`pandas.DataFrame`:
+
+.. ipython:: python
+    :okwarning
+
+    import pandas as pd
+
+    df = pd.DataFrame(data).sort_values(by='cycle_number').reset_index(drop=1)
+    df
 
 Integration within **argopy**
 -----------------------------
@@ -276,18 +368,18 @@ Or directly read parameter values:
 
     # Read one parameter value, with explicit or implicit parameter name:
     # ('CONFIG_' is not mandatory, but string is case-sensitive)
-    af.config['CONFIG_CycleTime_hours']
-    af.config['CycleTime_hours']
+    af.config['CONFIG_CycleTime_seconds']
+    af.config['CycleTime_seconds']
 
     # Read parameter value for one or more mission numbers:
     # (! 2nd index is not 0-based, it's an integer key to look for in mission numbers)
-    af.config['CycleTime_hours', 1]
-    af.config['CycleTime_hours', 1:3]
+    af.config['CycleTime_seconds', 1]
+    af.config['CycleTime_seconds', 1:3]
 
     # Read parameter value for one or more cycle numbers:
     # (! 2nd index is not 0-based, it's an integer key to look for in cycle numbers)
-    af.config.for_cycles('CycleTime_hours', 1)
-    af.config.for_cycles('CycleTime_hours', [10, 11])
+    af.config.for_cycles('CycleTime_seconds', 1)
+    af.config.for_cycles('CycleTime_seconds', [5, 6])
 
 And parameters can also be exported to :class:`pandas.DataFrame`:
 
@@ -324,8 +416,8 @@ Or directly read parameter values:
 
     # Read one parameter value, with explicit or implicit parameter name:
     # ('CONFIG_' is not mandatory, but string is case-sensitive)
-    af.launchconfig['CONFIG_CycleTime_hours']
-    af.launchconfig['CycleTime_hours']
+    af.launchconfig['CONFIG_CycleTime_seconds']
+    af.launchconfig['CycleTime_seconds']
 
 And launch parameters can also be exported to :class:`pandas.DataFrame`:
 
