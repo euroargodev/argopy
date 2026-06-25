@@ -366,7 +366,7 @@ class FloatStoreProto(ABC):
         name: str, optional, default = "prof"
             Name of the dataset to open. It can be any key from the dictionary returned by :class:`ArgoFloat.ls_datasets`.
         cast: bool, optional, default = True
-            Determine if the dataset variables should be cast or not. This is similar to opening the dataset directly with :class:`xr.open_dataset` using the ``engine=`argo``` option.
+            Determine if the dataset variables should be cast or not. This is similar to opening the dataset directly with :class:`xarray.open_dataset` using the ``engine=`argo``` option.
             This will be ignored if the ``netCDF4` kwarg is set to True.
         \**kwargs
             All the other arguments are passed to the GDAC store `open_dataset` method.
@@ -729,7 +729,7 @@ class FloatStoreProto(ABC):
         cast: bool, optional, default = True
             Determine if dataset variables should be cast or not.
 
-            This is similar to opening the dataset directly with :class:`xr.open_dataset` using the ``engine=`argo``` option.
+            This is similar to opening the dataset directly with :class:`xarray.open_dataset` using the ``engine=`argo``` option.
             This will be ignored if the ``netCDF4` kwarg is set to True.
         **kwargs:
             All the other arguments are passed to the GDAC store `open_dataset` method.
@@ -864,7 +864,7 @@ class FloatStoreProto(ABC):
         cast: bool, optional, default = True
             Determine if dataset variables should be cast or not.
 
-            This is similar to opening the dataset directly with :class:`xr.open_dataset` using the ``engine=`argo``` option.
+            This is similar to opening the dataset directly with :class:`xarray.open_dataset` using the ``engine=`argo``` option.
             This will be ignored if the ``netCDF4` kwarg is set to True.
         **kwargs
             All the other arguments are passed to the file store `open_mfdataset` method. Interesting arguments are:
