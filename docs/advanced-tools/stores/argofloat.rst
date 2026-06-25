@@ -7,8 +7,8 @@ Argo Float store
 
 If you are familiar with Argo float WMO numbers, you may be interested in using directly the Argo float store :class:`ArgoFloat`.
 
-This store aims to facilitate all Argo netcdf file load/read operations for a specific float. Whatever the Argo netcdf file location,
-local or remote, you can now delegate to **argopy** the burden of transfer protocol and GDAC paths handling.
+This store aims to facilitate all Argo files load and read operations for a specific float.
+Whatever the Argo file location, local or remote, you can delegate to **Argopy** the burden of transfer protocol and GDAC paths handling.
 
 All float store methods and properties are documented in the :class:`ArgoFloat` API page.
 
@@ -87,6 +87,7 @@ Note that you can open a dataset lazily, this is explained in the :ref:`lazy-arg
 
         af.open_dataset('meta', netCDF4=True)
 
+
 List and load profiles
 ----------------------
 
@@ -118,12 +119,12 @@ For each profile file, there is a key to refer to it and to be used by :meth:`Ar
 
 Note that since mono-cycle profile files are either 'R' for real-time or 'D' for adjusted or delayed-mode data, there is no need to select one or the other, they can't exist at the same time.
 
-A more verbose description of all available profiles is provided with the :meth:`ArgoFloat.describe_profiles` method:
+A more verbose description of all available profiles is provided with the :meth:`ArgoFloat.profiles_to_dataframe` method:
 
 .. ipython:: python
     :okwarning:
 
-    af.describe_profiles()
+    af.profiles_to_dataframe()
 
 To load a single mono-profile file, one will use the :meth:`ArgoFloat.open_profile` method with one of the key, as returned by :meth:`ArgoFloat.ls_profiles`:
 

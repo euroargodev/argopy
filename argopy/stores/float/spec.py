@@ -105,10 +105,10 @@ class FloatStoreProto(ABC):
         # Filled by self.load_dac(), returned by self.dac:
         self._dac: str | None = None
 
-        # Filled & returned by self.ls():
+        # Filled & returned by self._ls():
         self.__ls: list[str] | None = None
 
-        # Filled & returned by self.lsp():
+        # Filled & returned by self._lsp():
         self.__lsp: list[str] | None = None
 
         # Filled & returned by self.ls_profiles():
@@ -120,7 +120,7 @@ class FloatStoreProto(ABC):
         # Filled & returned by self.open_profile(), returned by self.profile():
         self._ds_profiles: dict[str, xr.Dataset | Any] = {}
 
-        # Filled & returned by self.describe_profiles():
+        # Filled & returned by self.profiles_to_dataframe():
         self._df_profiles: pd.DataFrame | None = None
 
         ########
@@ -266,22 +266,23 @@ class FloatStoreProto(ABC):
         """
         return self.host_sep.join([self.host, "dac", self.dac, "%i" % self.WMO])
 
-    def ls(self) -> list[str]:
+    def _ls(self) -> list[str]:
         """Return the list of files in float root path
 
         Protocol is included, all files are listed (not only netcdf, if any).
 
-        This is similar to running: ``ls <WMO>/*``
+        This is similar to running ``ls dac/<DAC>/<WMO>/*`` from the command line,
+        (and possibly appending results from the auxiliary folder as well).
 
         Examples
         --------
-        >>> ArgoFloat(4902640).ls()
+        >>> ArgoFloat(4902640)._ls()
         ['https://data-argo.ifremer.fr/dac/meds/4902640/4902640_Sprof.nc',
          'https://data-argo.ifremer.fr/dac/meds/4902640/4902640_meta.nc',
          'https://data-argo.ifremer.fr/dac/meds/4902640/4902640_prof.nc',
          'https://data-argo.ifremer.fr/dac/meds/4902640/4902640_tech.nc']
 
-        >>> ArgoFloat(3901682, aux=True).ls()
+        >>> ArgoFloat(3901682, aux=True)._ls()
         ['https://data-argo.ifremer.fr/aux/coriolis/3901682/3901682_Rtraj_aux.nc',
          'https://data-argo.ifremer.fr/aux/coriolis/3901682/3901682_meta_aux.nc',
          'https://data-argo.ifremer.fr/aux/coriolis/3901682/3901682_tech_aux.nc',
@@ -326,17 +327,18 @@ class FloatStoreProto(ABC):
 
         return self.__ls
 
-    def lsp(self) -> list[str]:
+    def _lsp(self) -> list[str]:
         """Return the list of files in float 'profiles' path
 
         The GDAC host protocol is included, all files are listed (not only netcdf, if any other exist).
 
-        This is similar to running: ``ls <WMO>/profiles/*``
+        This is similar to running ``ls dac/<DAC>/<WMO>/profiles/*`` from the command line,
+        (and possibly appending results from the auxiliary folder as well).
 
         Examples
         --------
-        >>> ArgoFloat(4902640).lsp()
-        >>> ArgoFloat(4902640, aux=True).lsp()
+        >>> ArgoFloat(4902640)._lsp()
+        >>> ArgoFloat(4902640, aux=True)._lsp()
         """
         if self.__lsp is None:
 
@@ -403,7 +405,7 @@ class FloatStoreProto(ABC):
 
         """
         avail = {}
-        for file in self.ls():
+        for file in self._ls():
             filename = file.split(self.host_sep)[-1]
             if Path(filename).suffix == ".nc":
                 split = Path(filename).stem.split("_")
@@ -475,43 +477,17 @@ class FloatStoreProto(ABC):
             )  # will commit this dataset to self._ds_datasets dict
         return self._ds_datasets[name]
 
-    @property
-    def CYCLE_NUMBERS(self) -> List[int]:
-        """List of cycle numbers, according to the list of mono-profile files.
-
-        The list is computed from the analysis of the GDAC 'profiles' folder of the float.
-        So this relies on :meth:`ArgoFloat.describe_profiles()` that in turns relies on :meth:`ArgoFloat.lsp()`.
-
-        Notes
-        -----
-        This `CYCLE_NUMBERS` attribute is not to be confused with the netcdf variable `CYCLE_NUMBER` that is the
-        float cycle number of the measurement in the context of a specific netcdf file. That's why we're using
-        the extra `s` at the end.
-        """
-        return sorted(
-            [int(c) for c in self.describe_profiles()["cycle_number"].unique()]
-        )
-
-    @property
-    def N_CYCLES(self) -> int:
-        """Number of cycles, according to the list of mono-profile files.
-
-        This is simply the length of :attr:`ArgoFloat.CYCLE_NUMBERS`.
-
-        Notes
-        -----
-        This `N_CYCLES` attribute is not to be confused with the netcdf dimension `N_CYCLE` that is the
-        index for cycles in the context of a specific netcdf file (eg: trajectory file). That's why we're using
-        the extra `s` at the end.
-        """
-        return len(self.CYCLE_NUMBERS)
-
-    @deprecated("Superseded by the 'lsp' method", "v1.5.0")
+    @deprecated("Superseded by the '_lsp' method", "v1.5.0")
     def lsprofiles(self) -> list:
-        """Deprecated, see ``lsp()``"""
-        return self.lsp()
+        """Deprecated, see ``_lsp()``"""
+        return self._lsp()
 
+    @deprecated("Superseded by the 'profiles_to_dataframe' method", "v1.5.0")
     def describe_profiles(self) -> pd.DataFrame:
+        """Return a :class:`pandas.DataFrame` describing all profile files"""
+        return self.profiles_to_dataframe()
+
+    def profiles_to_dataframe(self) -> pd.DataFrame:
         """Return a :class:`pandas.DataFrame` describing all profile files
 
         Here we use the *profile* word to designate a mono-cycle netcdf file under the GDAC 'profiles' folder of a WMO.
@@ -519,9 +495,8 @@ class FloatStoreProto(ABC):
         Returns
         -------
         :class:`pandas.DataFrame`
-            A DataFrame with ["cycle_number", "dataset", "direction", "data_mode", "stem", "path"] columns for each mono-cycle netcdf files. The extra columns `auxiliary` is added if necessary.
+            A DataFrame with ["cycle_number", "dataset", "direction", "data_mode", "stem", "path"] columns for each mono-cycle netcdf files. The extra columns `auxiliary` is added if the instance was created with the appropriate option.
         """
-
         def stem2cyc(s) -> int:
             ii = -2 if "aux" in s else -1
             if s.split("_")[ii][-1] == "D":
@@ -531,7 +506,7 @@ class FloatStoreProto(ABC):
 
         if self._df_profiles is None:
             # Read the list of netcdf files under '<wmo>/profiles/*':
-            paths = self.lsp()
+            paths = self._lsp()
             paths = [p for p in paths if p.split(".")[-1] == "nc"]
 
             # Scan each file name to extract information:
@@ -614,7 +589,7 @@ class FloatStoreProto(ABC):
             ds: str = dataset[0].upper()
             ds: str = {"C": "M", "B": "B", "S": "S"}[
                 ds
-            ]  # 'C' > 'M' because describe_profiles['dataset'] starts with a 'M' for 'C'ore profiles.
+            ]  # 'C' > 'M' because profiles_to_dataframe['dataset'] starts with a 'M' for 'C'ore profiles.
 
         direction = direction[0].upper()
         if direction not in ["A", "D"]:
@@ -627,7 +602,7 @@ class FloatStoreProto(ABC):
                 "To list auxiliary profile files, you need to create the ArgoFloat object with `aux=True` option, which was not the case with this instance."
             )
 
-        df = self.describe_profiles()
+        df = self.profiles_to_dataframe()
 
         results = {}
         for cycle_number in CYCs:
@@ -1023,6 +998,37 @@ class FloatStoreProto(ABC):
             return results[0]
 
         return results
+
+    @property
+    def CYCLE_NUMBERS(self) -> List[int]:
+        """List of cycle numbers, according to the list of mono-profile files.
+
+        The list is computed from the analysis of the GDAC 'profiles' folder of the float.
+        So this relies on :meth:`ArgoFloat.profiles_to_dataframe()` that in turns relies on :meth:`ArgoFloat._lsp()`.
+
+        Notes
+        -----
+        This `CYCLE_NUMBERS` attribute is not to be confused with the netcdf variable `CYCLE_NUMBER` that is the
+        float cycle number of the measurement in the context of a specific netcdf file. That's why we're using
+        the extra `s` at the end.
+        """
+        return sorted(
+            [int(c) for c in self.profiles_to_dataframe()["cycle_number"].unique()]
+        )
+
+    @property
+    def N_CYCLES(self) -> int:
+        """Number of cycles, according to the list of mono-profile files.
+
+        This is simply the length of :attr:`ArgoFloat.CYCLE_NUMBERS`.
+
+        Notes
+        -----
+        This `N_CYCLES` attribute is not to be confused with the netcdf dimension `N_CYCLE` that is the
+        index for cycles in the context of a specific netcdf file (eg: trajectory file). That's why we're using
+        the extra `s` at the end.
+        """
+        return len(self.CYCLE_NUMBERS)
 
     def _ipython_key_completions_(self):
         """Provide method for key-autocompletions in IPython."""

@@ -56,7 +56,7 @@ class ArgoFloat(FloatStore):
 
         ds = af.open_dataset('Sprof', netCDF4=True)  # Return a netCDF4 Dataset instead of an xarray
 
-        af.ls() # Return the full list of dataset files
+        af._ls() # Return the full list of dataset files
 
 
     .. code-block:: python
@@ -81,7 +81,7 @@ class ArgoFloat(FloatStore):
         # If you don't specify cycle numbers, all cycles are loaded:
         ds_list = af.open_profiles(direction='D') # Return *all* core descending files
 
-        af.describe_profiles()  # Pandas DataFrame describing all available profile files
+        af.profiles_to_dataframe()  # Pandas DataFrame describing all available profile files
 
 
     .. code-block:: python
@@ -93,8 +93,8 @@ class ArgoFloat(FloatStore):
         af.dac   # name of the DAC this float belongs to
         af.metadata  # a dictionary with all available metadata for this file (from netcdf or fleetmonitoring API)
 
-        af.ls()  # list af.path folder content
-        af.lsp() # list af.path+'profiles' folder content
+        af._ls()  # list af.path folder content
+        af._lsp() # list af.path+'profiles' folder content
 
 
     .. code-block:: python
