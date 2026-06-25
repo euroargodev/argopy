@@ -394,6 +394,8 @@ class Test_FloatStore_Spec:
         lds = af.ls_datasets()
         ds_key, _ = random.choice(list(lds.items()))
         assert isinstance(af.open_dataset(ds_key), xr.Dataset)
+        assert isinstance(af.dataset(ds_key), xr.Dataset)
+        assert isinstance(af[ds_key], xr.Dataset)
 
         with pytest.raises(ValueError):
             af.open_dataset("dummy_ds_key")
@@ -403,6 +405,8 @@ class Test_FloatStore_Spec:
         lds = af.ls_profiles()
         ds_key, _ = random.choice(list(lds.items()))
         assert isinstance(af.open_profile(ds_key), xr.Dataset)
+        assert isinstance(af.profile(ds_key), xr.Dataset)
+        assert isinstance(af[ds_key], xr.Dataset)
 
         with pytest.raises(ValueError):
             af.open_profile("dummy_ds_key")
