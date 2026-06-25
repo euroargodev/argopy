@@ -269,7 +269,9 @@ VALID_HOSTS.update(VALID_REMOTE_HOSTS)
 @skip_spec
 class Test_FloatStore_Spec:
     """
-    Tests specification methods and attributes of the facade, for both the offline/online implementations
+    Tests methods and attributes of the facade, for both the offline/online implementations
+
+    The instance fixture `af` will rely on the appropriate implementation for a given host.
     """
 
     scenarios = [
@@ -314,8 +316,6 @@ class Test_FloatStore_Spec:
     @pytest.fixture
     def af(self, request) -> Generator[ArgoFloatOnline, Any, None]:
         """Fixture to create a Float store instance for a given wmo and host"""
-        log.debug("-" * 50)
-        # log.debug(request)
         wmo = request.param[0]
         host = self._patch_host(VALID_HOSTS[request.param[1]])
         cache = request.param[2]
@@ -356,7 +356,7 @@ class Test_FloatStore_Spec:
     # TESTS #
     #########
     @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
-    def test_instance(self, mocked_httpserver, af):
+    def test_attributes(self, mocked_httpserver, af):
         assert is_wmo(af.WMO)
 
         assert hasattr(af, "dac")
@@ -367,32 +367,40 @@ class Test_FloatStore_Spec:
 
         assert is_cyc(af.CYCLE_NUMBERS)
         assert isinstance(af.N_CYCLES, int)
+
         assert isinstance(af.path, str)
         assert isinstance(af.host_sep, str)
         assert isinstance(af.host_protocol, str)
 
+    @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
+    def test_list_directories(self, mocked_httpserver, af):
+
         assert isinstance(af.ls_datasets(), dict)
-        assert is_list_of_strings(af.ls())
+        assert is_list_of_strings(af._ls())
 
         assert isinstance(af.ls_profiles(), dict)
-        assert is_list_of_strings(af.lsp())
-        assert isinstance(af.describe_profiles(), pd.DataFrame)
+        assert is_list_of_strings(af._lsp())
+
+        assert isinstance(af.profiles_to_dataframe(), pd.DataFrame)
 
     @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
     def test_open_dataset(self, mocked_httpserver, af):
         lds = af.ls_datasets()
-        dsname, _ = random.choice(list(lds.items()))
-        assert isinstance(af.open_dataset(dsname), xr.Dataset)
+        ds_key, _ = random.choice(list(lds.items()))
+        assert isinstance(af.open_dataset(ds_key), xr.Dataset)
 
         with pytest.raises(ValueError):
-            af.open_dataset("dummy_dsname")
+            af.open_dataset("dummy_ds_key")
 
     @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
     def test_open_profile(self, mocked_httpserver, af):
         lds = af.ls_profiles()
-        dsname, _ = random.choice(list(lds.items()))
-        # dsname = list(lds)[0]
-        assert isinstance(af.open_profile(dsname), xr.Dataset)
+        ds_key, _ = random.choice(list(lds.items()))
+        assert isinstance(af.open_profile(ds_key), xr.Dataset)
 
         with pytest.raises(ValueError):
-            af.open_dataset("dummy_dsname")
+            af.open_profile("dummy_ds_key")
+
+    # @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
+    # def test_open_profiles(self, mocked_httpserver, af):
+    #     assert False, "To be Implemented !"
