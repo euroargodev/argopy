@@ -233,3 +233,115 @@ Check all the detailed arguments on the API reference :class:`ArgoFloat.plot`.
                 af.plot.scatter('MEASUREMENT_CODE', ds='Rtraj')
 
         .. image:: ../../_static/ArgoFloat_MEASUREMENT_CODE.png
+
+
+Support for configuration parameters access
+-------------------------------------------
+
+The :class:`ArgoFloat` object comes with 2 extensions dedicated to easily access/read configuration parameters in operation and at launch-time.
+
+When Argopy is **offline**, parameters reading rely on a local meta data netcdf file, and when Argopy is **online**, it relies on the Euro-Argo Fleet-Monitoring web-API.
+
+
+Operational configuration
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+These are facilitated access to the ``CONFIG_PARAMETER_NAME`` and ``CONFIG_PARAMETER_VALUE`` netcdf parameters.
+
+Get list of parameters and missions:
+
+.. ipython:: python
+    :okwarning:
+
+    from argopy import ArgoFloat
+    af = ArgoFloat(3902492)
+
+    # Total number and list of configuration parameters:
+    af.config.n_params
+    af.config.parameters
+
+    # Total number and list of missions:
+    af.config.n_missions
+    af.config.missions
+
+    # Get a dictionary mapping cycle on mission numbers:
+    af.config.cycles
+
+
+Or directly read parameter values:
+
+.. ipython:: python
+    :okwarning:
+
+    # Read one parameter value, with explicit or implicit parameter name:
+    # ('CONFIG_' is not mandatory, but string is case-sensitive)
+    af.config['CONFIG_CycleTime_hours']
+    af.config['CycleTime_hours']
+
+    # Read parameter value for one or more mission numbers:
+    # (! 2nd index is not 0-based, it's an integer key to look for in mission numbers)
+    af.config['CycleTime_hours', 1]
+    af.config['CycleTime_hours', 1:3]
+
+    # Read parameter value for one or more cycle numbers:
+    # (! 2nd index is not 0-based, it's an integer key to look for in cycle numbers)
+    af.config.for_cycles('CycleTime_hours', 1)
+    af.config.for_cycles('CycleTime_hours', [10, 11])
+
+And parameters can also be exported to :class:`pandas.DataFrame`:
+
+.. ipython:: python
+    :okwarning:
+
+    af.config.to_dataframe()
+    # or:
+    # af.config.to_dataframe(missions=1)
+    # af.config.to_dataframe(missions=[1, 2])
+
+
+Launch-time configuration
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+These are facilitated access to the ``LAUNCH_CONFIG_PARAMETER_NAME`` and ``LAUNCH_CONFIG_PARAMETER_VALUE`` netcdf parameters.
+
+Get list of parameters:
+
+.. ipython:: python
+    :okwarning:
+
+    from argopy import ArgoFloat
+    af = ArgoFloat(3902492)
+
+    # Total number and list of launch parameters:
+    af.launchconfig.n_params
+    af.launchconfig.parameters
+
+Or directly read parameter values:
+
+.. ipython:: python
+    :okwarning:
+
+    # Read one parameter value, with explicit or implicit parameter name:
+    # ('CONFIG_' is not mandatory, but string is case-sensitive)
+    af.launchconfig['CONFIG_CycleTime_hours']
+    af.launchconfig['CycleTime_hours']
+
+And launch parameters can also be exported to :class:`pandas.DataFrame`:
+
+.. ipython:: python
+    :okwarning:
+
+    af.launchconfig.to_dataframe()
+
+
+
+.. note::
+
+    Note the **tab completion for parameter names** is available when executed with ipython (eg: jupyter notebooks) to easily get parameter names: just press tab when typing ``af.launchconfig['`` and ``af.config['``:
+
+    .. image:: https://github.com/user-attachments/assets/826e073f-1685-4e48-88bc-991fc90aae74
+        :width: 592
+
+    .. image:: https://github.com/user-attachments/assets/1abd8516-3467-45e8-964f-07b4a80bf91e
+        :width: 414
+
