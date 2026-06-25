@@ -24,8 +24,12 @@ Internals
 
 - **Fix bug** where by some unit tests would raise  `fsspec.exceptions.FSTimeoutError`, :issue:`593`. (:pr:`640`) by |gmaze|.
 
-- **Fix inconsistency** in checking availability of an :class:`ArgoFloat` configuration parameter, :issue:`643`.
+- **Fix inconsistency** in checking availability of an :class:`ArgoFloat` configuration parameter, :issue:`643`. (:pr:`644`) by |gmaze|.
 
+Documentation
+^^^^^^^^^^^^^
+
+- **Define** a policy regarding **generative AI usage** in **argopy** contributions :issue:`637`. (:pr:`639`) by |quai20|.
 
 v1.4.0 (5 Jan. 2026)
 --------------------
