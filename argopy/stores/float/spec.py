@@ -316,9 +316,8 @@ class FloatStoreProto(ABC):
             # Ensure the protocol is included for non-local files on FTP and S3 servers:
             for ip, p in enumerate(paths):
                 if self.host_protocol == "ftp":
-                    paths[ip] = (
-                        "ftp://" + self.fs.fs.host + fsspec.core.split_protocol(p)[-1]
-                    )
+                    paths[ip] = f"ftp://{self.fs.fs.host}:{self.fs.fs.port}{fsspec.core.split_protocol(p)[-1]}"
+
                 if self.host_protocol == "s3":
                     paths[ip] = "s3://" + fsspec.core.split_protocol(p)[-1]
 
@@ -361,9 +360,8 @@ class FloatStoreProto(ABC):
             # Ensure the protocol is included for non-local files on FTP and S3 servers:
             for ip, p in enumerate(paths):
                 if self.host_protocol == "ftp":
-                    paths[ip] = (
-                        "ftp://" + self.fs.fs.host + fsspec.core.split_protocol(p)[-1]
-                    )
+                    paths[ip] = f"ftp://{self.fs.fs.host}:{self.fs.fs.port}{fsspec.core.split_protocol(p)[-1]}"
+
                 if self.host_protocol == "s3":
                     paths[ip] = "s3://" + fsspec.core.split_protocol(p)[-1]
 
@@ -954,7 +952,7 @@ class FloatStoreProto(ABC):
                 if v == file_name:
                     return k
             raise ValueError(
-                f"This file name '{file_name}' is not a valid profile file."
+                f"This file name '{file_name}' does not correspond to any of the listed profile files: {list(self.ls_profiles().values())}"
             )
 
         fnames = list(
