@@ -92,30 +92,40 @@ class FloatStoreProto(ABC):
         self.host: str = self.idx.host  # Fix host shortcuts with correct values
         self.fs = self.idx.fs["src"]
 
-        # Init All Internal placeholder for this instance
+        ########################
+        # Internal placeholder #
+        ########################
+        # These are used to improve performance by limiting data fetching
+        # Data remained in memory, attached to the instance
+        # This is NOT similar to cache=True, for which data are writen on file
 
-        self._metadata: dict | None = (
-            None  # filled by self.load_metadata(), returned by self.metadata
-        )
-        self._dac: str | None = None  # filled by self.load_dac(), returned by self.dac
-        self._dataset: dict[str, xr.Dataset | Any] = (
-            {}
-        )  # filled/returned by self.open_dataset(), returned by self.dataset()
+        # Filled by self.load_metadata(), returned by self.metadata:
+        self._metadata: dict | None = None
 
-        self._ls: list[str] | None = None  # filled/returned by self.ls(), 'ls <WMO>/*'
-        self._lsp: list[str] | None = (
-            None  # filled/returned by self.lsp(),'ls <WMO>/profiles/*'
-        )
+        # Filled by self.load_dac(), returned by self.dac:
+        self._dac: str | None = None
 
-        self._ls_prof: dict[str | int, str] | None = (
-            None  # filled/returned by self.ls_profiles()
-        )
-        self._profile: dict[str, xr.Dataset | Any] = (
-            {}
-        )  # filled/returned by self.open_profile(), (mono-profile file xarray datasets)
-        self._df_profiles: pd.DataFrame | None = (
-            None  # filled/returned by self.describe_profiles()
-        )
+        # Filled & returned by self.ls():
+        self.__ls: list[str] | None = None
+
+        # Filled & returned by self.lsp():
+        self.__lsp: list[str] | None = None
+
+        # Filled & returned by self.ls_profiles():
+        self._ls_prof: dict[str | int, str] | None = None
+
+        # Filled & returned by self.open_dataset(), returned by self.dataset():
+        self._ds_datasets: dict[str, xr.Dataset | Any] = {}
+
+        # Filled & returned by self.open_profile(), returned by self.profile():
+        self._ds_profiles: dict[str, xr.Dataset | Any] = {}
+
+        # Filled & returned by self.describe_profiles():
+        self._df_profiles: pd.DataFrame | None = None
+
+        ########
+        # Misc #
+        ########
 
         # Load some data (in a perfect world, this should be done asynchronously):
         # self.load_index()
@@ -219,7 +229,7 @@ class FloatStoreProto(ABC):
 
         cycles_ldict = []
         for cyc in np.unique(self.open_dataset("prof")["CYCLE_NUMBER"]):
-            cycles_ldict.append({'id': int(cyc)})
+            cycles_ldict.append({"id": int(cyc)})
         data.update({"cycles": cycles_ldict})
 
         self._metadata = data
@@ -261,6 +271,8 @@ class FloatStoreProto(ABC):
 
         Protocol is included, all files are listed (not only netcdf, if any).
 
+        This is similar to running: ``ls <WMO>/*``
+
         Examples
         --------
         >>> ArgoFloat(4902640).ls()
@@ -282,7 +294,7 @@ class FloatStoreProto(ABC):
         --------
         :class:`ArgoFloat.ls_datasets`
         """
-        if self._ls is None:
+        if self.__ls is None:
             paths = self.fs.glob(self.host_sep.join([self.path, "*"]))
 
             if self._aux:
@@ -310,8 +322,54 @@ class FloatStoreProto(ABC):
                     paths[ip] = "s3://" + fsspec.core.split_protocol(p)[-1]
 
             paths.sort()
-            self._ls = paths
-        return self._ls
+            self.__ls = paths
+
+        return self.__ls
+
+    def lsp(self) -> list[str]:
+        """Return the list of files in float 'profiles' path
+
+        The GDAC host protocol is included, all files are listed (not only netcdf, if any other exist).
+
+        This is similar to running: ``ls <WMO>/profiles/*``
+
+        Examples
+        --------
+        >>> ArgoFloat(4902640).lsp()
+        >>> ArgoFloat(4902640, aux=True).lsp()
+        """
+        if self.__lsp is None:
+
+            paths = self.fs.glob(self.host_sep.join([self.path, "profiles", "*"]))
+
+            if self._aux:
+                paths += self.fs.glob(
+                    self.host_sep.join(
+                        [
+                            self.path.replace(
+                                f"{self.host_sep}dac{self.host_sep}",
+                                f"{self.host_sep}aux{self.host_sep}",
+                            ),
+                            "profiles",
+                            "*",
+                        ]
+                    )
+                )
+
+            # Ensure the protocol is included for non-local files on FTP and S3 servers:
+            for ip, p in enumerate(paths):
+                if self.host_protocol == "ftp":
+                    paths[ip] = (
+                        "ftp://" + self.fs.fs.host + fsspec.core.split_protocol(p)[-1]
+                    )
+                if self.host_protocol == "s3":
+                    paths[ip] = "s3://" + fsspec.core.split_protocol(p)[-1]
+
+            paths = [p for p in paths if Path(p).suffix != ""]
+            paths.sort()
+            self.__lsp = paths
+
+        return self.__lsp
 
     @deprecated("Replaced by the 'ls_datasets' method", "v1.5.0")
     def ls_dataset(self) -> dict:
@@ -391,10 +449,10 @@ class FloatStoreProto(ABC):
             kwargs.update({"xr_opts": {"engine": "argo"}})
 
         ds = self.fs.open_dataset(file, **kwargs)
-        self._dataset[name] = ds
+        self._ds_datasets[name] = ds
         return ds
 
-    def dataset(self, name: str = "prof", **kwargs)->xr.Dataset:
+    def dataset(self, name: str = "prof", **kwargs) -> xr.Dataset:
         """Open and decode a dataset file, once
 
         This method is similar to :meth:`ArgoFloat.open_dataset` except that data are fetched only once to improve performances.
@@ -411,13 +469,15 @@ class FloatStoreProto(ABC):
         :class:`xarray.Dataset`
 
         """
-        if name not in self._dataset:
-            self.open_dataset(name, **kwargs)  # will commit this dataset to self._dataset dict
-        return self._dataset[name]
+        if name not in self._ds_datasets:
+            self.open_dataset(
+                name, **kwargs
+            )  # will commit this dataset to self._ds_datasets dict
+        return self._ds_datasets[name]
 
     @property
-    def CYCLE_NUMBERS(self)-> List[int]:
-        """List of cycle numbers, according to list of mono-profile files.
+    def CYCLE_NUMBERS(self) -> List[int]:
+        """List of cycle numbers, according to the list of mono-profile files.
 
         The list is computed from the analysis of the GDAC 'profiles' folder of the float.
         So this relies on :meth:`ArgoFloat.describe_profiles()` that in turns relies on :meth:`ArgoFloat.lsp()`.
@@ -428,18 +488,20 @@ class FloatStoreProto(ABC):
         float cycle number of the measurement in the context of a specific netcdf file. That's why we're using
         the extra `s` at the end.
         """
-        return sorted([int(c) for c in self.describe_profiles()["cycle_number"].unique()])
+        return sorted(
+            [int(c) for c in self.describe_profiles()["cycle_number"].unique()]
+        )
 
     @property
     def N_CYCLES(self) -> int:
-        """Number of cycles, according to list of mono-profile files.
+        """Number of cycles, according to the list of mono-profile files.
 
         This is simply the length of :attr:`ArgoFloat.CYCLE_NUMBERS`.
 
         Notes
         -----
         This `N_CYCLES` attribute is not to be confused with the netcdf dimension `N_CYCLE` that is the
-        index for cycles in the context of a specific netcdf file (eg: trajectory file_. That's why we're using
+        index for cycles in the context of a specific netcdf file (eg: trajectory file). That's why we're using
         the extra `s` at the end.
         """
         return len(self.CYCLE_NUMBERS)
@@ -448,49 +510,6 @@ class FloatStoreProto(ABC):
     def lsprofiles(self) -> list:
         """Deprecated, see ``lsp()``"""
         return self.lsp()
-
-    def lsp(self) -> list[str]:
-        """Return the list of files in float 'profiles' path
-
-        The GDAC host protocol is included, all files are listed (not only netcdf, if any other exist).
-
-        Examples
-        --------
-        >>> ArgoFloat(4902640).lsp()
-        >>> ArgoFloat(4902640, aux=True).lsp()
-        """
-        if self._lsp is None:
-
-            paths = self.fs.glob(self.host_sep.join([self.path, "profiles", "*"]))
-
-            if self._aux:
-                paths += self.fs.glob(
-                    self.host_sep.join(
-                        [
-                            self.path.replace(
-                                f"{self.host_sep}dac{self.host_sep}",
-                                f"{self.host_sep}aux{self.host_sep}",
-                            ),
-                            "profiles",
-                            "*",
-                        ]
-                    )
-                )
-
-            # Ensure the protocol is included for non-local files on FTP and S3 servers:
-            for ip, p in enumerate(paths):
-                if self.host_protocol == "ftp":
-                    paths[ip] = (
-                        "ftp://" + self.fs.fs.host + fsspec.core.split_protocol(p)[-1]
-                    )
-                if self.host_protocol == "s3":
-                    paths[ip] = "s3://" + fsspec.core.split_protocol(p)[-1]
-
-            paths = [p for p in paths if Path(p).suffix != ""]
-            paths.sort()
-            self._lsp = paths
-
-        return self._lsp
 
     def describe_profiles(self) -> pd.DataFrame:
         """Return a :class:`pandas.DataFrame` describing all profile files
@@ -501,10 +520,6 @@ class FloatStoreProto(ABC):
         -------
         :class:`pandas.DataFrame`
             A DataFrame with ["cycle_number", "dataset", "direction", "data_mode", "stem", "path"] columns for each mono-cycle netcdf files. The extra columns `auxiliary` is added if necessary.
-
-        Notes
-        -----
-        This method is used by all profile methods :class:`ArgoFloat.ls_profiles_for`, class:`ArgoFloat.ls_profiles`, class:`ArgoFloat.open_profile` and class:`ArgoFloat.ls_profiles`.
         """
 
         def stem2cyc(s) -> int:
@@ -545,14 +560,14 @@ class FloatStoreProto(ABC):
 
         return self._df_profiles
 
-    def ls_profiles_for(
+    def _ls_profiles_for(
         self,
         cycle_number: Optional[int | list[int]] = None,
         dataset: Literal["C", "B", "S"] = "C",
         direction: Literal["A", "D"] = "A",
         auxiliary: bool = False,
     ) -> dict[int | str, str]:
-        """List all available profile files 'for' a specific dataset and direction
+        """List all available profile files *for* a specific dataset and direction
 
         Notes
         -----
@@ -588,11 +603,7 @@ class FloatStoreProto(ABC):
             - keys are file short name to be used with :class:`ArgoFloat.open_profile`,
             - values are absolute path toward profile files.
         """
-        CYCs = (
-            self.CYCLE_NUMBERS
-            if cycle_number is None
-            else cycle_number
-        )
+        CYCs = self.CYCLE_NUMBERS if cycle_number is None else cycle_number
         CYCs: list[int] = check_cyc(CYCs)
 
         if dataset.upper() not in ["C", "B", "S"]:
@@ -688,8 +699,9 @@ class FloatStoreProto(ABC):
             for ds in ["C", "B", "S"]:
                 for di in ["A", "D"]:
                     try:
-                        fl = self.ls_profiles_for(
-                            dataset=ds, direction=di,
+                        fl = self._ls_profiles_for(
+                            dataset=ds,
+                            direction=di,
                         )
                         for key, uri in fl.items():
                             self._ls_prof[key] = uri
@@ -700,7 +712,7 @@ class FloatStoreProto(ABC):
                 for ds in ["C", "B", "S"]:
                     for di in ["A", "D"]:
                         try:
-                            fl = self.ls_profiles_for(
+                            fl = self._ls_profiles_for(
                                 dataset=ds, direction=di, auxiliary=True
                             )
                             for key, uri in fl.items():
@@ -807,10 +819,10 @@ class FloatStoreProto(ABC):
         # key = f"{name}-{d2s(kwargs)}"
         file = self.ls_profiles()[name]
         ds = self.fs.open_dataset(file, **kwargs)
-        self._profile[name] = ds
+        self._ds_profiles[name] = ds
         return ds
 
-    def profile(self, name: str, **kwargs)->xr.Dataset:
+    def profile(self, name: str, **kwargs) -> xr.Dataset:
         """Open and decode a profile file, once
 
         This method is similar to :meth:`ArgoFloat.open_profile` except that data are fetched only once to improve performances.
@@ -827,9 +839,11 @@ class FloatStoreProto(ABC):
         :class:`xarray.Dataset`
 
         """
-        if name not in self._profile:
-            self.open_profile(name, **kwargs)  # will commit this dataset to self._profile dict
-        return self._profile[name]
+        if name not in self._ds_profiles:
+            self.open_profile(
+                name, **kwargs
+            )  # will commit this dataset to self._ds_profiles dict
+        return self._ds_profiles[name]
 
     def open_profiles(
         self,
@@ -905,10 +919,6 @@ class FloatStoreProto(ABC):
             # is similar:
             assert ds1.equals(ds2)
 
-        See Also
-        --------
-        :class:`ArgoFloat.ls_profiles_for`
-
         Examples
         --------
         .. code-block:: python
@@ -960,17 +970,22 @@ class FloatStoreProto(ABC):
             ds_list = af.open_profiles(dataset='S')
 
         """
-        self.ls_profiles() # Just making sure the instance as the internal placeholder filled
+        self.ls_profiles()  # Just making sure the instance as the internal placeholder filled
 
         def fname2key(file_name):
             for k, v in self.ls_profiles().items():
                 if v == file_name:
                     return k
-            raise ValueError(f"This file name '{file_name}' is not a valid profile file.")
+            raise ValueError(
+                f"This file name '{file_name}' is not a valid profile file."
+            )
 
         fnames = list(
-            self.ls_profiles_for(
-                cycle_number=cycle_number, dataset=dataset, direction=direction, auxiliary=auxiliary
+            self._ls_profiles_for(
+                cycle_number=cycle_number,
+                dataset=dataset,
+                direction=direction,
+                auxiliary=auxiliary,
             ).values()
         )
 
@@ -983,12 +998,12 @@ class FloatStoreProto(ABC):
             kwargs.update({"concat": False})
 
         _myprocessing = False
-        if 'preprocess' not in kwargs:
+        if "preprocess" not in kwargs:
             # Create a pre-processing function that will simply return the dataset in a dictionary
             # where the key will be used to commit the dataset in the internal placeholder later on.
             _myprocessing = True
-            kwargs['preprocess'] = lambda ds: {ds.encoding['source']: ds}
-            kwargs['concat'] = False
+            kwargs["preprocess"] = lambda ds: {ds.encoding["source"]: ds}
+            kwargs["concat"] = False
 
         results: xr.Dataset | Any | list[xr.Dataset | Any] = self.fs.open_mfdataset(
             fnames, **kwargs
@@ -1001,7 +1016,7 @@ class FloatStoreProto(ABC):
             for res in results:
                 for fname in res.keys():
                     key = fname2key(fname)
-                    self._profile[key] = res[fname]
+                    self._ds_profiles[key] = res[fname]
                     r.append(res[fname])
 
         if isinstance(results, list) and len(results) == 1:
@@ -1015,9 +1030,7 @@ class FloatStoreProto(ABC):
         keys.update(self.ls_profiles())
         return [k for k in keys.keys()]
 
-    def __getitem__(
-        self, args
-    ) -> int | str | list[int | str]:
+    def __getitem__(self, args) -> int | str | list[int | str]:
         """Retrieve netcdf file(s)
 
         .. code-block:: python
@@ -1053,9 +1066,9 @@ class FloatStoreProto(ABC):
             elif isinstance(obj, slice):
                 cycs = []
                 for cyc in range(
-                        self.CYCLE_NUMBERS[0] if not obj.start else obj.start,
-                        self.CYCLE_NUMBERS[-1] + 1 if not obj.stop else obj.stop,
-                        1 if not obj.step else obj.step,
+                    self.CYCLE_NUMBERS[0] if not obj.start else obj.start,
+                    self.CYCLE_NUMBERS[-1] + 1 if not obj.stop else obj.stop,
+                    1 if not obj.step else obj.step,
                 ):
                     if cyc in self.CYCLE_NUMBERS:
                         cycs.append(cyc)
@@ -1065,8 +1078,7 @@ class FloatStoreProto(ABC):
                 ConcurrentExecutor = ThreadPoolExecutor()
                 with ConcurrentExecutor as executor:
                     future_todo = {
-                        executor.submit(self.profile, cyc): cyc
-                        for cyc in cycs
+                        executor.submit(self.profile, cyc): cyc for cyc in cycs
                     }
                     futures = as_completed(future_todo)
                     for future in futures:
@@ -1075,35 +1087,34 @@ class FloatStoreProto(ABC):
                 return results
 
         elif isinstance(args, tuple):
-            obj : int | slice = args[0]
-            dataset : str = args[1]
+            obj: int | slice = args[0]
+            dataset: str = args[1]
 
             if isinstance(obj, str) and obj in self.ls_datasets():
                 raise ValueError("This syntax is for profiles only")
 
             elif isinstance(obj, int):
-                key = list(self.ls_profiles_for(obj, dataset=dataset).keys())[0]
+                key = list(self._ls_profiles_for(obj, dataset=dataset).keys())[0]
                 return self.profile(key)
 
             elif isinstance(obj, slice):
                 cycs = []
                 for cyc in range(
-                        self.CYCLE_NUMBERS[0] if not obj.start else obj.start,
-                        self.CYCLE_NUMBERS[-1] + 1 if not obj.stop else obj.stop,
-                        1 if not obj.step else obj.step,
+                    self.CYCLE_NUMBERS[0] if not obj.start else obj.start,
+                    self.CYCLE_NUMBERS[-1] + 1 if not obj.stop else obj.stop,
+                    1 if not obj.step else obj.step,
                 ):
                     if cyc in self.CYCLE_NUMBERS:
                         cycs.append(cyc)
 
-                keys = list(self.ls_profiles_for(cycs, dataset=dataset).keys())
+                keys = list(self._ls_profiles_for(cycs, dataset=dataset).keys())
 
                 # Small optimisation to handle a large number of cycles:
                 results = []
                 ConcurrentExecutor = ThreadPoolExecutor()
                 with ConcurrentExecutor as executor:
                     future_todo = {
-                        executor.submit(self.profile, key): key
-                        for key in keys
+                        executor.submit(self.profile, key): key for key in keys
                     }
                     futures = as_completed(future_todo)
                     for future in futures:
