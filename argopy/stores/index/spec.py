@@ -60,6 +60,8 @@ class ArgoIndexStoreProto(ABC):
         "aux",
         "ar_index_global_meta",
         "meta",
+        "argo_profile_detailled_index",
+        "core+",
     ]
     """List of supported conventions"""
 
@@ -101,6 +103,7 @@ class ArgoIndexStoreProto(ABC):
             - ``bgc-s`` or ``argo_synthetic-profile_index.txt``
             - ``aux``   or ``etc/argo-index/argo_aux-profile_index.txt``
             - ``meta``  or ``ar_index_global_meta.txt``
+            - ``core+`` or ``argo_profile_detailled_index.txt``
             - a local absolute path toward a file following an Argo index convention. When using a local file, you need to set the ``convention`` followed by the file.
 
         convention: str, default: None
@@ -116,6 +119,7 @@ class ArgoIndexStoreProto(ABC):
             - ``bgc-s`` or ``argo_synthetic-profile_index``
             - ``aux``   or ``argo_aux-profile_index``
             - ``meta``  or ``ar_index_global_meta``
+            - ``core+`` or ``argo_profile_detailled_index``
 
         cache : bool, default: False
             Use cache or not.
@@ -140,6 +144,8 @@ class ArgoIndexStoreProto(ABC):
             index_file = "etc/argo-index/argo_aux-profile_index.txt"
         elif index_file in ["meta"]:
             index_file = "ar_index_global_meta.txt"
+        elif index_file in ["core+"]:
+            index_file = "etc/argo-index/argo_profile_detailled_index.txt"
         self.index_file = index_file
 
         # Default number of commented lines to skip at the beginning of csv index files
@@ -236,6 +242,8 @@ class ArgoIndexStoreProto(ABC):
                 convention = "argo_aux-profile_index"
             elif convention in ["meta"]:
                 convention = "ar_index_global_meta"
+            elif convention in ["core+"]:
+                convention = "argo_profile_detailled_index"
         self._convention = convention
 
         # Check if the index file exists
@@ -327,7 +335,6 @@ class ArgoIndexStoreProto(ABC):
 
         Return 'full' if a search was not yet performed on the :class:`ArgoIndex` instance
 
-        This method uses the BOX, WMO, CYC keys of the index instance ``search_type`` property
         """
         cname = "full"
         C = []
@@ -426,6 +433,31 @@ class ArgoIndexStoreProto(ABC):
                     cname = "DAC%s" % (DAC[0])
                 else:
                     cname = ";".join(["DAC%s" % dac for dac in sorted(DAC)])
+
+            elif "PROFQC" == key:
+                PROFQC, LOG = self.search_type["PROFQC"]
+                cname = ("_%s_" % LOG).join(
+                    ["%s_%s" % (p, "".join(PROFQC[p])) for p in PROFQC]
+                )
+
+            elif "PSAL_ADJ_MEAN" == key:
+                log.debug(self.search_type)
+                ADJ = self.search_type["PSAL_ADJ_MEAN"]
+                cname = []
+                if ADJ[0] is not None:
+                    cname.append(f"MEAN_PSAL_ADJ>={ADJ[0]}")
+                if ADJ[1] is not None:
+                    cname.append(f"MEAN_PSAL_ADJ<={ADJ[1]}")
+                cname = "_and_".join(cname)
+
+            elif key == "NLEVELS":
+                N = self.search_type[key]
+                if N[0] is not None and N[1] is not None:
+                    cname = f"n={N[0]}/{N[1]}"
+                elif N[0] is not None and N[1] is None:
+                    cname = f"n>={N[0]}"
+                elif N[1] is not None and N[0] is None:
+                    cname = f"n<={N[1]}"
 
             C.append(cname)
 
@@ -543,6 +575,8 @@ class ArgoIndexStoreProto(ABC):
             title = "Aux-Profile directory file of the Argo GDAC"
         elif self.convention in ["ar_index_global_meta", "meta"]:
             title = "Metadata directory file of the Argo GDAC"
+        elif self.convention in ["argo_profile_detailled_index", "core+"]:
+            title = "Detailed Profile directory file of the Argo GDAC"
         return title
 
     @property
@@ -559,6 +593,12 @@ class ArgoIndexStoreProto(ABC):
                        'parameters', 'date_update']
         elif self.convention in ["ar_index_global_meta"]:
             columns = ['file', 'profiler_type', 'institution', 'date_update']
+        elif self.convention in ["argo_profile_detailled_index"]:
+            columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution', 'date_update',
+                       'profile_temp_qc', 'profile_psal_qc','profile_doxy_qc',
+                       'ad_psal_adjustment_mean','ad_psal_adjustment_deviation',
+                       'gdac_date_creation','gdac_date_update','n_levels',
+                       ]
 
         return columns
 
@@ -1028,6 +1068,22 @@ file,date,latitude,longitude,ocean,profiler_type,institution,parameters,date_upd
 # FTP root number 2 : ftp://usgodae.org/pub/outgoing/argo/dac
 # GDAC node : CORIOLIS
 file,profiler_type,institution,date_update
+""" % pd.to_datetime(
+                "now", utc=True
+            ).strftime(
+                "%Y%m%d%H%M%S"
+            )
+
+        elif self.convention == "argo_profile_detailled_index":
+            header = """# Title : Profile directory file of the Argo Global Data Assembly Center
+# Description : The directory file describes all individual profile files of the argo GDAC ftp site
+# Project : ARGO
+# Format version : 2.2
+# Date of update : %s
+# FTP root number 1 : ftp://ftp.ifremer.fr/ifremer/argo/dac
+# FTP root number 2 : ftp://usgodae.usgodae.org/pub/outgoing/argo/dac
+# GDAC node : CORIOLIS
+file,date,latitude,longitude,ocean,profiler_type,institution,date_update,profile_temp_qc,profile_psal_qc,profile_doxy_qc,ad_psal_adjustment_mean,ad_psal_adjustment_deviation,gdac_date_creation,gdac_date_update,n_levels
 """ % pd.to_datetime(
                 "now", utc=True
             ).strftime(

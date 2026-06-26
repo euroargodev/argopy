@@ -533,7 +533,7 @@ class indexstore(ArgoIndexStoreProto):
         ]:
             s = s.set_column(1, "date", new_date)
 
-        if self.convention == "ar_index_global_prof":
+        if self.convention in ["ar_index_global_prof", "argo_profile_detailled_index"]:
             s = s.set_column(7, "date_update", new_date_update)
         elif self.convention in [
             "argo_bio-profile_index",
