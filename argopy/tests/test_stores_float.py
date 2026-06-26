@@ -52,8 +52,9 @@ VALID_HOSTS.update(VALID_REMOTE_HOSTS)
 """
 List WMO to be tested, one for each mission
 """
-VALID_WMO = [13857, 3902131]  # core, bgc
-# VALID_WMO = [13857]  # core, bgc
+WMO_CORE = [13857]
+WMO_BGC = [3902131]
+VALID_WMO = WMO_CORE + WMO_BGC
 
 
 def id_for_host(host):
@@ -296,6 +297,38 @@ class Test_FloatStore_Spec:
         )
         for opts in scenarios
     ]
+
+    scenarios_bgc = [
+        (wmo, h, cache)
+        for wmo in WMO_BGC
+        for h in VALID_HOSTS.keys()
+        for cache in [False, True]
+    ]
+    scenarios_ids_bgc = [
+        "wmo=%i, host='%s', %s"
+        % (
+            opts[0],
+            id_for_host(VALID_HOSTS[opts[1]]),
+            "cached" if opts[2] else "no cache",
+        )
+        for opts in scenarios_bgc
+    ]
+
+    scenarios_core = [
+        (wmo, h, cache)
+        for wmo in WMO_BGC
+        for h in VALID_HOSTS.keys()
+        for cache in [False, True]
+    ]
+    scenarios_ids_core = [
+        "wmo=%i, host='%s', %s"
+        % (
+            opts[0],
+            id_for_host(VALID_HOSTS[opts[1]]),
+            "cached" if opts[2] else "no cache",
+        )
+        for opts in scenarios_core
+    ]
     #############
     # UTILITIES #
     #############
@@ -394,9 +427,9 @@ class Test_FloatStore_Spec:
     def test_open_dataset(self, mocked_httpserver, af):
         lds = af.ls_datasets()
         ds_key, _ = random.choice(list(lds.items()))
-        assert isinstance(af.open_dataset(ds_key), xr.Dataset)
-        assert isinstance(af.dataset(ds_key), xr.Dataset)
         assert isinstance(af[ds_key], xr.Dataset)
+        assert isinstance(af.dataset(ds_key), xr.Dataset)
+        assert isinstance(af.open_dataset(ds_key), xr.Dataset)
 
         with pytest.raises(ValueError):
             af.open_dataset("dummy_ds_key")
@@ -405,9 +438,9 @@ class Test_FloatStore_Spec:
     def test_open_profile(self, mocked_httpserver, af):
         lds = af.ls_profiles()
         ds_key, _ = random.choice(list(lds.items()))
-        assert isinstance(af.open_profile(ds_key), xr.Dataset)
-        assert isinstance(af.profile(ds_key), xr.Dataset)
         assert isinstance(af[ds_key], xr.Dataset)
+        assert isinstance(af.profile(ds_key), xr.Dataset)
+        assert isinstance(af.open_profile(ds_key), xr.Dataset)
 
         with pytest.raises(ValueError):
             af.open_profile("dummy_ds_key")
@@ -416,3 +449,16 @@ class Test_FloatStore_Spec:
     def test_open_profiles(self, mocked_httpserver, af):
         ds_list = af.open_profiles(af.CYCLE_NUMBERS[0:2])
         assert all([isinstance(ds, xr.Dataset) for ds in ds_list])
+
+    # @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
+    # def test_get_item(self, mocked_httpserver, af):
+    #     assert isinstance(af[1], xr.Dataset)
+    #     assert all([isinstance(ds, xr.Dataset) for ds in af[1:3]])
+    #     assert all([isinstance(ds, xr.Dataset) for ds in af[1:5:2]])
+    #
+    # @pytest.mark.parametrize("af", scenarios_bgc, indirect=True, ids=scenarios_ids_bgc)
+    # def test_get_item_bgc(self, mocked_httpserver, af):
+    #     for dataset in ['B', 'S']:
+    #         assert isinstance(af[1, dataset], xr.Dataset)
+    #         assert all([isinstance(ds, xr.Dataset) for ds in af[1:3, dataset]])
+    #         assert all([isinstance(ds, xr.Dataset) for ds in af[1:5:2, dataset]])
