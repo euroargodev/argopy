@@ -21,9 +21,7 @@ The simplest use case may look like this:
     WMO = 3902492 # Use any float
     ds = ArgoFloat(WMO).open_dataset('prof')
 
-This will trigger download and opening of the ``https://data-argo.ifremer.fr/dac/bodc/3902492/3902492_prof.nc`` file. You should notice
-that :class:`ArgoFloat` automatically determined in which DAC folder to find this float and constructed the appropriate path
-toward the requested dataset ``prof``.
+This will trigger download and opening of the ``https://data-argo.ifremer.fr/dac/bodc/3902492/3902492_prof.nc`` file. You should notice that :class:`ArgoFloat` automatically determined in which DAC folder to find this float and constructed the appropriate path toward the requested dataset ``prof``.
 
 Float store creation
 --------------------
@@ -42,7 +40,7 @@ If a specific host is not provided, :class:`ArgoFloat` will fetch float data fro
     # af = ArgoFloat(WMO, host='s3')     # Shortcut for s3://argo-gdac-sandbox/pub
 
 
-Note that in order to include dataset from the auxiliary GDAC folder, you need to specify it with the ``aux`` argument at
+Note that in order to include datasets from the auxiliary GDAC folder, you need to specify it with the ``aux`` argument at
 the instantiation of the class:
 
 .. ipython:: python
