@@ -279,3 +279,28 @@ def _add_attributes(this):  # noqa: C901
         }
 
     return this
+
+
+def _check_substrings(constraint: str) -> bool:
+    """Extend the OPeNDAP with extra strings.
+
+    From: https://github.com/ioos/erddapy/blob/518440fbc0805cab26b33379cd03ed8330be98cd/erddapy/core/url.py#L231
+    """
+    # The `now` doesn't need this check, it works both quoted and unquoted.
+    substrings = ["now+", "now-", "min(", "max("]
+    return any(
+        True for substring in substrings if substring in str(constraint)
+    )
+
+def quote_string_constraints(kwargs: dict[str, str]) -> dict[str, str]:
+    """Quote constraints of String variables.
+
+    The right-hand-side value must be surrounded by double quotes if they are
+    not relative constraints.
+
+    From: https://github.com/ioos/erddapy/blob/518440fbc0805cab26b33379cd03ed8330be98cd/erddapy/core/url.py#L211
+    """
+    return {
+        k: f'"{v}"' if isinstance(v, str) and not _check_substrings(v) else v
+        for k, v in kwargs.items()
+    }

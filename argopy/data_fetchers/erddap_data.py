@@ -18,7 +18,6 @@ from typing import Union
 from aiohttp import ClientResponseError
 import logging
 from erddapy.erddapy import ERDDAP, parse_dates
-from erddapy.erddapy import _quote_string_constraints as quote_string_constraints
 
 from ..options import OPTIONS, PARALLEL_SETUP
 from ..utils.lists import list_bgc_s_variables, list_core_parameters
@@ -27,7 +26,7 @@ from ..stores import httpstore, has_distributed, distributed
 from ..stores.index import indexstore_pd as ArgoIndex
 from ..utils import is_list_of_strings, to_list, Chunker
 from .proto import ArgoDataFetcherProto
-from .erddap_data_processors import pre_process
+from .erddap_data_processors import pre_process, quote_string_constraints
 
 
 log = logging.getLogger("argopy.erddap.data")
