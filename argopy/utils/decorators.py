@@ -12,21 +12,25 @@ class DocInherit(object):
 
     The class itself is also used as a decorator
 
-    Usage:
+    Examples
+    --------
+    .. code:: python
 
-    class Foo(object):
-        def foo(self):
-            "Frobber"
-            pass
+        class Foo(object):
+            def foo(self):
+                "Frobber"
+                pass
 
-    class Bar(Foo):
-        @doc_inherit
-        def foo(self):
-            pass
+        class Bar(Foo):
+            @doc_inherit
+            def foo(self):
+                pass
 
-    Now, Bar.foo.__doc__ == Bar().foo.__doc__ == Foo.foo.__doc__ == "Frobber"
+    Now, ``Bar.foo.__doc__ == Bar().foo.__doc__ == Foo.foo.__doc__ == "Frobber"``
 
-    src: https://code.activestate.com/recipes/576862/
+    References
+    ----------
+    Freely adapted from and inspired by https://code.activestate.com/recipes/576862/
     """
 
     def __init__(self, mthd):
@@ -112,7 +116,7 @@ def deprecated(reason: str = None, version: str = None, ignore_caller: List = []
 
     References
     ----------
-    This decorator is largely inspired by https://stackoverflow.com/a/40301488
+    Freely adapted from and inspired by https://stackoverflow.com/a/40301488
     """
     import inspect
     ignore_caller = [ignore_caller]
@@ -192,23 +196,15 @@ def deprecated(reason: str = None, version: str = None, ignore_caller: List = []
 
 
 class AccessorRegistrationWarning(Warning):
-    """Warning for conflicts in accessor registration.
-
-    Disclosure
-    ----------
-    This class was copied from [xarray](https://github.com/pydata/xarray/blob/main/xarray/core/extensions.py)
-    under Apache License 2.0
-    """
+    """Warning for conflicts in accessor registration"""
+    # Freely adapted from and inspired by:
+    # https://github.com/pydata/xarray/blob/main/xarray/core/extensions.py
 
 
 class _CachedAccessor:
-    """Custom property-like object (descriptor) for caching accessors.
-
-    Disclosure
-    ----------
-    This class was copied from [xarray](https://github.com/pydata/xarray/blob/main/xarray/core/extensions.py)
-    under Apache License 2.0
-    """
+    """Custom property-like object (descriptor) for caching accessors."""
+    # Freely adapted from and inspired by:
+    # https://github.com/pydata/xarray/blob/main/xarray/core/extensions.py
 
     def __init__(self, name, accessor):
         self._name = name
