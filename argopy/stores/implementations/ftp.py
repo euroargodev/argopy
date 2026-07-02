@@ -203,7 +203,7 @@ class ftpstore(httpstore):
 
                 if "source" not in ds.encoding:
                     if isinstance(url, str):
-                        ds.encoding["source"] = self.full_path(url)
+                        ds.encoding["source"] = self.full_path(url, protocol=True)
 
             else:
                 target = target if isinstance(target, bytes) else target.getbuffer()

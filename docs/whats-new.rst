@@ -7,12 +7,13 @@ What's New
 
 |pypi dwn| |conda dwn|
 
-
 Coming up next (unreleased)
 ---------------------------
 
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- **New methods to access any mono-cycle profile files**, using :class:`ArgoFloat.ls_profiles`, :class:`ArgoFloat.open_profile` and :class:`ArgoFloat.open_profiles` methods. (:pr:`590`) by |gmaze|.
 
 - **Full Argo vocabulary support** for reference tables (:class:`ArgoReferenceTable`), values (:class:`ArgoReferenceValue`) and mappings (:class:`ArgoReferenceMapping`) (:pr:`575`) by |gmaze|.
 

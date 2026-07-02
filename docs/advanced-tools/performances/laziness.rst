@@ -161,7 +161,7 @@ Now we can get a dummy list of netcdf files:
     idx = ArgoIndex(host='s3').query.box([-65, -55, 30, 40,
                                           '2025-01-01', '2025-02-01'])
 
-    ncfiles = [af.ls_dataset()['prof'] for af in idx.iterfloats()]
+    ncfiles = [af.ls_datasets()['prof'] for af in idx.iterfloats()]
     print(len(ncfiles))
 
 and compute zarr references that will be saved by the :class:`stores.ArgoKerchunker` instance. Note that this computation is done using Dask delayed when available, otherwise using multithreading:
