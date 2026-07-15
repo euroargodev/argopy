@@ -148,13 +148,11 @@ class Test_FloatStore_Offline:
 
     @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
     def test_load_metadata(self, af):
-        af.load_metadata()
         assert hasattr(af, "metadata")
         assert isinstance(af.metadata, dict)
 
     @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
     def test_load_dac(self, af):
-        af.load_dac()
         assert hasattr(af, "dac")
         assert isinstance(af.dac, str)
 
@@ -249,19 +247,16 @@ class Test_FloatStore_Online:
     #########
     @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
     def test_load_metadata(self, af):
-        af.load_metadata()
         assert hasattr(af, "metadata")
         assert isinstance(af.metadata, dict)
 
     @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
     def test_load_dac(self, af):
-        af.load_dac()
         assert hasattr(af, "dac")
         assert isinstance(af.dac, str)
 
     @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
     def test_load_technicaldata(self, af):
-        af.load_technicaldata()
         assert hasattr(af, "technicaldata")
         assert isinstance(af.technicaldata, dict)
 
@@ -447,7 +442,7 @@ class Test_FloatStore_Spec:
 
     @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
     def test_open_profiles(self, mocked_httpserver, af):
-        ds_list = af.open_profiles(af.CYCLE_NUMBERS[0:2])
+        ds_list = af.open_profiles(af.CYCLE_NUMBERS[1:3])
         log.debug(af._ds_profiles.keys())
         log.debug(ds_list)
         assert all([isinstance(ds, xr.Dataset) for ds in ds_list])
