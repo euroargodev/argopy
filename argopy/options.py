@@ -1,7 +1,7 @@
 """
 This module manage options of the package
 
-# Like always, largely inspired by xarray code:
+# Freely adapted from and inspired by Xarray:
 # https://github.com/pydata/xarray/blob/cafab46aac8f7a073a32ec5aa47e213a9810ed54/xarray/core/options.py
 """
 
