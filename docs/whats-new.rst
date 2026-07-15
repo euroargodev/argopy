@@ -7,12 +7,13 @@ What's New
 
 |pypi dwn| |conda dwn|
 
-
 Coming up next (unreleased)
 ---------------------------
 
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- **New methods to access any mono-cycle profile files**, using :class:`ArgoFloat.ls_profiles`, :class:`ArgoFloat.open_profile` and :class:`ArgoFloat.open_profiles` methods. (:pr:`590`) by |gmaze|.
 
 - **Full Argo vocabulary support** for reference tables (:class:`ArgoReferenceTable`), values (:class:`ArgoReferenceValue`) and mappings (:class:`ArgoReferenceMapping`) (:pr:`575`) by |gmaze|.
 
@@ -24,6 +25,8 @@ Internals
 - **Fix bug** where by some unit tests would raise  ``fsspec.exceptions.FSTimeoutError``, :issue:`593`. (:pr:`640`) by |gmaze|.
 
 - **Fix bug** whereby :meth:`Dataset.argo.point2profile` would return un-ordered ``N_PROF`` coordinate instead of a clean ``0..N_PROF-1`` range, :issue:`632`. by |gmaze|.
+
+- **Fix inconsistency** in checking availability of an :class:`ArgoFloat` configuration parameter, :issue:`643`. (:pr:`644`) by |gmaze|.
 
 Documentation
 ^^^^^^^^^^^^^
