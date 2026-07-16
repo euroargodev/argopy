@@ -442,9 +442,11 @@ class Test_FloatStore_Spec:
 
     @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
     def test_open_profiles(self, mocked_httpserver, af):
-        ds_list = af.open_profiles(af.CYCLE_NUMBERS[1:3])
+        ds_list = af.open_profiles(af.CYCLE_NUMBERS[1:-1])
+        log.debug("^"*10)
         log.debug(af._ds_profiles.keys())
-        log.debug(ds_list)
+        log.debug(af.fs.fs)
+        log.debug("^"*10)
         assert all([isinstance(ds, xr.Dataset) for ds in ds_list])
 
     # @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
