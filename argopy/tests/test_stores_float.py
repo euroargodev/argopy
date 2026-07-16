@@ -31,7 +31,8 @@ skip_spec = pytest.mark.skipif(0, reason="Skipped tests for specification")
 
 """
 List GDAC hosts to be tested. 
-Since the class is compatible with host from local, http, ftp or s3 protocols, we try to test them all:
+Since the ArgoFloat class is compatible with hosts from local, http, ftp or s3 protocols, we try to test them all.
+We use 2 dictionaries to be able to test implementations separately.
 """
 VALID_LOCAL_HOSTS = {
     "local": argopy.tutorial.open_dataset("gdac")[0],  # Use local files
@@ -45,10 +46,15 @@ VALID_REMOTE_HOSTS = {
 if has_s3:
     VALID_REMOTE_HOSTS.update({"s3": "s3://argo-gdac-sandbox/pub"})
 
+VALID_HOSTS = VALID_LOCAL_HOSTS.copy()
+VALID_HOSTS.update(VALID_REMOTE_HOSTS)
+
 """
 List WMO to be tested, one for each mission
 """
-VALID_WMO = [13857, 3902131]  # core, bgc
+WMO_CORE = [13857]
+WMO_BGC = [3902131]
+VALID_WMO = WMO_CORE + WMO_BGC
 
 
 def id_for_host(host):
@@ -65,6 +71,8 @@ def id_for_host(host):
 class Test_FloatStore_Offline:
     """
     Tests methods and attributes specific to the Offline implementation
+
+    Note that by directly using the implementation, and not the facade, un-cached extensions are not available (eg: 'plot'). Which is ok because extensions should have their own tests suite.
     """
 
     floatstore = ArgoFloatOffline
@@ -140,13 +148,11 @@ class Test_FloatStore_Offline:
 
     @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
     def test_load_metadata(self, af):
-        af.load_metadata()
         assert hasattr(af, "metadata")
         assert isinstance(af.metadata, dict)
 
     @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
     def test_load_dac(self, af):
-        af.load_dac()
         assert hasattr(af, "dac")
         assert isinstance(af.dac, str)
 
@@ -155,6 +161,8 @@ class Test_FloatStore_Offline:
 class Test_FloatStore_Online:
     """
     Tests methods and attributes specific to the Online implementation
+
+    Note that by directly using the implementation, and not the facade, un-cached extensions are not available (eg: 'plot'). Which is ok because extensions should have their own tests suite.
     """
 
     floatstore = ArgoFloatOnline
@@ -239,19 +247,16 @@ class Test_FloatStore_Online:
     #########
     @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
     def test_load_metadata(self, af):
-        af.load_metadata()
         assert hasattr(af, "metadata")
         assert isinstance(af.metadata, dict)
 
     @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
     def test_load_dac(self, af):
-        af.load_dac()
         assert hasattr(af, "dac")
         assert isinstance(af.dac, str)
 
     @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
     def test_load_technicaldata(self, af):
-        af.load_technicaldata()
         assert hasattr(af, "technicaldata")
         assert isinstance(af.technicaldata, dict)
 
@@ -262,16 +267,14 @@ class Test_FloatStore_Online:
         assert "technical" in af.api_point
 
 
-VALID_HOSTS = VALID_LOCAL_HOSTS.copy()
-VALID_HOSTS.update(VALID_REMOTE_HOSTS)
-
-
 @skip_spec
 class Test_FloatStore_Spec:
     """
-    Tests methods and attributes of the facade, for both the offline/online implementations
+    Tests for methods and attributes shared by all implementations, hence from the specification prototype.
 
     The instance fixture `af` will rely on the appropriate implementation for a given host.
+
+    But note that by directly using the implementation, and not the facade, un-cached extensions are not available (eg: 'plot'). Which is ok because extensions should have their own tests suite.
     """
 
     scenarios = [
@@ -288,6 +291,38 @@ class Test_FloatStore_Spec:
             "cached" if opts[2] else "no cache",
         )
         for opts in scenarios
+    ]
+
+    scenarios_bgc = [
+        (wmo, h, cache)
+        for wmo in WMO_BGC
+        for h in VALID_HOSTS.keys()
+        for cache in [False, True]
+    ]
+    scenarios_ids_bgc = [
+        "wmo=%i, host='%s', %s"
+        % (
+            opts[0],
+            id_for_host(VALID_HOSTS[opts[1]]),
+            "cached" if opts[2] else "no cache",
+        )
+        for opts in scenarios_bgc
+    ]
+
+    scenarios_core = [
+        (wmo, h, cache)
+        for wmo in WMO_BGC
+        for h in VALID_HOSTS.keys()
+        for cache in [False, True]
+    ]
+    scenarios_ids_core = [
+        "wmo=%i, host='%s', %s"
+        % (
+            opts[0],
+            id_for_host(VALID_HOSTS[opts[1]]),
+            "cached" if opts[2] else "no cache",
+        )
+        for opts in scenarios_core
     ]
     #############
     # UTILITIES #
@@ -387,6 +422,8 @@ class Test_FloatStore_Spec:
     def test_open_dataset(self, mocked_httpserver, af):
         lds = af.ls_datasets()
         ds_key, _ = random.choice(list(lds.items()))
+        assert isinstance(af[ds_key], xr.Dataset)
+        assert isinstance(af.dataset(ds_key), xr.Dataset)
         assert isinstance(af.open_dataset(ds_key), xr.Dataset)
 
         with pytest.raises(ValueError):
@@ -396,11 +433,31 @@ class Test_FloatStore_Spec:
     def test_open_profile(self, mocked_httpserver, af):
         lds = af.ls_profiles()
         ds_key, _ = random.choice(list(lds.items()))
+        assert isinstance(af[ds_key], xr.Dataset)
+        assert isinstance(af.profile(ds_key), xr.Dataset)
         assert isinstance(af.open_profile(ds_key), xr.Dataset)
 
         with pytest.raises(ValueError):
             af.open_profile("dummy_ds_key")
 
+    @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
+    def test_open_profiles(self, mocked_httpserver, af):
+        ds_list = af.open_profiles(af.CYCLE_NUMBERS[1:10])
+        log.debug("^"*10)
+        log.debug(af._ds_profiles.keys())
+        log.debug(af.fs.fs)
+        log.debug("^"*10)
+        assert all([isinstance(ds, xr.Dataset) for ds in ds_list])
+
     # @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
-    # def test_open_profiles(self, mocked_httpserver, af):
-    #     assert False, "To be Implemented !"
+    # def test_get_item(self, mocked_httpserver, af):
+    #     assert isinstance(af[1], xr.Dataset)
+    #     assert all([isinstance(ds, xr.Dataset) for ds in af[1:3]])
+    #     assert all([isinstance(ds, xr.Dataset) for ds in af[1:5:2]])
+    #
+    # @pytest.mark.parametrize("af", scenarios_bgc, indirect=True, ids=scenarios_ids_bgc)
+    # def test_get_item_bgc(self, mocked_httpserver, af):
+    #     for dataset in ['B', 'S']:
+    #         assert isinstance(af[1, dataset], xr.Dataset)
+    #         assert all([isinstance(ds, xr.Dataset) for ds in af[1:3, dataset]])
+    #         assert all([isinstance(ds, xr.Dataset) for ds in af[1:5:2, dataset]])

@@ -316,9 +316,8 @@ class FloatStoreProto(ABC):
             # Ensure the protocol is included for non-local files on FTP and S3 servers:
             for ip, p in enumerate(paths):
                 if self.host_protocol == "ftp":
-                    paths[ip] = (
-                        "ftp://" + self.fs.fs.host + fsspec.core.split_protocol(p)[-1]
-                    )
+                    paths[ip] = f"ftp://{self.fs.fs.host}:{self.fs.fs.port}{fsspec.core.split_protocol(p)[-1]}"
+
                 if self.host_protocol == "s3":
                     paths[ip] = "s3://" + fsspec.core.split_protocol(p)[-1]
 
@@ -361,9 +360,8 @@ class FloatStoreProto(ABC):
             # Ensure the protocol is included for non-local files on FTP and S3 servers:
             for ip, p in enumerate(paths):
                 if self.host_protocol == "ftp":
-                    paths[ip] = (
-                        "ftp://" + self.fs.fs.host + fsspec.core.split_protocol(p)[-1]
-                    )
+                    paths[ip] = f"ftp://{self.fs.fs.host}:{self.fs.fs.port}{fsspec.core.split_protocol(p)[-1]}"
+
                 if self.host_protocol == "s3":
                     paths[ip] = "s3://" + fsspec.core.split_protocol(p)[-1]
 
@@ -457,7 +455,7 @@ class FloatStoreProto(ABC):
     def dataset(self, name: str = "prof", **kwargs) -> xr.Dataset:
         """Open and decode a dataset file, once
 
-        This method is similar to :meth:`ArgoFloat.open_dataset` except that data are fetched only once to improve performances.
+        This method is similar to :meth:`ArgoFloat.open_dataset` except that data are fetched only once and saved internally to improve performances.
 
         Parameters
         ----------
@@ -800,7 +798,7 @@ class FloatStoreProto(ABC):
     def profile(self, name: str, **kwargs) -> xr.Dataset:
         """Open and decode a profile file, once
 
-        This method is similar to :meth:`ArgoFloat.open_profile` except that data are fetched only once to improve performances.
+        This method is similar to :meth:`ArgoFloat.open_profile` except that data are fetched only once and saved internally to improve performances.
 
         Parameters
         ----------
@@ -945,14 +943,16 @@ class FloatStoreProto(ABC):
             ds_list = af.open_profiles(dataset='S')
 
         """
-        self.ls_profiles()  # Just making sure the instance as the internal placeholder filled
+        # First we ensure the instance as the internal placeholder for profiles filled:
+        # (this avoid error when accessing the placeholder in parallel)
+        self.ls_profiles()
 
         def fname2key(file_name):
             for k, v in self.ls_profiles().items():
                 if v == file_name:
                     return k
             raise ValueError(
-                f"This file name '{file_name}' is not a valid profile file."
+                f"This file name '{file_name}' does not correspond to any of the listed profile files: {list(self.ls_profiles().values())}"
             )
 
         fnames = list(
@@ -993,6 +993,7 @@ class FloatStoreProto(ABC):
                     key = fname2key(fname)
                     self._ds_profiles[key] = res[fname]
                     r.append(res[fname])
+            results = r
 
         if isinstance(results, list) and len(results) == 1:
             return results[0]
@@ -1037,7 +1038,7 @@ class FloatStoreProto(ABC):
         return [k for k in keys.keys()]
 
     def __getitem__(self, args) -> int | str | list[int | str]:
-        """Retrieve netcdf file(s)
+        """Retrieve netcdf file(s), using dictionary-like syntax
 
         .. code-block:: python
 
@@ -1046,11 +1047,12 @@ class FloatStoreProto(ABC):
             af = ArgoFloat(3902492)
 
             # Get any dataset or profile:
+            # Valid keys are any from self.ls_datasets().keys() and self.ls_profiles().keys()
             af['prof']
             af[4]
             af['B3']
 
-            # Get a slice of profiles:
+            # For profiles, it is possible to provide slices:
             af[1:4]
             af[::2]
             af[:]
