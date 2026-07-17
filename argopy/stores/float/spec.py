@@ -825,6 +825,7 @@ class FloatStoreProto(ABC):
         direction: Literal["A", "D"] = "A",
         auxiliary: bool = False,
         cast: bool = True,
+        netCDF4:bool = False,
         **kwargs,
     ):
         """Open and decode one or more profile files
@@ -848,19 +849,21 @@ class FloatStoreProto(ABC):
             - 'D': Descending profile files.
         auxiliary: Bool, default = False
             Return files from the auxiliary folder. This requires the object to have been instanciated with the `aux=True` option.
-        cast: bool, optional, default = True
+        cast: bool, default = True
             Determine if dataset variables should be cast or not.
 
             This is similar to opening the dataset directly with :class:`xarray.open_dataset` using the ``engine=`argo``` option.
-            This will be ignored if the ``netCDF4` kwarg is set to True.
+            This argument is ignored if ``netCDF4` is set to True.
+        netCDF4: bool, default = False
+            Return a native :class:`netCDF4.Dataset` object instead of a :class:`xarray.Dataset`
         **kwargs
-            All the other arguments are passed to the file store `open_mfdataset` method. Interesting arguments are:
+            Other arguments passed to the file store `open_mfdataset` method:
 
             - 'preprocess' and 'preprocess_opts' to apply some pre-processing function to each profile file,
             - 'progress' to display a fetching progress bar,
             - 'method' to impose a parallelization method,
             - 'errors' to control what to do if an error occur with one profile file,
-            - 'open_dataset_opts' to provide options when opening each netcdf files, in particular 'netCDF4' to return a legacy netcdf dataset instead of a :class:`xr.Dataset`.
+            - 'concat'
 
             Depending on the GDAC host, more details can be found from: :class:`argopy.stores.httpstore.open_mfdataset`, :class:`argopy.stores.local.open_mfdataset`, :class:`argopy.stores.ftppstore.open_mfdataset` or :class:`argopy.stores.s3store.open_mfdataset`.
 
@@ -964,16 +967,17 @@ class FloatStoreProto(ABC):
             ).values()
         )
 
-        if "xr_opts" not in kwargs and cast is True:
-            if "open_dataset_opts" in kwargs:
-                kwargs["open_dataset_opts"].update({"xr_opts": {"engine": "argo"}})
-            else:
-                kwargs.update({"open_dataset_opts": {"xr_opts": {"engine": "argo"}}})
+        if netCDF4:
+            kwargs["open_dataset_opts"] = {"netCDF4": True}
+        else:
+            if cast is True:
+                kwargs["open_dataset_opts"] = {"xr_opts": {"engine": "argo"}}
+
         if "concat" not in kwargs:
-            kwargs.update({"concat": False})
+            kwargs["concat"] = False
 
         _myprocessing = False
-        if "preprocess" not in kwargs:
+        if "preprocess" not in kwargs and not netCDF4:
             # Create a pre-processing function that will simply return the dataset in a dictionary
             # where the key will be used to commit the dataset in the internal placeholder later on.
             _myprocessing = True
