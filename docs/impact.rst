@@ -28,6 +28,8 @@ Papers & proceedings citing Argopy
 
 #. Gonzalez A. (2023). "The Argo Online School: An e-learning tool to get started with Argo", The Journal of Open Source Education, 7(80), 193, https://jose.theoj.org/papers/10.21105/jose.00193
 
+# Hackl, Jürgen. (2026). "EuroFlood: a Python library and queryable index for the CEMS satellite-derived flood-depth archive of Europe." arXiv preprint https://arxiv.org/pdf/2607.21126
+
 #. Huda, Md Nurul  (2023). "Machine Learning for Improvement of Ocean Data Resolution for Weather Forecasting and Climatological Research", Thesis and Dissertations, Virginia Tech, http://hdl.handle.net/10919/116504
 
 #. Kerhalkar, S., Tandon, A., & MacKinnon, J. A. (2026). "Impacts of salinity stratification on sub-seasonal SST warming in the Northern Indian Ocean", Journal of Geophysical Research: Oceans, 131, e2025JC023486. https://doi.org/10.1029/2025JC023486
