@@ -7,14 +7,15 @@ What's New
 
 |pypi dwn| |conda dwn|
 
-
 Coming up next (unreleased)
 ---------------------------
 
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- **Full Argo vocabulary support** for reference tables (:class:`ArgoReferenceTable`), values (:class:`ArgoReferenceValue`) and mappings (:class:`ArgoReferenceMapping`) (:pr:`575`) by |gmaze|.
+- **New methods to access mono-cycle profile files** from :class:`ArgoFloat` instances using :class:`ArgoFloat.ls_profiles`, :class:`ArgoFloat.open_profile` and :class:`ArgoFloat.open_profiles` methods. (:pr:`590`) by |gmaze|.
+
+- **New full Argo vocabulary support** for reference tables (:class:`ArgoReferenceTable`), values (:class:`ArgoReferenceValue`) and mappings (:class:`ArgoReferenceMapping`) (:pr:`575`) by |gmaze|.
 
 BGC-Argo+ dataset integration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -37,7 +38,11 @@ Internals
 
 - **Update USA GDAC url** :issue:`624` (:pr:`624`) by |gmaze|.
 
-- **Fix bug** where by some unit tests would raise  `fsspec.exceptions.FSTimeoutError`, :issue:`593`. (:pr:`640`) by |gmaze|.
+- **Fix bug** whereby some unit tests would raise  ``fsspec.exceptions.FSTimeoutError``, :issue:`593`. (:pr:`640`) by |gmaze|.
+
+- **Fix bug** whereby :meth:`Dataset.argo.point2profile` would return un-ordered ``N_PROF`` coordinate instead of a clean ``0..N_PROF-1`` range, :issue:`632`. (:pr:`658`) by |gmaze|.
+
+- **Fix inconsistency** in checking availability of an :class:`ArgoFloat` configuration parameter, :issue:`643`. (:pr:`644`) by |gmaze|.
 
 Documentation
 ^^^^^^^^^^^^^

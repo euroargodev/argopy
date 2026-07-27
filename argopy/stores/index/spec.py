@@ -163,9 +163,7 @@ class ArgoIndexStoreProto(ABC):
         elif "ftp" in split_protocol(self.host)[0]:
             if "ifremer" not in host:
                 log.info(
-                    """Working with a non-official Argo ftp server: %s. Raise on issue if you wish to add your own to the valid list of FTP servers: https://github.com/euroargodev/argopy/issues/new?title=New%%20FTP%%20server"""
-                    % host
-                )
+                    f"Working with a non-official Argo ftp server: {host}")
             if not isconnected(host):
                 raise GdacPathError("This host (%s) is not alive !" % host)
 
