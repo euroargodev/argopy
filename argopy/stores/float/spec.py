@@ -16,6 +16,7 @@ from argopy.utils.format import argo_split_path
 from argopy.utils.lists import shortcut2gdac
 from argopy.utils.checkers import check_wmo, check_cyc, to_list
 from argopy.utils.decorators import deprecated
+from .bgcargo_plus import BGCArgoPlusStore, BGCARGO_PLUS_DEFAULT_VERSION
 
 
 log = logging.getLogger("argopy.stores.ArgoFloat")
@@ -422,12 +423,23 @@ class FloatStoreProto(ABC):
         Parameters
         ----------
         name: str, optional, default = "prof"
-            Name of the dataset to open. It can be any key from the dictionary returned by :class:`ArgoFloat.ls_datasets`.
+            Name of the dataset to open. It can be any key from the dictionary
+            returned by :class:`ArgoFloat.ls_dataset`, or the special value
+            ``"BGCArgoPlus"`` to load the QC-processed file from the BGC-Argo+
+            dataset (https://www.bgc-argo-plus.info) served on the SOEST FTP.
         cast: bool, optional, default = True
-            Determine if the dataset variables should be cast or not. This is similar to opening the dataset directly with :class:`xarray.open_dataset` using the ``engine=`argo``` option.
-            This will be ignored if the ``netCDF4` kwarg is set to True.
-        \**kwargs
-            All the other arguments are passed to the GDAC store `open_dataset` method.
+            Determine if the dataset variables should be cast or not. This is similar
+            to opening the dataset directly with :class:`xr.open_dataset` using the
+            ``engine="argo"`` option.
+            This will be ignored if the ``netCDF4`` kwarg is set to True.
+            Note: ``cast`` is **not** applied when ``name="BGCArgoPlus"``.
+        version: str, optional
+            BGC-Argo+ dataset version tag (only used when ``name='BGCArgoPlus'``).
+            Defaults to :data:`argopy.stores.float.bgcargo_plus.BGCARGO_PLUS_DEFAULT_VERSION`.
+        **kwargs
+            All the other parameters are passed to the GDAC store ``open_dataset``
+            method (or to :class:`argopy.stores.float.bgcargo_plus.BGCArgoPlusStore`
+            when ``name="BGCArgoPlus"``).
 
         Returns
         -------
@@ -435,8 +447,25 @@ class FloatStoreProto(ABC):
 
         Notes
         -----
-        Use the ``netCDF4=True`` option to return a :class:`netCDF4.Dataset` object instead of a :class:`xarray.Dataset`.
-        """
+        Use the ``netCDF4=True`` option to return a :class:`netCDF4.Dataset` object
+        instead of a :class:`xarray.Dataset`.
+
+        When ``name="BGCArgoPlus"``, the file is fetched from the SOEST FTP server::
+
+            ftp://ftp.soest.hawaii.edu/bgc_argo_plus/Individual_Floats/outliers_removed/
+
+        and a :class:`FileNotFoundError` is raised if the float is not (yet) part
+        of the BGC-Argo+ dataset.
+
+        Examples
+        --------
+        .. code-block:: python
+
+            from argopy import ArgoFloat
+            ds = ArgoFloat(6903091).open_dataset('BGCArgoPlus') # default version is 'v0.1_2026_04'
+            # Pin to a specific version:
+            ds = ArgoFloat(6903091).open_dataset('BGCArgoPlus', version='v0.1_2025_12')
+
         if name not in self.ls_datasets():
             raise ValueError(
                 "Dataset '%s' not found. Available dataset for this float are: %s"

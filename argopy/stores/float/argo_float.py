@@ -53,7 +53,6 @@ class ArgoFloat(FloatStore):
         ds = af.open_dataset('tech')
         ds = af.open_dataset('Rtraj')
         ds = af.open_dataset('Sprof')
-
         ds = af.open_dataset('Sprof', netCDF4=True)  # Return a netCDF4 Dataset instead of an xarray
 
 
@@ -81,6 +80,14 @@ class ArgoFloat(FloatStore):
 
         af.profiles_to_dataframe()  # Pandas DataFrame describing all available profile files
 
+
+    .. code-block:: python
+        :caption: Load the BGC-Argo+ dataset (https://www.bgc-argo-plus.info)
+
+        # Fetch QC-processed, outlier-removed BGC data from the SOEST FTP server:
+        ds = af.open_dataset('BGCArgoPlus')
+        # Pin to a specific version:
+        ds = af.open_dataset('BGCArgoPlus', version='v0.1_2026_04')
 
     .. code-block:: python
         :caption: Other attributes and methods
