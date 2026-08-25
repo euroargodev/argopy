@@ -14,6 +14,8 @@ Coming up next (unreleased)
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+- **New vertical interpolation procedure** following `Wong et al (2026) <https://doi.org/10.13155/107206>`_ (:pr:`573`) by |gmaze|.
+
 - **Full Argo vocabulary support** for reference tables (:class:`ArgoReferenceTable`), values (:class:`ArgoReferenceValue`) and mappings (:class:`ArgoReferenceMapping`) (:pr:`575`) by |gmaze|.
 
 v1.4.0 (5 Jan. 2026)
