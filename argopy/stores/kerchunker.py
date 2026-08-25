@@ -104,7 +104,7 @@ class ArgoKerchunker:
         from argopy import ArgoIndex
         idx = ArgoIndex(host='s3').search_lat_lon_tim([-70, -55, 30, 45,
                                                        '2025-01-01', '2025-02-01'])
-        ncfiles = [af.ls_dataset()['prof'] for af in idx.iterfloats()]
+        ncfiles = [af.ls_datasets()['prof'] for af in idx.iterfloats()]
 
         # Translate and save references for this batch of netcdf files:
         # (done in parallel, possibly using a Dask client if available)

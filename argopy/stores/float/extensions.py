@@ -96,6 +96,11 @@ class ArgoFloatAnyConfigParametersProto(ArgoFloatExtension):
     def __len__(self):
         return self.n_params
 
+    def __contains__(self, item)->bool:
+        if not item.startswith("CONFIG_"):
+            item = f"CONFIG_{item}"
+        return item in self.parameters
+
     def cast(self, param: str, pvalue: Any) -> float | int | bool:
         """Cast a configuration parameter
 

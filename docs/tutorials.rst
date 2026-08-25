@@ -11,6 +11,13 @@ Contributions are highly welcomed and appreciated. So, if you are interested in 
 Tutorials
 ---------
 
+Click the `MyBinder <https://euroargodev.github.io/binder-links-creator>`_ button below to open a jupyter notebook ready to play with Argopy tutorials:
+
+|Binder|
+
+.. |Binder| image:: https://img.shields.io/static/v1.svg?logo=Jupyter&label=Argopy&message=Start%20online%20tutorial%20notebooks&color=blue
+    :target: https://2i2c.mybinder.org/v2/gh/euroargodev/binder-sandbox/main?urlpath=git-pull%3Frepo%3Dhttps%253A%252F%252Fgithub.com%252Feuroargodev%252Fargopy-training%26urlpath%3Dlab%252Ftree%252Fargopy-training%252Fcontent%26branch%3Dmain
+
 .. list-table:: List of **Argopy** tutorial notebooks
     :header-rows: 0
     :stub-columns: 1
@@ -50,14 +57,15 @@ Tutorials
 Training sessions
 -----------------
 
-.. admonition:: Registration
-
-    You can register for the next **online** training session `here <https://forms.gle/d8xPbrWu7aZcvMut9>`_
-
-Past sessions:
-
 .. grid:: 1 1 2 2
     :gutter: 4
+
+    .. grid-item-card:: LOV/IMEV
+        :img-top: _static/Training_20260603.jpg
+
+        Spring 2026
+
+        **In person** training on Wednesday June 3rd 2026, room Tregouboff, `LOV/IMEV <https://lov.imev-mer.fr/web>`_ (14 participants).
 
     .. grid-item-card:: Local Brest community
         :img-top: _static/Training_20251125.jpg

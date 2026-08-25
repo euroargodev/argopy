@@ -21,17 +21,13 @@ if has_cartopy:
 log = logging.getLogger("argopy.tests.floatstore.plot")
 argopy.clear_cache()
 
-skip_online = pytest.mark.skipif(0, reason="Skipped tests for online implementation")
 skip_offline = pytest.mark.skipif(0, reason="Skipped tests for offline implementation")
-
+#todo The `ArgoFloat.plot` integration testing does not cover the online implementation
 
 """
 Select GDAC host to be use for plot extension tests 
 """
 VALID_HOST = argopy.tutorial.open_dataset("gdac")[0]  # Use local files
-# 'http1': mocked_server_address,  # Use the mocked http server
-# 'http2': 'https://data-argo.ifremer.fr',
-# 'ftp': "MOCKFTP",  # keyword to use a fake/mocked ftp server (running on localhost)
 
 """
 List WMO to be tested, one for each mission

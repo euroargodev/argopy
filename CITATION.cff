@@ -1,28 +1,45 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
+title: argopy
+message: 'If you use this software, please cite it as below.'
+type: software
 authors:
-- family-names: "Maze"
-  given-names: "Guillaume"
-  orcid: "https://orcid.org/0000-0001-7231-2095"
-- family-names: "Balem"
-  given-names: "Kevin"
-  orcid: "https://orcid.org/0000-0002-4956-8698"
-title: "argopy"
-doi: 10.5281/zenodo.4010160
-url: "https://github.com/euroargodev/argopy"
+  - family-names: Maze
+    given-names: Guillaume
+    orcid: 'https://orcid.org/0000-0001-7231-2095'
+  - family-names: Balem
+    given-names: Kevin
+    orcid: 'https://orcid.org/0000-0002-4956-8698'
+identifiers:
+  - type: doi
+    value: 10.21105/joss.02425
+    description: DOI of the JOSS peer-reviewed article, preferred citation
+  - type: swh
+    value: 'swh:1:dir:3d568702945207a22ac35e038256e4be88d20f17'
+    description: Software Heritage Identifier (SWHID)
+  - type: doi
+    value: 10.5281/zenodo.4010160
+    description: Zenodo archives of the repository
+repository-code: 'https://github.com/euroargodev/argopy'
+url: 'https://github.com/euroargodev/argopy'
+repository: 'https://argopy.readthedocs.io'
+abstract: A python library for Argo data beginners and experts
+license: EUPL-1.2
 preferred-citation:
   type: article
   authors:
-    - family-names: "Maze"
-      given-names: "Guillaume"
-      orcid: "https://orcid.org/0000-0001-7231-2095"
-    - family-names: "Balem"
-      given-names: "Kevin"
-      orcid: "https://orcid.org/0000-0002-4956-8698"
-  doi: "10.21105/joss.02425"
-  journal: "Journal of Open Source Software"
-  title: "argopy: A Python library for Argo ocean data analysis"
+    - family-names: Maze
+      given-names: Guillaume
+      orcid: 'https://orcid.org/0000-0001-7231-2095'
+    - family-names: Balem
+      given-names: Kevin
+      orcid: 'https://orcid.org/0000-0002-4956-8698'
+  doi: 10.21105/joss.02425
+  journal: Journal of Open Source Software
+  title: 'argopy: A Python library for Argo ocean data analysis'
   year: 2020
   volume: 5
   issue: 53
   page: 2425
+
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!

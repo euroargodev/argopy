@@ -4,7 +4,6 @@ dask = pytest.importorskip("dask", reason="Requires 'Dask' and 'distributed'")
 distributed = pytest.importorskip("distributed", reason="Requires 'Dask' and 'distributed'")
 from dask.distributed import Client
 
-
 import logging
 from argopy import DataFetcher
 from collections import ChainMap
@@ -98,7 +97,6 @@ class Test_Backend:
     #############
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
-        # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
         self.client = Client(processes=True)
         log.debug("Dask dashboard: %s" % self.client.dashboard_link)
 
@@ -110,6 +108,7 @@ class Test_Backend:
         }
         if USE_MOCKED_SERVER:
             defaults_args["server"] = mocked_server_address
+            defaults_args["gdac"] = mocked_server_address
 
         src = this_request.param["src"]
         dataset = this_request.param["ds"]
