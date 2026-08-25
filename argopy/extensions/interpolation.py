@@ -106,7 +106,7 @@ class Interpolator(ArgoAccessorExtension):
         self,
         levels: list[list, np.array, str] = "EasyOneArgoLite",
         axis: str = "PRES",
-        method: Literal["mrst-pchip", "pchip", "linear"] = "pchip",
+        method: Literal["mrst-pchip", "pchip", "linear"] = "mrst-pchip",
     ):
         """Interpolate measurements to standard pressure levels
 
@@ -124,15 +124,15 @@ class Interpolator(ArgoAccessorExtension):
         axis: str, default: ``PRES``
             The dataset variable to use as pressure axis. This can be ``PRES`` or ``PRES_ADJUSTED``.
 
-        method: str, LiteralString['pchip', 'mrst-pchip', 'linear'], default='pchip'
-            The interpolation method:
+        method: str, LiteralString['mrst-pchip', 'pchip', 'linear'], default='mrst-pchip'
+            Available interpolation methods:
 
-            - ``pchip``: Apply the Piecewise Cubic Hermite Interpolating Polynomial method on all parameters
-            - ``linear``: Apply :class:`scipy.interpolate.interp1d` on all parameters
-            - ``mrst-pchip``: Apply:
+            - ``mrst-pchip`` (default): Apply:
 
                 - Multiply-Rotated Salinity-Temperature PCHIP Method on temperature and salinity (Barker and McDougall, 2020)
                 - Piecewise Cubic Hermite Interpolating Polynomial method on all other parameters
+            - ``pchip``: Apply the Piecewise Cubic Hermite Interpolating Polynomial method on all parameters
+            - ``linear``: Apply :class:`scipy.interpolate.interp1d` on all parameters
 
         Returns
         -------
@@ -166,6 +166,8 @@ class Interpolator(ArgoAccessorExtension):
         Barker, P. M., and T. J. McDougall, 2020: Two Interpolation Methods Using Multiply-Rotated
         Piecewise Cubic Hermite Interpolating Polynomials. J. Atmos. Oceanic Technol., 37, 605-619,
         https://doi.org/10.1175/JTECH-D-19-0211.1.
+
+        Wong Annie, Rannou Jean-Philippe, Carval Thierry, Fontaine Laure, Schmechtig Catherine, Bittig Henry (2026). EasyOneArgo data product specification. Ifremer. https://doi.org/10.13155/107206.
 
         """
         if axis not in ["PRES", "PRES_ADJUSTED"]:
@@ -231,7 +233,6 @@ class Interpolator(ArgoAccessorExtension):
                 if "long_name" in ds_out[da].attrs:
                     ds_out[da].attrs["long_name"] = f"Interpolated {ds_out[da].attrs['long_name']}"
 
-
         elif method == "mrst-pchip":
             # T/S are interpolated together as CT/SA
             # then all other parameters are interpolated with pchip, one after the other
@@ -262,8 +263,6 @@ class Interpolator(ArgoAccessorExtension):
                     ds_out[da].attrs = this_dsp[da].attrs  # Preserve attributes
                     if "long_name" in ds_out[da].attrs:
                         ds_out[da].attrs["long_name"] = f"Interpolated {ds_out[da].attrs['long_name']}"
-
-
 
         ds_out[f"{axis}_INTERPOLATED"].attrs = this_dsp[axis].attrs
         if "long_name" in ds_out[f"{axis}_INTERPOLATED"].attrs:
