@@ -36,6 +36,10 @@ Papers & proceedings citing Argopy
 
 #. Lehmann, N., Aybar, C., Shah, A., Passaro, M., Bamber, J. L., and Zhu, X. X. (2026): "OceanTACO: A Multi-Sensor Global Ocean Sea Surface State Dataset", Earth Syst. Sci. Data Discuss. [preprint], https://doi.org/10.5194/essd-2026-232, in review, 2026.
 
+#. Oke PR, Rykova T, Lovell JL, van Wijk EM, McMahon PM, Schallenberg C, Rintoul SR, Foppert A, Scott R, Pilo GS, Slawinski D, Krummel L, Strutton PG. (2026): "Argo Australia: over 20 years of impact". Marine & Freshwater Research 77, MF26047. https://doi.org/10.1071/MF26047
+
+#. Nikhil Parkar, M. Marimuthu, Aditi Agale, Vraj Prajapati, Arnav Parekar, Aditi Bambal, Shivam Chavan (2026): "A unified RAG-based framework for intelligent exploration of Argo and BGC-Argo oceanographic data". Ecological Informatics, 98. https://doi.org/10.1016/j.ecoinf.2026.103990
+
 #. Singh, Shikha and Sapkal, Mayur (2025). "A machine learning approach to identify upper ocean water masses in the Indian Ocean", CSI Transactions on ICT. https://doi.org/10.1007/s40012-025-00417-9.
 
 #. Steinberg, J. M., Piecuch, C. G., Hamlington, B. D., Thompson, P. R., & Coats, S. (2024). "Influence of deep-ocean warming on coastal sea-level decadal trends in the Gulf of Mexico", Journal of Geophysical Research: Oceans, 129, e2023JC019681. https://doi.org/10.1029/2023JC019681
@@ -59,6 +63,8 @@ Blog post & personal pages :
 - Samapriya Roy : https://samapriyaroy.medium.com/open-ocean-data-with-argofloats-tool-50efef6c4f05
 
 Academic referencing/use-cases:
+
+- DeFeo, Jessica (2026). "Radiative Transfer Comparisons Between Satellite Ocean Color and BGC-Argo Float Chlorophyll". The State University of New Jersey, School of Graduate Studies. Dissertations & Theses, 2026. 32856575.
 
 - Sydney univ academic conda env : http://climate-cms.wikis.unsw.edu.au/Conda
 
