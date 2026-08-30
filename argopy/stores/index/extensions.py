@@ -202,11 +202,11 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         ----------
         BOX : list, tuple, int, float, optional
             An index box to search Argo records for. Can be:
-            
+
             - Full 6-element list: [lon_min, lon_max, lat_min, lat_max, date_min, date_max]
             - 2-element list: [lon_min, lon_max]
             - Single value: interpreted as lower bound (ge)
-            
+
         ge : int or float, optional
             Greater or equal bound for longitude filtering (lower limit).
             Default: -180
@@ -249,11 +249,11 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         ----------
         BOX : list, tuple, int, float, optional
             An index box to search Argo records for. Can be:
-            
+
             - Full 6-element list: [lon_min, lon_max, lat_min, lat_max, date_min, date_max]
             - 2-element list: [lat_min, lat_max]
             - Single value: interpreted as lower bound (ge)
-            
+
         ge : int or float, optional
             Greater or equal bound for latitude filtering (lower limit).
             Default: -90
@@ -296,11 +296,11 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         ----------
         BOX : list or str, optional
             An index box to search Argo records for. Can be:
-            
+
             - Full 6-element list: [lon_min, lon_max, lat_min, lat_max, date_min, date_max]
             - 2-element list: [date_min, date_max]
             - Single date string: interpreted as day-only (profiles on that specific date)
-            
+
         ge : str, optional
             Greater or equal bound for date filtering (lower limit).
             Default: '1900-01-01'
@@ -456,7 +456,7 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
     def profiler_type(self):
         """Search index for profiler types
 
-        The list of valid types is given by IDs of `Argo reference table 8 <http://vocab.nerc.ac.uk/collection/R08/current/>`_.
+        The list of valid types is given in `Argo reference table 8 / ARGO_WMO_INST_TYPE <http://vocab.nerc.ac.uk/collection/R08/current/>`_.
 
         Parameters
         ----------
@@ -479,8 +479,8 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         .. code-block:: python
             :caption: List valid types
 
-            from argopy import ArgoNVSReferenceTables
-            valid_types = ArgoNVSReferenceTables().tbl(8)['altLabel']
+            from argopy import ArgoReferenceTable
+            valid_types : list[str] = ArgoReferenceTable('ARGO_WMO_INST_TYPE').keys()
 
         See Also
         --------
@@ -491,12 +491,12 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
     def profiler_label(self, profiler_label: str, nrows=None, composed=False):
         """Search index for profiler types with a given string in their long name
 
-        Will search for string occurrences in the preferred label of `Argo reference table 8 <http://vocab.nerc.ac.uk/collection/R08/current/>`_.
+        Will search for string occurrences in the preferred label of `Argo reference table 8/ARGO_WMO_INST_TYPE <http://vocab.nerc.ac.uk/collection/R08/current/>`_.
 
         Parameters
         ----------
         profiler_label: str, list(str)
-            The string (not exact) to be found in profiler preferred labels.
+            The string (not necessarily exact) to be found in profiler preferred labels.
 
         Returns
         -------
@@ -514,8 +514,9 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         .. code-block:: python
             :caption: List valid labels
 
-            from argopy import ArgoNVSReferenceTables
-            valid_labels = ArgoNVSReferenceTables().tbl(8)['prefLabel']
+            from argopy import ArgoReferenceTable
+            df = ar.ArgoReferenceTable('ARGO_WMO_INST_TYPE').to_dataframe()
+            valid_labels : list[str] = list(df['long_name'].to_dict().values())
 
         See Also
         --------
@@ -553,10 +554,41 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
             return search_filter
 
     @abstractmethod
+    def profile_qc(self, param):
+        """Search index for parameter profile QCs with a specific value
+
+        Parameters
+        ----------
+        PARAMs: dict
+            A dictionary with parameters as keys, and profile QC as a string or a list of strings
+        logical: str, default='and'
+            Indicate to search for all (``and``) or any (``or``) of the parameters profile QC. This operator applies
+            between each parameter.
+
+        Returns
+        -------
+        :class:`ArgoIndex`
+
+        Examples
+        --------
+        .. code-block:: python
+
+            from argopy import ArgoIndex
+            idx = ArgoIndex(index_file='core+')
+
+            idx.query.profile_qc({'TEMP': 'A'})
+            idx.query.profile_qc({'PSAL': 'A'})
+            idx.query.profile_qc({'DOXY': ['A', 'B']})
+            idx.query.profile_qc({'PSAL': 'A', 'DOXY': 'A'}, logical='or')
+
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
     def institution_code(self, institution_code,  nrows=None, composed=False):
         """Search index for institution codes
 
-        The list of valid codes is given by IDs of `Argo reference table 4 <http://vocab.nerc.ac.uk/collection/R04/current/>`_.
+        The list of valid codes is given in `Argo reference table 4/DATA_CENTRE_CODES <http://vocab.nerc.ac.uk/collection/R04/current/>`_.
 
         Parameters
         ----------
@@ -580,8 +612,8 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         .. code-block:: python
             :caption: List valid codes
 
-            from argopy import ArgoNVSReferenceTables
-            valid_codes = ArgoNVSReferenceTables().tbl(4)['altLabel']
+            from argopy import ArgoReferenceTable
+            valid_codes : list[str] = ArgoReferenceTable('DATA_CENTRE_CODES').keys()
 
         See Also
         --------
@@ -593,12 +625,12 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
     def institution_name(self, institution_name: str, nrows=None, composed=False):
         """Search index for institutions with a given string in their long name
 
-        Will search for string occurrences in the preferred label of `Argo reference table 4 <http://vocab.nerc.ac.uk/collection/R04/current/>`_.
+        Will search for string occurrences in the preferred label of `Argo reference table 4/DATA_CENTRE_CODES <http://vocab.nerc.ac.uk/collection/R04/current/>`_.
 
         Parameters
         ----------
         institution_name: str, list(str)
-            The string (not exact) to be found in institution preferred labels.
+            The string (not necessarily exact) to be found in institution preferred labels.
 
         Returns
         -------
@@ -617,8 +649,9 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         .. code-block:: python
             :caption: List valid names
 
-            from argopy import ArgoNVSReferenceTables
-            valid_names = ArgoNVSReferenceTables().tbl(4)['prefLabel']
+            from argopy import ArgoReferenceTable
+            df = ar.ArgoReferenceTable('DATA_CENTRE_CODES').to_dataframe()
+            valid_names : list[str] = list(df['long_name'].to_dict().values())
 
         See Also
         --------
@@ -685,6 +718,24 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         See Also
         --------
         :class:`ArgoIndex.query.institution_code`, :class:`ArgoIndex.query.institution_name`
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def psal_adj(self):
+        """Search (detailed) index for salinity adjustment values
+
+        Defined for for delayed mode or adjusted mode profiles only.
+
+        - Mean of psal_adjusted – psal on the deepest 500 meters with good psal_adjusted_qc (equal to 1)
+        - Standard deviation of psal_adjusted – psal on the deepest 500 meters with good psal_adjusted_qc (equal to 1)
+
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def n_levels(self):
+        """Search index profiles using the maximum number of pressure levels contained in a profile
         """
         raise NotImplementedError("Not implemented")
 
