@@ -21,7 +21,6 @@ def test_AvailableDataSources_lazy_on_import():
 def test_list_multiprofile_file_variables():
     assert is_list_of_strings(list_multiprofile_file_variables())
 
-
 shortcuts = {None: dict, 'ftp': str, 'https://data-argo.ifremer.fr': str}
 
 @pytest.mark.parametrize("short", shortcuts.items(),
