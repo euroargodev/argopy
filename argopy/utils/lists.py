@@ -42,6 +42,18 @@ class AvailableDataSources:
     def __getitem__(self, key):
         return self.sources[key]
 
+    def __contains__(self, key):
+        return key in self.sources
+
+    def keys(self):
+        return self.sources.keys()
+
+    def values(self):
+        return self.sources.values()
+
+    def items(self):
+        return self.sources.items()
+
     def _list_available_data_src(self) -> dict:
         """List all available data sources"""
         sources = {}
