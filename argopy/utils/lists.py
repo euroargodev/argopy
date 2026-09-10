@@ -21,57 +21,81 @@ def subsample_list(original_list, N):
         return subsampled_list
 
 
-def list_available_data_src() -> dict:
-    """List all available data sources"""
-    sources = {}
-    try:
-        from ..data_fetchers import erddap_data as Erddap_Fetchers
+class AvailableDataSources:
+    def __init__(self):
+        self._sources: dict | None = None
 
-        # Ensure we're loading the erddap data fetcher with the current options:
-        Erddap_Fetchers.api_server_check = Erddap_Fetchers.api_server_check.replace(
-            Erddap_Fetchers.api_server, OPTIONS["erddap"]
-        )
-        Erddap_Fetchers.api_server = OPTIONS["erddap"]
+    @property
+    def sources(self) -> dict:
+        """Return a dictionary of available data sources, generating it lazily
+        if necessary"""
+        if self._sources is None:
+            self._sources = self._list_available_data_src()
+        return self._sources
 
-        sources["erddap"] = Erddap_Fetchers
-    except Exception:
-        warnings.warn(
-            "An error occurred while loading the ERDDAP data fetcher, "
-            "it will not be available !\n%s\n%s"
-            % (sys.exc_info()[0], sys.exc_info()[1])
-        )
-        pass
+    def __len__(self):
+        return len(self.sources)
 
-    try:
-        from ..data_fetchers import argovis_data as ArgoVis_Fetchers
+    def __iter__(self):
+        return iter(self.sources)
 
-        sources["argovis"] = ArgoVis_Fetchers
-    except Exception:
-        warnings.warn(
-            "An error occurred while loading the ArgoVis data fetcher, "
-            "it will not be available !\n%s\n%s"
-            % (sys.exc_info()[0], sys.exc_info()[1])
-        )
-        pass
+    def __getitem__(self, key):
+        return self.sources[key]
 
-    try:
-        from ..data_fetchers import gdac_data as GDAC_Fetchers
+    def _list_available_data_src(self) -> dict:
+        """List all available data sources"""
+        sources = {}
+        try:
+            from ..data_fetchers import erddap_data as Erddap_Fetchers
+    
+            # Ensure we're loading the erddap data fetcher with the current options:
+            Erddap_Fetchers.api_server_check = Erddap_Fetchers.api_server_check.replace(
+                Erddap_Fetchers.api_server, OPTIONS["erddap"]
+            )
+            Erddap_Fetchers.api_server = OPTIONS["erddap"]
+    
+            sources["erddap"] = Erddap_Fetchers
+        except Exception:
+            warnings.warn(
+                "An error occurred while loading the ERDDAP data fetcher, "
+                "it will not be available !\n%s\n%s"
+                % (sys.exc_info()[0], sys.exc_info()[1])
+            )
+            pass
+    
+        try:
+            from ..data_fetchers import argovis_data as ArgoVis_Fetchers
+    
+            sources["argovis"] = ArgoVis_Fetchers
+        except Exception:
+            warnings.warn(
+                "An error occurred while loading the ArgoVis data fetcher, "
+                "it will not be available !\n%s\n%s"
+                % (sys.exc_info()[0], sys.exc_info()[1])
+            )
+            pass
+    
+        try:
+            from ..data_fetchers import gdac_data as GDAC_Fetchers
+    
+            # Ensure we're loading the gdac data fetcher with the current options:
+            GDAC_Fetchers.api_server_check = OPTIONS["gdac"]
+            GDAC_Fetchers.api_server = OPTIONS["gdac"]
+    
+            sources["gdac"] = GDAC_Fetchers
+        except Exception:
+            warnings.warn(
+                "An error occurred while loading the GDAC data fetcher, "
+                "it will not be available !\n%s\n%s"
+                % (sys.exc_info()[0], sys.exc_info()[1])
+            )
+            pass
+    
+        # return dict(sorted(sources.items()))
+        return sources
 
-        # Ensure we're loading the gdac data fetcher with the current options:
-        GDAC_Fetchers.api_server_check = OPTIONS["gdac"]
-        GDAC_Fetchers.api_server = OPTIONS["gdac"]
 
-        sources["gdac"] = GDAC_Fetchers
-    except Exception:
-        warnings.warn(
-            "An error occurred while loading the GDAC data fetcher, "
-            "it will not be available !\n%s\n%s"
-            % (sys.exc_info()[0], sys.exc_info()[1])
-        )
-        pass
-
-    # return dict(sorted(sources.items()))
-    return sources
+list_available_data_src = AvailableDataSources
 
 
 def list_available_index_src() -> dict:
