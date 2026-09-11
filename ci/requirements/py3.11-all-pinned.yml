@@ -18,8 +18,7 @@ dependencies:
   - xarray = 2025.7.1
 
 # EXT.UTIL:
-  - gsw = 3.6.19
-  - pyco2sys = 1.8.3
+  - gsw = 3.6.20
   - tqdm = 4.67.1
 
 # EXT.FILES:
@@ -32,8 +31,6 @@ dependencies:
 # EXT.PERF:
   - dask = 2025.5.1
   - distributed = 2025.5.1
-  - joblib = 1.5.2
-  - numba = 0.62.1
   - pyarrow = 20.0.0
 
 # EXT.PLOT:
