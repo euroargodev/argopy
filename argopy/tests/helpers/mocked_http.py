@@ -38,13 +38,28 @@ import json
 import importlib
 
 
+requests = pytest.importorskip("requests")
 log = logging.getLogger("argopy.tests.mocked_http")
 LOG_SERVER_CONTENT = (
     False  # Should we list all files/uris available from the mocked server in the log ?
 )
 
-requests = pytest.importorskip("requests")
-port = 9898  # Select the port to run the local server on
+import socket
+
+
+def _free_port() -> int:
+    """Return a free port number on localhost.
+
+    bind("127.0.0.1", 0) asks the OS to assign a free port, which we read back
+    with getsockname"""
+    s = socket.socket()
+    s.bind(("127.0.0.1", 0))
+    p = s.getsockname()[1]
+    s.close()
+    return p
+
+
+port = _free_port()
 mocked_server_address = "http://127.0.0.1:%i" % port
 
 
@@ -93,7 +108,7 @@ if DB_FILE.exists():
         URI = json.load(f)
     for resource in URI:
         # Map the (server-relative) request URI to the path of the file holding
-        # its response. This file gets read lazily, when the request is served 
+        # its response. This file gets read lazily, when the request is served
         # (see HTTPTestHandler._read).
         test_data_file = TESTDATA_FOLDER.joinpath(
             "%s.%s" % (resource["sha"], resource["ext"])
@@ -164,6 +179,8 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
             self.send_header(k, str(v))
         self.end_headers()
         if data:
+            if not isinstance(data, (bytes, bytearray)):
+                data = _read(data)
             try:
                 self.wfile.write(data)
             except socket.error as e:
@@ -196,7 +213,7 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
             if file_data is None:
                 return self._respond(404)
 
-        n = len(file_data)
+        n = _length(file_data)
         status = 200
         content_range = "bytes 0-%i/%i" % (n - 1, n)
         if ("Range" in self.headers) and ("ignore_range" not in self.headers):
