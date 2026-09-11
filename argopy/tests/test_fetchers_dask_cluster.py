@@ -104,6 +104,7 @@ class Test_Backend:
         """Helper method to set up options for a fetcher creation"""
         defaults_args = {
             "parallel": self.client,
+            # "parallel": client,
             "chunks_maxsize": {"lon": 2.5, "lat": 2.5},
         }
         if USE_MOCKED_SERVER:
@@ -135,7 +136,8 @@ class Test_Backend:
 
     def teardown_class(self):
         """Cleanup once we are finished."""
-        self.client.close()
+        # self.client.close() # Raise an error on py3.12, cf https://github.com/euroargodev/argopy/issues/678
+        ...
 
     #########
     # TESTS #
