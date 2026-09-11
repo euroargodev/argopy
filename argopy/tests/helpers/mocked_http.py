@@ -49,8 +49,33 @@ LOG_SERVER_CONTENT = (
 # ``mocked_server_address`` are filled in when that server binds -- before any
 # test module that does ``from mocked_http import mocked_server_address`` reads
 # them, because importing this module runs its whole body first.
-port = None
-mocked_server_address = None
+port: int | None = None
+mocked_server_address: str | None = None
+_httpd: HTTPServer | None = None
+
+
+def _start_server():
+    """Start the process-wide mocked HTTP server, once, and keep it running.
+
+    The server binds an OS-assigned free port *atomically* (bind to port 0, then
+    read the chosen port back) -- there is no "reserve a free port, close the
+    socket, rebind it later" gap, so parallel pytest-xdist workers (and the xdist
+    controller) never race for the same port. It runs on a daemon thread for the
+    whole life of the process, so there is always exactly one server per process.
+    Idempotent; returns the server URL.
+    """
+    global _httpd, port, mocked_server_address
+    if _httpd is None:
+        _httpd = HTTPServer(("127.0.0.1", 0), HTTPTestHandler)
+        port = _httpd.server_address[1]
+        mocked_server_address = "http://127.0.0.1:%i" % port
+        th = threading.Thread(target=_httpd.serve_forever, daemon=True)
+        th.start()
+        log.info(
+            "Mocked HTTP server up and ready at %s, serving %i URI. (id=%s)"
+            % (mocked_server_address, len(HTTPTestHandler.files), id(_httpd))
+        )
+    return mocked_server_address
 
 
 """
@@ -290,34 +315,6 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
             self._respond(200)  # OK response, but no useful info
 
 
-_httpd = None  # the process-wide mocked HTTP server (a daemon thread)
-
-
-def _start_server():
-    """Start the process-wide mocked HTTP server, once, and keep it running.
-
-    The server binds an OS-assigned free port *atomically* (bind to port 0, then
-    read the chosen port back) -- there is no "reserve a free port, close the
-    socket, rebind it later" gap, so parallel pytest-xdist workers (and the xdist
-    controller) never race for the same port. It runs on a daemon thread for the
-    whole life of the process, so it does not matter which test needs it or
-    whether that test even requested the ``mocked_httpserver`` fixture: there is
-    always exactly one server per process. Idempotent; returns the server URL.
-    """
-    global _httpd, port, mocked_server_address
-    if _httpd is None:
-        _httpd = HTTPServer(("127.0.0.1", 0), HTTPTestHandler)
-        port = _httpd.server_address[1]
-        mocked_server_address = "http://127.0.0.1:%i" % port
-        th = threading.Thread(target=_httpd.serve_forever, daemon=True)
-        th.start()
-        log.info(
-            "Mocked HTTP server up and ready at %s, serving %i URI. (id=%s)"
-            % (mocked_server_address, len(HTTPTestHandler.files), id(_httpd))
-        )
-    return mocked_server_address
-
-
 @contextlib.contextmanager
 def serve_mocked_httpserver():
     """Backwards-compatible shim for callers written as a context manager.
@@ -334,6 +331,6 @@ def mocked_httpserver():
 
 
 # Start the server at import time so it is up in every process (the xdist
-# controller and every worker) regardless of which tests -- or none -- request
-# the fixture.
+# controller and every worker) regardless of which tests need it - once this
+# module gets imported, we will have a server on a free port.
 _start_server()
