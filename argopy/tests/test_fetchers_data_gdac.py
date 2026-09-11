@@ -28,6 +28,8 @@ from mocked_http import mocked_server_address as MOCKHTTP
 
 log = logging.getLogger("argopy.tests.data.gdac")
 
+pytestmark = pytest.mark.usefixtures("mocked_ftpserver")
+
 
 """
 List GDAC hosts to be tested. 

@@ -8,7 +8,7 @@ from argopy import tutorial
 log = logging.getLogger("argopy.tests.mocked_ftp")
 
 
-@pytest.fixture(scope="module", autouse=True)
+@pytest.fixture(scope="module")
 def mocked_ftpserver(ftpserver):
     """https://github.com/oz123/pytest-localftpserver"""
     os.environ['FTP_USER'] = 'janedow'
