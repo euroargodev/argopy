@@ -20,6 +20,8 @@ Features and front-end API
 Internals
 ^^^^^^^^^
 
+- **Improve import time** with lazy and/or deferred import of large dependencies, optimization and finally removing of the auto-discovery of data/index fetchers :issue:`585` (:pr:`676`) by |charles| and (:pr:`624`) by |gmaze|.
+
 - **Update USA GDAC url** :issue:`624` (:pr:`624`) by |gmaze|.
 
 - **Fix bug** whereby some unit tests would raise  ``fsspec.exceptions.FSTimeoutError``, :issue:`593`. (:pr:`640`) by |gmaze|.
@@ -1539,6 +1541,7 @@ v0.1.0 (17 Mar. 2020)
 .. |gmaze| replace:: `G. Maze <http://www.github.com/gmaze>`__
 .. |quai20| replace:: `K. Balem <http://www.github.com/quai20>`__
 .. |fricour| replace:: `F. Ricour <https://www.github.com/fricour>`__
+.. |charles| replace:: `C. Turner <https://github.com/charles-turner-1>`__
 
 .. |pypi dwn| image:: https://img.shields.io/pypi/dm/argopy?label=Pypi%20downloads
    :target: //pypi.org/project/argopy/
