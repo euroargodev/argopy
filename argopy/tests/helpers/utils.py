@@ -33,10 +33,7 @@ from pathlib import Path
 
 from argopy.options import set_options
 from argopy.errors import ErddapServerError, ArgovisServerError, DataNotFound, GdacPathError
-from argopy.utils.lists import (
-    list_available_data_src,
-    list_available_index_src,
-)
+
 from argopy.utils.checkers import (
     isconnected,
     erddap_ds_exists,
@@ -70,9 +67,9 @@ def _xfail(name, msg):
     return name, func
 
 
-AVAILABLE_SOURCES = list_available_data_src()
+AVAILABLE_SOURCES = ['erddap', 'gdac', 'argovis']
 
-AVAILABLE_INDEX_SOURCES = list_available_index_src()
+AVAILABLE_INDEX_SOURCES = ['erddap', 'gdac']
 CONNECTED = isconnected()
 
 has_fetcher, requires_fetcher = _connectskip(

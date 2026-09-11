@@ -4,7 +4,6 @@ import time
 import threading
 import logging
 
-from .lists import list_available_data_src
 from .checkers import isAPIconnected
 
 try:
@@ -56,12 +55,10 @@ class fetch_status:
 
     def fetch(self):
         results = {}
-        list_src = list_available_data_src()
-        for api, mod in list_src.items():
-            if getattr(mod, "api_server_check", None):
-                status = isAPIconnected(api)
-                message = "ok" if status else "offline"
-                results[api] = {"value": status, "message": message}
+        for api in ['erddap', 'gdac', 'argovis']:
+            status = isAPIconnected(api)
+            message = "ok" if status else "offline"
+            results[api] = {"value": status, "message": message}
         return results
 
     @property

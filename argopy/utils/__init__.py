@@ -22,8 +22,6 @@ from .checkers import (  # noqa: F401
 from .casting import DATA_TYPES, cast_Argo_variable_type, to_list
 from .decorators import deprecated, doc_inherit, register_accessor
 from .lists import (
-    list_available_data_src,
-    list_available_index_src,
     list_multiprofile_file_variables,
     list_core_parameters,
     list_standard_variables,
@@ -102,8 +100,6 @@ __all__ = (
     "doc_inherit",
     "register_accessor",
     # Lists:
-    "list_available_data_src",
-    "list_available_index_src",
     "list_multiprofile_file_variables",
     "list_standard_variables",
     "list_core_parameters",

@@ -13,14 +13,13 @@ import os
 import warnings
 
 import netCDF4
-
-import xarray as xr
-import pandas as pd
+from argopy import pandas as pd # Lazily import large module
+from argopy import xarray as xr # Lazily import large module
 import numpy as np
 import logging
 
-from .options import OPTIONS, VALIDATE, PARALLEL_SETUP
-from .errors import (
+from argopy.options import OPTIONS, VALIDATE, PARALLEL_SETUP
+from argopy.errors import (
     InvalidFetcherAccessPoint,
     InvalidFetcher,
     OptionValueError,
@@ -31,17 +30,12 @@ from .related import (
 )
 from .utils.checkers import is_box, is_indexbox, check_wmo, check_cyc
 from .utils.lists import (
-    list_available_data_src,
-    list_available_index_src,
     list_core_parameters,
     list_radiometry_parameters,
     list_bgc_s_parameters,
 )
 from .plot import plot_trajectory, bar_plot, open_sat_altim_report, scatter_plot
 
-
-AVAILABLE_DATA_SOURCES = list_available_data_src()
-AVAILABLE_INDEX_SOURCES = list_available_index_src()
 
 log = logging.getLogger("argopy.fetchers.facade")
 
@@ -113,7 +107,20 @@ class ArgoDataFetcher:
         if self._dataset_id == "bgc":
             self._dataset_id = "bgc-s"
 
-        Fetchers = AVAILABLE_DATA_SOURCES[self._src]
+        try:
+            server = OPTIONS[self._src]
+            if self._src == 'erddap':
+                from argopy.data_fetchers import erddap_data as Fetchers
+            elif self._src == 'gdac':
+                from argopy.data_fetchers import gdac_data as Fetchers
+            elif self._src == 'argovis':
+                from argopy.data_fetchers import argovis_data as Fetchers
+        except Exception:
+            raise ValueError(f"An error occurred while loading the {self._src} data fetcher !")
+
+        # Ensure we're loading the data fetcher with the current options for server value:
+        Fetchers.api_server_check = Fetchers.api_server_check.replace(Fetchers.api_server, server)
+        Fetchers.api_server = server
 
         # Auto-discovery of access points for this fetcher:
         # rq: Access point names for the facade are not the same as the access point of fetchers
@@ -995,14 +1002,27 @@ class ArgoIndexFetcher:
         self._src = OPTIONS["src"] if src == "" else VALIDATE("src", src)
 
         # Load data source access points:
-        if self._src not in AVAILABLE_INDEX_SOURCES:
-            raise InvalidFetcher(
-                "Requested index fetcher '%s' not available ! "
-                "Please try again with any of: %s"
-                % (self._src, "\n".join(AVAILABLE_INDEX_SOURCES))
-            )
-        else:
-            Fetchers = AVAILABLE_INDEX_SOURCES[self._src]
+        try:
+            server = OPTIONS[self._src]
+            if self._src == 'erddap':
+                from argopy.data_fetchers import erddap_index as Fetchers
+            elif self._src == 'gdac':
+                from argopy.data_fetchers import gdac_index as Fetchers
+        except Exception:
+            raise ValueError(f"An error occurred while loading the {self._src} index fetcher !")
+
+        # Ensure we're loading the data fetcher with the current options for server value:
+        Fetchers.api_server_check = Fetchers.api_server_check.replace(Fetchers.api_server, server)
+        Fetchers.api_server = server
+
+        # if self._src not in AVAILABLE_INDEX_SOURCES:
+        #     raise InvalidFetcher(
+        #         "Requested index fetcher '%s' not available ! "
+        #         "Please try again with any of: %s"
+        #         % (self._src, "\n".join(AVAILABLE_INDEX_SOURCES))
+        #     )
+        # else:
+        #     Fetchers = AVAILABLE_INDEX_SOURCES[self._src]
 
         # Auto-discovery of access points for this fetcher:
         # rq: Access point names for the facade are not the same as the access point of fetchers

@@ -15,11 +15,63 @@ except Exception:
     # Disable minimum version checks on downstream libraries.
     __version__ = "999"
 
+import importlib.util
+import sys
+
+def lazy_import(name, optional=False):
+    """
+    Lazily import a module.
+
+    Args:
+        name: Dotted module name, e.g. "pandas" or "scipy.optimize".
+        optional: If True, return None instead of raising when the
+                  module isn't installed.
+
+    Returns:
+        The lazily-loaded module, or None if optional=True and the
+        module isn't available.
+
+    Raises:
+        ModuleNotFoundError: if the module isn't available and
+                              optional=False.
+    """
+    # Already imported (lazily or otherwise) — just return it
+    if name in sys.modules:
+        return sys.modules[name]
+
+    try:
+        spec = importlib.util.find_spec(name)
+    except ModuleNotFoundError:
+        # Happens when a parent package in a dotted path is missing,
+        # e.g. lazy_import("foo.bar") when "foo" doesn't exist
+        spec = None
+
+    if spec is None:
+        if optional:
+            return None
+        raise ModuleNotFoundError(f"No module named {name!r}")
+
+    loader = importlib.util.LazyLoader(spec.loader)
+    spec.loader = loader
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    loader.exec_module(module)
+    return module
+
+xarray = lazy_import("xarray")
+pandas = lazy_import("pandas")
+erddapy = lazy_import("erddapy")
+netCDF4 = lazy_import("netCDF4")
+scipy = lazy_import("scipy")
+IPython = lazy_import("IPython", optional=True)
+pyarrow = lazy_import("pyarrow", optional=True)
+seaborn = lazy_import("seaborn", optional=True)
 
 # Loggers
 import logging
 log = logging.getLogger(__name__)
 log.addHandler(logging.NullHandler())
+
 
 # Import facades:
 from .fetchers import ArgoDataFetcher as DataFetcher  # noqa: E402
