@@ -2,6 +2,7 @@ import os
 import pytest
 import logging
 import tempfile
+from pathlib import Path
 from argopy import tutorial
 
 
@@ -16,12 +17,18 @@ def mocked_ftpserver(ftpserver):
     os.environ['FTP_HOME'] = tempfile.mkdtemp()
     # os.environ['FTP_PORT'] = '31175'  # Let this be chosen automatically
 
-    # Set up the ftp server with the tutorial repo GDAC content:
+    # Serve the tutorial GDAC tree over anonymous FTP *without* copying it:
+    # point the server's (empty) anon_root at the read-only tutorial tree via a
+    # directory symlink. pyftpdlib resolves realpath(root) to the tutorial dir,
+    # so every served file resolves inside the root and passes validpath().
+    # (Symlinking individual files would fail: their realpath escapes the root.)
     ftproot, flist = tutorial.open_dataset('gdac')
-    for f in flist:
-        ftpserver.put_files({"src": f,
-                             "dest": f.replace(ftproot, ".")},
-                            style="url", anon=True)
+    anon_root = Path(ftpserver.anon_root)
+    if anon_root.is_symlink():
+        anon_root.unlink()
+    elif anon_root.exists():
+        anon_root.rmdir()  # freshly-created empty dir from the plugin
+    anon_root.symlink_to(ftproot, target_is_directory=True)
 
     #
     ftp_login_data = ftpserver.get_login_data()
@@ -35,6 +42,10 @@ def mocked_ftpserver(ftpserver):
     # Run test
     yield ftpserver
 
-    # Teardown
+    # Teardown: restore an empty dir so the plugin's rmtree(anon_root) can't
+    # follow the symlink into the real tutorial data, then stop the server.
+    if anon_root.is_symlink():
+        anon_root.unlink()
+        anon_root.mkdir()
     log.info("Teardown mocked GDAC ftp")
     ftpserver.stop()
