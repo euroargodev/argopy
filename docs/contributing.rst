@@ -523,7 +523,7 @@ output, like plotting or xarray data manipulation.
 Data fetchers for third-party products
 --------------------------------------
 
-The goal of **Argopy** is help scientists to access to the Argo dataset by providing high-level APIs for beginners as well as low-level APIs for users gaining expertise with the dataset.
+The goal of **Argopy** is to help scientists to access to the Argo dataset by providing high-level APIs for beginners as well as low-level APIs for users gaining expertise with the dataset.
 
 The Argo dataset is officially referenced with a DOI, and possibly a DOI for each monthly snapshots. These data are officially distributed by GDAC through http, ftp, s3 and erddap servers. The GDAC servers are the data sources for Argopy.
 
