@@ -1,14 +1,7 @@
-import sys
-import warnings
 import importlib
 import os
 import json
-from ..options import OPTIONS
 from typing import List, Union
-
-path2assets = importlib.util.find_spec(
-    "argopy.static.assets"
-).submodule_search_locations[0]
 
 
 def subsample_list(original_list, N):
@@ -19,135 +12,6 @@ def subsample_list(original_list, N):
         indices = [int(i * step) for i in range(N)]
         subsampled_list = [original_list[i] for i in indices]
         return subsampled_list
-
-
-class AvailableDataSources:
-    def __init__(self):
-        self._sources: dict | None = None
-
-    @property
-    def sources(self) -> dict:
-        """Return a dictionary of available data sources, generating it lazily
-        if necessary"""
-        if self._sources is None:
-            self._sources = self._list_available_data_src()
-        return self._sources
-
-    def __len__(self):
-        return len(self.sources)
-
-    def __iter__(self):
-        return iter(self.sources)
-
-    def __getitem__(self, key):
-        return self.sources[key]
-
-    def __contains__(self, key):
-        return key in self.sources
-
-    def keys(self):
-        return self.sources.keys()
-
-    def values(self):
-        return self.sources.values()
-
-    def items(self):
-        return self.sources.items()
-
-    def _list_available_data_src(self) -> dict:
-        """List all available data sources"""
-        sources = {}
-        try:
-            from ..data_fetchers import erddap_data as Erddap_Fetchers
-    
-            # Ensure we're loading the erddap data fetcher with the current options:
-            Erddap_Fetchers.api_server_check = Erddap_Fetchers.api_server_check.replace(
-                Erddap_Fetchers.api_server, OPTIONS["erddap"]
-            )
-            Erddap_Fetchers.api_server = OPTIONS["erddap"]
-    
-            sources["erddap"] = Erddap_Fetchers
-        except Exception:
-            warnings.warn(
-                "An error occurred while loading the ERDDAP data fetcher, "
-                "it will not be available !\n%s\n%s"
-                % (sys.exc_info()[0], sys.exc_info()[1])
-            )
-            pass
-    
-        try:
-            from ..data_fetchers import argovis_data as ArgoVis_Fetchers
-    
-            sources["argovis"] = ArgoVis_Fetchers
-        except Exception:
-            warnings.warn(
-                "An error occurred while loading the ArgoVis data fetcher, "
-                "it will not be available !\n%s\n%s"
-                % (sys.exc_info()[0], sys.exc_info()[1])
-            )
-            pass
-    
-        try:
-            from ..data_fetchers import gdac_data as GDAC_Fetchers
-    
-            # Ensure we're loading the gdac data fetcher with the current options:
-            GDAC_Fetchers.api_server_check = OPTIONS["gdac"]
-            GDAC_Fetchers.api_server = OPTIONS["gdac"]
-    
-            sources["gdac"] = GDAC_Fetchers
-        except Exception:
-            warnings.warn(
-                "An error occurred while loading the GDAC data fetcher, "
-                "it will not be available !\n%s\n%s"
-                % (sys.exc_info()[0], sys.exc_info()[1])
-            )
-            pass
-    
-        # return dict(sorted(sources.items()))
-        return sources
-
-
-list_available_data_src = AvailableDataSources
-
-
-def list_available_index_src() -> dict:
-    """List all available index sources"""
-    sources = {}
-    try:
-        from ..data_fetchers import erddap_index as Erddap_Fetchers
-
-        # Ensure we're loading the erddap data fetcher with the current options:
-        Erddap_Fetchers.api_server_check = Erddap_Fetchers.api_server_check.replace(
-            Erddap_Fetchers.api_server, OPTIONS["erddap"]
-        )
-        Erddap_Fetchers.api_server = OPTIONS["erddap"]
-
-        sources["erddap"] = Erddap_Fetchers
-    except Exception:
-        warnings.warn(
-            "An error occurred while loading the ERDDAP index fetcher, "
-            "it will not be available !\n%s\n%s"
-            % (sys.exc_info()[0], sys.exc_info()[1])
-        )
-        pass
-
-    try:
-        from ..data_fetchers import gdac_index as GDAC_Fetchers
-
-        # Ensure we're loading the gdac data fetcher with the current options:
-        GDAC_Fetchers.api_server_check = OPTIONS["gdac"]
-        GDAC_Fetchers.api_server = OPTIONS["gdac"]
-
-        sources["gdac"] = GDAC_Fetchers
-    except Exception:
-        warnings.warn(
-            "An error occurred while loading the GDAC index fetcher, "
-            "it will not be available !\n%s\n%s"
-            % (sys.exc_info()[0], sys.exc_info()[1])
-        )
-        pass
-
-    return sources
 
 
 def list_multiprofile_file_variables() -> List[str]:
@@ -320,6 +184,10 @@ def list_bgc_s_variables() -> List[str]:
     :meth:`argopy.utils.list_radiometry_variables`
     :meth:`argopy.utils.list_radiometry_parameters`,
     """
+    path2assets = importlib.util.find_spec(
+        "argopy.static.assets"
+    ).submodule_search_locations[0]
+
     with open(os.path.join(path2assets, "variables_bgc_synthetic.json"), "r") as f:
         vlist = json.load(f)
     return vlist["data"]["variables"]
@@ -450,6 +318,9 @@ def list_gdac_servers() -> List[str]:
     :class:`argopy.gdacfs`, :meth:`argopy.utils.check_gdac_path`, :meth:`argopy.utils.shortcut2gdac`
 
     """
+    path2assets = importlib.util.find_spec(
+        "argopy.static.assets"
+    ).submodule_search_locations[0]
     with open(os.path.join(path2assets, "gdac_servers.json"), "r") as f:
         vlist = json.load(f)
     return vlist["data"]["paths"]
@@ -473,6 +344,9 @@ def shortcut2gdac(short: str = None) -> Union[str, dict]:
     :func:`argopy.utils.list_gdac_servers`, :class:`argopy.gdacfs`, :meth:`argopy.utils.check_gdac_path`
 
     """
+    path2assets = importlib.util.find_spec(
+        "argopy.static.assets"
+    ).submodule_search_locations[0]
     with open(os.path.join(path2assets, "gdac_servers.json"), "r") as f:
         vlist = json.load(f)
     shortcuts = vlist["data"]["shortcuts"]

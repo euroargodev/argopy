@@ -1,16 +1,9 @@
 import numpy as np
 from contextlib import contextmanager
-import importlib
+import importlib.util
 
 
-def _importorskip(modname):
-    try:
-        importlib.import_module(modname)  # noqa: E402
-        has = True
-    except ImportError:
-        has = False
-    return has
-
+_importorskip = lambda modname: importlib.util.find_spec(modname) is not None
 
 has_mpl = _importorskip("matplotlib")
 has_cartopy = _importorskip("cartopy")
