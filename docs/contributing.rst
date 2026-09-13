@@ -9,7 +9,7 @@ First off, thanks for taking the time to contribute!
 
 .. note::
 
-  Large parts of this document came from the `Xarray <http://xarray.pydata.org/en/stable/contributing.html>`_
+  Large parts of this document come from the `Xarray <http://xarray.pydata.org/en/stable/contributing.html>`_
   and `Pandas <http://pandas.pydata.org/pandas*docs/stable/contributing.html>`_ contributing guides.
 
 If you seek **support** for your argopy usage or if you don't want to read
@@ -19,9 +19,9 @@ Where to start?
 ===============
 
 All contributions, bug reports, bug fixes, documentation improvements,
-enhancements, and ideas are welcome.
+enhancements, new features, and ideas are welcome.
 
-If you are brand new to *argopy* or open source development, we recommend going
+If you are brand new to **Argopy** or open source development, we recommend going
 through the `GitHub "issues" tab <https://github.com/euroargodev/argopy/issues>`_
 to find issues that interest you. There are a number of issues listed under
 `Documentation <https://github.com/euroargodev/argopy/issues?q=is%3Aissue+is%3Aopen+label%3Adocumentation>`_
@@ -39,7 +39,7 @@ and `Good first issue <https://github.com/euroargodev/argopy/discussions?discuss
 Bug reports and enhancement requests
 ====================================
 
-Bug reports are an important part of making *argopy* more stable. Having a complete bug
+Bug reports are an important part of making **Argopy** more stable. Having a complete bug
 report will allow others to reproduce the bug and provide insight into fixing. See
 `this stackoverflow article <https://stackoverflow.com/help/mcve>`_ for tips on
 writing a good bug report.
@@ -60,7 +60,7 @@ Bug reports must:
       ...
       ```
 
-#. Include the full version string of *argopy* and its dependencies. You can use the
+#. Include the full version string of **Argopy** and its dependencies. You can use the
    built in function::
 
       >>> import argopy
@@ -78,7 +78,7 @@ Contributing to the documentation
 =================================
 
 If you're not the developer type, contributing to the documentation is still of
-huge value. You don't even have to be an expert on *argopy* to do so! In fact,
+huge value. You don't even have to be an expert on **Argopy** to do so! In fact,
 there are sections of the docs that are worse off after being written by
 experts. If something in the docs doesn't make sense to you, updating the
 relevant section after you figure it out is a great way to ensure it will help
@@ -88,7 +88,7 @@ the next person.
    :local:
 
 
-About the *argopy* documentation
+About the **Argopy** documentation
 --------------------------------
 
 The documentation is written in **reStructuredText**, which is almost like writing
@@ -99,7 +99,7 @@ complex changes to the documentation as well.
 
 Some other important things to know about the docs:
 
-- The *argopy* documentation consists of two parts: the docstrings in the code
+- The **Argopy** documentation consists of two parts: the docstrings in the code
   itself and the docs in this folder ``argopy/docs/``.
 
   The docstrings are meant to provide a clear explanation of the usage of the
@@ -145,7 +145,7 @@ Some other important things to know about the docs:
   will emit a warning.
 
 
-How to build the *argopy* documentation
+How to build the **Argopy** documentation
 ---------------------------------------
 
 Requirements
@@ -320,12 +320,12 @@ Writing good code is not just about what you write. It is also about *how* you
 write it. During Continuous Integration testing, several
 tools will be run to check your code for stylistic errors.
 Generating any warnings will cause the test to fail.
-Thus, good style is a requirement for submitting code to *argopy*.
+Thus, good style is a requirement for submitting code to *Argopy*.
 
 Code Formatting
 ---------------
 
-*argopy* uses several tools to ensure a consistent code format throughout the project:
+**Argopy** uses several tools to ensure a consistent code format throughout the project:
 
 * `Flake8 <http://flake8.pycqa.org/en/latest/>`_ for general code quality
 
@@ -505,7 +505,7 @@ for json requests:
 Output data format
 """"""""""""""""""
 
-Last but not least, about the output data. In **argopy**, we want
+Last but not least, about the output data. In **Argopy**, we want
 to provide data for both expert and standard users. This is explained
 and illustrated in the `documentation
 here <https://argopy.readthedocs.io/en/latest/user_mode.html>`__.
@@ -523,7 +523,23 @@ output, like plotting or xarray data manipulation.
 Data fetchers for third-party products
 --------------------------------------
 
-[TBD]
+The goal of **Argopy** is help scientists to access to the Argo dataset by providing high-level APIs for beginners as well as low-level APIs for users gaining expertise with the dataset.
+
+The Argo dataset is officially referenced with a DOI, and possibly a DOI for each monthly snapshots. These data are officially distributed by GDAC through http, ftp, s3 and erddap servers. The GDAC servers are the data sources for Argopy.
+
+(The Argo dataset and the Argo Data Management Team cannot be made responsible for results obtained with Argo data as return by Argopy, since Argopy is not an official GDAC data source.)
+
+Several groups are also developing Argo-based dataset. Such third-party dataset provide opinionated versions of the official Argo dataset (eg: possibly specific quality controls, vertical interpolation, new variables computation, etc...).
+
+The Argopy team believes that a *clear distinction* must be done between the Argo official versus opinionated dataset.
+A *clear distinction* is necessary to preserve the Argo Data Management Team work reputation and to not engage the Argo responsibility for scientific results based on non-official third-party dataset. Such a distinction is also necessary to make users aware of the origin of the dataset they work with.
+
+The Argopy team believes that Argo-based, but opinionated third-party, dataset can also be made available through Argopy APIs. This choice is made to promote science analysis, the inter-comparison of products and FAIR principles.
+
+Therefore, the Argopy APIs to be used to provide access to third-party non-official data are:
+- For the :class:`argopy.fetchers.ArgoDataFetcher` API: provide access to a third-party dataset with the `product` argument, which, when specified, will take precedance over the `src` argument.
+- For the :class:`argopy.fetchers.ArgoFloat` API: provide access to a third-party dataset with the `open_product()` method, rather than the `open_dataset()` method to be used only for official data.
+
 
 .. _dataset_extensions:
 
