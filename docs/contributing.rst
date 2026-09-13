@@ -110,7 +110,7 @@ Some other important things to know about the docs:
 - The docstrings follow the **Numpy Docstring Standard**, which is used widely
   in the Scientific Python community. This standard specifies the format of
   the different sections of the docstring. See `this document
-  <https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt>`_
+  <https://numpydoc.readthedocs.io/en/latest/format.html#docstring-standard>`_
   for a detailed explanation, or look at some of the existing functions to
   extend it in a similar manner.
 
@@ -137,9 +137,9 @@ Some other important things to know about the docs:
   doc build. This approach means that code examples will always be up to date,
   but it does make the doc building a bit more complex.
 
-- Our API documentation in ``docs/api.rst`` houses the auto-generated
-  documentation from the docstrings. For classes, there are a few subtleties
-  around controlling which methods and attributes have pages auto-generated.
+- Our API documentation in ``docs/api.rst`` houses an organised collection of all
+  auto-generated documentation from the docstrings. For classes, there are a few
+  subtleties around controlling which methods and attributes have pages auto-generated.
 
   Every method should be included in a ``toctree`` in ``api.rst``, else Sphinx
   will emit a warning.
@@ -158,7 +158,6 @@ the specific environment ``argopy-docs``:
     $ ./ci/envs_manager -i argopy-docs
     $ conda activate argopy-docs
     $ pip install -e .
-    $ pip install -r docs/requirements.txt
 
 Building the documentation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -185,8 +184,8 @@ If you want to do a full clean build, do:
 
 .. _working.code:
 
-Working with the code
-=====================
+Contributing to the code base
+=============================
 
 Development workflow
 --------------------
@@ -261,8 +260,10 @@ incorporated into argopy.
 
 .. _contributing.dev_env:
 
-Virtual environment
--------------------
+Conda environment
+-----------------
+
+We use `conda <https://docs.conda.io/projects/conda/en/stable/user-guide/install/index.html>`_/`mamba <https://mamba.readthedocs.io/>`_ to manage Python environments for developments and CI tests.
 
 We created a short command line script to help manage argopy virtual environments. It's available in the "ci" folder of the repository.
 
@@ -308,6 +309,9 @@ Then, you can simply install the default dev environment like this:
     $ pip install -e .
     $ python -c 'import argopy; argopy.show_versions()'
 
+.. note::
+
+    ``./ci/envs_manager`` is based on `mamba <https://mamba.readthedocs.io/>`_, much faster than `conda <https://docs.conda.io/projects/conda/en/stable/user-guide/install/index.html>`_.
 
 Code standards
 --------------
@@ -336,12 +340,30 @@ and then run from the root of the argopy repository::
 to qualify your code.
 
 
+Test-driven development/code writing
+------------------------------------
+
+[TBD]
+
+
+Backwards Compatibility
+-----------------------
+
+[TBD]
+
+
+Testing With Continuous Integration
+-----------------------------------
+
+[TBD]
+
+
 .. _contributing.code:
 
-Contributing to the code base
-=============================
+Specific contributions to the codebase
+======================================
 
-.. contents:: Code Base:
+.. contents:: Specific contributions
    :local:
 
 .. _data_fetchers:
@@ -371,6 +393,8 @@ If you want to add your own data fetcher for a new service, then, keep in mind t
     *  ``access_points``, eg: ['wmo', 'box']
     *  ``exit_formats``, eg: ['xarray']
     *  ``dataset_ids``, eg: ['phy', 'ref', 'bgc']
+    *  ``api_server``, eg: "https://argovis-api.colorado.edu"
+    *  ``api_server_check``, eg: "https://argovis-api.colorado.edu/ping"
 
   * provides the facade API (:class:`argopy.fetchers.ArgoDataFetcher`) methods to transform or filter data
     according to user level or requests. These must includes:
@@ -395,11 +419,10 @@ Inheritance
 Inherit from the :class:`argopy.data_fetchers.proto.ArgoDataFetcherProto`.
 This enforces minimal internal design compliance.
 
-Auto-discovery of fetcher properties
-""""""""""""""""""""""""""""""""""""
+Fetcher properties
+""""""""""""""""""
 
-
-The new fetcher must come with the ``access_points``, ``exit_formats``, ``dataset_ids`` and ``api_server_check`` properties at the top of the file, e.g.:
+The new fetcher must come with the ``access_points``, ``exit_formats``, ``dataset_ids``, ``api_server``, ``api_server_check`` properties at the top of the file, e.g.:
 
 .. code-block:: python
 
@@ -417,6 +440,9 @@ to auto-discover the fetcher capabilities. The ``dataset_ids``
 property is used to determine which variables can be retrieved.
 
 The ``api_server_check`` property is used to ping the data source and monitor for availability.
+
+Fetcher access points
+"""""""""""""""""""""
 
 Auto-discovery of fetcher access points
 """""""""""""""""""""""""""""""""""""""
@@ -492,10 +518,100 @@ dataframe will be formatted and contain the same variables. This will
 also ensure that other argopy features can be used on the new fetcher
 output, like plotting or xarray data manipulation.
 
-
 .. _product_data_fetchers:
 
 Data fetchers for third-party products
 --------------------------------------
 
 [TBD]
+
+.. _dataset_extensions:
+
+Xarray Dataset extensions
+-------------------------
+
+[TBD]
+
+.. _argofloat_extensions:
+
+ArgoFloat extensions
+--------------------
+
+[TBD]
+
+.. _argoindex_extensions:
+
+ArgoIndex extensions
+--------------------
+
+[TBD]
+
+.. _contributing.ai_policy:
+
+Policy regarding AI powered contributions
+=========================================
+
+.. contents:: AI powered contributions:
+   :local:
+
+AI Usage Policy
+---------------
+
+The argopy developing team has set some rules for generative AI usage. These rules are not definitive and may be updated in the future.
+
+- **All generative AI usage in any form must be disclosed.** If AI was used to generate a significant
+  portion of your contribution (beyond simple autocomplete), we ask that you **disclose it** within the
+  code or PR description. You must state the tool you used along with a sentence saying that the work was AI-assisted.
+
+- **Pull requests and issues created by AI are forbidden.**
+  If AI isn't disclosed but a maintainer suspects its use within a PR or issue **creation**, the PR will be closed.
+  AI assistance can be used for discussions inside PR or issues, but must always be supervized and reviewed by a human eye before submission.
+
+- **Media.**
+  Text and code are the only acceptable AI-generated content, per the
+  other rules in this policy.
+
+These rules apply to all contributors, including maintainers.
+
+Human Accountability
+--------------------
+
+**The human contributor is 100% responsible for the contribution.**
+
+If you submit a Pull Request that includes AI-generated code, documentation, or
+comments:
+
+- You must **fully understand** the code you submit, and the context in which it is included inside the global project or **Argopy**.
+- You must be able to explain the "**why**" behind the implementation during the
+  review process.
+- You are responsible for the long-term maintenance of that code.
+
+The people
+----------
+
+Please keep in mind that **Argopy** is developed and maintained by humans being.
+
+It is for us a fundamental aspect of the project that discussions (in issues or PR), even if happenning on github,
+are made between humans. Knowing this, it will be considered impolite to approach the **Argopy** dev community with AI-agent.
+
+Ethics, Ecology & Expertise
+---------------------------
+
+For more than 20 years, the Argo program has been a key element in the observation and understanding of climate change
+and its impact on the ocean. Argo is incremental in monitoring how the human-driven climate change negatively impact
+the ocean state and marine life (`check the IPCC special report on ocean <https://www.ipcc.ch/srocc/>`_ or
+`that brief overview also from the IPCC <https://www.ipcc.ch/report/ar6/wg1/downloads/factsheets/IPCC_AR6_WGI_Sectoral_Fact_Sheet_Marine_Ecosystems_Fisheries.pdf>`_).
+So, it is of primary and inherent concern to Argo to limit its environmental footprint.
+
+We like to think that **Argopy** is part of the Argo ecosystem.
+
+As sustainable software developers, the **Argopy** team aims to better understand the generative
+AI’s environmental impact, following our preliminary work in
+`monitoring the carbon footprint of maintaining and developing Argopy <https://argopy.readthedocs.io/en/latest/energy.html>`_.
+But very little information are available on the generative AI’s environmental impact and "current GAI models are deployed mainly
+in carbon-intensive regions" (`Ding et al, 2025 <https://doi.org/10.1016/j.xinn.2025.100866>`_).
+
+With that, 2 things to keep in mind when contributing to the development of **Argopy** :
+
+- **Ethics & Ecology** : Not knowing the - presumably very large - impact of generative AI on CO2 emissions (and use of limited Earth resources), it is important to us that we adopt a conservative and limited approach regarding GAI usage in contributing to **Argopy** in order to limit its environmental footprint.
+- **Expertise** : **Argopy**, as part of a public research infrastructure, has more duty in developing/preserving a technical and scientific expertise for the public good, than participating in a blind race to productivity gain (in the `social acceleration sense <https://en.wikipedia.org/wiki/Social_acceleration>`_, an argument echoing the `slow science <https://en.wikipedia.org/wiki/Slow_science>`_ approach at work within **Argopy**). It is thus also important to us that we adopt a conservative and limited approach regarding GAI usage in contributing to **Argopy** to preserve a good level of human expertise regarding the produced code and our associated ability to disseminate our expertise to the end-users.

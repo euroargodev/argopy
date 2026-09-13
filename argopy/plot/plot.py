@@ -12,8 +12,8 @@ import os
 import json
 from copy import copy
 
-import xarray as xr
-import pandas as pd
+from argopy import pandas as pd # Lazily import large module
+from argopy import xarray as xr # Lazily import large module
 import numpy as np
 from typing import Union
 import importlib
@@ -36,12 +36,13 @@ if has_mpl:
 
 if has_seaborn:
     # STYLE["axes"] = "dark"
-    import seaborn as sns
+    from argopy import seaborn as sns  # Lazily import large module
 
 if has_cartopy:
     import cartopy.crs as ccrs
 
 if has_ipython:
+    from argopy import IPython  # Lazily import large module
     from IPython.display import Image, display
 
 if has_ipywidgets:

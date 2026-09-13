@@ -7,18 +7,33 @@ What's New
 
 |pypi dwn| |conda dwn|
 
-
 Coming up next (unreleased)
 ---------------------------
 
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- **Full Argo vocabulary support** for reference tables (:class:`ArgoReferenceTable`), values (:class:`ArgoReferenceValue`) and mappings (:class:`ArgoReferenceMapping`) (:pr:`575`) by |gmaze|.
+- **New methods to access mono-cycle profile files** from :class:`ArgoFloat` instances using :class:`ArgoFloat.ls_profiles`, :class:`ArgoFloat.open_profile` and :class:`ArgoFloat.open_profiles` methods. (:pr:`590`) by |gmaze|.
+
+- **New full Argo vocabulary support** for reference tables (:class:`ArgoReferenceTable`), values (:class:`ArgoReferenceValue`) and mappings (:class:`ArgoReferenceMapping`) (:pr:`575`) by |gmaze|.
 
 Internals
 ^^^^^^^^^
-- **Fix bug** where by some unit tests would raise  `fsspec.exceptions.FSTimeoutError`, :issue:`593`. (:pr:`640`) by |gmaze|.
+
+- **Improve import time** with lazy and/or deferred import of large dependencies, optimization and finally removing of the auto-discovery of data/index fetchers :issue:`585` (:pr:`676`) by |charles| and (:pr:`624`) by |gmaze|.
+
+- **Update USA GDAC url** :issue:`624` (:pr:`624`) by |gmaze|.
+
+- **Fix bug** whereby some unit tests would raise  ``fsspec.exceptions.FSTimeoutError``, :issue:`593`. (:pr:`640`) by |gmaze|.
+
+- **Fix bug** whereby :meth:`Dataset.argo.point2profile` would return un-ordered ``N_PROF`` coordinate instead of a clean ``0..N_PROF-1`` range, :issue:`632`. (:pr:`658`) by |gmaze|.
+
+- **Fix inconsistency** in checking availability of an :class:`ArgoFloat` configuration parameter, :issue:`643`. (:pr:`644`) by |gmaze|.
+
+Documentation
+^^^^^^^^^^^^^
+
+- **Define** a policy regarding **generative AI usage** in **argopy** contributions :issue:`637`. (:pr:`639`) by |quai20|.
 
 v1.4.0 (5 Jan. 2026)
 --------------------
@@ -1526,6 +1541,7 @@ v0.1.0 (17 Mar. 2020)
 .. |gmaze| replace:: `G. Maze <http://www.github.com/gmaze>`__
 .. |quai20| replace:: `K. Balem <http://www.github.com/quai20>`__
 .. |fricour| replace:: `F. Ricour <https://www.github.com/fricour>`__
+.. |charles| replace:: `C. Turner <https://github.com/charles-turner-1>`__
 
 .. |pypi dwn| image:: https://img.shields.io/pypi/dm/argopy?label=Pypi%20downloads
    :target: //pypi.org/project/argopy/

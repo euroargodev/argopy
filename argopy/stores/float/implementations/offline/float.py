@@ -1,8 +1,8 @@
 from pathlib import Path
 import logging
 
-from .....errors import InvalidOption
-from ...spec import FloatStoreProto
+from argopy.errors import OptionValueError
+from argopy.stores.float.spec import FloatStoreProto
 
 
 log = logging.getLogger("argopy.stores.offline.FloatStore")
@@ -21,7 +21,7 @@ class FloatStore(FloatStoreProto):
         super().__init__(*args, **kwargs)
 
         if self.host_protocol != "file":
-            raise InvalidOption(
+            raise OptionValueError(
                 "Trying to work with the offline store using a remote host !"
             )
 

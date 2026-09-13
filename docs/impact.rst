@@ -28,11 +28,17 @@ Papers & proceedings citing Argopy
 
 #. Gonzalez A. (2023). "The Argo Online School: An e-learning tool to get started with Argo", The Journal of Open Source Education, 7(80), 193, https://jose.theoj.org/papers/10.21105/jose.00193
 
+#. Hackl, Jürgen. (2026). "EuroFlood: a Python library and queryable index for the CEMS satellite-derived flood-depth archive of Europe." arXiv preprint https://arxiv.org/pdf/2607.21126
+
 #. Huda, Md Nurul  (2023). "Machine Learning for Improvement of Ocean Data Resolution for Weather Forecasting and Climatological Research", Thesis and Dissertations, Virginia Tech, http://hdl.handle.net/10919/116504
 
 #. Kerhalkar, S., Tandon, A., & MacKinnon, J. A. (2026). "Impacts of salinity stratification on sub-seasonal SST warming in the Northern Indian Ocean", Journal of Geophysical Research: Oceans, 131, e2025JC023486. https://doi.org/10.1029/2025JC023486
 
 #. Lehmann, N., Aybar, C., Shah, A., Passaro, M., Bamber, J. L., and Zhu, X. X. (2026): "OceanTACO: A Multi-Sensor Global Ocean Sea Surface State Dataset", Earth Syst. Sci. Data Discuss. [preprint], https://doi.org/10.5194/essd-2026-232, in review, 2026.
+
+#. Oke PR, Rykova T, Lovell JL, van Wijk EM, McMahon PM, Schallenberg C, Rintoul SR, Foppert A, Scott R, Pilo GS, Slawinski D, Krummel L, Strutton PG. (2026): "Argo Australia: over 20 years of impact". Marine & Freshwater Research 77, MF26047. https://doi.org/10.1071/MF26047
+
+#. Nikhil Parkar, M. Marimuthu, Aditi Agale, Vraj Prajapati, Arnav Parekar, Aditi Bambal, Shivam Chavan (2026): "A unified RAG-based framework for intelligent exploration of Argo and BGC-Argo oceanographic data". Ecological Informatics, 98. https://doi.org/10.1016/j.ecoinf.2026.103990
 
 #. Singh, Shikha and Sapkal, Mayur (2025). "A machine learning approach to identify upper ocean water masses in the Indian Ocean", CSI Transactions on ICT. https://doi.org/10.1007/s40012-025-00417-9.
 
@@ -57,6 +63,8 @@ Blog post & personal pages :
 - Samapriya Roy : https://samapriyaroy.medium.com/open-ocean-data-with-argofloats-tool-50efef6c4f05
 
 Academic referencing/use-cases:
+
+- DeFeo, Jessica (2026). "Radiative Transfer Comparisons Between Satellite Ocean Color and BGC-Argo Float Chlorophyll". The State University of New Jersey, School of Graduate Studies. Dissertations & Theses, 2026. 32856575.
 
 - Sydney univ academic conda env : http://climate-cms.wikis.unsw.edu.au/Conda
 

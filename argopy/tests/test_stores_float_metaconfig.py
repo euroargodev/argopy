@@ -71,6 +71,8 @@ class FloatStore_Config_Proto:
     )
     def test_get(self, wmo, config, mocked_httpserver):
         a_param = np.random.choice(config.parameters, 1)[0]
+        assert a_param in config
+        assert a_param.replace('CONFIG_', '') in config
         assert isinstance(config[a_param], list)
         assert isinstance(config[a_param, 1:2], list)
         assert isinstance(config[a_param, 1], int | float | str | bool)
