@@ -22,18 +22,20 @@ def lazy_import(name, optional=False):
     """
     Lazily import a module.
 
-    Args:
-        name: Dotted module name, e.g. "pandas" or "scipy.optimize".
-        optional: If True, return None instead of raising when the
-                  module isn't installed.
+    Parameters
+    ----------
+    name: str
+        Dotted module name, e.g. "pandas" or "scipy.optimize".
+    optional: bool, default=False
+        If True, return None instead of raising when the module isn't installed.
 
-    Returns:
-        The lazily-loaded module, or None if optional=True and the
-        module isn't available.
+    Returns
+    -------
+    The lazily-loaded module, or None if optional=True and the module isn't available.
 
-    Raises:
-        ModuleNotFoundError: if the module isn't available and
-                              optional=False.
+    Raises
+    ------
+    :class:`ModuleNotFoundError` if the module isn't available and optional=False.
     """
     # Already imported (lazily or otherwise) — just return it
     if name in sys.modules:
@@ -49,7 +51,7 @@ def lazy_import(name, optional=False):
     if spec is None:
         if optional:
             return None
-        raise ModuleNotFoundError(f"No module named {name!r}")
+        raise ModuleNotFoundError(f"No module named {name}")
 
     loader = importlib.util.LazyLoader(spec.loader)
     spec.loader = loader
