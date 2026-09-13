@@ -389,6 +389,8 @@ If you want to add your own data fetcher for a new service, then, keep in mind t
     *  ``access_points``, eg: ['wmo', 'box']
     *  ``exit_formats``, eg: ['xarray']
     *  ``dataset_ids``, eg: ['phy', 'ref', 'bgc']
+    *  ``api_server``, eg: "https://argovis-api.colorado.edu"
+    *  ``api_server_check``, eg: "https://argovis-api.colorado.edu/ping"
 
   * provides the facade API (:class:`argopy.fetchers.ArgoDataFetcher`) methods to transform or filter data
     according to user level or requests. These must includes:
@@ -413,11 +415,10 @@ Inheritance
 Inherit from the :class:`argopy.data_fetchers.proto.ArgoDataFetcherProto`.
 This enforces minimal internal design compliance.
 
-Auto-discovery of fetcher properties
-""""""""""""""""""""""""""""""""""""
+Fetcher properties
+""""""""""""""""""
 
-The new fetcher must come with the ``access_points``, ``exit_formats`` and ``dataset_ids`` properties at the top of the
-file, e.g.:
+The new fetcher must come with the ``access_points``, ``exit_formats``, ``dataset_ids``, ``api_server``, ``api_server_check`` properties at the top of the file, e.g.:
 
 .. code-block:: python
 
@@ -434,8 +435,8 @@ required. These variables are used by the facade
 to auto-discover the fetcher capabilities. The ``dataset_ids``
 property is used to determine which variables can be retrieved.
 
-Auto-discovery of fetcher access points
-"""""""""""""""""""""""""""""""""""""""
+Fetcher access points
+"""""""""""""""""""""
 
 The new fetcher must come at least with a ``Fetch_box`` or
 ``Fetch_wmo`` class, basically one for each of the ``access_points``
@@ -510,8 +511,22 @@ output, like plotting or xarray data manipulation.
 
 .. _dataset_extensions:
 
-Dataset extensions
-------------------
+Xarray Dataset extensions
+-------------------------
+
+[TBD]
+
+.. _argofloat_extensions:
+
+ArgoFloat extensions
+--------------------
+
+[TBD]
+
+.. _argoindex_extensions:
+
+ArgoIndex extensions
+--------------------
 
 [TBD]
 
