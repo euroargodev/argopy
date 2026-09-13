@@ -27,9 +27,8 @@ from .implementations.plot import ArgoIndexPlot
 from .implementations.valid import ArgoIndexSearchValid
 
 try:
-    from argopy import pyarrow # Lazily import large module
+    from argopy import pyarrow as pa # Lazily import large module
     import pyarrow.csv as csv  # noqa: F401
-    import pyarrow as pa
     import pyarrow.parquet as pq  # noqa: F401
 except ModuleNotFoundError:
     pass
