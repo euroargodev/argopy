@@ -1,0 +1,73 @@
+{
+  "name": "BBP532",
+  "long_name": "Particle backscattering at 532 nanometers",
+  "last_update": "2026-01-25T11:11:31.095604+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R03/current/BBP532/",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/BBP532/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/BBP532/1/"
+      }
+    ],
+    "pav:authoredOn": "2025-11-25 10:14:02.0",
+    "@type": "skos:Concept",
+    "skos:related": {
+      "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UPRM/"
+    },
+    "skos:definition": {
+      "@language": "en",
+      "@value": "Particle backscattering at 532 nm wavelength, reported by ECO3 sensor. Local_Attributes:{long_name:Particle backscattering at 532 nanometers; standard_name:-; units:m-1; valid_min:-; valid_max:-; fill_value:99999.f}. Properties:{category:b; data_type:float}"
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R03::BBP532",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "Particle backscattering at 532 nanometers"
+    },
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-25 10:14:02.0",
+    "skos:altLabel": "BBP532",
+    "skos:notation": "SDN:R03::BBP532",
+    "owl:sameAs": {
+      "@id": "http://vocab.nerc.ac.uk/collection/P01/current/BB117G01/"
+    },
+    "pav:version": "3",
+    "dce:identifier": "SDN:R03::BBP532",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/BBP532/3/"
+    },
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

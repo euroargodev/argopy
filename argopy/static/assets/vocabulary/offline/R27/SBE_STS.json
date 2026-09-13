@@ -1,0 +1,70 @@
+{
+  "name": "SBE_STS",
+  "long_name": "Sea-Bird Scientific SBE Surface Temperature and Salinity sensor",
+  "last_update": "2026-01-25T11:14:11.149705+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE_STS/",
+    "pav:authoredOn": "2019-10-11 14:49:00.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE_STS/1/"
+    },
+    "@type": "skos:Concept",
+    "skos:related": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/STS_CNDC/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/STS_TEMP/"
+      }
+    ],
+    "skos:definition": {
+      "@language": "en",
+      "@value": "The SBE Surface Temperature and Salinity (STS) sensor is designed to make near-surface temperature and conductivity measurements from profiling floats. As its conductivity sensor is free-flushed, the SBE STS is designed to be used in conjunction with an SBE 41CP sensor for calibration purposes."
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R27::SBE_STS",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "Sea-Bird Scientific SBE Surface Temperature and Salinity sensor"
+    },
+    "owl:versionInfo": "1",
+    "dc:date": "2019-10-11 14:49:00.0",
+    "skos:altLabel": "SBE_STS",
+    "skos:notation": "SDN:R27::SBE_STS",
+    "skos:broader": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+    },
+    "pav:version": "1",
+    "dce:identifier": "SDN:R27::SBE_STS",
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

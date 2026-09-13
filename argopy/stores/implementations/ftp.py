@@ -10,7 +10,7 @@ from typing import Literal
 from netCDF4 import Dataset
 
 from ...errors import InvalidMethod, DataNotFound
-from ...utils.transform import drop_variables_not_in_all_datasets
+from ...utils.transformers import drop_variables_not_in_all_datasets
 from ..filesystems import has_distributed, distributed
 from ..filesystems import tqdm
 from .http import httpstore
@@ -203,7 +203,7 @@ class ftpstore(httpstore):
 
                 if "source" not in ds.encoding:
                     if isinstance(url, str):
-                        ds.encoding["source"] = self.full_path(url)
+                        ds.encoding["source"] = self.full_path(url, protocol=True)
 
             else:
                 target = target if isinstance(target, bytes) else target.getbuffer()

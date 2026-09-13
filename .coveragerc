@@ -1,7 +1,8 @@
 [run]
 omit =
     argopy/tests/*
-    argopy/tests/*
+    argopy/related/argo_documentation.py
+    argopy/related/doi_snapshot.py
     *deprec*
     *__init__*
 [report]

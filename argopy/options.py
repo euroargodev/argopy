@@ -1,7 +1,7 @@
 """
 This module manage options of the package
 
-# Like always, largely inspired by xarray code:
+# Freely adapted from and inspired by Xarray:
 # https://github.com/pydata/xarray/blob/cafab46aac8f7a073a32ec5aa47e213a9810ed54/xarray/core/options.py
 """
 
@@ -37,6 +37,8 @@ log = logging.getLogger("argopy.options")
 DATA_SOURCE = "src"
 GDAC = "gdac"
 ERDDAP = "erddap"
+ARGOVIS = "argovis"
+ARGOVIS_API_KEY = "argovis_api_key"
 DATASET = "ds"
 CACHE_FOLDER = "cachedir"
 CACHE_EXPIRATION = "cache_expiration"
@@ -46,16 +48,18 @@ TRUST_ENV = "trust_env"
 SERVER = "server"
 USER = "user"
 PASSWORD = "password"
-ARGOVIS_API_KEY = "argovis_api_key"
 PARALLEL = "parallel"
 PARALLEL_DEFAULT_METHOD = "parallel_default_method"
 LON = "longitude_convention"
+NVS = "nvs"
 
 # Define the list of available options and default values:
 OPTIONS = {
     DATA_SOURCE: "erddap",
     GDAC: "https://data-argo.ifremer.fr",
     ERDDAP: "https://erddap.ifremer.fr/erddap",
+    ARGOVIS: "https://argovis-api.colorado.edu",
+    ARGOVIS_API_KEY: "guest",  # https://argovis-keygen.colorado.edu
     DATASET: "phy",
     CACHE_FOLDER: os.path.expanduser(os.path.sep.join(["~", ".cache", "argopy"])),
     CACHE_EXPIRATION: 86400,
@@ -65,15 +69,15 @@ OPTIONS = {
     SERVER: None,
     USER: os.environ.get("ERDDAP_USERNAME"),
     PASSWORD: os.environ.get("ERDDAP_PASSWORD"),
-    ARGOVIS_API_KEY: "guest",  # https://argovis-keygen.colorado.edu
     PARALLEL: False,
     PARALLEL_DEFAULT_METHOD: "thread",
     LON: "180",
+    NVS: "https://vocab.nerc.ac.uk",
 }
 DEFAULT = OPTIONS.copy()
 
 # Define the list of possible values
-_DATA_SOURCE_LIST = frozenset(["erddap", "argovis", "gdac"])
+DATA_SOURCE_LIST = frozenset(["erddap", "argovis", "gdac"])
 _DATASET_LIST = frozenset(["phy", "bgc", "ref", "bgc-s", "bgc-b"])
 _USER_LEVEL_LIST = frozenset(["standard", "expert", "research"])
 
@@ -91,7 +95,7 @@ def validate_gdac(this_path):
         return False
 
 
-def validate_http(this_path):
+def validate_erddap(this_path):
     if this_path != "-":
         return check_erddap_path(this_path, errors="raise")
     else:
@@ -118,9 +122,11 @@ def validate_parallel_method(method):
 
 
 _VALIDATORS = {
-    DATA_SOURCE: _DATA_SOURCE_LIST.__contains__,
+    DATA_SOURCE: DATA_SOURCE_LIST.__contains__,
     GDAC: validate_gdac,
-    ERDDAP: validate_http,
+    ERDDAP: validate_erddap,
+    ARGOVIS: lambda x: isinstance(x, str),
+    ARGOVIS_API_KEY: lambda x: isinstance(x, str) or x is None,
     DATASET: _DATASET_LIST.__contains__,
     CACHE_FOLDER: lambda x: os.access(x, os.W_OK),
     CACHE_EXPIRATION: lambda x: isinstance(x, int) and x > 0,
@@ -130,10 +136,10 @@ _VALIDATORS = {
     SERVER: lambda x: True,
     USER: lambda x: isinstance(x, str) or x is None,
     PASSWORD: lambda x: isinstance(x, str) or x is None,
-    ARGOVIS_API_KEY: lambda x: isinstance(x, str) or x is None,
     PARALLEL: validate_parallel,
     PARALLEL_DEFAULT_METHOD: validate_parallel_method,
     LON: lambda x: x in ['180', '360'],
+    NVS: lambda x: (isinstance(x, str) and x.startswith('http')) or x is None,
 }
 
 
@@ -222,12 +228,15 @@ class set_options:
                 - ``process``: use `multi-processing <https://en.wikipedia.org/wiki/Multiprocessing>`_ with a :class:`concurrent.futures.ProcessPoolExecutor`
                 -  :class:`distributed.Client`: Use a `Dask Cluster <https://docs.dask.org/en/stable/deploying.html>`_ `client <https://distributed.dask.org/en/latest/client.html>`_.
 
-    longitude_convention: str, default: '180',
+    longitude_convention: str, default: '180'
         The longitude convention to use when longitudes are compared.
 
             Possible values:
                 - '180': longitude goes from -180 to 180
                 - '360': longitude goes from 0 to 360
+
+    nvs: str, default: 'https://vocab.nerc.ac.uk/collection'
+        URL to use for the NVS Argo reference vocabulary server.
 
     Other Parameters
     ----------------

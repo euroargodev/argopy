@@ -179,6 +179,8 @@ def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa
         'ext.perf': sorted([
             ("dask", get_version),
             ("distributed", get_version),
+            ("joblib", get_version),
+            ("numba", get_version),
             ("pyarrow", get_version),
         ]),
         'ext.plot': sorted([

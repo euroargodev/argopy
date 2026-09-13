@@ -12,6 +12,31 @@ except ImportError:
     HAS_PYCO2SYS = False
     pyco2 = None
 
+try:
+    from numba import jit, prange
+
+    HAS_NUMBA = True
+except ImportError:
+    HAS_NUMBA = False
+
+    # Define dummy decorators (needed for tests when numba is not installed)
+    def jit(*args, **kwargs):
+        def decorator(func):
+            return func
+
+        return decorator
+
+    prange = range
+
+try:
+    from joblib import Parallel, delayed
+
+    HAS_JOBLIB = True
+except ImportError:
+    HAS_JOBLIB = False
+    Parallel = None
+    delayed = None
+
 from ..errors import InvalidDatasetStructure, DataNotFound
 from ..utils import path2assets, to_list, point_in_polygon
 from . import register_argo_accessor, ArgoAccessorExtension
@@ -41,7 +66,7 @@ class CanyonB(ArgoAccessorExtension):
         ds = ArgoSet.to_xarray()
 
     Once input data are loaded, make all or selected parameters predictions with or without specifying input errors
-    on pressure (epres, in dbar), temperature (etemp, in °C), salinity (epsal, in PSU) and oxygen (edoxy, in micromole/kg).
+    on pressure (epres, in dbar), temperature (etemp, in degC), salinity (epsal, in PSU) and oxygen (edoxy, in micromole/kg).
     For interested users, uncertainties on predicted parameters can also be included.
 
     .. code-block:: python
@@ -55,20 +80,20 @@ class CanyonB(ArgoAccessorExtension):
 
     By default, if no input errors are specified, the following default values are used:
         - epres = 0.5 dbar
-        - etemp = 0.005 °C
+        - etemp = 0.005 degC
         - epsal = 0.005 PSU
         - edoxy = 1% of DOXY value
 
     Notes
     -----
-    This Python implementation is largely inspired by work from Raphaël Bajon (https://github.com/RaphaelBajon)
+    This Python implementation is largely inspired by work from Raphael Bajon (https://github.com/RaphaelBajon)
     which is available at https://github.com/RaphaelBajon/canyonbpy and from the EuroGO-SHIP organization (https://github.com/EuroGO-SHIP/AtlantOS_QC/blob/master/atlantos_qc/data_models/extra/pycanyonb.py)
 
     References
     ----------
-    .. [1] Bittig, H. C., Steinhoff, T., Claustre, H., Fiedler, B., Williams, N. L., Sauzède, R., Körtzinger, A., and Gattuso, J. P. (2018). An alternative to static climatologies: Robust estimation of open ocean CO2 variables and nutrient concentrations from T, S, and O2 data using Bayesian neural networks. Frontiers in Marine Science, 5, 328. https://doi.org/10.3389/fmars.2018.00328
+    .. [1] Bittig, H. C., Steinhoff, T., Claustre, H., Fiedler, B., Williams, N. L., Sauzede, R., Kortzinger, A., and Gattuso, J. P. (2018). An alternative to static climatologies: Robust estimation of open ocean CO2 variables and nutrient concentrations from T, S, and O2 data using Bayesian neural networks. Frontiers in Marine Science, 5, 328. https://doi.org/10.3389/fmars.2018.00328
 
-    .. [2] Sauzède, R., Bittig, H. C., Claustre, H., Pasqueron de Fommervault, O., Gattuso, J. P., Legendre, L., and Johnson, K. S. (2017). Estimates of water-column nutrient concentrations and carbonate system parameters in the global ocean: A novel approach based on neural networks. Frontiers in Marine Science, 4, 128. https://doi.org/10.3389/fmars.2017.00128
+    .. [2] Sauzede, R., Bittig, H. C., Claustre, H., Pasqueron de Fommervault, O., Gattuso, J. P., Legendre, L., and Johnson, K. S. (2017). Estimates of water-column nutrient concentrations and carbonate system parameters in the global ocean: A novel approach based on neural networks. Frontiers in Marine Science, 4, 128. https://doi.org/10.3389/fmars.2017.00128
     """
 
     n_inputs = (
@@ -122,9 +147,19 @@ class CanyonB(ArgoAccessorExtension):
     def __init__(self, *args, **kwargs):
         if not HAS_PYCO2SYS:
             raise ImportError(
-                "PyCO2SYS is required for the canyon_b extension. "
+                "PyCO2SYS is required for the CANYON-B extension."
                 "Install it with: pip install PyCO2SYS"
             )
+        if not HAS_NUMBA:
+            raise ImportError(
+                "numba is required for the CANYON-B extension."
+                "Install it with: pip install numba"
+            )  # Note: for performance reasons, numba is required now.
+        if not HAS_JOBLIB:
+            raise ImportError(
+                "joblib is required for the CANYON-B extension."
+                "Install it with: pip install joblib"
+            )  # Note: for parallelization of predictions, joblib is required now.
 
         super().__init__(*args, **kwargs)
 
@@ -257,14 +292,14 @@ class CanyonB(ArgoAccessorExtension):
             - 'lat': Latitude in degrees North (Arctic-adjusted if applicable)
             - 'lon': Longitude in degrees East
             - 'dec_year': Decimal year
-            - 'temp': Temperature (°C)
+            - 'temp': Temperature (degC)
             - 'psal': Salinity (PSU)
-            - 'doxy': Dissolved oxygen (µmol/kg)
+            - 'doxy': Dissolved oxygen (umol/kg)
             - 'pres': Modified pressure for CANYON-B input (dimensionless)
 
         References
         ----------
-        .. [1] Fourrier, M., Coppola, L., Claustre, H., D’Ortenzio, F., Sauzède, R., and Gattuso, J.-P. (2020). A Regional Neural Network Approach to Estimate Water-Column Nutrient Concentrations and Carbonate System Variables in the Mediterranean Sea: CANYON-MED. Frontiers in Marine Science 7. https://doi.org/10.3389/fmars.2020.00620
+        .. [1] Fourrier, M., Coppola, L., Claustre, H., D'Ortenzio, F., Sauzede, R., and Gattuso, J.-P. (2020). A Regional Neural Network Approach to Estimate Water-Column Nutrient Concentrations and Carbonate System Variables in the Mediterranean Sea: CANYON-MED. Frontiers in Marine Science 7. https://doi.org/10.3389/fmars.2020.00620
         """
         if self._obj.argo.N_POINTS > 1:
             df = pd.DataFrame(
@@ -318,14 +353,14 @@ class CanyonB(ArgoAccessorExtension):
             - Decimal year
             - Normalized latitude
             - Transformed longitude (see eq. (1) in [1]_)
-            - Temperature (°C)
+            - Temperature (degC)
             - Practical salinity (PSU)
-            - Dissolved oxygen (μmol/kg)
+            - Dissolved oxygen (umol/kg)
             - Transformed pressure (dimensionless)
 
         References
         ----------
-        .. [1] Bittig, H. C., Steinhoff, T., Claustre, H., Fiedler, B., Williams, N. L., Sauzède, R., Körtzinger, A., and Gattuso, J. P. (2018). An alternative to static climatologies: Robust estimation of open ocean CO2 variables and nutrient concentrations from T, S, and O2 data using Bayesian neural networks. Frontiers in Marine Science, 5, 328. https://doi.org/10.3389/fmars.2018.00328
+        .. [1] Bittig, H. C., Steinhoff, T., Claustre, H., Fiedler, B., Williams, N. L., Sauzede, R., Kortzinger, A., and Gattuso, J. P. (2018). An alternative to static climatologies: Robust estimation of open ocean CO2 variables and nutrient concentrations from T, S, and O2 data using Bayesian neural networks. Frontiers in Marine Science, 5, 328. https://doi.org/10.3389/fmars.2018.00328
         """
         df = self.ds2df()
 
@@ -350,7 +385,7 @@ class CanyonB(ArgoAccessorExtension):
         Adjust latitude for Arctic basin calculations.
 
         This methods adjusts the latitude of all points inside the Arctic, west of the
-        Lomonosov ridge. This adjustement improves the predictions in the subpolar North
+        Lomonosov ridge. This adjustment improves the predictions in the subpolar North
         Pacific by artificially increasing the "length" of the Bering Strait (see [1]_ for details).
 
         Parameters
@@ -367,7 +402,7 @@ class CanyonB(ArgoAccessorExtension):
 
         References
         ----------
-        .. [1] Bittig, H. C., Steinhoff, T., Claustre, H., Fiedler, B., Williams, N. L., Sauzède, R., Körtzinger, A., and Gattuso, J. P. (2018). An alternative to static climatologies: Robust estimation of open ocean CO2 variables and nutrient concentrations from T, S, and O2 data using Bayesian neural networks. Frontiers in Marine Science, 5, 328. https://doi.org/10.3389/fmars.2018.00328
+        .. [1] Bittig, H. C., Steinhoff, T., Claustre, H., Fiedler, B., Williams, N. L., Sauzede, R., Kortzinger, A., and Gattuso, J. P. (2018). An alternative to static climatologies: Robust estimation of open ocean CO2 variables and nutrient concentrations from T, S, and O2 data using Bayesian neural networks. Frontiers in Marine Science, 5, 328. https://doi.org/10.3389/fmars.2018.00328
         """
         # Points for Arctic basin 'West' of Lomonosov ridge
         plon = np.array(
@@ -431,6 +466,87 @@ class CanyonB(ArgoAccessorExtension):
 
         return weights
 
+    @staticmethod
+    @jit(nopython=True, parallel=True, cache=True, fastmath=True)
+    def _nn_forward_1layer(data_N, w1, b1, w2, b2):
+        """Forward pass for 1-layer neural network (numba optimized with parallelization)"""
+        nol = data_N.shape[0]  # Number of data points
+        ni = data_N.shape[1]  # Number of inputs to the neural network
+        nl1 = w1.shape[0]  # Number of neurons in the hidden layer
+
+        # Forward pass
+        a = np.zeros((nol, nl1))
+        for i in prange(
+            nol
+        ):  # Parallel over data points (needs to be an explicit loop for numba)
+            for j in range(nl1):
+                tmp = b1[j]
+                for k in range(ni):
+                    tmp += data_N[i, k] * w1[j, k]
+                a[i, j] = np.tanh(tmp)
+
+        y = (
+            a @ w2.T + b2
+        )  # @ is matrix multiplication operator in numpy and numba optimizes it well
+
+        # Calculate input effects in parallel
+        inx = np.zeros((nol, ni))
+        for i in prange(nol):  # Parallel loop
+            tanh_a = a[i, :]
+            dtanh = 1 - tanh_a * tanh_a
+            for k in range(ni):
+                tmp = 0.0
+                for j in range(nl1):
+                    tmp += w2[0, j] * w1[j, k] * dtanh[j]
+                inx[i, k] = tmp
+
+        return y.flatten(), inx
+
+    @staticmethod
+    @jit(nopython=True, parallel=True, cache=True, fastmath=True)
+    def _nn_forward_2layer(data_N, w1, b1, w2, b2, w3, b3):
+        """Forward pass for 2-layer neural network (numba optimized with parallelization)"""
+        nol = data_N.shape[0]  # Number of data points
+        ni = data_N.shape[1]  # Number of inputs (neural network)
+        nl1 = w1.shape[0]  # Number of neurons in the first hidden layer
+        nl2 = w2.shape[0]  # Number of neurons in the second hidden layer
+
+        # First layer
+        a = np.zeros((nol, nl1))
+        for i in prange(nol):
+            for j in range(nl1):
+                tmp = b1[j]
+                for k in range(ni):
+                    tmp += data_N[i, k] * w1[j, k]
+                a[i, j] = np.tanh(tmp)
+
+        # Second layer
+        b_layer = np.zeros((nol, nl2))
+        for i in prange(nol):
+            for j in range(nl2):
+                tmp = b2[j]
+                for k in range(nl1):
+                    tmp += a[i, k] * w2[j, k]
+                b_layer[i, j] = np.tanh(tmp)
+
+        # Output layer
+        y = b_layer @ w3.T + b3
+
+        # Calculate input effects in parallel
+        inx = np.zeros((nol, ni))
+        for i in prange(nol):
+            dtanh_a = 1 - a[i, :] * a[i, :]
+            dtanh_b = 1 - b_layer[i, :] * b_layer[i, :]
+
+            for m in range(ni):
+                tmp = 0.0
+                for j in range(nl2):
+                    for k in range(nl1):
+                        tmp += w3[0, j] * dtanh_b[j] * w2[j, k] * dtanh_a[k] * w1[k, m]
+                inx[i, m] = tmp
+
+        return y.flatten(), inx
+
     def _predict(
         self,
         param: str,
@@ -438,6 +554,7 @@ class CanyonB(ArgoAccessorExtension):
         etemp: Optional[float] = None,
         epsal: Optional[float] = None,
         edoxy: Optional[Union[float, np.ndarray]] = None,
+        data: Optional[np.ndarray] = None,
     ) -> dict:
         """
         Predict a single biogeochemical parameter using CANYON-B neural networks.
@@ -451,23 +568,26 @@ class CanyonB(ArgoAccessorExtension):
         ----------
         param : str
             Parameter to predict. Must be one of:
-            - 'AT': Total alkalinity (μmol/kg)
-            - 'DIC': Dissolved inorganic carbon (μmol/kg)
+            - 'AT': Total alkalinity (umol/kg)
+            - 'DIC': Dissolved inorganic carbon (umol/kg)
             - 'pHT': Total pH
-            - 'pCO2': Partial pressure of CO₂ (μatm)
-            - 'NO3': Nitrate concentration (μmol/kg)
-            - 'PO4': Phosphate concentration (μmol/kg)
-            - 'SiOH4': Silicate concentration (μmol/kg)
+            - 'pCO2': Partial pressure of CO2 (uatm)
+            - 'NO3': Nitrate concentration (umol/kg)
+            - 'PO4': Phosphate concentration (umol/kg)
+            - 'SiOH4': Silicate concentration (umol/kg)
         epres : float, optional
             Pressure measurement uncertainty in dbar (default: 0.5 dbar)
         etemp : float, optional
-            Temperature measurement uncertainty in °C (default: 0.005 °C)
+            Temperature measurement uncertainty in degC (default: 0.005 degC)
         epsal : float, optional
             Salinity measurement uncertainty (PSU, default: 0.005)
         edoxy : float or np.ndarray, optional
-            Oxygen measurement uncertainty in μmol/kg. If not provided,
+            Oxygen measurement uncertainty in umol/kg. If not provided,
             defaults to 1% of measured oxygen values. Can be a scalar
             applied to all points or an array matching data dimensions.
+        data : np.ndarray, optional
+            Precomputed input matrix from create_canyonb_input_matrix().
+            If not provided, it will be computed.
 
         Returns
         -------
@@ -510,7 +630,8 @@ class CanyonB(ArgoAccessorExtension):
         inputsigma[2] = np.sqrt(0.005**2 + 0.01**2)
 
         # Prepare input data
-        data = self.create_canyonb_input_matrix()
+        if data is None:
+            data = self.create_canyonb_input_matrix()
 
         # Output dictionary
         out = {}
@@ -579,30 +700,17 @@ class CanyonB(ArgoAccessorExtension):
                 idx += nl2
                 b3 = inwgts[idx : idx + 1, network]
 
-            # Forward pass
-            a = np.dot(data_N, w1.T) + b1
+            # Forward pass using numba-optimized functions
             if nlayerflag == 1:
                 # One hidden layer
-                y = np.dot(np.tanh(a), w2.T) + b2
+                y, inx = self._nn_forward_1layer(data_N, w1, b1, w2, b2)
             else:
                 # Two hidden layers
-                b = np.dot(np.tanh(a), w2.T) + b2
-                y = np.dot(np.tanh(b), w3.T) + b3
+                y, inx = self._nn_forward_2layer(data_N, w1, b1, w2, b2, w3, b3)
 
             # Store results
-            cval[:, network] = y.flatten()
+            cval[:, network] = y
             cvalcy[network] = 1 / beta  # 'noise' variance
-
-            # Calculate input effects
-            x1 = w1[None, :, :] * (1 - np.tanh(a)[:, :, None] ** 2)
-
-            if nlayerflag == 1:
-                # One hidden layer
-                inx = np.einsum("ij,...jk->...ik", w2, x1)[:, 0, :]
-            else:
-                # Two hidden layers
-                x2 = w2[None, :, :] * (1 - np.tanh(b)[:, :, None] ** 2)
-                inx = np.einsum("ij,...jk,...kl->...il", w3, x2, x1)[:, 0, :]
             inval[:, :, network] = inx
 
         # Denormalization
@@ -707,6 +815,7 @@ class CanyonB(ArgoAccessorExtension):
         epsal: Optional[float] = None,
         edoxy: Optional[Union[float, np.ndarray]] = None,
         include_uncertainties: Optional[bool] = False,
+        n_jobs: Optional[int] = -1,
     ) -> xr.Dataset:
         """
         Make predictions using the CANYON-B method.
@@ -719,28 +828,31 @@ class CanyonB(ArgoAccessorExtension):
         params : str, list of str, or None, optional
             Parameter(s) to predict. Valid options:
 
-            - 'AT': Total alkalinity (μmol/kg)
-            - 'DIC': Dissolved inorganic carbon (μmol/kg)
+            - 'AT': Total alkalinity (umol/kg)
+            - 'DIC': Dissolved inorganic carbon (umol/kg)
             - 'pHT': Total pH
-            - 'pCO2': Partial pressure of CO₂ (μatm)
-            - 'NO3': Nitrate concentration (μmol/kg)
-            - 'PO4': Phosphate concentration (μmol/kg)
-            - 'SiOH4': Silicate concentration (μmol/kg)
+            - 'pCO2': Partial pressure of CO2 (uatm)
+            - 'NO3': Nitrate concentration (umol/kg)
+            - 'PO4': Phosphate concentration (umol/kg)
+            - 'SiOH4': Silicate concentration (umol/kg)
 
             If None (default), all seven parameters are predicted.
 
         epres : float, optional
             Pressure measurement uncertainty in dbar (default: 0.5 dbar)
         etemp : float, optional
-            Temperature measurement uncertainty in °C (default: 0.005 °C)
+            Temperature measurement uncertainty in degC (default: 0.005 degC)
         epsal : float, optional
             Salinity measurement uncertainty in PSU (default: 0.005)
         edoxy : float or np.ndarray, optional
-            Oxygen measurement uncertainty in μmol/kg. If not provided,
+            Oxygen measurement uncertainty in umol/kg. If not provided,
             defaults to 1% of measured oxygen values. Can be a scalar
             applied to all points or an array matching data dimensions.
         include_uncertainties : bool, optional
             If True, include uncertainty estimates for each predicted parameter
+        n_jobs : int, optional
+            Number of parallel jobs used for prediction (only used when there is more than one parameter to predict).
+            Default is -1 (use all available CPUs). This option is directly passed to :class:`joblib.Parallel`.
 
         Returns
         -------
@@ -749,22 +861,44 @@ class CanyonB(ArgoAccessorExtension):
         """
 
         # Validation of requested parameters to predict:
+        params_list = ["NO3", "PO4", "SiOH4", "AT", "DIC", "pHT", "pCO2"]
         if params is None:
-            params = self.output_list
+            params = params_list
         else:
             params = to_list(params)
         for p in params:
-            if p not in self.output_list:
+            if p not in params_list:
                 raise ValueError(
                     "Invalid parameter ('%s') to predict, must be in [%s]"
-                    % (p, ",".join(self.output_list))
+                    % (p, ",".join(params_list))
                 )
 
-        # Make predictions of each of the requested parameters
-        for param in params:
+        # Compute input matrix once for all parameters (optimization)
+        data = self.create_canyonb_input_matrix()
+
+        # Helper function to process a single parameter
+        def process_param(param):
+            """Process a single parameter prediction"""
             out = self._predict(
-                param, epres=epres, etemp=etemp, epsal=epsal, edoxy=edoxy
+                param, epres=epres, etemp=etemp, epsal=epsal, edoxy=edoxy, data=data
             )
+            return param, out
+
+        # Make predictions of each of the requested parameters
+        if len(params) > 1:
+            # Parallel execution
+            with Parallel(n_jobs=n_jobs, prefer=None) as parallel:
+                results = parallel(delayed(process_param)(param) for param in params)
+
+            # Convert results list to dict for processing
+            results_dict = {param: out for param, out in results}
+        else:
+            # Sequential execution
+            results_dict = {param: process_param(param)[1] for param in params}
+
+        # Add results to dataset
+        for param in params:
+            out = results_dict[param]
 
             # Add predicted parameter to xr.Dataset
             self._obj[param] = xr.zeros_like(self._obj["TEMP"])

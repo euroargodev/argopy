@@ -43,7 +43,7 @@ class ArgoColors:
     COLORS = ARGOPY_COLORS.copy()
     """Set of Argo colors derived from the logo"""
 
-    def __init__(self, name: str = "Set1", N: int = None):
+    def __init__(self, name: str = "Set1", N: int | None = None):
         """
 
         Parameters

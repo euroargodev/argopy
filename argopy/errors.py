@@ -1,4 +1,5 @@
 """A bunch of custom errors used in argopy."""
+
 from typing import List
 import warnings
 import logging
@@ -8,6 +9,7 @@ log = logging.getLogger("argopy.errors")
 
 class NoData(ValueError):
     """Raise for no data"""
+
     def __init__(self, path: str = "?"):
         self.value = "%s" % path
         self.path = path
@@ -19,11 +21,13 @@ class NoData(ValueError):
 
 class DataNotFound(NoData):
     """Raise when a data fetching returns nothing"""
+
     pass
 
 
 class NoDataLeft(NoData):
     """Raise when data processing returns an empty dataset or dataframe"""
+
     pass
 
 
@@ -81,6 +85,7 @@ class InvalidDataset(ValueError):
     """
     This is to be used when a dataset or its property is not valid
     """
+
     pass
 
 
@@ -128,6 +133,7 @@ class InvalidDashboard(ValueError):
 
 class APIServerError(ValueError):
     """Raise this when argopy is disrupted by an error due to a webAPI, not argopy machinery."""
+
     def __init__(self, path: str = None):
         self.value = path
 
@@ -172,8 +178,12 @@ class OptionDeprecatedWarning(DeprecationWarning):
     version: str, optional, default=None
     ignore_caller: List, optional, default=[]
     """
-    def __init__(self, reason: str = None, version: str = None, ignore_caller: List = []):
+
+    def __init__(
+        self, reason: str = None, version: str = None, ignore_caller: List = []
+    ):
         import inspect
+
         ignore_caller = [ignore_caller]
 
         if isinstance(reason, str):

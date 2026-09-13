@@ -1,0 +1,65 @@
+{
+  "name": "SEAPOINT_TURBIDITY_METER",
+  "long_name": "Seapoint Turbidity Meter",
+  "last_update": "2026-01-25T11:13:58.869570+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SEAPOINT_TURBIDITY_METER/",
+    "pav:authoredOn": "2021-08-09 12:23:38.0",
+    "@type": "skos:Concept",
+    "skos:related": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_TURBIDITY/"
+    },
+    "skos:definition": {
+      "@language": "en",
+      "@value": "A single-channel optical meter measuring scattering at 880 nm to determine turbidity, depth-rated to 6000 m. The sensor has four programmable sensitivity options: 2 mV/FTU, 10 mV/FTU, 40 mV/FTU and 200 mV/FTU, each corresponding to a gain of 1x, 5x, 20x and 100x respectively, and range of non-linear, 500 FTU, 125 FTU and 25 FTU respectively. The instrument was developed and manufactured by Seapoint Sensors, inc."
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R27::SEAPOINT_TURBIDITY_METER",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "Seapoint Turbidity Meter"
+    },
+    "owl:versionInfo": "1",
+    "dc:date": "2021-08-09 12:23:38.0",
+    "skos:altLabel": "SEAPOINT_TURBIDITY_METER",
+    "skos:notation": "SDN:R27::SEAPOINT_TURBIDITY_METER",
+    "skos:broader": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SEAPOINT/"
+    },
+    "pav:version": "1",
+    "dce:identifier": "SDN:R27::SEAPOINT_TURBIDITY_METER",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SEAPOINT_TURBIDITY_METER/1/"
+    },
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

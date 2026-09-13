@@ -80,6 +80,7 @@
 
     argopy.utils.show_versions
     argopy.utils.show_options
+    argopy.utils.Asset
 
     argopy.utils.clear_cache
     argopy.utils.lscache
@@ -316,6 +317,9 @@
     argopy.ArgoIndex.query.parameter_data_mode
     argopy.ArgoIndex.query.profiler_type
     argopy.ArgoIndex.query.profiler_label
+    argopy.ArgoIndex.query.institution_code
+    argopy.ArgoIndex.query.institution_name
+    argopy.ArgoIndex.query.dac
 
     argopy.ArgoIndex.query.wmo_cyc
     argopy.ArgoIndex.query.lon_lat
@@ -383,17 +387,25 @@
 
     argopy.errors.InvalidDatasetStructure
 
-    argopy.stores.float.spec.ArgoFloatProto
+    argopy.stores.float.spec.FloatStoreProto
     argopy.stores.ArgoFloat
+    argopy.ArgoFloat._ls
+    argopy.ArgoFloat.ls_datasets
     argopy.ArgoFloat.open_dataset
-    argopy.ArgoFloat.ls_dataset
-    argopy.ArgoFloat.path
-    argopy.ArgoFloat.ls
-    argopy.ArgoFloat.lsprofiles
-    argopy.ArgoFloat.describe_profiles
+    argopy.ArgoFloat.dataset
+    argopy.ArgoFloat._lsp
+    argopy.ArgoFloat.ls_profiles
+    argopy.ArgoFloat._ls_profiles_for
+    argopy.ArgoFloat.profiles_to_dataframe
+    argopy.ArgoFloat.open_profile
+    argopy.ArgoFloat.open_profiles
+    argopy.ArgoFloat.profile
     argopy.ArgoFloat.metadata
+    argopy.ArgoFloat.CYCLE_NUMBERS
     argopy.ArgoFloat.N_CYCLES
     argopy.ArgoFloat.dac
+    argopy.ArgoFloat.path
+    argopy.ArgoFloat.metadata
 
     argopy.stores.ArgoFloat.plot
     argopy.stores.ArgoFloat.plot.trajectory
@@ -403,3 +415,50 @@
     argopy.ArgoFloat.plot.trajectory
     argopy.ArgoFloat.plot.scatter
     argopy.ArgoFloat.plot.map
+
+    argopy.stores.ArgoFloat.config
+    argopy.stores.ArgoFloat.config.n_params
+    argopy.stores.ArgoFloat.config.parameters
+    argopy.stores.ArgoFloat.config.n_missions
+    argopy.stores.ArgoFloat.config.missions
+    argopy.stores.ArgoFloat.config.cycles
+    argopy.stores.ArgoFloat.config.for_cycles
+    argopy.stores.ArgoFloat.config.to_dataframe
+    argopy.ArgoFloat.config
+    argopy.ArgoFloat.config.n_params
+    argopy.ArgoFloat.config.parameters
+    argopy.ArgoFloat.config.n_missions
+    argopy.ArgoFloat.config.missions
+    argopy.ArgoFloat.config.cycles
+    argopy.ArgoFloat.config.for_cycles
+    argopy.ArgoFloat.config.to_dataframe
+
+    argopy.stores.ArgoFloat.launchconfig
+    argopy.stores.ArgoFloat.launchconfig.n_params
+    argopy.stores.ArgoFloat.launchconfig.parameters
+    argopy.stores.ArgoFloat.launchconfig.to_dataframe
+    argopy.ArgoFloat.launchconfig
+    argopy.ArgoFloat.launchconfig.n_params
+    argopy.ArgoFloat.launchconfig.parameters
+    argopy.ArgoFloat.launchconfig.to_dataframe
+
+    argopy.reference.concept.ArgoReferenceValue
+    argopy.ArgoReferenceValue.from_urn
+    argopy.ArgoReferenceValue.from_dict
+    argopy.ArgoReferenceValue.to_json
+    argopy.ArgoReferenceValue.nvs
+
+    argopy.reference.vocabulary.ArgoReferenceTable
+    argopy.ArgoReferenceTable.valid_identifier
+    argopy.ArgoReferenceTable.search
+    argopy.ArgoReferenceTable.from_urn
+    argopy.ArgoReferenceTable.to_dataframe
+    argopy.ArgoReferenceTable.to_dict
+    argopy.ArgoReferenceTable.nvs
+
+    argopy.reference.mapping.ArgoReferenceMapping
+    argopy.ArgoReferenceMapping.subjects
+    argopy.ArgoReferenceMapping.objects
+    argopy.ArgoReferenceMapping.predicates
+    argopy.ArgoReferenceMapping.to_dataframe
+    argopy.ArgoReferenceMapping.nvs

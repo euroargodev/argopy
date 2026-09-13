@@ -311,9 +311,7 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         }
         if self.parallel_method in ["thread"]:
             opts["method"] = "thread"
-            opts["open_dataset_opts"] = {
-                "xr_opts": {"decode_cf": 1, "use_cftime": 0, "mask_and_scale": 1}
-            }
+            opts["open_dataset_opts"] = {"xr_opts": {"engine": "argo"}}
 
         elif (self.parallel_method in ["process"]) | (
             has_distributed

@@ -12,7 +12,7 @@ from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import as_completed
 from threading import Lock
 import logging
-from typing import Union
+from typing import Union, Callable, Iterable, Any
 from abc import ABC, abstractmethod
 import importlib
 
@@ -589,3 +589,15 @@ class MyThreadPoolExecutor(c):
     """
 
     pass
+
+
+def pmap(obj, mapper: Callable, a_list: Iterable, kw: dict[Any] = {}) -> list[Any]:
+    """A method to execute some computation with multithreading"""
+    results: list[Any] = []
+
+    with ThreadPoolExecutor() as executor:
+        futures = {executor.submit(mapper, item, obj, **kw): item for item in a_list}
+        for future in as_completed(futures):
+            results.append(future.result())
+
+    return results

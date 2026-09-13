@@ -1,5 +1,5 @@
 """
-Utility module for optical modelling diagnostics.
+Utility module for optical modeling diagnostics.
 
 These functions are not really meant to be used directly, they consume raw 1D array of data.
 
@@ -308,7 +308,7 @@ def MLD_Func(PRES, PSAL, TEMP, LAT, LON):
     ----------
     Process potential density using gsw package
 
-    Return MLD with Boyer Montégut method with threshold of σ(10m) + 0.03 kg.m-3
+    Return MLD with Boyer Montegut method with threshold of SIG0(10m) + 0.03 kg.m-3
 
     """
     SA = gsw.SA_from_SP(PSAL, PRES, LON, LAT)
@@ -334,7 +334,7 @@ def MLD_Func(PRES, PSAL, TEMP, LAT, LON):
 
 
 def time_UTC_tolocal(time_64, longitude):
-    delta = 60 * longitude / 15  # 60 min = 15°
+    delta = 60 * longitude / 15  # 60 min = 15deg
 
     local = time_64 + np.timedelta64(int(delta), "m")
 

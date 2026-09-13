@@ -32,6 +32,8 @@ dependencies:
 # EXT.PERF:
 #  - dask = 2025.5.1
 #  - distributed = 2025.5.1
+#  - joblib = 1.5.2
+#  - numba = 0.62.1
 #  - pyarrow = 20.0.0
 
 # EXT.PLOT:
@@ -54,6 +56,7 @@ dependencies:
   - numpy = 2.3.1
   - pandas = 2.3.1
   - pip = 25.1.1
+  - psutil = 6.1.0  
   - pytest = 8.4.1
   - pytest-cov = 6.2.1
   - pytest-env = 1.1.5

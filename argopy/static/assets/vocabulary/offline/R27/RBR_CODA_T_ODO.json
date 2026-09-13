@@ -1,0 +1,65 @@
+{
+  "name": "RBR_CODA_T_ODO",
+  "long_name": "RBRcoda T.ODO Temperature and Dissolved Oxygen sensor",
+  "last_update": "2026-01-25T11:13:59.453853+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CODA_T_ODO/",
+    "pav:authoredOn": "2021-05-26 09:01:46.0",
+    "@type": "skos:Concept",
+    "skos:related": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R25/current/OPTODE_DOXY/"
+    },
+    "skos:definition": {
+      "@language": "en",
+      "@value": "A stand-alone oxygen optode with integrated temperature sensor, manufactured by RBR. This instrument exploits the physio-chemical principle of dynamic fluorescence quenching to measure absolute oxygen concentration and percent saturation. It is available in three variants based on response times: slow (30 s time constant), standard (8 s time constant) and fast (1 s time constant), the latter being optimal for vertical profiling applications. Depth rating: 6000 m; oxygen concentration accuracy of +/- 8 uM or +/- 5 %, and resolution of < 1 uM; air saturation resolution of 0.4 %."
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R27::RBR_CODA_T_ODO",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "RBRcoda T.ODO Temperature and Dissolved Oxygen sensor"
+    },
+    "owl:versionInfo": "1",
+    "dc:date": "2021-05-26 09:01:46.0",
+    "skos:altLabel": "RBR_CODA_T_ODO",
+    "skos:notation": "SDN:R27::RBR_CODA_T_ODO",
+    "skos:broader": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R26/current/RBR/"
+    },
+    "pav:version": "1",
+    "dce:identifier": "SDN:R27::RBR_CODA_T_ODO",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CODA_T_ODO/1/"
+    },
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

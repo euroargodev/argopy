@@ -3065,6 +3065,34 @@
             "@type": "skos:Concept"
         },
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0244/",
+            "pav:authoredOn": "2025-10-08 10:58:28.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0244/1/"
+            },
+            "dce:identifier": "SDN:R40::PI0244",
+            "pav:version": "1",
+            "skos:notation": "SDN:R40::PI0244",
+            "skos:altLabel": "BaekJo KIM",
+            "dc:date": "2025-10-08 10:58:28.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "BaekJo KIM"
+            },
+            "dc:identifier": "SDN:R40::PI0244",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": "",
+            "@type": "skos:Concept"
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0048/",
             "pav:authoredOn": "2023-06-22 12:58:04.0",
             "pav:hasCurrentVersion": {
@@ -7159,6 +7187,9 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0018/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0244/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0048/"
                 },
                 {
@@ -7552,13 +7583,13 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0242/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0155/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0196/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0017/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0155/"
                 }
             ],
             "@type": "skos:Collection",
@@ -7566,14 +7597,17 @@
             "dc:description": "List of Principal Investigator (PI) names in charge of Argo floats. Argo netCDF variable PI_NAME is populated by R40 altLabel.",
             "dc:title": "Argo Principal Investigator (PI) names",
             "skos:prefLabel": "Argo Principal Investigator (PI) names",
-            "owl:versionInfo": "6",
-            "dc:date": "2025-07-01 03:00:01.0",
+            "owl:versionInfo": "7",
+            "dc:date": "2025-10-09 03:00:01.0",
             "skos:altLabel": "PI_NAME",
             "dc:creator": "Argo Data Management Team",
             "dc:alternative": "PI_NAME",
             "rdfs:comment": "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
             "grg:RE_RegisterOwner": "Argo Data Management Team",
-            "grg:RE_RegisterManager": "British Oceanographic Data Centre"
+            "grg:RE_RegisterManager": "British Oceanographic Data Centre",
+            "rdfs:seeAlso": {
+                "@id": "https://github.com/OneArgo/ArgoVocabs"
+            }
         }
     ],
     "@context": {

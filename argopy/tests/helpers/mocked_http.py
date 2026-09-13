@@ -47,9 +47,6 @@ requests = pytest.importorskip("requests")
 port = 9898  # Select the port to run the local server on
 mocked_server_address = "http://127.0.0.1:%i" % port
 
-start_with = (
-    lambda f, x: f[0 : len(x)] == x if len(x) <= len(f) else False
-)  # noqa: E731
 
 """
 Load test data and create a dictionary mapping of URL requests as keys, and expected responses as values
@@ -94,14 +91,14 @@ if DB_FILE.exists():
             "https://www.ocean-ops.org/api/1",
             "https://dataselection.euro-argo.eu/api",
             "https://fleetmonitoring.euro-argo.eu",
-            "https://vocab.nerc.ac.uk/collection",
+            "https://vocab.nerc.ac.uk",
             "https://argovis-api.colorado.edu",
             # "https://argovisbeta02.colorado.edu",
             "https://dx.doi.org",
             "https://archimer.ifremer.fr",
         ]
         for pattern in patterns:
-            if start_with(resource["uri"], pattern):
+            if resource["uri"].startswith(pattern):
                 MOCKED_REQUESTS[resource["uri"].replace(pattern, "")] = data
 
 else:

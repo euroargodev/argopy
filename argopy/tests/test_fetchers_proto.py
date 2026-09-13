@@ -1,6 +1,7 @@
 import pytest
 import logging
 
+import argopy
 import xarray
 from argopy.data_fetchers.proto import ArgoDataFetcherProto
 from argopy.utils import to_list
@@ -46,20 +47,21 @@ def test_required_methods():
         f.filter_researchmode(xarray.Dataset)
 
 
-@pytest.mark.parametrize("profile", [[13857, None], [13857, 90]],
+@pytest.mark.parametrize("profile", [[6901929, None], [6901929, 90]],
                          indirect=False,
-                         ids=["%s" % p for p in [[13857, None], [13857, 90]]])
-def test_dashboard(profile):
-    #todo Use the mocked_httpserver here
+                         ids=["%s" % p for p in [[6901929, None], [6901929, 90]]])
+def test_dashboard(profile, mocked_httpserver):
 
-    f = Fetcher()
-    f.WMO, f.CYC = profile
-    f.WMO = to_list(f.WMO)
-    f.CYC = to_list(f.CYC)
-    assert isinstance(f.dashboard(url_only=True), str)
+    with argopy.set_options(server=mocked_server_address):
 
-    with pytest.warns(UserWarning):
         f = Fetcher()
-        f.WMO = [1901393, 6902746]
-        f.CYC = None
-        f.dashboard(url_only=True)
+        f.WMO, f.CYC = profile
+        f.WMO = to_list(f.WMO)
+        f.CYC = to_list(f.CYC)
+        assert isinstance(f.dashboard(url_only=True), str)
+
+        with pytest.warns(UserWarning):
+            f = Fetcher()
+            f.WMO = [1901393, 6902746]
+            f.CYC = None
+            f.dashboard(url_only=True)

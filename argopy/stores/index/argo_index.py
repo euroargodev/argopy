@@ -56,7 +56,9 @@ class ArgoIndex(indexstore):
         :caption: Search methods
 
         idx.query.wmo(1901393)
+        idx.query.wmo([6902915, 1901393])
         idx.query.cyc(1)
+        idx.query.cyc([1, 12])
         idx.query.wmo_cyc(1901393, [1,12])
 
         idx.query.lat([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
@@ -69,7 +71,16 @@ class ArgoIndex(indexstore):
         idx.query.parameter_data_mode({'BBP700': 'D', 'DOXY': ['A', 'D']})  # Take a dict.
 
         idx.query.profiler_type(845)
+        idx.query.profiler_type([845, 856])
         idx.query.profiler_label('NINJA')
+        idx.query.profiler_label(['NINJA', 'SOLO-D deep'])
+
+        idx.query.institution_code('IF')
+        idx.query.institution_code(['IF', 'JA'])
+        idx.query.institution_name('Canada')
+        idx.query.institution_name(['Canada', 'INCOIS'])
+        idx.query.dac('coriolis')
+        idx.query.dac(['meds', 'aoml'])
 
     .. code-block:: python
         :caption: Composing search methods

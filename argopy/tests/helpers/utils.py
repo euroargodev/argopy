@@ -33,10 +33,7 @@ from pathlib import Path
 
 from argopy.options import set_options
 from argopy.errors import ErddapServerError, ArgovisServerError, DataNotFound, GdacPathError
-from argopy.utils.lists import (
-    list_available_data_src,
-    list_available_index_src,
-)
+
 from argopy.utils.checkers import (
     isconnected,
     erddap_ds_exists,
@@ -49,12 +46,13 @@ from mocked_http import mocked_server_address, serve_mocked_httpserver
 log = logging.getLogger("argopy.tests.utils")
 log.debug("%s TESTS UTILS %s" % ("="*50, "="*50))
 
-def _importorskip(modname):
-    try:
-        importlib.import_module(modname)  # noqa: E402
-        has = True
-    except ImportError:
-        has = False
+def _importorskip(modname, has: bool | None = None):
+    if has is None:
+        try:
+            importlib.import_module(modname)  # noqa: E402
+            has = True
+        except ImportError:
+            has = False
     func = pytest.mark.skipif(not has, reason="Requires {}".format(modname))
     return has, func
 
@@ -69,9 +67,9 @@ def _xfail(name, msg):
     return name, func
 
 
-AVAILABLE_SOURCES = list_available_data_src()
+AVAILABLE_SOURCES = ['erddap', 'gdac', 'argovis']
 
-AVAILABLE_INDEX_SOURCES = list_available_index_src()
+AVAILABLE_INDEX_SOURCES = ['erddap', 'gdac']
 CONNECTED = isconnected()
 
 has_fetcher, requires_fetcher = _connectskip(
@@ -193,6 +191,8 @@ has_ipywidgets, requires_ipywidgets = _importorskip("ipywidgets")
 ##############
 # EXTENSIONS #
 ##############
+has_joblib, requires_joblib = _importorskip("joblib")
+has_numba, requires_numba = _importorskip("numba")
 has_pyco2sys, requires_pyco2sys = _importorskip("PyCO2SYS")
 
 #################
@@ -202,6 +202,16 @@ has_pyco2sys, requires_pyco2sys = _importorskip("PyCO2SYS")
 #     isconnected(OceanOPSDeployments().api_server_check), "a live Ocean-OPS server"
 # )
 has_oops, requires_oops = _connectskip(1, "a live Ocean-OPS server")  # Always ON with the mocked server
+
+
+##########
+# AWS S3 #
+##########
+has_s3, _ = _importorskip("s3fs")
+if has_s3:
+    log.debug("All unit tests for S3 GDAC are disabled manually !")
+    has_s3, requires_s3 = _importorskip("s3fs", has=False)
+
 
 ############
 # Fix for issues discussed here:

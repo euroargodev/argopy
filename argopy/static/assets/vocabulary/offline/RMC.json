@@ -1,0 +1,208 @@
+{
+  "name": "MEASUREMENT_CODE_CATEGORY",
+  "long_name": "Argo measurement code categories",
+  "last_update": "2026-01-25T10:44:08.182334+00:00",
+  "data": {
+    "@graph": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/RMC/current/SECMC/",
+        "pav:authoredOn": "2021-11-30 12:44:50.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RMC/current/SECMC/1/"
+        },
+        "dce:identifier": "SDN:RMC::SECMC",
+        "pav:version": "1",
+        "skos:notation": "SDN:RMC::SECMC",
+        "skos:altLabel": "Secondary MC",
+        "dc:date": "2021-11-30 12:44:50.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Secondary Measurement Codes (MC)"
+        },
+        "dc:identifier": "SDN:RMC::SECMC",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Measurement codes marking a recommended cycle timing variable. These are used to determine trajectory estimates for a range of float types."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/RMC/current/RGENC/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/RMC/current/RGENC/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/RMC/current/RGENC/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/RMC/current/RGENC/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Measurement codes marking measurements recorded while transitioning towards a primary or secondary measurement code, or taken as part of a surface sequence of in-water or in-air samples. If 'MC' is defined as a primary or secondary measurement code, relative generic codes 'RGENC' correspond to all codes falling within the (MC-15) and (MC-10) range, and within the (MC-6) and (MC-1) range; i.e. (MC-16) < RGENC < (MC-9) and (MC-7) <RGENC < MC. Moreover, RGENC also correspond to MC+10 and MC+11 for MCs of either 600, 700 or 800. The definitions for relative generic codes are purposely broad, so that they may be associated with trajectory measurements recorded by a wide range of different float types."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:RMC::RGENC",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Relative Generic Codes"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2021-12-01 14:18:02.0",
+        "skos:altLabel": "Relative Generic Codes",
+        "skos:notation": "SDN:RMC::RGENC",
+        "pav:version": "4",
+        "dce:identifier": "SDN:RMC::RGENC",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RMC/current/RGENC/4/"
+        },
+        "pav:authoredOn": "2021-12-01 14:18:02.0"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/RMC/current/PRIMC/",
+        "pav:authoredOn": "2021-11-30 12:44:50.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RMC/current/PRIMC/1/"
+        },
+        "dce:identifier": "SDN:RMC::PRIMC",
+        "pav:version": "1",
+        "skos:notation": "SDN:RMC::PRIMC",
+        "skos:altLabel": "Primary MC",
+        "dc:date": "2021-11-30 12:44:50.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Primary Measurement Codes (MC)"
+        },
+        "dc:identifier": "SDN:RMC::PRIMC",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Measurement codes marking a mandatory cycle timing variable. These are essential to determine trajectory estimates for all float types."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/RMC/current/RSPEC/",
+        "pav:authoredOn": "2021-11-30 12:44:50.0",
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Measurement codes reserved for unique timing events which are not repeated anywhere else within a float's cycle. If 'MC' is defined as a primary or secondary measurement code, relative specific codes 'RSPEC' generally fall anywhere within the (MC+1) and (MC+25) range; i.e. MC < RSPEC < (MC+26). However, please note that a RSPEC may not be associated with an MC at all. Each relative specific code is unique, and is matched with a trajectory measurement that is generally recorded by a limited number of float types."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:RMC::RSPEC",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Relative Specific Codes"
+        },
+        "owl:versionInfo": "1",
+        "skos:narrower": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R15/current/704/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R15/current/702/"
+          }
+        ],
+        "dc:date": "2021-11-30 12:44:50.0",
+        "skos:altLabel": "Relative Specific Codes",
+        "skos:notation": "SDN:RMC::RSPEC",
+        "pav:version": "1",
+        "dce:identifier": "SDN:RMC::RSPEC",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RMC/current/RSPEC/1/"
+        }
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/RMC/current/",
+        "skos:member": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/RMC/current/SECMC/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/RMC/current/RGENC/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/RMC/current/RSPEC/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/RMC/current/PRIMC/"
+          }
+        ],
+        "@type": "skos:Collection",
+        "dc:publisher": "Natural Environment Research Council",
+        "dc:description": "Categories of trajectory measurement codes listed in NVS collection 'R15'",
+        "dc:title": "Argo measurement code categories",
+        "skos:prefLabel": "Argo measurement code categories",
+        "owl:versionInfo": "2",
+        "dc:date": "2021-12-02 02:00:02.0",
+        "skos:altLabel": "MEASUREMENT_CODE_CATEGORY",
+        "dc:creator": "Argo Data Management Team",
+        "dc:alternative": "MEASUREMENT_CODE_CATEGORY",
+        "rdfs:comment": "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
+        "grg:RE_RegisterOwner": "Argo Data Management Team",
+        "grg:RE_RegisterManager": "British Oceanographic Data Centre",
+        "rdfs:seeAlso": {
+          "@id": "https://github.com/OneArgo/ArgoVocabs"
+        }
+      }
+    ],
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

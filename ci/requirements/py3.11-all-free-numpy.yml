@@ -25,6 +25,8 @@ dependencies:
 # EXT.PERF:
   - dask
   - distributed
+  - joblib
+  - numba
   - pyarrow
 
 # EXT.FILES:

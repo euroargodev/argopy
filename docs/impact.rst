@@ -1,34 +1,52 @@
-Impact of argopy
+Impact of Argopy
 ================
 
-Papers & proceedings mentioning argopy
---------------------------------------
+Papers & proceedings citing Argopy
+----------------------------------
 
-- Bartlett, Jenna  (2022). "An investigation of geostationary satellite imagery to compare developing and non-developing African easterly waves", Thesis and Dissertations. 5600. https://scholarsjunction.msstate.edu/td/5600
+#. Bartlett, Jenna  (2022). "An investigation of geostationary satellite imagery to compare developing and non-developing African easterly waves", Thesis and Dissertations. 5600. https://scholarsjunction.msstate.edu/td/5600
 
-- Chafik, et.al (2023). "The Faroe-Shetland Channel Jet: Structure, Variability, and Driving Mechanisms", Journal of Geophysical Research: Oceans. https://doi.org/10.1029/2022JC019083
+#. Broullón, E., Williams, R. G., Naveira Garabato, A. C., Clément, L., & Fernández Castro, B. (2026). "The lifecycle of tracer variance in the North Atlantic". Geophysical Research Letters, 53, e2026GL122823. https://doi.org/10.1029/2026GL122823
 
-- Chevillard C, Juza M, Dıaz-Barroso L, Reyes E, Escudier R and Tintore J (2024). "Capability of the Mediterranean Argo network to monitor sub-regional climate change indicators", Front. Mar. Sci. 11:1416486. https://doi.org/10.3389/fmars.2024.1416486
+#. Chafik, et.al (2023). "The Faroe-Shetland Channel Jet: Structure, Variability, and Driving Mechanisms", Journal of Geophysical Research: Oceans. https://doi.org/10.1029/2022JC019083
 
-- Dan E. Kelley, Jaimie Harbin, Clark Richards (2021). "argoFloats: An R Package for Analyzing Argo Data" Frontiers in Marine Science, https://doi.org/10.3389/fmars.2021.635922
+#. Chevillard C, Juza M, Dıaz-Barroso L, Reyes E, Escudier R and Tintore J (2024). "Capability of the Mediterranean Argo network to monitor sub-regional climate change indicators", Front. Mar. Sci. 11:1416486. https://doi.org/10.3389/fmars.2024.1416486
 
-- de Solo, Sofia M. (2021). "What makes a hurricane fall apart? A multi-platform assessment of tropical cyclone weakening By", Thesis and Dissertations. 5274. https://scholarsjunction.msstate.edu/td/5274
+#. Clay, S., Ringuette, M., Devred, E., Azetsu-Scott, K., Wang, Z., Greenan, B., Gordon, C., Gabriel, C.E., Childs, D., and Layton, C. (2026). "Physical, Chemical, Biological, and Optical Oceanographic Conditions in the Labrador Sea in 2024", Can. Tech. Rep. Fish. Aquat. Sci. 3752: vii + 58 p. https://doi.org/10.60825/327m-sm93
 
-- Dunnington et al., (2021). "argodata: An R interface to oceanographic data from the International Argo Program", Journal of Open Source Software, 6(68), 3659, https://doi.org/10.21105/joss.03659
+#. Dan E. Kelley, Jaimie Harbin, Clark Richards (2021). "argoFloats: An R Package for Analyzing Argo Data", Frontiers in Marine Science, https://doi.org/10.3389/fmars.2021.635922
 
-- Elipot S. , P Miron, M Curcic, K Santana, R Lumpkin (2024). "Clouddrift: a Python package to accelerate the use of Lagrangian data for atmospheric, oceanic, and climate sciences", Journal of Open Source Software, 9(99), 6742,  https://joss.theoj.org/papers/10.21105/joss.06742
+#. Danilo Augusto Silva, Avijit Gangopadhyay, Dalton Kei Sasaki, et al. (2026). "Evidence of Synoptic Cross-shelf Pathways of Mid-depth Salinity Maximum Intrusions in the South Brazil Bight", ESS Open Archive, https://doi.org/10.22541/essoar.176771720.05845924/v1
 
-- Glaubke, R.H., Sikes, E.L., Sosdian, S.M. et al. (2025). "Elevated shallow water salinity in the deglacial Indian Ocean was sourced from the deep", Nat. Geosci. 18, 893–900, https://doi.org/10.1038/s41561-025-01756-7
+#. de Solo, Sofia M. (2021). "What makes a hurricane fall apart? A multi-platform assessment of tropical cyclone weakening By", Thesis and Dissertations. 5274. https://scholarsjunction.msstate.edu/td/5274
 
-- Gonzalez A. (2023). "The Argo Online School: An e-learning tool to get started with Argo", The Journal of Open Source Education, 7(80), 193, https://jose.theoj.org/papers/10.21105/jose.00193
+#. Dunnington et al., (2021). "argodata: An R interface to oceanographic data from the International Argo Program", Journal of Open Source Software, 6(68), 3659, https://doi.org/10.21105/joss.03659
 
-- Huda, Md Nurul  (2023). "Machine Learning for Improvement of Ocean Data Resolution for Weather Forecasting and Climatological Research", Thesis and Dissertations, Virginia Tech, http://hdl.handle.net/10919/116504
+#. Elipot S. , P Miron, M Curcic, K Santana, R Lumpkin (2024). "Clouddrift: a Python package to accelerate the use of Lagrangian data for atmospheric, oceanic, and climate sciences", Journal of Open Source Software, 9(99), 6742,  https://joss.theoj.org/papers/10.21105/joss.06742
 
-- Singh, Shikha and Sapkal, Mayur (2025). "A machine learning approach to identify upper ocean water masses in the Indian Ocean", CSI Transactions on ICT. https://doi.org/10.1007/s40012-025-00417-9.
+#. Glaubke, R.H., Sikes, E.L., Sosdian, S.M. et al. (2025). "Elevated shallow water salinity in the deglacial Indian Ocean was sourced from the deep", Nat. Geosci. 18, 893–900, https://doi.org/10.1038/s41561-025-01756-7
 
-- Steinberg, J. M., Piecuch, C. G., Hamlington, B. D., Thompson, P. R., & Coats, S. (2024). "Influence of deep-ocean warming on coastal sea-level decadal trends in the Gulf of Mexico", Journal of Geophysical Research: Oceans, 129, e2023JC019681. https://doi.org/10.1029/2023JC019681
+#. Gonzalez A. (2023). "The Argo Online School: An e-learning tool to get started with Argo", The Journal of Open Source Education, 7(80), 193, https://jose.theoj.org/papers/10.21105/jose.00193
 
-- Zhang, Y. (2023). "Python Data Analysis Techniques in Administrative Information Integration Management System". In: Atiquzzaman, M., Yen, N.Y., Xu, Z. (eds) Proceedings of the 4th International Conference on Big Data Analytics for Cyber-Physical System in Smart City - Volume 2. BDCPS 2022. Lecture Notes on Data Engineering and Communications Technologies, vol 168. Springer, Singapore. https://doi.org/10.1007/978-981-99-1157-8_35
+#. Hackl, Jürgen. (2026). "EuroFlood: a Python library and queryable index for the CEMS satellite-derived flood-depth archive of Europe." arXiv preprint https://arxiv.org/pdf/2607.21126
+
+#. Huda, Md Nurul  (2023). "Machine Learning for Improvement of Ocean Data Resolution for Weather Forecasting and Climatological Research", Thesis and Dissertations, Virginia Tech, http://hdl.handle.net/10919/116504
+
+#. Kerhalkar, S., Tandon, A., & MacKinnon, J. A. (2026). "Impacts of salinity stratification on sub-seasonal SST warming in the Northern Indian Ocean", Journal of Geophysical Research: Oceans, 131, e2025JC023486. https://doi.org/10.1029/2025JC023486
+
+#. Lehmann, N., Aybar, C., Shah, A., Passaro, M., Bamber, J. L., and Zhu, X. X. (2026): "OceanTACO: A Multi-Sensor Global Ocean Sea Surface State Dataset", Earth Syst. Sci. Data Discuss. [preprint], https://doi.org/10.5194/essd-2026-232, in review, 2026.
+
+#. Oke PR, Rykova T, Lovell JL, van Wijk EM, McMahon PM, Schallenberg C, Rintoul SR, Foppert A, Scott R, Pilo GS, Slawinski D, Krummel L, Strutton PG. (2026): "Argo Australia: over 20 years of impact". Marine & Freshwater Research 77, MF26047. https://doi.org/10.1071/MF26047
+
+#. Nikhil Parkar, M. Marimuthu, Aditi Agale, Vraj Prajapati, Arnav Parekar, Aditi Bambal, Shivam Chavan (2026): "A unified RAG-based framework for intelligent exploration of Argo and BGC-Argo oceanographic data". Ecological Informatics, 98. https://doi.org/10.1016/j.ecoinf.2026.103990
+
+#. Singh, Shikha and Sapkal, Mayur (2025). "A machine learning approach to identify upper ocean water masses in the Indian Ocean", CSI Transactions on ICT. https://doi.org/10.1007/s40012-025-00417-9.
+
+#. Steinberg, J. M., Piecuch, C. G., Hamlington, B. D., Thompson, P. R., & Coats, S. (2024). "Influence of deep-ocean warming on coastal sea-level decadal trends in the Gulf of Mexico", Journal of Geophysical Research: Oceans, 129, e2023JC019681. https://doi.org/10.1029/2023JC019681
+
+#. Yao, L., Taylor, J.R. (2026). "Global climatology of submesoscale restratification using machine learning". Sci Rep (2026). https://doi.org/10.1038/s41598-026-41929-x
+
+#. Zhang, Y. (2023). "Python Data Analysis Techniques in Administrative Information Integration Management System". In: Atiquzzaman, M., Yen, N.Y., Xu, Z. (eds) Proceedings of the 4th International Conference on Big Data Analytics for Cyber-Physical System in Smart City - Volume 2. BDCPS 2022. Lecture Notes on Data Engineering and Communications Technologies, vol 168. Springer, Singapore. https://doi.org/10.1007/978-981-99-1157-8_35
 
 
 Other interesting mentions
@@ -44,7 +62,9 @@ Blog post & personal pages :
 
 - Samapriya Roy : https://samapriyaroy.medium.com/open-ocean-data-with-argofloats-tool-50efef6c4f05
 
-Some academic python env :
+Academic referencing/use-cases:
+
+- DeFeo, Jessica (2026). "Radiative Transfer Comparisons Between Satellite Ocean Color and BGC-Argo Float Chlorophyll". The State University of New Jersey, School of Graduate Studies. Dissertations & Theses, 2026. 32856575.
 
 - Sydney univ academic conda env : http://climate-cms.wikis.unsw.edu.au/Conda
 
@@ -52,4 +72,6 @@ Some academic python env :
 
 - Heliocloud : https://git.smce.nasa.gov/heliocloud/heliocloud-docker-images/-/blob/main/environment_pangeo_base_min.yml?ref_type=heads
 
-- Stackoverflow : https://stackoverflow.com/search?q=argopy
+- `NMFS Hack days <https://nmfs-opensci.github.io/NMFSHackDays-2026/>`_: `Video <https://www.youtube.com/watch?v=0c5tHHZaaV4&t=660s>`_ and Notebooks to `load Argo-BGC data <https://nmfs-opensci.github.io/NMFSHackDays-2026/topics/2026-04-10/argopy.html>`_ and perform `Rrs data matchup <https://nmfs-opensci.github.io/NMFSHackDays-2026/topics/2026-04-10/argo-matchups.html>`_.
+
+- DTU M.Sc. course 25340 Digital Ocean: https://kurser.dtu.dk/course/25340, 38 students, 2026, ArgoPy with Jupyter notebooks, with markedly better outcomes than with Matlab (two 4 hours sessions). “...the coding exercises relating to the argo float were great and i learned a lot by doing..” “...Very good hands-on exercises. …(ArgoPy) more students moved forward faster instead of fighting with the computer….”.

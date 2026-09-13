@@ -1,0 +1,109 @@
+{
+  "name": "WETLABS",
+  "long_name": "Wetlabs Inc.",
+  "last_update": "2026-01-25T11:16:08.255091+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/",
+    "pav:authoredOn": "2019-10-11 15:08:43.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/1/"
+    },
+    "dce:identifier": "SDN:R26::WETLABS",
+    "pav:version": "1",
+    "skos:notation": "SDN:R26::WETLABS",
+    "skos:altLabel": "WETLABS",
+    "dc:date": "2019-10-11 15:08:43.0",
+    "skos:narrower": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL_AP2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD_AP2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB3/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_2K/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FL/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/C_ROVER/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_AP2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBBCD/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_NTU/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLNTU/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBB2/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
+      "@language": "en",
+      "@value": "A brand of Sea-Bird Scientific, the business manufactures oceanographic and environmental fluorometers, transmissometers, scattering sensors and spectrophotometers. The company was initially founded in 1992. Danaher acquired three ocean science instrumentation companies, Sea-Bird Electronics (2008), WET Labs (2010), and Satlantic (2011), which were then combined to form Sea-Bird Scientific."
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R26::WETLABS",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "Wetlabs Inc."
+    },
+    "owl:versionInfo": "1",
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

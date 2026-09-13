@@ -1,0 +1,73 @@
+{
+  "name": "ECO_FLBBFL_AP2",
+  "long_name": "ECO_FLBBFL_AP2",
+  "last_update": "2026-01-25T11:14:00.638589+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL_AP2/",
+    "pav:hasVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL_AP2/1/"
+    },
+    "pav:authoredOn": "2023-10-05 14:42:48.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL_AP2/2/"
+    },
+    "@type": "skos:Concept",
+    "skos:related": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/"
+      }
+    ],
+    "skos:definition": {
+      "@language": "en",
+      "@value": "A three-channel optical sensor fitted with two single-wavelength chlorophyll fluorometers and a single-angle scattering meter, depth-rated to 2000 m and designed for float applications. The two fluorometers are configured to detect chlorophyll-a fluorescence at 470 nm (excitation) / 695 nm (emission) wavelengths and chlorophyll-a fluorescence at 435 nm (excitation) / 695 nm (emission) wavelengths respectively, whereas the scattering meter (in-water centroid angle of 124 deg) is configured to measure backscattering at 700 nm wavelength. The instrument is part of the Environmental Characterization Optics (ECO) series tools, manufactured by Sea-Bird Scientific. The sensor is fitted on an APEX float."
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R27::ECO_FLBBFL_AP2",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "ECO_FLBBFL_AP2"
+    },
+    "owl:versionInfo": "2",
+    "dc:date": "2023-10-05 14:42:48.0",
+    "skos:altLabel": "ECO_FLBBFL_AP2",
+    "skos:notation": "SDN:R27::ECO_FLBBFL_AP2",
+    "skos:broader": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
+    },
+    "pav:version": "2",
+    "dce:identifier": "SDN:R27::ECO_FLBBFL_AP2",
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

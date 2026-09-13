@@ -1,0 +1,73 @@
+{
+  "name": "UP_RADIANCE490",
+  "long_name": "Upwelling radiance at 490 nanometers",
+  "last_update": "2026-01-25T11:11:29.859935+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE490/",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE490/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE490/1/"
+      }
+    ],
+    "pav:authoredOn": "2025-11-25 10:14:01.0",
+    "@type": "skos:Concept",
+    "skos:related": {
+      "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UWNS/"
+    },
+    "skos:definition": {
+      "@language": "en",
+      "@value": "Upwelling radiance at 490 nm wavelength, reported by OCR504 sensor (unit conversion). Local_Attributes:{long_name:Upwelling radiance at 490 nanometers; standard_name:upwelling_radiance_in_sea_water; units:W/m^2/nm/sr; valid_min:-; valid_max:-; fill_value:99999.f}. Properties:{category:b; data_type:float}"
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R03::UP_RADIANCE490",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "Upwelling radiance at 490 nanometers"
+    },
+    "owl:versionInfo": "3",
+    "dc:date": "2025-11-25 10:14:01.0",
+    "skos:altLabel": "UP_RADIANCE490",
+    "skos:notation": "SDN:R03::UP_RADIANCE490",
+    "owl:sameAs": {
+      "@id": "http://vocab.nerc.ac.uk/collection/P01/current/RXUU490L/"
+    },
+    "pav:version": "3",
+    "dce:identifier": "SDN:R03::UP_RADIANCE490",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE490/3/"
+    },
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}
