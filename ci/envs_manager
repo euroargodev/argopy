@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Script to (re)install argopy related Conda environments and handle associated Jupyter kernels
-# Use conda, not conda
+# Use mamba, not conda
 #
 # Examples:
 # envs_manager -h
