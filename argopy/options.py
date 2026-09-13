@@ -37,6 +37,8 @@ log = logging.getLogger("argopy.options")
 DATA_SOURCE = "src"
 GDAC = "gdac"
 ERDDAP = "erddap"
+ARGOVIS = "argovis"
+ARGOVIS_API_KEY = "argovis_api_key"
 DATASET = "ds"
 CACHE_FOLDER = "cachedir"
 CACHE_EXPIRATION = "cache_expiration"
@@ -46,7 +48,6 @@ TRUST_ENV = "trust_env"
 SERVER = "server"
 USER = "user"
 PASSWORD = "password"
-ARGOVIS_API_KEY = "argovis_api_key"
 PARALLEL = "parallel"
 PARALLEL_DEFAULT_METHOD = "parallel_default_method"
 LON = "longitude_convention"
@@ -57,6 +58,8 @@ OPTIONS = {
     DATA_SOURCE: "erddap",
     GDAC: "https://data-argo.ifremer.fr",
     ERDDAP: "https://erddap.ifremer.fr/erddap",
+    ARGOVIS: "https://argovis-api.colorado.edu",
+    ARGOVIS_API_KEY: "guest",  # https://argovis-keygen.colorado.edu
     DATASET: "phy",
     CACHE_FOLDER: os.path.expanduser(os.path.sep.join(["~", ".cache", "argopy"])),
     CACHE_EXPIRATION: 86400,
@@ -66,7 +69,6 @@ OPTIONS = {
     SERVER: None,
     USER: os.environ.get("ERDDAP_USERNAME"),
     PASSWORD: os.environ.get("ERDDAP_PASSWORD"),
-    ARGOVIS_API_KEY: "guest",  # https://argovis-keygen.colorado.edu
     PARALLEL: False,
     PARALLEL_DEFAULT_METHOD: "thread",
     LON: "180",
@@ -75,7 +77,7 @@ OPTIONS = {
 DEFAULT = OPTIONS.copy()
 
 # Define the list of possible values
-_DATA_SOURCE_LIST = frozenset(["erddap", "argovis", "gdac"])
+DATA_SOURCE_LIST = frozenset(["erddap", "argovis", "gdac"])
 _DATASET_LIST = frozenset(["phy", "bgc", "ref", "bgc-s", "bgc-b"])
 _USER_LEVEL_LIST = frozenset(["standard", "expert", "research"])
 
@@ -93,7 +95,7 @@ def validate_gdac(this_path):
         return False
 
 
-def validate_http(this_path):
+def validate_erddap(this_path):
     if this_path != "-":
         return check_erddap_path(this_path, errors="raise")
     else:
@@ -120,9 +122,11 @@ def validate_parallel_method(method):
 
 
 _VALIDATORS = {
-    DATA_SOURCE: _DATA_SOURCE_LIST.__contains__,
+    DATA_SOURCE: DATA_SOURCE_LIST.__contains__,
     GDAC: validate_gdac,
-    ERDDAP: validate_http,
+    ERDDAP: validate_erddap,
+    ARGOVIS: lambda x: isinstance(x, str),
+    ARGOVIS_API_KEY: lambda x: isinstance(x, str) or x is None,
     DATASET: _DATASET_LIST.__contains__,
     CACHE_FOLDER: lambda x: os.access(x, os.W_OK),
     CACHE_EXPIRATION: lambda x: isinstance(x, int) and x > 0,
@@ -132,7 +136,6 @@ _VALIDATORS = {
     SERVER: lambda x: True,
     USER: lambda x: isinstance(x, str) or x is None,
     PASSWORD: lambda x: isinstance(x, str) or x is None,
-    ARGOVIS_API_KEY: lambda x: isinstance(x, str) or x is None,
     PARALLEL: validate_parallel,
     PARALLEL_DEFAULT_METHOD: validate_parallel_method,
     LON: lambda x: x in ['180', '360'],

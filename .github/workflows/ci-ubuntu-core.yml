@@ -74,6 +74,7 @@ jobs:
           aws-region: us-west-1
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ga-ci-tests-argopy-01
           role-duration-seconds: 7200
+        continue-on-error: true
 
       - name: Increase swapfile
         if: ${{matrix.os == 'ubuntu-latest'}}

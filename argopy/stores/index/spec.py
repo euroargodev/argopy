@@ -1,7 +1,7 @@
 import copy
 import numpy as np
-import pandas as pd
-import xarray as xr
+from argopy import pandas as pd # Lazily import large module
+from argopy import xarray as xr # Lazily import large module
 import logging
 import time
 from abc import ABC, abstractmethod
@@ -27,8 +27,8 @@ from .implementations.plot import ArgoIndexPlot
 from .implementations.valid import ArgoIndexSearchValid
 
 try:
+    from argopy import pyarrow as pa # Lazily import large module
     import pyarrow.csv as csv  # noqa: F401
-    import pyarrow as pa
     import pyarrow.parquet as pq  # noqa: F401
 except ModuleNotFoundError:
     pass

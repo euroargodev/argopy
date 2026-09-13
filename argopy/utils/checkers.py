@@ -13,7 +13,7 @@ import importlib
 
 from argopy.options import OPTIONS
 from argopy.errors import InvalidDatasetStructure, GdacPathError, InvalidFetcher
-from .lists import list_available_data_src, list_available_index_src, list_gdac_servers
+from .lists import list_gdac_servers
 from .casting import to_list
 from .geo import conv_lon
 
@@ -838,15 +838,33 @@ def isAPIconnected(src="erddap", data=True):
     bool
     """
     if data:
-        list_src = list_available_data_src()
-    else:
-        list_src = list_available_index_src()
-
-    if src in list_src and getattr(list_src[src], "api_server_check", None):
-        if src == "gdac":
-            return check_gdac_path(list_src[src].api_server_check, ignore_knowns=True)
+        if src == 'erddap':
+            from argopy.data_fetchers import erddap_data as Fetcher
+        elif src == 'gdac':
+            from argopy.data_fetchers import gdac_data as Fetcher
+        elif src == 'argovis':
+            from argopy.data_fetchers import argovis_data as Fetcher
         else:
-            return isalive(list_src[src].api_server_check)
+            raise ValueError(f"{src} is not a valid data source (no fetcher found)")
+
+    else:
+        if src == 'erddap':
+            from argopy.data_fetchers import erddap_index as Fetcher
+        elif src == 'gdac':
+            from argopy.data_fetchers import gdac_index as Fetcher
+        else:
+            raise ValueError(f"{src} is not a valid index source (no fetcher found)")
+
+    # Ensure we're loading the data fetcher with the current options for server value:
+    server = OPTIONS[src]
+    Fetcher.api_server_check = Fetcher.api_server_check.replace(Fetcher.api_server, server)
+    Fetcher.api_server = server
+
+    if getattr(Fetcher, "api_server_check", None):
+        if src == "gdac":
+            return check_gdac_path(Fetcher.api_server_check, ignore_knowns=True)
+        else:
+            return isalive(Fetcher.api_server_check)
     else:
         raise InvalidFetcher
 
