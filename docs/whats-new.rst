@@ -17,6 +17,22 @@ Features and front-end API
 
 - **New full Argo vocabulary support** for reference tables (:class:`ArgoReferenceTable`), values (:class:`ArgoReferenceValue`) and mappings (:class:`ArgoReferenceMapping`) (:pr:`575`) by |gmaze|.
 
+BGC-Argo+ dataset integration
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+:class:`argopy.ArgoFloat` can now load data from the
+`BGC-Argo+ <https://www.bgc-argo-plus.info>`_ dataset by passing
+``'BGCArgoPlus'`` to :meth:`~argopy.ArgoFloat.open_dataset`:
+
+.. code-block:: python
+
+    from argopy import ArgoFloat
+    ds = ArgoFloat(6903091).open_dataset('BGCArgoPlus')
+
+The BGC-Argo+ dataset (SOEST / University of Hawaiʻi at Mānoa) provides
+QC-processed, outlier-removed BGC-Argo float files served on the SOEST FTP
+server.  See :ref:`bgcargo_plus_store` for details.
+
 Internals
 ^^^^^^^^^
 
