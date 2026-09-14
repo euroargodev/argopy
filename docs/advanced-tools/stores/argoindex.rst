@@ -25,33 +25,47 @@ The table below summarize the **argopy** support status of all Argo index files:
 
     * -
       - Index file
+      - File pattern
       - Supported
-    * - Profile
+    * - Individual Profile
       - ar_index_global_prof.txt
+      - <DAC>/<WMO>/profiles/*<WMO>_<CYC>.nc
       - ✅
-    * - Synthetic-Profile
+    * - Detailed Individual Profile
+      - <DAC>/<WMO>/profiles/*<WMO>_<CYC>.nc
+      - argo_profile_detailled_index.txt
+      - ❌
+    * - Individual Synthetic-Profile
+      - <DAC>/<WMO>/profiles/S*<WMO>_<CYC>.nc
       - argo_synthetic-profile_index.txt
       - ✅
-    * - Bio-Profile
+    * - Individual Bio-Profile
+      - <DAC>/<WMO>/profiles/B*<WMO>_<CYC>.nc
       - argo_bio-profile_index.txt
       - ✅
-    * - Metadata
-      - ar_index_global_meta.txt
-      - ✅
-    * - Auxiliary
+    * - Auxiliary Profile
+      - <DAC>/<WMO>/profiles/B*<WMO>_<CYC>_aux.nc
       - etc/argo-index/argo_aux-profile_index.txt
       - ✅
+    * - Metadata
+      - <DAC>/<WMO>/<WMO>_meta.nc
+      - ar_index_global_meta.txt
+      - ✅
     * - Trajectory
+      - <DAC>/<WMO>/<WMO>_*traj.nc
       - ar_index_global_traj.txt
       - ❌
     * - Bio-Trajectory
+      - <DAC>/<WMO>/<WMO>_B*traj.nc
       - argo_bio-traj_index.txt
       - ❌
     * - Technical
+      - <DAC>/<WMO>/<WMO>_tech.nc
       - ar_index_global_tech.txt
       - ❌
-    * - Greylist
-      - ar_greylist.txt
+    * - Detailed Synthetic-Profile
+      - <DAC>/<WMO>/<WMO>_Sprof.nc
+      - argo_synthetic-profile_detailled_index.txt
       - ❌
 
 Index files support can be added on demand. `Click here to raise an issue if you'd like to access other index files <https://github.com/euroargodev/argopy/issues/new>`_.
