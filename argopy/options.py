@@ -77,7 +77,7 @@ OPTIONS = {
 DEFAULT = OPTIONS.copy()
 
 # Define the list of possible values
-DATA_SOURCE_LIST = frozenset(["erddap", "argovis", "gdac"])
+DATA_SOURCE_LIST = frozenset(["erddap", "gdac", "argovis"])
 _DATASET_LIST = frozenset(["phy", "bgc", "ref", "bgc-s", "bgc-b"])
 _USER_LEVEL_LIST = frozenset(["standard", "expert", "research"])
 
@@ -120,9 +120,18 @@ def validate_parallel_method(method):
     else:
         return False
 
+def validate_data_source(src):
+    if src == 'argovis':
+        warnings.warn(
+            f"'argovis' as a 'src' option is no longer accepted and will raise an error soon. To fetch data from the Argovis server, please update your code to use the new DataFetcher 'product' argument dedicated to third-party providers like Argovis -- Deprecated since version 1.5",
+            category=FutureWarning,
+            stacklevel=2,
+        )
+    return src in DATA_SOURCE_LIST
+
 
 _VALIDATORS = {
-    DATA_SOURCE: DATA_SOURCE_LIST.__contains__,
+    DATA_SOURCE: validate_data_source,
     GDAC: validate_gdac,
     ERDDAP: validate_erddap,
     ARGOVIS: lambda x: isinstance(x, str),
@@ -175,7 +184,7 @@ class set_options:
         Define the Dataset to work with: ``phy``, ``bgc`` or ``ref``
 
     src: str, default: ``erddap``
-        Source of fetched data: ``erddap``, ``gdac``, ``argovis``
+        Source of fetched data: ``erddap``, ``gdac``
 
     mode: str, default: ``standard``
         User mode: ``standard``, ``expert`` or ``research``
@@ -208,7 +217,7 @@ class set_options:
         Password to use when a simple authentication is required
 
     argovis_api_key: str, default: ``guest``
-        The API key to use when fetching data from the `argovis` data source
+        The API key to use when fetching data from the `argovis` product
 
         You can get a free key at https://argovis-keygen.colorado.edu
 
