@@ -13,6 +13,8 @@ from utils import patch_ftp, has_s3
 
 log = logging.getLogger("argopy.tests.gdacfs")
 
+pytestmark = pytest.mark.usefixtures("mocked_ftpserver")
+
 
 """
 List gdac hosts to be tested. 

@@ -25,6 +25,8 @@ from argopy.tests.helpers.utils import patch_ftp, has_connection, has_s3
 
 log = logging.getLogger("argopy.tests.floatstore")
 
+pytestmark = pytest.mark.usefixtures("mocked_ftpserver")
+
 skip_online = pytest.mark.skipif(0, reason="Skipped tests for online implementation")
 skip_offline = pytest.mark.skipif(0, reason="Skipped tests for offline implementation")
 skip_spec = pytest.mark.skipif(0, reason="Skipped tests for specification")
