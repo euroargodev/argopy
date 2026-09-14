@@ -25,18 +25,19 @@ The HTTPTestHandler class below is taken from the fsspec tests suite at:
 https://github.com/fsspec/filesystem_spec/blob/55c5d71e657445cbfbdba15049d660a5c9639ff0/fsspec/tests/conftest.py
 
 """
+
 import contextlib
-from pathlib import Path
+import importlib
+import json
+import logging
+import socket
 import threading
 from collections import ChainMap
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-import pytest
-import logging
+from http.server import BaseHTTPRequestHandler, HTTPServer, ThreadingHTTPServer
+from pathlib import Path
 from urllib.parse import unquote
-import socket
-import json
-import importlib
 
+import pytest
 
 requests = pytest.importorskip("requests")
 log = logging.getLogger("argopy.tests.mocked_http")
@@ -58,8 +59,7 @@ def _start_server():
     """Start the process-wide mocked HTTP server, once, and keep it running.
 
     The server binds an OS-assigned free port *atomically* (bind to port 0, then
-    read the chosen port back) -- there is no "reserve a free port, close the
-    socket, rebind it later" gap, so parallel pytest-xdist workers (and the xdist
+    read the chosen port back) so parallel pytest-xdist workers (and the xdist
     controller) never race for the same port. It runs on a daemon thread for the
     whole life of the process, so there is always exactly one server per process.
     Idempotent; returns the server URL.
@@ -306,9 +306,7 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
 
             self._respond(200, response_headers)
         elif "give_range" in self.headers:
-            self._respond(
-                200, {"Content-Range": "0-%i/%i" % (n - 1, n)}
-            )
+            self._respond(200, {"Content-Range": "0-%i/%i" % (n - 1, n)})
         elif "give_etag" in self.headers:
             self._respond(200, {"ETag": "xxx"})
         else:
