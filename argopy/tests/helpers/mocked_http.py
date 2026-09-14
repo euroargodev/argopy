@@ -213,6 +213,7 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
             if file_data is None:
                 return self._respond(404)
 
+        file_data = _read(file_data)
         n = _length(file_data)
         status = 200
         content_range = "bytes 0-%i/%i" % (n - 1, n)
@@ -280,7 +281,7 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
         if file_data is None:
             return self._respond(404)
         else:
-            n = len(file_data)
+            n = _length(file_data)
 
         if ("give_length" in self.headers) or ("head_give_length" in self.headers):
             response_headers = {"Content-Length": n}

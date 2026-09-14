@@ -13,7 +13,6 @@ import pytest
 import shutil
 from urllib.parse import urlparse
 import logging
-import importlib
 
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
@@ -42,7 +41,7 @@ HOSTS = [
 ]
 
 if has_s3:
-    # todo Create a mocked server for s3 tests
+    #todo Create a mocked server for s3 tests
     HOSTS.append("s3://argo-gdac-sandbox/pub")  # todo: How do we mock a s3 server ?
 
 """
@@ -265,6 +264,6 @@ class TestBackend:
     def test_uri_mono2multi(self, mocked_httpserver):
         ap = [v for v in ACCESS_POINTS if "region" in v.keys()][0]
         f = create_fetcher(
-            {"src": self.src, "gdac": HOSTS[0], "N_RECORDS": 100}, ap
+            {"src": self.src, "gdac": self._patch_gdac(HOSTS[0]), "N_RECORDS": 100}, ap
         ).fetcher
         assert is_list_of_strings(f.uri_mono2multi(f.uri))

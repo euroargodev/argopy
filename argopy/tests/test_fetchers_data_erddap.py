@@ -110,7 +110,6 @@ def assert_fetcher(mocked_erddapserver, this_fetcher, cacheable=False):
         if cacheable:
             assert is_list_of_strings(core.cachepath)
 
-        log.debug("In assert, this fetcher is in '%s' user mode" % this_fetcher._mode)
         if this_fetcher._dataset_id not in ['ref']:
             if this_fetcher._mode == 'expert':
                 assert 'PRES_ADJUSTED' in ds
