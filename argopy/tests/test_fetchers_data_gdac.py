@@ -41,7 +41,7 @@ HOSTS = [
 ]
 
 if has_s3:
-    #todo Create a mocked server for s3 tests
+    # todo Create a mocked server for s3 tests
     HOSTS.append("s3://argo-gdac-sandbox/pub")  # todo: How do we mock a s3 server ?
 
 """
