@@ -156,6 +156,13 @@ Additional attributes:
     * - ``arv.nvs``
       - Raw NVS json data
 
+.. note::
+
+    In IPython environment, like notebooks, **Argopy** provides an auto-completion feature to easily get one of the attributes, just press tab when typing ``arv['``:
+
+    .. image:: ../../_static/ArgoReferenceValue_autocompletion.png
+        :width: 289
+
 Extra attributes (R03, R14, R18)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -249,10 +256,12 @@ Creation
 
 .. tip::
 
-    If you don't know where to start, you can get the list of all available tables with this class method:
+    If you don't know where to start, you can get a dictionary of all available tables with this class method :meth:`ArgoReferenceTable.valid_identifier`:
 
-    :meth:`ArgoReferenceTable.valid_identifier`
+    .. ipython:: python
+        :okwarning:
 
+        ArgoReferenceTable.valid_identifier()
 
 
 Read attributes
@@ -319,7 +328,7 @@ Since :class:`ArgoReferenceTable` represents a list of distinct concepts, **Argo
 
 .. note::
 
-    In ipython environment, like notebooks, **Argopy** provides an auto-completion feature to easily get one of the values: just press tab when typing ``art['``:
+    In IPython environment, like notebooks, **Argopy** provides an auto-completion feature to easily get one of the values, just press tab when typing ``art['``:
 
     .. image:: ../../_static/ArgoReferenceTable_autocompletion.png
         :width: 345
