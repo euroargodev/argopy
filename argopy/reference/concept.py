@@ -234,7 +234,7 @@ class ArgoReferenceValue:
                 reference = reftable[0]
 
         # Once we have a 'name' and a 'reference', we can load raw data from NVS
-        self._nvs = self._nvs_store.load_concept(self.name, self.reference)
+        self._nvs = self._nvs_store.load_concept(name, reference)
 
         return {'name': name, 'reference': reference}
 
