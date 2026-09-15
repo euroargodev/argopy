@@ -47,6 +47,9 @@ VALID_HOSTS = [
     "MOCKFTP",  # keyword to use a fake/mocked ftp server (running on localhost)
 ]
 
+if has_pyarrow:
+    import pyarrow as pa
+
 if has_s3:
     # todo Create a mocked server for s3 tests
     VALID_HOSTS.append("s3://argo-gdac-sandbox/pub/idx")
