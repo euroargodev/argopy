@@ -1,7 +1,7 @@
 {
   "name": "SENSOR",
   "long_name": "Argo sensor types",
-  "last_update": "2026-01-25T10:44:16.308963+00:00",
+  "last_update": "2026-09-15T15:04:21.201474+00:00",
   "data": {
     "@graph": [
       {
@@ -37,57 +37,6 @@
           "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RAMSES_ACC/"
         },
         "@type": "skos:Concept"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/",
-        "pav:authoredOn": "2023-11-24 09:35:13.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/1/"
-        },
-        "dce:identifier": "SDN:R25::CTD_TEMP_CNDC",
-        "pav:version": "1",
-        "skos:notation": "SDN:R25::CTD_TEMP_CNDC",
-        "@type": "skos:Concept",
-        "skos:related": [
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP4K/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/"
-          }
-        ],
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Specific temperature sensor used with conductivity to calculate salinity on a CTD"
-        },
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "owl:deprecated": "false",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "dc:identifier": "SDN:R25::CTD_TEMP_CNDC",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "Temperature sensor for conductivity on a CTD"
-        },
-        "owl:versionInfo": "1",
-        "dc:date": "2023-11-24 09:35:13.0",
-        "skos:altLabel": ""
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/",
@@ -301,6 +250,45 @@
         }
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR670/",
+        "pav:authoredOn": "2026-07-09 11:22:59.0",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Radiometer measuring downwelling irradiance at 670 nanometers."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R25::RADIOMETER_DOWN_IRR670",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Radiometer measuring downwelling irradiance at 670 nanometers"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2026-07-09 11:22:59.0",
+        "skos:altLabel": "RADIOMETER_DOWN_IRR670",
+        "skos:notation": "SDN:R25::RADIOMETER_DOWN_IRR670",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R25::RADIOMETER_DOWN_IRR670",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR670/1/"
+        }
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R25/current/SPECTROPHOTOMETER_BISULFIDE/",
         "pav:authoredOn": "2019-10-11 15:06:36.0",
         "pav:hasCurrentVersion": {
@@ -490,10 +478,10 @@
         "@type": "skos:Concept",
         "skos:related": [
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/"
           }
         ],
         "skos:definition": {
@@ -554,9 +542,6 @@
         },
         "skos:related": [
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/CTD_F01/"
           },
           {
@@ -569,7 +554,13 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3.1/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP4K/"
@@ -1006,10 +997,10 @@
         "@type": "skos:Concept",
         "skos:related": [
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/"
           }
         ],
         "skos:definition": {
@@ -1047,10 +1038,14 @@
         },
         "dce:identifier": "SDN:R25::RADIOMETER_PAR",
         "pav:version": "1",
+        "skos:notation": "SDN:R25::RADIOMETER_PAR",
         "@type": "skos:Concept",
         "skos:related": [
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_PAR/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/"
@@ -1084,8 +1079,7 @@
         },
         "owl:versionInfo": "1",
         "dc:date": "2019-10-11 15:06:36.0",
-        "skos:altLabel": "RADIOMETER_PAR",
-        "skos:notation": "SDN:R25::RADIOMETER_PAR"
+        "skos:altLabel": "RADIOMETER_PAR"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/",
@@ -1118,9 +1112,6 @@
         },
         "skos:related": [
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/CTD_F01/"
           },
           {
@@ -1133,7 +1124,13 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3.1/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP4K/"
@@ -1300,10 +1297,10 @@
         "@type": "skos:Concept",
         "skos:related": [
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/"
           }
         ],
         "skos:definition": {
@@ -1407,6 +1404,63 @@
         "@type": "skos:Concept"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/",
+        "pav:hasVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/1/"
+        },
+        "pav:authoredOn": "2026-04-29 13:04:08.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/2/"
+        },
+        "dce:identifier": "SDN:R25::CTD_TEMP_CNDC",
+        "pav:version": "2",
+        "skos:notation": "SDN:R25::CTD_TEMP_CNDC",
+        "skos:altLabel": "CTD_TEMP_CNDC",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP4K/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3.1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Specific temperature sensor used with conductivity to calculate salinity on a CTD"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R25::CTD_TEMP_CNDC",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Temperature sensor for conductivity on a CTD"
+        },
+        "owl:versionInfo": "2",
+        "dc:date": "2026-04-29 13:04:08.0"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R25/current/OPTODE_DOXY/",
         "pav:authoredOn": "2019-10-11 15:06:36.0",
         "pav:hasCurrentVersion": {
@@ -1432,6 +1486,9 @@
         "skos:related": [
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE63_OPTODE/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CODA_T_ODO/"
@@ -1465,9 +1522,6 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4330/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/"
           }
         ],
         "skos:definition": {
@@ -1479,15 +1533,54 @@
         }
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR665/",
+        "pav:authoredOn": "2026-07-09 11:22:59.0",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Radiometer measuring downwelling irradiance at 665 nanometers."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R25::RADIOMETER_DOWN_IRR665",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Radiometer measuring downwelling irradiance at 665 nanometers"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2026-07-09 11:22:59.0",
+        "skos:altLabel": "RADIOMETER_DOWN_IRR665",
+        "skos:notation": "SDN:R25::RADIOMETER_DOWN_IRR665",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R25::RADIOMETER_DOWN_IRR665",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR665/1/"
+        }
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR555/",
         "pav:authoredOn": "2021-02-09 15:34:44.0",
         "@type": "skos:Concept",
         "skos:related": [
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/"
           }
         ],
         "skos:definition": {
@@ -1548,9 +1641,6 @@
         },
         "skos:related": [
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/DSB301-10-C85/"
           },
           {
@@ -1608,6 +1698,9 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO/"
           },
           {
@@ -1615,6 +1708,9 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES_A/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3.1/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP4K/"
@@ -1947,10 +2043,10 @@
         "@type": "skos:Concept",
         "skos:related": [
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/"
           }
         ],
         "skos:definition": {
@@ -1987,9 +2083,6 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/"
           },
           {
@@ -2000,6 +2093,9 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR670/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R25/current/SPECTROPHOTOMETER_BISULFIDE/"
@@ -2059,7 +2155,13 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R25/current/STS_CNDC/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R25/current/OPTODE_DOXY/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR665/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR555/"
@@ -2088,8 +2190,8 @@
         "dc:description": "Terms describing sensor types mounted on Argo floats. Argo netCDF variable SENSOR is populated by R25 altLabel.",
         "dc:title": "Argo sensor types",
         "skos:prefLabel": "Argo sensor types",
-        "owl:versionInfo": "4",
-        "dc:date": "2025-08-29 03:00:01.0",
+        "owl:versionInfo": "6",
+        "dc:date": "2026-07-10 03:00:01.0",
         "skos:altLabel": "SENSOR",
         "dc:creator": "Argo Data Management Team",
         "dc:alternative": "SENSOR",

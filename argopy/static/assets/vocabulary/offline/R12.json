@@ -1,7 +1,7 @@
 {
   "name": "HISTORY_STEP",
   "long_name": "Argo history processing step codes",
-  "last_update": "2026-01-25T10:44:09.865904+00:00",
+  "last_update": "2026-09-15T15:04:17.892518+00:00",
   "data": {
     "@graph": [
       {
@@ -316,7 +316,7 @@
         ],
         "@type": "skos:Collection",
         "dc:publisher": "Natural Environment Research Council",
-        "dc:description": "Data processing step codes for history record. Argo netCDF variable TRANS_SYSTEM is populated by R12 altLabel.",
+        "dc:description": "Data processing step codes for history record. Argo netCDF variable HISTORY_STEP is populated by R12 altLabel.",
         "dc:title": "Argo history processing step codes",
         "skos:prefLabel": "Argo history processing step codes",
         "owl:versionInfo": "1",

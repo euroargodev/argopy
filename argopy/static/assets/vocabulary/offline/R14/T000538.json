@@ -1,7 +1,7 @@
 {
   "name": "T000538",
   "long_name": "VOLTAGE_BatteryPumpOn_volts",
-  "last_update": "2026-01-25T11:11:57.529833+00:00",
+  "last_update": "2026-09-15T15:04:43.818432+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000538/",
     "pav:hasVersion": {

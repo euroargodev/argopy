@@ -1,22 +1,25 @@
 {
   "name": "PI0145",
-  "long_name": "Pedro VELEZ-BELCHI",
-  "last_update": "2026-01-25T11:15:00.350877+00:00",
+  "long_name": "Pedro VELEZ",
+  "last_update": "2026-09-15T15:05:31.067031+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0145/",
-    "pav:authoredOn": "2023-06-22 12:58:04.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0145/1/"
     },
+    "pav:authoredOn": "2026-02-24 11:49:21.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R40/current/PI0145/2/"
+    },
     "dce:identifier": "SDN:R40::PI0145",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R40::PI0145",
-    "skos:altLabel": "Pedro VELEZ-BELCHI",
-    "dc:date": "2023-06-22 12:58:04.0",
-    "owl:versionInfo": "1",
+    "skos:altLabel": "Pedro VELEZ",
+    "dc:date": "2026-02-24 11:49:21.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
-      "@value": "Pedro VELEZ-BELCHI"
+      "@value": "Pedro VELEZ"
     },
     "dc:identifier": "SDN:R40::PI0145",
     "skos:note": {
@@ -27,7 +30,10 @@
     "void:inDataset": {
       "@id": "http://vocab.nerc.ac.uk/.well-known/void"
     },
-    "skos:definition": "",
+    "skos:definition": {
+      "@language": "en",
+      "@value": "Pedro VELEZ-BELCHI"
+    },
     "@type": "skos:Concept",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",

@@ -1,7 +1,7 @@
 {
   "name": "T000507",
   "long_name": "CURRENT_BatterySurfaceAirPumpOn_mA",
-  "last_update": "2026-01-25T11:12:41.771683+00:00",
+  "last_update": "2026-09-15T15:04:47.427107+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000507/",
     "pav:hasVersion": {

@@ -1,7 +1,7 @@
 {
   "name": "T000522",
   "long_name": "VOLTAGE_BatteryCPUStartXmit_volts",
-  "last_update": "2026-01-25T11:12:03.252246+00:00",
+  "last_update": "2026-09-15T15:04:44.618111+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000522/",
     "pav:hasVersion": {

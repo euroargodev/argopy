@@ -1,7 +1,7 @@
 {
   "name": "TECHNICAL_PARAMETER_NAME",
   "long_name": "Argo technical parameter names",
-  "last_update": "2026-01-25T10:44:12.727079+00:00",
+  "last_update": "2026-09-15T15:04:18.913455+00:00",
   "data": {
     "@graph": [
       {
@@ -73,6 +73,48 @@
         "@type": "skos:Concept"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900002/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900002/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900002/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900002/3/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Deprecated - Time when float was settled at the parking depth for the 2nd time. MC189 - buoyancy action. Template_Values:{unit:[YYYYMMDD, HHMMSS, YYYYMMDDHHMMSS, HHMM, MMSS, YYYY, DD, HH, MM]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900002",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CLOCK_2ndSettlingBeforePark_YYYYMMDDHHMMSS"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:36:46.0",
+        "skos:altLabel": "91",
+        "skos:notation": "SDN:R14::T900002",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900002",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900002/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:36:46.0"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000360/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000360/1/"
@@ -107,38 +149,46 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900018/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900018/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:14.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900018/2/"
-        },
-        "dce:identifier": "SDN:R14::T900018",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900018",
-        "skos:altLabel": "900018",
-        "dc:date": "2025-12-11 11:04:14.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900034/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900034/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900034/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900034/3/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
           "@language": "en",
-          "@value": "PRES_MaximumDescentToPark_dbar"
+          "@value": "Deprecated - Minimum temperature during park phase. MC minus 3 or 297. Template_Values:{unit:[degC, mdegC]}."
         },
-        "dc:identifier": "SDN:R14::T900018",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
         "void:inDataset": {
           "@id": "http://vocab.nerc.ac.uk/.well-known/void"
         },
-        "skos:definition": {
+        "owl:deprecated": "true",
+        "skos:note": {
           "@language": "en",
-          "@value": "Deprecated - Maximum recorded pressure during descent, before stabilisation at park pressure. MC minus 2. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+          "@value": "deprecated"
         },
-        "@type": "skos:Concept"
+        "dc:identifier": "SDN:R14::T900034",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "TEMP_ParkMinimum_degC"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:37:11.0",
+        "skos:altLabel": "13",
+        "skos:notation": "SDN:R14::T900034",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900034",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900034/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:37:11.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000155/",
@@ -380,40 +430,6 @@
         "skos:definition": {
           "@language": "en",
           "@value": "Time from bladders empty to the start of mission. Template_Values:{unit:[days, hours, minutes, seconds, dsec, csec, msec, usec]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900031/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900031/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:53.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900031/2/"
-        },
-        "dce:identifier": "SDN:R14::T900031",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900031",
-        "skos:altLabel": "900031",
-        "dc:date": "2025-12-11 11:04:53.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "TEMP_LastAscentPumpedRawSample_degC"
-        },
-        "dc:identifier": "SDN:R14::T900031",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Deprecated - Last (shallowest) pumped raw temperature sample acquired during the ascent from the profile depth to the surface (i.e. just before the cut-off pressure where the pump is stopped). MC599. Template_Values:{unit:[degC, mdegC]}."
         },
         "@type": "skos:Concept"
       },
@@ -899,6 +915,48 @@
         "@type": "skos:Concept"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900026/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900026/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900026/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900026/3/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Deprecated - Minimum pressure during park phase. MC minus 3 or 297. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900026",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PRES_ParkMinimum_dbar"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:37:05.0",
+        "skos:altLabel": "7",
+        "skos:notation": "SDN:R14::T900026",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900026",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900026/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:37:05.0"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000126/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000126/1/"
@@ -1109,40 +1167,6 @@
         "skos:definition": {
           "@language": "en",
           "@value": "Number of pressure bins with data. Template_Values:{unit:[COUNT]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900002/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900002/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:53.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900002/2/"
-        },
-        "dce:identifier": "SDN:R14::T900002",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900002",
-        "skos:altLabel": "900002",
-        "dc:date": "2025-12-11 11:04:53.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CLOCK_2ndSettlingBeforePark_YYYYMMDDHHMMSS"
-        },
-        "dc:identifier": "SDN:R14::T900002",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Deprecated - Time when float was settled at the parking depth for the 2nd time. MC189 - buoyancy action. Template_Values:{unit:[YYYYMMDD, HHMMSS, YYYYMMDDHHMMSS, HHMM, MMSS, YYYY, DD, HH, MM]}."
         },
         "@type": "skos:Concept"
       },
@@ -1759,6 +1783,90 @@
         "@type": "skos:Concept"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900005/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900005/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900005/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900005/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Deprecated - Time when the first message is sent. Concerns deep Ninja. Refers to exactly the same time as first message received by satellite (MC=702). Template_Values:{unit:[YYYYMMDD, HHMMSS, YYYYMMDDHHMMSS, HHMM, MMSS, YYYY, DD, HH, MM]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900005",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CLOCK_FirstMessageTime_YYYYMMDDHHMMSS"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:36:49.0",
+        "skos:altLabel": "68.1",
+        "skos:notation": "SDN:R14::T900005",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900005",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900005/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:36:49.0"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900010/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900010/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900010/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900010/3/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Deprecated - Pressure taken at the end of piston retraction. JULD_DEEP_PARK_START and JULD with MC = 450. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900010",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PRES_DescentStartToProfile_dbar"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:36:53.0",
+        "skos:altLabel": "378",
+        "skos:notation": "SDN:R14::T900010",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900010",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900010/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:36:53.0"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000520/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000520/1/"
@@ -2240,6 +2348,45 @@
         "@type": "skos:Concept"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000226/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000226/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000226/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "The number of records in each dataset type [1-5] as transmitted - dataset 1=test data, 2=park data if profile, GPS data if test, 3=not used, 4=profile data, 5=GPS data for profile. Template_Values:{unit:[COUNT];digit:[1..5]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R14::T000226",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "NUMBER_RecordsInDataset<digit>_COUNT"
+        },
+        "owl:versionInfo": "3",
+        "dc:date": "2026-03-26 15:18:17.0",
+        "skos:altLabel": "226",
+        "skos:notation": "SDN:R14::T000226",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R14::T000226",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000226/3/"
+        },
+        "pav:authoredOn": "2026-03-26 15:18:17.0"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000142/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000142/1/"
@@ -2270,40 +2417,6 @@
         "skos:definition": {
           "@language": "en",
           "@value": "Number of samples collected in deep area during ascent. Template_Values:{unit:[COUNT]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900034/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900034/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:52.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900034/2/"
-        },
-        "dce:identifier": "SDN:R14::T900034",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900034",
-        "skos:altLabel": "900034",
-        "dc:date": "2025-12-11 11:04:52.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "TEMP_ParkMinimum_degC"
-        },
-        "dc:identifier": "SDN:R14::T900034",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Deprecated - Minimum temperature during park phase. MC minus 3 or 297. Template_Values:{unit:[degC, mdegC]}."
         },
         "@type": "skos:Concept"
       },
@@ -3149,6 +3262,48 @@
         "@type": "skos:Concept"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900021/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900021/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900021/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900021/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Deprecated - Minimum pressure recorded during descent to profile. MC minus 3. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900021",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PRES_MinimumDescentToProfile_dbar"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:37:02.0",
+        "skos:altLabel": "397",
+        "skos:notation": "SDN:R14::T900021",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900021",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900021/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:37:02.0"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000032/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000032/1/"
@@ -3179,40 +3334,6 @@
         "skos:definition": {
           "@language": "en",
           "@value": "Surface pressure recorded just before the previous descent. This is a cumulative offset with 5dbar added. Not autocorrected. Subtract 5 db. In real-time, subtract the cumulative offset from the reported pressures of the present profile. In DMQC, apply this value to the reported pressures of the PREVIOUS profile. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900032/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900032/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:22.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900032/2/"
-        },
-        "dce:identifier": "SDN:R14::T900032",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900032",
-        "skos:altLabel": "900032",
-        "dc:date": "2025-12-11 11:04:22.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "TEMP_ParkMaximum_degC"
-        },
-        "dc:identifier": "SDN:R14::T900032",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Deprecated - Maximum temperature during park phase. MC minus 2 or 298. Template_Values:{unit:[degC, mdegC]}."
         },
         "@type": "skos:Concept"
       },
@@ -3562,40 +3683,6 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900016/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900016/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:22.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900016/2/"
-        },
-        "dce:identifier": "SDN:R14::T900016",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900016",
-        "skos:altLabel": "900016",
-        "dc:date": "2025-12-11 11:04:22.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "PRES_Grounded_dbar"
-        },
-        "dc:identifier": "SDN:R14::T900016",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Deprecated - Grounded pressure if the float hit bottom. MC901 references grounding information. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000318/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000318/1/"
@@ -3696,6 +3783,48 @@
           "@value": "CTD error count. Template_Values:{unit:[COUNT]}."
         },
         "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900007/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900007/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900007/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900007/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Deprecated - Pressure when float was settled at the parking depth for the 2nd time. MC189 - buoyancy action. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900007",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PRES_2ndSettlingBeforePark_dbar"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:36:50.0",
+        "skos:altLabel": "92",
+        "skos:notation": "SDN:R14::T900007",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900007",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900007/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:36:50.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000555/",
@@ -4981,40 +5110,6 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900026/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900026/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:55.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900026/2/"
-        },
-        "dce:identifier": "SDN:R14::T900026",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900026",
-        "skos:altLabel": "900026",
-        "dc:date": "2025-12-11 11:04:55.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "PRES_ParkMinimum_dbar"
-        },
-        "dc:identifier": "SDN:R14::T900026",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Deprecated - Minimum pressure during park phase. MC minus 3 or 297. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000334/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000334/1/"
@@ -5081,6 +5176,48 @@
           "@value": "Measured during park-park phase and is averaged. Template_Values:{unit:[COUNT, amps, mA]}."
         },
         "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900029/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900029/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900029/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900029/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Deprecated - Pressure where the minimum temperature was measured during park phase. MC minus 13 or 287. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900029",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PRES_WhenMinimumTemperatureAtPark_dbar"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:37:07.0",
+        "skos:altLabel": "10",
+        "skos:notation": "SDN:R14::T900029",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900029",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900029/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:37:07.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000426/",
@@ -5360,40 +5497,6 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900005/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900005/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:56.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900005/2/"
-        },
-        "dce:identifier": "SDN:R14::T900005",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900005",
-        "skos:altLabel": "900005",
-        "dc:date": "2025-12-11 11:04:56.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CLOCK_FirstMessageTime_YYYYMMDDHHMMSS"
-        },
-        "dc:identifier": "SDN:R14::T900005",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Deprecated - Time when the first message is sent. Concerns deep Ninja. Refers to exactly the same time as first message received by satellite (MC=702). Template_Values:{unit:[YYYYMMDD, HHMMSS, YYYYMMDDHHMMSS, HHMM, MMSS, YYYY, DD, HH, MM]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000029/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000029/1/"
@@ -5460,6 +5563,48 @@
           "@value": "Ascent time out expired (1/Yes or 0/No). Template_Values:{unit:[LOGICAL]}."
         },
         "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900008/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900008/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900008/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900008/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Deprecated - Pressure when float was settled at the parking depth for the 3rd time. MC189 - buoyancy action. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900008",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PRES_3rdSettlingBeforePark_dbar"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:36:51.0",
+        "skos:altLabel": "94",
+        "skos:notation": "SDN:R14::T900008",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900008",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900008/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:36:51.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000123/",
@@ -5734,6 +5879,48 @@
         "@type": "skos:Concept"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900011/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900011/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900011/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900011/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Deprecated - Pressure when the float reaches park depth but still goes through settling etc so not quite equivalent to ParkStart. JULD_DESCENT_END and JULD with MC=200. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900011",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PRES_DescentToParkEnd_dbar"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:36:54.0",
+        "skos:altLabel": "379",
+        "skos:notation": "SDN:R14::T900011",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900011",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900011/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:36:54.0"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000404/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000404/1/"
@@ -5808,37 +5995,45 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900035/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900035/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:53.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900035/2/"
-        },
-        "dce:identifier": "SDN:R14::T900035",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900035",
-        "skos:altLabel": "900035",
-        "dc:date": "2025-12-11 11:04:53.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "TEMP_ParkStandardDeviation_degC"
-        },
-        "dc:identifier": "SDN:R14::T900035",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900035/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900035/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900035/3/"
+          }
+        ],
+        "@type": "skos:Concept",
         "skos:definition": {
           "@language": "en",
           "@value": "Deprecated - Standard deviation of temperature during the park phase. MC minus 6 or 294. Template_Values:{unit:[degC, mdegC]}."
         },
-        "@type": "skos:Concept"
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900035",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "TEMP_ParkStandardDeviation_degC"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:37:12.0",
+        "skos:altLabel": "14",
+        "skos:notation": "SDN:R14::T900035",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900035",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900035/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:37:12.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000236/",
@@ -6027,37 +6222,45 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900003/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900003/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:51.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900003/2/"
-        },
-        "dce:identifier": "SDN:R14::T900003",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900003",
-        "skos:altLabel": "900003",
-        "dc:date": "2025-12-11 11:04:51.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CLOCK_3rdSettlingBeforePark_YYYYMMDDHHMMSS"
-        },
-        "dc:identifier": "SDN:R14::T900003",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900003/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900003/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900003/3/"
+          }
+        ],
+        "@type": "skos:Concept",
         "skos:definition": {
           "@language": "en",
           "@value": "Deprecated - Time when float was settled at the parking depth for the 3rd time. MC189 - buoyancy action. Template_Values:{unit:[YYYYMMDD, HHMMSS, YYYYMMDDHHMMSS, HHMM, MMSS, YYYY, DD, HH, MM]}."
         },
-        "@type": "skos:Concept"
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900003",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CLOCK_3rdSettlingBeforePark_YYYYMMDDHHMMSS"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:36:47.0",
+        "skos:altLabel": "93",
+        "skos:notation": "SDN:R14::T900003",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900003",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900003/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:36:47.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000387/",
@@ -6128,40 +6331,6 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900010/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900010/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:56.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900010/2/"
-        },
-        "dce:identifier": "SDN:R14::T900010",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900010",
-        "skos:altLabel": "900010",
-        "dc:date": "2025-12-11 11:04:56.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "PRES_DescentStartToProfile_dbar"
-        },
-        "dc:identifier": "SDN:R14::T900010",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Deprecated - Pressure taken at the end of piston retraction. JULD_DEEP_PARK_START and JULD with MC = 450. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000034/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000034/1/"
@@ -6196,6 +6365,48 @@
         "@type": "skos:Concept"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900027/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900027/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900027/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900027/3/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Deprecated - Standard deviation of pressure during the park phase. MC minus 6 or 294. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900027",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PRES_ParkStandardDeviation_dbar"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:37:06.0",
+        "skos:altLabel": "8",
+        "skos:notation": "SDN:R14::T900027",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900027",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900027/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:37:06.0"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000481/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000481/1/"
@@ -6228,6 +6439,48 @@
           "@value": "Time since startup before deployment. Template_Values:{unit:[days, hours, minutes, seconds, dsec, csec, msec, usec]}."
         },
         "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900013/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900013/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900013/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900013/3/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Deprecated - Minimum pressure during descent to park. MC minus 3. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900013",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PRES_DescentToParkMinPressure_dbar"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:36:56.0",
+        "skos:altLabel": "381",
+        "skos:notation": "SDN:R14::T900013",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900013",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900013/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:36:56.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000546/",
@@ -6364,6 +6617,48 @@
           "@value": "The number of Near Surface Temperature monitoring PT samples (non-pumped PT). Template_Values:{unit:[COUNT]}."
         },
         "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900023/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900023/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900023/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900023/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Deprecated - Pressure during park phase when float is grounded. MC901 references grounding information. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900023",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PRES_ParkGrounded_dbar"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:37:03.0",
+        "skos:altLabel": "4",
+        "skos:notation": "SDN:R14::T900023",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900023",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900023/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:37:03.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000019/",
@@ -6615,37 +6910,45 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900019/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900019/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:14.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900019/2/"
-        },
-        "dce:identifier": "SDN:R14::T900019",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900019",
-        "skos:altLabel": "900019",
-        "dc:date": "2025-12-11 11:04:14.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "PRES_MaximumDescentToProfile_dbar"
-        },
-        "dc:identifier": "SDN:R14::T900019",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900019/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900019/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900019/3/"
+          }
+        ],
+        "@type": "skos:Concept",
         "skos:definition": {
           "@language": "en",
           "@value": "Deprecated - Maximum recorded pressure during descent, before stabilisation at profile pressure. MC minus 2. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
         },
-        "@type": "skos:Concept"
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900019",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PRES_MaximumDescentToProfile_dbar"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:37:00.0",
+        "skos:altLabel": "393",
+        "skos:notation": "SDN:R14::T900019",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900019",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900019/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:37:00.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000510/",
@@ -6989,40 +7292,6 @@
         "skos:definition": {
           "@language": "en",
           "@value": "Battery current while the optial sensor is on. Template_Values:{unit:[COUNT]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900027/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900027/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:54.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900027/2/"
-        },
-        "dce:identifier": "SDN:R14::T900027",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900027",
-        "skos:altLabel": "900027",
-        "dc:date": "2025-12-11 11:04:54.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "PRES_ParkStandardDeviation_dbar"
-        },
-        "dc:identifier": "SDN:R14::T900027",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Deprecated - Standard deviation of pressure during the park phase. MC minus 6 or 294. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
         },
         "@type": "skos:Concept"
       },
@@ -8470,40 +8739,6 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900011/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900011/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:54.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900011/2/"
-        },
-        "dce:identifier": "SDN:R14::T900011",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900011",
-        "skos:altLabel": "900011",
-        "dc:date": "2025-12-11 11:04:54.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "PRES_DescentToParkEnd_dbar"
-        },
-        "dc:identifier": "SDN:R14::T900011",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Deprecated - Pressure when the float reaches park depth but still goes through settling etc so not quite equivalent to ParkStart. JULD_DESCENT_END and JULD with MC=200. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000405/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000405/1/"
@@ -8776,40 +9011,6 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900021/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900021/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:22.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900021/2/"
-        },
-        "dce:identifier": "SDN:R14::T900021",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900021",
-        "skos:altLabel": "900021",
-        "dc:date": "2025-12-11 11:04:22.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "PRES_MinimumDescentToProfile_dbar"
-        },
-        "dc:identifier": "SDN:R14::T900021",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Deprecated - Minimum pressure recorded during descent to profile. MC minus 3. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000364/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000364/1/"
@@ -9046,6 +9247,48 @@
           "@value": "Piston position, recorded AFTER the instrument reaches the surface and the bladder has been fully pumped to increase buoyancy. Template_Values:{unit:[COUNT]}."
         },
         "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900024/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900024/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900024/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900024/3/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Deprecated - Maximum pressure during park phase. MC minus 2 or 298. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900024",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PRES_ParkMaximum_dbar"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:37:04.0",
+        "skos:altLabel": "6",
+        "skos:notation": "SDN:R14::T900024",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900024",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900024/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:37:04.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000332/",
@@ -9318,6 +9561,48 @@
           "@value": "Battery voltage of 14V system when float starts ascending to surface. Template_Values:{unit:[COUNT, volts, mV]}."
         },
         "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900022/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900022/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900022/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900022/3/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Deprecated - Minimum pressure during drifting at profile depth. MC minus 3. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900022",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PRES_MinimumDuringProfileDrift_dbar"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:37:02.0",
+        "skos:altLabel": "398",
+        "skos:notation": "SDN:R14::T900022",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900022",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900022/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:37:02.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000046/",
@@ -9660,6 +9945,48 @@
         "@type": "skos:Concept"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900014/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900014/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900014/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900014/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Deprecated - Maximum pressure during descent to profile. MC minus 2. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900014",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PRES_DescentToProfileMaxPressure_dbar"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:36:56.0",
+        "skos:altLabel": "382",
+        "skos:notation": "SDN:R14::T900014",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900014",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900014/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:36:56.0"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T200278/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T200278/1/"
@@ -10000,40 +10327,6 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900007/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900007/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:22.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900007/2/"
-        },
-        "dce:identifier": "SDN:R14::T900007",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900007",
-        "skos:altLabel": "900007",
-        "dc:date": "2025-12-11 11:04:22.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "PRES_2ndSettlingBeforePark_dbar"
-        },
-        "dc:identifier": "SDN:R14::T900007",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Deprecated - Pressure when float was settled at the parking depth for the 2nd time. MC189 - buoyancy action. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000275/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000275/1/"
@@ -10239,37 +10532,45 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900006/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900006/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:14.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900006/2/"
-        },
-        "dce:identifier": "SDN:R14::T900006",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900006",
-        "skos:altLabel": "900006",
-        "dc:date": "2025-12-11 11:04:14.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "PRES_1stSettlingBeforePark_dbar"
-        },
-        "dc:identifier": "SDN:R14::T900006",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900006/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900006/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900006/2/"
+          }
+        ],
+        "@type": "skos:Concept",
         "skos:definition": {
           "@language": "en",
           "@value": "Deprecated - Pressure when float was settled at the parking depth for the 1st time. MC189 - buoyancy action. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
         },
-        "@type": "skos:Concept"
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900006",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PRES_1stSettlingBeforePark_dbar"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:36:50.0",
+        "skos:altLabel": "90",
+        "skos:notation": "SDN:R14::T900006",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900006",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900006/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:36:50.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000372/",
@@ -11035,40 +11336,6 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000226/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000226/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:20.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000226/2/"
-        },
-        "dce:identifier": "SDN:R14::T000226",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T000226",
-        "skos:altLabel": "226",
-        "dc:date": "2025-12-11 11:04:20.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "NUMBER_RecordsInDataset<digit>_COUNT"
-        },
-        "dc:identifier": "SDN:R14::T000226",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "The number of records in each dataset type [1-5] as transmitted - dataset 1=test data, 2=park data if profile, GPS data if test, 3=not used, 4=profile data, 5=GPS data for profile. Template_Values:{unit:[COUNT];digit=[1..5]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000496/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000496/1/"
@@ -11463,38 +11730,46 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900022/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900022/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:22.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900022/2/"
-        },
-        "dce:identifier": "SDN:R14::T900022",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900022",
-        "skos:altLabel": "900022",
-        "dc:date": "2025-12-11 11:04:22.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900015/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900015/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900015/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900015/3/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
           "@language": "en",
-          "@value": "PRES_MinimumDuringProfileDrift_dbar"
+          "@value": "Deprecated - Minimum pressure during descent to profile. MC minus 3. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
         },
-        "dc:identifier": "SDN:R14::T900022",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
         "void:inDataset": {
           "@id": "http://vocab.nerc.ac.uk/.well-known/void"
         },
-        "skos:definition": {
+        "owl:deprecated": "true",
+        "skos:note": {
           "@language": "en",
-          "@value": "Deprecated - Minimum pressure during drifting at profile depth. MC minus 3. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+          "@value": "deprecated"
         },
-        "@type": "skos:Concept"
+        "dc:identifier": "SDN:R14::T900015",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PRES_DescentToProfileMinPressure_dbar"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:36:57.0",
+        "skos:altLabel": "383",
+        "skos:notation": "SDN:R14::T900015",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900015",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900015/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:36:57.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000464/",
@@ -12037,40 +12312,6 @@
         "skos:definition": {
           "@language": "en",
           "@value": "The 8-bit profile counter overflowed (1/Yes or 0/No). Template_Values:{unit:[LOGICAL]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900029/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900029/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:15.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900029/2/"
-        },
-        "dce:identifier": "SDN:R14::T900029",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900029",
-        "skos:altLabel": "900029",
-        "dc:date": "2025-12-11 11:04:15.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "PRES_WhenMinimumTemperatureAtPark_dbar"
-        },
-        "dc:identifier": "SDN:R14::T900029",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Deprecated - Pressure where the minimum temperature was measured during park phase. MC minus 13 or 287. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
         },
         "@type": "skos:Concept"
       },
@@ -12799,40 +13040,6 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900008/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900008/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:54.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900008/2/"
-        },
-        "dce:identifier": "SDN:R14::T900008",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900008",
-        "skos:altLabel": "900008",
-        "dc:date": "2025-12-11 11:04:54.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "PRES_3rdSettlingBeforePark_dbar"
-        },
-        "dc:identifier": "SDN:R14::T900008",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Deprecated - Pressure when float was settled at the parking depth for the 3rd time. MC189 - buoyancy action. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000400/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000400/1/"
@@ -12899,6 +13106,48 @@
           "@value": "Flag indicating the status of the antenna (see manual). Template_Values:{unit:[LOGICAL, hex, NUMBER]}."
         },
         "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900030/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900030/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900030/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900030/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Deprecated - Last (shallowest) pumped raw salinity sample acquired during the ascent from the profile depth to the surface (i.e. just before the cut-off pressure where the pump is stopped). MC599. Template_Values:{unit:[psu, mpsu]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900030",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PSAL_LastAscentPumpedRawSample_psu"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:37:08.0",
+        "skos:altLabel": "95.2",
+        "skos:notation": "SDN:R14::T900030",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900030",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900030/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:37:08.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000106/",
@@ -13377,40 +13626,6 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900033/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900033/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:53.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900033/2/"
-        },
-        "dce:identifier": "SDN:R14::T900033",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900033",
-        "skos:altLabel": "900033",
-        "dc:date": "2025-12-11 11:04:53.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "TEMP_ParkMean_degC"
-        },
-        "dc:identifier": "SDN:R14::T900033",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Deprecated - Mean temperature during park phase. MC minus 4 or 296. Template_Values:{unit:[degC, mdegC]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000258/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000258/1/"
@@ -13683,40 +13898,6 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900001/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900001/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:14.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900001/2/"
-        },
-        "dce:identifier": "SDN:R14::T900001",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900001",
-        "skos:altLabel": "900001",
-        "dc:date": "2025-12-11 11:04:14.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CLOCK_1stSettlingBeforePark_YYYYMMDDHHMMSS"
-        },
-        "dc:identifier": "SDN:R14::T900001",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Deprecated - Time when float was settled at the parking depth for the 1st time. MC189 - buoyancy action. Template_Values:{unit:[YYYYMMDD, HHMMSS, YYYYMMDDHHMMSS, HHMM, MMSS, YYYY, DD, HH, MM]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000303/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000303/1/"
@@ -13819,6 +14000,48 @@
         "@type": "skos:Concept"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900025/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900025/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900025/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900025/3/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Deprecated - Mean pressure during the park phase. MC minus 4 or 296. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900025",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PRES_ParkMean_dbar"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:37:04.0",
+        "skos:altLabel": "5",
+        "skos:notation": "SDN:R14::T900025",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900025",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900025/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:37:04.0"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000049/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000049/1/"
@@ -13883,40 +14106,6 @@
         "skos:definition": {
           "@language": "en",
           "@value": "Sbe41 : Response to PTS measurement failed the pedantic regex (Yes or No). Template_Values:{unit:[LOGICAL]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900013/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900013/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:15.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900013/2/"
-        },
-        "dce:identifier": "SDN:R14::T900013",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900013",
-        "skos:altLabel": "900013",
-        "dc:date": "2025-12-11 11:04:15.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "PRES_DescentToParkMinPressure_dbar"
-        },
-        "dc:identifier": "SDN:R14::T900013",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Deprecated - Minimum pressure during descent to park. MC minus 3. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
         },
         "@type": "skos:Concept"
       },
@@ -14125,6 +14314,48 @@
         "@type": "skos:Concept"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900016/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900016/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900016/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900016/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Deprecated - Grounded pressure if the float hit bottom. MC901 references grounding information. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900016",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PRES_Grounded_dbar"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:36:58.0",
+        "skos:altLabel": "389",
+        "skos:notation": "SDN:R14::T900016",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900016",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900016/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:36:58.0"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000131/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000131/1/"
@@ -14155,40 +14386,6 @@
         "skos:definition": {
           "@language": "en",
           "@value": "Number of motor actions between start and end of descent from park depth to profile depth. Template_Values:{unit:[COUNT]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900023/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900023/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:55.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900023/2/"
-        },
-        "dce:identifier": "SDN:R14::T900023",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900023",
-        "skos:altLabel": "900023",
-        "dc:date": "2025-12-11 11:04:55.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "PRES_ParkGrounded_dbar"
-        },
-        "dc:identifier": "SDN:R14::T900023",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Deprecated - Pressure during park phase when float is grounded. MC901 references grounding information. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
         },
         "@type": "skos:Concept"
       },
@@ -14332,40 +14529,6 @@
           "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000230/3/"
         },
         "pav:authoredOn": "2026-01-19 15:35:34.0"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900017/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900017/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:15.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900017/2/"
-        },
-        "dce:identifier": "SDN:R14::T900017",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900017",
-        "skos:altLabel": "900017",
-        "dc:date": "2025-12-11 11:04:15.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "PRES_InitialStabilizationDuringDescentToPark_dbar"
-        },
-        "dc:identifier": "SDN:R14::T900017",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Deprecated - Pressure when first stabilization appears during descent to park. MC 150. Template_Values:{unit:[COUNT, bar, dbar, cbar, mbar, inHg]}."
-        },
-        "@type": "skos:Concept"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000359/",
@@ -14917,6 +15080,48 @@
         "@type": "skos:Concept"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900009/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900009/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900009/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900009/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Deprecated - Pressure taken at the end of piston retraction. JULD_PARK_START and JULD with MC = 250. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900009",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PRES_DescentStartToPark_dbar"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:36:52.0",
+        "skos:altLabel": "377",
+        "skos:notation": "SDN:R14::T900009",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900009",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900009/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:36:52.0"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000500/",
         "pav:hasVersion": [
           {
@@ -15364,40 +15569,6 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900009/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900009/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:53.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900009/2/"
-        },
-        "dce:identifier": "SDN:R14::T900009",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900009",
-        "skos:altLabel": "900009",
-        "dc:date": "2025-12-11 11:04:53.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "PRES_DescentStartToPark_dbar"
-        },
-        "dc:identifier": "SDN:R14::T900009",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Deprecated - Pressure taken at the end of piston retraction. JULD_PARK_START and JULD with MC = 250. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000401/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000401/1/"
@@ -15464,6 +15635,48 @@
           "@value": "CTD ascent acquisition frequency. Template_Values:{unit:[days, hours, minutes, seconds, dsec]}."
         },
         "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900031/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900031/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900031/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900031/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Deprecated - Last (shallowest) pumped raw temperature sample acquired during the ascent from the profile depth to the surface (i.e. just before the cut-off pressure where the pump is stopped). MC599. Template_Values:{unit:[degC, mdegC]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900031",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "TEMP_LastAscentPumpedRawSample_degC"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:37:09.0",
+        "skos:altLabel": "95.1",
+        "skos:notation": "SDN:R14::T900031",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900031",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900031/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:37:09.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000206/",
@@ -16812,40 +17025,6 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900014/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900014/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:53.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900014/2/"
-        },
-        "dce:identifier": "SDN:R14::T900014",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900014",
-        "skos:altLabel": "900014",
-        "dc:date": "2025-12-11 11:04:53.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "PRES_DescentToProfileMaxPressure_dbar"
-        },
-        "dc:identifier": "SDN:R14::T900014",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Deprecated - Maximum pressure during descent to profile. MC minus 2. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000362/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000362/1/"
@@ -16982,6 +17161,48 @@
         "@type": "skos:Concept"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900017/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900017/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900017/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900017/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Deprecated - Pressure when first stabilization appears during descent to park. MC 150. Template_Values:{unit:[COUNT, bar, dbar, cbar, mbar, inHg]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900017",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PRES_InitialStabilizationDuringDescentToPark_dbar"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:36:59.0",
+        "skos:altLabel": "390",
+        "skos:notation": "SDN:R14::T900017",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900017",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900017/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:36:59.0"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000132/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000132/1/"
@@ -17012,40 +17233,6 @@
         "skos:definition": {
           "@language": "en",
           "@value": "Number of motor actions between start and end of descent to profile depth. Template_Values:{unit:[COUNT]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900024/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900024/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:55.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900024/2/"
-        },
-        "dce:identifier": "SDN:R14::T900024",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900024",
-        "skos:altLabel": "900024",
-        "dc:date": "2025-12-11 11:04:55.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "PRES_ParkMaximum_dbar"
-        },
-        "dc:identifier": "SDN:R14::T900024",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Deprecated - Maximum pressure during park phase. MC minus 2 or 298. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
         },
         "@type": "skos:Concept"
       },
@@ -17542,37 +17729,45 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900020/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900020/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:53.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900020/2/"
-        },
-        "dce:identifier": "SDN:R14::T900020",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900020",
-        "skos:altLabel": "900020",
-        "dc:date": "2025-12-11 11:04:53.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "PRES_MaximumDuringProfileDrift_dbar"
-        },
-        "dc:identifier": "SDN:R14::T900020",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900020/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900020/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900020/2/"
+          }
+        ],
+        "@type": "skos:Concept",
         "skos:definition": {
           "@language": "en",
           "@value": "Deprecated - Maximum pressure during drifting at profile depth. MC minus 2. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
         },
-        "@type": "skos:Concept"
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900020",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PRES_MaximumDuringProfileDrift_dbar"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:37:01.0",
+        "skos:altLabel": "394",
+        "skos:notation": "SDN:R14::T900020",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900020",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900020/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:37:01.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000264/",
@@ -17984,37 +18179,45 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900012/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900012/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:22.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900012/2/"
-        },
-        "dce:identifier": "SDN:R14::T900012",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900012",
-        "skos:altLabel": "900012",
-        "dc:date": "2025-12-11 11:04:22.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "PRES_DescentToParkMaxPressure_dbar"
-        },
-        "dc:identifier": "SDN:R14::T900012",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900012/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900012/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900012/2/"
+          }
+        ],
+        "@type": "skos:Concept",
         "skos:definition": {
           "@language": "en",
           "@value": "Deprecated - Maximum pressure during descent to park. MC minus 2. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
         },
-        "@type": "skos:Concept"
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900012",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PRES_DescentToParkMaxPressure_dbar"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:36:55.0",
+        "skos:altLabel": "380",
+        "skos:notation": "SDN:R14::T900012",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900012",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900012/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:36:55.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000036/",
@@ -18465,37 +18668,45 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900004/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900004/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:53.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900004/2/"
-        },
-        "dce:identifier": "SDN:R14::T900004",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900004",
-        "skos:altLabel": "900004",
-        "dc:date": "2025-12-11 11:04:53.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CLOCK_DateGrounded_DDMMYYYY"
-        },
-        "dc:identifier": "SDN:R14::T900004",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900004/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900004/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900004/1/"
+          }
+        ],
+        "@type": "skos:Concept",
         "skos:definition": {
           "@language": "en",
           "@value": "Deprecated - Date the float grounded. MC901 references grounding information. Template_Values:{unit:[YYYYMMDD, HHMMSS, YYYYMMDDHHMMSS, HHMM, MMSS, YYYY, DD, HH, MM]}."
         },
-        "@type": "skos:Concept"
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900004",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CLOCK_DateGrounded_DDMMYYYY"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:36:48.0",
+        "skos:altLabel": "74",
+        "skos:notation": "SDN:R14::T900004",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900004",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900004/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:36:48.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000402/",
@@ -18564,6 +18775,48 @@
           "@value": "Surface pressure recorded just before the previous descent. This is a cumulative offset, negative offsets truncated to 0, 3dbar added. Not autocorrected. Subtract 3 db. In real-time, subtract the cumulative offset from the reported pressures of the present profile. In DMQC, apply this value to the reported pressures of the PREVIOUS profile. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
         },
         "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900032/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900032/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900032/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900032/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Deprecated - Maximum temperature during park phase. MC minus 2 or 298. Template_Values:{unit:[degC, mdegC]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900032",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "TEMP_ParkMaximum_degC"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:37:10.0",
+        "skos:altLabel": "11",
+        "skos:notation": "SDN:R14::T900032",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900032",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900032/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:37:10.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000306/",
@@ -18703,37 +18956,45 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900028/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900028/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:52.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900028/2/"
-        },
-        "dce:identifier": "SDN:R14::T900028",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900028",
-        "skos:altLabel": "900028",
-        "dc:date": "2025-12-11 11:04:52.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "PRES_WhenMaximumTemperatureAtPark_dbar"
-        },
-        "dc:identifier": "SDN:R14::T900028",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900028/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900028/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900028/1/"
+          }
+        ],
+        "@type": "skos:Concept",
         "skos:definition": {
           "@language": "en",
           "@value": "Deprecated - Pressure where the maximum temperature was measured during park phase. MC minus 12 or 288. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
         },
-        "@type": "skos:Concept"
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900028",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PRES_WhenMaximumTemperatureAtPark_dbar"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:37:06.0",
+        "skos:altLabel": "9",
+        "skos:notation": "SDN:R14::T900028",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900028",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900028/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:37:06.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000212/",
@@ -18904,6 +19165,48 @@
           "@value": "Flag indicating whether GPS is valid (1) or not valid (0). Template_Values:{unit:[LOGICAL, hex, NUMBER]}."
         },
         "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900001/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900001/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900001/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900001/3/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Deprecated - Time when float was settled at the parking depth for the 1st time. MC189 - buoyancy action. Template_Values:{unit:[YYYYMMDD, HHMMSS, YYYYMMDDHHMMSS, HHMM, MMSS, YYYY, DD, HH, MM]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900001",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CLOCK_1stSettlingBeforePark_YYYYMMDDHHMMSS"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:36:46.0",
+        "skos:altLabel": "89",
+        "skos:notation": "SDN:R14::T900001",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900001",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900001/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:36:46.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000567/",
@@ -19878,40 +20181,6 @@
         "pav:authoredOn": "2026-01-19 15:35:33.0"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900015/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900015/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:54.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900015/2/"
-        },
-        "dce:identifier": "SDN:R14::T900015",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900015",
-        "skos:altLabel": "900015",
-        "dc:date": "2025-12-11 11:04:54.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "PRES_DescentToProfileMinPressure_dbar"
-        },
-        "dc:identifier": "SDN:R14::T900015",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Deprecated - Minimum pressure during descent to profile. MC minus 3. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100557/",
         "pav:hasVersion": [
           {
@@ -20121,6 +20390,48 @@
         "@type": "skos:Concept"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900018/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900018/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900018/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900018/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Deprecated - Maximum recorded pressure during descent, before stabilisation at park pressure. MC minus 2. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900018",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PRES_MaximumDescentToPark_dbar"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:37:00.0",
+        "skos:altLabel": "392",
+        "skos:notation": "SDN:R14::T900018",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900018",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900018/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:37:00.0"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000133/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000133/1/"
@@ -20151,40 +20462,6 @@
         "skos:definition": {
           "@language": "en",
           "@value": "Total number of samples collected during ascent. Template_Values:{unit:[COUNT]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900025/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900025/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:22.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900025/2/"
-        },
-        "dce:identifier": "SDN:R14::T900025",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900025",
-        "skos:altLabel": "900025",
-        "dc:date": "2025-12-11 11:04:22.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "PRES_ParkMean_dbar"
-        },
-        "dc:identifier": "SDN:R14::T900025",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Deprecated - Mean pressure during the park phase. MC minus 4 or 296. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
         },
         "@type": "skos:Concept"
       },
@@ -21681,40 +21958,6 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900030/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900030/1/"
-        },
-        "pav:authoredOn": "2025-12-11 11:04:54.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900030/2/"
-        },
-        "dce:identifier": "SDN:R14::T900030",
-        "pav:version": "2",
-        "skos:notation": "SDN:R14::T900030",
-        "skos:altLabel": "900030",
-        "dc:date": "2025-12-11 11:04:54.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "PSAL_LastAscentPumpedRawSample_psu"
-        },
-        "dc:identifier": "SDN:R14::T900030",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Deprecated - Last (shallowest) pumped raw salinity sample acquired during the ascent from the profile depth to the surface (i.e. just before the cut-off pressure where the pump is stopped). MC599. Template_Values:{unit:[psu, mpsu]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000104/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000104/1/"
@@ -21849,6 +22092,48 @@
           "@value": "Number of motor actions while drifting at profile depth. Template_Values:{unit:[COUNT]}."
         },
         "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900033/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900033/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900033/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900033/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Deprecated - Mean temperature during park phase. MC minus 4 or 296. Template_Values:{unit:[degC, mdegC]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R14::T900033",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "TEMP_ParkMean_degC"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-07-24 12:37:10.0",
+        "skos:altLabel": "12",
+        "skos:notation": "SDN:R14::T900033",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R14::T900033",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900033/4/"
+        },
+        "pav:authoredOn": "2026-07-24 12:37:10.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000406/",
@@ -22234,10 +22519,13 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000055/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900002/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000360/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900018/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900034/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000155/"
@@ -22259,9 +22547,6 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000457/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900031/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000204/"
@@ -22306,6 +22591,9 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000047/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900026/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000126/"
           },
           {
@@ -22322,9 +22610,6 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000110/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900002/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000331/"
@@ -22381,6 +22666,12 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000298/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900005/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900010/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000520/"
           },
           {
@@ -22423,10 +22714,10 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100058/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000142/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000226/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900034/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000142/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000161/"
@@ -22501,10 +22792,10 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000107/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000032/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900021/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900032/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000032/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000056/"
@@ -22537,9 +22828,6 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000465/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900016/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000318/"
           },
           {
@@ -22547,6 +22835,9 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000253/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900007/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000555/"
@@ -22660,13 +22951,13 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T500488/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900026/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000334/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000497/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900029/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000426/"
@@ -22693,13 +22984,13 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000113/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900005/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000029/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000276/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900008/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000123/"
@@ -22724,6 +23015,9 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000255/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900011/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000404/"
@@ -22759,13 +23053,16 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000027/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900010/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000034/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900027/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000481/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900013/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000546/"
@@ -22778,6 +23075,9 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T200260/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900023/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000019/"
@@ -22832,9 +23132,6 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000493/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900027/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000224/"
@@ -22963,9 +23260,6 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000127/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900011/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000405/"
           },
           {
@@ -22990,9 +23284,6 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000086/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900021/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000364/"
           },
           {
@@ -23012,6 +23303,9 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000357/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900024/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000332/"
@@ -23036,6 +23330,9 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T200520/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900022/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000046/"
@@ -23068,6 +23365,9 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000240/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900014/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T200278/"
           },
           {
@@ -23096,9 +23396,6 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000115/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900007/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000275/"
@@ -23188,9 +23485,6 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000310/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000226/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000496/"
           },
           {
@@ -23224,7 +23518,7 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000529/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900022/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900015/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000464/"
@@ -23273,9 +23567,6 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000272/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900029/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000421/"
@@ -23341,13 +23632,13 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000116/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900008/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000400/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100273/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900030/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000106/"
@@ -23392,9 +23683,6 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000342/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900033/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000258/"
           },
           {
@@ -23419,9 +23707,6 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000417/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900001/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000303/"
           },
           {
@@ -23431,13 +23716,13 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T300290/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900025/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000049/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000327/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900013/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000262/"
@@ -23458,10 +23743,10 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000286/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000131/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900016/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900023/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000131/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000549/"
@@ -23474,9 +23759,6 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000230/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900017/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000359/"
@@ -23527,6 +23809,9 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T700271/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900009/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000500/"
           },
           {
@@ -23566,13 +23851,13 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000197/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900009/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000401/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000475/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900031/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000206/"
@@ -23692,9 +23977,6 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000427/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900014/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000362/"
           },
           {
@@ -23707,10 +23989,10 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000386/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000132/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900017/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900024/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000132/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000117/"
@@ -23845,6 +24127,9 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000028/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900032/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000306/"
           },
           {
@@ -23873,6 +24158,9 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000289/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900001/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000567/"
@@ -23959,9 +24247,6 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000184/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900015/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100557/"
           },
           {
@@ -23980,10 +24265,10 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000486/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000133/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900018/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900025/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000133/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000217/"
@@ -24115,9 +24400,6 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000309/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900030/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000104/"
           },
           {
@@ -24128,6 +24410,9 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000128/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900033/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000406/"
@@ -24168,8 +24453,8 @@
         "dc:description": "List of technical parameters reported by a float at every cycle. Technical parameter names are stored in the float 'tech.nc' file, under TECHNICAL_PARAMETER_NAME, which is populated by R14 prefLabel. Detailed information (incl. Template_Values explanation) is in the user manual (https://dx.doi.org/10.13155/29825), in the Reference Table 14 section.",
         "dc:title": "Argo technical parameter names",
         "skos:prefLabel": "Argo technical parameter names",
-        "owl:versionInfo": "5",
-        "dc:date": "2026-01-20 02:00:01.0",
+        "owl:versionInfo": "8",
+        "dc:date": "2026-07-25 03:00:01.0",
         "skos:altLabel": "TECHNICAL_PARAMETER_NAME",
         "dc:creator": "Argo Data Management Team",
         "dc:alternative": "TECHNICAL_PARAMETER_NAME",

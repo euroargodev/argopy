@@ -1,17 +1,23 @@
 {
   "name": "ARVOR",
   "long_name": "ARVOR float",
-  "last_update": "2026-01-25T11:11:14.767149+00:00",
+  "last_update": "2026-09-15T15:04:35.428284+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/",
     "pav:authoredOn": "2020-05-03 20:30:02.0",
     "pav:hasCurrentVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/1/"
     },
+    "dce:identifier": "SDN:R23::ARVOR",
     "@type": "skos:Concept",
-    "skos:related": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
-    },
+    "skos:related": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0005/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
+      }
+    ],
     "skos:definition": {
       "@language": "en",
       "@value": "ARVOR float. PLATFORM_TYPE_KEY = 102"
@@ -42,7 +48,6 @@
     "skos:altLabel": "ARVOR",
     "skos:notation": "SDN:R23::ARVOR",
     "pav:version": "1",
-    "dce:identifier": "SDN:R23::ARVOR",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

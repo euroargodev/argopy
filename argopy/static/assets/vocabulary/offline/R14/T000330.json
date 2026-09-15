@@ -1,7 +1,7 @@
 {
   "name": "T000330",
   "long_name": "FLAG_ShallowWaterTrapDetected_LOGICAL",
-  "last_update": "2026-01-25T11:13:28.548656+00:00",
+  "last_update": "2026-09-15T15:05:00.668968+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000330/",
     "pav:hasVersion": {

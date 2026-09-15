@@ -1,7 +1,7 @@
 {
   "name": "T000459",
   "long_name": "TIME_GroundingRelativeToCycleBeginning_hours",
-  "last_update": "2026-01-25T11:13:26.445046+00:00",
+  "last_update": "2026-09-15T15:04:59.944312+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000459/",
     "pav:hasVersion": {

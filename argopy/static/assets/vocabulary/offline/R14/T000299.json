@@ -1,7 +1,7 @@
 {
   "name": "T000299",
   "long_name": "FLAG_OptodeStatus_NUMBER",
-  "last_update": "2026-01-25T11:13:05.278866+00:00",
+  "last_update": "2026-09-15T15:04:53.558004+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000299/",
     "pav:hasVersion": {

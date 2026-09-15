@@ -1,7 +1,7 @@
 {
   "name": "T000498",
   "long_name": "CURRENT_BatteryParkEnd_mA",
-  "last_update": "2026-01-25T11:12:55.317504+00:00",
+  "last_update": "2026-09-15T15:04:50.356921+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000498/",
     "pav:hasVersion": {

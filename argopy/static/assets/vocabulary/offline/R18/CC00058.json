@@ -1,40 +1,48 @@
 {
   "name": "CC00058",
   "long_name": "CONFIG_GPSSetClock_LOGICAL",
-  "last_update": "2026-01-25T11:15:42.458680+00:00",
+  "last_update": "2026-09-15T15:05:45.200871+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00058/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00058/1/"
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00058/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00058/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00058/3/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
+      "@language": "en",
+      "@value": "Never used on the GDAC. Set the float Real Time Clock with GPS time. Template_Values:{unit:[LOGICAL]}."
     },
-    "pav:authoredOn": "2025-12-12 11:41:05.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00058/2/"
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
     },
-    "dce:identifier": "SDN:R18::CC00058",
-    "pav:version": "2",
-    "skos:notation": "SDN:R18::CC00058",
-    "skos:altLabel": "Core Config 58",
-    "dc:date": "2025-12-12 11:41:05.0",
-    "owl:versionInfo": "2",
+    "owl:deprecated": "true",
+    "skos:note": {
+      "@language": "en",
+      "@value": "deprecated"
+    },
+    "dc:identifier": "SDN:R18::CC00058",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "CONFIG_GPSSetClock_LOGICAL"
     },
-    "dc:identifier": "SDN:R18::CC00058",
-    "skos:note": {
-      "@language": "en",
-      "@value": "accepted"
+    "owl:versionInfo": "4",
+    "dc:date": "2026-03-09 09:11:24.0",
+    "skos:altLabel": "Core Config 58",
+    "skos:notation": "SDN:R18::CC00058",
+    "pav:version": "4",
+    "dce:identifier": "SDN:R18::CC00058",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00058/4/"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
-      "@language": "en",
-      "@value": "Set the float Real Time Clock with GPS time. Template_Values:{unit:[LOGICAL]}."
-    },
-    "@type": "skos:Concept",
+    "pav:authoredOn": "2026-03-09 09:11:24.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

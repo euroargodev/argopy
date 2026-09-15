@@ -1,7 +1,7 @@
 {
   "name": "IK_PH",
   "long_name": "Counter electrode current of pH sensor",
-  "last_update": "2026-01-25T11:11:28.335270+00:00",
+  "last_update": "2026-09-15T15:04:38.811129+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/IK_PH/",
     "pav:hasVersion": [

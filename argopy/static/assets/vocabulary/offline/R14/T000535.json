@@ -1,7 +1,7 @@
 {
   "name": "T000535",
   "long_name": "VOLTAGE_BatteryProfileNoLoad_volts",
-  "last_update": "2026-01-25T11:13:35.014804+00:00",
+  "last_update": "2026-09-15T15:05:03.025738+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000535/",
     "pav:hasVersion": {

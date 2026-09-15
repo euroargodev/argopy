@@ -45,7 +45,7 @@ def save_data(file: str, name: str, long_name: str, data: dict):
     with open(root.joinpath(f"{file}.json"), "w") as f:
         json.dump(data, f, indent=2)
 
-    print(f"SAVED: {file}.json with: {long_name}")
+    print(f"SAVED: '{long_name}' in {file}.json")
 
 
 def asset_data_types():
@@ -503,7 +503,8 @@ def asset_bgc_vars():
 
     # We get the list of variables from the ArgoIndex
     from argopy import ArgoIndex
-    params = ArgoIndex(index_file='bgc-s').load().read_params()
+
+    params = ArgoIndex(index_file="bgc-s").load().read_params()
 
     # We get the list of variables from the Ifremer Erddap, serving the S files:
     data = httpstore().open_json(
@@ -518,10 +519,12 @@ def asset_bgc_vars():
     vlist = bgc_vlist_erddap.copy()
     plist = []
     for v in bgc_vlist_erddap:
-        if ("%s_QC" % v) in bgc_vlist_erddap \
-                and ("%s_ADJUSTED" % v) in bgc_vlist_erddap \
-                and ("%s_ADJUSTED_QC" % v) in bgc_vlist_erddap \
-                and ("%s_ADJUSTED_ERROR" % v) in bgc_vlist_erddap:
+        if (
+            ("%s_QC" % v) in bgc_vlist_erddap
+            and ("%s_ADJUSTED" % v) in bgc_vlist_erddap
+            and ("%s_ADJUSTED_QC" % v) in bgc_vlist_erddap
+            and ("%s_ADJUSTED_ERROR" % v) in bgc_vlist_erddap
+        ):
             plist.append(v)
             vlist.remove(v)
             vlist.remove("%s_QC" % v)
@@ -544,15 +547,16 @@ def asset_bgc_vars():
 
 
 def asset_GDAC_servers():
-    """" List of valid Argo GDAC servers and shortcut dictionary"""
+    """ " List of valid Argo GDAC servers and shortcut dictionary"""
 
     # Group by protocols
-    valid_gdac = ["https://data-argo.ifremer.fr",
-                  "https://usgodae.org/pub/outgoing/argo",
-                  "https://argo-gdac-sandbox.s3-eu-west-3.amazonaws.com/pub",
-                  "ftp://ftp.ifremer.fr/ifremer/argo",
-                  "s3://argo-gdac-sandbox/pub",
-                  ]
+    valid_gdac = [
+        "https://data-argo.ifremer.fr",
+        "https://usgodae.org/pub/outgoing/argo",
+        "https://argo-gdac-sandbox.s3-eu-west-3.amazonaws.com/pub",
+        "ftp://ftp.ifremer.fr/ifremer/argo",
+        "s3://argo-gdac-sandbox/pub",
+    ]
 
     gdac_shortcuts = {
         "http": "https://data-argo.ifremer.fr",
@@ -566,13 +570,15 @@ def asset_GDAC_servers():
         "aws": "s3://argo-gdac-sandbox/pub",
     }
 
-    save_data(file="gdac_servers",
-              name="gdac",
-              long_name="List of official Argo GDAC servers",
-              data={
-            'paths': valid_gdac,
-            'shortcuts': gdac_shortcuts,
-        })
+    save_data(
+        file="gdac_servers",
+        name="gdac",
+        long_name="List of official Argo GDAC servers",
+        data={
+            "paths": valid_gdac,
+            "shortcuts": gdac_shortcuts,
+        },
+    )
 
 
 def asset_netcdf_json_schema():
@@ -593,54 +599,70 @@ def asset_netcdf_json_schema():
 
     # Core / multi-profile
     # Load a template from a real file:
-    ds = filestore().open_dataset('./jsonschema/src_netcdf/' + "6901929_prof.nc",
-                                  xr_opts={'engine': 'argo'})
+    ds = filestore().open_dataset(
+        "./jsonschema/src_netcdf/" + "6901929_prof.nc", xr_opts={"engine": "argo"}
+    )
 
     # Make a json dict with the dataset schema
     ds_schema = {}
-    ds_schema['dims'] = [d for d in ds.dims]
+    ds_schema["dims"] = [d for d in ds.dims]
     # ds_schema['coords'] = [c for c in ds.coords]
-    ds_schema['vars'] = {}
-    ds_schema['attrs'] = {}
+    ds_schema["vars"] = {}
+    ds_schema["attrs"] = {}
 
     for d in ds.data_vars:
         dims = ds[d].dims
         attrs = ds[d].attrs
-        attrs.pop('casted', None)
-        ds_schema['vars'].update({d: {'dims': dims,
-                                      'attrs': attrs,
-                                      'dtype': str(ds[d].dtype),
-                                     }})
+        attrs.pop("casted", None)
+        ds_schema["vars"].update(
+            {
+                d: {
+                    "dims": dims,
+                    "attrs": attrs,
+                    "dtype": str(ds[d].dtype),
+                }
+            }
+        )
 
-    ds_schema['attrs'] = ds.attrs.copy()
-    ds_schema['attrs']['history'] = "%s creation" % pd.to_datetime('now', utc=True).isoformat()
+    ds_schema["attrs"] = ds.attrs.copy()
+    ds_schema["attrs"]["history"] = (
+        "%s creation" % pd.to_datetime("now", utc=True).isoformat()
+    )
 
     with open(ASSETS_FOLDER.joinpath("schema", "core-multi-prof.json"), "w") as f:
         json.dump(ds_schema, f, indent=2, cls=JSONEncoder)
 
     # BGC / synthetic / multi-profi
     # Load a template from a real file:
-    ds = filestore().open_dataset('./jsonschema/src_netcdf/' + "3902131_Sprof.nc",
-                                  xr_opts={'engine': 'argo'})
+    ds = filestore().open_dataset(
+        "./jsonschema/src_netcdf/" + "3902131_Sprof.nc", xr_opts={"engine": "argo"}
+    )
 
     # Make a json dict with the dataset schema
     ds_schema = {}
-    ds_schema['dims'] = [d for d in ds.dims]
+    ds_schema["dims"] = [d for d in ds.dims]
     # ds_schema['coords'] = [c for c in ds.coords]
-    ds_schema['vars'] = {}
-    ds_schema['attrs'] = {}
+    ds_schema["vars"] = {}
+    ds_schema["attrs"] = {}
 
     for d in ds.data_vars:
         dims = ds[d].dims
         attrs = ds[d].attrs
-        attrs.pop('casted', None)
-        ds_schema['vars'].update({d: {'dims': dims,
-                                      'attrs': attrs,
-                                      'dtype': str(ds[d].dtype),
-                                     }})
+        attrs.pop("casted", None)
+        ds_schema["vars"].update(
+            {
+                d: {
+                    "dims": dims,
+                    "attrs": attrs,
+                    "dtype": str(ds[d].dtype),
+                }
+            }
+        )
 
-    ds_schema['attrs'] = ds.attrs.copy()
-    ds_schema['attrs']['history'] = "%s creation" % pd.to_datetime('now', utc=True).isoformat()
+    ds_schema["attrs"] = ds.attrs.copy()
+    ds_schema["attrs"]["history"] = (
+        "%s creation" % pd.to_datetime("now", utc=True).isoformat()
+    )
 
     with open(ASSETS_FOLDER.joinpath("schema", "bgc-multi-prof.json"), "w") as f:
         json.dump(ds_schema, f, indent=2, cls=JSONEncoder)
@@ -654,7 +676,16 @@ def asset_sensor_schema():
     """
     fs = httpstore()
     _schema_root = "https://raw.githubusercontent.com/euroargodev/sensor_metadata_json/refs/heads/main/schemas"
-    for schema in ['sensor', 'float', 'platform', 'vendors', 'RBR', 'MRV', 'SBE', 'TRIOS']:
+    for schema in [
+        "sensor",
+        "float",
+        "platform",
+        "vendors",
+        "RBR",
+        "MRV",
+        "SBE",
+        "TRIOS",
+    ]:
         uri = f"{_schema_root}/argo.{schema}.schema.json"
         data = fs.open_json(uri)
 
@@ -664,25 +695,27 @@ def asset_sensor_schema():
 
     gitfs = filesystem(
         "filecache",
-        target_protocol='github',
-        target_options={'org': 'euroargodev',
-                        'repo': 'sensor_metadata_json',
-                        'username': 'gmaze',
-                        'token': os.getenv("GITHUB_TOKEN")
-                        },
-        cache_storage=OPTIONS['cachedir'],
+        target_protocol="github",
+        target_options={
+            "org": "euroargodev",
+            "repo": "sensor_metadata_json",
+            "username": "gmaze",
+            "token": os.getenv("GITHUB_TOKEN"),
+        },
+        cache_storage=OPTIONS["cachedir"],
         expiry_time=OPTIONS["cache_expiration"],
         cache_check=10,
     )
 
     def list_examples():
         """Get the list of sensor json examples from the repo at https://github.com/euroargodev/sensor_metadata_json"""
-        js_list = gitfs.glob('json_sensors/sensor-*.json')
+        js_list = gitfs.glob("json_sensors/sensor-*.json")
         result = {}
         for s in js_list:
-            key = s.replace('json_sensors/sensor-', '').replace('.json', '')
+            key = s.replace("json_sensors/sensor-", "").replace(".json", "")
             result.update({key: s})
         return result
+
     SENSOR_JS_EXAMPLES = list_examples()
 
     SENSOR_JS_EXAMPLES_URI = {}
@@ -695,8 +728,8 @@ def asset_sensor_schema():
         name="Sensor json meta-data examples",
         long_name="Examples of Argo sensor meta-data following a schema",
         data={
-            'content': [k for k in SENSOR_JS_EXAMPLES.keys()],
-            'uri': SENSOR_JS_EXAMPLES_URI,
+            "content": [k for k in SENSOR_JS_EXAMPLES.keys()],
+            "uri": SENSOR_JS_EXAMPLES_URI,
         },
     )
 
@@ -704,32 +737,38 @@ def asset_sensor_schema():
 def asset_vocabulary_description():
     fs = httpstore()
 
-    data = fs.open_json('https://vocab.nerc.ac.uk/collection/?_profile=nvs&_mediatype=application/ld+json')
+    data = fs.open_json(
+        "https://vocab.nerc.ac.uk/collection/?_profile=nvs&_mediatype=application/ld+json"
+    )
 
     def is_admt(item):
-        return item['dc:creator'] == 'Argo Data Management Team'
+        return item["dc:creator"] == "Argo Data Management Team"
 
-    id_list = [item for item in data['@graph'] if is_admt(item)]
+    id_list = [item for item in data["@graph"] if is_admt(item)]
 
     valid_ref = []
     for item in id_list:
-        valid_ref.append({
-            'id': item['@id'].replace("http://vocab.nerc.ac.uk/collection/", "").replace("/current/", ""),
-            'altLabel': item['skos:altLabel'],
-            'prefLabel': item['skos:prefLabel'],
-            'description': item['dc:description'],
-            'date': item['dc:date'],
-            'uri': item['@id'],
-        })
-    df = pd.DataFrame(valid_ref).sort_values('id', axis=0).reset_index(drop=1)
+        valid_ref.append(
+            {
+                "id": item["@id"]
+                .replace("http://vocab.nerc.ac.uk/collection/", "")
+                .replace("/current/", ""),
+                "altLabel": item["skos:altLabel"],
+                "prefLabel": item["skos:prefLabel"],
+                "description": item["dc:description"],
+                "date": item["dc:date"],
+                "uri": item["@id"],
+            }
+        )
+    df = pd.DataFrame(valid_ref).sort_values("id", axis=0).reset_index(drop=1)
 
     save_data(
         file="vocabulary:description",
         name="List of Argo NVS reference tables",
         long_name="List of Argo NVS reference table ids and description",
         data={
-            'valid_ref': list(df['id'].values),
-            'details': valid_ref,
+            "valid_ref": list(df["id"].values),
+            "details": valid_ref,
         },
     )
 
@@ -744,7 +783,7 @@ def asset_vocabulary_mapping():
     Vocabulary2Parameter = {}
     for vocab in all_vocabulary.keys():
         df = nvs.tbl(vocab)
-        Vocabulary2Concept.update({vocab: list(df['altLabel'].values)})
+        Vocabulary2Concept.update({vocab: list(df["altLabel"].values)})
         Vocabulary2Parameter.update({vocab: all_vocabulary[vocab][0]})
 
     save_data(
@@ -752,49 +791,55 @@ def asset_vocabulary_mapping():
         name="Mapping of NVS Vocabulary onto NVS Concept and Argo Parameter",
         long_name="Dictionaries to easily go from reference tables (Vocabulary) to netcdf Parameter names and possible values (Concept)",
         data={
-            'Vocabulary2Parameter': dict(sorted(Vocabulary2Parameter.items())),
-            'Vocabulary2Concept': dict(sorted(Vocabulary2Concept.items())),
+            "Vocabulary2Parameter": dict(sorted(Vocabulary2Parameter.items())),
+            "Vocabulary2Concept": dict(sorted(Vocabulary2Concept.items())),
         },
     )
 
 
-def asset_vocabulary_offline_vocabs():
+def asset_offline_nvs_vocabs():
     fs = httpstore()
     nvs = "https://vocab.nerc.ac.uk/collection"
 
-    data = fs.open_json(f'{nvs}/?_profile=nvs&_mediatype=application/ld+json')
+    data = fs.open_json(f"{nvs}/?_profile=nvs&_mediatype=application/ld+json")
 
     def is_admt(item):
-        return item['dc:creator'] == 'Argo Data Management Team'
+        return item["dc:creator"] == "Argo Data Management Team"
 
-    id_list = [item for item in data['@graph'] if is_admt(item)]
+    id_list = [item for item in data["@graph"] if is_admt(item)]
 
     for item in id_list:
-        rtid = item['@id'].replace("http://vocab.nerc.ac.uk/collection/", "").replace("/current/", "")
-        name = item['skos:altLabel']
-        long_name = item['skos:prefLabel']
+        rtid = (
+            item["@id"]
+            .replace("http://vocab.nerc.ac.uk/collection/", "")
+            .replace("/current/", "")
+        )
+        name = item["skos:altLabel"]
+        long_name = item["skos:prefLabel"]
 
         url = f"{item['@id']}/?_profile=nvs&_mediatype=application/ld+json"
         js = fs.open_json(url)
 
         save_data(
-            file = f"vocabulary:offline:{rtid}",
-            name = name,
-            long_name = long_name,
-            data = js,
+            file=f"vocabulary:offline:{rtid}",
+            name=name,
+            long_name=long_name,
+            data=js,
         )
 
 
-def asset_vocabulary_offline_concepts():
+def asset_offline_nvs_concepts():
     fs = httpstore()
-    nvs = OPTIONS['nvs']
+    nvs = OPTIONS["nvs"]
 
-    data = fs.open_json(f'{nvs}/collection/?_profile=nvs&_mediatype=application/ld+json')
+    data = fs.open_json(
+        f"{nvs}/collection/?_profile=nvs&_mediatype=application/ld+json"
+    )
 
     def is_admt(item):
-        return item['dc:creator'] == 'Argo Data Management Team'
+        return item["dc:creator"] == "Argo Data Management Team"
 
-    id_list = [item for item in data['@graph'] if is_admt(item)]
+    id_list = [item for item in data["@graph"] if is_admt(item)]
 
     to_retrieve = []
     # Loop through vocabularies:
@@ -811,46 +856,43 @@ def asset_vocabulary_offline_concepts():
     print(f"Will now retrieve NVS data for {len(to_retrieve)} concepts")  # = 2048
 
     def func(data):
-        urn = urnparser(data['skos:notation'])
+        urn = urnparser(data["skos:notation"])
         file = f"vocabulary:offline:{urn['listid']}:{urn['termid']}"
-        name = urn['termid']
+        name = urn["termid"]
         long_name = data["skos:prefLabel"]["@value"]
-        save_data(
-            file = file,
-            name = name,
-            long_name = long_name,
-            data = data
-        )
+        save_data(file=file, name=name, long_name=long_name, data=data)
 
     fs.open_mfjson(
         to_retrieve,
-        progress = True,
-        preprocess = func,
-        errors = 'raise',
+        progress=True,
+        preprocess=func,
+        errors="raise",
     )
     return None
 
 
-def asset_vocabulary_offline_mappings():
-    fs = httpstore(client_kwargs={
-                    "headers": {
-                        "Accept": "application/ld+json, application/sparql-results+json"
-                    }
-                })
-    nvs = OPTIONS['nvs']
+def asset_offline_nvs_mappings():
+    fs = httpstore(
+        client_kwargs={
+            "headers": {
+                "Accept": "application/ld+json, application/sparql-results+json"
+            }
+        }
+    )
+    nvs = OPTIONS["nvs"]
 
-    for (sub, obj) in known_mappings():
+    for sub, obj in known_mappings():
         sparql = sparql_mapping_request(sub, obj)
         url = f"{nvs}/sparql?query={urllib.parse.quote(sparql)}"
         content = fs.open_json(url)
         file = f"vocabulary:offline:mapping:{sub}_{obj}"
         save_data(
-            file = file,
-            name = f"{sub}_{obj}",
-            long_name = f"Mapping of subject={sub} with object={obj}",
-            data = {'sparql': sparql,
-                    'content': content}
+            file=file,
+            name=f"{sub}_{obj}",
+            long_name=f"Mapping of subject={sub} with object={obj}",
+            data={"sparql": sparql, "content": content},
         )
+
 
 def main():
     argopy.clear_cache()
@@ -867,9 +909,11 @@ def main():
 
     # asset_vocabulary_description()
     # asset_vocabulary_mapping()
-    # asset_vocabulary_offline_vocabs()
-    # asset_vocabulary_offline_concepts()
-    asset_vocabulary_offline_mappings()
+
+    asset_offline_nvs_vocabs()
+    asset_offline_nvs_concepts()
+    asset_offline_nvs_mappings()
+
 
 if __name__ == "__main__":
     main()

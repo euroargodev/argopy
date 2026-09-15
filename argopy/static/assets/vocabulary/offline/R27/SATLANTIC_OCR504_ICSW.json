@@ -1,7 +1,7 @@
 {
   "name": "SATLANTIC_OCR504_ICSW",
   "long_name": "OCR-504 multispectral radiometer (downwelling irradiance)",
-  "last_update": "2026-01-25T11:14:12.915072+00:00",
+  "last_update": "2026-09-15T15:05:10.898099+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/",
     "pav:hasVersion": {
@@ -22,6 +22,8 @@
       }
     ],
     "skos:notation": "SDN:R27::SATLANTIC_OCR504_ICSW",
+    "skos:altLabel": "SATLANTIC_OCR504_ICSW",
+    "dc:date": "2025-08-28 11:45:52.0",
     "@type": "skos:Concept",
     "skos:related": [
       {
@@ -29,6 +31,9 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR555/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR665/"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR412/"
@@ -41,6 +46,9 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR490/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR670/"
       }
     ],
     "skos:definition": {
@@ -61,8 +69,6 @@
       "@value": "OCR-504 multispectral radiometer (downwelling irradiance)"
     },
     "owl:versionInfo": "2",
-    "dc:date": "2025-08-28 11:45:52.0",
-    "skos:altLabel": "SATLANTIC_OCR504_ICSW",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

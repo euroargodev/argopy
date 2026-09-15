@@ -1,40 +1,43 @@
 {
   "name": "POPS_NEMO",
   "long_name": "POPS with NEMO float",
-  "last_update": "2026-01-25T11:11:12.894954+00:00",
+  "last_update": "2026-09-15T15:04:34.583786+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R23/current/POPS_NEMO/",
     "pav:authoredOn": "2020-05-03 20:30:02.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R23/current/POPS_NEMO/1/"
-    },
-    "dce:identifier": "SDN:R23::POPS_NEMO",
-    "pav:version": "1",
-    "skos:notation": "SDN:R23::POPS_NEMO",
-    "skos:altLabel": "POPS_NEMO",
-    "dc:date": "2020-05-03 20:30:02.0",
-    "owl:versionInfo": "1",
-    "skos:prefLabel": {
-      "@language": "en",
-      "@value": "POPS with NEMO float"
-    },
-    "dc:identifier": "SDN:R23::POPS_NEMO",
-    "skos:note": {
-      "@language": "en",
-      "@value": "accepted"
-    },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    "@type": "skos:Concept",
+    "skos:related": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R24/current/OPTIMARE/"
     },
     "skos:definition": {
       "@language": "en",
       "@value": "Polar Ocean Profiling System with a NEMO float. PLATFORM_TYPE_KEY = 430"
     },
-    "skos:related": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R24/current/OPTIMARE/"
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
     },
-    "@type": "skos:Concept",
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R23::POPS_NEMO",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "POPS with NEMO float"
+    },
+    "owl:versionInfo": "1",
+    "skos:narrower": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R08/current/843/"
+    },
+    "dc:date": "2020-05-03 20:30:02.0",
+    "skos:altLabel": "POPS_NEMO",
+    "skos:notation": "SDN:R23::POPS_NEMO",
+    "pav:version": "1",
+    "dce:identifier": "SDN:R23::POPS_NEMO",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R23/current/POPS_NEMO/1/"
+    },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

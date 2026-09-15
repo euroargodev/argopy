@@ -1,7 +1,7 @@
 {
   "name": "CC00200",
   "long_name": "CONFIG_TargetAscentSpeed_cm/s",
-  "last_update": "2026-01-25T11:15:55.149925+00:00",
+  "last_update": "2026-09-15T15:05:43.901551+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00200/",
     "pav:hasVersion": {

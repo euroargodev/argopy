@@ -1,7 +1,7 @@
 {
   "name": "SBE",
   "long_name": "Sea-Bird Scientific",
-  "last_update": "2026-01-25T11:16:10.686672+00:00",
+  "last_update": "2026-09-15T15:05:47.130953+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
     "pav:hasVersion": {
@@ -66,6 +66,9 @@
         "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.4/"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_R10W/"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/"
       },
       {
@@ -73,6 +76,9 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.5/"
@@ -145,6 +151,9 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.5/"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V3.0/"
@@ -220,6 +229,9 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.2/"

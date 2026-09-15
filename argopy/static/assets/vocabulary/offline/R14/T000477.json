@@ -1,7 +1,7 @@
 {
   "name": "T000477",
   "long_name": "TIME_SampleFrequencyDuringPark_seconds",
-  "last_update": "2026-01-25T11:12:56.462844+00:00",
+  "last_update": "2026-09-15T15:04:50.729321+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000477/",
     "pav:hasVersion": {

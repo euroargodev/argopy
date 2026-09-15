@@ -1,17 +1,29 @@
 {
   "name": "PROVOR_V",
   "long_name": "PROVOR_V float",
-  "last_update": "2026-01-25T11:11:14.533308+00:00",
+  "last_update": "2026-09-15T15:04:35.677839+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/",
     "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/1/"
     },
     "pav:authoredOn": "2023-10-05 14:41:04.0",
-    "@type": "skos:Concept",
-    "skos:related": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/2/"
     },
+    "dce:identifier": "SDN:R23::PROVOR_V",
+    "@type": "skos:Concept",
+    "skos:related": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0008/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0007/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
+      }
+    ],
     "skos:definition": {
       "@language": "en",
       "@value": "PROVOR CTS5-USEA float, USEA is the controller board type. PLATFORM_ TYPE_ KEY = 106"
@@ -37,10 +49,6 @@
     "skos:altLabel": "PROVOR_V",
     "skos:notation": "SDN:R23::PROVOR_V",
     "pav:version": "2",
-    "dce:identifier": "SDN:R23::PROVOR_V",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/2/"
-    },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

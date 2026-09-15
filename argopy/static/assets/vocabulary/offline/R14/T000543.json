@@ -1,7 +1,7 @@
 {
   "name": "T000543",
   "long_name": "VOLTAGE_BatterySurfaceAirPumpOn_volts",
-  "last_update": "2026-01-25T11:13:34.112845+00:00",
+  "last_update": "2026-09-15T15:05:02.540844+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000543/",
     "pav:hasVersion": {

@@ -1,7 +1,7 @@
 {
   "name": "CC00131",
   "long_name": "CONFIG_ParkSamplingPeriodSecondary_hours",
-  "last_update": "2026-01-25T11:16:04.740213+00:00",
+  "last_update": "2026-09-15T15:05:45.718795+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00131/",
     "pav:hasVersion": {

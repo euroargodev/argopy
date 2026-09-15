@@ -1,40 +1,45 @@
 {
   "name": "CC00061",
-  "long_name": "CONFIG_GroundingMode_LOGICAL",
-  "last_update": "2026-01-25T11:15:22.509175+00:00",
+  "long_name": "CONFIG_GroundingMode_NUMBER",
+  "last_update": "2026-09-15T15:05:35.071148+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00061/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00061/1/"
-    },
-    "pav:authoredOn": "2025-12-12 11:41:07.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00061/2/"
-    },
-    "dce:identifier": "SDN:R18::CC00061",
-    "pav:version": "2",
-    "skos:notation": "SDN:R18::CC00061",
-    "skos:altLabel": "Core Config 61",
-    "dc:date": "2025-12-12 11:41:07.0",
-    "owl:versionInfo": "2",
-    "skos:prefLabel": {
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00061/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00061/1/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
       "@language": "en",
-      "@value": "CONFIG_GroundingMode_LOGICAL"
+      "@value": "Scenario followed by the float when a grounding is detected. Values and possibilities vary according to float types, check specific manuals for details. Template_Values:{unit:[LOGICAL, NUMBER]}."
     },
-    "dc:identifier": "SDN:R18::CC00061",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R18::CC00061",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "Action performed by the float when a grounding is detected. 0 = the float changes its drift pressure, 1 = the float stays on the seabed until the next phase of the cycle. For PROVOR CTS5 the number assigned to each mode has changed - see float manual for details for this model. Template_Values:{unit:[LOGICAL, NUMBER]}."
+      "@value": "CONFIG_GroundingMode_NUMBER"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "3",
+    "dc:date": "2026-03-05 17:07:33.0",
+    "skos:altLabel": "Core Config 61",
+    "skos:notation": "SDN:R18::CC00061",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R18::CC00061",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00061/3/"
+    },
+    "pav:authoredOn": "2026-03-05 17:07:33.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

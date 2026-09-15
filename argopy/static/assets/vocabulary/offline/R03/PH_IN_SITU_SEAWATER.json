@@ -1,7 +1,7 @@
 {
   "name": "PH_IN_SITU_SEAWATER",
   "long_name": "pH (seawater scale)",
-  "last_update": "2026-01-25T11:11:27.503857+00:00",
+  "last_update": "2026-09-15T15:04:38.582174+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/PH_IN_SITU_SEAWATER/",
     "pav:hasVersion": [

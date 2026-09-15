@@ -1,14 +1,26 @@
 {
   "name": "PROVOR_III",
   "long_name": "Dual board PROVOR CTS4 float",
-  "last_update": "2026-01-25T11:11:14.193985+00:00",
+  "last_update": "2026-09-15T15:04:35.431869+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/",
     "pav:authoredOn": "2020-05-03 20:30:02.0",
-    "@type": "skos:Concept",
-    "skos:related": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/1/"
     },
+    "dce:identifier": "SDN:R23::PROVOR_III",
+    "@type": "skos:Concept",
+    "skos:related": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0005/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0012/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
+      }
+    ],
     "skos:definition": {
       "@language": "en",
       "@value": "Dual board PROVOR CTS4 float. PLATFORM_TYPE_KEY = 104"
@@ -34,10 +46,6 @@
     "skos:altLabel": "PROVOR_III",
     "skos:notation": "SDN:R23::PROVOR_III",
     "pav:version": "1",
-    "dce:identifier": "SDN:R23::PROVOR_III",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/1/"
-    },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

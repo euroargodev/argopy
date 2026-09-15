@@ -1,7 +1,7 @@
 {
   "name": "CTD_PRES",
   "long_name": "Conductivity Temperature Depth (CTD) sensors package measuring pressure",
-  "last_update": "2026-01-25T11:15:17.921146+00:00",
+  "last_update": "2026-09-15T15:05:33.634060+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/",
     "pav:authoredOn": "2019-10-11 15:06:36.0",
@@ -32,9 +32,6 @@
       "@value": "Conductivity Temperature Depth (CTD) sensors package measuring pressure"
     },
     "skos:related": [
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/"
-      },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R27/current/DSB301-10-C85/"
       },
@@ -93,6 +90,9 @@
         "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO/"
       },
       {
@@ -100,6 +100,9 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES_A/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3.1/"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP4K/"

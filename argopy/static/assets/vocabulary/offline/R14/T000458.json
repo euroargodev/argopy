@@ -1,7 +1,7 @@
 {
   "name": "T000458",
   "long_name": "TIME_FromStartOfMissionToEndFirstProfile_seconds",
-  "last_update": "2026-01-25T11:12:43.784143+00:00",
+  "last_update": "2026-09-15T15:04:47.860584+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000458/",
     "pav:hasVersion": {

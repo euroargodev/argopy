@@ -1,7 +1,7 @@
 {
   "name": "T000266",
   "long_name": "DIAGNOSTICbit_CurrentWithMotorOut_bit",
-  "last_update": "2026-01-25T11:12:01.975968+00:00",
+  "last_update": "2026-09-15T15:04:44.391155+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000266/",
     "pav:hasVersion": {

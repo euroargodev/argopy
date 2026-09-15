@@ -1,7 +1,7 @@
 {
   "name": "CB00031",
   "long_name": "CONFIG_OcrMinTransmittedPar_COUNT",
-  "last_update": "2026-01-25T11:15:50.023690+00:00",
+  "last_update": "2026-09-15T15:05:42.628649+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00031/",
     "pav:hasVersion": [

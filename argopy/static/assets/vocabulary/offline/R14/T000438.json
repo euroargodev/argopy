@@ -1,7 +1,7 @@
 {
   "name": "T000438",
   "long_name": "TEMPERATURE_InternalVacuumProfileStart_degC",
-  "last_update": "2026-01-25T11:13:48.542126+00:00",
+  "last_update": "2026-09-15T15:05:05.254321+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000438/",
     "pav:hasVersion": {
