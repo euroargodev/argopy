@@ -20,6 +20,8 @@ Features and front-end API
 Internals
 ^^^^^^^^^
 
+- **Annual upgrade to support last versions of depedencies**. (:pr:`681`) by |gmaze|.
+
 - **Improve import time** with lazy and/or deferred import of large dependencies, optimization and finally removing of the auto-discovery of data/index fetchers :issue:`585` (:pr:`676`) by |charles| and (:pr:`624`) by |gmaze|.
 
 - **Update USA GDAC url** :issue:`624` (:pr:`624`) by |gmaze|.
