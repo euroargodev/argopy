@@ -321,7 +321,6 @@ Argo vocabulary: referencing system
     ArgoReferenceValue
     ArgoReferenceTable
     ArgoReferenceMapping
-    ArgoNVSReferenceTables
 
 Other Argo related data
 =======================

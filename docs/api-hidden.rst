@@ -445,15 +445,22 @@
     argopy.reference.concept.ArgoReferenceValue
     argopy.ArgoReferenceValue.from_urn
     argopy.ArgoReferenceValue.from_dict
+    argopy.ArgoReferenceValue.to_dict
     argopy.ArgoReferenceValue.to_json
     argopy.ArgoReferenceValue.nvs
+    argopy.ArgoReferenceValue.extra
+    argopy.ArgoReferenceValue.keys
+    argopy.ArgoReferenceValue.attrs
 
     argopy.reference.vocabulary.ArgoReferenceTable
-    argopy.ArgoReferenceTable.valid_identifier
-    argopy.ArgoReferenceTable.search
     argopy.ArgoReferenceTable.from_urn
     argopy.ArgoReferenceTable.to_dataframe
     argopy.ArgoReferenceTable.to_dict
+    argopy.ArgoReferenceTable.valid_identifier
+    argopy.ArgoReferenceTable.search
+    argopy.ArgoReferenceTable.keys
+    argopy.ArgoReferenceTable.values
+    argopy.ArgoReferenceTable.attrs
     argopy.ArgoReferenceTable.nvs
 
     argopy.reference.mapping.ArgoReferenceMapping
@@ -462,3 +469,7 @@
     argopy.ArgoReferenceMapping.predicates
     argopy.ArgoReferenceMapping.to_dataframe
     argopy.ArgoReferenceMapping.nvs
+    argopy.ArgoReferenceMapping.sub_id
+    argopy.ArgoReferenceMapping.sub_parameter
+    argopy.ArgoReferenceMapping.obj_id
+    argopy.ArgoReferenceMapping.obj_parameter

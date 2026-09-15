@@ -15,7 +15,7 @@ Features and front-end API
 
 - **New methods to access mono-cycle profile files** from :class:`ArgoFloat` instances using :class:`ArgoFloat.ls_profiles`, :class:`ArgoFloat.open_profile` and :class:`ArgoFloat.open_profiles` methods. (:pr:`590`) by |gmaze|.
 
-- **New full Argo vocabulary support** for reference tables (:class:`ArgoReferenceTable`), values (:class:`ArgoReferenceValue`) and mappings (:class:`ArgoReferenceMapping`) (:pr:`575`) by |gmaze|.
+- **New full Argo vocabulary support** for reference tables (:class:`ArgoReferenceTable`), values (:class:`ArgoReferenceValue`) and mappings (:class:`ArgoReferenceMapping`). Check the full documentation page at :ref:`Argo vocabulary and Reference`_. As a consequence the historical :class:`ArgoNVSReferenceTables` is deprecated. The historical ``ArgoNVSReferenceTables.tbl('R25')`` method can be replaced with the new :meth:`ArgoReferenceTable.to_dataframe``.(:pr:`575`) by |gmaze|.
 
 Internals
 ^^^^^^^^^
@@ -29,6 +29,11 @@ Internals
 - **Fix bug** whereby :meth:`Dataset.argo.point2profile` would return un-ordered ``N_PROF`` coordinate instead of a clean ``0..N_PROF-1`` range, :issue:`632`. (:pr:`658`) by |gmaze|.
 
 - **Fix inconsistency** in checking availability of an :class:`ArgoFloat` configuration parameter, :issue:`643`. (:pr:`644`) by |gmaze|.
+
+Breaking changes
+^^^^^^^^^^^^^^^^
+
+
 
 Documentation
 ^^^^^^^^^^^^^
