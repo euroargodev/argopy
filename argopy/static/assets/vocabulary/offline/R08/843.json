@@ -1,40 +1,45 @@
 {
   "name": "843",
   "long_name": "POPS ice platform using PROVOR float with SBE conductivity sensor",
-  "last_update": "2026-01-25T11:14:19.927377+00:00",
+  "last_update": "2026-09-15T15:05:13.082970+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/843/",
     "pav:authoredOn": "2020-05-03 20:28:54.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R08/current/843/1/"
-    },
-    "dce:identifier": "SDN:R08::843",
-    "pav:version": "1",
-    "skos:broader": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R23/current/POPS_PROVOR/"
-    },
-    "skos:notation": "SDN:R08::843",
-    "skos:altLabel": "843",
-    "dc:date": "2020-05-03 20:28:54.0",
-    "owl:versionInfo": "1",
-    "skos:prefLabel": {
-      "@language": "en",
-      "@value": "POPS ice platform using PROVOR float with SBE conductivity sensor"
-    },
-    "dc:identifier": "SDN:R08::843",
-    "skos:note": {
-      "@language": "en",
-      "@value": "accepted"
-    },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
+    "@type": "skos:Concept",
     "skos:definition": {
       "@language": "en",
       "@value": "Polar Ocean Profiling System (POPS) ice platform using PROVOR profiling float with Sea-Bird Scientific (SBE) conductivity sensor"
     },
-    "@type": "skos:Concept",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R08::843",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "POPS ice platform using PROVOR float with SBE conductivity sensor"
+    },
+    "owl:versionInfo": "1",
+    "dc:date": "2020-05-03 20:28:54.0",
+    "skos:altLabel": "843",
+    "skos:notation": "SDN:R08::843",
+    "skos:broader": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/POPS_NEMO/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/POPS_PROVOR/"
+      }
+    ],
+    "pav:version": "1",
+    "dce:identifier": "SDN:R08::843",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R08/current/843/1/"
+    },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

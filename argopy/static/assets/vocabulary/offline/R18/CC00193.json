@@ -1,7 +1,7 @@
 {
   "name": "CC00193",
   "long_name": "CONFIG_SlowAscentPistonAdjustment_COUNT",
-  "last_update": "2026-01-25T11:15:49.957737+00:00",
+  "last_update": "2026-09-15T15:05:42.631397+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00193/",
     "pav:hasVersion": {

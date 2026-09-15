@@ -1,7 +1,7 @@
 {
   "name": "CB00046",
   "long_name": "CONFIG_SunaApfFrameOutputPixelBegin_NUMBER",
-  "last_update": "2026-01-25T11:15:50.560923+00:00",
+  "last_update": "2026-09-15T15:05:42.863534+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00046/",
     "pav:hasVersion": [

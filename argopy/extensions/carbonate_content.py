@@ -801,8 +801,8 @@ class CONTENT(ArgoAccessorExtension):
             - sigma: record of weighted sigmas
             - canyon_b_raw: CANYON-B structure
 
-        Reference
-        ---------
+        References
+        ----------
         .. [1] Bittig, H. C., Steinhoff, T., Claustre, H., Fiedler, B., Williams, N. L., Sauzede, R., Kortzinger, A., and Gattuso, J. P. (2018). An alternative to static climatologies: Robust estimation of open ocean CO2 variables and nutrient concentrations from T, S, and O2 data using Bayesian neural networks. Frontiers in Marine Science, 5, 328. doi:10.3389/fmars.2018.00328
         """
 

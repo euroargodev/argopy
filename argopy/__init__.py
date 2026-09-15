@@ -97,8 +97,7 @@ from .utils import MonitoredThreadPoolExecutor  # noqa: E402, F401
 from .utils import monitor_status as status  # noqa: E402
 from .related import TopoFetcher, OceanOPSDeployments, ArgoDocs, ArgoDOI  # noqa: E402
 from .extensions import CanyonMED  # noqa: E402
-from .reference import ArgoReferenceTable, ArgoReferenceValue, ArgoReferenceMapping # noqa: E402
-
+from .reference import ArgoReferenceTable, ArgoReferenceValue, ArgoReferenceMapping, ArgoNVSReferenceTables # noqa: E402
 #
 __all__ = (
     # Top-level classes:
@@ -124,7 +123,7 @@ __all__ = (
     "ArgoDOI",  # Class
 
     # Argo Referencing system (vocabulary):
-    # "ArgoNVSReferenceTables",  # Class
+    "ArgoNVSReferenceTables",  # deprecated in v1.5
     "ArgoReferenceTable",
     "ArgoReferenceValue",
     "ArgoReferenceMapping",

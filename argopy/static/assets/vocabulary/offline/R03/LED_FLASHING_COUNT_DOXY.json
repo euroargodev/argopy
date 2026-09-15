@@ -1,7 +1,7 @@
 {
   "name": "LED_FLASHING_COUNT_DOXY",
   "long_name": "Number of times oxygen sensor flashing to measure oxygen",
-  "last_update": "2026-01-25T11:11:33.530088+00:00",
+  "last_update": "2026-09-15T15:04:40.646900+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/LED_FLASHING_COUNT_DOXY/",
     "pav:hasVersion": [

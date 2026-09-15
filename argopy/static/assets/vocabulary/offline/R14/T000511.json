@@ -1,7 +1,7 @@
 {
   "name": "T000511",
   "long_name": "CURRENT_MotorStartProfile_amps",
-  "last_update": "2026-01-25T11:13:34.417105+00:00",
+  "last_update": "2026-09-15T15:05:02.806972+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000511/",
     "pav:hasVersion": {

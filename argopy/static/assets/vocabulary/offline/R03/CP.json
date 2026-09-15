@@ -1,7 +1,7 @@
 {
   "name": "CP",
   "long_name": "Particle beam attenuation at x nanometers",
-  "last_update": "2026-01-25T11:11:28.910859+00:00",
+  "last_update": "2026-09-15T15:04:39.102515+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/CP/",
     "pav:hasVersion": [

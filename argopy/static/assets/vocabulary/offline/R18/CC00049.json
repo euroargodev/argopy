@@ -1,40 +1,48 @@
 {
   "name": "CC00049",
   "long_name": "CONFIG_DownTimeAutumnWinter_hours",
-  "last_update": "2026-01-25T11:15:53.116077+00:00",
+  "last_update": "2026-09-15T15:05:43.478336+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00049/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00049/1/"
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00049/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00049/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00049/3/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
+      "@language": "en",
+      "@value": "Never used on the GDAC. Preset duration of the down time (from start of descent to start of ascent) specific to the autumn/winter period. Template_Values:{unit:[days, hours, minutes, seconds]}."
     },
-    "pav:authoredOn": "2025-12-12 11:41:05.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00049/2/"
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
     },
-    "dce:identifier": "SDN:R18::CC00049",
-    "pav:version": "2",
-    "skos:notation": "SDN:R18::CC00049",
-    "skos:altLabel": "Core Config 49",
-    "dc:date": "2025-12-12 11:41:05.0",
-    "owl:versionInfo": "2",
+    "owl:deprecated": "true",
+    "skos:note": {
+      "@language": "en",
+      "@value": "deprecated"
+    },
+    "dc:identifier": "SDN:R18::CC00049",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "CONFIG_DownTimeAutumnWinter_hours"
     },
-    "dc:identifier": "SDN:R18::CC00049",
-    "skos:note": {
-      "@language": "en",
-      "@value": "accepted"
+    "owl:versionInfo": "4",
+    "dc:date": "2026-03-09 09:11:24.0",
+    "skos:altLabel": "Core Config 49",
+    "skos:notation": "SDN:R18::CC00049",
+    "pav:version": "4",
+    "dce:identifier": "SDN:R18::CC00049",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00049/4/"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
-      "@language": "en",
-      "@value": "Preset duration of the down time (from start of descent to start of ascent) specific to the autumn/winter period. Template_Values:{unit:[days, hours, minutes, seconds]}."
-    },
-    "@type": "skos:Concept",
+    "pav:authoredOn": "2026-03-09 09:11:24.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

@@ -1,12 +1,13 @@
 {
   "name": "836",
   "long_name": "PROVOR III",
-  "last_update": "2026-01-25T11:14:19.881081+00:00",
+  "last_update": "2026-09-15T15:05:13.060464+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/836/",
     "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R08/current/836/1/"
     },
+    "pav:authoredOn": "2023-10-05 14:39:49.0",
     "@type": "skos:Concept",
     "skos:definition": {
       "@language": "en",
@@ -29,15 +30,19 @@
     "dc:date": "2023-10-05 14:39:49.0",
     "skos:altLabel": "836",
     "skos:notation": "SDN:R08::836",
-    "skos:broader": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/"
-    },
+    "skos:broader": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III_JUMBO/"
+      }
+    ],
     "pav:version": "2",
     "dce:identifier": "SDN:R08::836",
     "pav:hasCurrentVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R08/current/836/2/"
     },
-    "pav:authoredOn": "2023-10-05 14:39:49.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

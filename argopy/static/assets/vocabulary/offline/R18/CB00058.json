@@ -1,7 +1,7 @@
 {
   "name": "CB00058",
   "long_name": "CONFIG_<short_sensor_name><param>FluorescenceEmissionWavelength_nm",
-  "last_update": "2026-01-25T11:15:46.648250+00:00",
+  "last_update": "2026-09-15T15:05:41.512105+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00058/",
     "pav:hasVersion": [

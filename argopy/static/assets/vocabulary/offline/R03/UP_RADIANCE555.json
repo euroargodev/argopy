@@ -1,7 +1,7 @@
 {
   "name": "UP_RADIANCE555",
   "long_name": "Upwelling radiance at 555 nanometers",
-  "last_update": "2026-01-25T11:11:29.112533+00:00",
+  "last_update": "2026-09-15T15:04:39.087256+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE555/",
     "pav:hasVersion": [

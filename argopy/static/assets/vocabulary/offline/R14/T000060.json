@@ -1,7 +1,7 @@
 {
   "name": "T000060",
   "long_name": "CLOCK_FloatTime_HHMMSS",
-  "last_update": "2026-01-25T11:13:26.965877+00:00",
+  "last_update": "2026-09-15T15:05:00.176076+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000060/",
     "pav:hasVersion": {

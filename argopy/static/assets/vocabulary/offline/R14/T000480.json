@@ -1,7 +1,7 @@
 {
   "name": "T000480",
   "long_name": "TIME_SinceAscentEnd_HHMMSS",
-  "last_update": "2026-01-25T11:13:06.668899+00:00",
+  "last_update": "2026-09-15T15:04:53.982684+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000480/",
     "pav:hasVersion": {

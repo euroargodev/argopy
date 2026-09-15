@@ -1,7 +1,7 @@
 {
   "name": "CC00100",
   "long_name": "CONFIG_InternalCycle<D>LastGregYear_YYYY",
-  "last_update": "2026-01-25T11:15:59.622702+00:00",
+  "last_update": "2026-09-15T15:05:44.544573+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00100/",
     "pav:hasVersion": {

@@ -1,40 +1,45 @@
 {
   "name": "CC00187",
   "long_name": "CONFIG_RafosSampling_minutes",
-  "last_update": "2026-01-25T11:15:44.883823+00:00",
+  "last_update": "2026-09-15T15:05:36.919469+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00187/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00187/1/"
-    },
-    "pav:authoredOn": "2025-12-12 11:41:04.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00187/2/"
-    },
-    "dce:identifier": "SDN:R18::CC00187",
-    "pav:version": "2",
-    "skos:notation": "SDN:R18::CC00187",
-    "skos:altLabel": "Core Config 187",
-    "dc:date": "2025-12-12 11:41:04.0",
-    "owl:versionInfo": "2",
-    "skos:prefLabel": {
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00187/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00187/1/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
       "@language": "en",
-      "@value": "CONFIG_RafosSampling_minutes"
+      "@value": "Specifies the time in minutes of the listening window for a sound source signal for underwater positioning, typically used in under ice applications (APF9 RAFOS variant firmware). Template_Values:{unit:[days, hours, minutes, seconds]}."
     },
-    "dc:identifier": "SDN:R18::CC00187",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R18::CC00187",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "Clarification needed. Template_Values:{unit:[days, hours, minutes, seconds]}."
+      "@value": "CONFIG_RafosSampling_minutes"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "3",
+    "dc:date": "2026-03-09 09:11:24.0",
+    "skos:altLabel": "Core Config 187",
+    "skos:notation": "SDN:R18::CC00187",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R18::CC00187",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00187/3/"
+    },
+    "pav:authoredOn": "2026-03-09 09:11:24.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

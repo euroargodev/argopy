@@ -1,40 +1,48 @@
 {
   "name": "T900029",
   "long_name": "PRES_WhenMinimumTemperatureAtPark_dbar",
-  "last_update": "2026-01-25T11:13:11.350200+00:00",
+  "last_update": "2026-09-15T15:04:48.146264+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900029/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900029/1/"
-    },
-    "pav:authoredOn": "2025-12-11 11:04:15.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900029/2/"
-    },
-    "dce:identifier": "SDN:R14::T900029",
-    "pav:version": "2",
-    "skos:notation": "SDN:R14::T900029",
-    "skos:altLabel": "900029",
-    "dc:date": "2025-12-11 11:04:15.0",
-    "owl:versionInfo": "2",
-    "skos:prefLabel": {
-      "@language": "en",
-      "@value": "PRES_WhenMinimumTemperatureAtPark_dbar"
-    },
-    "dc:identifier": "SDN:R14::T900029",
-    "skos:note": {
-      "@language": "en",
-      "@value": "accepted"
-    },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900029/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900029/3/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900029/2/"
+      }
+    ],
+    "@type": "skos:Concept",
     "skos:definition": {
       "@language": "en",
       "@value": "Deprecated - Pressure where the minimum temperature was measured during park phase. MC minus 13 or 287. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
     },
-    "@type": "skos:Concept",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "true",
+    "skos:note": {
+      "@language": "en",
+      "@value": "deprecated"
+    },
+    "dc:identifier": "SDN:R14::T900029",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "PRES_WhenMinimumTemperatureAtPark_dbar"
+    },
+    "owl:versionInfo": "4",
+    "dc:date": "2026-07-24 12:37:07.0",
+    "skos:altLabel": "10",
+    "skos:notation": "SDN:R14::T900029",
+    "pav:version": "4",
+    "dce:identifier": "SDN:R14::T900029",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900029/4/"
+    },
+    "pav:authoredOn": "2026-07-24 12:37:07.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

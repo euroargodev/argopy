@@ -1,7 +1,7 @@
 {
   "name": "RAW_UPWELLING_RADIANCE490",
   "long_name": "Raw upwelling radiance at 490 nanometers",
-  "last_update": "2026-01-25T11:11:35.437102+00:00",
+  "last_update": "2026-09-15T15:04:41.248186+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_UPWELLING_RADIANCE490/",
     "pav:hasVersion": [

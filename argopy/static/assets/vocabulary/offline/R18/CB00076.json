@@ -1,7 +1,7 @@
 {
   "name": "CB00076",
   "long_name": "CONFIG_<short_sensor_name><cycle_phase_name>DepthZone<N>NumberOfSubSampling_NUMBER",
-  "last_update": "2026-01-25T11:15:43.776732+00:00",
+  "last_update": "2026-09-15T15:05:40.639329+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00076/",
     "pav:hasVersion": [

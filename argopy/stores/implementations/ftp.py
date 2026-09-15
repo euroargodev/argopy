@@ -127,10 +127,17 @@ class ftpstore(httpstore):
                     "We didn't get a CDF or HDF5 binary data as expected ! We get: %s"
                     % data
                 )
-            if data[0:3] == b"\x89HD":
-                data = io.BytesIO(data)
+            if data[0:3] == b"CDF":
+                if 'engine' not in xr_opts:
+                    xr_opts['engine'] = 'scipy'
+            elif data[0:3] == b"\x89HD":
+                if 'engine' not in xr_opts:
+                    xr_opts['engine'] = 'h5netcdf'
+
+            data = io.BytesIO(data)
 
             return data, xr_opts
+
 
         def load_lazily(url, errors="raise", xr_opts={}, akoverwrite: bool = False):
             """Check if url support lazy access and return kerchunk data along with xarray option to open it lazily
@@ -188,7 +195,7 @@ class ftpstore(httpstore):
                 return None
 
         if not lazy:
-            target, _ = load_in_memory(url, errors=errors, xr_opts=xr_opts)
+            target, xr_opts = load_in_memory(url, errors=errors, xr_opts=xr_opts)
         else:
             target, xr_opts = load_lazily(
                 url,

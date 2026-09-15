@@ -1,7 +1,7 @@
 {
   "name": "T500488",
   "long_name": "VOLUME_OilVolumeTransferredDuringAscentToSurface_cm^3",
-  "last_update": "2026-01-25T11:12:43.976074+00:00",
+  "last_update": "2026-09-15T15:04:47.918156+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T500488/",
     "pav:hasVersion": {

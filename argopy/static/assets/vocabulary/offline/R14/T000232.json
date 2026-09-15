@@ -1,7 +1,7 @@
 {
   "name": "T000232",
   "long_name": "NUMBER_Profile<short_sensor_name>MeasurementsProfile3_COUNT",
-  "last_update": "2026-01-25T11:12:51.649131+00:00",
+  "last_update": "2026-09-15T15:04:49.729406+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000232/",
     "pav:hasVersion": [

@@ -1,7 +1,7 @@
 {
   "name": "NOTC",
   "long_name": "National Ocean Technology Center",
-  "last_update": "2026-01-25T11:11:03.977767+00:00",
+  "last_update": "2026-09-15T15:04:31.051947+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NOTC/",
     "pav:hasVersion": {

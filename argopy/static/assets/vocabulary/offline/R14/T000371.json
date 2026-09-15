@@ -1,7 +1,7 @@
 {
   "name": "T000371",
   "long_name": "PRES_CTDProfileReductionSeparation_dbar",
-  "last_update": "2026-01-25T11:12:56.462205+00:00",
+  "last_update": "2026-09-15T15:04:50.727746+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000371/",
     "pav:hasVersion": {

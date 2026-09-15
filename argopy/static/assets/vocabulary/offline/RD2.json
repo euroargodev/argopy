@@ -1,7 +1,7 @@
 {
   "name": "DM_QC_FLAG",
   "long_name": "Argo delayed-mode quality control measurement flags",
-  "last_update": "2026-01-25T10:44:06.591951+00:00",
+  "last_update": "2026-09-15T15:04:15.794277+00:00",
   "data": {
     "@graph": [
       {

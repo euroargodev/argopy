@@ -85,8 +85,6 @@
     argopy.utils.clear_cache
     argopy.utils.lscache
 
-    argopy.utils.list_available_data_src
-    argopy.utils.list_available_index_src
     argopy.utils.list_standard_variables
     argopy.utils.list_multiprofile_file_variables
     argopy.utils.list_core_parameters
@@ -147,13 +145,13 @@
     argopy.related.TopoFetcher.cachepath
     argopy.related.TopoFetcher.uri
 
-    argopy.related.ArgoNVSReferenceTables
-    argopy.related.ArgoNVSReferenceTables.search
-    argopy.related.ArgoNVSReferenceTables.valid_ref
-    argopy.related.ArgoNVSReferenceTables.all_tbl
-    argopy.related.ArgoNVSReferenceTables.all_tbl_name
-    argopy.related.ArgoNVSReferenceTables.tbl
-    argopy.related.ArgoNVSReferenceTables.tbl_name
+    argopy.reference.ArgoNVSReferenceTables
+    argopy.reference.ArgoNVSReferenceTables.search
+    argopy.reference.ArgoNVSReferenceTables.valid_ref
+    argopy.reference.ArgoNVSReferenceTables.all_tbl
+    argopy.reference.ArgoNVSReferenceTables.all_tbl_name
+    argopy.reference.ArgoNVSReferenceTables.tbl
+    argopy.reference.ArgoNVSReferenceTables.tbl_name
 
     argopy.related.OceanOPSDeployments
     argopy.related.OceanOPSDeployments.to_dataframe
@@ -445,16 +443,45 @@
     argopy.reference.concept.ArgoReferenceValue
     argopy.ArgoReferenceValue.from_urn
     argopy.ArgoReferenceValue.from_dict
+    argopy.ArgoReferenceValue.to_dict
     argopy.ArgoReferenceValue.to_json
     argopy.ArgoReferenceValue.nvs
+    argopy.ArgoReferenceValue.extra
+    argopy.ArgoReferenceValue.keys
+    argopy.ArgoReferenceValue.attrs
+    argopy.ArgoReferenceValue.name
+    argopy.ArgoReferenceValue.long_name
+    argopy.ArgoReferenceValue.reference
+    argopy.ArgoReferenceValue.definition
+    argopy.ArgoReferenceValue.deprecated
+    argopy.ArgoReferenceValue.version
+    argopy.ArgoReferenceValue.date
+    argopy.ArgoReferenceValue.uri
+    argopy.ArgoReferenceValue.urn
+    argopy.ArgoReferenceValue.parameter
+    argopy.ArgoReferenceValue.related
+    argopy.ArgoReferenceValue.broader
+    argopy.ArgoReferenceValue.narrower
+    argopy.ArgoReferenceValue.sameas
+    argopy.ArgoReferenceValue.context
 
     argopy.reference.vocabulary.ArgoReferenceTable
-    argopy.ArgoReferenceTable.valid_identifier
-    argopy.ArgoReferenceTable.search
     argopy.ArgoReferenceTable.from_urn
     argopy.ArgoReferenceTable.to_dataframe
     argopy.ArgoReferenceTable.to_dict
+    argopy.ArgoReferenceTable.valid_identifiers
+    argopy.ArgoReferenceTable.search
+    argopy.ArgoReferenceTable.keys
+    argopy.ArgoReferenceTable.values
+    argopy.ArgoReferenceTable.attrs
     argopy.ArgoReferenceTable.nvs
+    argopy.ArgoReferenceTable.identifier
+    argopy.ArgoReferenceTable.parameter
+    argopy.ArgoReferenceTable.long_name
+    argopy.ArgoReferenceTable.description
+    argopy.ArgoReferenceTable.version
+    argopy.ArgoReferenceTable.date
+    argopy.ArgoReferenceTable.uri
 
     argopy.reference.mapping.ArgoReferenceMapping
     argopy.ArgoReferenceMapping.subjects
@@ -462,3 +489,7 @@
     argopy.ArgoReferenceMapping.predicates
     argopy.ArgoReferenceMapping.to_dataframe
     argopy.ArgoReferenceMapping.nvs
+    argopy.ArgoReferenceMapping.sub_id
+    argopy.ArgoReferenceMapping.sub_parameter
+    argopy.ArgoReferenceMapping.obj_id
+    argopy.ArgoReferenceMapping.obj_parameter

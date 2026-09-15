@@ -1,7 +1,7 @@
 {
   "name": "T000524",
   "long_name": "VOLTAGE_BatteryCPUDepth_volts",
-  "last_update": "2026-01-25T11:13:21.592071+00:00",
+  "last_update": "2026-09-15T15:04:58.324196+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000524/",
     "pav:hasVersion": {

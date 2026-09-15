@@ -1,7 +1,7 @@
 {
   "name": "PROF_QC_FLAG",
   "long_name": "Argo profile quality control flags",
-  "last_update": "2026-01-25T10:44:10.250599+00:00",
+  "last_update": "2026-09-15T15:04:18.044790+00:00",
   "data": {
     "@graph": [
       {

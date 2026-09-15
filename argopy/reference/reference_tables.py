@@ -218,32 +218,13 @@ class NVScollection:
         return results
 
 
-@deprecated("Update your code to use 'ArgoReference' instead.", version='[TBD]')
+@deprecated("Update your code to use 'ArgoReferenceTable' instead.", version='1.5')
 class ArgoNVSReferenceTables(NVScollection):
     """Argo Reference Tables
 
-    Utility function to retrieve Argo Reference Tables from a NVS server.
+    .. warning::
 
-    By default, this relies on: https://vocab.nerc.ac.uk/collection
-
-    Examples
-    --------
-    Methods:
-
-    >>> R = ArgoNVSReferenceTables()
-    >>> R.search('sensor')
-    >>> R.tbl(3)
-    >>> R.tbl('R09')
-
-    Properties:
-
-    >>> R.all_tbl_name
-    >>> R.all_tbl
-    >>> R.valid_ref
-
-    Notes
-    -----
-    This class relies on a list of valid reference table ids that is updated on every argopy release.
+        The class is deprecated. Update your code to use :class:`ArgoReferenceTable` instead.
 
     """
     valid_ref = VALID_REF.copy()

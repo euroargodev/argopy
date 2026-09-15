@@ -1,7 +1,7 @@
 {
   "name": "MTIME",
   "long_name": "Fractional day of the individual measurement relative to JULD of the station",
-  "last_update": "2026-01-25T11:11:29.222200+00:00",
+  "last_update": "2026-09-15T15:04:38.998396+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/MTIME/",
     "pav:hasVersion": [

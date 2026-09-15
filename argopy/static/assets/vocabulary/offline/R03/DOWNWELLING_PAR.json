@@ -1,7 +1,7 @@
 {
   "name": "DOWNWELLING_PAR",
   "long_name": "Downwelling photosynthetic available radiation",
-  "last_update": "2026-01-25T11:11:27.561774+00:00",
+  "last_update": "2026-09-15T15:04:38.567926+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/DOWNWELLING_PAR/",
     "pav:hasVersion": [

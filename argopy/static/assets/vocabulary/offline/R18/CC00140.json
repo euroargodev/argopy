@@ -1,7 +1,7 @@
 {
   "name": "CC00140",
   "long_name": "CONFIG_PressureActivation_dbar",
-  "last_update": "2026-01-25T11:15:49.381345+00:00",
+  "last_update": "2026-09-15T15:05:42.189904+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00140/",
     "pav:hasVersion": {

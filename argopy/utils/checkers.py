@@ -695,13 +695,13 @@ def check_gdac_path(
 
         elif errors == "raise":
             raise GdacPathError(
-                "This path is not GDAC compliant (no legitimate sub-folder `dac`):\n%s"
+                "This path is not GDAC compliant (no legitimate sub-folder `dac`): '%s'"
                 % path
             )
 
         elif errors == "warn":
             warnings.warn(
-                "This path is not GDAC compliant (no legitimate sub-folder `dac`):\n%s"
+                "This path is not GDAC compliant (no legitimate sub-folder `dac`): '%s'"
                 % path
             )
             return False

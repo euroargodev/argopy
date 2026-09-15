@@ -1,7 +1,7 @@
 {
   "name": "SBE41N",
   "long_name": "Sea-Bird Scientific SBE 41N CTD",
-  "last_update": "2026-01-25T11:14:02.287898+00:00",
+  "last_update": "2026-09-15T15:05:08.548977+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N/",
     "pav:hasVersion": {
@@ -17,6 +17,7 @@
       "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
     },
     "skos:notation": "SDN:R27::SBE41N",
+    "skos:altLabel": "SBE41N",
     "@type": "skos:Concept",
     "skos:related": [
       {
@@ -24,6 +25,9 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.4.0/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.5/"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.4/"
@@ -57,7 +61,6 @@
     },
     "owl:versionInfo": "2",
     "dc:date": "2019-10-16 06:35:48.0",
-    "skos:altLabel": "SBE41N",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

@@ -1,7 +1,7 @@
 {
   "name": "AMETEK",
   "long_name": "Ametek Process Instruments",
-  "last_update": "2026-01-25T11:16:10.119045+00:00",
+  "last_update": "2026-09-15T15:05:47.139254+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R26/current/AMETEK/",
     "pav:authoredOn": "2019-10-11 15:08:43.0",

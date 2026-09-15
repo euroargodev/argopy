@@ -1,12 +1,13 @@
 {
   "name": "878",
   "long_name": "ARVOR float with RBR conductivity sensor",
-  "last_update": "2026-01-25T11:14:20.251787+00:00",
+  "last_update": "2026-09-15T15:05:13.180738+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/878/",
     "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R08/current/878/1/"
     },
+    "pav:authoredOn": "2024-11-11 09:32:23.0",
     "@type": "skos:Concept",
     "skos:definition": {
       "@language": "en",
@@ -29,15 +30,19 @@
     "dc:date": "2024-11-11 09:32:23.0",
     "skos:altLabel": "878",
     "skos:notation": "SDN:R08::878",
-    "skos:broader": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/"
-    },
+    "skos:broader": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/"
+      }
+    ],
     "pav:version": "2",
     "dce:identifier": "SDN:R08::878",
     "pav:hasCurrentVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R08/current/878/2/"
     },
-    "pav:authoredOn": "2024-11-11 09:32:23.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

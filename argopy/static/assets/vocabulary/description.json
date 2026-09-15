@@ -1,7 +1,7 @@
 {
   "name": "List of Argo NVS reference tables",
   "long_name": "List of Argo NVS reference table ids and description",
-  "last_update": "2026-01-25T10:41:09.036376+00:00",
+  "last_update": "2026-09-15T15:32:28.836402+00:00",
   "data": {
     "valid_ref": [
       "R01",
@@ -31,6 +31,9 @@
       "R27",
       "R28",
       "R31",
+      "R33",
+      "R34",
+      "R35",
       "R40",
       "RD2",
       "RMC",
@@ -91,7 +94,7 @@
         "id": "RTV",
         "altLabel": "CYCLE_TIMING_VARIABLE",
         "prefLabel": "Argo float cycle timing variables",
-        "description": "Timing variables representing stages of an Argo float profiling cycle, most of which are associated with a trajectory measurement code ID listed in NVS collection 'R15'. Argo netCDF cycle timing variable names JULD_<RTV>_STATUS are constructed by RTV altLabel.",
+        "description": "Timing variables representing stages of an Argo float profiling cycle, most of which are associated with a trajectory measurement code ID listed in NVS collection 'R15'. Argo netCDF cycle timing variable named JULD_{cycle_phase_name}_STATUS are constructed with the template {cycle_phase_name} being replaced by RTV altLabel.",
         "date": "2021-12-01 02:00:02.0",
         "uri": "http://vocab.nerc.ac.uk/collection/RTV/current/"
       },
@@ -108,7 +111,7 @@
         "altLabel": "PLATFORM_TYPE",
         "prefLabel": "Argo platform type",
         "description": "List of Argo float types. Argo netCDF variable PLATFORM_TYPE is populated by R23 altLabel.",
-        "date": "2024-10-25 03:00:00.0",
+        "date": "2026-05-13 03:00:02.0",
         "uri": "http://vocab.nerc.ac.uk/collection/R23/current/"
       },
       {
@@ -116,7 +119,7 @@
         "altLabel": "TRANS_SYSTEM",
         "prefLabel": "Argo transmission systems",
         "description": "List of telecommunication systems. Argo netCDF variable TRANS_SYSTEM is populated by R10 altLabel.",
-        "date": "2024-11-12 02:00:00.0",
+        "date": "2026-02-26 02:00:01.0",
         "uri": "http://vocab.nerc.ac.uk/collection/R10/current/"
       },
       {
@@ -155,7 +158,7 @@
         "id": "R12",
         "altLabel": "HISTORY_STEP",
         "prefLabel": "Argo history processing step codes",
-        "description": "Data processing step codes for history record. Argo netCDF variable TRANS_SYSTEM is populated by R12 altLabel.",
+        "description": "Data processing step codes for history record. Argo netCDF variable HISTORY_STEP is populated by R12 altLabel.",
         "date": "2020-04-08 03:00:04.0",
         "uri": "http://vocab.nerc.ac.uk/collection/R12/current/"
       },
@@ -172,7 +175,7 @@
         "altLabel": "PARAMETER",
         "prefLabel": "Argo parameter codes",
         "description": "Terms describing individual measured parameters or phenomena, used to mark up sets of data in Argo netCDF arrays. Argo netCDF variables PARAMETER, STATION_PARAMETERS, HISTORY_PARAMETER and TRAJECTORY_PARAMETERS are populated by R03 altLabel. R03 altLabel is also used to name netCDF variables. Detailed information (incl. about Local_Attributes and Properties) is in the user manual (https://dx.doi.org/10.13155/29825), in the Reference Table 3 section.",
-        "date": "2026-01-16 02:00:00.0",
+        "date": "2026-07-21 03:00:00.0",
         "uri": "http://vocab.nerc.ac.uk/collection/R03/current/"
       },
       {
@@ -188,7 +191,7 @@
         "altLabel": "TECHNICAL_PARAMETER_NAME",
         "prefLabel": "Argo technical parameter names",
         "description": "List of technical parameters reported by a float at every cycle. Technical parameter names are stored in the float 'tech.nc' file, under TECHNICAL_PARAMETER_NAME, which is populated by R14 prefLabel. Detailed information (incl. Template_Values explanation) is in the user manual (https://dx.doi.org/10.13155/29825), in the Reference Table 14 section.",
-        "date": "2026-01-20 02:00:01.0",
+        "date": "2026-07-25 03:00:01.0",
         "uri": "http://vocab.nerc.ac.uk/collection/R14/current/"
       },
       {
@@ -204,7 +207,7 @@
         "altLabel": "SENSOR_MODEL",
         "prefLabel": "Argo sensor models",
         "description": "Terms listing models of sensors mounted on Argo floats. Note: avoid using the manufacturer name and sensor firmware version in new entries when possible. Argo netCDF variable SENSOR_MODEL is populated by R27 altLabel.",
-        "date": "2025-11-19 02:00:00.0",
+        "date": "2026-05-09 03:00:01.0",
         "uri": "http://vocab.nerc.ac.uk/collection/R27/current/"
       },
       {
@@ -212,7 +215,7 @@
         "altLabel": "DATA_TYPE",
         "prefLabel": "Argo data type",
         "description": "Terms describing the type of data contained in an Argo netCDF file. Argo netCDF variable DATA_TYPE is populated by R01 prefLabel.",
-        "date": "2024-09-13 03:00:00.0",
+        "date": "2026-04-30 03:00:00.0",
         "uri": "http://vocab.nerc.ac.uk/collection/R01/current/"
       },
       {
@@ -256,11 +259,19 @@
         "uri": "http://vocab.nerc.ac.uk/collection/R15/current/"
       },
       {
+        "id": "R33",
+        "altLabel": "BATTERY_MAKER",
+        "prefLabel": "Argo battery maker",
+        "description": "List of float battery manufacturers. Argo netCDF variable BATTERY_TYPE syntax uses both R33 altLabel and R34 altLabel with the following convention: <R33-battery_maker> <R34-battery_type> <voltage> V [+<R33-battery_maker> <R34-battery_type> <voltage> V].",
+        "date": "2026-03-19 02:00:01.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R33/current/"
+      },
+      {
         "id": "R40",
         "altLabel": "PI_NAME",
         "prefLabel": "Argo Principal Investigator (PI) names",
         "description": "List of Principal Investigator (PI) names in charge of Argo floats. Argo netCDF variable PI_NAME is populated by R40 altLabel.",
-        "date": "2025-10-09 03:00:01.0",
+        "date": "2026-09-05 03:00:01.0",
         "uri": "http://vocab.nerc.ac.uk/collection/R40/current/"
       },
       {
@@ -268,7 +279,7 @@
         "altLabel": "CONTROLLER_BOARD_TYPE",
         "prefLabel": "Argo controller board types and generations",
         "description": "List of Argo floats controller board types and generations. Argo netCDF variables CONTROLLER_BOARD_TYPE_PRIMARY and, when needed, CONTROLLER_BOARD_TYPE_SECONDARY, are populated by R28 altLabel.",
-        "date": "2023-06-23 03:00:02.0",
+        "date": "2026-01-27 02:00:01.0",
         "uri": "http://vocab.nerc.ac.uk/collection/R28/current/"
       },
       {
@@ -276,15 +287,23 @@
         "altLabel": "SENSOR",
         "prefLabel": "Argo sensor types",
         "description": "Terms describing sensor types mounted on Argo floats. Argo netCDF variable SENSOR is populated by R25 altLabel.",
-        "date": "2025-08-29 03:00:01.0",
+        "date": "2026-07-10 03:00:01.0",
         "uri": "http://vocab.nerc.ac.uk/collection/R25/current/"
+      },
+      {
+        "id": "R35",
+        "altLabel": "BATTERY_SIZE",
+        "prefLabel": "Argo battery size",
+        "description": "List of float battery styles. Argo netCDF variable BATTERY_PACKS uses both R35 altLabel and R34 prefLabel with the following convention: <x><R35-battery_size> <R34-battery_type> [+<x><R35-battery_size> <R34-battery_type>].",
+        "date": "2026-03-19 02:00:01.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R35/current/"
       },
       {
         "id": "R18",
         "altLabel": "CONFIG_PARAMETER_NAME",
         "prefLabel": "Argo configuration parameter names",
         "description": "List of float configuration settings selected by the float Principal Investigator (PI). Configuration parameters selected for a float are stored in the float 'meta.nc' file, under CONFIG_PARAMETER_NAME and LAUNCH_CONFIG_PARAMETER_NAME, which are populated by R18 prefLabel. Detailed information (incl. Template_Values explanation) is in the user manual (https://dx.doi.org/10.13155/29825), in the Reference Table 18 section.",
-        "date": "2025-12-13 02:00:01.0",
+        "date": "2026-05-16 03:00:01.0",
         "uri": "http://vocab.nerc.ac.uk/collection/R18/current/"
       },
       {
@@ -294,6 +313,14 @@
         "description": "Terms describing developers and manufacturers of sensors mounted on Argo floats. Argo netCDF variable SENSOR_MAKER is populated by R26 altLabel.",
         "date": "2025-08-30 03:00:01.0",
         "uri": "http://vocab.nerc.ac.uk/collection/R26/current/"
+      },
+      {
+        "id": "R34",
+        "altLabel": "BATTERY_TYPE",
+        "prefLabel": "Argo battery type",
+        "description": "List of float battery types. Argo netCDF variable BATTERY_TYPE syntax uses both R33 altLabel and R34 altLabel with the following convention: <R33-battery_maker> <R34-battery_type> <voltage> V [+<R33-battery_maker> <R34-battery_type> <voltage> V]. Argo netCDF variable BATTERY_PACKS uses both R35 altLabel and R34 prefLabel with the following convention: <x><R35-battery_size> <R34-battery_type> [+<x><R35-battery_size> <R34-battery_type>].",
+        "date": "2026-03-19 02:00:01.0",
+        "uri": "http://vocab.nerc.ac.uk/collection/R34/current/"
       },
       {
         "id": "R19",

@@ -1,7 +1,7 @@
 {
   "name": "800",
   "long_name": "TET",
-  "last_update": "2026-01-25T11:14:35.140731+00:00",
+  "last_update": "2026-09-15T15:05:18.168381+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R15/current/800/",
     "pav:authoredOn": "2021-11-30 09:53:34.0",
@@ -10,6 +10,9 @@
     },
     "dce:identifier": "SDN:R15::800",
     "pav:version": "1",
+    "owl:sameAs": {
+      "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/TET/"
+    },
     "skos:notation": "SDN:R15::800",
     "skos:altLabel": "800",
     "dc:date": "2021-11-30 09:53:34.0",

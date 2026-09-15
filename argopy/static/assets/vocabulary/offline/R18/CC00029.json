@@ -1,7 +1,7 @@
 {
   "name": "CC00029",
   "long_name": "CONFIG_CPActivationPressure_dbar",
-  "last_update": "2026-01-25T11:15:48.331568+00:00",
+  "last_update": "2026-09-15T15:05:41.950873+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00029/",
     "pav:hasVersion": {

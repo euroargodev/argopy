@@ -1,7 +1,7 @@
 {
   "name": "T000465",
   "long_name": "TIME_MotorDriveDuringAscent_minutes",
-  "last_update": "2026-01-25T11:12:18.132398+00:00",
+  "last_update": "2026-09-15T15:04:46.206004+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000465/",
     "pav:hasVersion": {

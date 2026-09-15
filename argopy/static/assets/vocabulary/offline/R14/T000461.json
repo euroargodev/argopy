@@ -1,7 +1,7 @@
 {
   "name": "T000461",
   "long_name": "TIME_IridiumGPSFix_seconds",
-  "last_update": "2026-01-25T11:12:55.391389+00:00",
+  "last_update": "2026-09-15T15:04:50.509293+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000461/",
     "pav:hasVersion": {

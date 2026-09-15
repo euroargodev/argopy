@@ -1,7 +1,7 @@
 {
   "name": "UP_RADIANCE",
   "long_name": "Upwelling radiance at x nanometers",
-  "last_update": "2026-01-25T11:11:29.223847+00:00",
+  "last_update": "2026-09-15T15:04:39.185250+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE/",
     "pav:hasVersion": [

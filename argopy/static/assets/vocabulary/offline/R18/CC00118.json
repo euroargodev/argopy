@@ -1,7 +1,7 @@
 {
   "name": "CC00118",
   "long_name": "CONFIG_OilVolumeMaxPerPumpActionReposition_cm^3",
-  "last_update": "2026-01-25T11:16:00.582541+00:00",
+  "last_update": "2026-09-15T15:05:44.969972+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00118/",
     "pav:hasVersion": {

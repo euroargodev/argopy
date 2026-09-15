@@ -1,7 +1,7 @@
 {
   "name": "CC00086",
   "long_name": "CONFIG_IceDetectionSpringInhibitionAscentEnd_dbar",
-  "last_update": "2026-01-25T11:15:59.720556+00:00",
+  "last_update": "2026-09-15T15:05:44.971638+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00086/",
     "pav:hasVersion": {

@@ -1,7 +1,7 @@
 {
   "name": "T000070",
   "long_name": "CLOCK_FloatDate_YYYYMMDD",
-  "last_update": "2026-01-25T11:12:58.122718+00:00",
+  "last_update": "2026-09-15T15:04:51.414810+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000070/",
     "pav:hasVersion": {

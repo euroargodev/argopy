@@ -1,7 +1,7 @@
 {
   "name": "CC00225",
   "long_name": "CONFIG_PressureTargetToleranceDuringDriftPhase<D>_dbar",
-  "last_update": "2026-01-25T11:15:50.607404+00:00",
+  "last_update": "2026-09-15T15:05:42.864325+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00225/",
     "pav:authoredOn": "2025-12-12 11:41:09.0",

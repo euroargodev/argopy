@@ -18,6 +18,8 @@ from mocked_http import mocked_server_address as MOCKHTTP
 log = logging.getLogger("argopy.tests.index.gdac")
 skip_for_debug = pytest.mark.skipif(True, reason="Taking too long !")
 
+pytestmark = pytest.mark.usefixtures("mocked_ftpserver")
+
 
 """
 List GDAC hosts to be tested. 

@@ -1,7 +1,7 @@
 {
   "name": "CC00007",
   "long_name": "CONFIG_AscentSpeedFactor_NUMBER",
-  "last_update": "2026-01-25T11:15:29.679605+00:00",
+  "last_update": "2026-09-15T15:05:37.582041+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00007/",
     "pav:hasVersion": {

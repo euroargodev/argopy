@@ -1,7 +1,7 @@
 {
   "name": "T000265",
   "long_name": "DIAGNOSTICbit_CPUBatteryVoltage_bit",
-  "last_update": "2026-01-25T11:13:43.240031+00:00",
+  "last_update": "2026-09-15T15:05:04.576861+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000265/",
     "pav:hasVersion": {

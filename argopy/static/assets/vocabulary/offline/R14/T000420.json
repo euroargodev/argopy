@@ -1,7 +1,7 @@
 {
   "name": "T000420",
   "long_name": "PRESSURE_InternalVacuum_mbar",
-  "last_update": "2026-01-25T11:13:02.428165+00:00",
+  "last_update": "2026-09-15T15:04:52.706202+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000420/",
     "pav:hasVersion": {
