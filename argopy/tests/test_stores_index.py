@@ -206,8 +206,8 @@ class IndexStore_test_proto:
         # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
         self.cachedir = create_temp_folder().folder
         if has_pyarrow:
-            log.debug(pa.cpu_count())
-            log.debug(pa.io_thread_count())
+            log.warning(pa.cpu_count())
+            log.warning(pa.io_thread_count())
 
     def teardown_class(self):
         """Cleanup once we are finished."""
