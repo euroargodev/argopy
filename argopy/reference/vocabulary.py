@@ -81,7 +81,7 @@ class ArgoReferenceTable:
     Examples
     --------
     .. code-block:: python
-        :caption: Creation and Attributes
+        :caption: Creation
 
         from argopy import ArgoReferenceTable
 
@@ -93,6 +93,12 @@ class ArgoReferenceTable:
 
         # or a URN:
         art = ArgoReferenceTable.from_urn('SDN:R25::CTD_TEMP')
+
+        # List of all possible identifiers and parameters to create an instance:
+        ArgoReferenceTable.valid_identifiers()
+
+    .. code-block:: python
+        :caption: Attributes
 
         # All possible attributes are listed in:
         art.attrs
@@ -253,13 +259,13 @@ class ArgoReferenceTable:
         return cls(urn["listid"])
 
     @classmethod
-    def valid_identifier(cls)->Dict[str, str]:
+    def valid_identifiers(cls)->Dict[str, str]:
         """Return the a dictionary of all available tables
 
         Returns
         -------
         Dict[str, str]
-            Keys are identifier, Values are paramerer, both valid to create a :class:`ArgoReferenceTable` instance.
+            Keys are identifiers, Values are parameters, both valid to create a :class:`ArgoReferenceTable` instance.
         """
         return Asset.load("vocabulary:mapping")["data"]["Vocabulary2Parameter"]
 

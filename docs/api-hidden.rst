@@ -469,7 +469,7 @@
     argopy.ArgoReferenceTable.from_urn
     argopy.ArgoReferenceTable.to_dataframe
     argopy.ArgoReferenceTable.to_dict
-    argopy.ArgoReferenceTable.valid_identifier
+    argopy.ArgoReferenceTable.valid_identifiers
     argopy.ArgoReferenceTable.search
     argopy.ArgoReferenceTable.keys
     argopy.ArgoReferenceTable.values

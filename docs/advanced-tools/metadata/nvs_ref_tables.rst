@@ -256,12 +256,12 @@ Creation
 
 .. tip::
 
-    If you don't know where to start, you can get a dictionary of all available tables with this class method :meth:`ArgoReferenceTable.valid_identifier`:
+    If you don't know where to start, you can get a dictionary of all available tables with this class method :meth:`ArgoReferenceTable.valid_identifiers`:
 
     .. ipython:: python
         :okwarning:
 
-        ArgoReferenceTable.valid_identifier()
+        ArgoReferenceTable.valid_identifiers()
 
 
 Read attributes

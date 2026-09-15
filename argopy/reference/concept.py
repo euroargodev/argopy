@@ -451,10 +451,12 @@ class ArgoReferenceValue:
 
     @property
     def context(self):
+        """List of NVS context associated with this value"""
         return self._context
 
     @property
     def extra(self):
+        """Access to extra attributes inferred from the value description, available for R03, R14 and R18 only."""
         return self._extra
 
     @classmethod
