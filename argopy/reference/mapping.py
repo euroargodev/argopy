@@ -22,12 +22,13 @@ class ArgoReferenceMapping:
     More details from the AVTT documentation:
     https://github.com/OneArgo/ArgoVocabs?tab=readme-ov-file#ivb-mappings
 
-    > Mappings are used to inform relationship between concepts. For instance, inform all the sensor_models manufactured by one sensor_maker, or all the platform_types manufactures by one platform_maker, etc.
-    > They are used by the FileChecker to ensure the consistency between these metadata fields in the Argo dataset.
+        Mappings are used to inform relationship between concepts. For instance, inform all the sensor_models manufactured by one sensor_maker, or all the platform_types manufactures by one platform_maker, etc.
+
+        They are used by the FileChecker to ensure the consistency between these metadata fields in the Argo dataset.
 
     Examples
     --------
-    ..code-block: python
+    .. code-block:: python
         :caption: Creation
 
         from argopy import ArgoReferenceMapping
