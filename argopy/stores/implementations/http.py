@@ -368,6 +368,8 @@ class httpstore(ArgoStoreProto):
         if target is not None:
             if not netCDF4:
                 ds = xr.open_dataset(target, **xr_opts)
+                if not lazy:
+                    ds = ds.load()
 
                 if "source" not in ds.encoding:
                     if isinstance(url, str):
