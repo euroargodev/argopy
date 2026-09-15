@@ -34,12 +34,10 @@ from .reference_tables import ArgoNVSReferenceTables
 from .concept import ArgoReferenceValue
 from .vocabulary import ArgoReferenceTable
 from .mapping import ArgoReferenceMapping
-from .collection import ArgoReference
 
 __all__ = (
     "ArgoReferenceTable",
     "ArgoReferenceValue",
     "ArgoReferenceMapping",
-    "ArgoReference",
     "ArgoNVSReferenceTables", # Deprecated since v1.5
 )
