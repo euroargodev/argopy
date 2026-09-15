@@ -459,6 +459,7 @@ class Test_MemoryStore:
 
 
 @skip_this
+@pytest.mark.usefixtures("mocked_ftpserver")
 class Test_FtpStore:
     fs = None
     mf_nc = ["dac/csiro/5900865/profiles/D5900865_00%i.nc" % i for i in [1, 2]]

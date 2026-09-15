@@ -26,6 +26,8 @@ from utils import patch_ftp
 
 log = logging.getLogger("argopy.tests.indexstores")
 
+pytestmark = pytest.mark.usefixtures("mocked_ftpserver")
+
 has_pyarrow = importlib.util.find_spec("pyarrow") is not None
 skip_nopyarrow = pytest.mark.skipif(not has_pyarrow, reason="Requires pyarrow")
 
