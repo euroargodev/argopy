@@ -54,7 +54,7 @@ USER_MODES = ['expert']
 List of 'params' fetcher arguments to be tested
 """
 PARAMS = ['all', 'DOXY']
-PARAMS = ['all']
+# PARAMS = ['all']
 
 """
 Make a list of VALID dataset/access_points to be tested
@@ -171,10 +171,10 @@ class Test_Backend:
 
         dataset = this_request.param['ds']
         user_mode = this_request.param['mode']
+        access_point = this_request.param['access_point']
+
         params = this_request.param['params']
         measured = this_request.param['measured'] if 'measured' in this_request.param else None
-
-        access_point = this_request.param['access_point']
 
         fetcher_args = ChainMap(defaults_args, {"ds": dataset, 'mode': user_mode, 'params': params, 'measured': measured})
         if not cached:
