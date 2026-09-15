@@ -41,4 +41,5 @@ __all__ = (
     "ArgoReferenceValue",
     "ArgoReferenceMapping",
     "ArgoReference",
+    "ArgoNVSReferenceTables", # Deprecated since v1.5
 )
