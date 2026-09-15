@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from pandas import DataFrame
-from typing import Any, Optional, List
+from typing import Any, Optional, List, Dict
 from dataclasses import dataclass
 
 from argopy.options import OPTIONS
@@ -253,14 +253,15 @@ class ArgoReferenceTable:
         return cls(urn["listid"])
 
     @classmethod
-    def valid_identifier(cls)->List[str]:
-        """Return the static list of table valid identifier
+    def valid_identifier(cls)->Dict[str, str]:
+        """Return the a dictionary of all available tables
 
         Returns
         -------
-        List[str]
+        Dict[str, str]
+            Keys are identifier, Values are paramerer, both valid to create a :class:`ArgoReferenceTable` instance.
         """
-        return Asset.load("vocabulary:description")["data"]["valid_ref"]
+        return Asset.load("vocabulary:mapping")["data"]["Vocabulary2Parameter"]
 
     def __setattr__(self, attr, value):
         """Set attribute value, with read-only policy after instantiation for public attributes"""
