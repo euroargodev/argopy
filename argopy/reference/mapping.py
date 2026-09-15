@@ -39,6 +39,17 @@ class ArgoReferenceMapping:
         ArgoReferenceMapping('R24', 'R23')
 
     .. code-block:: python
+        :caption: Attributes
+
+        from argopy import ArgoReferenceMapping
+        arm = ArgoReferenceMapping('R24', 'R23')
+
+        # Relationships within this reference mapping:
+        arm.subjects   # Ordered list of unique 'subject' reference values names
+        arm.objects    # Ordered list of unique 'object' reference values names
+        arm.predicates # Ordered list of unique 'predicate', aka relationships, in this mapping
+
+    .. code-block:: python
         :caption: Indexing and values
 
         from argopy import ArgoReferenceMapping
@@ -46,9 +57,6 @@ class ArgoReferenceMapping:
 
         # Relationships within this reference mapping:
         len(arm)     # Number of relationships
-        arm.subjects   # Ordered list of unique 'subject' reference values names
-        arm.objects    # Ordered list of unique 'object' reference values names
-        arm.predicates # Ordered list of unique 'predicate', aka relationships, in this mapping
 
         # Check if a reference value is in this mapping as a subject or an object:
         'SBE' in arm  # Return True
