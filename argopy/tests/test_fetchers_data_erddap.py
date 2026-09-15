@@ -100,16 +100,20 @@ def assert_fetcher(mocked_erddapserver, this_fetcher, cacheable=False):
         This should be used by all tests asserting a fetcher
     """
     def assert_all(this_fetcher, cacheable):
+        # `this_fetcher` is a facade instance not a :class:`argopy.data_fetchers.ArgoDataFetcherProto`
+
         # We use the facade to test 'to_xarray' in order to make sure to test all filters required by user mode
         ds = this_fetcher.to_xarray(errors='raise')
         assert isinstance(ds, xr.Dataset)
-        #
+
+        # Then apply checks on erddap fetcher:
         core = this_fetcher.fetcher
         assert is_list_of_strings(core.uri)
         assert (core.N_POINTS >= 1)  # Make sure we found results
         if cacheable:
             assert is_list_of_strings(core.cachepath)
 
+        # log.debug("In assert, this fetcher is in '%s' user mode" % this_fetcher._mode)
         if this_fetcher._dataset_id not in ['ref']:
             if this_fetcher._mode == 'expert':
                 assert 'PRES_ADJUSTED' in ds
@@ -127,7 +131,7 @@ def assert_fetcher(mocked_erddapserver, this_fetcher, cacheable=False):
         assert_all(this_fetcher, cacheable)
     except:
         raise
-        assert False
+        # assert False
 
 
 @requires_erddap

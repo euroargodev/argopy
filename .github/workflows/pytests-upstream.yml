@@ -3,10 +3,15 @@ name: CI tests Upstream
 # Allows to be warned when argopy fail tests due to updates in dependencies
 
 on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches-ignore:
+      - 'dependabot*'
   schedule:
     - cron: "0 0 12 * *" # Monthly “At 00:00” UTC on the 12th day
   workflow_dispatch: # allows you to trigger the workflow manually if necessary
-
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -52,7 +57,7 @@ jobs:
     defaults:
       run:
         shell: bash -l {0}
-#    timeout-minutes: 45
+    timeout-minutes: 120
     strategy:
       fail-fast: false
       matrix:
@@ -165,7 +170,7 @@ jobs:
     defaults:
       run:
         shell: bash -l {0}
-#    timeout-minutes: 45
+    timeout-minutes: 120
     strategy:
       fail-fast: false
       matrix:
