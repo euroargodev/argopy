@@ -360,16 +360,76 @@ Testing With Continuous Integration
 
 .. _contributing.code:
 
-Specific contributions to the codebase
-======================================
+Specific contributions
+======================
 
 .. contents:: Specific contributions
    :local:
 
+.. _dataset_extensions:
+
+Xarray Dataset extensions
+-------------------------
+
+[TBD]
+
+.. _argofloat_extensions:
+
+ArgoFloat extensions
+--------------------
+
+[TBD]
+
+.. _argoindex_extensions:
+
+ArgoIndex extensions
+--------------------
+
+[TBD]
+
+.. _product_data_fetchers:
+
+Third-party products
+====================
+
+The goal of **Argopy** is to help scientists to access the Argo dataset, through high-level APIs for beginners as well as low-level APIs for users gaining expertise with the dataset.
+
+The Argo dataset is officially referenced with a DOI, and possibly a DOI for each monthly snapshots. These data are officially distributed by GDAC through http, ftp, s3 and erddap servers. The GDAC servers are the data sources for Argopy.
+
+Several groups are also developing Argo-based dataset. Such third-party dataset provide opinionated versions of the official Argo dataset (eg: possibly with specific quality controls, vertical interpolation, new variables computation, etc...).
+
+The Argopy team believes that a *clear distinction* must be done between the Argo official versus opinionated dataset.
+A *clear distinction* is necessary to preserve the Argo Data Management Team work reputation and to not engage the Argo responsibility for scientific results based on non-official third-party dataset. Such a distinction is also necessary to make users aware of the origin of the dataset they work with.
+
+The Argopy team also believes that such Argo-based, but opinionated third-party, dataset should also be made available through Argopy APIs. This choice is made to promote science analysis, the inter-comparison of products and FAIR principles.
+
+Therefore, the Argopy APIs to be used to provide access to third-party non-official data are:
+- For the :class:`argopy.fetchers.ArgoDataFetcher` API: provide access to a third-party dataset with the `product` argument, which, when specified, will take precedance over the `src` argument to be used only for official data sources.
+- For the :class:`argopy.fetchers.ArgoFloat` API: provide access to a third-party dataset with the `open_product()` method, rather than the `open_dataset()` method to be used only for official data.
+
+.. _argofloat_product:
+
+From the ArgoFloat class
+------------------------
+
+Along the :meth:`ArgoFloat.open_dataset`, :meth:`ArgoFloat.open_profile` and :meth:`ArgoFloat.open_profiles` for
+official Argo data, third-parties can make specific product available with the :meth:`ArgoFloat.open_product` method.
+
+This method receives the name of the product as a primary argument and is responsible for dispatching the request to a specific sub-module located under ``argopy/stores/float/products/``.
+
+Contributors should also update the list of valid products used by the checker.
+
+The return data can be anything, since this depends on the product.
+
+Contributors will keep in mind to use our internal ftp, http and s3 stores if necessary.
+
+
 .. _data_fetchers:
 
-Data fetchers
--------------
+From the DataFetcher class
+--------------------------
+
+This section for those who which to make a third-product accessible through the :class:`DataFetcher` facade.
 
 Introduction
 ^^^^^^^^^^^^
@@ -378,12 +438,11 @@ Introduction
 
     This section needs to be updated with new requirements for data fetchers.
 
-If you want to add your own data fetcher for a new service, then, keep in mind that:
-
 * Data fetchers are responsible for:
 
   * loading all available data from a given source and providing at least a :func:`to_xarray()` method
   * making data compliant to Argo standards (data type, variable name, attributes, etc ...)
+  * be compatible and take in consideration all arguments passed to the :class:`DataFetcher` facade.
 
 * Data fetchers must:
 
@@ -448,7 +507,7 @@ Auto-discovery of fetcher access points
 """""""""""""""""""""""""""""""""""""""
 
 The new fetcher must come at least with a ``Fetch_box`` or
-``Fetch_wmo`` class, basically one for each of the ``access_points``
+``Fetch_wmo`` implementations, basically one for each of the ``access_points``
 listed as properties. More generally we may have a main class that
 provides the key functionality to retrieve data from the source,
 and then classes for each of the ``access_points`` of your fetcher.
@@ -515,52 +574,8 @@ not part of the Argo ADMT vocabulary. For instance,
 variables like: ``bgcMeasKeys`` or ``geoLocation`` are not allowed. This will ensure
 that whatever the data source set by users, the output xarray or
 dataframe will be formatted and contain the same variables. This will
-also ensure that other argopy features can be used on the new fetcher
+also ensure that other **Argopy** features can be used on the new fetcher
 output, like plotting or xarray data manipulation.
-
-.. _product_data_fetchers:
-
-Data fetchers for third-party products
---------------------------------------
-
-The goal of **Argopy** is to help scientists to access to the Argo dataset by providing high-level APIs for beginners as well as low-level APIs for users gaining expertise with the dataset.
-
-The Argo dataset is officially referenced with a DOI, and possibly a DOI for each monthly snapshots. These data are officially distributed by GDAC through http, ftp, s3 and erddap servers. The GDAC servers are the data sources for Argopy.
-
-(The Argo dataset and the Argo Data Management Team cannot be made responsible for results obtained with Argo data as return by Argopy, since Argopy is not an official GDAC data source.)
-
-Several groups are also developing Argo-based dataset. Such third-party dataset provide opinionated versions of the official Argo dataset (eg: possibly specific quality controls, vertical interpolation, new variables computation, etc...).
-
-The Argopy team believes that a *clear distinction* must be done between the Argo official versus opinionated dataset.
-A *clear distinction* is necessary to preserve the Argo Data Management Team work reputation and to not engage the Argo responsibility for scientific results based on non-official third-party dataset. Such a distinction is also necessary to make users aware of the origin of the dataset they work with.
-
-The Argopy team believes that Argo-based, but opinionated third-party, dataset can also be made available through Argopy APIs. This choice is made to promote science analysis, the inter-comparison of products and FAIR principles.
-
-Therefore, the Argopy APIs to be used to provide access to third-party non-official data are:
-- For the :class:`argopy.fetchers.ArgoDataFetcher` API: provide access to a third-party dataset with the `product` argument, which, when specified, will take precedance over the `src` argument.
-- For the :class:`argopy.fetchers.ArgoFloat` API: provide access to a third-party dataset with the `open_product()` method, rather than the `open_dataset()` method to be used only for official data.
-
-
-.. _dataset_extensions:
-
-Xarray Dataset extensions
--------------------------
-
-[TBD]
-
-.. _argofloat_extensions:
-
-ArgoFloat extensions
---------------------
-
-[TBD]
-
-.. _argoindex_extensions:
-
-ArgoIndex extensions
---------------------
-
-[TBD]
 
 .. _contributing.ai_policy:
 
