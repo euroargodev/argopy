@@ -46,15 +46,15 @@ def cast_Argo_variable_type(ds: xr.Dataset, overwrite=True) -> xr.Dataset:
             else:
                 msg = ["Oops! %s occurred" % sys.exc_info()[0]]
                 msg.append(
-                    "Fail to cast %s[%s] from '%s' to %s"
+                    "Fail to cast %s[%s] from '%s' to '%s'"
                     % (da.name, da.dims, da.dtype, type)
                 )
                 try:
                     msg.append("Unique values:", np.unique(da))
                 except Exception:
-                    msg.append("Can't read unique values !")
+                    msg.append("And I can't read unique values !")
                     pass
-                log.debug("\n".join(msg))
+                log.debug(" ".join(msg))
         return da
 
     def cast_this_da(da, v):

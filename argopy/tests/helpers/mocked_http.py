@@ -38,13 +38,28 @@ import json
 import importlib
 
 
+requests = pytest.importorskip("requests")
 log = logging.getLogger("argopy.tests.mocked_http")
 LOG_SERVER_CONTENT = (
     False  # Should we list all files/uris available from the mocked server in the log ?
 )
 
-requests = pytest.importorskip("requests")
-port = 9898  # Select the port to run the local server on
+import socket
+
+
+def _free_port() -> int:
+    """Return a free port number on localhost.
+
+    bind("127.0.0.1", 0) asks the OS to assign a free port, which we read back
+    with getsockname"""
+    s = socket.socket()
+    s.bind(("127.0.0.1", 0))
+    p = s.getsockname()[1]
+    s.close()
+    return p
+
+
+port = _free_port()
 mocked_server_address = "http://127.0.0.1:%i" % port
 
 
@@ -69,43 +84,65 @@ if not TESTDATA_FOLDER.exists():
 DB_FILE = TESTDATA_FOLDER.joinpath("httpmocked_uri_index.json")
 URI = []
 
+# Remove all specific api/server names from absolute URIs
+# Because these are arguments passed to methods that will use mocked_server_address instead
+# (See for instance the argument 'server' in `argopy.data_fetchers.erddap_data.ErddapArgoDataFetcher`)
+PATTERNS = [
+    "https://github.com/euroargodev/argopy-data/raw/master",
+    "https://erddap.ifremer.fr/erddap",
+    "https://data-argo.ifremer.fr",
+    "https://api.ifremer.fr",
+    "https://coastwatch.pfeg.noaa.gov/erddap",
+    "https://www.ocean-ops.org/api/1",
+    "https://dataselection.euro-argo.eu/api",
+    "https://fleetmonitoring.euro-argo.eu",
+    "https://vocab.nerc.ac.uk",
+    "https://argovis-api.colorado.edu",
+    # "https://argovisbeta02.colorado.edu",
+    "https://dx.doi.org",
+    "https://archimer.ifremer.fr",
+]
+
 if DB_FILE.exists():
     with open(DB_FILE, "r") as f:
         URI = json.load(f)
     for resource in URI:
+        # Map the (server-relative) request URI to the path of the file holding
+        # its response. This file gets read lazily, when the request is served
+        # (see HTTPTestHandler._read).
         test_data_file = TESTDATA_FOLDER.joinpath(
             "%s.%s" % (resource["sha"], resource["ext"])
         )
-        with open(test_data_file, mode="rb") as file:
-            data = file.read()
-
-        # Remove all specific api/server names from absolute URIs
-        # Because these are arguments passed to methods that will use mocked_server_address instead
-        # (See for instance the argument 'server' in `argopy.data_fetchers.erddap_data.ErddapArgoDataFetcher`)
-        patterns = [
-            "https://github.com/euroargodev/argopy-data/raw/master",
-            "https://erddap.ifremer.fr/erddap",
-            "https://data-argo.ifremer.fr",
-            "https://api.ifremer.fr",
-            "https://coastwatch.pfeg.noaa.gov/erddap",
-            "https://www.ocean-ops.org/api/1",
-            "https://dataselection.euro-argo.eu/api",
-            "https://fleetmonitoring.euro-argo.eu",
-            "https://vocab.nerc.ac.uk",
-            "https://argovis-api.colorado.edu",
-            # "https://argovisbeta02.colorado.edu",
-            "https://dx.doi.org",
-            "https://archimer.ifremer.fr",
-        ]
-        for pattern in patterns:
+        for pattern in PATTERNS:
             if resource["uri"].startswith(pattern):
-                MOCKED_REQUESTS[resource["uri"].replace(pattern, "")] = data
+                MOCKED_REQUESTS[resource["uri"].replace(pattern, "")] = test_data_file
 
 else:
     raise RuntimeError(
         "Can't find test data index file at: %s.\n Note that test data are not included in the pypi distribution. You should fork the repo to get test data."
         % DB_FILE
     )
+
+
+def _read(value):
+    """Return a mocked response body as bytes.
+
+    Values stored in :attr:`HTTPTestHandler.files` are either raw ``bytes``
+    (the landing page, or content POSTed during a test) or a
+    :class:`pathlib.Path` pointing at a test-data file, whose content is read
+    from disk here on demand.
+    """
+    if isinstance(value, (bytes, bytearray)):
+        return bytes(value)
+    with open(value, mode="rb") as file:
+        return file.read()
+
+
+def _length(value):
+    """Return a mocked response body length without reading file content into RAM."""
+    if isinstance(value, (bytes, bytearray)):
+        return len(value)
+    return value.stat().st_size
 
 
 def get_html_landing_page():
@@ -142,6 +179,8 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
             self.send_header(k, str(v))
         self.end_headers()
         if data:
+            if not isinstance(data, (bytes, bytearray)):
+                data = _read(data)
             try:
                 self.wfile.write(data)
             except socket.error as e:
@@ -174,7 +213,8 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
             if file_data is None:
                 return self._respond(404)
 
-        n = len(file_data)
+        file_data = _read(file_data)
+        n = _length(file_data)
         status = 200
         content_range = "bytes 0-%i/%i" % (n - 1, n)
         if ("Range" in self.headers) and ("ignore_range" not in self.headers):
@@ -241,7 +281,7 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
         if file_data is None:
             return self._respond(404)
         else:
-            n = len(file_data)
+            n = _length(file_data)
 
         if ("give_length" in self.headers) or ("head_give_length" in self.headers):
             response_headers = {"Content-Length": n}
