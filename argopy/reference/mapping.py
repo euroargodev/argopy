@@ -102,7 +102,7 @@ class ArgoReferenceMapping:
         self._nvs_store: NVS = NVS(nvs=kwargs.get("nvs", OPTIONS["nvs"]))
 
         # Validate subject and object:
-        self._Vocabulary2Parameter: dict[str, str] = Asset.load("vocabulary:mapping")[
+        self._Vocabulary2Parameter: dict[str, str] = Asset.load("vocabulary:description")[
             "data"
         ]["Vocabulary2Parameter"]
 

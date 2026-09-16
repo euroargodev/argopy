@@ -174,7 +174,7 @@ class ArgoReferenceTable:
     def __init__(self, identifier_or_parameter: str, *args, **kwargs) -> None:
         """Create a :class:`ArgoReferenceTable` with an identifer, eg ``R25`` or a parameter name, eg ``SENSOR_MODEL``"""
         # Internal placeholders:
-        self._Vocabulary2Parameter: dict[str, str] = Asset.load("vocabulary:mapping")[
+        self._Vocabulary2Parameter: dict[str, str] = Asset.load("vocabulary:description")[
             "data"
         ]["Vocabulary2Parameter"]
         self._df: pd.DataFrame | None = None  # Dataframe export
@@ -192,7 +192,7 @@ class ArgoReferenceTable:
             ][0]
         else:
             raise ValueError(
-                f"Unknown Reference Table '{identifier_or_parameter}'. Possible values are: \nIDs like: {ppliststr([k for k in self._Vocabulary2Parameter], last='or')}\nNames like: {ppliststr([k for k in self._Vocabulary2Parameter.values()], last='or')}"
+                f"Undocumented Reference Table '{identifier_or_parameter}'. Possible values are: \nIDs like: {ppliststr([k for k in self._Vocabulary2Parameter], last='or')}\nNames like: {ppliststr([k for k in self._Vocabulary2Parameter.values()], last='or')}"
             )
         self.identifier = identifier
         """Table identifier, eg ``R25``"""
@@ -267,7 +267,7 @@ class ArgoReferenceTable:
         Dict[str, str]
             Keys are identifiers, Values are parameters, both valid to create a :class:`ArgoReferenceTable` instance.
         """
-        return Asset.load("vocabulary:mapping")["data"]["Vocabulary2Parameter"]
+        return Asset.load("vocabulary:description")["data"]["Vocabulary2Parameter"]
 
     def __setattr__(self, attr, value):
         """Set attribute value, with read-only policy after instantiation for public attributes"""

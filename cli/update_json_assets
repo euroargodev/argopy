@@ -26,9 +26,14 @@ ASSETS_FOLDER = Path(os.path.dirname(argopy.__file__)).joinpath("static", "asset
 
 fs = httpstore(cache=True)
 
+OVER_WRITE = False
 
-def is_admt(item):
-    return item["dc:creator"] == "Argo Data Management Team"
+def is_argo_table(item):
+    # return item["dc:creator"] == "Argo Data Management Team"
+    def from_admt(item):
+        return item["dc:creator"] == "Argo Data Management Team"
+
+    return from_admt(item) or "argo" in item["dc:description"].lower()
 
 
 def save_data(file: str, name: str, long_name: str, data: dict):
@@ -48,10 +53,17 @@ def save_data(file: str, name: str, long_name: str, data: dict):
     else:
         root = ASSETS_FOLDER
 
-    with open(root.joinpath(f"{file}.json"), "w") as f:
-        json.dump(data, f, indent=2)
+    json_file = root.joinpath(f"{file}.json")
+    if OVER_WRITE:
+        ex = json_file.exists()
 
-    print(f"SAVED: '{long_name}' in {file}.json")
+        with open(json_file, "w") as f:
+            json.dump(data, f, indent=2)
+
+        if ex:
+            print(f"OVERWRITTEN: '{long_name}' in {file}.json")
+        else:
+            print(f"SAVED: '{long_name}' in {file}.json")
 
 
 def asset_data_types():
@@ -739,13 +751,13 @@ def asset_sensor_schema():
     )
 
 
-def asset_vocabulary_description():
+def asset_vocabulary_inventory():
 
     data = fs.open_json(
         "https://vocab.nerc.ac.uk/collection/?_profile=nvs&_mediatype=application/ld+json"
     )
 
-    id_list = [item for item in data["@graph"] if is_admt(item)]
+    id_list = [item for item in data["@graph"] if is_argo_table(item)]
 
     valid_ref = []
     for item in id_list:
@@ -764,7 +776,7 @@ def asset_vocabulary_description():
     df = pd.DataFrame(valid_ref).sort_values("id", axis=0).reset_index(drop=1)
 
     save_data(
-        file="vocabulary:description",
+        file="vocabulary:inventory",
         name="List of Argo NVS reference tables",
         long_name="List of Argo NVS reference table ids and description",
         data={
@@ -774,14 +786,14 @@ def asset_vocabulary_description():
     )
 
 
-def asset_vocabulary_mapping():
+def asset_vocabulary_description():
     # Retrieve all reference tables altlabels and create a mapping between Vocabulary and both Concept and Argo Parameter
 
     data = fs.open_json(
         "https://vocab.nerc.ac.uk/collection/?_profile=nvs&_mediatype=application/ld+json"
     )
 
-    id_list = [item for item in data["@graph"] if is_admt(item)]
+    id_list = [item for item in data["@graph"] if is_argo_table(item)]
 
     valid_ref = []
     for item in id_list:
@@ -814,8 +826,8 @@ def asset_vocabulary_mapping():
     Vocabulary2Concept = dict(sorted(Vocabulary2Concept.items()))
 
     save_data(
-        file="vocabulary:mapping",
-        name="Mapping of NVS Vocabulary onto NVS Concept and Argo Parameter",
+        file="vocabulary:description",
+        name="Describe NVS Vocabulary content: Argo Parameter and list of NVS Concepts",
         long_name="Dictionaries to easily go from reference tables (Vocabulary) to netcdf Parameter names and possible values (Concept)",
         data={
             "Vocabulary2Parameter": dict(sorted(Vocabulary2Parameter.items())),
@@ -829,7 +841,7 @@ def asset_offline_nvs_vocabs():
 
     data = fs.open_json(f"{nvs}/?_profile=nvs&_mediatype=application/ld+json")
 
-    id_list = [item for item in data["@graph"] if is_admt(item)]
+    id_list = [item for item in data["@graph"] if is_argo_table(item)]
 
     for item in id_list:
         rtid = (
@@ -858,7 +870,7 @@ def asset_offline_nvs_concepts():
         f"{nvs}/collection/?_profile=nvs&_mediatype=application/ld+json"
     )
 
-    id_list = [item for item in data["@graph"] if is_admt(item)]
+    id_list = [item for item in data["@graph"] if is_argo_table(item)]
 
     to_retrieve = []
     # Loop through vocabularies:
@@ -926,8 +938,8 @@ def main():
     # asset_netcdf_json_schema()
     # asset_sensor_schema()
 
+    asset_vocabulary_inventory()
     asset_vocabulary_description()
-    asset_vocabulary_mapping()
 
     asset_offline_nvs_vocabs()
     asset_offline_nvs_concepts()

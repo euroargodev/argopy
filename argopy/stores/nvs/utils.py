@@ -12,8 +12,8 @@ import pandas as pd
 from argopy.utils.locals import Asset
 from argopy.utils.format import urnparser
 
-Vocabulary2Concept = Asset.load("vocabulary:mapping")["data"]["Vocabulary2Concept"]
-Vocabulary2Parameter = Asset.load("vocabulary:mapping")["data"]["Vocabulary2Parameter"]
+Vocabulary2Concept = Asset.load("vocabulary:description")["data"]["Vocabulary2Concept"]
+Vocabulary2Parameter = Asset.load("vocabulary:description")["data"]["Vocabulary2Parameter"]
 
 
 @lru_cache
