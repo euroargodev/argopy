@@ -1,7 +1,7 @@
 {
   "name": "T000462",
   "long_name": "TIME_TransmissionLastHousekeepingMessage_seconds",
-  "last_update": "2026-01-25T11:13:38.375733+00:00",
+  "last_update": "2026-09-15T15:05:03.724037+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000462/",
     "pav:hasVersion": {

@@ -1,7 +1,7 @@
 {
   "name": "T000020",
   "long_name": "CHLT_MeanBeforeAscent_mg/m^3",
-  "last_update": "2026-01-25T11:13:29.486558+00:00",
+  "last_update": "2026-09-15T15:05:00.907120+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000020/",
     "pav:hasVersion": {

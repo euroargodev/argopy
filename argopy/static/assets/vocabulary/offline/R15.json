@@ -1,7 +1,7 @@
 {
   "name": "MEASUREMENT_CODE_ID",
   "long_name": "Argo trajectory measurement code identifiers",
-  "last_update": "2026-01-25T10:44:15.360331+00:00",
+  "last_update": "2026-09-15T15:04:20.401157+00:00",
   "data": {
     "@graph": [
       {
@@ -384,6 +384,9 @@
         },
         "dce:identifier": "SDN:R15::600",
         "pav:version": "1",
+        "owl:sameAs": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/AET/"
+        },
         "skos:notation": "SDN:R15::600",
         "skos:altLabel": "600",
         "dc:date": "2021-11-30 09:53:34.0",
@@ -880,6 +883,9 @@
         },
         "dce:identifier": "SDN:R15::550",
         "pav:version": "1",
+        "owl:sameAs": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/DAST/"
+        },
         "skos:notation": "SDN:R15::550",
         "skos:altLabel": "550",
         "dc:date": "2021-11-30 09:53:34.0",
@@ -999,33 +1005,39 @@
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R15/current/702/",
         "pav:authoredOn": "2021-11-30 09:53:34.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R15/current/702/1/"
-        },
-        "dce:identifier": "SDN:R15::702",
-        "pav:version": "1",
-        "skos:notation": "SDN:R15::702",
-        "skos:altLabel": "702",
-        "dc:date": "2021-11-30 09:53:34.0",
-        "owl:versionInfo": "1",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "FMT"
-        },
-        "dc:identifier": "SDN:R15::702",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
+        "@type": "skos:Concept",
         "skos:definition": {
           "@language": "en",
           "@value": "Earliest time of all messages received by telecommunications system - may or may not have a location fix."
         },
-        "@type": "skos:Concept"
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R15::702",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "FMT"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2021-11-30 09:53:34.0",
+        "skos:altLabel": "702",
+        "skos:notation": "SDN:R15::702",
+        "skos:broader": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RMC/current/RSPEC/"
+        },
+        "owl:sameAs": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/FMT/"
+        },
+        "pav:version": "1",
+        "dce:identifier": "SDN:R15::702",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R15/current/702/1/"
+        }
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R15/current/87/",
@@ -1066,6 +1078,9 @@
         },
         "dce:identifier": "SDN:R15::500",
         "pav:version": "1",
+        "owl:sameAs": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/AST/"
+        },
         "skos:notation": "SDN:R15::500",
         "skos:altLabel": "500",
         "dc:date": "2021-11-30 09:53:34.0",
@@ -1221,6 +1236,9 @@
         },
         "dce:identifier": "SDN:R15::700",
         "pav:version": "1",
+        "owl:sameAs": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/TST/"
+        },
         "skos:notation": "SDN:R15::700",
         "skos:altLabel": "700",
         "dc:date": "2021-11-30 09:53:34.0",
@@ -1500,6 +1518,9 @@
         },
         "dce:identifier": "SDN:R15::400",
         "pav:version": "1",
+        "owl:sameAs": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/DDET/"
+        },
         "skos:notation": "SDN:R15::400",
         "skos:altLabel": "400",
         "dc:date": "2021-11-30 09:53:34.0",
@@ -2053,33 +2074,41 @@
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R15/current/703/",
         "pav:authoredOn": "2021-11-30 09:53:34.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R15/current/703/1/"
-        },
-        "dce:identifier": "SDN:R15::703",
-        "pav:version": "1",
-        "skos:notation": "SDN:R15::703",
-        "skos:altLabel": "703",
-        "dc:date": "2021-11-30 09:53:34.0",
-        "owl:versionInfo": "1",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "FMT+1"
-        },
-        "dc:identifier": "SDN:R15::703",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/LLT/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/FLT/"
+          }
+        ],
         "skos:definition": {
           "@language": "en",
           "@value": "Surface times and locations (if available) during surface drift. Should be listed in chronological order."
         },
-        "@type": "skos:Concept"
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R15::703",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "FMT+1"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2021-11-30 09:53:34.0",
+        "skos:altLabel": "703",
+        "skos:notation": "SDN:R15::703",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R15::703",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R15/current/703/1/"
+        }
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R15/current/595/",
@@ -2244,6 +2273,9 @@
         },
         "dce:identifier": "SDN:R15::100",
         "pav:version": "1",
+        "owl:sameAs": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/DST/"
+        },
         "skos:notation": "SDN:R15::100",
         "skos:altLabel": "100",
         "dc:date": "2021-11-30 09:53:34.0",
@@ -2895,6 +2927,9 @@
         },
         "dce:identifier": "SDN:R15::450",
         "pav:version": "1",
+        "owl:sameAs": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/DPST/"
+        },
         "skos:notation": "SDN:R15::450",
         "skos:altLabel": "450",
         "dc:date": "2021-11-30 09:53:34.0",
@@ -3050,6 +3085,9 @@
         },
         "dce:identifier": "SDN:R15::150",
         "pav:version": "1",
+        "owl:sameAs": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/FST/"
+        },
         "skos:notation": "SDN:R15::150",
         "skos:altLabel": "150",
         "dc:date": "2021-11-30 09:53:34.0",
@@ -3081,6 +3119,9 @@
         },
         "dce:identifier": "SDN:R15::800",
         "pav:version": "1",
+        "owl:sameAs": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/TET/"
+        },
         "skos:notation": "SDN:R15::800",
         "skos:altLabel": "800",
         "dc:date": "2021-11-30 09:53:34.0",
@@ -3634,33 +3675,39 @@
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R15/current/704/",
         "pav:authoredOn": "2021-11-30 09:53:34.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R15/current/704/1/"
-        },
-        "dce:identifier": "SDN:R15::704",
-        "pav:version": "1",
-        "skos:notation": "SDN:R15::704",
-        "skos:altLabel": "704",
-        "dc:date": "2021-11-30 09:53:34.0",
-        "owl:versionInfo": "1",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "LMT"
-        },
-        "dc:identifier": "SDN:R15::704",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
+        "@type": "skos:Concept",
         "skos:definition": {
           "@language": "en",
           "@value": "Latest time of all messages received by telecommunications system - may or may not have a location fix."
         },
-        "@type": "skos:Concept"
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R15::704",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "LMT"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2021-11-30 09:53:34.0",
+        "skos:altLabel": "704",
+        "skos:notation": "SDN:R15::704",
+        "skos:broader": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RMC/current/RSPEC/"
+        },
+        "owl:sameAs": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/LMT/"
+        },
+        "pav:version": "1",
+        "dce:identifier": "SDN:R15::704",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R15/current/704/1/"
+        }
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R15/current/203/",
@@ -4228,6 +4275,9 @@
         },
         "dce:identifier": "SDN:R15::200",
         "pav:version": "1",
+        "owl:sameAs": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/DET/"
+        },
         "skos:notation": "SDN:R15::200",
         "skos:altLabel": "200",
         "dc:date": "2021-11-30 09:53:34.0",
@@ -4789,6 +4839,9 @@
         },
         "dce:identifier": "SDN:R15::250",
         "pav:version": "1",
+        "owl:sameAs": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/PST/"
+        },
         "skos:notation": "SDN:R15::250",
         "skos:altLabel": "250",
         "dc:date": "2021-11-30 09:53:34.0",
@@ -5409,6 +5462,9 @@
         },
         "dce:identifier": "SDN:R15::300",
         "pav:version": "1",
+        "owl:sameAs": {
+          "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/PET/"
+        },
         "skos:notation": "SDN:R15::300",
         "skos:altLabel": "300",
         "dc:date": "2021-11-30 09:53:34.0",

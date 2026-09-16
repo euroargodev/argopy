@@ -1,7 +1,7 @@
 {
   "name": "FLUORESCENCE_CHLA",
   "long_name": "Chlorophyll-A signal from fluorescence sensor",
-  "last_update": "2026-01-25T11:11:35.100444+00:00",
+  "last_update": "2026-09-15T15:04:41.099976+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/FLUORESCENCE_CHLA/",
     "pav:hasVersion": [

@@ -1,7 +1,7 @@
 {
   "name": "C2PHASE_DOXY",
   "long_name": "Uncalibrated red excitation light phase shift reported by Aanderaa optode 4330/4330F",
-  "last_update": "2026-01-25T11:11:31.954608+00:00",
+  "last_update": "2026-09-15T15:04:40.084829+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/C2PHASE_DOXY/",
     "pav:hasVersion": [

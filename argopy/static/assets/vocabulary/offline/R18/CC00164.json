@@ -1,7 +1,7 @@
 {
   "name": "CC00164",
   "long_name": "CONFIG_PressureTargetToleranceForStabilisationAtProfileDepth_dbar",
-  "last_update": "2026-01-25T11:15:52.429530+00:00",
+  "last_update": "2026-09-15T15:05:43.295958+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00164/",
     "pav:hasVersion": {

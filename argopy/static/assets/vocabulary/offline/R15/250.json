@@ -1,7 +1,7 @@
 {
   "name": "250",
   "long_name": "PST",
-  "last_update": "2026-01-25T11:14:41.579192+00:00",
+  "last_update": "2026-09-15T15:05:20.062319+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R15/current/250/",
     "pav:authoredOn": "2021-11-30 09:53:34.0",
@@ -10,6 +10,9 @@
     },
     "dce:identifier": "SDN:R15::250",
     "pav:version": "1",
+    "owl:sameAs": {
+      "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/PST/"
+    },
     "skos:notation": "SDN:R15::250",
     "skos:altLabel": "250",
     "dc:date": "2021-11-30 09:53:34.0",

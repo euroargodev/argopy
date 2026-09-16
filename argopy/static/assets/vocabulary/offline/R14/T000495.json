@@ -1,7 +1,7 @@
 {
   "name": "T000495",
   "long_name": "CURRENT_BatteryMaxPumpOnStartAscent_mA",
-  "last_update": "2026-01-25T11:12:03.955327+00:00",
+  "last_update": "2026-09-15T15:04:44.857523+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000495/",
     "pav:hasVersion": {

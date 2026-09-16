@@ -1,7 +1,7 @@
 {
   "name": "T000580",
   "long_name": "NUMBER_SubCyclesDoneSinceDeployment_COUNT",
-  "last_update": "2026-01-25T11:13:40.111736+00:00",
+  "last_update": "2026-09-15T15:05:04.147880+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000580/",
     "pav:hasVersion": {

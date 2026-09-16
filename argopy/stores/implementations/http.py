@@ -278,8 +278,15 @@ class httpstore(ArgoStoreProto):
                     "We didn't get a CDF or HDF5 binary data as expected ! We get: %s"
                     % data
                 )
-            if data[0:3] == b"\x89HD":
-                data = io.BytesIO(data)
+
+            if data[0:3] == b"CDF":
+                if 'engine' not in xr_opts:
+                    xr_opts['engine'] = 'scipy'
+            elif data[0:3] == b"\x89HD":
+                if 'engine' not in xr_opts:
+                    xr_opts['engine'] = 'h5netcdf'
+
+            data = io.BytesIO(data)
 
             return data, xr_opts
 
@@ -346,7 +353,7 @@ class httpstore(ArgoStoreProto):
                 return None
 
         if not lazy:
-            target, _ = load_in_memory(
+            target, xr_opts = load_in_memory(
                 url, errors=errors, dwn_opts=dwn_opts, xr_opts=xr_opts
             )
         else:
@@ -361,6 +368,8 @@ class httpstore(ArgoStoreProto):
         if target is not None:
             if not netCDF4:
                 ds = xr.open_dataset(target, **xr_opts)
+                if not lazy:
+                    ds = ds.load()
 
                 if "source" not in ds.encoding:
                     if isinstance(url, str):

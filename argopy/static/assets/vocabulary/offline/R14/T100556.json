@@ -1,7 +1,7 @@
 {
   "name": "T100556",
   "long_name": "NUMBER_<short_sensor_name>DescentIridiumPackets_COUNT",
-  "last_update": "2026-01-25T11:13:44.426028+00:00",
+  "last_update": "2026-09-15T15:05:04.855416+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100556/",
     "pav:hasVersion": [

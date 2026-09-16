@@ -1,5 +1,5 @@
 import pandas as pd
-from typing import Any, TypeAlias
+from typing import Any, TypeAlias, Optional
 from os import PathLike
 from pathlib import Path
 import json
@@ -201,17 +201,17 @@ class ArgoReferenceValue:
     __slots__ = Props.slots
 
     attrs: tuple[str] = Props.attrs
-    """Public attributes"""
+    """Public list of attributes"""
 
     keys: tuple[str] = Props.keys
     """Attributes used in exporting this reference value"""
 
     def __init_implicit(
         self, name: str | None = None, reference: str | None = None, **kwargs
-    ) -> None:
+    ) -> dict[str, Any]:
         """Create instance with JSON fetched from NVS using name and reference"""
         self._from = "nvs"
-        self.name = name
+
         reftable: list[str] | None = concept2vocabulary(
             name
         )  # Return vocabulary IDs with this concept
@@ -231,47 +231,81 @@ class ArgoReferenceValue:
                     f"This Reference Value appears in more than one Reference Table: {reftable}. You must specified with the 'reference' argument which one to use."
                 )
             else:
-                self.reference = reftable[0]
-        else:
-            self.reference = reference  # eg 'R27'
+                reference = reftable[0]
 
         # Once we have a 'name' and a 'reference', we can load raw data from NVS
-        self._nvs = self._nvs_store.load_concept(self.name, self.reference)
+        self._nvs = self._nvs_store.load_concept(name, reference)
 
-    def __init_explicit(self, data: Any) -> None:
+        return {'name': name, 'reference': reference}
+
+    def __init_explicit(self, data: Any) -> dict[str, Any]:
         """Create instance with JSON data provided, typically using ArgoReferenceValue.from_dict()"""
         self._from = "json"
         self._nvs = data
-        self.name = self.nvs["skos:altLabel"]
-        if self.name == "" or self.name is None:
-            self.name = urnparser(id2urn(self.nvs["@id"]))["termid"]
-        self.reference = urnparser(self.nvs["dce:identifier"])[
+
+        name = self.nvs["skos:altLabel"]
+        if name == "" or name is None:
+            name = urnparser(id2urn(self.nvs["@id"]))["termid"]
+
+        reference : str = urnparser(self.nvs["dce:identifier"])[
             "listid"
         ]  # eg 'dce:identifier' = 'SDN:R27::UNKNOWN'
 
-    def __init__(self, name: str, reference: str | None = None, **kwargs) -> None:
+        return {'name': name, 'reference': reference}
+
+    def __init__(self, name: str, reference: Optional[str] = None, **kwargs) -> None:
+        """Create a :class:`ArgoReferenceValue` with a value name
+
+        Parameters
+        ----------
+        name: str
+        reference: str, optional, default=None
+            If the value name is found in more than one reference table, an identifier (eg ``RR2``) or a parameter (eg ``RT_QC_FLAG``) must be specified.
+        """
         self._nvs_store : NVS = NVS(nvs=kwargs.get("nvs", OPTIONS["nvs"]))
 
         if kwargs.get("data", None) is None:
-            self.__init_implicit(name=name, reference=reference)
+            props = self.__init_implicit(name=name, reference=reference)
         else:
-            self.__init_explicit(data=kwargs.get("data"))
+            props = self.__init_explicit(data=kwargs.get("data"))
+
+        self.name = props['name']
+        """Value name"""
+
+        self.reference = props['reference']
+        """Table identifier this value is from, eg ``R25``"""
 
         # And populate all attributes:
         self.long_name = self.nvs["skos:prefLabel"]["@value"]
+        """Value long name"""
+
         self.definition = (
             self.nvs["skos:definition"]["@value"]
             if isinstance(self.nvs["skos:definition"], dict)
             else self.nvs["skos:definition"]
         )
+        """Value definition, long description"""
+
         self.deprecated = True if self.nvs["owl:deprecated"] == "True" else False
+        """Is value no longer recommended for active use"""
+
         self.version = self.nvs["owl:versionInfo"]
+        """Value attributes version"""
+
         self.date = pd.to_datetime(self.nvs["dc:date"])
+        """Last update date of the value attributes"""
+
         self.uri = self.nvs["@id"]
+        """NVS url of this value"""
+
         self.urn = self.nvs["skos:notation"]
-        self.parameter = Asset().load("vocabulary:mapping")["data"][
+        """RFC 8141 compliant uniform resource name for this value"""
+
+        self.parameter = Asset().load("vocabulary:description")["data"][
             "Vocabulary2Parameter"
         ][self.reference]
+        """Netcdf parameter this value can be used for, eg ``SENSOR_MODEL``"""
+
         self._context = self.nvs.get("@context", None)
 
         self._extra = None
@@ -289,18 +323,30 @@ class ArgoReferenceValue:
         # Eg: 'AANDERAA_OPTODE_3830' concept:
         #  'skos:related': {'@id': 'http://vocab.nerc.ac.uk/collection/R25/current/OPTODE_DOXY/'},
         #  'skos:broader': {'@id': 'http://vocab.nerc.ac.uk/collection/R26/current/AANDERAA/'},
-        self.related = None
+        related = None
         if self.nvs.get("skos:related", None) is not None:
-            self.related = to_list(self.nvs.get("skos:related", None))
-        self.broader = None
+            related = to_list(self.nvs.get("skos:related", None))
+        self.related = related
+        """Mapping of other objects this value is "related" to"""
+
+        broader = None
         if self.nvs.get("skos:broader", None) is not None:
-            self.broader = to_list(self.nvs.get("skos:broader", None))
-        self.narrower = None
+            broader = to_list(self.nvs.get("skos:broader", None))
+        self.broader = broader
+        """Mapping of other objects this value is a "broader" subject for"""
+
+        narrower = None
         if self.nvs.get("skos:narrower", None) is not None:
-            self.narrower = to_list(self.nvs.get("skos:narrower", None))
-        self.sameas = None
+            narrower = to_list(self.nvs.get("skos:narrower", None))
+        self.narrower = narrower
+        """Mapping of other objects this value is a "narrower" subject for"""
+
+        sameas = None
         if self.nvs.get("owl:sameAs", None) is not None:
-            self.sameas = to_list(self.nvs.get("owl:sameAs", None))
+            sameas = to_list(self.nvs.get("owl:sameAs", None))
+        self.sameas = sameas
+        """Mapping of other objects this value is a "same as" subject for"""
+
 
     def __setattr__(self, attr, value):
         """Set attribute value, with read-only after instantiation policy for public attributes"""
@@ -399,25 +445,55 @@ class ArgoReferenceValue:
         return [p for p in Props.keys]
 
     @property
-    def nvs(self):
+    def nvs(self)-> dict[str, Any]:
+        """Raw NVS server response, json-like"""
         return self._nvs
 
     @property
     def context(self):
+        """List of NVS context associated with this value"""
         return self._context
 
     @property
     def extra(self):
+        """Access to extra attributes inferred from the value description, available for R03, R14 and R18 only."""
         return self._extra
 
     @classmethod
     def from_urn(cls, urn: str = None) -> "ArgoReferenceValue":
+        """Create a :class:`ArgoReferenceValue` from a URN
+
+        Parameters
+        ----------
+        urn: str
+            RFC 8141 compliant uniform resource names (URN) from the Argo NVS.
+
+            Allowed URN are of the general form: ``SDN:{listid}:{version}:{termid}`` or ``SDN:{listid}::{termid}``.
+
+            Argopy will extract ``listid`` and ``termid`` component and create the corresponding reference table.
+
+            E.g.: ``SDN:R25::CTD_TEMP``
+
+        Returns
+        -------
+        :class:`ArgoReferenceValue`
+
+        Notes
+        -----
+        SDN stands for SeaDataNet.
+        """
         urn = urnparser(urn)
         return cls(urn["termid"], reference=urn["listid"])
 
     @classmethod
     def from_dict(cls, data: dict = None) -> "ArgoReferenceValue":
         """Create a :class:`ArgoReferenceValue` from a dictionary (JSON-like)
+
+        This method is mostly used internally to create a value from the json of a :attr:`ArgoReferenceTable.nvs`.
+
+        Returns
+        -------
+        :class:`ArgoReferenceValue`
 
         Examples
         --------
@@ -443,13 +519,13 @@ class ArgoReferenceValue:
         """
         return cls("", data=data)
 
-    def to_dict(self, keys: list[str] | None = None) -> dict[str, Any]:
-        """Export reference value attributes to a dictionary
+    def to_dict(self, keys: Optional[list[str]] = None) -> dict[str, Any]:
+        """Export attributes to a dictionary
 
         Parameters
         ----------
         keys: list[str], optional, default = None
-            List of attributes to output as keys in the dictionary. All by default if set to None.
+            List of attributes to output as keys in the dictionary. Use all attributes by default.
 
         Returns
         -------
@@ -472,18 +548,18 @@ class ArgoReferenceValue:
         return d
 
     def to_json(
-        self, path: FilePath | None = None, keys: list[str] | None = None, **kwargs
+        self, path: Optional[FilePath] = None, keys: list[str] | None = None, **kwargs
     ):
-        """Export to a JSON string or path
+        """Export attributes to a JSON string or path
 
         Parameters
         ----------
-        path: str, path object, file-like object, or None, default None
-            String, path object (implementing os.PathLike[str]), or file-like object implementing a write() function. If None, the result is returned as a string.
+        path: str, path object, file-like object, optional, default=None
+            String, path object (implementing os.PathLike[str]), or a file-like object implementing a write() function. If None, the result is returned as a string.
         keys: list[str], optional, default = None
-            List of attributes to output as keys in the JSON structure. All by default if set to None.
+            List of attributes to output as keys in the JSON structure. Use all attributes by default.
         **kwargs
-            All other arguments are passed to :class:`json.dumps` or :class:`json.dump`
+            All other arguments are passed to :meth:`json.dumps` or :meth:`json.dump`
 
         Returns
         -------

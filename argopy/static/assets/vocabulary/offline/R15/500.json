@@ -1,7 +1,7 @@
 {
   "name": "500",
   "long_name": "AST",
-  "last_update": "2026-01-25T11:14:27.882110+00:00",
+  "last_update": "2026-09-15T15:05:15.904586+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R15/current/500/",
     "pav:authoredOn": "2021-11-30 09:53:34.0",
@@ -10,6 +10,9 @@
     },
     "dce:identifier": "SDN:R15::500",
     "pav:version": "1",
+    "owl:sameAs": {
+      "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/AST/"
+    },
     "skos:notation": "SDN:R15::500",
     "skos:altLabel": "500",
     "dc:date": "2021-11-30 09:53:34.0",

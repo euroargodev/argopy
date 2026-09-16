@@ -1,7 +1,7 @@
 {
   "name": "CC00080",
   "long_name": "CONFIG_IceDetectionOilVolumeForFirstValveAction_cm^3",
-  "last_update": "2026-01-25T11:15:39.461500+00:00",
+  "last_update": "2026-09-15T15:05:39.222327+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00080/",
     "pav:hasVersion": {

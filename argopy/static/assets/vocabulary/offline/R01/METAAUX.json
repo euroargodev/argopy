@@ -1,19 +1,22 @@
 {
   "name": "METAAUX",
   "long_name": "Argo auxiliary meta-data",
-  "last_update": "2026-01-25T11:14:15.308920+00:00",
+  "last_update": "2026-09-15T15:05:11.580565+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R01/current/METAAUX/",
-    "pav:authoredOn": "2024-09-11 11:40:41.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R01/current/METAAUX/1/"
     },
+    "pav:authoredOn": "2026-04-29 13:04:08.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R01/current/METAAUX/2/"
+    },
     "dce:identifier": "SDN:R01::METAAUX",
-    "pav:version": "1",
+    "pav:version": "2",
     "skos:notation": "SDN:R01::METAAUX",
-    "skos:altLabel": "",
-    "dc:date": "2024-09-11 11:40:41.0",
-    "owl:versionInfo": "1",
+    "skos:altLabel": "METAAUX",
+    "dc:date": "2026-04-29 13:04:08.0",
+    "owl:versionInfo": "2",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "Argo auxiliary meta-data"

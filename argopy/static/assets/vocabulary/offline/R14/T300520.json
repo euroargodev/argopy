@@ -1,7 +1,7 @@
 {
   "name": "T300520",
   "long_name": "VOLTAGE_Battery7VStartDescentToPark_volts",
-  "last_update": "2026-01-25T11:13:21.717152+00:00",
+  "last_update": "2026-09-15T15:04:58.417635+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T300520/",
     "pav:hasVersion": {

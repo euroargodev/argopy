@@ -1,7 +1,7 @@
 {
   "name": "T000514",
   "long_name": "VOLTAGE_Battery_volts",
-  "last_update": "2026-01-25T11:12:43.258611+00:00",
+  "last_update": "2026-09-15T15:04:47.808485+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000514/",
     "pav:hasVersion": {

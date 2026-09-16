@@ -1,7 +1,7 @@
 {
   "name": "CB00071",
   "long_name": "CONFIG_<short_sensor_name><cycle_phase_name>DepthZone<N>StartPres_dbar",
-  "last_update": "2026-01-25T11:15:29.031203+00:00",
+  "last_update": "2026-09-15T15:05:37.384266+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00071/",
     "pav:hasVersion": [

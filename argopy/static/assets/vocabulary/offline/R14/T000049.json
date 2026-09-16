@@ -1,7 +1,7 @@
 {
   "name": "T000049",
   "long_name": "CLOCK_EndAscentToSurface_hours",
-  "last_update": "2026-01-25T11:13:17.583376+00:00",
+  "last_update": "2026-09-15T15:04:57.063014+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000049/",
     "pav:hasVersion": {

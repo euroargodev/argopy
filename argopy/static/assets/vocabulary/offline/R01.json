@@ -1,7 +1,7 @@
 {
   "name": "DATA_TYPE",
   "long_name": "Argo data type",
-  "last_update": "2026-01-25T10:44:13.956011+00:00",
+  "last_update": "2026-09-15T15:04:19.512443+00:00",
   "data": {
     "@graph": [
       {
@@ -266,16 +266,19 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R01/current/METAAUX/",
-        "pav:authoredOn": "2024-09-11 11:40:41.0",
-        "pav:hasCurrentVersion": {
+        "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R01/current/METAAUX/1/"
         },
+        "pav:authoredOn": "2026-04-29 13:04:08.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R01/current/METAAUX/2/"
+        },
         "dce:identifier": "SDN:R01::METAAUX",
-        "pav:version": "1",
+        "pav:version": "2",
         "skos:notation": "SDN:R01::METAAUX",
-        "skos:altLabel": "",
-        "dc:date": "2024-09-11 11:40:41.0",
-        "owl:versionInfo": "1",
+        "skos:altLabel": "METAAUX",
+        "dc:date": "2026-04-29 13:04:08.0",
+        "owl:versionInfo": "2",
         "skos:prefLabel": {
           "@language": "en",
           "@value": "Argo auxiliary meta-data"
@@ -365,8 +368,8 @@
         "dc:description": "Terms describing the type of data contained in an Argo netCDF file. Argo netCDF variable DATA_TYPE is populated by R01 prefLabel.",
         "dc:title": "Argo data type",
         "skos:prefLabel": "Argo data type",
-        "owl:versionInfo": "4",
-        "dc:date": "2024-09-13 03:00:00.0",
+        "owl:versionInfo": "5",
+        "dc:date": "2026-04-30 03:00:00.0",
         "skos:altLabel": "DATA_TYPE",
         "dc:creator": "Argo Data Management Team",
         "dc:alternative": "DATA_TYPE",

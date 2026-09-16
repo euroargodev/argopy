@@ -1,7 +1,7 @@
 {
   "name": "COPEX",
   "long_name": "COPEX float",
-  "last_update": "2026-01-25T11:11:15.383278+00:00",
+  "last_update": "2026-09-15T15:04:34.783295+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R23/current/COPEX/",
     "pav:authoredOn": "2020-05-03 20:30:02.0",

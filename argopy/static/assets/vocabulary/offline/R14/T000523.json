@@ -1,7 +1,7 @@
 {
   "name": "T000523",
   "long_name": "VOLTAGE_BatteryCPUSurface_volts",
-  "last_update": "2026-01-25T11:12:39.148625+00:00",
+  "last_update": "2026-09-15T15:04:46.767491+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000523/",
     "pav:hasVersion": {

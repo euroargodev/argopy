@@ -1,7 +1,7 @@
 {
   "name": "T000325",
   "long_name": "FLAG_Sbe41ResponseToPMeasurementFailedThePedanticRegex_LOGICAL",
-  "last_update": "2026-01-25T11:12:52.996250+00:00",
+  "last_update": "2026-09-15T15:04:49.937652+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000325/",
     "pav:hasVersion": {

@@ -1,7 +1,7 @@
 {
   "name": "DRUCK_2900PSIA",
   "long_name": "Druck pressure sensor with 2900 PSIA rating",
-  "last_update": "2026-01-25T11:13:59.357454+00:00",
+  "last_update": "2026-09-15T15:05:07.688937+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/DRUCK_2900PSIA/",
     "pav:authoredOn": "2019-10-11 14:49:00.0",

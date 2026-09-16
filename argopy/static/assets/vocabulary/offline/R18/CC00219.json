@@ -1,7 +1,7 @@
 {
   "name": "CC00219",
   "long_name": "CONFIG_UpTime_hours",
-  "last_update": "2026-01-25T11:15:21.144540+00:00",
+  "last_update": "2026-09-15T15:05:34.728124+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00219/",
     "pav:hasVersion": {

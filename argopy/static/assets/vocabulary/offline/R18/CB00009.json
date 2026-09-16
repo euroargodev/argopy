@@ -1,7 +1,7 @@
 {
   "name": "CB00009",
   "long_name": "CONFIG_<short_sensor_name>DepthZone<N>DataProcessingMode_NUMBER",
-  "last_update": "2026-01-25T11:16:01.019445+00:00",
+  "last_update": "2026-09-15T15:05:45.200158+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00009/",
     "pav:hasVersion": [

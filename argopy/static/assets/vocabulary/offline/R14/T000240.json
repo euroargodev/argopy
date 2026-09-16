@@ -1,7 +1,7 @@
 {
   "name": "T000240",
   "long_name": "NUMBER_TransmissionFloatFramesComplete_COUNT",
-  "last_update": "2026-01-25T11:13:03.390149+00:00",
+  "last_update": "2026-09-15T15:04:52.901802+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000240/",
     "pav:hasVersion": {

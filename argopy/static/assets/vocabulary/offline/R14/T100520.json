@@ -1,7 +1,7 @@
 {
   "name": "T100520",
   "long_name": "VOLTAGE_Battery14VStartDescentToPark_volts",
-  "last_update": "2026-01-25T11:12:43.003167+00:00",
+  "last_update": "2026-09-15T15:04:47.697889+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100520/",
     "pav:hasVersion": {

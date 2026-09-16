@@ -1,7 +1,7 @@
 {
   "name": "T000516",
   "long_name": "VOLTAGE_Battery7V_volts",
-  "last_update": "2026-01-25T11:13:22.442988+00:00",
+  "last_update": "2026-09-15T15:04:58.671411+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000516/",
     "pav:hasVersion": {

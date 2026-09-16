@@ -1,40 +1,48 @@
 {
   "name": "CC00218",
   "long_name": "CONFIG_TriProfileOption_LOGICAL",
-  "last_update": "2026-01-25T11:15:54.623745+00:00",
+  "last_update": "2026-09-15T15:05:36.924560+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00218/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00218/1/"
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00218/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00218/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00218/3/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
+      "@language": "en",
+      "@value": "Never used on the GDAC. Tri profile option (1 = YES, 0 = NO). From the first generation of PROVOR floats for which a number of configurations are allowed, i.e. if tri profile is set to yes, it indicates a float which performs 1 deep profile followed by two shallower profiles. Template_Values:{unit:[LOGICAL]}."
     },
-    "pav:authoredOn": "2025-12-12 11:41:07.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00218/2/"
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
     },
-    "dce:identifier": "SDN:R18::CC00218",
-    "pav:version": "2",
-    "skos:notation": "SDN:R18::CC00218",
-    "skos:altLabel": "Core Config 218",
-    "dc:date": "2025-12-12 11:41:07.0",
-    "owl:versionInfo": "2",
+    "owl:deprecated": "true",
+    "skos:note": {
+      "@language": "en",
+      "@value": "deprecated"
+    },
+    "dc:identifier": "SDN:R18::CC00218",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "CONFIG_TriProfileOption_LOGICAL"
     },
-    "dc:identifier": "SDN:R18::CC00218",
-    "skos:note": {
-      "@language": "en",
-      "@value": "accepted"
+    "owl:versionInfo": "4",
+    "dc:date": "2026-03-09 09:11:25.0",
+    "skos:altLabel": "Core Config 218",
+    "skos:notation": "SDN:R18::CC00218",
+    "pav:version": "4",
+    "dce:identifier": "SDN:R18::CC00218",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00218/4/"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
-      "@language": "en",
-      "@value": "Tri profile option (1 = YES, 0 = NO). From the first generation of PROVOR floats for which a number of configurations are allowed, i.e. if tri profile is set to yes, it indicates a float which performs 1 deep profile followed by two shallower profiles. Template_Values:{unit:[LOGICAL]}."
-    },
-    "@type": "skos:Concept",
+    "pav:authoredOn": "2026-03-09 09:11:25.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

@@ -1,7 +1,7 @@
 {
   "name": "CB00050",
   "long_name": "CONFIG_<short_sensor_name>BetaBandwidth<I>_nm",
-  "last_update": "2026-01-25T11:15:19.053521+00:00",
+  "last_update": "2026-09-15T15:05:34.039307+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00050/",
     "pav:hasVersion": [

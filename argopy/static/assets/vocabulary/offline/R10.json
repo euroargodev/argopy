@@ -1,24 +1,27 @@
 {
   "name": "TRANS_SYSTEM",
   "long_name": "Argo transmission systems",
-  "last_update": "2026-01-25T10:44:08.720513+00:00",
+  "last_update": "2026-09-15T15:04:17.160475+00:00",
   "data": {
     "@graph": [
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R10/current/BEIDOU/",
-        "pav:authoredOn": "2024-11-11 09:32:23.0",
-        "pav:hasCurrentVersion": {
+        "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R10/current/BEIDOU/1/"
         },
+        "pav:authoredOn": "2026-02-25 09:10:14.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R10/current/BEIDOU/2/"
+        },
         "dce:identifier": "SDN:R10::BEIDOU",
-        "pav:version": "1",
+        "pav:version": "2",
         "skos:notation": "SDN:R10::BEIDOU",
-        "skos:altLabel": "",
-        "dc:date": "2024-11-11 09:32:23.0",
-        "owl:versionInfo": "1",
+        "skos:altLabel": "BEIDOU",
+        "dc:date": "2026-02-25 09:10:14.0",
+        "owl:versionInfo": "2",
         "skos:prefLabel": {
           "@language": "en",
-          "@value": "BEIDOU"
+          "@value": "Beidou transmission system"
         },
         "dc:identifier": "SDN:R10::BEIDOU",
         "skos:note": {
@@ -31,7 +34,7 @@
         },
         "skos:definition": {
           "@language": "en",
-          "@value": "Beidou transmission system."
+          "@value": "Beidou transmission system"
         },
         "@type": "skos:Concept"
       },
@@ -149,8 +152,8 @@
         "dc:description": "List of telecommunication systems. Argo netCDF variable TRANS_SYSTEM is populated by R10 altLabel.",
         "dc:title": "Argo transmission systems",
         "skos:prefLabel": "Argo transmission systems",
-        "owl:versionInfo": "2",
-        "dc:date": "2024-11-12 02:00:00.0",
+        "owl:versionInfo": "3",
+        "dc:date": "2026-02-26 02:00:01.0",
         "skos:altLabel": "TRANS_SYSTEM",
         "dc:creator": "Argo Data Management Team",
         "dc:alternative": "TRANS_SYSTEM",

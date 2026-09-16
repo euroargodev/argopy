@@ -22,12 +22,13 @@ class ArgoReferenceMapping:
     More details from the AVTT documentation:
     https://github.com/OneArgo/ArgoVocabs?tab=readme-ov-file#ivb-mappings
 
-    > Mappings are used to inform relationship between concepts. For instance, inform all the sensor_models manufactured by one sensor_maker, or all the platform_types manufactures by one platform_maker, etc.
-    > They are used by the FileChecker to ensure the consistency between these metadata fields in the Argo dataset.
+        Mappings are used to inform relationship between concepts. For instance, inform all the sensor_models manufactured by one sensor_maker, or all the platform_types manufactures by one platform_maker, etc.
+
+        They are used by the FileChecker to ensure the consistency between these metadata fields in the Argo dataset.
 
     Examples
     --------
-    ..code-block: python
+    .. code-block:: python
         :caption: Creation
 
         from argopy import ArgoReferenceMapping
@@ -39,6 +40,17 @@ class ArgoReferenceMapping:
         ArgoReferenceMapping('R24', 'R23')
 
     .. code-block:: python
+        :caption: Attributes
+
+        from argopy import ArgoReferenceMapping
+        arm = ArgoReferenceMapping('R24', 'R23')
+
+        # Relationships within this reference mapping:
+        arm.subjects   # Ordered list of unique 'subject' reference values names
+        arm.objects    # Ordered list of unique 'object' reference values names
+        arm.predicates # Ordered list of unique 'predicate', aka relationships, in this mapping
+
+    .. code-block:: python
         :caption: Indexing and values
 
         from argopy import ArgoReferenceMapping
@@ -46,9 +58,6 @@ class ArgoReferenceMapping:
 
         # Relationships within this reference mapping:
         len(arm)     # Number of relationships
-        arm.subjects   # Ordered list of unique 'subject' reference values names
-        arm.objects    # Ordered list of unique 'object' reference values names
-        arm.predicates # Ordered list of unique 'predicate', aka relationships, in this mapping
 
         # Check if a reference value is in this mapping as a subject or an object:
         'SBE' in arm  # Return True
@@ -93,7 +102,7 @@ class ArgoReferenceMapping:
         self._nvs_store: NVS = NVS(nvs=kwargs.get("nvs", OPTIONS["nvs"]))
 
         # Validate subject and object:
-        self._Vocabulary2Parameter: dict[str, str] = Asset.load("vocabulary:mapping")[
+        self._Vocabulary2Parameter: dict[str, str] = Asset.load("vocabulary:description")[
             "data"
         ]["Vocabulary2Parameter"]
 

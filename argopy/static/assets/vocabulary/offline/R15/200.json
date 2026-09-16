@@ -1,7 +1,7 @@
 {
   "name": "200",
   "long_name": "DET",
-  "last_update": "2026-01-25T11:14:39.280445+00:00",
+  "last_update": "2026-09-15T15:05:19.394890+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R15/current/200/",
     "pav:authoredOn": "2021-11-30 09:53:34.0",
@@ -10,6 +10,9 @@
     },
     "dce:identifier": "SDN:R15::200",
     "pav:version": "1",
+    "owl:sameAs": {
+      "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/DET/"
+    },
     "skos:notation": "SDN:R15::200",
     "skos:altLabel": "200",
     "dc:date": "2021-11-30 09:53:34.0",

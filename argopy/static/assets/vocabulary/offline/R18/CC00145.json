@@ -1,7 +1,7 @@
 {
   "name": "CC00145",
   "long_name": "CONFIG_PressureBladderTarget_dbar",
-  "last_update": "2026-01-25T11:15:38.780901+00:00",
+  "last_update": "2026-09-15T15:05:38.436970+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00145/",
     "pav:hasVersion": {

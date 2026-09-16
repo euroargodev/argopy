@@ -1,7 +1,7 @@
 {
   "name": "T100488",
   "long_name": "VOLUME_OilVolumeTransferredAtSurfaceDuringDescent_cm^3",
-  "last_update": "2026-01-25T11:13:29.416929+00:00",
+  "last_update": "2026-09-15T15:05:00.896214+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100488/",
     "pav:hasVersion": {

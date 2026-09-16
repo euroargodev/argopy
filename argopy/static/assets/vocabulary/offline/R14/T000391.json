@@ -1,7 +1,7 @@
 {
   "name": "T000391",
   "long_name": "PRES_MaximumDepthBinWithValidData_dbar",
-  "last_update": "2026-01-25T11:13:10.742461+00:00",
+  "last_update": "2026-09-15T15:04:55.187691+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000391/",
     "pav:hasVersion": {

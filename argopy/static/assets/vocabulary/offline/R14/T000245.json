@@ -1,7 +1,7 @@
 {
   "name": "T000245",
   "long_name": "NUMBER_TransmissionFloatFramesTechnicalOk_COUNT",
-  "last_update": "2026-01-25T11:12:38.538606+00:00",
+  "last_update": "2026-09-15T15:04:46.756668+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000245/",
     "pav:hasVersion": {

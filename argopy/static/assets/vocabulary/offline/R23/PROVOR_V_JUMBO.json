@@ -1,7 +1,7 @@
 {
   "name": "PROVOR_V_JUMBO",
   "long_name": "PROVOR_V_JUMBO float",
-  "last_update": "2026-01-25T11:11:17.582245+00:00",
+  "last_update": "2026-09-15T15:04:35.668216+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/",
     "pav:hasVersion": {
@@ -12,10 +12,20 @@
       "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/2/"
     },
     "dce:identifier": "SDN:R23::PROVOR_V_JUMBO",
+    "pav:version": "2",
+    "skos:notation": "SDN:R23::PROVOR_V_JUMBO",
     "@type": "skos:Concept",
-    "skos:related": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
-    },
+    "skos:related": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0008/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0007/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
+      }
+    ],
     "skos:definition": {
       "@language": "en",
       "@value": "PROVOR CTS5-USEA float with additional battery pack, USEA is the controller board type. PLATFORM_ TYPE_ KEY = 107"
@@ -47,8 +57,6 @@
     ],
     "dc:date": "2023-10-05 14:41:04.0",
     "skos:altLabel": "PROVOR_V_JUMBO",
-    "skos:notation": "SDN:R23::PROVOR_V_JUMBO",
-    "pav:version": "2",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

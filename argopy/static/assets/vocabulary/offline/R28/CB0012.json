@@ -1,0 +1,67 @@
+{
+  "name": "CB0012",
+  "long_name": "CAMAT256",
+  "last_update": "2026-09-15T15:05:32.257534+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0012/",
+    "pav:authoredOn": "2026-01-26 14:08:04.0",
+    "@type": "skos:Concept",
+    "skos:related": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_C/"
+      }
+    ],
+    "skos:definition": {
+      "@language": "en",
+      "@value": "Used in certain types of NKE Argo floats as secondary controller board (ARVOR_CM, PROVOR_III_CTS4)"
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R28::CB0012",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "CAMAT256"
+    },
+    "owl:versionInfo": "1",
+    "dc:date": "2026-01-26 14:08:04.0",
+    "skos:altLabel": "CAMAT256",
+    "skos:notation": "SDN:R28::CB0012",
+    "pav:version": "1",
+    "dce:identifier": "SDN:R28::CB0012",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0012/1/"
+    },
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

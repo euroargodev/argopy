@@ -1,7 +1,7 @@
 {
   "name": "PARAMETER",
   "long_name": "Argo parameter codes",
-  "last_update": "2026-01-25T10:44:10.783386+00:00",
+  "last_update": "2026-09-15T15:04:18.264996+00:00",
   "data": {
     "@graph": [
       {
@@ -42,6 +42,68 @@
           "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_DURAFET/3/"
         },
         "pav:authoredOn": "2025-11-26 10:16:04.0"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/DOWN_IRRADIANCE665/",
+        "pav:authoredOn": "2026-07-20 09:27:57.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R03/current/DOWN_IRRADIANCE665/1/"
+        },
+        "dce:identifier": "SDN:R03::DOWN_IRRADIANCE665",
+        "pav:version": "1",
+        "skos:notation": "SDN:R03::DOWN_IRRADIANCE665",
+        "skos:altLabel": "DOWN_IRRADIANCE665",
+        "dc:date": "2026-07-20 09:27:57.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Downwelling irradiance at 665 nanometers"
+        },
+        "dc:identifier": "SDN:R03::DOWN_IRRADIANCE665",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Downwelling irradiance at 665 nm wavelength, reported by OCR504 sensor (unit conversion). Local_Attributes:{long_name:Downwelling irradiance at 665 nanometers; standard_name:-; units:W/m^2/nm; valid_min:-; valid_max:-; fill_value:99999.f}. Properties:{category:b; data_type:float}."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE665/",
+        "pav:authoredOn": "2026-06-11 09:21:52.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE665/1/"
+        },
+        "dce:identifier": "SDN:R03::RAW_DOWNWELLING_IRRADIANCE665",
+        "pav:version": "1",
+        "skos:notation": "SDN:R03::RAW_DOWNWELLING_IRRADIANCE665",
+        "skos:altLabel": "RAW_DOWNWELLING_IRRADIANCE665",
+        "dc:date": "2026-06-11 09:21:52.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Raw downwelling irradiance at 665 nanometers"
+        },
+        "dc:identifier": "SDN:R03::RAW_DOWNWELLING_IRRADIANCE665",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Raw downwelling irradiance signal at 665 nm wavelength. Local_Attributes:{long_name:Raw downwelling irradiance at 665 nanometers; standard_name:-; units:count; valid_min:-; valid_max:-; fill_value:NC_FILL_DOUBLE}. Properties:{category:ib; data_type:double}"
+        },
+        "@type": "skos:Concept"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_OCR/",
@@ -161,45 +223,6 @@
         "pav:authoredOn": "2025-11-26 10:16:04.0"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_MCOMS/",
-        "pav:hasVersion": [
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_MCOMS/1/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_MCOMS/2/"
-          }
-        ],
-        "@type": "skos:Concept",
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Not Used. Number of samples in each pressure bin. Local_Attributes:{long_name:Number of samples in each pressure bin; standard_name:-; units:count; valid_min:-; valid_max:-; fill_value:NC_FILL_SHORT}. Properties:{category:ic; data_type:short}."
-        },
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "owl:deprecated": "true",
-        "skos:note": {
-          "@language": "en",
-          "@value": "deprecated"
-        },
-        "dc:identifier": "SDN:R03::NB_SAMPLE_MCOMS",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "Number of MCOMS samples in each pressure bin"
-        },
-        "owl:versionInfo": "3",
-        "dc:date": "2025-11-26 10:16:04.0",
-        "skos:altLabel": "NB_SAMPLE_MCOMS",
-        "skos:notation": "SDN:R03::NB_SAMPLE_MCOMS",
-        "pav:version": "3",
-        "dce:identifier": "SDN:R03::NB_SAMPLE_MCOMS",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_MCOMS/3/"
-        },
-        "pav:authoredOn": "2025-11-26 10:16:04.0"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_SFET/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_SFET/1/"
@@ -310,6 +333,110 @@
           "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_CTD/3/"
         },
         "pav:authoredOn": "2025-11-25 10:14:03.0"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE670/",
+        "pav:authoredOn": "2026-06-11 09:21:52.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE670/1/"
+        },
+        "dce:identifier": "SDN:R03::RAW_DOWNWELLING_IRRADIANCE670",
+        "pav:version": "1",
+        "skos:notation": "SDN:R03::RAW_DOWNWELLING_IRRADIANCE670",
+        "skos:altLabel": "RAW_DOWNWELLING_IRRADIANCE670",
+        "dc:date": "2026-06-11 09:21:52.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Raw downwelling irradiance at 670 nanometers"
+        },
+        "dc:identifier": "SDN:R03::RAW_DOWNWELLING_IRRADIANCE670",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Raw downwelling irradiance signal at 670 nm wavelength. Local_Attributes:{long_name:Raw downwelling irradiance at 670 nanometers; standard_name:-; units:count; valid_min:-; valid_max:-; fill_value:NC_FILL_DOUBLE}. Properties:{category:ib; data_type:double}"
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_MCOMS/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_MCOMS/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_MCOMS/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_MCOMS/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Number of samples in each pressure bin. Local_Attributes:{long_name:Number of samples in each pressure bin; standard_name:-; units:count; valid_min:-; valid_max:-; fill_value:NC_FILL_SHORT}. Properties:{category:ic; data_type:short}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R03::NB_SAMPLE_MCOMS",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Number of MCOMS samples in each pressure bin"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-05-18 09:45:19.0",
+        "skos:altLabel": "NB_SAMPLE_MCOMS",
+        "skos:notation": "SDN:R03::NB_SAMPLE_MCOMS",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R03::NB_SAMPLE_MCOMS",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_MCOMS/4/"
+        },
+        "pav:authoredOn": "2026-05-18 09:45:19.0"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/DOWN_IRRADIANCE670/",
+        "pav:authoredOn": "2026-06-11 09:21:52.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R03/current/DOWN_IRRADIANCE670/1/"
+        },
+        "dce:identifier": "SDN:R03::DOWN_IRRADIANCE670",
+        "pav:version": "1",
+        "skos:notation": "SDN:R03::DOWN_IRRADIANCE670",
+        "skos:altLabel": "DOWN_IRRADIANCE670",
+        "dc:date": "2026-06-11 09:21:52.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Downwelling irradiance at 670 nanometers"
+        },
+        "dc:identifier": "SDN:R03::DOWN_IRRADIANCE670",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Downwelling irradiance at 670 nm wavelength, reported by OCR504 sensor (unit conversion). Local_Attributes:{long_name:Downwelling irradiance at 670 nanometers; standard_name:-; units:W/m^2/nm; valid_min:-; valid_max:-; fill_value:99999.f}. Properties:{category:b; data_type:float}"
+        },
+        "@type": "skos:Concept"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_SUNA/",
@@ -466,6 +593,45 @@
           "@id": "http://vocab.nerc.ac.uk/collection/R03/current/CHLA_FLUORESCENCE/3/"
         },
         "pav:authoredOn": "2025-11-25 10:14:02.0"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R03/current/BDOWN_IRRADIANCE665/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R03/current/BDOWN_IRRADIANCE665/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R03/current/BDOWN_IRRADIANCE665/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Downwelling irradiance at 665 nm wavelength, reported by OCR504 sensor (unit conversion). Local_Attributes:{long_name:Downwelling irradiance at 665 nanometers; standard_name:-; units:W/m^2/nm; valid_min:-; valid_max:-; fill_value:99999.f}. Properties:{category:b; data_type:float}"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R03::BDOWN_IRRADIANCE665",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "deprecated_for_incorrect_id"
+        },
+        "owl:versionInfo": "3",
+        "dc:date": "2026-07-15 14:47:24.0",
+        "skos:altLabel": "deprecated_for_incorrect_id",
+        "skos:notation": "SDN:R03::BDOWN_IRRADIANCE665",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R03::BDOWN_IRRADIANCE665",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R03/current/BDOWN_IRRADIANCE665/3/"
+        },
+        "pav:authoredOn": "2026-07-15 14:47:24.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_CYC/",
@@ -4395,6 +4561,12 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_DURAFET/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R03/current/DOWN_IRRADIANCE665/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE665/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_OCR/"
           },
           {
@@ -4404,9 +4576,6 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_STM/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_MCOMS/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_SFET/"
           },
           {
@@ -4414,6 +4583,15 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_CTD/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE670/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_MCOMS/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R03/current/DOWN_IRRADIANCE670/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_SUNA/"
@@ -4426,6 +4604,9 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R03/current/CHLA_FLUORESCENCE/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R03/current/BDOWN_IRRADIANCE665/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_CYC/"
@@ -4697,8 +4878,8 @@
         "dc:description": "Terms describing individual measured parameters or phenomena, used to mark up sets of data in Argo netCDF arrays. Argo netCDF variables PARAMETER, STATION_PARAMETERS, HISTORY_PARAMETER and TRAJECTORY_PARAMETERS are populated by R03 altLabel. R03 altLabel is also used to name netCDF variables. Detailed information (incl. about Local_Attributes and Properties) is in the user manual (https://dx.doi.org/10.13155/29825), in the Reference Table 3 section.",
         "dc:title": "Argo parameter codes",
         "skos:prefLabel": "Argo parameter codes",
-        "owl:versionInfo": "13",
-        "dc:date": "2026-01-16 02:00:00.0",
+        "owl:versionInfo": "17",
+        "dc:date": "2026-07-21 03:00:00.0",
         "skos:altLabel": "PARAMETER",
         "dc:creator": "Argo Data Management Team",
         "dc:alternative": "PARAMETER",

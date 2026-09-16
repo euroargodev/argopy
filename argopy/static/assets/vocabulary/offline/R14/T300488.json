@@ -1,7 +1,7 @@
 {
   "name": "T300488",
   "long_name": "VOLUME_OilVolumeTransferredToAscentWhenGrounded_cm^3",
-  "last_update": "2026-01-25T11:12:39.208877+00:00",
+  "last_update": "2026-09-15T15:04:43.363305+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T300488/",
     "pav:hasVersion": {
