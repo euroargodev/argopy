@@ -105,6 +105,7 @@ class ArgoDataFetcher:
         self.fetcher_kwargs = {**fetcher_kwargs}
 
         if product is not None:
+            # Third-party products must update this section to be included:
             if product.lower() not in ["argovis"]:
                 raise InvalidFetcher(f"The '{product}' product has no implementation. Available products are: ['argovis'].")
             self._src = product
