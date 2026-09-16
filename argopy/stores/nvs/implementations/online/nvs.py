@@ -40,6 +40,19 @@ class NVS(NVSProto):
         return cls._instance
 
     def __init__(self, *args, **kwargs) -> None:
+        """Create a NVS store
+
+        Notes
+        -----
+        Some global options are used to create the private http store:
+
+        - "nvs", the url of the server,
+        - "cache", use cache or not,
+        - "cachedir", where to put cached files,
+        - "api_timeout", http request time out in seconds.
+
+        You can overwrite these options by providing them in arguments on the very first call.
+        """
         if not self._initialized:
             self._fs: httpstore = httpstore(
                 cache=kwargs.get("cache", True),

@@ -1,10 +1,11 @@
 .. currentmodule:: argopy
 
+.. _argovocabulary:
 
 Argo vocabulary and Reference
 =============================
 
-The Argo GDAC database and netcdf format are strict and based on a collection of parameters fully documented and conventioned. Most of these parameters are allowed to take only referenced values organised in tables and related with miscellaneous mappings. All reference tables can be found in the `Argo user manual <https://doi.org/10.13155/29825>`_.
+The Argo GDAC database and netcdf format are strict and based on a collection of parameters fully documented and convention. Most of these parameters are allowed to take only referenced values organised in tables and related with miscellaneous mappings. All reference tables can be found in the `Argo user manual <https://doi.org/10.13155/29825>`_.
 
 Argo references (tables, values, mappings) are machine-to-machine accessible from a `NVS server <https://vocab.nerc.ac.uk>`_ where the **Argo Vocabulary Task Team (AVTT)** maintains up-to-date the entire Argo vocabulary.
 
@@ -478,6 +479,69 @@ Export method
 
     ArgoReferenceMapping('R24', 'R23').to_dataframe()
 
+
+Online/Offline access to reference data
+---------------------------------------
+
+**Argopy** is distributed with all the relevant data from the NVS server so that even when using the library offline, you have access to all tables, values and mappings described above. **Argopy** will automatically detect if it has to work online directly with the NVS server, or offline with internal static assets.
+
+Note that when used offline, data are as they were at the date of the **Argopy** release publication.
+
+To check which implementation you are working one, look at the *private* NVS store instance used by the class:
+
+.. ipython:: python
+    :okwarning:
+
+    from argopy import ArgoReferenceTable
+
+    ArgoReferenceTable('R41')._nvs_store
+
+
+Internal NVS store
+------------------
+
+**Argopy** has implemented it's own utility class to easily access anything from the NVS server: :class:`argopy.stores.NVS`
+
+All :class:`ArgoReferenceValue`, :class:`ArgoReferenceTable` and :class:`ArgoReferenceMapping` rely on such internal store.
+
+For your own use, you can have access to this store like this:
+
+.. ipython:: python
+    :okwarning:
+
+    from argopy.stores import NVS
+
+    nvs = NVS(cache=True)
+
+With the online implementation, the NVS instance is created using some **Argopy** global options:
+
+- ``nvs``: the url of the server,
+- ``cache``: use cache or not,
+- ``cachedir``: where to put cached files,
+- ``api_timeout``: http request time out in seconds.
+
+.. important::
+
+    This class has a singleton design, i.e. only one instance creation is done and will be return on all subsequent instantiations.
+
+    This implies that to modify the creation options, they must be defined on the first instanciation in the session, otherwise they will be ignored.
+
+
+Once the store is created, you can load vocabularies, concepts and mappings like this:
+
+.. code-block:: python
+    :caption: Load anything from the NVS server
+
+    # Load vocabularies (tables):
+    nvs.load_vocabulary('R27')
+    nvs.load_vocabulary_collection('R27') # A subset of data to briefly describe a vocabulary
+
+    # Load concepts (values):
+    nvs.load_concept('AANDERAA_OPTODE_3835')
+    nvs.load_concept('1', rtid='R05')  # Need to specify the vocabulary id for a concept seen in more than one
+
+    # Load mappings:
+    nvs.load_mapping('R24', 'R23')
 
 Legacy ``ArgoNVSReferenceTables``
 ---------------------------------

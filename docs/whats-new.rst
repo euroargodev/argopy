@@ -20,7 +20,7 @@ Features and front-end API
     - reference tables: :class:`ArgoReferenceTable`,
     - and mappings: :class:`ArgoReferenceMapping`.
 
-    Check the full documentation page at :ref:`Argo vocabulary and Reference`. (:pr:`575`) by |gmaze|.
+    Check the full documentation page at :ref:`Argo vocabulary and references <argovocabulary>`. (:pr:`575`) by |gmaze|.
 
     Rq: As a consequence, the historical :class:`ArgoNVSReferenceTables` is deprecated. The ``ArgoNVSReferenceTables.tbl('R25')`` method can be replaced with the new :meth:`ArgoReferenceTable.to_dataframe`.
 

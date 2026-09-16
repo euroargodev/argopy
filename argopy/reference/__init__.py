@@ -27,7 +27,7 @@ ArgoReferenceMapping provides direct access to relationships between ArgoReferen
     For developers and internal use only, we still use the NVS jargon in file naming.
 """
 
-# To be deprecated:
+# Deprecated:
 from .reference_tables import ArgoNVSReferenceTables
 
 # New APIs:

@@ -440,6 +440,13 @@
     argopy.ArgoFloat.launchconfig.parameters
     argopy.ArgoFloat.launchconfig.to_dataframe
 
+    argopy.stores.NVS
+    argopy.stores.NVS.load_vocabulary
+    argopy.stores.NVS.load_vocabulary_collection
+    argopy.stores.NVS.load_concept
+    argopy.stores.NVS.load_mapping
+
+
     argopy.reference.concept.ArgoReferenceValue
     argopy.ArgoReferenceValue.from_urn
     argopy.ArgoReferenceValue.from_dict
