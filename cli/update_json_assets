@@ -14,19 +14,12 @@ from fsspec import filesystem
 import urllib
 
 import argopy
-from argopy.reference import ArgoNVSReferenceTables
 from argopy.stores import httpstore, filestore
 from argopy.options import OPTIONS
 from argopy.utils.format import urnparser
 from argopy.stores.nvs.utils import sparql_mapping_request, known_mappings
 
 
-# Locate the static/assets folder of the library:
-ASSETS_FOLDER = Path(os.path.dirname(argopy.__file__)).joinpath("static", "assets")
-
-fs = httpstore(cache=True)
-
-OVER_WRITE = False
 
 def is_argo_table(item):
     # return item["dc:creator"] == "Argo Data Management Team"
@@ -54,16 +47,22 @@ def save_data(file: str, name: str, long_name: str, data: dict):
         root = ASSETS_FOLDER
 
     json_file = root.joinpath(f"{file}.json")
-    if OVER_WRITE:
-        ex = json_file.exists()
+    ex = json_file.exists()
+
+    if ex and OVER_WRITE:
 
         with open(json_file, "w") as f:
             json.dump(data, f, indent=2)
 
-        if ex:
-            print(f"OVERWRITTEN: '{long_name}' in {file}.json")
-        else:
-            print(f"SAVED: '{long_name}' in {file}.json")
+        print(f"OVERWRITTEN: '{long_name}' in {file}.json")
+
+    elif ex:
+        print(f"UNTOUCHED: '{long_name}' in {file}.json")
+
+    else:
+        with open(json_file, "w") as f:
+            json.dump(data, f, indent=2)
+        print(f"SAVED: '{long_name}' in {file}.json")
 
 
 def asset_data_types():
@@ -926,7 +925,9 @@ def asset_offline_nvs_mappings():
 
 
 def main():
-    argopy.clear_cache()
+
+
+    # argopy.clear_cache()
 
     # asset_data_types()
     # asset_dict_institutions()
@@ -947,4 +948,11 @@ def main():
 
 
 if __name__ == "__main__":
+    # Locate the static/assets folder of the library:
+    ASSETS_FOLDER = Path(os.path.dirname(argopy.__file__)).joinpath("static", "assets")
+
+    fs = httpstore(cache=True)
+
+    OVER_WRITE = False
+
     main()

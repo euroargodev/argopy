@@ -301,7 +301,7 @@ class ArgoReferenceValue:
         self.urn = self.nvs["skos:notation"]
         """RFC 8141 compliant uniform resource name for this value"""
 
-        self.parameter = Asset().load("vocabulary:mapping")["data"][
+        self.parameter = Asset().load("vocabulary:description")["data"][
             "Vocabulary2Parameter"
         ][self.reference]
         """Netcdf parameter this value can be used for, eg ``SENSOR_MODEL``"""

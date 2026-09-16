@@ -9,9 +9,6 @@ from argopy.utils.decorators import deprecated
 from argopy.utils.format import urnparser
 
 
-VALID_REF = Asset.load('vocabulary:description')['data']['valid_ref']
-
-
 class NVScollection:
     """ A class to handle any NVS collection table """
 
@@ -227,7 +224,7 @@ class ArgoNVSReferenceTables(NVScollection):
         The class is deprecated. Update your code to use :class:`ArgoReferenceTable` instead.
 
     """
-    valid_ref = VALID_REF.copy()
+    valid_ref = Asset.load('vocabulary:inventory')['data']['valid_ref'].copy()
 
     """List of all available Reference Tables"""
 

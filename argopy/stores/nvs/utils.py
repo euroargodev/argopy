@@ -12,9 +12,6 @@ import pandas as pd
 from argopy.utils.locals import Asset
 from argopy.utils.format import urnparser
 
-Vocabulary2Concept = Asset.load("vocabulary:description")["data"]["Vocabulary2Concept"]
-Vocabulary2Parameter = Asset.load("vocabulary:description")["data"]["Vocabulary2Parameter"]
-
 
 @lru_cache
 def concept2vocabulary(name: str) -> list[str] | None:
@@ -34,6 +31,8 @@ def concept2vocabulary(name: str) -> list[str] | None:
         concept2vocabulary('FLOAT_COASTAL') # ['R22']
 
     """
+    Vocabulary2Concept = Asset.load("vocabulary:description")["data"]["Vocabulary2Concept"]
+
     name = name.strip().upper()
     found: list[str] = []
     for vocabulary in Vocabulary2Concept:
@@ -66,6 +65,8 @@ def check_vocabulary(input: str) -> str | None:
         check_vocabulary('dummy')  # Return: None
 
     """
+    Vocabulary2Parameter = Asset.load("vocabulary:description")["data"]["Vocabulary2Parameter"]
+
     input = input.strip().upper()
     for vocab in Vocabulary2Parameter:
         if input == vocab or input == Vocabulary2Parameter[vocab]:
