@@ -4,6 +4,7 @@ Contributing to argopy
 
 .. contents:: Table of contents:
    :local:
+   :depth: 1
 
 First off, thanks for taking the time to contribute!
 
@@ -360,18 +361,32 @@ Testing With Continuous Integration
 
 .. _contributing.code:
 
-Specific contributions
-======================
+Adding new extensions to **Argopy** facades
+===========================================
 
-.. contents:: Specific contributions
+.. contents::
    :local:
 
 .. _dataset_extensions:
 
-Xarray Dataset extensions
--------------------------
+Extensions for the 'argo' Xarray Dataset accessor
+-------------------------------------------------
 
-[TBD]
+Have a look to existing submodules located under ``argopy/extensions``.
+
+Basically an extension implementation is of the form:
+
+.. code-block:: python
+
+    from argopy.extensions import register_argo_accessor, ArgoAccessorExtension
+
+    @register_argo_accessor("canyon_b")
+    class CanyonB(ArgoAccessorExtension):
+        ...
+
+Here, the class will be accessible as an extension as ``Dataset.argo.canyon_b``.
+
+[TBC]
 
 .. _argofloat_extensions:
 
@@ -389,31 +404,67 @@ ArgoIndex extensions
 
 .. _product_data_fetchers:
 
-Third-party products
-====================
+Distribute third-party products
+===============================
 
-The goal of **Argopy** is to help scientists to access the Argo dataset, through high-level APIs for beginners as well as low-level APIs for users gaining expertise with the dataset.
+The goal of **Argopy** is to help scientists to access the Argo dataset, through high-level APIs for beginners as
+well as low-level APIs for users gaining expertise with the dataset.
 
-The Argo dataset is officially referenced with a DOI, and possibly a DOI for each monthly snapshots. These data are officially distributed by GDAC through http, ftp, s3 and erddap servers. The GDAC servers are the data sources for Argopy.
+The Argo dataset is officially referenced with a DOI, and possibly a DOI for each monthly snapshots. These data are
+officially distributed by GDAC through http, ftp, s3 and erddap servers. The GDAC servers are the data sources for **Argopy** .
 
-Several groups are also developing Argo-based dataset. Such third-party dataset provide opinionated versions of the official Argo dataset (eg: possibly with specific quality controls, vertical interpolation, new variables computation, etc...).
+Several groups are also developing Argo-based dataset. Such third-party dataset provide opinionated versions of the
+official Argo dataset (eg: possibly with specific quality controls, vertical interpolation, new variables computation, etc...).
 
-The Argopy team believes that a *clear distinction* must be done between the Argo official versus opinionated dataset.
-A *clear distinction* is necessary to preserve the Argo Data Management Team work reputation and to not engage the Argo responsibility for scientific results based on non-official third-party dataset. Such a distinction is also necessary to make users aware of the origin of the dataset they work with.
+The **Argopy**  team believes that: **for users, a clear distinction must be made between the Argo official
+versus opinionated dataset**.
 
-The Argopy team also believes that such Argo-based, but opinionated third-party, dataset should also be made available through Argopy APIs. This choice is made to promote science analysis, the inter-comparison of products and FAIR principles.
+A *clear distinction* is necessary to preserve the Argo Data Management Team work reputation and to not engage the Argo
+responsibility for scientific results based on non-official third-party dataset. Such a distinction is also necessary
+to make users aware of the origin of the dataset they work with.
 
-Therefore, the Argopy APIs to be used to provide access to third-party non-official data are:
-- For the :class:`argopy.fetchers.ArgoDataFetcher` API: provide access to a third-party dataset with the `product` argument, which, when specified, will take precedance over the `src` argument to be used only for official data sources.
-- For the :class:`argopy.fetchers.ArgoFloat` API: provide access to a third-party dataset with the `open_product()` method, rather than the `open_dataset()` method to be used only for official data.
+The **Argopy**  team also believes that such Argo-based, but opinionated third-party, dataset should also be made
+available through **Argopy** APIs. This choice is made to promote science analysis, the inter-comparison of products
+and FAIR principles.
+
+Therefore, the **Argopy** APIs to be used to provide access to third-party non-official data are based on specific argument or methods:
+
+- For the :class:`argopy.fetchers.ArgoDataFetcher` API: provide access to a third-party dataset with the **product** argument, which, when specified, will take precedance over the ``src`` argument to be used only for official data sources.
+- For the :class:`argopy.ArgoFloat` API: provide access to a third-party dataset with the **open_product** method, rather than the ``open_dataset()`` and ``open_profile`` methods to be used only for official data.
+
+.. important::
+
+    For third-party products to be made accessible through **Argopy** facades, a couple of requirements are to be met:
+
+    #. The data production procedure and the data content are fully documented in a peer-reviewed document with an online DOI. This may not necessarily be a journal article. What is expected is that the product has already received positive feedbacks from the community and/or ADMT.
+
+    #. The submodule has to be fully tested to ensure reliability under all the OS **Argopy** supports.
+
+    #. A contact person must be mentioned within the submodule.
+
+    #. Ressources must be attributed to the maintenance of the submodule for a reasonable minimal period of 2 years. If CI tests start to fail and no maintenance is provided: the product will follow the regular deprecation cycle (see below).
+
+
+Deprecation cycle:
+
+- If CI tests are failed for vX.Y.Z release, product is marked as deprecated since version = vX.Y.Z, CI tests are marked x-failed from now on.
+- On next release, if code is marked as deprecated since version = vX.(Y-1).Z : do nothing (2nd and last version with deprecation warning)
+- On next release, if code is marked as deprecated since version = vX.(Y-2).Z : delete code (code will raise an error)
 
 .. _argofloat_product:
 
 From the ArgoFloat class
 ------------------------
 
-Along the :meth:`ArgoFloat.open_dataset`, :meth:`ArgoFloat.open_profile` and :meth:`ArgoFloat.open_profiles` for
-official Argo data, third-parties can make specific product available with the :meth:`ArgoFloat.open_product` method.
+This section is for those who which to make a third-product accessible through the :class:`argopy.ArgoFloat` store.
+
+Official Argo data are accessible through:
+
+- :meth:`argopy.ArgoFloat.open_dataset`,
+- :meth:`argopy.ArgoFloat.open_profile`,
+- and :meth:`argopy.ArgoFloat.open_profiles`.
+
+For third-party product use: :meth:`argopy.ArgoFloat.open_product`.
 
 This method receives the name of the product as a primary argument and is responsible for dispatching the request to a specific sub-module located under ``argopy/stores/float/products/``.
 
@@ -421,7 +472,7 @@ Contributors should also update the list of valid products used by the checker.
 
 The return data can be anything, since this depends on the product.
 
-Contributors will keep in mind to use our internal ftp, http and s3 stores if necessary.
+Contributors will keep in mind to use our internal :class:`argopy.stores.ftpstore`, :class:`argopy.stores.httpstore` and :class:`argopy.stores.s3store` stores if necessary, or possibly the private :class:`argopy.ArgoFloat.fs` and :class:`argopy.ArgoFloat.idx` instances.
 
 
 .. _data_fetchers:
@@ -429,7 +480,7 @@ Contributors will keep in mind to use our internal ftp, http and s3 stores if ne
 From the DataFetcher class
 --------------------------
 
-This section for those who which to make a third-product accessible through the :class:`DataFetcher` facade.
+This section is for those who which to make a third-product accessible through the :class:`DataFetcher` facade.
 
 Introduction
 ^^^^^^^^^^^^
