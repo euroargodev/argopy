@@ -144,7 +144,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 \
+          python ci/resource_summary.py pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 \
             --report-log output-${{ matrix.python-version }}-log.jsonl
 
       - name: Print Resource summary
@@ -313,7 +313,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 \
+          python ci/resource_summary.py pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 \
             --report-log output-${{ matrix.python-version }}-log.jsonl
 
       - name: Resource summary
