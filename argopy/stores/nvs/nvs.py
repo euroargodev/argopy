@@ -30,7 +30,6 @@ class NVS(Implementation):
         nvs.load_concept('AANDERAA_OPTODE_3835')
         nvs.load_concept('1', rtid='R05')  # Need to specify the vocabulary for a concept seen in more than one
 
-        nvs.vocabulary  # Return the list of available vocabulary identifier
 
     Notes
     -----

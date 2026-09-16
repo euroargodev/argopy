@@ -115,7 +115,7 @@ class NVS(NVSProto):
         if rtid is None:
             reftable = concept2vocabulary(conceptid)
             if reftable is None:
-                raise ValueError("Invalid Concept")
+                raise ValueError("Invalid or Unknown Concept, you may need to specify the vocabulary of this concept with the 'rtid' argument.")
             if len(reftable) > 1:
                 raise ValueError(
                     f"This Concept appears in more than one Vocabulary: {reftable}. You must specified with the 'rtid' argument which one to use."
