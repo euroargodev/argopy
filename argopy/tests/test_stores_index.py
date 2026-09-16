@@ -47,6 +47,9 @@ VALID_HOSTS = [
     "MOCKFTP",  # keyword to use a fake/mocked ftp server (running on localhost)
 ]
 
+if has_pyarrow:
+    import pyarrow as pa
+
 if has_s3:
     # todo Create a mocked server for s3 tests
     VALID_HOSTS.append("s3://argo-gdac-sandbox/pub/idx")
@@ -205,6 +208,9 @@ class IndexStore_test_proto:
         """setup any state specific to the execution of the given class"""
         # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
         self.cachedir = create_temp_folder().folder
+        if has_pyarrow:
+            log.warning(pa.cpu_count())
+            log.warning(pa.io_thread_count())
 
     def teardown_class(self):
         """Cleanup once we are finished."""

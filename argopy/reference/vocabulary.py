@@ -373,9 +373,9 @@ class ArgoReferenceTable:
                 filters.append(
                     df[key].str.contains(str(kwargs[key]), regex=True, case=False)
                 )
-            elif df[key].dtype == "datetime64[ns]":
+            elif str(df[key].dtype).startswith("datetime64"):
                 raise OptionValueError(
-                    "No search method implemented for a datetime ArgoReferenceValue attribute"
+                    "No search method implemented for a datetime64 ArgoReferenceValue attribute"
                 )
             elif df[key].dtype == "bool":
                 filters.append(df[key] == kwargs[key])

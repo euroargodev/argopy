@@ -97,7 +97,7 @@ class Test_Backend:
     #############
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
-        self.client = Client(processes=True)
+        self.client = Client(processes=False)
         log.debug("Dask dashboard: %s" % self.client.dashboard_link)
 
     def _test2fetcherargs(self, this_request):
