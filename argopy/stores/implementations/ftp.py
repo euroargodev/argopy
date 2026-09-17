@@ -8,6 +8,7 @@ import fsspec
 import warnings
 from typing import Literal
 from netCDF4 import Dataset
+import threading
 
 from ...errors import InvalidMethod, DataNotFound
 from ...utils.transformers import drop_variables_not_in_all_datasets
@@ -17,6 +18,8 @@ from .http import httpstore
 
 
 log = logging.getLogger("argopy.stores.implementation.ftp")
+
+_cache_lock = threading.Lock()
 
 
 class ftpstore(httpstore):
@@ -110,7 +113,8 @@ class ftpstore(httpstore):
 
             try:
                 this_url = self.fs._strip_protocol(url)
-                data = self.fs.cat_file(this_url)
+                with _cache_lock:
+                    data = self.fs.cat_file(this_url)
                 if data is None:
                     if errors == "raise":
                         raise DataNotFound(url)

@@ -17,6 +17,7 @@ import io
 from functools import lru_cache
 from netCDF4 import Dataset
 from urllib.parse import urlparse
+import threading
 
 from ...errors import InvalidMethod, DataNotFound
 from ...utils import Registry, UriCName
@@ -32,6 +33,8 @@ from ..filesystems import tqdm
 
 
 log = logging.getLogger("argopy.stores.implementation.http")
+
+_cache_lock = threading.Lock()
 
 
 class httpstore(ArgoStoreProto):
@@ -118,7 +121,8 @@ class httpstore(ArgoStoreProto):
             data = None
             if n_attempt <= max_attempt:
                 try:
-                    data = ffs.cat_file(url, **cat_opts)
+                    with _cache_lock:
+                        data = ffs.cat_file(url, **cat_opts)
                 except FileNotFoundError as e:
                     if errors == "raise":
                         raise e
@@ -905,9 +909,10 @@ class httpstore(ArgoStoreProto):
 
         """
         url = self.curateurl(url)
-        # log.debug("Opening/reading csv from: %s" % url)
-        with self.open(url) as of:
-            df = pd.read_csv(of, **kwargs)
+
+        with _cache_lock:
+            with self.open(url) as of:
+                df = pd.read_csv(of, **kwargs)
 
         self.register(url)
         return df

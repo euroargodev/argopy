@@ -276,10 +276,10 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
             and not self.parallelize
             and self.parallel_method == "sequential"
         ):
-            warnings.warn(
-                "Found more than 50 files to load, this may take a while to process sequentially ! "
-                "Consider using another data source (eg: 'erddap') or the 'parallel=True' option to improve processing time."
-            )
+            msg = "Found more than 50 files to load, this may take a while to process sequentially ! Consider using another data source (eg: 'erddap') or the 'parallel=True' option to improve processing time."
+            warnings.warn(msg)
+            log.info(msg)
+
         elif len(URI) == 0:
             raise DataNotFound("No data found for: %s" % self.indexfs.cname)
 

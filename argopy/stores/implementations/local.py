@@ -11,6 +11,7 @@ import fsspec
 from pathlib import Path
 import warnings
 from netCDF4 import Dataset
+import threading
 
 from ...options import OPTIONS
 from ...errors import InvalidMethod, DataNotFound
@@ -19,7 +20,10 @@ from ..spec import ArgoStoreProto
 from ..filesystems import has_distributed, distributed
 from ..filesystems import tqdm
 
+
 log = logging.getLogger("argopy.stores.implementation.local")
+
+_cache_lock = threading.Lock()
 
 
 class filestore(ArgoStoreProto):
@@ -71,8 +75,9 @@ class filestore(ArgoStoreProto):
         if "js_opts" in kwargs:
             js_opts.update(kwargs["js_opts"])
 
-        with self.open(url, **open_opts) as of:
-            js = json.load(of, **js_opts)
+        with _cache_lock:
+            with self.open(url, **open_opts) as of:
+                js = json.load(of, **js_opts)
 
         if len(js) == 0:
             if errors == "raise":
@@ -121,7 +126,8 @@ class filestore(ArgoStoreProto):
             tuple: (data, _) or (None, _) if errors == "ignore"
             """
             try:
-                data = self.fs.cat_file(path)
+                with _cache_lock:
+                    data = self.fs.cat_file(path)
 
                 if data[0:3] != b"CDF" and data[0:3] != b"\x89HD":
                     raise TypeError(
@@ -426,6 +432,7 @@ class filestore(ArgoStoreProto):
         :class:`pandas.DataFrame`
         """
         log.debug("Reading csv: %s" % path)
-        with self.open(path) as of:
-            df = pd.read_csv(of, **kwargs)
+        with _cache_lock:
+            with self.open(path) as of:
+                df = pd.read_csv(of, **kwargs)
         return df

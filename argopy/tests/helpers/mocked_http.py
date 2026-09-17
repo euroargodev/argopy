@@ -29,7 +29,7 @@ import contextlib
 from pathlib import Path
 import threading
 from collections import ChainMap
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import pytest
 import logging
 from urllib.parse import unquote
@@ -47,21 +47,21 @@ LOG_SERVER_CONTENT = (
 import socket
 
 
-def _free_port() -> int:
-    """Return a free port number on localhost.
-
-    bind("127.0.0.1", 0) asks the OS to assign a free port, which we read back
-    with getsockname"""
-    s = socket.socket()
-    s.bind(("127.0.0.1", 0))
-    p = s.getsockname()[1]
-    s.close()
-    return p
-
-
-port = _free_port()
-mocked_server_address = "http://127.0.0.1:%i" % port
-
+# def _free_port() -> int:
+#     """Return a free port number on localhost.
+#
+#     bind("127.0.0.1", 0) asks the OS to assign a free port, which we read back
+#     with getsockname"""
+#     s = socket.socket()
+#     s.bind(("127.0.0.1", 0))
+#     p = s.getsockname()[1]
+#     s.close()
+#     return p
+#
+#
+# port = _free_port()
+# mocked_server_address = "http://127.0.0.1:%i" % port
+mocked_server_address = "?"
 
 """
 Load test data and create a dictionary mapping of URL requests as keys, and expected responses as values
@@ -174,22 +174,23 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
     def _respond(self, code=200, headers=None, data=b""):
         headers = headers or {}
         headers.update({"User-Agent": "Mocked http server for unit tests"})
-        self.send_response(code)
-        for k, v in headers.items():
-            self.send_header(k, str(v))
-        self.end_headers()
-        if data:
-            if not isinstance(data, (bytes, bytearray)):
-                data = _read(data)
-            try:
+        try:
+            self.send_response(code)
+            for k, v in headers.items():
+                self.send_header(k, str(v))
+            self.end_headers()
+            if data:
+                if not isinstance(data, (bytes, bytearray)):
+                    data = _read(data)
                 self.wfile.write(data)
-            except socket.error as e:
-                # socket error [Errno 32] Broken pipe
-                # This might be happening when a client program doesn't wait till all the data from the server is
-                # received and simply closes a socket
-                if "32" not in str(e):
-                    log.debug("socket error %s" % str(e))
-                pass
+        except (BrokenPipeError, ConnectionResetError, socket.error) as e:
+            # socket error [Errno 32] Broken pipe
+            # This might be happening when a client program doesn't wait till all the data from the server is
+            # received and simply closes a socket
+            log.debug("socket error while responding: %s" % str(e))
+            # if "32" not in str(e):
+            #     log.debug("socket error %s" % str(e))
+            # pass
 
     def log_message(self, format, *args):
         # Quiet logging !
@@ -301,8 +302,13 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
 
 @contextlib.contextmanager
 def serve_mocked_httpserver():
-    server_address = ("", port)
-    httpd = HTTPServer(server_address, HTTPTestHandler)
+    # server_address = ("", port) # port could have been taken between the call to _free_port() and reaching here.
+    # httpd = HTTPServer(server_address, HTTPTestHandler)
+
+    httpd = ThreadingHTTPServer(("127.0.0.1", 0), HTTPTestHandler)
+    port = httpd.server_address[1]
+    mocked_server_address = "http://127.0.0.1:%i" % port
+
     th = threading.Thread(target=httpd.serve_forever)
     th.daemon = True
     th.start()
