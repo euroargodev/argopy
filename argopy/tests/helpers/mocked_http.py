@@ -44,8 +44,6 @@ LOG_SERVER_CONTENT = (
     False  # Should we list all files/uris available from the mocked server in the log ?
 )
 
-mocked_server_address = None
-
 """
 Load test data and create a dictionary mapping of URL requests as keys, and expected responses as values
 
