@@ -9,7 +9,7 @@ from argopy import DataFetcher
 from collections import ChainMap
 import xarray as xr
 
-from mocked_http import mocked_server_address, mocked_httpserver
+from mocked_http import mocked_httpserver
 from utils import (
     requires_argovis,
     requires_erddap,
@@ -95,6 +95,10 @@ class Test_Backend:
     #############
     # UTILITIES #
     #############
+    @pytest.fixture(autouse=True)
+    def _setup(self, mocked_httpserver):
+        self.mocked_server_address = mocked_httpserver
+
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
         self.client = Client(processes=False)
@@ -108,8 +112,8 @@ class Test_Backend:
             "chunks_maxsize": {"lon": 2.5, "lat": 2.5},
         }
         if USE_MOCKED_SERVER:
-            defaults_args["server"] = mocked_server_address
-            defaults_args["gdac"] = mocked_server_address
+            defaults_args["server"] = self.mocked_server_address
+            defaults_args["gdac"] = self.mocked_server_address
 
         src = this_request.param["src"]
         dataset = this_request.param["ds"]

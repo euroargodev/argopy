@@ -29,7 +29,6 @@ from argopy.tests.helpers.utils import (
 )
 
 from mocked_http import mocked_httpserver
-from mocked_http import mocked_server_address as MOCKHTTP
 
 
 if has_matplotlib:
@@ -112,7 +111,7 @@ class Test_Facade:
                              ids=ids_params)
     def test_to_index(self, params, mocked_httpserver):
         full, coriolis_id = params
-        with argopy.set_options(server=MOCKHTTP):
+        with argopy.set_options(server=mocked_httpserver):
             assert isinstance(self.__get_fetcher()[1].to_index(full=full, coriolis_id=coriolis_id), pd.core.frame.DataFrame)
 
     def test_load(self):
@@ -174,7 +173,7 @@ class Test_Facade:
         fetcher.domain
 
     def test_dashboard(self, mocked_httpserver):
-        with argopy.set_options(server=MOCKHTTP):
+        with argopy.set_options(server=mocked_httpserver):
             f, fetcher = self.__get_fetcher(pt='float')
             assert isinstance(fetcher.dashboard(url_only=True), str)
 

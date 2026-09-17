@@ -40,7 +40,7 @@ from argopy.utils.checkers import (
     isAPIconnected,
 )
 from argopy.options import OPTIONS
-from mocked_http import mocked_server_address, serve_mocked_httpserver
+from mocked_http import serve_mocked_httpserver
 
 
 log = logging.getLogger("argopy.tests.utils")
@@ -92,7 +92,8 @@ has_erddap, requires_erddap = _connectskip(
 
 if CONNECTED:
     log.debug("Checking which Erddap dataset are available (eg: core, bgc, ref, index)")
-    with serve_mocked_httpserver() as s:  # Use the mocked http server
+    with serve_mocked_httpserver() as mocked_server_address:  # Use the mocked http server
+        # log.info(f"Use http server for the erddap: {mocked_server_address}")
         with set_options(erddap=mocked_server_address):
             res = erddap_ds_exists(["ArgoFloats", "ArgoFloats-synthetic-BGC", "ArgoFloats-reference", "ArgoFloats-index"])
             DSEXISTS = res[0]

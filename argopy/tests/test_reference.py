@@ -7,7 +7,7 @@ import tempfile
 import logging
 from collections.abc import Iterable
 
-from mocked_http import mocked_httpserver, mocked_server_address
+from mocked_http import mocked_httpserver
 from utils import (
     create_temp_folder,
 )
@@ -24,13 +24,16 @@ log = logging.getLogger("argopy.tests.related.reference")
 
 @pytest.mark.skip("Deprecated, out of the CI tests suite")
 class Test_ArgoNVSReferenceTables_Deprecated:
+    @pytest.fixture(autouse=True)
+    def _setup(self, mocked_httpserver):
+        self.mocked_server_address = mocked_httpserver
 
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
         # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
         self.cachedir = create_temp_folder().folder
         self.nvs = ArgoNVSReferenceTables(
-            cache=True, cachedir=self.cachedir, nvs=mocked_server_address
+            cache=True, cachedir=self.cachedir, nvs=self.mocked_server_address
         )
 
     def teardown_class(self):
