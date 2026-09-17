@@ -24,6 +24,7 @@ from ..filesystems import tqdm
 log = logging.getLogger("argopy.stores.implementation.local")
 
 _cache_lock = threading.Lock()
+# Used to lock threads to prevent race to the cached meda-data of fsspec
 
 
 class filestore(ArgoStoreProto):
