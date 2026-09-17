@@ -6,13 +6,12 @@ import logging
 
 import argopy
 from argopy.errors import InvalidDashboard
-from utils import (
-    requires_connection,
+from argopy.tests.helpers.utils import (
     requires_ipython,
     has_ipython,
     create_temp_folder,
 )
-from mocked_http import mocked_httpserver
+from argopy.tests.helpers.mocked_http import mocked_httpserver
 
 if has_ipython:
     import IPython

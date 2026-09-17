@@ -19,9 +19,8 @@ from argopy.errors import (
 from argopy.utils.checkers import is_list_of_strings, is_wmo
 from argopy.stores.index import indexstore_pd
 from argopy.stores import ArgoFloat
-from utils import create_temp_folder, has_s3
-from mocked_http import mocked_httpserver, mocked_server_address
-from utils import patch_ftp
+from argopy.tests.helpers.utils import create_temp_folder, has_s3, patch_ftp
+from argopy.tests.helpers.mocked_http import mocked_httpserver
 
 
 log = logging.getLogger("argopy.tests.indexstores")
@@ -43,7 +42,7 @@ Since the fetcher is compatible with host from local, http, ftp or s3 protocols,
 """
 VALID_HOSTS = [
     argopy.tutorial.open_dataset("gdac")[0],  # Use local files
-    mocked_server_address,  # Use the mocked http server
+    "MOCKHTTP",  # Use the mocked http server
     "MOCKFTP",  # keyword to use a fake/mocked ftp server (running on localhost)
 ]
 
@@ -164,7 +163,7 @@ def ftp_shortname(ftp):
     """Get a short name for scenarios IDs, given a FTP host"""
     if ftp == "MOCKFTP":
         return "ftp_mocked"
-    elif "localhost" in ftp or "127.0.0.1" in ftp:
+    elif ftp == "MOCKHTTP":
         return "http_mocked"
     else:
         return (lambda x: "file" if x == "" else x)(urlparse(ftp).scheme)
@@ -203,6 +202,9 @@ class IndexStore_test_proto:
     #############
     # UTILITIES #
     #############
+    @pytest.fixture(autouse=True)
+    def _setup(self, mocked_httpserver):
+        self.mocked_server_address = mocked_httpserver
 
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
@@ -220,8 +222,12 @@ class IndexStore_test_proto:
 
         remove_test_dir()
 
-    def _patch_ftp(self, ftp):
-        return patch_ftp(ftp)
+    def _patch_gdac(self, gdac):
+        if gdac == 'MOCKFTP':
+            return patch_ftp(gdac)
+        elif gdac == 'MOCKHTTP':
+            return self.mocked_server_address
+        return gdac
 
     def create_store(self, store_args, xfail=False, reason="?"):
         def core(fargs):
@@ -253,7 +259,7 @@ class IndexStore_test_proto:
             None if "tutorial" in host or "MOCK" in host else 100
         )  # Make sure we're not going to load the full index
         fetcher_args = {
-            "host": self._patch_ftp(host),
+            "host": self._patch_gdac(host),
             "index_file": index_file,
             "cache": False,
             "convention": convention,

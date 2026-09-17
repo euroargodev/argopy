@@ -5,7 +5,7 @@ import argopy
 import xarray
 from argopy.data_fetchers.proto import ArgoDataFetcherProto
 from argopy.utils import to_list
-from mocked_http import mocked_httpserver
+from argopy.tests.helpers.mocked_http import mocked_httpserver
 
 log = logging.getLogger("argopy.tests.fetchers.proto")
 

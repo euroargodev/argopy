@@ -4,8 +4,8 @@ import platform
 import argopy
 from argopy.options import OPTIONS
 from argopy.errors import OptionValueError, GdacPathError, ErddapPathError
-from utils import requires_gdac, create_read_only_folder
-from mocked_http import mocked_httpserver
+from argopy.tests.helpers.utils import requires_gdac, create_read_only_folder
+from argopy.tests.helpers.mocked_http import mocked_httpserver
 import logging
 
 

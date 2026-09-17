@@ -9,8 +9,8 @@ from argopy import DataFetcher
 from collections import ChainMap
 import xarray as xr
 
-from mocked_http import mocked_httpserver
-from utils import (
+from argopy.tests.helpers.mocked_http import mocked_httpserver
+from argopy.tests.helpers.utils import (
     requires_argovis,
     requires_erddap,
     requires_gdac,

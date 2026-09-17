@@ -7,11 +7,11 @@ from argopy.stores.index import indexstore_pd as ArgoIndex  # make sure to work 
 
 import pytest
 import xarray as xr
-from utils import (
+from argopy.tests.helpers.utils import (
     requires_erddap,
     create_temp_folder,
 )
-from mocked_http import mocked_httpserver
+from argopy.tests.helpers.mocked_http import mocked_httpserver
 
 import shutil
 from collections import ChainMap

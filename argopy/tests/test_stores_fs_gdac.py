@@ -7,8 +7,8 @@ import logging
 
 import argopy
 from argopy.stores import gdacfs
-from mocked_http import mocked_httpserver, mocked_server_address
-from utils import patch_ftp, has_s3
+from argopy.tests.helpers.mocked_http import mocked_httpserver
+from argopy.tests.helpers.utils import patch_ftp, has_s3
 
 
 log = logging.getLogger("argopy.tests.gdacfs")
@@ -22,7 +22,7 @@ Since the GDAC fs is compatible with host from local, http, ftp or s3 protocols,
 """
 VALID_HOSTS = {
     'local': argopy.tutorial.open_dataset("gdac")[0],  # Use local files
-    'http': mocked_server_address,  # Use the mocked http server
+    'http': "MOCKHTTP",  # Use the mocked http server
     'ftp': "MOCKFTP",  # keyword to use a fake/mocked ftp server (running on localhost)
 }
 
@@ -33,7 +33,7 @@ def id_for_host(host):
     """Get a short name for scenarios IDs, given a FTP host"""
     if host == "MOCKFTP":
         return "ftp_mocked"
-    elif "localhost" in host or "127.0.0.1" in host:
+    elif host == "MOCKHTTP":
         return "http_mocked"
     else:
         return (lambda x: "local" if x == "" else x)(urlparse(host).scheme)
@@ -49,6 +49,9 @@ class Test_Gdacfs:
     #############
     # UTILITIES #
     #############
+    @pytest.fixture(autouse=True)
+    def _setup(self, mocked_httpserver):
+        self.mocked_server_address = mocked_httpserver
 
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
@@ -62,9 +65,12 @@ class Test_Gdacfs:
 
         remove_test_dir()
 
-    def _patch_ftp(self, ftp):
-        log.debug(ftp)
-        return patch_ftp(ftp)
+    def patch_gdac(self, gdac):
+        if gdac == 'MOCKFTP':
+            return patch_ftp(gdac)
+        elif gdac == 'MOCKHTTP':
+            return self.mocked_server_address
+        return gdac
 
     def call_gdacfs(self, host, xfail=False, reason="?"):
         def core(host):
@@ -85,8 +91,8 @@ class Test_Gdacfs:
     @pytest.fixture
     def store_maker(self, request):
         """Fixture to create a GDAC store instance for a given host"""
-        host = self._patch_ftp(VALID_HOSTS[request.param[0]])
-        log.debug(host)
+        host = self.patch_gdac(VALID_HOSTS[request.param[0]])
+        # log.debug(host)
         # cache = request.param[1]
 
         xfail, reason = False, ""
@@ -107,5 +113,5 @@ class Test_Gdacfs:
     @pytest.mark.parametrize(
         "store_maker", scenarios, indirect=True, ids=scenarios_ids
     )
-    def test_implementation(self, mocked_httpserver, store_maker):
+    def test_implementation(self, store_maker):
         self.assert_fs(store_maker)

@@ -4,9 +4,9 @@ import pandas as pd
 from collections import ChainMap
 import shutil
 
-from mocked_http import mocked_httpserver
+from argopy.tests.helpers.mocked_http import mocked_httpserver
 
-from utils import (
+from argopy.tests.helpers.utils import (
     requires_matplotlib,
     requires_cartopy,
     requires_oops,

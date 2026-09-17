@@ -10,9 +10,8 @@ from typing import Callable
 import pickle
 
 import argopy
-from utils import (
+from argopy.tests.helpers.utils import (
     requires_gdac,
-    requires_connection,
     requires_matplotlib,
     requires_ipython,
     requires_cartopy,
@@ -33,7 +32,7 @@ from argopy.plot.plot import (
 from argopy.plot.argo_colors import ArgoColors
 from argopy.errors import InvalidDatasetStructure
 from argopy import DataFetcher
-from mocked_http import mocked_httpserver
+from argopy.tests.helpers.mocked_http import mocked_httpserver
 
 
 if has_matplotlib:

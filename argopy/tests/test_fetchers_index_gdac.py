@@ -10,8 +10,8 @@ from argopy import IndexFetcher as ArgoIndexFetcher
 from argopy.errors import CacheFileNotFound, FileSystemHasNoCache, GdacPathError
 from argopy.utils.checkers import isconnected, is_list_of_strings
 
-from utils import requires_gdac, create_temp_folder, patch_ftp
-from mocked_http import mocked_httpserver
+from argopy.tests.helpers.utils import requires_gdac, create_temp_folder, patch_ftp
+from argopy.tests.helpers.mocked_http import mocked_httpserver
 
 
 log = logging.getLogger("argopy.tests.index.gdac")

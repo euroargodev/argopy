@@ -28,7 +28,7 @@ from argopy.tests.helpers.utils import (
 
 )
 
-from mocked_http import mocked_httpserver
+from argopy.tests.helpers.mocked_http import mocked_httpserver
 
 
 if has_matplotlib:

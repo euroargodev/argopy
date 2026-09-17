@@ -20,8 +20,8 @@ from argopy.errors import (
     CacheFileNotFound,
 )
 from argopy.utils.checkers import is_list_of_strings, check_gdac_path
-from utils import requires_gdac, create_temp_folder, patch_ftp, has_s3
-from mocked_http import mocked_httpserver
+from argopy.tests.helpers.utils import requires_gdac, create_temp_folder, patch_ftp, has_s3
+from argopy.tests.helpers.mocked_http import mocked_httpserver
 
 
 log = logging.getLogger("argopy.tests.data.gdac")

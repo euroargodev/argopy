@@ -20,7 +20,7 @@ from argopy.stores.float.implementations.online.float import (
     FloatStore as ArgoFloatOnline,
 )
 
-from argopy.tests.helpers.mocked_http import mocked_httpserver, mocked_server_address
+from argopy.tests.helpers.mocked_http import mocked_httpserver
 from argopy.tests.helpers.utils import patch_ftp, has_connection, has_s3
 
 log = logging.getLogger("argopy.tests.floatstore")
@@ -40,7 +40,7 @@ VALID_LOCAL_HOSTS = {
     "local": argopy.tutorial.open_dataset("gdac")[0],  # Use local files
 }
 VALID_REMOTE_HOSTS = {
-    "http1": mocked_server_address,  # Use the mocked http server
+    "http1": "MOCKHTTP",  # Use the mocked http server
     # 'http2': 'https://data-argo.ifremer.fr',
     "ftp": "MOCKFTP",  # keyword to use a fake/mocked ftp server (running on localhost)
 }
@@ -63,7 +63,7 @@ def id_for_host(host):
     """Get a short name for GDAC host to populate scenarios IDs"""
     if host == "MOCKFTP":
         return "ftp_mocked"
-    elif "localhost" in host or "127.0.0.1" in host:
+    elif host == "MOCKHTTP":
         return "http_mocked"
     else:
         return (lambda x: "local" if x == "" else x)(urlparse(host).scheme)
@@ -98,6 +98,9 @@ class Test_FloatStore_Offline:
     #############
     # UTILITIES #
     #############
+    @pytest.fixture(autouse=True)
+    def _setup(self, mocked_httpserver):
+        self.mocked_server_address = mocked_httpserver
 
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
@@ -111,13 +114,20 @@ class Test_FloatStore_Offline:
 
         remove_test_dir()
 
+    def patch_host(self, gdac):
+        if gdac == 'MOCKFTP':
+            return patch_ftp(gdac)
+        elif gdac == 'MOCKHTTP':
+            return self.mocked_server_address
+        return gdac
+
     @pytest.fixture
     def af(self, request) -> Generator[ArgoFloatOffline, Any, None]:
         """Fixture to create a Float store instance for a given wmo and host"""
         log.debug("-" * 50)
         # log.debug(request)
         wmo = request.param[0]
-        host = patch_ftp(VALID_LOCAL_HOSTS[request.param[1]])
+        host = self.patch_host(VALID_LOCAL_HOSTS[request.param[1]])
         cache = request.param[2]
 
         xfail, reason = False, ""
@@ -144,9 +154,9 @@ class Test_FloatStore_Offline:
     # TESTS #
     #########
 
-    def test_remotehost(self, mocked_httpserver):
+    def test_remotehost(self):
         with pytest.raises(OptionValueError):
-            self.floatstore(VALID_WMO[0], host=mocked_server_address)
+            self.floatstore(VALID_WMO[0], host=self.mocked_server_address)
 
     @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
     def test_load_metadata(self, af):
@@ -188,6 +198,10 @@ class Test_FloatStore_Online:
     #############
     # UTILITIES #
     #############
+    @pytest.fixture(autouse=True)
+    def _setup(self, mocked_httpserver):
+        self.mocked_server_address = mocked_httpserver
+
 
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
@@ -201,13 +215,20 @@ class Test_FloatStore_Online:
 
         remove_test_dir()
 
-    def _patch_host(self, host):
+    def patch_gdac(self, gdac):
+        if gdac == 'MOCKFTP':
+            return patch_ftp(gdac)
+        elif gdac == 'MOCKHTTP':
+            return self.mocked_server_address
+        return gdac
+
+    def patch_host(self, host):
         if "s3" in host and not has_connection:
             log.info("Skip this test with 's3' because there is no internet connection")
             pytest.skip(
                 "Skip this test with 's3' because there is no internet connection"
             )
-        return patch_ftp(host)
+        return self.patch_gdac(host)
 
     @pytest.fixture
     def af(self, request) -> Generator[ArgoFloatOnline, Any, None]:
@@ -215,7 +236,7 @@ class Test_FloatStore_Online:
         log.debug("-" * 50)
         # log.debug(request)
         wmo = request.param[0]
-        host = self._patch_host(VALID_REMOTE_HOSTS[request.param[1]])
+        host = self.patch_host(VALID_REMOTE_HOSTS[request.param[1]])
         cache = request.param[2]
 
         xfail, reason = False, ""
@@ -224,7 +245,7 @@ class Test_FloatStore_Online:
 
         store_args = {
             "host": host,
-            "eafleetmonitoring_server": mocked_server_address,
+            "eafleetmonitoring_server": self.mocked_server_address,
             # also use mocked server for Euro-Argo meta data API calls
         }
         if cache:
@@ -326,9 +347,13 @@ class Test_FloatStore_Spec:
         )
         for opts in scenarios_core
     ]
+
     #############
     # UTILITIES #
     #############
+    @pytest.fixture(autouse=True)
+    def _setup(self, mocked_httpserver):
+        self.mocked_server_address = mocked_httpserver
 
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
@@ -342,19 +367,26 @@ class Test_FloatStore_Spec:
 
         remove_test_dir()
 
-    def _patch_host(self, host):
+    def patch_gdac(self, gdac):
+        if gdac == 'MOCKFTP':
+            return patch_ftp(gdac)
+        elif gdac == 'MOCKHTTP':
+            return self.mocked_server_address
+        return gdac
+
+    def patch_host(self, host):
         if "s3" in host and not has_connection:
             log.info("Skip this test with 's3' because there is no internet connection")
             pytest.skip(
                 "Skip this test with 's3' because there is no internet connection"
             )
-        return patch_ftp(host)
+        return self.patch_gdac(host)
 
     @pytest.fixture
     def af(self, request) -> Generator[ArgoFloatOnline, Any, None]:
         """Fixture to create a Float store instance for a given wmo and host"""
         wmo = request.param[0]
-        host = self._patch_host(VALID_HOSTS[request.param[1]])
+        host = self.patch_host(VALID_HOSTS[request.param[1]])
         cache = request.param[2]
 
         xfail, reason = False, ""
@@ -368,7 +400,7 @@ class Test_FloatStore_Spec:
             floatstore = ArgoFloatOnline
             store_args = {
                 "host": host,
-                "eafleetmonitoring_server": mocked_server_address,
+                "eafleetmonitoring_server": self.mocked_server_address,
                 # also use mocked server for Euro-Argo meta data API calls
             }
 
@@ -393,7 +425,7 @@ class Test_FloatStore_Spec:
     # TESTS #
     #########
     @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
-    def test_attributes(self, mocked_httpserver, af):
+    def test_attributes(self, af):
         assert is_wmo(af.WMO)
 
         assert hasattr(af, "dac")
@@ -410,7 +442,7 @@ class Test_FloatStore_Spec:
         assert isinstance(af.host_protocol, str)
 
     @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
-    def test_list_directories(self, mocked_httpserver, af):
+    def test_list_directories(self, af):
 
         assert isinstance(af.ls_datasets(), dict)
         assert is_list_of_strings(af._ls())
@@ -421,7 +453,7 @@ class Test_FloatStore_Spec:
         assert isinstance(af.profiles_to_dataframe(), pd.DataFrame)
 
     @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
-    def test_open_dataset(self, mocked_httpserver, af):
+    def test_open_dataset(self, af):
         lds = af.ls_datasets()
         ds_key, _ = random.choice(list(lds.items()))
         assert isinstance(af[ds_key], xr.Dataset)
@@ -432,7 +464,7 @@ class Test_FloatStore_Spec:
             af.open_dataset("dummy_ds_key")
 
     @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
-    def test_open_profile(self, mocked_httpserver, af):
+    def test_open_profile(self, af):
         lds = af.ls_profiles()
         ds_key, _ = random.choice(list(lds.items()))
         assert isinstance(af[ds_key], xr.Dataset)
@@ -443,12 +475,12 @@ class Test_FloatStore_Spec:
             af.open_profile("dummy_ds_key")
 
     @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
-    def test_open_profiles(self, mocked_httpserver, af):
+    def test_open_profiles(self, af):
         ds_list = af.open_profiles(af.CYCLE_NUMBERS[1:10])
-        log.debug("^"*10)
-        log.debug(af._ds_profiles.keys())
-        log.debug(af.fs.fs)
-        log.debug("^"*10)
+        # log.debug("^"*10)
+        # log.debug(af._ds_profiles.keys())
+        # log.debug(af.fs.fs)
+        # log.debug("^"*10)
         assert all([isinstance(ds, xr.Dataset) for ds in ds_list])
 
     # @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)

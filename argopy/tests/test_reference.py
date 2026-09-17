@@ -7,8 +7,8 @@ import tempfile
 import logging
 from collections.abc import Iterable
 
-from mocked_http import mocked_httpserver
-from utils import (
+from argopy.tests.helpers.mocked_http import mocked_httpserver
+from argopy.tests.helpers.utils import (
     create_temp_folder,
 )
 from argopy.errors import OptionValueError, NoDataLeft
