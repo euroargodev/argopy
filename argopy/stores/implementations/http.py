@@ -373,7 +373,8 @@ class httpstore(ArgoStoreProto):
             if not netCDF4:
                 ds = xr.open_dataset(target, **xr_opts)
                 if not lazy:
-                    ds = ds.load()
+                    ds = ds.load()  # materialize into plain numpy arrays, detach from the backend buffer
+                    ds.close()  # explicitly release the netCDF4/HDF5 handle right away
 
                 if "source" not in ds.encoding:
                     if isinstance(url, str):
