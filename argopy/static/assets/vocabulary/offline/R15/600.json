@@ -1,7 +1,7 @@
 {
   "name": "600",
   "long_name": "AET",
-  "last_update": "2026-01-25T11:14:25.603653+00:00",
+  "last_update": "2026-09-15T15:05:15.720452+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R15/current/600/",
     "pav:authoredOn": "2021-11-30 09:53:34.0",
@@ -10,6 +10,9 @@
     },
     "dce:identifier": "SDN:R15::600",
     "pav:version": "1",
+    "owl:sameAs": {
+      "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/AET/"
+    },
     "skos:notation": "SDN:R15::600",
     "skos:altLabel": "600",
     "dc:date": "2021-11-30 09:53:34.0",

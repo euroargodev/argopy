@@ -1,40 +1,48 @@
 {
   "name": "CC00075",
   "long_name": "CONFIG_IceDetectionISAMode_NUMBER",
-  "last_update": "2026-01-25T11:15:40.032553+00:00",
+  "last_update": "2026-09-15T15:05:40.349746+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00075/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00075/1/"
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00075/3/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00075/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00075/2/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
+      "@language": "en",
+      "@value": "Never used on the GDAC. Mode of the ISA ice detection algorithm (see float manual for details). E.g: For March 2018 firmware, the values signifiations are: 0 = not used, 1 = algorithm based on temperature median value, 2 = algorithm based on temperature median value and associated salinities. Template_Values:{unit:[NUMBER]}."
     },
-    "pav:authoredOn": "2025-12-12 11:41:04.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00075/2/"
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
     },
-    "dce:identifier": "SDN:R18::CC00075",
-    "pav:version": "2",
-    "skos:notation": "SDN:R18::CC00075",
-    "skos:altLabel": "Core Config 75",
-    "dc:date": "2025-12-12 11:41:04.0",
-    "owl:versionInfo": "2",
+    "owl:deprecated": "true",
+    "skos:note": {
+      "@language": "en",
+      "@value": "deprecated"
+    },
+    "dc:identifier": "SDN:R18::CC00075",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "CONFIG_IceDetectionISAMode_NUMBER"
     },
-    "dc:identifier": "SDN:R18::CC00075",
-    "skos:note": {
-      "@language": "en",
-      "@value": "accepted"
+    "owl:versionInfo": "4",
+    "dc:date": "2026-03-09 09:11:25.0",
+    "skos:altLabel": "Core Config 75",
+    "skos:notation": "SDN:R18::CC00075",
+    "pav:version": "4",
+    "dce:identifier": "SDN:R18::CC00075",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00075/4/"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
-      "@language": "en",
-      "@value": "Mode of the ISA ice detection algorithm (see float manual for details). E.g: For March 2018 firmware, the values signifiations are: 0 = not used, 1 = algorithm based on temperature median value, 2 = algorithm based on temperature median value and associated salinities. Template_Values:{unit:[NUMBER]}."
-    },
-    "@type": "skos:Concept",
+    "pav:authoredOn": "2026-03-09 09:11:25.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

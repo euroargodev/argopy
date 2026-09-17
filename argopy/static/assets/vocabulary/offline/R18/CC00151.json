@@ -1,7 +1,7 @@
 {
   "name": "CC00151",
   "long_name": "CONFIG_PressureCheckTimeParking_minutes",
-  "last_update": "2026-01-25T11:15:57.083392+00:00",
+  "last_update": "2026-09-15T15:05:44.313780+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00151/",
     "pav:hasVersion": {

@@ -1,7 +1,7 @@
 {
   "name": "DOXY",
   "long_name": "Dissolved oxygen",
-  "last_update": "2026-01-25T11:11:35.889031+00:00",
+  "last_update": "2026-09-15T15:04:41.402202+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/DOXY/",
     "pav:hasVersion": [

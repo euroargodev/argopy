@@ -1,7 +1,7 @@
 {
   "name": "CC00191",
   "long_name": "CONFIG_SeeksToParkPeriods_COUNT",
-  "last_update": "2026-01-25T11:15:21.364725+00:00",
+  "last_update": "2026-09-15T15:05:34.832169+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00191/",
     "pav:hasVersion": {

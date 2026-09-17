@@ -1,7 +1,7 @@
 {
   "name": "T000080",
   "long_name": "FLAG_ReceptionStartDateTime_NUMBER",
-  "last_update": "2026-01-25T11:12:54.826012+00:00",
+  "last_update": "2026-09-15T15:04:50.331425+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000080/",
     "pav:hasVersion": {

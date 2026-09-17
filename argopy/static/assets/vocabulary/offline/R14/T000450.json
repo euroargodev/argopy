@@ -1,7 +1,7 @@
 {
   "name": "T000450",
   "long_name": "TIME_ClockDrift_dsec/day",
-  "last_update": "2026-01-25T11:12:51.966432+00:00",
+  "last_update": "2026-09-15T15:04:49.731353+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000450/",
     "pav:hasVersion": {

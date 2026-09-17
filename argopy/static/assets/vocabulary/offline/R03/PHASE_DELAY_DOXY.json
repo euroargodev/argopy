@@ -1,7 +1,7 @@
 {
   "name": "PHASE_DELAY_DOXY",
   "long_name": "Phase delay reported by oxygen sensor",
-  "last_update": "2026-01-25T11:11:28.192271+00:00",
+  "last_update": "2026-09-15T15:04:38.893098+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/PHASE_DELAY_DOXY/",
     "pav:hasVersion": [

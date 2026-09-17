@@ -1,7 +1,7 @@
 {
   "name": "T000494",
   "long_name": "CURRENT_BatteryInitialAtProfileDepth_mA",
-  "last_update": "2026-01-25T11:13:36.211650+00:00",
+  "last_update": "2026-09-15T15:05:03.387635+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000494/",
     "pav:hasVersion": {

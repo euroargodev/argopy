@@ -1,7 +1,7 @@
 {
   "name": "T000262",
   "long_name": "NUMBER_SensorAnomaly_COUNT",
-  "last_update": "2026-01-25T11:13:17.860539+00:00",
+  "last_update": "2026-09-15T15:04:57.158961+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000262/",
     "pav:hasVersion": {

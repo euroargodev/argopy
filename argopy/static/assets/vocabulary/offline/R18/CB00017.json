@@ -1,7 +1,7 @@
 {
   "name": "CB00017",
   "long_name": "CONFIG_CtdMinTransmittedSalinity_mpsu",
-  "last_update": "2026-01-25T11:15:26.155961+00:00",
+  "last_update": "2026-09-15T15:05:36.482016+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00017/",
     "pav:hasVersion": [

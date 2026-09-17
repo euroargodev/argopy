@@ -1,7 +1,7 @@
 {
   "name": "CB00002",
   "long_name": "CONFIG_<short_sensor_name>DepthZone<N>SlicesThickness_dbar",
-  "last_update": "2026-01-25T11:15:52.427019+00:00",
+  "last_update": "2026-09-15T15:05:43.311449+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00002/",
     "pav:hasVersion": [

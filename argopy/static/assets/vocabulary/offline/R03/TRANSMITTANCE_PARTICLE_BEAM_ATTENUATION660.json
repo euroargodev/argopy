@@ -1,7 +1,7 @@
 {
   "name": "TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660",
   "long_name": "Beam attenuation from transmissometer sensor at 660 nanometers",
-  "last_update": "2026-01-25T11:11:33.530963+00:00",
+  "last_update": "2026-09-15T15:04:40.540736+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660/",
     "pav:hasVersion": [

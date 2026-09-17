@@ -1,7 +1,7 @@
 {
   "name": "BBP532",
   "long_name": "Particle backscattering at 532 nanometers",
-  "last_update": "2026-01-25T11:11:31.095604+00:00",
+  "last_update": "2026-09-15T15:04:39.620058+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/BBP532/",
     "pav:hasVersion": [

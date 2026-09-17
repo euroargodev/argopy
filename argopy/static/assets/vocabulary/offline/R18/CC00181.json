@@ -1,40 +1,48 @@
 {
   "name": "CC00181",
   "long_name": "CONFIG_PumpActionIntervalDuringAscent_COUNT",
-  "last_update": "2026-01-25T11:15:48.620899+00:00",
+  "last_update": "2026-09-15T15:05:41.959846+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00181/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00181/1/"
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00181/3/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00181/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00181/1/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
+      "@language": "en",
+      "@value": "Never used on the GDAC. Interval between successive pump activations during ascent. Template_Values:{unit:[COUNT]}."
     },
-    "pav:authoredOn": "2025-12-12 11:41:04.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00181/2/"
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
     },
-    "dce:identifier": "SDN:R18::CC00181",
-    "pav:version": "2",
-    "skos:notation": "SDN:R18::CC00181",
-    "skos:altLabel": "Core Config 181",
-    "dc:date": "2025-12-12 11:41:04.0",
-    "owl:versionInfo": "2",
+    "owl:deprecated": "true",
+    "skos:note": {
+      "@language": "en",
+      "@value": "deprecated"
+    },
+    "dc:identifier": "SDN:R18::CC00181",
     "skos:prefLabel": {
       "@language": "en",
       "@value": "CONFIG_PumpActionIntervalDuringAscent_COUNT"
     },
-    "dc:identifier": "SDN:R18::CC00181",
-    "skos:note": {
-      "@language": "en",
-      "@value": "accepted"
+    "owl:versionInfo": "4",
+    "dc:date": "2026-03-09 09:11:25.0",
+    "skos:altLabel": "Core Config 181",
+    "skos:notation": "SDN:R18::CC00181",
+    "pav:version": "4",
+    "dce:identifier": "SDN:R18::CC00181",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00181/4/"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
-      "@language": "en",
-      "@value": "Interval between successive pump activations during ascent. Template_Values:{unit:[COUNT]}."
-    },
-    "@type": "skos:Concept",
+    "pav:authoredOn": "2026-03-09 09:11:25.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

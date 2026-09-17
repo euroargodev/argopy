@@ -1,7 +1,7 @@
 {
   "name": "CB00028",
   "long_name": "CONFIG_OptodeMaxTransmittedTemperature_mdegC",
-  "last_update": "2026-01-25T11:15:34.533262+00:00",
+  "last_update": "2026-09-15T15:05:38.190556+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00028/",
     "pav:hasVersion": [

@@ -1,7 +1,7 @@
 {
   "name": "842",
   "long_name": "PROVOR float with FSI conductivity sensor",
-  "last_update": "2026-01-25T11:14:21.603823+00:00",
+  "last_update": "2026-09-15T15:05:13.612071+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/842/",
     "pav:authoredOn": "2020-05-03 20:28:54.0",
@@ -29,10 +29,10 @@
     "skos:notation": "SDN:R08::842",
     "skos:broader": [
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_MT/"
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/"
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_MT/"
       }
     ],
     "pav:version": "1",

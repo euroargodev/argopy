@@ -1,7 +1,7 @@
 {
   "name": "T000550",
   "long_name": "FLAG_<short_sensor_name>Status_LOGICAL",
-  "last_update": "2026-01-25T11:12:49.139042+00:00",
+  "last_update": "2026-09-15T15:04:49.042542+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000550/",
     "pav:hasVersion": [

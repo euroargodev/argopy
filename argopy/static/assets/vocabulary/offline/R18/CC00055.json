@@ -1,7 +1,7 @@
 {
   "name": "CC00055",
   "long_name": "CONFIG_GPSAcquisitionEndCycle_LOGICAL",
-  "last_update": "2026-01-25T11:16:03.793444+00:00",
+  "last_update": "2026-09-15T15:05:45.565441+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00055/",
     "pav:hasVersion": {

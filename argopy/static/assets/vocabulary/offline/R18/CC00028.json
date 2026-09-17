@@ -1,7 +1,7 @@
 {
   "name": "CC00028",
   "long_name": "CONFIG_ConnectionTimeOut_seconds",
-  "last_update": "2026-01-25T11:15:20.543927+00:00",
+  "last_update": "2026-09-15T15:05:34.504357+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00028/",
     "pav:hasVersion": {

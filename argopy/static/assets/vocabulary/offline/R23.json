@@ -1,7 +1,7 @@
 {
   "name": "PLATFORM_TYPE",
   "long_name": "Argo platform type",
-  "last_update": "2026-01-25T10:44:08.494653+00:00",
+  "last_update": "2026-09-15T15:04:17.003939+00:00",
   "data": {
     "@graph": [
       {
@@ -73,71 +73,6 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/POPS_NEMO/",
-        "pav:authoredOn": "2020-05-03 20:30:02.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/POPS_NEMO/1/"
-        },
-        "dce:identifier": "SDN:R23::POPS_NEMO",
-        "pav:version": "1",
-        "skos:notation": "SDN:R23::POPS_NEMO",
-        "skos:altLabel": "POPS_NEMO",
-        "dc:date": "2020-05-03 20:30:02.0",
-        "owl:versionInfo": "1",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "POPS with NEMO float"
-        },
-        "dc:identifier": "SDN:R23::POPS_NEMO",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Polar Ocean Profiling System with a NEMO float. PLATFORM_TYPE_KEY = 430"
-        },
-        "skos:related": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R24/current/OPTIMARE/"
-        },
-        "@type": "skos:Concept"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III_JUMBO/",
-        "pav:authoredOn": "2024-09-11 11:40:41.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III_JUMBO/1/"
-        },
-        "dce:identifier": "SDN:R23::PROVOR_III_JUMBO",
-        "pav:version": "1",
-        "skos:notation": "SDN:R23::PROVOR_III_JUMBO",
-        "skos:altLabel": "",
-        "dc:date": "2024-09-11 11:40:41.0",
-        "owl:versionInfo": "1",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "PROVOR_III_JUMBO float"
-        },
-        "dc:identifier": "SDN:R23::PROVOR_III_JUMBO",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "PROVOR float with additional battery pack. PLATFORM_ TYPE_ KEY = 108."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R23/current/FLOAT/",
         "pav:authoredOn": "2020-05-03 20:30:02.0",
         "pav:hasCurrentVersion": {
@@ -167,43 +102,6 @@
           "@value": "Generic value when platform type unknown. PLATFORM_TYPE_KEY = 999"
         },
         "@type": "skos:Concept"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_C/",
-        "pav:authoredOn": "2020-05-03 20:30:02.0",
-        "@type": "skos:Concept",
-        "skos:related": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Coastal ARVOR float. PLATFORM_TYPE_KEY = 110"
-        },
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "owl:deprecated": "false",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "dc:identifier": "SDN:R23::ARVOR_C",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "Coastal ARVOR float"
-        },
-        "owl:versionInfo": "1",
-        "skos:narrower": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R08/current/837/"
-        },
-        "dc:date": "2020-05-03 20:30:02.0",
-        "skos:altLabel": "ARVOR_C",
-        "skos:notation": "SDN:R23::ARVOR_C",
-        "pav:version": "1",
-        "dce:identifier": "SDN:R23::ARVOR_C",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_C/1/"
-        }
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R23/current/HM2000/",
@@ -243,51 +141,6 @@
         }
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_IV/",
-        "pav:hasVersion": [
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_IV/1/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_IV/2/"
-          }
-        ],
-        "pav:authoredOn": "2023-06-22 12:04:12.0",
-        "@type": "skos:Concept",
-        "skos:related": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "PROVOR CTS5-Payload float. PLATFORM_TYPE_KEY = 105"
-        },
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "owl:deprecated": "false",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "dc:identifier": "SDN:R23::PROVOR_IV",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "PROVOR CTS5-Payload float"
-        },
-        "owl:versionInfo": "3",
-        "skos:narrower": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R08/current/835/"
-        },
-        "dc:date": "2023-06-22 12:04:12.0",
-        "skos:altLabel": "PROVOR_IV",
-        "skos:notation": "SDN:R23::PROVOR_IV",
-        "pav:version": "3",
-        "dce:identifier": "SDN:R23::PROVOR_IV",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_IV/3/"
-        }
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PALACE/",
         "pav:authoredOn": "2020-05-03 20:30:02.0",
         "@type": "skos:Concept",
@@ -322,43 +175,6 @@
         "dce:identifier": "SDN:R23::PALACE",
         "pav:hasCurrentVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PALACE/1/"
-        }
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_D/",
-        "pav:authoredOn": "2020-05-03 20:30:02.0",
-        "@type": "skos:Concept",
-        "skos:related": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Deep ARVOR float. PLATFORM_TYPE_KEY = 120"
-        },
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "owl:deprecated": "false",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "dc:identifier": "SDN:R23::ARVOR_D",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "Deep ARVOR float"
-        },
-        "owl:versionInfo": "1",
-        "skos:narrower": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R08/current/838/"
-        },
-        "dc:date": "2020-05-03 20:30:02.0",
-        "skos:altLabel": "ARVOR_D",
-        "skos:notation": "SDN:R23::ARVOR_D",
-        "pav:version": "1",
-        "dce:identifier": "SDN:R23::ARVOR_D",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_D/1/"
         }
       },
       {
@@ -446,15 +262,22 @@
         "dce:identifier": "SDN:R23::APEX_EM"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/",
-        "pav:authoredOn": "2020-05-03 20:30:02.0",
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III_JUMBO/",
+        "pav:hasVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III_JUMBO/1/"
+        },
+        "pav:authoredOn": "2026-04-29 13:04:08.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III_JUMBO/2/"
+        },
+        "dce:identifier": "SDN:R23::PROVOR_III_JUMBO",
         "@type": "skos:Concept",
         "skos:related": {
           "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
         },
         "skos:definition": {
           "@language": "en",
-          "@value": "Dual board PROVOR CTS4 float. PLATFORM_TYPE_KEY = 104"
+          "@value": "PROVOR float with additional battery pack. PLATFORM_TYPE_KEY = 108."
         },
         "void:inDataset": {
           "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -464,23 +287,27 @@
           "@language": "en",
           "@value": "accepted"
         },
-        "dc:identifier": "SDN:R23::PROVOR_III",
+        "dc:identifier": "SDN:R23::PROVOR_III_JUMBO",
         "skos:prefLabel": {
           "@language": "en",
-          "@value": "Dual board PROVOR CTS4 float"
+          "@value": "PROVOR_III_JUMBO float"
         },
-        "owl:versionInfo": "1",
-        "skos:narrower": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R08/current/836/"
-        },
-        "dc:date": "2020-05-03 20:30:02.0",
-        "skos:altLabel": "PROVOR_III",
-        "skos:notation": "SDN:R23::PROVOR_III",
-        "pav:version": "1",
-        "dce:identifier": "SDN:R23::PROVOR_III",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/1/"
-        }
+        "owl:versionInfo": "2",
+        "skos:narrower": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/836/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/891/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/890/"
+          }
+        ],
+        "dc:date": "2026-04-29 13:04:08.0",
+        "skos:altLabel": "PROVOR_III_JUMBO",
+        "skos:notation": "SDN:R23::PROVOR_III_JUMBO",
+        "pav:version": "2"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R23/current/POPS_PROVOR/",
@@ -520,18 +347,15 @@
         }
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/1/"
-        },
-        "pav:authoredOn": "2023-10-05 14:41:04.0",
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/POPS_NEMO/",
+        "pav:authoredOn": "2020-05-03 20:30:02.0",
         "@type": "skos:Concept",
         "skos:related": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
+          "@id": "http://vocab.nerc.ac.uk/collection/R24/current/OPTIMARE/"
         },
         "skos:definition": {
           "@language": "en",
-          "@value": "PROVOR CTS5-USEA float, USEA is the controller board type. PLATFORM_ TYPE_ KEY = 106"
+          "@value": "Polar Ocean Profiling System with a NEMO float. PLATFORM_TYPE_KEY = 430"
         },
         "void:inDataset": {
           "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -541,22 +365,22 @@
           "@language": "en",
           "@value": "accepted"
         },
-        "dc:identifier": "SDN:R23::PROVOR_V",
+        "dc:identifier": "SDN:R23::POPS_NEMO",
         "skos:prefLabel": {
           "@language": "en",
-          "@value": "PROVOR_V float"
+          "@value": "POPS with NEMO float"
         },
-        "owl:versionInfo": "2",
+        "owl:versionInfo": "1",
         "skos:narrower": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R08/current/834/"
+          "@id": "http://vocab.nerc.ac.uk/collection/R08/current/843/"
         },
-        "dc:date": "2023-10-05 14:41:04.0",
-        "skos:altLabel": "PROVOR_V",
-        "skos:notation": "SDN:R23::PROVOR_V",
-        "pav:version": "2",
-        "dce:identifier": "SDN:R23::PROVOR_V",
+        "dc:date": "2020-05-03 20:30:02.0",
+        "skos:altLabel": "POPS_NEMO",
+        "skos:notation": "SDN:R23::POPS_NEMO",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R23::POPS_NEMO",
         "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/2/"
+          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/POPS_NEMO/1/"
         }
       },
       {
@@ -595,48 +419,6 @@
         "pav:hasCurrentVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_A/1/"
         }
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/",
-        "pav:authoredOn": "2020-05-03 20:30:02.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/1/"
-        },
-        "@type": "skos:Concept",
-        "skos:related": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "ARVOR float. PLATFORM_TYPE_KEY = 102"
-        },
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "owl:deprecated": "false",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "dc:identifier": "SDN:R23::ARVOR",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "ARVOR float"
-        },
-        "owl:versionInfo": "1",
-        "skos:narrower": [
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/844/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/878/"
-          }
-        ],
-        "dc:date": "2020-05-03 20:30:02.0",
-        "skos:altLabel": "ARVOR",
-        "skos:notation": "SDN:R23::ARVOR",
-        "pav:version": "1",
-        "dce:identifier": "SDN:R23::ARVOR"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ALTO/",
@@ -1001,56 +783,6 @@
         }
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/",
-        "pav:authoredOn": "2020-05-03 20:30:02.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/1/"
-        },
-        "dce:identifier": "SDN:R23::PROVOR",
-        "pav:version": "1",
-        "@type": "skos:Concept",
-        "skos:related": [
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/MARTEC/"
-          }
-        ],
-        "skos:definition": {
-          "@language": "en",
-          "@value": "PROVOR float. PLATFORM_TYPE_KEY = 101"
-        },
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "owl:deprecated": "false",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "dc:identifier": "SDN:R23::PROVOR",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "PROVOR float"
-        },
-        "owl:versionInfo": "1",
-        "skos:narrower": [
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/840/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/842/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/841/"
-          }
-        ],
-        "dc:date": "2020-05-03 20:30:02.0",
-        "skos:altLabel": "PROVOR",
-        "skos:notation": "SDN:R23::PROVOR"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_MT/",
         "pav:authoredOn": "2020-05-03 20:30:02.0",
         "pav:hasCurrentVersion": {
@@ -1355,48 +1087,6 @@
         "pav:version": "1"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_II/",
-        "pav:authoredOn": "2020-05-03 20:30:02.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_II/1/"
-        },
-        "@type": "skos:Concept",
-        "skos:related": [
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/MARTEC/"
-          }
-        ],
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Dual board PROVOR float. PLATFORM_TYPE_KEY = 103"
-        },
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "owl:deprecated": "false",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "dc:identifier": "SDN:R23::PROVOR_II",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "Dual board PROVOR float"
-        },
-        "owl:versionInfo": "1",
-        "skos:narrower": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R08/current/839/"
-        },
-        "dc:date": "2020-05-03 20:30:02.0",
-        "skos:altLabel": "PROVOR_II",
-        "skos:notation": "SDN:R23::PROVOR_II",
-        "pav:version": "1",
-        "dce:identifier": "SDN:R23::PROVOR_II"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R23/current/XUANWU/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R23/current/XUANWU/1/"
@@ -1489,6 +1179,9 @@
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R23/current/APEX_D/",
         "pav:authoredOn": "2020-05-03 20:30:02.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/APEX_D/1/"
+        },
         "@type": "skos:Concept",
         "skos:related": {
           "@id": "http://vocab.nerc.ac.uk/collection/R24/current/TWR/"
@@ -1511,65 +1204,19 @@
           "@value": "Deep APEX float"
         },
         "owl:versionInfo": "1",
-        "skos:narrower": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R08/current/849/"
-        },
+        "skos:narrower": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/849/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/883/"
+          }
+        ],
         "dc:date": "2020-05-03 20:30:02.0",
         "skos:altLabel": "APEX_D",
         "skos:notation": "SDN:R23::APEX_D",
         "pav:version": "1",
-        "dce:identifier": "SDN:R23::APEX_D",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/APEX_D/1/"
-        }
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/1/"
-        },
-        "pav:authoredOn": "2023-10-05 14:41:04.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/2/"
-        },
-        "dce:identifier": "SDN:R23::PROVOR_V_JUMBO",
-        "@type": "skos:Concept",
-        "skos:related": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "PROVOR CTS5-USEA float with additional battery pack, USEA is the controller board type. PLATFORM_ TYPE_ KEY = 107"
-        },
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "owl:deprecated": "false",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "dc:identifier": "SDN:R23::PROVOR_V_JUMBO",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "PROVOR_V_JUMBO float"
-        },
-        "owl:versionInfo": "2",
-        "skos:narrower": [
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/888/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/834/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/889/"
-          }
-        ],
-        "dc:date": "2023-10-05 14:41:04.0",
-        "skos:altLabel": "PROVOR_V_JUMBO",
-        "skos:notation": "SDN:R23::PROVOR_V_JUMBO",
-        "pav:version": "2"
+        "dce:identifier": "SDN:R23::APEX_D"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R23/current/NINJA/",
@@ -1620,6 +1267,499 @@
         "skos:notation": "SDN:R23::NINJA"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_II/",
+        "pav:authoredOn": "2020-05-03 20:30:02.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_II/1/"
+        },
+        "dce:identifier": "SDN:R23::PROVOR_II",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0011/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/MARTEC/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Dual board PROVOR float. PLATFORM_TYPE_KEY = 103"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R23::PROVOR_II",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Dual board PROVOR float"
+        },
+        "owl:versionInfo": "1",
+        "skos:narrower": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R08/current/839/"
+        },
+        "dc:date": "2020-05-03 20:30:02.0",
+        "skos:altLabel": "PROVOR_II",
+        "skos:notation": "SDN:R23::PROVOR_II",
+        "pav:version": "1"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_C/",
+        "pav:authoredOn": "2020-05-03 20:30:02.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_C/1/"
+        },
+        "dce:identifier": "SDN:R23::ARVOR_C",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0005/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0012/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Coastal ARVOR float. PLATFORM_TYPE_KEY = 110"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R23::ARVOR_C",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Coastal ARVOR float"
+        },
+        "owl:versionInfo": "1",
+        "skos:narrower": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R08/current/837/"
+        },
+        "dc:date": "2020-05-03 20:30:02.0",
+        "skos:altLabel": "ARVOR_C",
+        "skos:notation": "SDN:R23::ARVOR_C",
+        "pav:version": "1"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_D/",
+        "pav:authoredOn": "2020-05-03 20:30:02.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_D/1/"
+        },
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0005/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Deep ARVOR float. PLATFORM_TYPE_KEY = 120"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R23::ARVOR_D",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Deep ARVOR float"
+        },
+        "owl:versionInfo": "1",
+        "skos:narrower": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R08/current/838/"
+        },
+        "dc:date": "2020-05-03 20:30:02.0",
+        "skos:altLabel": "ARVOR_D",
+        "skos:notation": "SDN:R23::ARVOR_D",
+        "pav:version": "1",
+        "dce:identifier": "SDN:R23::ARVOR_D"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/",
+        "pav:authoredOn": "2020-05-03 20:30:02.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/1/"
+        },
+        "dce:identifier": "SDN:R23::PROVOR_III",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0005/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0012/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Dual board PROVOR CTS4 float. PLATFORM_TYPE_KEY = 104"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R23::PROVOR_III",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Dual board PROVOR CTS4 float"
+        },
+        "owl:versionInfo": "1",
+        "skos:narrower": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R08/current/836/"
+        },
+        "dc:date": "2020-05-03 20:30:02.0",
+        "skos:altLabel": "PROVOR_III",
+        "skos:notation": "SDN:R23::PROVOR_III",
+        "pav:version": "1"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/",
+        "pav:authoredOn": "2020-05-03 20:30:02.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/1/"
+        },
+        "dce:identifier": "SDN:R23::ARVOR",
+        "pav:version": "1",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0013/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0005/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "ARVOR float. PLATFORM_TYPE_KEY = 102"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R23::ARVOR",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "ARVOR float"
+        },
+        "owl:versionInfo": "1",
+        "skos:narrower": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/844/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/878/"
+          }
+        ],
+        "dc:date": "2020-05-03 20:30:02.0",
+        "skos:altLabel": "ARVOR",
+        "skos:notation": "SDN:R23::ARVOR"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR2/",
+        "pav:authoredOn": "2026-05-12 09:48:49.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR2/1/"
+        },
+        "dce:identifier": "SDN:R23::ARVOR2",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0013/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "ARVOR2 float, PFV2 is the controller board type."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R23::ARVOR2",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "ARVOR 2 float"
+        },
+        "owl:versionInfo": "1",
+        "skos:narrower": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/844/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/878/"
+          }
+        ],
+        "dc:date": "2026-05-12 09:48:49.0",
+        "skos:altLabel": "ARVOR2",
+        "skos:notation": "SDN:R23::ARVOR2",
+        "pav:version": "1"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/",
+        "pav:authoredOn": "2020-05-03 20:30:02.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/1/"
+        },
+        "dce:identifier": "SDN:R23::PROVOR",
+        "pav:version": "1",
+        "skos:notation": "SDN:R23::PROVOR",
+        "skos:altLabel": "PROVOR",
+        "dc:date": "2020-05-03 20:30:02.0",
+        "skos:narrower": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/841/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/840/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/842/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0010/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0005/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0009/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0011/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/MARTEC/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "PROVOR float. PLATFORM_TYPE_KEY = 101"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R23::PROVOR",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PROVOR float"
+        },
+        "owl:versionInfo": "1"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_IV/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_IV/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_IV/2/"
+          }
+        ],
+        "pav:authoredOn": "2023-06-22 12:04:12.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_IV/3/"
+        },
+        "dce:identifier": "SDN:R23::PROVOR_IV",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0008/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0006/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "PROVOR CTS5-Payload float. PLATFORM_TYPE_KEY = 105"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R23::PROVOR_IV",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PROVOR CTS5-Payload float"
+        },
+        "owl:versionInfo": "3",
+        "skos:narrower": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R08/current/835/"
+        },
+        "dc:date": "2023-06-22 12:04:12.0",
+        "skos:altLabel": "PROVOR_IV",
+        "skos:notation": "SDN:R23::PROVOR_IV",
+        "pav:version": "3"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/",
+        "pav:hasVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/1/"
+        },
+        "pav:authoredOn": "2023-10-05 14:41:04.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/2/"
+        },
+        "dce:identifier": "SDN:R23::PROVOR_V_JUMBO",
+        "pav:version": "2",
+        "skos:notation": "SDN:R23::PROVOR_V_JUMBO",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0008/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0007/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "PROVOR CTS5-USEA float with additional battery pack, USEA is the controller board type. PLATFORM_ TYPE_ KEY = 107"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R23::PROVOR_V_JUMBO",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PROVOR_V_JUMBO float"
+        },
+        "owl:versionInfo": "2",
+        "skos:narrower": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/888/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/834/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/889/"
+          }
+        ],
+        "dc:date": "2023-10-05 14:41:04.0",
+        "skos:altLabel": "PROVOR_V_JUMBO"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/",
+        "pav:hasVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/1/"
+        },
+        "pav:authoredOn": "2023-10-05 14:41:04.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/2/"
+        },
+        "dce:identifier": "SDN:R23::PROVOR_V",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0008/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0007/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "PROVOR CTS5-USEA float, USEA is the controller board type. PLATFORM_ TYPE_ KEY = 106"
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R23::PROVOR_V",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "PROVOR_V float"
+        },
+        "owl:versionInfo": "2",
+        "skos:narrower": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R08/current/834/"
+        },
+        "dc:date": "2023-10-05 14:41:04.0",
+        "skos:altLabel": "PROVOR_V",
+        "skos:notation": "SDN:R23::PROVOR_V",
+        "pav:version": "2"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R23/current/",
         "skos:member": [
           {
@@ -1629,28 +1769,13 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ITP/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/POPS_NEMO/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III_JUMBO/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R23/current/FLOAT/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_C/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R23/current/HM2000/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_IV/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PALACE/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_D/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R23/current/HM4000/"
@@ -1659,19 +1784,16 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R23/current/APEX_EM/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III_JUMBO/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R23/current/POPS_PROVOR/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/POPS_NEMO/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_A/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ALTO/"
@@ -1701,9 +1823,6 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_D/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_MT/"
           },
           {
@@ -1725,9 +1844,6 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_II/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R23/current/XUANWU/"
           },
           {
@@ -1740,6 +1856,33 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R23/current/NINJA/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_II/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_C/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_D/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_IV/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/"
           }
         ],
@@ -1748,8 +1891,8 @@
         "dc:description": "List of Argo float types. Argo netCDF variable PLATFORM_TYPE is populated by R23 altLabel.",
         "dc:title": "Argo platform type",
         "skos:prefLabel": "Argo platform type",
-        "owl:versionInfo": "9",
-        "dc:date": "2024-10-25 03:00:00.0",
+        "owl:versionInfo": "11",
+        "dc:date": "2026-05-13 03:00:02.0",
         "skos:altLabel": "PLATFORM_TYPE",
         "dc:creator": "Argo Data Management Team",
         "dc:alternative": "PLATFORM_TYPE",

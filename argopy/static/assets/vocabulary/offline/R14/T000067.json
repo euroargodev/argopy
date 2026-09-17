@@ -1,7 +1,7 @@
 {
   "name": "T000067",
   "long_name": "CLOCK_Satellite_HHMMSS",
-  "last_update": "2026-01-25T11:13:07.053889+00:00",
+  "last_update": "2026-09-15T15:04:54.141044+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000067/",
     "pav:hasVersion": {

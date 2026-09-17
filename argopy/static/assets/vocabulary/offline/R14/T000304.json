@@ -1,7 +1,7 @@
 {
   "name": "T000304",
   "long_name": "FLAG_PressureReachedZero_LOGICAL",
-  "last_update": "2026-01-25T11:12:55.888398+00:00",
+  "last_update": "2026-09-15T15:04:50.534832+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000304/",
     "pav:hasVersion": {

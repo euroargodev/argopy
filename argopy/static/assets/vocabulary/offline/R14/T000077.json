@@ -1,7 +1,7 @@
 {
   "name": "T000077",
   "long_name": "CLOCK_ReceptionEndDateTime_YYYYMMDDHHMMSS",
-  "last_update": "2026-01-25T11:11:56.598609+00:00",
+  "last_update": "2026-09-15T15:04:43.817528+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000077/",
     "pav:hasVersion": {

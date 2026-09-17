@@ -1,7 +1,7 @@
 {
   "name": "RAW_DOWNWELLING_IRRADIANCE",
   "long_name": "Raw downwelling irradiance at x nanometers",
-  "last_update": "2026-01-25T11:11:34.463897+00:00",
+  "last_update": "2026-09-15T15:04:40.887922+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE/",
     "pav:hasVersion": [

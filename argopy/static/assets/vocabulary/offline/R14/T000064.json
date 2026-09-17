@@ -1,7 +1,7 @@
 {
   "name": "T000064",
   "long_name": "CLOCK_InitialStabilizationDuringDescentToPark_hours",
-  "last_update": "2026-01-25T11:12:39.737570+00:00",
+  "last_update": "2026-09-15T15:04:47.014636+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000064/",
     "pav:hasVersion": {

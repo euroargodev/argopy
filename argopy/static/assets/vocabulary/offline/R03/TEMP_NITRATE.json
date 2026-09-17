@@ -1,7 +1,7 @@
 {
   "name": "TEMP_NITRATE",
   "long_name": "Internal temperature of the SUNA sensor",
-  "last_update": "2026-01-25T11:11:31.450711+00:00",
+  "last_update": "2026-09-15T15:04:39.843119+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_NITRATE/",
     "pav:hasVersion": [

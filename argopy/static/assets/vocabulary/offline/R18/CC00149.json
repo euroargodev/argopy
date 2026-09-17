@@ -1,7 +1,7 @@
 {
   "name": "CC00149",
   "long_name": "CONFIG_PressureCheckTimeDescentToParkingDepth_seconds",
-  "last_update": "2026-01-25T11:15:39.050818+00:00",
+  "last_update": "2026-09-15T15:05:39.078607+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00149/",
     "pav:hasVersion": {

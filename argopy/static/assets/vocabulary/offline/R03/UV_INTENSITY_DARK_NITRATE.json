@@ -1,7 +1,7 @@
 {
   "name": "UV_INTENSITY_DARK_NITRATE",
   "long_name": "Intensity of ultra violet flux dark measurement from nitrate sensor",
-  "last_update": "2026-01-25T11:11:33.531416+00:00",
+  "last_update": "2026-09-15T15:04:40.523997+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UV_INTENSITY_DARK_NITRATE/",
     "pav:hasVersion": [

@@ -1,7 +1,7 @@
 {
   "name": "CB00067",
   "long_name": "CONFIG_SetClockSensorCard_LOGICAL",
-  "last_update": "2026-01-25T11:15:55.151847+00:00",
+  "last_update": "2026-09-15T15:05:43.919619+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00067/",
     "pav:hasVersion": [

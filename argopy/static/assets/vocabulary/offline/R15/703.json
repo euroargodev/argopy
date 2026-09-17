@@ -1,37 +1,45 @@
 {
   "name": "703",
   "long_name": "FMT+1",
-  "last_update": "2026-01-25T11:14:31.794160+00:00",
+  "last_update": "2026-09-15T15:05:17.039901+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R15/current/703/",
     "pav:authoredOn": "2021-11-30 09:53:34.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R15/current/703/1/"
-    },
-    "dce:identifier": "SDN:R15::703",
-    "pav:version": "1",
-    "skos:notation": "SDN:R15::703",
-    "skos:altLabel": "703",
-    "dc:date": "2021-11-30 09:53:34.0",
-    "owl:versionInfo": "1",
-    "skos:prefLabel": {
-      "@language": "en",
-      "@value": "FMT+1"
-    },
-    "dc:identifier": "SDN:R15::703",
-    "skos:note": {
-      "@language": "en",
-      "@value": "accepted"
-    },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
+    "@type": "skos:Concept",
+    "skos:related": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/LLT/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/FLT/"
+      }
+    ],
     "skos:definition": {
       "@language": "en",
       "@value": "Surface times and locations (if available) during surface drift. Should be listed in chronological order."
     },
-    "@type": "skos:Concept",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R15::703",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "FMT+1"
+    },
+    "owl:versionInfo": "1",
+    "dc:date": "2021-11-30 09:53:34.0",
+    "skos:altLabel": "703",
+    "skos:notation": "SDN:R15::703",
+    "pav:version": "1",
+    "dce:identifier": "SDN:R15::703",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R15/current/703/1/"
+    },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

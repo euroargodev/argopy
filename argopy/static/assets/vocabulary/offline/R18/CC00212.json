@@ -1,7 +1,7 @@
 {
   "name": "CC00212",
   "long_name": "CONFIG_TransmissionEndCycle_LOGICAL",
-  "last_update": "2026-01-25T11:15:50.072036+00:00",
+  "last_update": "2026-09-15T15:05:42.682245+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00212/",
     "pav:hasVersion": {

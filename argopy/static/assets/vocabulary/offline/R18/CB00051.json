@@ -1,7 +1,7 @@
 {
   "name": "CB00051",
   "long_name": "CONFIG_Ocr<param>Wavelength<I>_nm",
-  "last_update": "2026-01-25T11:16:05.715579+00:00",
+  "last_update": "2026-09-15T15:05:45.195588+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00051/",
     "pav:hasVersion": [

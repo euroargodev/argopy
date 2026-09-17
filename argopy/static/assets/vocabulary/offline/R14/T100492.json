@@ -1,7 +1,7 @@
 {
   "name": "T100492",
   "long_name": "CURRENT_BatteryFlbbParkEnd_mA",
-  "last_update": "2026-01-25T11:12:54.516775+00:00",
+  "last_update": "2026-09-15T15:04:50.317603+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100492/",
     "pav:hasVersion": {

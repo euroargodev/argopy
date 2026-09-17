@@ -1,7 +1,7 @@
 {
   "name": "RADIOMETER_PAR",
   "long_name": "Radiometer measuring Photosynthetically Active Radiation (PAR)",
-  "last_update": "2026-01-25T11:15:17.175088+00:00",
+  "last_update": "2026-09-15T15:05:33.265320+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_PAR/",
     "pav:authoredOn": "2019-10-11 15:06:36.0",
@@ -10,10 +10,14 @@
     },
     "dce:identifier": "SDN:R25::RADIOMETER_PAR",
     "pav:version": "1",
+    "skos:notation": "SDN:R25::RADIOMETER_PAR",
     "@type": "skos:Concept",
     "skos:related": [
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_PAR/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/"
@@ -48,7 +52,6 @@
     "owl:versionInfo": "1",
     "dc:date": "2019-10-11 15:06:36.0",
     "skos:altLabel": "RADIOMETER_PAR",
-    "skos:notation": "SDN:R25::RADIOMETER_PAR",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

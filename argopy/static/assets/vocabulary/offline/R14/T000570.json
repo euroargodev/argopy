@@ -1,7 +1,7 @@
 {
   "name": "T000570",
   "long_name": "VOLTAGE_SUNAAPFSupplyVoltage_volts",
-  "last_update": "2026-01-25T11:13:38.993932+00:00",
+  "last_update": "2026-09-15T15:05:03.924561+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000570/",
     "pav:hasVersion": {

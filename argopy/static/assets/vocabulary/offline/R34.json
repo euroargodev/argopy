@@ -1,0 +1,155 @@
+{
+  "name": "BATTERY_TYPE",
+  "long_name": "Argo battery type",
+  "last_update": "2026-09-15T15:04:22.009010+00:00",
+  "data": {
+    "@graph": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R34/current/BT00003/",
+        "pav:authoredOn": "2026-03-18 11:19:28.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R34/current/BT00003/1/"
+        },
+        "dce:identifier": "SDN:R34::BT00003",
+        "pav:version": "1",
+        "skos:notation": "SDN:R34::BT00003",
+        "skos:altLabel": "Hybrid",
+        "dc:date": "2026-03-18 11:19:28.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Hyb"
+        },
+        "dc:identifier": "SDN:R34::BT00003",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Hybrid (alkaline and lithium) batteries."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R34/current/BT00002/",
+        "pav:authoredOn": "2026-03-18 11:19:28.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R34/current/BT00002/1/"
+        },
+        "dce:identifier": "SDN:R34::BT00002",
+        "pav:version": "1",
+        "skos:notation": "SDN:R34::BT00002",
+        "skos:altLabel": "Lithium",
+        "dc:date": "2026-03-18 11:19:28.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Li"
+        },
+        "dc:identifier": "SDN:R34::BT00002",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Lithium battery."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R34/current/BT00001/",
+        "pav:authoredOn": "2026-03-18 11:19:28.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R34/current/BT00001/1/"
+        },
+        "dce:identifier": "SDN:R34::BT00001",
+        "pav:version": "1",
+        "skos:notation": "SDN:R34::BT00001",
+        "skos:altLabel": "Alkaline",
+        "dc:date": "2026-03-18 11:19:28.0",
+        "owl:versionInfo": "1",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Alk"
+        },
+        "dc:identifier": "SDN:R34::BT00001",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Alkaline battery."
+        },
+        "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R34/current/",
+        "skos:member": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R34/current/BT00003/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R34/current/BT00001/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R34/current/BT00002/"
+          }
+        ],
+        "@type": "skos:Collection",
+        "dc:publisher": "Natural Environment Research Council",
+        "dc:description": "List of float battery types. Argo netCDF variable BATTERY_TYPE syntax uses both R33 altLabel and R34 altLabel with the following convention: <R33-battery_maker> <R34-battery_type> <voltage> V [+<R33-battery_maker> <R34-battery_type> <voltage> V]. Argo netCDF variable BATTERY_PACKS uses both R35 altLabel and R34 prefLabel with the following convention: <x><R35-battery_size> <R34-battery_type> [+<x><R35-battery_size> <R34-battery_type>].",
+        "dc:title": "Argo battery type",
+        "skos:prefLabel": "Argo battery type",
+        "owl:versionInfo": "1",
+        "dc:date": "2026-03-19 02:00:01.0",
+        "skos:altLabel": "BATTERY_TYPE",
+        "dc:creator": "Argo Data Management Team",
+        "dc:alternative": "BATTERY_TYPE",
+        "rdfs:comment": "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
+        "grg:RE_RegisterOwner": "Argo Data Management Team",
+        "grg:RE_RegisterManager": "British Oceanographic Data Centre",
+        "rdfs:seeAlso": {
+          "@id": "https://github.com/OneArgo/ArgoVocabs"
+        }
+      }
+    ],
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

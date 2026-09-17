@@ -1,7 +1,7 @@
 {
   "name": "T000302",
   "long_name": "FLAG_PistonMotorRunning_LOGICAL",
-  "last_update": "2026-01-25T11:12:16.623960+00:00",
+  "last_update": "2026-09-15T15:04:46.249065+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000302/",
     "pav:hasVersion": {

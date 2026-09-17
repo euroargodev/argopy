@@ -1,7 +1,7 @@
 {
   "name": "T300278",
   "long_name": "FLAG_CTDStopProfileError_LOGICAL",
-  "last_update": "2026-01-25T11:12:57.139454+00:00",
+  "last_update": "2026-09-15T15:04:50.947491+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T300278/",
     "pav:hasVersion": {

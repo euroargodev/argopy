@@ -1,7 +1,7 @@
 {
   "name": "T000525",
   "long_name": "VOLTAGE_BatteryDescentToProfile_volts",
-  "last_update": "2026-01-25T11:12:53.218887+00:00",
+  "last_update": "2026-09-15T15:04:50.101824+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000525/",
     "pav:hasVersion": {

@@ -1,40 +1,45 @@
 {
   "name": "CC00066",
   "long_name": "CONFIG_HangingMode_NUMBER",
-  "last_update": "2026-01-25T11:15:48.547031+00:00",
+  "last_update": "2026-09-15T15:05:42.187399+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00066/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00066/1/"
-    },
-    "pav:authoredOn": "2025-12-12 11:41:05.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00066/2/"
-    },
-    "dce:identifier": "SDN:R18::CC00066",
-    "pav:version": "2",
-    "skos:notation": "SDN:R18::CC00066",
-    "skos:altLabel": "Core Config 66",
-    "dc:date": "2025-12-12 11:41:05.0",
-    "owl:versionInfo": "2",
-    "skos:prefLabel": {
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00066/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00066/2/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
       "@language": "en",
-      "@value": "CONFIG_HangingMode_NUMBER"
+      "@value": "Scenario followed by the float when a hanging (too low vertical motion after having activated its pump) during the ascent is detected. This parameter configures (with the same idea as CONFIG_GroundingMode_NUMBER for grounding) what should be the actions to perform to try to escape from hanging (e.g., it can activate its pump and valve alternatively to try to escape, or abandon the ascent and switch to the next scheduled task). Template_Values:{unit:[NUMBER]}."
     },
-    "dc:identifier": "SDN:R18::CC00066",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R18::CC00066",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "Action performed by the float when a hanging is detected (see float manual for details). PROVOR floats: The hanging mode is the same idea as the grounding mode but for an ascent phase. When the float detects a too low vertical motion after having activated its pump to try to ascend it enters in a hanging mode (it is probably stuck at the sea floor). This parameter configures (with the same idea as CONFIG_GroundingMode_NUMBER for grounding) what should be the actions to perform to try to escape from hanging (it can activate its pump and valve alternatively to try to escape or abandon the ascent and switch to the next scheduled task. Template_Values:{unit:[NUMBER]}."
+      "@value": "CONFIG_HangingMode_NUMBER"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "3",
+    "dc:date": "2026-03-05 17:07:34.0",
+    "skos:altLabel": "Core Config 66",
+    "skos:notation": "SDN:R18::CC00066",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R18::CC00066",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00066/3/"
+    },
+    "pav:authoredOn": "2026-03-05 17:07:34.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

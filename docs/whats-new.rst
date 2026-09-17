@@ -15,7 +15,14 @@ Features and front-end API
 
 - **New methods to access mono-cycle profile files** from :class:`ArgoFloat` instances using :class:`ArgoFloat.ls_profiles`, :class:`ArgoFloat.open_profile` and :class:`ArgoFloat.open_profiles` methods. (:pr:`590`) by |gmaze|.
 
-- **New full Argo vocabulary support** for reference tables (:class:`ArgoReferenceTable`), values (:class:`ArgoReferenceValue`) and mappings (:class:`ArgoReferenceMapping`) (:pr:`575`) by |gmaze|.
+- **New full Argo vocabulary support** for:
+    - reference values: :class:`ArgoReferenceValue`,
+    - reference tables: :class:`ArgoReferenceTable`,
+    - and mappings: :class:`ArgoReferenceMapping`.
+
+    Check the full documentation page at :ref:`Argo vocabulary and references <argovocabulary>`. (:pr:`575`) by |gmaze|.
+
+    Rq: As a consequence, the historical :class:`ArgoNVSReferenceTables` is deprecated. The ``ArgoNVSReferenceTables.tbl('R25')`` method can be replaced with the new :meth:`ArgoReferenceTable.to_dataframe`.
 
 Internals
 ^^^^^^^^^
@@ -24,13 +31,14 @@ Internals
 
 - **Improve import time** with lazy and/or deferred import of large dependencies, optimization and finally removing of the auto-discovery of data/index fetchers :issue:`585` (:pr:`676`) by |charles| and (:pr:`624`) by |gmaze|.
 
-- **Update USA GDAC url** :issue:`624` (:pr:`624`) by |gmaze|.
+- **Update USA GDAC url** :issue:`624` (:pr:`634`) by |gmaze|.
 
 - **Fix bug** whereby some unit tests would raise  ``fsspec.exceptions.FSTimeoutError``, :issue:`593`. (:pr:`640`) by |gmaze|.
 
 - **Fix bug** whereby :meth:`Dataset.argo.point2profile` would return un-ordered ``N_PROF`` coordinate instead of a clean ``0..N_PROF-1`` range, :issue:`632`. (:pr:`658`) by |gmaze|.
 
 - **Fix inconsistency** in checking availability of an :class:`ArgoFloat` configuration parameter, :issue:`643`. (:pr:`644`) by |gmaze|.
+
 
 Documentation
 ^^^^^^^^^^^^^
@@ -599,7 +607,7 @@ Features and front-end API
 
 - **New xarray argo accessor features**. Easily retrieve an Argo sample index and domain extent with the ``index`` and ``domain`` properties. Get a list with all possible (PLATFORM_NUMBER, CYCLE_NUMBER) with the ``list_WMO_CYC`` method. (:pr:`278`) by |gmaze|
 
-- **New search methods for Argo reference tables**. It is now possible to search for a string in tables title and/or description using the :meth:`related.ArgoNVSReferenceTables.search` method.
+- **New search methods for Argo reference tables**. It is now possible to search for a string in tables title and/or description using the :meth:`reference.ArgoNVSReferenceTables.search` method.
 
 .. code-block:: python
 
@@ -673,7 +681,7 @@ Internals
 
 - New utilities to handle a collection of datasets: :func:`utils.drop_variables_not_in_all_datasets` will drop variables that are not in all datasets (the lowest common denominator) and :func:`utils.fill_variables_not_in_all_datasets` will add empty variables to dataset so that all the collection have the same data_vars and coords. These functions are used by stores to concat/merge a collection of datasets (chunks).
 
-- :func:`related.load_dict` now relies on :class:`ArgoNVSReferenceTables` instead of static pickle files.
+- :func:`related.load_dict` now relies on :class:`reference.ArgoNVSReferenceTables` instead of static pickle files.
 
 - :class:`argopy.ArgoColors` colormap for Argo Data-Mode has now a fourth value to account for a white space FillValue.
 

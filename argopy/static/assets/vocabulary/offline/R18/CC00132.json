@@ -1,7 +1,7 @@
 {
   "name": "CC00132",
   "long_name": "CONFIG_ParkTime_hours",
-  "last_update": "2026-01-25T11:15:43.516996+00:00",
+  "last_update": "2026-09-15T15:05:40.364373+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00132/",
     "pav:hasVersion": {

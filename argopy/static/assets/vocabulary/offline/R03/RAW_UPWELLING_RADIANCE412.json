@@ -1,7 +1,7 @@
 {
   "name": "RAW_UPWELLING_RADIANCE412",
   "long_name": "Raw upwelling radiance at 412 nanometers",
-  "last_update": "2026-01-25T11:11:33.196046+00:00",
+  "last_update": "2026-09-15T15:04:40.442471+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_UPWELLING_RADIANCE412/",
     "pav:hasVersion": [
