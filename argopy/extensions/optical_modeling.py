@@ -104,7 +104,7 @@ class OpticalModeling(ArgoAccessorExtension):
         But the euphotic depth can also be estimated using the exponential decay of light with depth, described by Beer's Law [1]_:
 
         .. math::
-            I(z) = I_0 \exp(-K_{PAR}\\,z)
+            I(z) = I_0 \\exp(-K_{PAR}\\,z)
 
         If we solve for $I(Z_e)=0.01 I_0$ we get:
 
@@ -292,7 +292,7 @@ class OpticalModeling(ArgoAccessorExtension):
 
         .. math::
 
-            z | abs(PAR(z) - t) < \epsilon
+            z | abs(PAR(z) - t) < \\epsilon
 
         A default value of 15 is used because it is the theoretical value below which the Fchla is no longer
         quenched (For correction of NPQ purposes).
