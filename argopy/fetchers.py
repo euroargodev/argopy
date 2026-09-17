@@ -1,5 +1,3 @@
-#!/bin/env python
-# -*coding: UTF-8 -*-
 """
 
 High level helper methods to load Argo data from any source
@@ -11,6 +9,7 @@ Validity of access points parameters (eg: wmo) is made here, not at the data/ind
 
 import os
 import warnings
+from typing import Optional
 
 import netCDF4
 from argopy import pandas as pd # Lazily import large module
@@ -77,6 +76,8 @@ class ArgoDataFetcher:
          Source of the data to use. Eg: ``erddap``. Set to OPTIONS['src'] by default if empty.
     ds: str, optional
         Name of the dataset to load. Eg: ``phy``. Set to OPTIONS['ds'] by default if empty.
+    product: str, optional
+        The name of a third-party data source. Eg: ``argovis``. This parameter takes precedence over ``src``.
     **fetcher_kwargs: optional
         Additional arguments passed on data source fetcher creation of each access points.
 
@@ -89,9 +90,8 @@ class ArgoDataFetcher:
 
     """
 
-    def __init__(self, mode: str = "", src: str = "", ds: str = "", **fetcher_kwargs):
+    def __init__(self, mode: str = "", src: str = "", ds: str = "", product: Optional[str]= None,  **fetcher_kwargs):
         """Create a fetcher instance
-
 
         Returns
         -------
@@ -103,6 +103,12 @@ class ArgoDataFetcher:
         self._dataset_id = OPTIONS["ds"] if ds == "" else VALIDATE("ds", ds)
         self._src = OPTIONS["src"] if src == "" else VALIDATE("src", src)
         self.fetcher_kwargs = {**fetcher_kwargs}
+
+        if product is not None:
+            # Third-party products must update this section to be included:
+            if product.lower() not in ["argovis"]:
+                raise InvalidFetcher(f"The '{product}' product has no implementation. Available products are: ['argovis'].")
+            self._src = product
 
         if self._dataset_id == "bgc":
             self._dataset_id = "bgc-s"

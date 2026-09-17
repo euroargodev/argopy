@@ -1135,3 +1135,30 @@ class FloatStoreProto(ABC):
                 return results
 
         raise NotImplementedError
+
+    def open_product(
+        self, name: str = "", **kwargs
+    ) -> xr.Dataset | Any:
+        """Open and decode an Argo third-party dataset
+
+        Parameters
+        ----------
+        name: str
+            Name of the third-party dataset to open.
+        \**kwargs
+            All the other arguments are passed to the product specific method.
+
+        Returns
+        -------
+        :class:`xarray.Dataset` | Any
+        """
+
+        # Third-party access modules must be located in argopy.stores.float.products
+        # and the facade called from here.
+
+        valid_products = [] # To be populated by contributors
+
+        if name not in valid_products:
+            raise NotImplementedError(
+                "Dataset '%s' not found. Available third-party dataset for this float are: %s"
+                % (name, valid_products))

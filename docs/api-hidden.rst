@@ -145,6 +145,7 @@
     argopy.related.TopoFetcher.cachepath
     argopy.related.TopoFetcher.uri
 
+    argopy.reference.NVScollection
     argopy.reference.ArgoNVSReferenceTables
     argopy.reference.ArgoNVSReferenceTables.search
     argopy.reference.ArgoNVSReferenceTables.valid_ref
@@ -404,6 +405,7 @@
     argopy.ArgoFloat.dac
     argopy.ArgoFloat.path
     argopy.ArgoFloat.metadata
+    argopy.ArgoFloat.open_product
 
     argopy.stores.ArgoFloat.plot
     argopy.stores.ArgoFloat.plot.trajectory
