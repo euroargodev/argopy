@@ -44,24 +44,7 @@ LOG_SERVER_CONTENT = (
     False  # Should we list all files/uris available from the mocked server in the log ?
 )
 
-import socket
-
-
-# def _free_port() -> int:
-#     """Return a free port number on localhost.
-#
-#     bind("127.0.0.1", 0) asks the OS to assign a free port, which we read back
-#     with getsockname"""
-#     s = socket.socket()
-#     s.bind(("127.0.0.1", 0))
-#     p = s.getsockname()[1]
-#     s.close()
-#     return p
-#
-#
-# port = _free_port()
-# mocked_server_address = "http://127.0.0.1:%i" % port
-mocked_server_address = "?"
+mocked_server_address = None
 
 """
 Load test data and create a dictionary mapping of URL requests as keys, and expected responses as values
@@ -302,9 +285,6 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
 
 @contextlib.contextmanager
 def serve_mocked_httpserver():
-    # server_address = ("", port) # port could have been taken between the call to _free_port() and reaching here.
-    # httpd = HTTPServer(server_address, HTTPTestHandler)
-
     httpd = ThreadingHTTPServer(("127.0.0.1", 0), HTTPTestHandler)
     port = httpd.server_address[1]
     mocked_server_address = "http://127.0.0.1:%i" % port
