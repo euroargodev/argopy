@@ -102,7 +102,7 @@ class Test_Backend:
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
         self.client = Client(processes=False)
-        log.debug("Dask dashboard: %s" % self.client.dashboard_link)
+        # log.debug("Dask dashboard: %s" % self.client.dashboard_link) # Possibly prevent UTF-8 error on Windows
 
     def _test2fetcherargs(self, this_request):
         """Helper method to set up options for a fetcher creation"""

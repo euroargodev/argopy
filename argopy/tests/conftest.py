@@ -54,6 +54,6 @@ def _resource_tracker(request):
     if delta_fds > 10 or delta_threads > 2:
         print(
             f"\n[RESOURCE LEAK] {request.node.nodeid}\n"
-            f"  FDs:     {before['fds']} → {after['fds']} (Δ{delta_fds:+d})\n"
-            f"  Threads: {before['threads']} → {after['threads']} (Δ{delta_threads:+d})\n"
+            f"  FDs:     {before['fds']} : {after['fds']} (diff:{delta_fds:+d})\n"
+            f"  Threads: {before['threads']} : {after['threads']} (diff:{delta_threads:+d})\n"
         )

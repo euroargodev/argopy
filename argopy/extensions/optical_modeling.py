@@ -288,7 +288,7 @@ class OpticalModeling(ArgoAccessorExtension):
 
         Notes
         -----
-        This is the closest level $z$ in the vertical axis for which PAR is about a threshold value $t$, with some tolerance $\epsilon$:
+        This is the closest level $z$ in the vertical axis for which PAR is about a threshold value $t$, with some tolerance $\\epsilon$:
 
         .. math::
 
