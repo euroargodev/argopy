@@ -11,7 +11,10 @@ from argopy.utils.monitored_threadpool import pmap
 from argopy.utils.checkers import is_indexbox, parse_indexbox, check_wmo, check_cyc
 from argopy.utils.casting import to_list
 from argopy.utils.geo import conv_lon
-from argopy.stores.index.extensions import register_ArgoIndex_accessor, ArgoIndexSearchEngine
+from argopy.stores.index.extensions import (
+    register_ArgoIndex_accessor,
+    ArgoIndexSearchEngine,
+)
 from argopy.stores.index.implementations.index_s3 import search_s3
 from argopy.stores.index.implementations.pandas.index import indexstore
 
@@ -56,7 +59,9 @@ class SearchEngine(ArgoIndexSearchEngine):
                 % ";".join([str(wmo) for wmo in WMOs])
             )
             if len(WMOs) > 30:
-                warnings.warn("Searching a large amount of Argo floats with the Pandas backend is quite slow. We strongly recommend to install Pyarrow to improve performances ! Pyarrow is about 10 times faster than Pandas for this use-case.")
+                warnings.warn(
+                    "Searching a large amount of Argo floats with the Pandas backend is quite slow. We strongly recommend to install Pyarrow to improve performances ! Pyarrow is about 10 times faster than Pandas for this use-case."
+                )
             return WMOs
 
         def namer(WMOs):
@@ -91,7 +96,9 @@ class SearchEngine(ArgoIndexSearchEngine):
                 % (";".join([str(cyc) for cyc in CYCs]))
             )
             if len(CYCs) > 50:
-                warnings.warn("Searching a large amount of Argo float cycles with the Pandas backend is quite slow. We strongly recommend to install Pyarrow to improve performances ! Pyarrow is about 10 times faster than Pandas for this use-case.")
+                warnings.warn(
+                    "Searching a large amount of Argo float cycles with the Pandas backend is quite slow. We strongly recommend to install Pyarrow to improve performances ! Pyarrow is about 10 times faster than Pandas for this use-case."
+                )
             return CYCs
 
         def namer(CYCs):
@@ -130,7 +137,9 @@ class SearchEngine(ArgoIndexSearchEngine):
                 )
             )
             if len(WMOs) > 30 or len(CYCs) > 50:
-                warnings.warn("Searching a large amount of Argo float cycles with the Pandas backend is quite slow. We strongly recommend to install Pyarrow to improve performances ! Pyarrow is about 10 times faster than Pandas for this use-case.")
+                warnings.warn(
+                    "Searching a large amount of Argo float cycles with the Pandas backend is quite slow. We strongly recommend to install Pyarrow to improve performances ! Pyarrow is about 10 times faster than Pandas for this use-case."
+                )
             return WMOs, CYCs
 
         def namer(WMOs, CYCs):
@@ -159,7 +168,7 @@ class SearchEngine(ArgoIndexSearchEngine):
             BOX = parse_indexbox("date", BOX, **kwargs)
             is_indexbox(BOX)
             log.debug("Argo index searching for date in BOX=%s ..." % BOX)
-            return ("date", BOX)   # Return key to use for time axis
+            return ("date", BOX)  # Return key to use for time axis
 
         def namer(BOX):
             return {"DATE": BOX[4:6]}
@@ -355,9 +364,7 @@ class SearchEngine(ArgoIndexSearchEngine):
             return {"PARAMS": (PARAMs, logical)}
 
         def composer(obj, PARAMs, logical):
-            obj.index["variables"] = obj.index["parameters"].apply(
-                lambda x: x.split()
-            )
+            obj.index["variables"] = obj.index["parameters"].apply(lambda x: x.split())
             filt = pmap(obj, compute_params, PARAMs)
             obj.index = obj.index.drop("variables", axis=1)
             return obj._reduce_a_filter_list(filt, op=logical)
@@ -568,15 +575,21 @@ class SearchEngine(ArgoIndexSearchEngine):
     def profile_qc(self, PARAMs: dict, logical="and", nrows=None, composed=False):
         def checker(PARAMs):
             if "profile_temp_qc" not in self._obj.convention_columns:
-                raise InvalidDatasetStructure("Cannot search for profile QC in this index)")
+                raise InvalidDatasetStructure(
+                    "Cannot search for profile QC in this index)"
+                )
             # Validate PARAMs
-            [
-                PARAMs.update({p: to_list(PARAMs[p])}) for p in PARAMs
-            ]
+            [PARAMs.update({p: to_list(PARAMs[p])}) for p in PARAMs]
             if not np.all(
-                [v in ['', ' ', '1', 'A', 'B', 'C', 'D', 'E', 'F'] for vals in PARAMs.values() for v in vals]
+                [
+                    v in ["", " ", "1", "A", "B", "C", "D", "E", "F"]
+                    for vals in PARAMs.values()
+                    for v in vals
+                ]
             ):
-                raise ValueError("Profile QC must be a value in '', 'A', 'B', 'C', 'D', 'E', 'F'")
+                raise ValueError(
+                    "Profile QC must be a value in '', 'A', 'B', 'C', 'D', 'E', 'F'"
+                )
             log.debug("Argo index searching for profile QC: %s ..." % PARAMs)
             return PARAMs
 
@@ -588,7 +601,9 @@ class SearchEngine(ArgoIndexSearchEngine):
 
             for param in PARAMs:
                 qcflags = PARAMs[param]
-                filt.append(self._obj.index[f"profile_{param.lower()}_qc"].isin(qcflags))
+                filt.append(
+                    self._obj.index[f"profile_{param.lower()}_qc"].isin(qcflags)
+                )
 
             return self._obj._reduce_a_filter_list(filt, op=logical)
 
@@ -612,9 +627,13 @@ class SearchEngine(ArgoIndexSearchEngine):
         nrows=None,
         composed=False,
     ):
-        def checker(where: str, ge: Optional[float], le: Optional[float])-> [str, Optional[float], Optional[float]]:
-            if where.lower() not in ['mean', 'dev']:
-                raise ValueError(f"'{where}': The 'where' argument must be 'mean' or 'dev'.")
+        def checker(
+            where: str, ge: Optional[float], le: Optional[float]
+        ) -> [str, Optional[float], Optional[float]]:
+            if where.lower() not in ["mean", "dev"]:
+                raise ValueError(
+                    f"'{where}': The 'where' argument must be 'mean' or 'dev'."
+                )
             if "ad_psal_adjustment_mean" not in self._obj.convention_columns:
                 raise InvalidDatasetStructure(
                     "Cannot search for salinity adjustment mean in this index)"
@@ -626,7 +645,7 @@ class SearchEngine(ArgoIndexSearchEngine):
 
             bounds = [where.lower(), ge, le]
 
-            if bounds[0] == 'dev' and bounds[2] is not None and bounds[2] < 0:
+            if bounds[0] == "dev" and bounds[2] is not None and bounds[2] < 0:
                 raise ValueError(f"Deviation lower limit must be zero or positive")
 
             return bounds
