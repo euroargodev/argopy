@@ -685,9 +685,13 @@ class SearchEngine(ArgoIndexSearchEngine):
         nrows=None,
         composed=False,
     ):
-        def checker(where: str, ge: Optional[float], le: Optional[float])-> [str, Optional[float], Optional[float]]:
-            if where.lower() not in ['mean', 'std']:
-                raise ValueError(f"'{where}': The 'where' argument must be 'mean' or 'std'.")
+        def checker(
+            where: str, ge: Optional[float], le: Optional[float]
+        ) -> [str, Optional[float], Optional[float]]:
+            if where.lower() not in ["mean", "std"]:
+                raise ValueError(
+                    f"'{where}': The 'where' argument must be 'mean' or 'std'."
+                )
             if "ad_psal_adjustment_mean" not in self._obj.convention_columns:
                 raise InvalidDatasetStructure(
                     "Cannot search for salinity adjustment mean in this index"
@@ -699,8 +703,10 @@ class SearchEngine(ArgoIndexSearchEngine):
 
             bounds = [where.lower(), ge, le]
 
-            if bounds[0] == 'std' and bounds[2] is not None and bounds[2] < 0:
-                raise ValueError(f"Standard deviation lower limit must be zero or positive")
+            if bounds[0] == "std" and bounds[2] is not None and bounds[2] < 0:
+                raise ValueError(
+                    f"Standard deviation lower limit must be zero or positive"
+                )
 
             return bounds
 
@@ -739,18 +745,30 @@ class SearchEngine(ArgoIndexSearchEngine):
         nrows=None,
         composed=False,
     ):
-        def checker(ge: Optional[int], le: Optional[int])-> [Optional[int], Optional[int]]:
+        def checker(
+            ge: Optional[int], le: Optional[int]
+        ) -> [Optional[int], Optional[int]]:
             if "n_levels" not in self._obj.convention_columns:
                 raise InvalidDatasetStructure(
                     "Cannot search for number of levels in this index)"
                 )
             bounds = [ge, le]
             if bounds[0] is not None and bounds[0] <= 0:
-                raise ValueError(f"The minimum number of levels 'ge' must be positive, {bounds[0]} provided")
+                raise ValueError(
+                    f"The minimum number of levels 'ge' must be positive, {bounds[0]} provided"
+                )
             if bounds[1] is not None and bounds[1] <= 0:
-                raise ValueError(f"The maximum number of levels 'le' must be positive, {bounds[1]} provided")
-            if bounds[0] is not None and bounds[1] is not None and bounds[0] > bounds[1]:
-                raise ValueError(f"Upper bound le={bounds[1]} must be small than the lower bound ge={bounds[0]}")
+                raise ValueError(
+                    f"The maximum number of levels 'le' must be positive, {bounds[1]} provided"
+                )
+            if (
+                bounds[0] is not None
+                and bounds[1] is not None
+                and bounds[0] > bounds[1]
+            ):
+                raise ValueError(
+                    f"Upper bound le={bounds[1]} must be small than the lower bound ge={bounds[0]}"
+                )
             return bounds
 
         def namer(bounds):
@@ -759,9 +777,9 @@ class SearchEngine(ArgoIndexSearchEngine):
         def composer(obj, bounds):
             filt = []
             if bounds[0] is not None:
-                filt.append(pc.greater_equal(obj.index['n_levels'], bounds[0]))
+                filt.append(pc.greater_equal(obj.index["n_levels"], bounds[0]))
             if bounds[1] is not None:
-                filt.append(pc.less_equal(obj.index['n_levels'], bounds[1]))
+                filt.append(pc.less_equal(obj.index["n_levels"], bounds[1]))
             return obj._reduce_a_filter_list(filt, op="and")
 
         bounds = checker(ge, le)
