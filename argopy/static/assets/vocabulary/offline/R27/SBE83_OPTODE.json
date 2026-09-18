@@ -1,12 +1,13 @@
 {
   "name": "SBE83_OPTODE",
   "long_name": "Sea-Bird Scientific SBE83 oxygen optode",
-  "last_update": "2026-01-25T11:13:53.821535+00:00",
+  "last_update": "2026-09-15T15:05:09.206214+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/",
     "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/1/"
     },
+    "pav:authoredOn": "2025-11-18 12:09:41.0",
     "@type": "skos:Concept",
     "skos:related": {
       "@id": "http://vocab.nerc.ac.uk/collection/R25/current/OPTODE_DOXY/"
@@ -32,12 +33,14 @@
     "dc:date": "2025-11-18 12:09:41.0",
     "skos:altLabel": "SBE83_OPTODE",
     "skos:notation": "SDN:R27::SBE83_OPTODE",
+    "skos:broader": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+    },
     "pav:version": "2",
     "dce:identifier": "SDN:R27::SBE83_OPTODE",
     "pav:hasCurrentVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/2/"
     },
-    "pav:authoredOn": "2025-11-18 12:09:41.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

@@ -1,7 +1,7 @@
 {
   "name": "CC00048",
   "long_name": "CONFIG_DownTime_hours",
-  "last_update": "2026-01-25T11:15:35.524763+00:00",
+  "last_update": "2026-09-15T15:05:38.196296+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00048/",
     "pav:hasVersion": {

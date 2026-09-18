@@ -1027,7 +1027,10 @@ class Lister:
             uri = af.host_sep.join([af.path, "profiles"])
             this_URI.commit(self.dfile(uri, "html"))
 
-            for key, uri in af.ls_dataset().items():
+            for key, uri in af.ls_datasets().items():
+                this_URI.commit(self.dfile(uri, "nc"))
+
+            for key, uri in af.ls_profiles().items():
                 this_URI.commit(self.dfile(uri, "nc"))
 
             for key, uri in af.api_point.items():

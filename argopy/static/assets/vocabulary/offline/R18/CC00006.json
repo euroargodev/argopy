@@ -1,7 +1,7 @@
 {
   "name": "CC00006",
   "long_name": "CONFIG_AscentSpeed_mm/s",
-  "last_update": "2026-01-25T11:15:23.876382+00:00",
+  "last_update": "2026-09-15T15:05:35.525750+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00006/",
     "pav:hasVersion": {

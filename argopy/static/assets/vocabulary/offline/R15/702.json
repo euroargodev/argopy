@@ -1,37 +1,43 @@
 {
   "name": "702",
   "long_name": "FMT",
-  "last_update": "2026-01-25T11:14:27.656483+00:00",
+  "last_update": "2026-09-15T15:05:15.750330+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R15/current/702/",
     "pav:authoredOn": "2021-11-30 09:53:34.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R15/current/702/1/"
-    },
-    "dce:identifier": "SDN:R15::702",
-    "pav:version": "1",
-    "skos:notation": "SDN:R15::702",
-    "skos:altLabel": "702",
-    "dc:date": "2021-11-30 09:53:34.0",
-    "owl:versionInfo": "1",
-    "skos:prefLabel": {
-      "@language": "en",
-      "@value": "FMT"
-    },
-    "dc:identifier": "SDN:R15::702",
-    "skos:note": {
-      "@language": "en",
-      "@value": "accepted"
-    },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
+    "@type": "skos:Concept",
     "skos:definition": {
       "@language": "en",
       "@value": "Earliest time of all messages received by telecommunications system - may or may not have a location fix."
     },
-    "@type": "skos:Concept",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R15::702",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "FMT"
+    },
+    "owl:versionInfo": "1",
+    "dc:date": "2021-11-30 09:53:34.0",
+    "skos:altLabel": "702",
+    "skos:notation": "SDN:R15::702",
+    "skos:broader": {
+      "@id": "http://vocab.nerc.ac.uk/collection/RMC/current/RSPEC/"
+    },
+    "owl:sameAs": {
+      "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/FMT/"
+    },
+    "pav:version": "1",
+    "dce:identifier": "SDN:R15::702",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R15/current/702/1/"
+    },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

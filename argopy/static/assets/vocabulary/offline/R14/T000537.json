@@ -1,7 +1,7 @@
 {
   "name": "T000537",
   "long_name": "VOLTAGE_BatteryPumpLastValueAsAscends_volts",
-  "last_update": "2026-01-25T11:13:07.379517+00:00",
+  "last_update": "2026-09-15T15:04:54.207112+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000537/",
     "pav:hasVersion": {

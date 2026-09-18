@@ -22,7 +22,7 @@ from argopy.utils.checkers import is_list_of_strings
 log = logging.getLogger("argopy.tests.related.reference")
 
 
-# @pytest.mark.skip
+@pytest.mark.skip("Deprecated, out of the CI tests suite")
 class Test_ArgoNVSReferenceTables_Deprecated:
 
     def setup_class(self):

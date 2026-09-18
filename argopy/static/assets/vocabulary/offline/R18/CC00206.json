@@ -1,40 +1,45 @@
 {
   "name": "CC00206",
   "long_name": "CONFIG_TelemetryRetransmission_COUNT",
-  "last_update": "2026-01-25T11:15:59.729173+00:00",
+  "last_update": "2026-09-15T15:05:39.635205+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00206/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00206/1/"
-    },
-    "pav:authoredOn": "2025-12-12 11:41:12.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00206/2/"
-    },
-    "dce:identifier": "SDN:R18::CC00206",
-    "pav:version": "2",
-    "skos:notation": "SDN:R18::CC00206",
-    "skos:altLabel": "Core Config 206",
-    "dc:date": "2025-12-12 11:41:12.0",
-    "owl:versionInfo": "2",
-    "skos:prefLabel": {
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00206/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00206/2/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
       "@language": "en",
-      "@value": "CONFIG_TelemetryRetransmission_COUNT"
+      "@value": "Desired number of retransmissions of the N ARGOS messages needed to transmit the data collected during the cycle. This parameter is also used to compute the transmission duration. To transmit N ARGOS messages, the transmission duration of an ARGOS PROVOR float is : MAX([N*CONFIG_TransmissionRepetitionPeriod_seconds*CONFIG_TelemetryRetransmission_COUNT]/3600, CONFIG_TransmissionMaxTime_hours). Template_Values:{unit:[COUNT]}."
     },
-    "dc:identifier": "SDN:R18::CC00206",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R18::CC00206",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "Used to compute the transmission duration. To transmit N Argos messages, the transmission duration of an Argos PROVOR float is : MAX([N*CONFIG_TransmissionRepetitionPeriod_seconds*CONFIG_TelemetryRetransmission_COUNT]/3600, CONFIG_TransmissionMaxTime_hours). Template_Values:{unit:[COUNT]}."
+      "@value": "CONFIG_TelemetryRetransmission_COUNT"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "3",
+    "dc:date": "2026-03-05 17:07:34.0",
+    "skos:altLabel": "Core Config 206",
+    "skos:notation": "SDN:R18::CC00206",
+    "pav:version": "3",
+    "dce:identifier": "SDN:R18::CC00206",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00206/3/"
+    },
+    "pav:authoredOn": "2026-03-05 17:07:34.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

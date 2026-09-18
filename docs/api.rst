@@ -321,7 +321,7 @@ Argo vocabulary: referencing system
     ArgoReferenceValue
     ArgoReferenceTable
     ArgoReferenceMapping
-    ArgoNVSReferenceTables
+    ArgoNVSReferenceTables (deprecated) <reference.ArgoNVSReferenceTables>
 
 Other Argo related data
 =======================
@@ -387,8 +387,6 @@ Lists
 .. autosummary::
    :toctree: generated/
 
-    list_available_data_src
-    list_available_index_src
     list_standard_variables
     list_multiprofile_file_variables
     list_core_parameters
@@ -397,6 +395,7 @@ Lists
     list_radiometry_variables
     list_radiometry_parameters
     list_gdac_servers
+    shortcut2gdac
 
 Checkers
 --------
@@ -413,12 +412,13 @@ Checkers
     isalive
     isAPIconnected
 
-
 Misc
---------
+----
 
 .. autosummary::
    :toctree: generated/
+
+    cast_Argo_variable_type
 
     float_wmo
     Registry
@@ -432,6 +432,7 @@ Misc
     Github
 
     optical_modeling
+    wmo2box
 
 Argopy helpers
 ==============
@@ -440,11 +441,12 @@ Argopy helpers
 .. autosummary::
    :toctree: generated/
 
-   set_options
-   clear_cache
-   tutorial.open_dataset
-   show_versions
-   xarray.ArgoEngine
+    set_options
+    show_options
+    clear_cache
+    tutorial.open_dataset
+    show_versions
+    xarray.ArgoEngine
 
 
 Internals
@@ -466,6 +468,7 @@ File systems
     stores.ftpstore
     stores.s3store
     stores.ArgoKerchunker
+    utils.Asset
 
 Fetcher sources
 ---------------

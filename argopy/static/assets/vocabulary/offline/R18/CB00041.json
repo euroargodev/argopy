@@ -1,7 +1,7 @@
 {
   "name": "CB00041",
   "long_name": "CONFIG_SunaDataType_NUMBER",
-  "last_update": "2026-01-25T11:15:26.587370+00:00",
+  "last_update": "2026-09-15T15:05:36.689645+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00041/",
     "pav:hasVersion": [

@@ -1,7 +1,7 @@
 {
   "name": "PH_IN_SITU_TOTAL",
   "long_name": "pH (total scale)",
-  "last_update": "2026-01-25T11:11:27.043151+00:00",
+  "last_update": "2026-09-15T15:04:38.576917+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/PH_IN_SITU_TOTAL/",
     "pav:hasVersion": [

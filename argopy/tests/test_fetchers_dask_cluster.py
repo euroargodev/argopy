@@ -97,13 +97,14 @@ class Test_Backend:
     #############
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
-        self.client = Client(processes=True)
+        self.client = Client(processes=False)
         log.debug("Dask dashboard: %s" % self.client.dashboard_link)
 
     def _test2fetcherargs(self, this_request):
         """Helper method to set up options for a fetcher creation"""
         defaults_args = {
             "parallel": self.client,
+            # "parallel": client,
             "chunks_maxsize": {"lon": 2.5, "lat": 2.5},
         }
         if USE_MOCKED_SERVER:
@@ -135,7 +136,8 @@ class Test_Backend:
 
     def teardown_class(self):
         """Cleanup once we are finished."""
-        self.client.close()
+        # self.client.close() # Raise an error on py3.12, cf https://github.com/euroargodev/argopy/issues/678
+        ...
 
     #########
     # TESTS #

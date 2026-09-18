@@ -1,7 +1,7 @@
 {
   "name": "890",
   "long_name": "PROVOR_III - Jumbo, SBE",
-  "last_update": "2026-01-25T11:14:17.851024+00:00",
+  "last_update": "2026-09-15T15:05:12.405536+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/890/",
     "pav:hasVersion": [
@@ -34,6 +34,9 @@
     "dc:date": "2024-11-11 09:32:23.0",
     "skos:altLabel": "890",
     "skos:notation": "SDN:R08::890",
+    "skos:broader": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III_JUMBO/"
+    },
     "pav:version": "3",
     "dce:identifier": "SDN:R08::890",
     "pav:hasCurrentVersion": {

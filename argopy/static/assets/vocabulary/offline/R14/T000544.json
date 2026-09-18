@@ -1,7 +1,7 @@
 {
   "name": "T000544",
   "long_name": "VOLTAGE_BatterySurfaceNoLoad_volts",
-  "last_update": "2026-01-25T11:12:08.350795+00:00",
+  "last_update": "2026-09-15T15:04:45.715222+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000544/",
     "pav:hasVersion": {

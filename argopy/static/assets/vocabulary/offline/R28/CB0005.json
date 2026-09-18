@@ -1,37 +1,57 @@
 {
   "name": "CB0005",
   "long_name": "I535",
-  "last_update": "2026-01-25T11:15:14.572578+00:00",
+  "last_update": "2026-09-15T15:05:32.464120+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0005/",
-    "pav:authoredOn": "2023-06-22 12:52:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0005/1/"
     },
-    "dce:identifier": "SDN:R28::CB0005",
-    "pav:version": "1",
-    "skos:notation": "SDN:R28::CB0005",
-    "skos:altLabel": "I535",
-    "dc:date": "2023-06-22 12:52:35.0",
-    "owl:versionInfo": "1",
-    "skos:prefLabel": {
-      "@language": "en",
-      "@value": "I535"
+    "pav:authoredOn": "2026-01-26 14:08:04.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0005/2/"
     },
-    "dc:identifier": "SDN:R28::CB0005",
+    "dce:identifier": "SDN:R28::CB0005",
+    "pav:version": "2",
+    "@type": "skos:Concept",
+    "skos:related": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_D/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_C/"
+      }
+    ],
+    "skos:definition": {
+      "@language": "en",
+      "@value": "Used in certain types of NKE Argo floats as primary controller board (ARVOR, ARVOR_C, ARVOR_D, PROVOR_CTS3.1, PROVOR_CTS3.1-DO, PROVOR_III_CTS4, PROVOR_DO-I)."
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R28::CB0005",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "Used in certain types of NKE Argo floats as primary controller board."
+      "@value": "I535"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "2",
+    "dc:date": "2026-01-26 14:08:04.0",
+    "skos:altLabel": "I535",
+    "skos:notation": "SDN:R28::CB0005",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

@@ -1,17 +1,17 @@
 {
   "name": "MARTEC",
   "long_name": "Martec",
-  "last_update": "2026-01-25T11:11:04.307548+00:00",
+  "last_update": "2026-09-15T15:04:31.290365+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R24/current/MARTEC/",
     "pav:authoredOn": "2020-05-03 20:30:12.0",
     "@type": "skos:Concept",
     "skos:related": [
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_II/"
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/"
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_II/"
       }
     ],
     "skos:definition": {

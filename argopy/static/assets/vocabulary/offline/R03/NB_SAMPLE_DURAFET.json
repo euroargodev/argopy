@@ -1,7 +1,7 @@
 {
   "name": "NB_SAMPLE_DURAFET",
   "long_name": "Number of DURAFET samples in each pressure bin",
-  "last_update": "2026-01-25T11:11:25.521817+00:00",
+  "last_update": "2026-09-15T15:04:37.813433+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_DURAFET/",
     "pav:hasVersion": [

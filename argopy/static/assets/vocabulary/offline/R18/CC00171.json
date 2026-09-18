@@ -1,7 +1,7 @@
 {
   "name": "CC00171",
   "long_name": "CONFIG_ProfileDepthInterval_dbar",
-  "last_update": "2026-01-25T11:15:45.868690+00:00",
+  "last_update": "2026-09-15T15:05:41.269198+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00171/",
     "pav:hasVersion": {

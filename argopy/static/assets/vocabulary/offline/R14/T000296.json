@@ -1,7 +1,7 @@
 {
   "name": "T000296",
   "long_name": "FLAG_OptodeFailed_LOGICAL",
-  "last_update": "2026-01-25T11:13:40.003620+00:00",
+  "last_update": "2026-09-15T15:05:04.142033+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000296/",
     "pav:hasVersion": {

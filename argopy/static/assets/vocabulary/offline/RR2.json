@@ -1,7 +1,7 @@
 {
   "name": "RT_QC_FLAG",
   "long_name": "Argo real-time quality control measurement flags",
-  "last_update": "2026-01-25T10:44:14.182785+00:00",
+  "last_update": "2026-09-15T15:04:19.644725+00:00",
   "data": {
     "@graph": [
       {

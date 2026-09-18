@@ -1,7 +1,7 @@
 import copy
 import numpy as np
-import pandas as pd
-import xarray as xr
+from argopy import pandas as pd # Lazily import large module
+from argopy import xarray as xr # Lazily import large module
 import logging
 import time
 from abc import ABC, abstractmethod
@@ -27,8 +27,8 @@ from .implementations.plot import ArgoIndexPlot
 from .implementations.valid import ArgoIndexSearchValid
 
 try:
+    from argopy import pyarrow as pa # Lazily import large module
     import pyarrow.csv as csv  # noqa: F401
-    import pyarrow as pa
     import pyarrow.parquet as pq  # noqa: F401
 except ModuleNotFoundError:
     pass
@@ -163,9 +163,7 @@ class ArgoIndexStoreProto(ABC):
         elif "ftp" in split_protocol(self.host)[0]:
             if "ifremer" not in host:
                 log.info(
-                    """Working with a non-official Argo ftp server: %s. Raise on issue if you wish to add your own to the valid list of FTP servers: https://github.com/euroargodev/argopy/issues/new?title=New%%20FTP%%20server"""
-                    % host
-                )
+                    f"Working with a non-official Argo ftp server: {host}")
             if not isconnected(host):
                 raise GdacPathError("This host (%s) is not alive !" % host)
 

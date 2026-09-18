@@ -1,7 +1,7 @@
 {
   "name": "T000466",
   "long_name": "TIME_OptiqueSampleFrequencyDuringDescent_seconds",
-  "last_update": "2026-01-25T11:12:45.489186+00:00",
+  "last_update": "2026-09-15T15:04:48.308566+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000466/",
     "pav:hasVersion": {

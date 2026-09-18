@@ -1,7 +1,7 @@
 {
   "name": "T000456",
   "long_name": "TIME_DOXYSampleFrequencyDuringPark_hours",
-  "last_update": "2026-01-25T11:13:10.521516+00:00",
+  "last_update": "2026-09-15T15:04:55.110265+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000456/",
     "pav:hasVersion": {

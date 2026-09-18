@@ -1,7 +1,7 @@
 {
   "name": "CC00226",
   "long_name": "CONFIG_PressureTargetToleranceBeforeRepositionPhase<D>_dbar",
-  "last_update": "2026-01-25T11:15:33.499652+00:00",
+  "last_update": "2026-09-15T15:05:38.024345+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00226/",
     "pav:authoredOn": "2025-12-12 11:41:12.0",

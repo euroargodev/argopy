@@ -1,7 +1,7 @@
 {
   "name": "CB00060",
   "long_name": "CONFIG_<short_sensor_name><param>FluorescenceEmissionBandwidth_nm",
-  "last_update": "2026-01-25T11:15:47.676898+00:00",
+  "last_update": "2026-09-15T15:05:41.744361+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00060/",
     "pav:hasVersion": [

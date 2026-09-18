@@ -1,7 +1,7 @@
 {
   "name": "CB00023",
   "long_name": "CONFIG_OptodeMinTransmittedBPhase_angularDeg",
-  "last_update": "2026-01-25T11:15:43.517974+00:00",
+  "last_update": "2026-09-15T15:05:40.354203+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00023/",
     "pav:hasVersion": [

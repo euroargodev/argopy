@@ -1,7 +1,7 @@
 {
   "name": "T000526",
   "long_name": "VOLTAGE_BatteryExternalStartProfile_volts",
-  "last_update": "2026-01-25T11:12:55.172808+00:00",
+  "last_update": "2026-09-15T15:04:50.366450+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000526/",
     "pav:hasVersion": {

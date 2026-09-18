@@ -1,7 +1,7 @@
 {
   "name": "ECO_BB",
   "long_name": "ECO BB scattering meter",
-  "last_update": "2026-01-25T11:14:12.769720+00:00",
+  "last_update": "2026-09-15T15:05:10.840484+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB/",
     "pav:hasVersion": {

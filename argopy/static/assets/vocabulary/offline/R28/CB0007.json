@@ -1,37 +1,48 @@
 {
   "name": "CB0007",
   "long_name": "USEA",
-  "last_update": "2026-01-25T11:15:14.323134+00:00",
+  "last_update": "2026-09-15T15:05:32.660899+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0007/",
-    "pav:authoredOn": "2023-06-22 12:52:35.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0007/1/"
     },
-    "dce:identifier": "SDN:R28::CB0007",
-    "pav:version": "1",
-    "skos:notation": "SDN:R28::CB0007",
-    "skos:altLabel": "USEA",
-    "dc:date": "2023-06-22 12:52:35.0",
-    "owl:versionInfo": "1",
-    "skos:prefLabel": {
+    "pav:authoredOn": "2026-01-26 14:08:04.0",
+    "@type": "skos:Concept",
+    "skos:related": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/"
+      }
+    ],
+    "skos:definition": {
       "@language": "en",
-      "@value": "USEA"
+      "@value": "Used in certain types of NKE Argo floats as secondary controller board (PROVOR_V_CTS5, PROVOR_V_JUMBO_CTS5). Developed in partnership with LOV. Mentioned in https://www.frontiersin.org/articles/10.3389/fmars.2020.577446/full"
     },
-    "dc:identifier": "SDN:R28::CB0007",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R28::CB0007",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "Used in certain types of NKE Argo floats as secondary controller board. Developed in partnership with LOV. Mentioned in https://www.frontiersin.org/articles/10.3389/fmars.2020.577446/full"
+      "@value": "USEA"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "2",
+    "dc:date": "2026-01-26 14:08:04.0",
+    "skos:altLabel": "USEA",
+    "skos:notation": "SDN:R28::CB0007",
+    "pav:version": "2",
+    "dce:identifier": "SDN:R28::CB0007",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0007/2/"
+    },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

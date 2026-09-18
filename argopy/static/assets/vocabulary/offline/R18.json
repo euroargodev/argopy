@@ -1,7 +1,7 @@
 {
   "name": "CONFIG_PARAMETER_NAME",
   "long_name": "Argo configuration parameter names",
-  "last_update": "2026-01-25T10:44:16.925616+00:00",
+  "last_update": "2026-09-15T15:04:21.674964+00:00",
   "data": {
     "@graph": [
       {
@@ -107,6 +107,45 @@
         "@type": "skos:Concept"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00133/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00133/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00133/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "The maximum buoyancy position in counts. The buoyancy pump will shut off if the buoyancy position reaches this maximum value. Template_Values:{unit:[COUNT]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R18::CC00133",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_PistonFullExtension_COUNT"
+        },
+        "owl:versionInfo": "3",
+        "dc:date": "2026-03-09 09:11:24.0",
+        "skos:altLabel": "Core Config 133",
+        "skos:notation": "SDN:R18::CC00133",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R18::CC00133",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00133/3/"
+        },
+        "pav:authoredOn": "2026-03-09 09:11:24.0"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00037/",
         "pav:hasVersion": [
           {
@@ -146,38 +185,46 @@
         "pav:authoredOn": "2025-12-11 09:34:56.0"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00142/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00142/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:13.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00142/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00142",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00142",
-        "skos:altLabel": "Core Config 142",
-        "dc:date": "2025-12-12 11:41:13.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00180/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00180/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00180/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00180/3/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
           "@language": "en",
-          "@value": "CONFIG_PressureActivationMode_LOGICAL"
+          "@value": "Never used on the GDAC. Use last piston position until this profile number. Template_Values:{unit:[NUMBER]}."
         },
-        "dc:identifier": "SDN:R18::CC00142",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
         "void:inDataset": {
           "@id": "http://vocab.nerc.ac.uk/.well-known/void"
         },
-        "skos:definition": {
+        "owl:deprecated": "true",
+        "skos:note": {
           "@language": "en",
-          "@value": "Use the pressure activation feature. Template_Values:{unit:[LOGICAL]}."
+          "@value": "deprecated"
         },
-        "@type": "skos:Concept"
+        "dc:identifier": "SDN:R18::CC00180",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_ProfileWhereChangePistonPosition_NUMBER"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-03-09 09:11:25.0",
+        "skos:altLabel": "Core Config 180",
+        "skos:notation": "SDN:R18::CC00180",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R18::CC00180",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00180/4/"
+        },
+        "pav:authoredOn": "2026-03-09 09:11:25.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00050/",
@@ -290,40 +337,6 @@
           "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00062/3/"
         },
         "pav:authoredOn": "2025-12-11 09:34:56.0"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00093/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00093/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:09.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00093/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00093",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00093",
-        "skos:altLabel": "Core Config 93",
-        "dc:date": "2025-12-12 11:41:09.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CONFIG_IceDetectionEndTelemetryDay_NUMBER"
-        },
-        "dc:identifier": "SDN:R18::CC00093",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Last day of the year during which telemetry is attempted during the Surface phase. When the float surfaces on a day that is not specified, it does not attempt telemetry and immediately begins the Park Descent phase for the next profiling cycle. TelemetryDays are specified with a start day and an end day. The start day is the first day of the transmit season for the year. The end day is the last day of the transmit season for the year. A setting of 0 0 disables TelemetryDays, and the float attempts telemetry during each Surface Phase. Template_Values:{unit:[NUMBER]}."
-        },
-        "@type": "skos:Concept"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00064/",
@@ -512,37 +525,42 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00166/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00166/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:04.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00166/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00166",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00166",
-        "skos:altLabel": "Core Config 166",
-        "dc:date": "2025-12-12 11:41:04.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00166/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00166/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
           "@language": "en",
-          "@value": "CONFIG_PressureThresholdDataReduction_dbar"
+          "@value": "Isobar that divides shallow depths from deep depths for the purpose of data reduction, for floats with 2 depth zones. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
         },
-        "dc:identifier": "SDN:R18::CC00166",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
         "skos:note": {
           "@language": "en",
           "@value": "accepted"
         },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
+        "dc:identifier": "SDN:R18::CC00166",
+        "skos:prefLabel": {
           "@language": "en",
-          "@value": "Isobar that divides shallow depths from deep depths for the purpose of data reduction with 2 depth zones. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+          "@value": "CONFIG_PressureThresholdDataReduction_dbar"
         },
-        "@type": "skos:Concept"
+        "owl:versionInfo": "3",
+        "dc:date": "2026-03-05 17:07:34.0",
+        "skos:altLabel": "Core Config 166",
+        "skos:notation": "SDN:R18::CC00166",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R18::CC00166",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00166/3/"
+        },
+        "pav:authoredOn": "2026-03-05 17:07:34.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00126/",
@@ -754,6 +772,48 @@
         "@type": "skos:Concept"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00027/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00027/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00027/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00027/3/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Never used on the GDAC. Connection time out allowed for initial connection to the RUDICS server. Default value is 30 minutes. Template_Values:{unit:[hours, minutes, seconds]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R18::CC00027",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_ConnectionInitialTimeOut_seconds"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-03-09 09:11:24.0",
+        "skos:altLabel": "Core Config 27",
+        "skos:notation": "SDN:R18::CC00027",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R18::CC00027",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00027/4/"
+        },
+        "pav:authoredOn": "2026-03-09 09:11:24.0"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00219/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00219/1/"
@@ -786,6 +846,48 @@
           "@value": "Preset duration of the up time (from start of ascent to start of descent). Template_Values:{unit:[days, hours, minutes, seconds]}."
         },
         "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00019/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00019/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00019/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00019/3/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Never used on the GDAC. Ascent end time of Profile 1 (expected time at the surface of Profile 1). Template_Values:{unit:[YYYYMMDD, HHMMSS, YYYYMMDDHHMMSS, HHMM, MMSS, YYYY, DD, HH, MM]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R18::CC00019",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_ClockAscentEndTimeProfile1_HHMM"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-03-09 09:11:24.0",
+        "skos:altLabel": "Core Config 19",
+        "skos:notation": "SDN:R18::CC00019",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R18::CC00019",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00019/4/"
+        },
+        "pav:authoredOn": "2026-03-09 09:11:24.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00101/",
@@ -1149,71 +1251,42 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00061/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00061/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:07.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00061/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00061",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00061",
-        "skos:altLabel": "Core Config 61",
-        "dc:date": "2025-12-12 11:41:07.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00061/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00061/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
           "@language": "en",
-          "@value": "CONFIG_GroundingMode_LOGICAL"
+          "@value": "Scenario followed by the float when a grounding is detected. Values and possibilities vary according to float types, check specific manuals for details. Template_Values:{unit:[LOGICAL, NUMBER]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
         },
         "dc:identifier": "SDN:R18::CC00061",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Action performed by the float when a grounding is detected. 0 = the float changes its drift pressure, 1 = the float stays on the seabed until the next phase of the cycle. For PROVOR CTS5 the number assigned to each mode has changed - see float manual for details for this model. Template_Values:{unit:[LOGICAL, NUMBER]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00113/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00113/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:05.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00113/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00113",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00113",
-        "skos:altLabel": "Core Config 113",
-        "dc:date": "2025-12-12 11:41:05.0",
-        "owl:versionInfo": "2",
         "skos:prefLabel": {
           "@language": "en",
-          "@value": "CONFIG_MissionSignature_NUMBER"
+          "@value": "CONFIG_GroundingMode_NUMBER"
         },
-        "dc:identifier": "SDN:R18::CC00113",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
+        "owl:versionInfo": "3",
+        "dc:date": "2026-03-05 17:07:33.0",
+        "skos:altLabel": "Core Config 61",
+        "skos:notation": "SDN:R18::CC00061",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R18::CC00061",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00061/3/"
         },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Clarification needed. Template_Values:{unit:[NUMBER]}."
-        },
-        "@type": "skos:Concept"
+        "pav:authoredOn": "2026-03-05 17:07:33.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00082/",
@@ -1491,40 +1564,6 @@
         "skos:definition": {
           "@language": "en",
           "@value": "Preset piston position for pressure activation. Template_Values:{unit:[COUNT]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00020/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00020/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:12.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00020/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00020",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00020",
-        "skos:altLabel": "Core Config 20",
-        "dc:date": "2025-12-12 11:41:12.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CONFIG_ClockAscentEndTimeProfile2_HHMM"
-        },
-        "dc:identifier": "SDN:R18::CC00020",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Ascent end time of Profile 2 (expected time at the surface of Profile 2). Template_Values:{unit:[YYYYMMDD, HHMMSS, YYYYMMDDHHMMSS, HHMM, MMSS, YYYY, DD, HH, MM]}."
         },
         "@type": "skos:Concept"
       },
@@ -1855,6 +1894,48 @@
         "pav:authoredOn": "2025-12-11 09:34:55.0"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00070/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00070/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00070/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00070/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Never used on the GDAC. Pressure threshold to start the acoustic ice detection test. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R18::CC00070",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_IceDetectionAcousticStartPressureThreshold_dbar"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-03-09 09:11:25.0",
+        "skos:altLabel": "Core Config 70",
+        "skos:notation": "SDN:R18::CC00070",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R18::CC00070",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00070/4/"
+        },
+        "pav:authoredOn": "2026-03-09 09:11:25.0"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00122/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00122/1/"
@@ -2030,38 +2111,46 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00134/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00134/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:06.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00134/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00134",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00134",
-        "skos:altLabel": "Core Config 134",
-        "dc:date": "2025-12-12 11:41:06.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00023/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00023/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00023/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00023/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
           "@language": "en",
-          "@value": "CONFIG_PistonFullRetraction_COUNT"
+          "@value": "Never used on the GDAC. Cycle to start at a preset time (0 = Disabled, 1 = Enabled). Template_Values:{unit:[LOGICAL]}."
         },
-        "dc:identifier": "SDN:R18::CC00134",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
         "void:inDataset": {
           "@id": "http://vocab.nerc.ac.uk/.well-known/void"
         },
-        "skos:definition": {
+        "owl:deprecated": "true",
+        "skos:note": {
           "@language": "en",
-          "@value": "Clarification needed. Piston full retraction. Template_Values:{unit:[COUNT]}."
+          "@value": "deprecated"
         },
-        "@type": "skos:Concept"
+        "dc:identifier": "SDN:R18::CC00023",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_ClockPresetStartCycle_LOGICAL"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-03-09 09:11:24.0",
+        "skos:altLabel": "Core Config 23",
+        "skos:notation": "SDN:R18::CC00023",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R18::CC00023",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00023/4/"
+        },
+        "pav:authoredOn": "2026-03-09 09:11:24.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00073/",
@@ -2429,6 +2518,48 @@
         "pav:authoredOn": "2025-12-11 09:34:57.0"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00094/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00094/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00094/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00094/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Never used on the GDAC. Amount of time allowed for the float to complete telemetry. A setting of 0 disables IceTelemetryTimeout, and the time available is instead determined by the remaining UpTime of the Ascent phase. Template_Values:{unit:[days, hours, minutes, seconds]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R18::CC00094",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_IceDetectionTelemetryTimeout_minutes"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-03-09 09:11:25.0",
+        "skos:altLabel": "Core Config 94",
+        "skos:notation": "SDN:R18::CC00094",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R18::CC00094",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00094/4/"
+        },
+        "pav:authoredOn": "2026-03-09 09:11:25.0"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00041/",
         "pav:hasVersion": [
           {
@@ -2575,40 +2706,6 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00130/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00130/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:06.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00130/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00130",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00130",
-        "skos:altLabel": "Core Config 130",
-        "dc:date": "2025-12-12 11:41:06.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CONFIG_ParkSamplingPeriod_hours"
-        },
-        "dc:identifier": "SDN:R18::CC00130",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Specify sampling period during the park phase. For example, for APEX floats could be hourly or for ARVOR floats 12 hourly, for SOLO/SOLOII floats this definition is: P,T,S is sampled during drift (park) every CONFIG_ParkSamplingPeriod_hours, e.g. every 2 hours. Template_Values:{unit:[days, hours, minutes, seconds]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00059/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00059/1/"
@@ -2677,40 +2774,6 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00089/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00089/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:06.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00089/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00089",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00089",
-        "skos:altLabel": "Core Config 89",
-        "dc:date": "2025-12-12 11:41:06.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CONFIG_IceDetectionTestDuration_seconds"
-        },
-        "dc:identifier": "SDN:R18::CC00089",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Duration of the ice detection test. Template_Values:{unit:[days, hours, minutes, seconds, dsec, csec, msec, usec]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00052/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00052/1/"
@@ -2743,6 +2806,48 @@
           "@value": "Water leak emergency mode. If set to yes, the float will transition to the Emergency mode upon detection of an internal water leak. If set to no, the float will only log the condition to the system_log.txt file. Template_Values:{unit:[LOGICAL]}."
         },
         "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00218/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00218/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00218/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00218/3/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Never used on the GDAC. Tri profile option (1 = YES, 0 = NO). From the first generation of PROVOR floats for which a number of configurations are allowed, i.e. if tri profile is set to yes, it indicates a float which performs 1 deep profile followed by two shallower profiles. Template_Values:{unit:[LOGICAL]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R18::CC00218",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_TriProfileOption_LOGICAL"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-03-09 09:11:25.0",
+        "skos:altLabel": "Core Config 218",
+        "skos:notation": "SDN:R18::CC00218",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R18::CC00218",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00218/4/"
+        },
+        "pav:authoredOn": "2026-03-09 09:11:25.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00105/",
@@ -2816,6 +2921,45 @@
           "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00025/3/"
         },
         "pav:authoredOn": "2025-12-11 09:34:54.0"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00187/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00187/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00187/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Specifies the time in minutes of the listening window for a sound source signal for underwater positioning, typically used in under ice applications (APF9 RAFOS variant firmware). Template_Values:{unit:[days, hours, minutes, seconds]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R18::CC00187",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_RafosSampling_minutes"
+        },
+        "owl:versionInfo": "3",
+        "dc:date": "2026-03-09 09:11:24.0",
+        "skos:altLabel": "Core Config 187",
+        "skos:notation": "SDN:R18::CC00187",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R18::CC00187",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00187/3/"
+        },
+        "pav:authoredOn": "2026-03-09 09:11:24.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00087/",
@@ -2962,6 +3106,45 @@
           "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00090/3/"
         },
         "pav:authoredOn": "2025-12-11 09:34:56.0"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00076/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00076/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00076/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Maximum delay in number of days of no transmission due to the ice detection algorithm. This parameter is used to disable the ice detection algorithm and force the float to surface even if ice is detected. Template_Values:{unit:[NUMBER]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R18::CC00076",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_IceDetectionMaxDaysNoTransmission_NUMBER"
+        },
+        "owl:versionInfo": "3",
+        "dc:date": "2026-03-09 09:11:24.0",
+        "skos:altLabel": "Core Config 76",
+        "skos:notation": "SDN:R18::CC00076",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R18::CC00076",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00076/3/"
+        },
+        "pav:authoredOn": "2026-03-09 09:11:24.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00089/",
@@ -3290,40 +3473,6 @@
         "pav:authoredOn": "2025-12-12 11:41:12.0"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00128/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00128/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:08.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00128/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00128",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00128",
-        "skos:altLabel": "Core Config 128",
-        "dc:date": "2025-12-12 11:41:08.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CONFIG_ParkSamplingMethod_LOGICAL"
-        },
-        "dc:identifier": "SDN:R18::CC00128",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Park Sampling method (1 = averaged, 0 = spot sampling). Template_Values:{unit:[LOGICAL]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00170/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00170/1/"
@@ -3395,6 +3544,48 @@
           "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00019/3/"
         },
         "pav:authoredOn": "2025-12-11 09:34:55.0"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00142/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00142/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00142/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00142/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Never used on the GDAC. Use the pressure activation feature. Template_Values:{unit:[LOGICAL]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R18::CC00142",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_PressureActivationMode_LOGICAL"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-03-09 09:11:25.0",
+        "skos:altLabel": "Core Config 142",
+        "skos:notation": "SDN:R18::CC00142",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R18::CC00142",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00142/4/"
+        },
+        "pav:authoredOn": "2026-03-09 09:11:25.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00075/",
@@ -3540,40 +3731,6 @@
         "pav:authoredOn": "2025-12-11 09:34:57.0"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00157/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00157/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:13.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00157/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00157",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00157",
-        "skos:altLabel": "Core Config 157",
-        "dc:date": "2025-12-12 11:41:13.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CONFIG_PressureStartContinuousProfiling_dbar"
-        },
-        "dc:identifier": "SDN:R18::CC00157",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Preset pressure where continuous profiling begins on ascent. This varies depending on the phase. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00044/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00044/1/"
@@ -3606,6 +3763,48 @@
           "@value": "Maximum time a float will try to reach its target depth (park) before aborting this step. Template_Values:{unit:[days, hours, minutes, seconds]}."
         },
         "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00093/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00093/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00093/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00093/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Never used on the GDAC. Last day of the year during which telemetry is attempted during the Surface phase. When the float surfaces on a day that is not specified, it does not attempt telemetry and immediately begins the Park Descent phase for the next profiling cycle. TelemetryDays are specified with a start day and an end day. The start day is the first day of the transmit season for the year. The end day is the last day of the transmit season for the year. A setting of 0 0 disables TelemetryDays, and the float attempts telemetry during each Surface Phase. Template_Values:{unit:[NUMBER]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R18::CC00093",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_IceDetectionEndTelemetryDay_NUMBER"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-03-09 09:11:25.0",
+        "skos:altLabel": "Core Config 93",
+        "skos:notation": "SDN:R18::CC00093",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R18::CC00093",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00093/4/"
+        },
+        "pav:authoredOn": "2026-03-09 09:11:25.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00077/",
@@ -3682,37 +3881,42 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00026/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00026/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:09.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00026/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00026",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00026",
-        "skos:altLabel": "Core Config 26",
-        "dc:date": "2025-12-12 11:41:09.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00026/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00026/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
           "@language": "en",
-          "@value": "CONFIG_ConnectionFailureTimeOut_minutes"
+          "@value": "Maximum delay allowed for the float to connect to the RUDICS server. Default value is 30 minutes. Template_Values:{unit:[hours, minutes, seconds]}."
         },
-        "dc:identifier": "SDN:R18::CC00026",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
         "skos:note": {
           "@language": "en",
           "@value": "accepted"
         },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
+        "dc:identifier": "SDN:R18::CC00026",
+        "skos:prefLabel": {
           "@language": "en",
-          "@value": "Maximum time allowed for the float to connect to the RUDICS server. Default value is 30 minutes. Template_Values:{unit:[hours, minutes, seconds]}."
+          "@value": "CONFIG_ConnectionFailureTimeOut_minutes"
         },
-        "@type": "skos:Concept"
+        "owl:versionInfo": "3",
+        "dc:date": "2026-03-05 17:07:33.0",
+        "skos:altLabel": "Core Config 26",
+        "skos:notation": "SDN:R18::CC00026",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R18::CC00026",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00026/3/"
+        },
+        "pav:authoredOn": "2026-03-05 17:07:33.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00085/",
@@ -3965,6 +4169,45 @@
         "pav:authoredOn": "2025-12-11 09:34:54.0"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00214/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00214/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00214/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Time the float will remain on the surface transmitting its data at the end of each cycle (ARGOS transmission only). Template_Values:{unit:[days, hours, minutes, seconds]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R18::CC00214",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_TransmissionMinTime_hours"
+        },
+        "owl:versionInfo": "3",
+        "dc:date": "2026-03-05 17:07:34.0",
+        "skos:altLabel": "Core Config 214",
+        "skos:notation": "SDN:R18::CC00214",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R18::CC00214",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00214/3/"
+        },
+        "pav:authoredOn": "2026-03-05 17:07:34.0"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00143/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00143/1/"
@@ -4107,37 +4350,45 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00092/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00092/1/"
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00092/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00092/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00092/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Never used on the GDAC. First day of the year during which telemetry is attempted during the Surface phase. When the float surfaces on a day that is not specified, it does not attempt telemetry and immediately begins the Park Descent phase for the next profiling cycle. TelemetryDays are specified with a start day and an end day. The start day is the first day of the transmit season for the year. The end day is the last day of the transmit season for the year. A setting of 0 0 disables TelemetryDays, and the float attempts telemetry during each Surface Phase. Template_Values:{unit:[NUMBER]}."
         },
-        "pav:authoredOn": "2025-12-12 11:41:09.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00092/2/"
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
         },
-        "dce:identifier": "SDN:R18::CC00092",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00092",
-        "skos:altLabel": "Core Config 92",
-        "dc:date": "2025-12-12 11:41:09.0",
-        "owl:versionInfo": "2",
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R18::CC00092",
         "skos:prefLabel": {
           "@language": "en",
           "@value": "CONFIG_IceDetectionFirstTelemetryDay_NUMBER"
         },
-        "dc:identifier": "SDN:R18::CC00092",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
+        "owl:versionInfo": "4",
+        "dc:date": "2026-03-09 09:11:25.0",
+        "skos:altLabel": "Core Config 92",
+        "skos:notation": "SDN:R18::CC00092",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R18::CC00092",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00092/4/"
         },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "First day of the year during which telemetry is attempted during the Surface phase. When the float surfaces on a day that is not specified, it does not attempt telemetry and immediately begins the Park Descent phase for the next profiling cycle. TelemetryDays are specified with a start day and an end day. The start day is the first day of the transmit season for the year. The end day is the last day of the transmit season for the year. A setting of 0 0 disables TelemetryDays, and the float attempts telemetry during each Surface Phase. Template_Values:{unit:[NUMBER]}."
-        },
-        "@type": "skos:Concept"
+        "pav:authoredOn": "2026-03-09 09:11:25.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00145/",
@@ -4247,40 +4498,6 @@
         "pav:authoredOn": "2025-12-11 09:34:58.0"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00094/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00094/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:08.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00094/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00094",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00094",
-        "skos:altLabel": "Core Config 94",
-        "dc:date": "2025-12-12 11:41:08.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CONFIG_IceDetectionTelemetryTimeout_minutes"
-        },
-        "dc:identifier": "SDN:R18::CC00094",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Amount of time allowed for the float to complete telemetry. A setting of 0 disables IceTelemetryTimeout, and the time available is instead determined by the remaining UpTime of the Ascent phase. Template_Values:{unit:[days, hours, minutes, seconds]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00198/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00198/1/"
@@ -4354,40 +4571,6 @@
         "pav:authoredOn": "2025-12-11 09:34:59.0"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00180/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00180/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:09.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00180/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00180",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00180",
-        "skos:altLabel": "Core Config 180",
-        "dc:date": "2025-12-12 11:41:09.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CONFIG_ProfileWhereChangePistonPosition_NUMBER"
-        },
-        "dc:identifier": "SDN:R18::CC00180",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Use last piston position until this profile number. Template_Values:{unit:[NUMBER]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00124/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00124/1/"
@@ -4456,6 +4639,48 @@
         "@type": "skos:Concept"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00051/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00051/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00051/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00051/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Never used on the GDAC. Preset duration of the down time (from start of descent to start of ascent) specific to the spring/summer period. Template_Values:{unit:[days, hours, minutes, seconds]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R18::CC00051",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_DownTimeSpringSummer_hours"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-03-09 09:11:24.0",
+        "skos:altLabel": "Core Config 51",
+        "skos:notation": "SDN:R18::CC00051",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R18::CC00051",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00051/4/"
+        },
+        "pav:authoredOn": "2026-03-09 09:11:24.0"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00015/",
         "pav:hasVersion": [
           {
@@ -4493,6 +4718,87 @@
           "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00015/3/"
         },
         "pav:authoredOn": "2025-12-11 09:34:55.0"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00177/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00177/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00177/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00177/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Profile sampling method (1 = averaged, 0 = spot sampling). Template_Values:{unit:[LOGICAL]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R18::CC00177",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_ProfileSamplingMethod_LOGICAL"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-03-05 17:07:34.0",
+        "skos:altLabel": "Core Config 177",
+        "skos:notation": "SDN:R18::CC00177",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R18::CC00177",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00177/4/"
+        },
+        "pav:authoredOn": "2026-03-05 17:07:34.0"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00167/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00167/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00167/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Isobar that divides intermediate depths from deep depths for the purpose of data reduction, for floats with 3 depth zones. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R18::CC00167",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_PressureThresholdDataReductionIntermediateToDeep_dbar"
+        },
+        "owl:versionInfo": "3",
+        "dc:date": "2026-03-05 17:07:34.0",
+        "skos:altLabel": "Core Config 167",
+        "skos:notation": "SDN:R18::CC00167",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R18::CC00167",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00167/3/"
+        },
+        "pav:authoredOn": "2026-03-05 17:07:34.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00096/",
@@ -4631,72 +4937,43 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00136/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00136/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:06.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00136/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00136",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00136",
-        "skos:altLabel": "Core Config 136",
-        "dc:date": "2025-12-12 11:41:06.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00063/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00063/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00063/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
           "@language": "en",
-          "@value": "CONFIG_PistonPositionBallast_COUNT"
+          "@value": "Scenario followed by the float when a grounding is detected during descent to profile, or profile drift depth. Values and possibilities vary according to float types, check specific manuals for details. Template_Values:{unit:[NUMBER]}."
         },
-        "dc:identifier": "SDN:R18::CC00136",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
         "skos:note": {
           "@language": "en",
           "@value": "accepted"
         },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Clarification needed. Template_Values:{unit:[COUNT]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00063/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00063/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:05.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00063/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00063",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00063",
-        "skos:altLabel": "Core Config 63",
-        "dc:date": "2025-12-12 11:41:05.0",
-        "owl:versionInfo": "2",
+        "dc:identifier": "SDN:R18::CC00063",
         "skos:prefLabel": {
           "@language": "en",
           "@value": "CONFIG_GroundingModeForProfileDepth_NUMBER"
         },
-        "dc:identifier": "SDN:R18::CC00063",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
+        "owl:versionInfo": "3",
+        "dc:date": "2026-03-05 17:07:34.0",
+        "skos:altLabel": "Core Config 63",
+        "skos:notation": "SDN:R18::CC00063",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R18::CC00063",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00063/3/"
         },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Action performed by the float when a grounding is detected during descent to profile depth. For PROVOR CTS5 floats: 2 = the float stays on the seabed until the ascent start time, 3 = the ascent starts immediately. Template_Values:{unit:[NUMBER]}."
-        },
-        "@type": "skos:Concept"
+        "pav:authoredOn": "2026-03-05 17:07:34.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00027/",
@@ -4736,6 +5013,45 @@
           "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00027/3/"
         },
         "pav:authoredOn": "2025-12-11 09:34:52.0"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00003/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00003/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00003/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Controls the ascent rate, commonly cited as buoyancy nudge. Units can be of several types depending on the float model. Template_Values:{unit:[COUNT, days, hours, minutes, seconds, dsec, csec, msec, usec]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R18::CC00003",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_AscentAdjustmentToBuoyancy_seconds"
+        },
+        "owl:versionInfo": "3",
+        "dc:date": "2026-03-05 17:07:33.0",
+        "skos:altLabel": "Core Config 3",
+        "skos:notation": "SDN:R18::CC00003",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R18::CC00003",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00003/3/"
+        },
+        "pav:authoredOn": "2026-03-05 17:07:33.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00149/",
@@ -4809,6 +5125,48 @@
           "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00016/3/"
         },
         "pav:authoredOn": "2025-12-11 09:34:55.0"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00210/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00210/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00210/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00210/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Never used on the GDAC. Time delay between recovery messages. Template_Values:{unit:[days, hours, minutes, seconds]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R18::CC00210",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_TimeDelaybetweenRecoveryMessage_minutes"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-03-09 09:11:25.0",
+        "skos:altLabel": "Core Config 210",
+        "skos:notation": "SDN:R18::CC00210",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R18::CC00210",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00210/4/"
+        },
+        "pav:authoredOn": "2026-03-09 09:11:25.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00069/",
@@ -5025,40 +5383,6 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00075/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00075/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:04.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00075/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00075",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00075",
-        "skos:altLabel": "Core Config 75",
-        "dc:date": "2025-12-12 11:41:04.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CONFIG_IceDetectionISAMode_NUMBER"
-        },
-        "dc:identifier": "SDN:R18::CC00075",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Mode of the ISA ice detection algorithm (see float manual for details). E.g: For March 2018 firmware, the values signifiations are: 0 = not used, 1 = algorithm based on temperature median value, 2 = algorithm based on temperature median value and associated salinities. Template_Values:{unit:[NUMBER]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00039/",
         "pav:hasVersion": [
           {
@@ -5098,38 +5422,82 @@
         "pav:authoredOn": "2025-12-11 09:34:56.0"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00133/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00133/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:12.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00133/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00133",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00133",
-        "skos:altLabel": "Core Config 133",
-        "dc:date": "2025-12-12 11:41:12.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00067/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00067/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00067/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
           "@language": "en",
-          "@value": "CONFIG_PistonFullExtension_COUNT"
+          "@value": "Transmit hydraulic data (recorded pump/valve actions with time, pressure and duration) at the end of the cycle (1 = YES, 0 = NO). Template_Values:{unit:[LOGICAL]}."
         },
-        "dc:identifier": "SDN:R18::CC00133",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
         "skos:note": {
           "@language": "en",
           "@value": "accepted"
         },
-        "owl:deprecated": "false",
+        "dc:identifier": "SDN:R18::CC00067",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_HydraulicDataTransmission_LOGICAL"
+        },
+        "owl:versionInfo": "3",
+        "dc:date": "2026-03-05 17:07:33.0",
+        "skos:altLabel": "Core Config 67",
+        "skos:notation": "SDN:R18::CC00067",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R18::CC00067",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00067/3/"
+        },
+        "pav:authoredOn": "2026-03-05 17:07:33.0"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00153/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00153/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00153/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Float pressure limit at which an emergency ascent phase will be triggered. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+        },
         "void:inDataset": {
           "@id": "http://vocab.nerc.ac.uk/.well-known/void"
         },
-        "skos:definition": {
+        "owl:deprecated": "false",
+        "skos:note": {
           "@language": "en",
-          "@value": "Clarification needed. Piston full extension. Template_Values:{unit:[COUNT]}."
+          "@value": "accepted"
         },
-        "@type": "skos:Concept"
+        "dc:identifier": "SDN:R18::CC00153",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_PressureMaxBeforeEmergencyAscent_dbar"
+        },
+        "owl:versionInfo": "3",
+        "dc:date": "2026-03-05 17:07:34.0",
+        "skos:altLabel": "Core Config 153",
+        "skos:notation": "SDN:R18::CC00153",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R18::CC00153",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00153/3/"
+        },
+        "pav:authoredOn": "2026-03-05 17:07:34.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00082/",
@@ -5271,71 +5639,162 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00034/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00034/1/"
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00034/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00034/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Provides the ability (enable/disable) for engineering information to be reported back by the float (APF9). Template_Values:{unit:[NUMBER, hex]}."
         },
-        "pav:authoredOn": "2025-12-12 11:41:10.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00034/2/"
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
         },
-        "dce:identifier": "SDN:R18::CC00034",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00034",
-        "skos:altLabel": "Core Config 34",
-        "dc:date": "2025-12-12 11:41:10.0",
-        "owl:versionInfo": "2",
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R18::CC00034",
         "skos:prefLabel": {
           "@language": "en",
           "@value": "CONFIG_DebugBits_NUMBER"
         },
-        "dc:identifier": "SDN:R18::CC00034",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
+        "owl:versionInfo": "3",
+        "dc:date": "2026-03-09 09:11:24.0",
+        "skos:altLabel": "Core Config 34",
+        "skos:notation": "SDN:R18::CC00034",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R18::CC00034",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00034/3/"
         },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Clarification needed. Template_Values:{unit:[NUMBER, hex]}."
-        },
-        "@type": "skos:Concept"
+        "pav:authoredOn": "2026-03-09 09:11:24.0"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00087/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00087/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:11.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00087/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00087",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00087",
-        "skos:altLabel": "Core Config 87",
-        "dc:date": "2025-12-12 11:41:11.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00206/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00206/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00206/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
           "@language": "en",
-          "@value": "CONFIG_IceDetectionSpringInhibitionDelaySinceLastIceEvasion_NUMBER"
+          "@value": "Desired number of retransmissions of the N ARGOS messages needed to transmit the data collected during the cycle. This parameter is also used to compute the transmission duration. To transmit N ARGOS messages, the transmission duration of an ARGOS PROVOR float is : MAX([N*CONFIG_TransmissionRepetitionPeriod_seconds*CONFIG_TelemetryRetransmission_COUNT]/3600, CONFIG_TransmissionMaxTime_hours). Template_Values:{unit:[COUNT]}."
         },
-        "dc:identifier": "SDN:R18::CC00087",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
         "skos:note": {
           "@language": "en",
           "@value": "accepted"
         },
-        "owl:deprecated": "false",
+        "dc:identifier": "SDN:R18::CC00206",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_TelemetryRetransmission_COUNT"
+        },
+        "owl:versionInfo": "3",
+        "dc:date": "2026-03-05 17:07:34.0",
+        "skos:altLabel": "Core Config 206",
+        "skos:notation": "SDN:R18::CC00206",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R18::CC00206",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00206/3/"
+        },
+        "pav:authoredOn": "2026-03-05 17:07:34.0"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00155/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00155/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00155/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Allow CTD pressure reset-offset at surface (0 = Disabled, 1 = Enabled). For ARVOR_CM floats. Template_Values:{unit:[LOGICAL]}."
+        },
         "void:inDataset": {
           "@id": "http://vocab.nerc.ac.uk/.well-known/void"
         },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R18::CC00155",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_PressureOffsetResetAtSurface_LOGICAL"
+        },
+        "owl:versionInfo": "3",
+        "dc:date": "2026-03-13 16:33:42.0",
+        "skos:altLabel": "Core Config 155",
+        "skos:notation": "SDN:R18::CC00155",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R18::CC00155",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00155/3/"
+        },
+        "pav:authoredOn": "2026-03-13 16:33:42.0"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00089/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00089/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00089/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00089/1/"
+          }
+        ],
+        "@type": "skos:Concept",
         "skos:definition": {
           "@language": "en",
-          "@value": "Maximum delay in number of days (units are days) or in number of cycles (units are NUMBER) since the last ice evasion date to attempt a surfacing. This is often called the 'Spring', where the float stays underwater for a time even though the temperature has warmed. Template_Values:{unit:[NUMBER, days]}."
+          "@value": "Never used on the GDAC. Duration of the ice detection test. Template_Values:{unit:[days, hours, minutes, seconds, dsec, csec, msec, usec]}."
         },
-        "@type": "skos:Concept"
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R18::CC00089",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_IceDetectionTestDuration_seconds"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-03-09 09:11:25.0",
+        "skos:altLabel": "Core Config 89",
+        "skos:notation": "SDN:R18::CC00089",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R18::CC00089",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00089/4/"
+        },
+        "pav:authoredOn": "2026-03-09 09:11:25.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00084/",
@@ -5440,6 +5899,45 @@
         "@type": "skos:Concept"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00104/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00104/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00104/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Logging verbosity is an integer describing the parameters to be output. Lower values produce more terse logging. A verbosity of 2 typically yields standard logging. Template_Values:{unit:[NUMBER]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R18::CC00104",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_LoggingVerbosity_NUMBER"
+        },
+        "owl:versionInfo": "3",
+        "dc:date": "2026-03-05 17:07:34.0",
+        "skos:altLabel": "Core Config 104",
+        "skos:notation": "SDN:R18::CC00104",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R18::CC00104",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00104/3/"
+        },
+        "pav:authoredOn": "2026-03-05 17:07:34.0"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00052/",
         "pav:hasVersion": [
           {
@@ -5511,6 +6009,48 @@
           "@value": "For Apex APF11 Iridium floats, Hyper Retraction is used to pull in an amount of oil to temporarily increase a float density as it leaves the ocean surface. The result of the increased float density allows a float to move through a mixed density layer more easily or allows a float to descend at a faster rate. In particular, the HyperRetractCount is the temporary piston position used when the float leaves the Surface and starts a ParkDescent. Template_Values:{unit:[COUNT]}."
         },
         "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00020/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00020/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00020/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00020/3/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Never used on the GDAC. Ascent end time of Profile 2 (expected time at the surface of Profile 2). Template_Values:{unit:[YYYYMMDD, HHMMSS, YYYYMMDDHHMMSS, HHMM, MMSS, YYYY, DD, HH, MM]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R18::CC00020",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_ClockAscentEndTimeProfile2_HHMM"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-03-09 09:11:24.0",
+        "skos:altLabel": "Core Config 20",
+        "skos:notation": "SDN:R18::CC00020",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R18::CC00020",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00020/4/"
+        },
+        "pav:authoredOn": "2026-03-09 09:11:24.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00004/",
@@ -5586,40 +6126,6 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00120/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00120/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:12.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00120/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00120",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00120",
-        "skos:altLabel": "Core Config 120",
-        "dc:date": "2025-12-12 11:41:12.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CONFIG_OilVolumeMinForGroundingDetection_cm^3"
-        },
-        "dc:identifier": "SDN:R18::CC00120",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Threshold used to detect a grounding of the float. If there is no vertical motion after having tranfered CONFIG_OilVolumeMinForGroundingDetection_cm^3 through the valve, the grounded flag is activated and the float acts as configurated by the CONFIG_GroundingMode_LOGICAL parameter. Template_Values:{unit:[cm^3]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00011/",
         "pav:hasVersion": [
           {
@@ -5689,40 +6195,6 @@
         "skos:definition": {
           "@language": "en",
           "@value": "Deepest pressure sampled in the ascending profile. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00058/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00058/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:05.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00058/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00058",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00058",
-        "skos:altLabel": "Core Config 58",
-        "dc:date": "2025-12-12 11:41:05.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CONFIG_GPSSetClock_LOGICAL"
-        },
-        "dc:identifier": "SDN:R18::CC00058",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Set the float Real Time Clock with GPS time. Template_Values:{unit:[LOGICAL]}."
         },
         "@type": "skos:Concept"
       },
@@ -5834,38 +6306,46 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00070/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00070/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:03.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00070/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00070",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00070",
-        "skos:altLabel": "Core Config 70",
-        "dc:date": "2025-12-12 11:41:03.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00075/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00075/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00075/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00075/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
           "@language": "en",
-          "@value": "CONFIG_IceDetectionAcousticStartPressureThreshold_dbar"
+          "@value": "Never used on the GDAC. Mode of the ISA ice detection algorithm (see float manual for details). E.g: For March 2018 firmware, the values signifiations are: 0 = not used, 1 = algorithm based on temperature median value, 2 = algorithm based on temperature median value and associated salinities. Template_Values:{unit:[NUMBER]}."
         },
-        "dc:identifier": "SDN:R18::CC00070",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
         "void:inDataset": {
           "@id": "http://vocab.nerc.ac.uk/.well-known/void"
         },
-        "skos:definition": {
+        "owl:deprecated": "true",
+        "skos:note": {
           "@language": "en",
-          "@value": "Pressure threshold to start the acoustic ice detection test. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+          "@value": "deprecated"
         },
-        "@type": "skos:Concept"
+        "dc:identifier": "SDN:R18::CC00075",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_IceDetectionISAMode_NUMBER"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-03-09 09:11:25.0",
+        "skos:altLabel": "Core Config 75",
+        "skos:notation": "SDN:R18::CC00075",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R18::CC00075",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00075/4/"
+        },
+        "pav:authoredOn": "2026-03-09 09:11:25.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00205/",
@@ -6398,40 +6878,6 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00187/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00187/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:04.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00187/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00187",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00187",
-        "skos:altLabel": "Core Config 187",
-        "dc:date": "2025-12-12 11:41:04.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CONFIG_RafosSampling_minutes"
-        },
-        "dc:identifier": "SDN:R18::CC00187",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Clarification needed. Template_Values:{unit:[days, hours, minutes, seconds]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00103/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00103/1/"
@@ -6534,72 +6980,46 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00023/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00023/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:10.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00023/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00023",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00023",
-        "skos:altLabel": "Core Config 23",
-        "dc:date": "2025-12-12 11:41:10.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00083/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00083/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00083/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00083/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
           "@language": "en",
-          "@value": "CONFIG_ClockPresetStartCycle_LOGICAL"
+          "@value": "Sampling interval used by the float to collect T and S between CONFIG_IceDetectionMixedLayerPMax_dbar and CONFIG_IceDetectionMixedLayerPMin_dbar for the TEMP comparison, within the Ice Detection algorithm. Units can be dbar (e.g. PROVOR CTS5) or minutes (e.g. ARVOR). Template_Values:{unit:[bar, dbar, cbar, mbar, inHg, minutes]}."
         },
-        "dc:identifier": "SDN:R18::CC00023",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
         "skos:note": {
           "@language": "en",
           "@value": "accepted"
         },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Cycle to start at a preset time (0 = Disabled, 1 = Enabled). Template_Values:{unit:[LOGICAL]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00083/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00083/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:11.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00083/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00083",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00083",
-        "skos:altLabel": "Core Config 83",
-        "dc:date": "2025-12-12 11:41:11.0",
-        "owl:versionInfo": "2",
+        "dc:identifier": "SDN:R18::CC00083",
         "skos:prefLabel": {
           "@language": "en",
           "@value": "CONFIG_IceDetectionPressureInterval_dbar"
         },
-        "dc:identifier": "SDN:R18::CC00083",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
+        "owl:versionInfo": "4",
+        "dc:date": "2026-03-05 17:07:34.0",
+        "skos:altLabel": "Core Config 83",
+        "skos:notation": "SDN:R18::CC00083",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R18::CC00083",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00083/4/"
         },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Period of the ice detection algorithm. It is the pressure interval used by the float to collect T and S samples between CONFIG_IceDetectionMixedLayerPMax_dbar and CONFIG_IceDetectionMixedLayerPMin_dbar for the TEMP comparison. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
-        },
-        "@type": "skos:Concept"
+        "pav:authoredOn": "2026-03-05 17:07:34.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00047/",
@@ -6671,40 +7091,6 @@
         "skos:definition": {
           "@language": "en",
           "@value": "This float has a RUDICS transmission system. However it is able to connect to Iridium if the user wants to get one Iridium position for each cycle. Template_Values:{unit:[LOGICAL]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00076/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00076/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:04.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00076/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00076",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00076",
-        "skos:altLabel": "Core Config 76",
-        "dc:date": "2025-12-12 11:41:04.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CONFIG_IceDetectionMaxDaysNoTransmission_NUMBER"
-        },
-        "dc:identifier": "SDN:R18::CC00076",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Maximum delay in number of days (units are days) or number of cycles (units are NUMBER) of no transmission due to the ice detection algorithm. This parameter is used to disable the ice detection algorithm and force the float to surface even if ice is detected. Template_Values:{unit:[NUMBER, days]}."
         },
         "@type": "skos:Concept"
       },
@@ -6929,37 +7315,42 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00168/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00168/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:13.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00168/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00168",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00168",
-        "skos:altLabel": "Core Config 168",
-        "dc:date": "2025-12-12 11:41:13.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00168/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00168/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
           "@language": "en",
-          "@value": "CONFIG_PressureThresholdDataReductionShallowToIntermediate_dbar"
+          "@value": "Isobar that divides shallow depths from intermediate depths for the purpose of data reduction, for floats with 3 depth zones. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
         },
-        "dc:identifier": "SDN:R18::CC00168",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
         "skos:note": {
           "@language": "en",
           "@value": "accepted"
         },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
+        "dc:identifier": "SDN:R18::CC00168",
+        "skos:prefLabel": {
           "@language": "en",
-          "@value": "Isobar that divides shallow depths from intermediate depths for the purpose of data reduction with 3 depth zones. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+          "@value": "CONFIG_PressureThresholdDataReductionShallowToIntermediate_dbar"
         },
-        "@type": "skos:Concept"
+        "owl:versionInfo": "3",
+        "dc:date": "2026-03-05 17:07:34.0",
+        "skos:altLabel": "Core Config 168",
+        "skos:notation": "SDN:R18::CC00168",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R18::CC00168",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00168/3/"
+        },
+        "pav:authoredOn": "2026-03-05 17:07:34.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00095/",
@@ -7288,40 +7679,6 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00027/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00027/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:10.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00027/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00027",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00027",
-        "skos:altLabel": "Core Config 27",
-        "dc:date": "2025-12-12 11:41:10.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CONFIG_ConnectionInitialTimeOut_seconds"
-        },
-        "dc:identifier": "SDN:R18::CC00027",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Connection time out allowed for initial connection to the RUDICS server. Default value is 30 minutes. Template_Values:{unit:[hours, minutes, seconds]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00018/",
         "pav:hasVersion": [
           {
@@ -7615,71 +7972,84 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00181/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00181/1/"
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00181/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00181/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00181/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Never used on the GDAC. Interval between successive pump activations during ascent. Template_Values:{unit:[COUNT]}."
         },
-        "pav:authoredOn": "2025-12-12 11:41:04.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00181/2/"
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
         },
-        "dce:identifier": "SDN:R18::CC00181",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00181",
-        "skos:altLabel": "Core Config 181",
-        "dc:date": "2025-12-12 11:41:04.0",
-        "owl:versionInfo": "2",
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R18::CC00181",
         "skos:prefLabel": {
           "@language": "en",
           "@value": "CONFIG_PumpActionIntervalDuringAscent_COUNT"
         },
-        "dc:identifier": "SDN:R18::CC00181",
+        "owl:versionInfo": "4",
+        "dc:date": "2026-03-09 09:11:25.0",
+        "skos:altLabel": "Core Config 181",
+        "skos:notation": "SDN:R18::CC00181",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R18::CC00181",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00181/4/"
+        },
+        "pav:authoredOn": "2026-03-09 09:11:25.0"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00066/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00066/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00066/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Scenario followed by the float when a hanging (too low vertical motion after having activated its pump) during the ascent is detected. This parameter configures (with the same idea as CONFIG_GroundingMode_NUMBER for grounding) what should be the actions to perform to try to escape from hanging (e.g., it can activate its pump and valve alternatively to try to escape, or abandon the ascent and switch to the next scheduled task). Template_Values:{unit:[NUMBER]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
         "skos:note": {
           "@language": "en",
           "@value": "accepted"
         },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Interval between successive pump activations during ascent. Template_Values:{unit:[COUNT]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00066/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00066/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:05.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00066/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00066",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00066",
-        "skos:altLabel": "Core Config 66",
-        "dc:date": "2025-12-12 11:41:05.0",
-        "owl:versionInfo": "2",
+        "dc:identifier": "SDN:R18::CC00066",
         "skos:prefLabel": {
           "@language": "en",
           "@value": "CONFIG_HangingMode_NUMBER"
         },
-        "dc:identifier": "SDN:R18::CC00066",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
+        "owl:versionInfo": "3",
+        "dc:date": "2026-03-05 17:07:34.0",
+        "skos:altLabel": "Core Config 66",
+        "skos:notation": "SDN:R18::CC00066",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R18::CC00066",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00066/3/"
         },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Action performed by the float when a hanging is detected (see float manual for details). PROVOR floats: The hanging mode is the same idea as the grounding mode but for an ascent phase. When the float detects a too low vertical motion after having activated its pump to try to ascend it enters in a hanging mode (it is probably stuck at the sea floor). This parameter configures (with the same idea as CONFIG_GroundingMode_NUMBER for grounding) what should be the actions to perform to try to escape from hanging (it can activate its pump and valve alternatively to try to escape or abandon the ascent and switch to the next scheduled task. Template_Values:{unit:[NUMBER]}."
-        },
-        "@type": "skos:Concept"
+        "pav:authoredOn": "2026-03-05 17:07:34.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00011/",
@@ -7755,74 +8125,6 @@
         "pav:authoredOn": "2025-12-11 09:34:59.0"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00210/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00210/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:12.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00210/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00210",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00210",
-        "skos:altLabel": "Core Config 210",
-        "dc:date": "2025-12-12 11:41:12.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CONFIG_TimeDelaybetweenRecoveryMessage_minutes"
-        },
-        "dc:identifier": "SDN:R18::CC00210",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Time delay between recovery messages. Template_Values:{unit:[days, hours, minutes, seconds]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00177/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00177/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:09.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00177/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00177",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00177",
-        "skos:altLabel": "Core Config 177",
-        "dc:date": "2025-12-12 11:41:09.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CONFIG_ProfileSamplingMethod_LOGICAL"
-        },
-        "dc:identifier": "SDN:R18::CC00177",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Profile Sampling method (1 = averaged, 0 = spot sampling). Template_Values:{unit:[LOGICAL]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00044/",
         "pav:hasVersion": [
           {
@@ -7863,37 +8165,45 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00213/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00213/1/"
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00213/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00213/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00213/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Never used on the GDAC. Maximum transmission time for recovery messages. Template_Values:{unit:[days, hours, minutes, seconds]}."
         },
-        "pav:authoredOn": "2025-12-12 11:41:12.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00213/2/"
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
         },
-        "dce:identifier": "SDN:R18::CC00213",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00213",
-        "skos:altLabel": "Core Config 213",
-        "dc:date": "2025-12-12 11:41:12.0",
-        "owl:versionInfo": "2",
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R18::CC00213",
         "skos:prefLabel": {
           "@language": "en",
           "@value": "CONFIG_TransmissionMaxTimeforRecoveryMessage_minutes"
         },
-        "dc:identifier": "SDN:R18::CC00213",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
+        "owl:versionInfo": "4",
+        "dc:date": "2026-03-09 09:11:25.0",
+        "skos:altLabel": "Core Config 213",
+        "skos:notation": "SDN:R18::CC00213",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R18::CC00213",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00213/4/"
         },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Maximum transmission time for recovery messages. Template_Values:{unit:[days, hours, minutes, seconds]}."
-        },
-        "@type": "skos:Concept"
+        "pav:authoredOn": "2026-03-09 09:11:25.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00140/",
@@ -8074,6 +8384,48 @@
           "@value": "Indicates for which months the ice detection algorithm is active - months in reverse order. The bit mask is input as a 3 digit hexadecimal value in the mission file sent to the float. This parameter in the metadata file however is the decimal number of that hexadecimal value. For example for the Southern Hemisphere the default position is to have the ice detection algorithm active for all months except February: the hexadecimal value in the mission file is 'FFD' (or 1111 1111 1101 in binary representation), and the associated decimal value for the configuration parameter in the metafile would be 4093. The northern hemisphere default would be all months active except for August: the hexadecimal value is 'F7F' (or 1111 0111 1111 in binary representation) and the associated decimal value for the configuration parameter in the metafile would be 3967. Template_Values:{unit:[NUMBER]}."
         },
         "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00113/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00113/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00113/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00113/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Never used on the GDAC. Clarification needed. Template_Values:{unit:[NUMBER]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R18::CC00113",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_MissionSignature_NUMBER"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-03-05 17:07:33.0",
+        "skos:altLabel": "Core Config 113",
+        "skos:notation": "SDN:R18::CC00113",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R18::CC00113",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00113/4/"
+        },
+        "pav:authoredOn": "2026-03-05 17:07:33.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00193/",
@@ -8496,38 +8848,43 @@
         "pav:authoredOn": "2025-12-11 09:34:57.0"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00214/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00214/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:07.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00214/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00214",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00214",
-        "skos:altLabel": "Core Config 214",
-        "dc:date": "2025-12-12 11:41:07.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00130/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00130/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00130/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
           "@language": "en",
-          "@value": "CONFIG_TransmissionMinTime_hours"
+          "@value": "Sampling period during the park phase. Template_Values:{unit:[days, hours, minutes, seconds]}."
         },
-        "dc:identifier": "SDN:R18::CC00214",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
         "skos:note": {
           "@language": "en",
           "@value": "accepted"
         },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
+        "dc:identifier": "SDN:R18::CC00130",
+        "skos:prefLabel": {
           "@language": "en",
-          "@value": "Time the float will remain on the surface transmitting its data at the end of each cycle. Template_Values:{unit:[days, hours, minutes, seconds]}."
+          "@value": "CONFIG_ParkSamplingPeriod_hours"
         },
-        "@type": "skos:Concept"
+        "owl:versionInfo": "3",
+        "dc:date": "2026-03-05 17:07:34.0",
+        "skos:altLabel": "Core Config 130",
+        "skos:notation": "SDN:R18::CC00130",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R18::CC00130",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00130/3/"
+        },
+        "pav:authoredOn": "2026-03-05 17:07:34.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00048/",
@@ -8823,37 +9180,45 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00049/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00049/1/"
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00049/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00049/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00049/3/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Never used on the GDAC. Preset duration of the down time (from start of descent to start of ascent) specific to the autumn/winter period. Template_Values:{unit:[days, hours, minutes, seconds]}."
         },
-        "pav:authoredOn": "2025-12-12 11:41:05.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00049/2/"
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
         },
-        "dce:identifier": "SDN:R18::CC00049",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00049",
-        "skos:altLabel": "Core Config 49",
-        "dc:date": "2025-12-12 11:41:05.0",
-        "owl:versionInfo": "2",
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R18::CC00049",
         "skos:prefLabel": {
           "@language": "en",
           "@value": "CONFIG_DownTimeAutumnWinter_hours"
         },
-        "dc:identifier": "SDN:R18::CC00049",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
+        "owl:versionInfo": "4",
+        "dc:date": "2026-03-09 09:11:24.0",
+        "skos:altLabel": "Core Config 49",
+        "skos:notation": "SDN:R18::CC00049",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R18::CC00049",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00049/4/"
         },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Preset duration of the down time (from start of descent to start of ascent) specific to the autumn/winter period. Template_Values:{unit:[days, hours, minutes, seconds]}."
-        },
-        "@type": "skos:Concept"
+        "pav:authoredOn": "2026-03-09 09:11:24.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00091/",
@@ -9211,40 +9576,6 @@
         "pav:authoredOn": "2025-12-11 09:34:55.0"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00019/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00019/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:10.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00019/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00019",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00019",
-        "skos:altLabel": "Core Config 19",
-        "dc:date": "2025-12-12 11:41:10.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CONFIG_ClockAscentEndTimeProfile1_HHMM"
-        },
-        "dc:identifier": "SDN:R18::CC00019",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Ascent end time of Profile 1 (expected time at the surface of Profile 1). Template_Values:{unit:[YYYYMMDD, HHMMSS, YYYYMMDDHHMMSS, HHMM, MMSS, YYYY, DD, HH, MM]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00114/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00114/1/"
@@ -9309,40 +9640,6 @@
         "skos:definition": {
           "@language": "en",
           "@value": "Inverse of the gain used to pack the P, T and S data. Template_Values:{PARAM:[PRES,PSAL,TEMP];unit:[COUNT]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00218/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00218/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:07.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00218/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00218",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00218",
-        "skos:altLabel": "Core Config 218",
-        "dc:date": "2025-12-12 11:41:07.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CONFIG_TriProfileOption_LOGICAL"
-        },
-        "dc:identifier": "SDN:R18::CC00218",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Tri profile option (1 = YES, 0 = NO). From the first generation of PROVOR floats for which a number of configurations are allowed, i.e. if tri profile is set to yes, it indicates a float which performs 1 deep profile followed by two shallower profiles. Template_Values:{unit:[LOGICAL]}."
         },
         "@type": "skos:Concept"
       },
@@ -9415,6 +9712,45 @@
         "@type": "skos:Concept"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00134/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00134/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00134/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "The minimum buoyancy position in counts. The buoyancy pump will shut off if the buoyancy position reaches this minimum value. Template_Values:{unit:[COUNT]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R18::CC00134",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_PistonFullRetraction_COUNT"
+        },
+        "owl:versionInfo": "3",
+        "dc:date": "2026-03-09 09:11:24.0",
+        "skos:altLabel": "Core Config 134",
+        "skos:notation": "SDN:R18::CC00134",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R18::CC00134",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00134/3/"
+        },
+        "pav:authoredOn": "2026-03-09 09:11:24.0"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00067/",
         "pav:hasVersion": [
           {
@@ -9452,40 +9788,6 @@
           "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00067/3/"
         },
         "pav:authoredOn": "2025-12-11 09:34:57.0"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00167/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00167/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:13.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00167/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00167",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00167",
-        "skos:altLabel": "Core Config 167",
-        "dc:date": "2025-12-12 11:41:13.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CONFIG_PressureThresholdDataReductionIntermediateToDeep_dbar"
-        },
-        "dc:identifier": "SDN:R18::CC00167",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Isobar that divides intermediate depths from deep depths for the purpose of data reduction with 3 depth zones. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
-        },
-        "@type": "skos:Concept"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00034/",
@@ -9595,40 +9897,6 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00062/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00062/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:05.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00062/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00062",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00062",
-        "skos:altLabel": "Core Config 62",
-        "dc:date": "2025-12-12 11:41:05.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CONFIG_GroundingModeDeepZoneThickness_dbar"
-        },
-        "dc:identifier": "SDN:R18::CC00062",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "In case of grounding during the descent to profile depth phase, this parameter (PM18 in float user manual) defines the thickness of a new deep zone (from profile start pressure) for the purpose of data reduction. The thickness of the slices is 1 dbar in this zone. Should be set to 0 to disable this function. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00116/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00116/1/"
@@ -9702,40 +9970,6 @@
         "pav:authoredOn": "2025-12-11 09:34:52.0"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00003/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00003/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:12.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00003/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00003",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00003",
-        "skos:altLabel": "Core Config 3",
-        "dc:date": "2025-12-12 11:41:12.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CONFIG_AscentAdjustmentToBuoyancy_seconds"
-        },
-        "dc:identifier": "SDN:R18::CC00003",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Controls the ascent rate, commonly cited as buoyancy nudge. Units can be of several types depending on the float. For example, for SOLO-II it refers to the number of seconds the pump is run to adjust float rise rate on ascent. Template_Values:{unit:[COUNT, days, hours, minutes, seconds, dsec, csec, msec, usec]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00202/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00202/1/"
@@ -9770,6 +10004,45 @@
         "@type": "skos:Concept"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00136/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00136/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00136/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "The buoyancy position used to ballast the float to be neutrally buoyant at a specified depth (usually 2000 dbar). Template_Values:{unit:[COUNT]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R18::CC00136",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_PistonPositionBallast_COUNT"
+        },
+        "owl:versionInfo": "3",
+        "dc:date": "2026-03-09 09:11:24.0",
+        "skos:altLabel": "Core Config 136",
+        "skos:notation": "SDN:R18::CC00136",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R18::CC00136",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00136/3/"
+        },
+        "pav:authoredOn": "2026-03-09 09:11:24.0"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00065/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00065/1/"
@@ -9800,40 +10073,6 @@
         "skos:definition": {
           "@language": "en",
           "@value": "If in grounding mode 0, the float changes its drift pressure to its programmed one minus this value only if its current pressure is greater than this value. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00188/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00188/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:03.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00188/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00188",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00188",
-        "skos:altLabel": "Core Config 188",
-        "dc:date": "2025-12-12 11:41:03.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CONFIG_RecoveryModeActivate_LOGICAL"
-        },
-        "dc:identifier": "SDN:R18::CC00188",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Activate recovery mode (1 = YES, 0 = NO). If activated, the float remains on the surface indefinitely while transmitting its position and log files and downloading new mission and sample configuration parameters if available. If Recovery mode is then deactivated, the float will begin the Park Descent phase of a new mission. Template_Values:{unit:[LOGICAL]}."
         },
         "@type": "skos:Concept"
       },
@@ -10024,37 +10263,45 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00021/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00021/1/"
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00021/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00021/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00021/3/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Never used on the GDAC. Ascent end time of Profile 3 (expected time at the surface of Profile 3). Template_Values:{unit:[YYYYMMDD, HHMMSS, YYYYMMDDHHMMSS, HHMM, MMSS, YYYY, DD, HH, MM]}."
         },
-        "pav:authoredOn": "2025-12-12 11:41:04.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00021/2/"
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
         },
-        "dce:identifier": "SDN:R18::CC00021",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00021",
-        "skos:altLabel": "Core Config 21",
-        "dc:date": "2025-12-12 11:41:04.0",
-        "owl:versionInfo": "2",
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R18::CC00021",
         "skos:prefLabel": {
           "@language": "en",
           "@value": "CONFIG_ClockAscentEndTimeProfile3_HHMM"
         },
-        "dc:identifier": "SDN:R18::CC00021",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
+        "owl:versionInfo": "4",
+        "dc:date": "2026-03-09 09:11:24.0",
+        "skos:altLabel": "Core Config 21",
+        "skos:notation": "SDN:R18::CC00021",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R18::CC00021",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00021/4/"
         },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Ascent end time of Profile 3 (expected time at the surface of Profile 3). Template_Values:{unit:[YYYYMMDD, HHMMSS, YYYYMMDDHHMMSS, HHMM, MMSS, YYYY, DD, HH, MM]}."
-        },
-        "@type": "skos:Concept"
+        "pav:authoredOn": "2026-03-09 09:11:24.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00005/",
@@ -10232,38 +10479,43 @@
         "pav:authoredOn": "2025-12-11 09:34:55.0"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00067/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00067/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:05.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00067/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00067",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00067",
-        "skos:altLabel": "Core Config 67",
-        "dc:date": "2025-12-12 11:41:05.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00120/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00120/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00120/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
           "@language": "en",
-          "@value": "CONFIG_HydraulicDataTransmission_LOGICAL"
+          "@value": "Threshold used to detect a grounding of the float. If there is no vertical motion after having tranfered CONFIG_OilVolumeMinForGroundingDetection_cm^3 through the valve, the grounded flag is activated and the float acts as configurated by the CONFIG_GroundingMode_{unit} parameter. Template_Values:{unit:[cm^3]}."
         },
-        "dc:identifier": "SDN:R18::CC00067",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
         "skos:note": {
           "@language": "en",
           "@value": "accepted"
         },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
+        "dc:identifier": "SDN:R18::CC00120",
+        "skos:prefLabel": {
           "@language": "en",
-          "@value": "Transmit hydraulic data at the end of the cycle (1 = YES, 0 = NO). Template_Values:{unit:[LOGICAL]}."
+          "@value": "CONFIG_OilVolumeMinForGroundingDetection_cm^3"
         },
-        "@type": "skos:Concept"
+        "owl:versionInfo": "3",
+        "dc:date": "2026-03-05 17:07:34.0",
+        "skos:altLabel": "Core Config 120",
+        "skos:notation": "SDN:R18::CC00120",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R18::CC00120",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00120/3/"
+        },
+        "pav:authoredOn": "2026-03-05 17:07:34.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00038/",
@@ -10305,38 +10557,43 @@
         "pav:authoredOn": "2025-12-11 09:34:59.0"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00153/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00153/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:08.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00153/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00153",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00153",
-        "skos:altLabel": "Core Config 153",
-        "dc:date": "2025-12-12 11:41:08.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00087/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00087/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00087/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
           "@language": "en",
-          "@value": "CONFIG_PressureMaxBeforeEmergencyAscent_dbar"
+          "@value": "Maximum delay in number of days (units are days) or in number of cycles (units are NUMBER) since the last ice evasion date to attempt a surfacing. This is often called the 'Spring', where the float stays underwater for a time even though the temperature has warmed. Template_Values:{unit:[NUMBER, days]}."
         },
-        "dc:identifier": "SDN:R18::CC00153",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
         "skos:note": {
           "@language": "en",
           "@value": "accepted"
         },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
+        "dc:identifier": "SDN:R18::CC00087",
+        "skos:prefLabel": {
           "@language": "en",
-          "@value": "Emergency ascent phase start pressure. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+          "@value": "CONFIG_IceDetectionSpringInhibitionDelaySinceLastIceEvasion_days"
         },
-        "@type": "skos:Concept"
+        "owl:versionInfo": "3",
+        "dc:date": "2026-02-11 18:06:22.0",
+        "skos:altLabel": "Core Config 87",
+        "skos:notation": "SDN:R18::CC00087",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R18::CC00087",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00087/3/"
+        },
+        "pav:authoredOn": "2026-02-11 18:06:22.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00020/",
@@ -10514,40 +10771,6 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00206/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00206/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:12.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00206/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00206",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00206",
-        "skos:altLabel": "Core Config 206",
-        "dc:date": "2025-12-12 11:41:12.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CONFIG_TelemetryRetransmission_COUNT"
-        },
-        "dc:identifier": "SDN:R18::CC00206",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Used to compute the transmission duration. To transmit N Argos messages, the transmission duration of an Argos PROVOR float is : MAX([N*CONFIG_TransmissionRepetitionPeriod_seconds*CONFIG_TelemetryRetransmission_COUNT]/3600, CONFIG_TransmissionMaxTime_hours). Template_Values:{unit:[COUNT]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00086/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00086/1/"
@@ -10578,40 +10801,6 @@
         "skos:definition": {
           "@language": "en",
           "@value": "Ice evasion depth for the spring inhibition part of the ISA algorithm. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00051/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00051/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:09.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00051/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00051",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00051",
-        "skos:altLabel": "Core Config 51",
-        "dc:date": "2025-12-12 11:41:09.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CONFIG_DownTimeSpringSummer_hours"
-        },
-        "dc:identifier": "SDN:R18::CC00051",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Preset duration of the down time (from start of descent to start of ascent) specific to the spring/summer period. Template_Values:{unit:[days, hours, minutes, seconds]}."
         },
         "@type": "skos:Concept"
       },
@@ -10653,40 +10842,6 @@
           "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00092/3/"
         },
         "pav:authoredOn": "2025-12-11 09:34:57.0"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00155/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00155/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:06.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00155/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00155",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00155",
-        "skos:altLabel": "Core Config 155",
-        "dc:date": "2025-12-12 11:41:06.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CONFIG_PressureOffsetResetAtSurface_LOGICAL"
-        },
-        "dc:identifier": "SDN:R18::CC00155",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Clarification needed. Template_Values:{unit:[LOGICAL]}."
-        },
-        "@type": "skos:Concept"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00084/",
@@ -10869,40 +11024,6 @@
         "pav:authoredOn": "2025-12-11 09:34:59.0"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00104/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00104/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:08.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00104/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00104",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00104",
-        "skos:altLabel": "Core Config 104",
-        "dc:date": "2025-12-12 11:41:08.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "CONFIG_LoggingVerbosity_NUMBER"
-        },
-        "dc:identifier": "SDN:R18::CC00104",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Logging verbosity is an integer (values in range [0, 4] for these floats) describing the parameters to be output. Lower values produce more terse logging. A verbosity of 2 yields standard logging. Template_Values:{unit:[NUMBER]}."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00051/",
         "pav:hasVersion": [
           {
@@ -10940,6 +11061,48 @@
           "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00051/3/"
         },
         "pav:authoredOn": "2025-12-11 09:34:57.0"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00058/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00058/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00058/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00058/3/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Never used on the GDAC. Set the float Real Time Clock with GPS time. Template_Values:{unit:[LOGICAL]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R18::CC00058",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_GPSSetClock_LOGICAL"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-03-09 09:11:24.0",
+        "skos:altLabel": "Core Config 58",
+        "skos:notation": "SDN:R18::CC00058",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R18::CC00058",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00058/4/"
+        },
+        "pav:authoredOn": "2026-03-09 09:11:24.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00053/",
@@ -11196,37 +11359,42 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00172/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00172/1/"
-        },
-        "pav:authoredOn": "2025-12-12 11:41:13.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00172/2/"
-        },
-        "dce:identifier": "SDN:R18::CC00172",
-        "pav:version": "2",
-        "skos:notation": "SDN:R18::CC00172",
-        "skos:altLabel": "Core Config 172",
-        "dc:date": "2025-12-12 11:41:13.0",
-        "owl:versionInfo": "2",
-        "skos:prefLabel": {
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00172/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00172/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
           "@language": "en",
-          "@value": "CONFIG_ProfileEvasionBrakingFactor_NUMBER"
+          "@value": "Factor defining the oil volume transferred from the external bladder when a profile evasion occurs and the float has to brake. The transferred oil volume is CONFIG_ProfileEvasionBrakingFactor_NUMBER times the oil volume of the last pump action. Template_Values:{unit:[NUMBER]}."
         },
-        "dc:identifier": "SDN:R18::CC00172",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
         "skos:note": {
           "@language": "en",
           "@value": "accepted"
         },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
+        "dc:identifier": "SDN:R18::CC00172",
+        "skos:prefLabel": {
           "@language": "en",
-          "@value": "Factor defining the oil volume transferred from the external bladder when a profile evasion occurs and the float has to brake. The transferred oil volume is CONFIG_ProfileEvasionAscentSpeedFactor_NUMBER times the oil volume of the last pump action. Template_Values:{unit:[NUMBER]}."
+          "@value": "CONFIG_ProfileEvasionBrakingFactor_NUMBER"
         },
-        "@type": "skos:Concept"
+        "owl:versionInfo": "3",
+        "dc:date": "2026-02-11 18:06:22.0",
+        "skos:altLabel": "Core Config 172",
+        "skos:notation": "SDN:R18::CC00172",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R18::CC00172",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00172/3/"
+        },
+        "pav:authoredOn": "2026-02-11 18:06:22.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00063/",
@@ -11302,6 +11470,45 @@
         "@type": "skos:Concept"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00188/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00188/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00188/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Activate recovery mode (1 = YES, 0 = NO). If activated, the float remains on the surface indefinitely while transmitting its position and log files, and downloading new mission and sample configuration parameters if available. If recovery mode is then deactivated, the float will begin the Park Descent phase of a new mission. Template_Values:{unit:[LOGICAL]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R18::CC00188",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_RecoveryModeActivate_LOGICAL"
+        },
+        "owl:versionInfo": "3",
+        "dc:date": "2026-03-05 17:07:34.0",
+        "skos:altLabel": "Core Config 188",
+        "skos:notation": "SDN:R18::CC00188",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R18::CC00188",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00188/3/"
+        },
+        "pav:authoredOn": "2026-03-05 17:07:34.0"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00141/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00141/1/"
@@ -11334,6 +11541,51 @@
           "@value": "In pressure activated floats, this parameter sets how often the float will test whether it is in the water, e.g. every 2 hours. Template_Values:{unit:[days, hours, minutes, seconds]}."
         },
         "@type": "skos:Concept"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00062/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00062/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00062/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00062/4/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00062/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "In case of grounding during the descent to profile depth phase, this parameter (PM18 in float user manual) defines the thickness of a new deep zone (from profile start pressure) for the purpose of data reduction. The thickness of the slices is 1 dbar in this zone. Should be set to 0 to disable this function. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R18::CC00062",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_GroundingModeDeepZoneThickness_dbar"
+        },
+        "owl:versionInfo": "5",
+        "dc:date": "2026-05-15 10:00:35.0",
+        "skos:altLabel": "Core Config 62",
+        "skos:notation": "SDN:R18::CC00062",
+        "pav:version": "5",
+        "dce:identifier": "SDN:R18::CC00062",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00062/5/"
+        },
+        "pav:authoredOn": "2026-05-15 10:00:35.0"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00204/",
@@ -11657,6 +11909,45 @@
         "@type": "skos:Concept"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00128/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00128/2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00128/1/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Park sampling method (1 = averaged, 0 = spot sampling). Template_Values:{unit:[LOGICAL]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R18::CC00128",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_ParkSamplingMethod_LOGICAL"
+        },
+        "owl:versionInfo": "3",
+        "dc:date": "2026-03-05 17:07:34.0",
+        "skos:altLabel": "Core Config 128",
+        "skos:notation": "SDN:R18::CC00128",
+        "pav:version": "3",
+        "dce:identifier": "SDN:R18::CC00128",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00128/3/"
+        },
+        "pav:authoredOn": "2026-03-05 17:07:34.0"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00069/",
         "pav:hasVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00069/1/"
@@ -11725,6 +12016,48 @@
         "@type": "skos:Concept"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00157/",
+        "pav:hasVersion": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00157/1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00157/3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00157/2/"
+          }
+        ],
+        "@type": "skos:Concept",
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Never used on the GDAC. Preset pressure where continuous profiling begins on ascent. This varies depending on the phase. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "true",
+        "skos:note": {
+          "@language": "en",
+          "@value": "deprecated"
+        },
+        "dc:identifier": "SDN:R18::CC00157",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "CONFIG_PressureStartContinuousProfiling_dbar"
+        },
+        "owl:versionInfo": "4",
+        "dc:date": "2026-03-09 09:11:25.0",
+        "skos:altLabel": "Core Config 157",
+        "skos:notation": "SDN:R18::CC00157",
+        "pav:version": "4",
+        "dce:identifier": "SDN:R18::CC00157",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00157/4/"
+        },
+        "pav:authoredOn": "2026-03-09 09:11:25.0"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R18/current/",
         "skos:member": [
           {
@@ -11737,10 +12070,13 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00081/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00133/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00037/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00142/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00180/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00050/"
@@ -11750,9 +12086,6 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00062/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00093/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00064/"
@@ -11791,7 +12124,13 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00012/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00027/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00219/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00019/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00101/"
@@ -11827,9 +12166,6 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00061/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00113/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00082/"
           },
           {
@@ -11852,9 +12188,6 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00138/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00020/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00054/"
@@ -11884,6 +12217,9 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00078/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00070/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00122/"
           },
           {
@@ -11899,7 +12235,7 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00048b/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00134/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00023/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00073/"
@@ -11932,6 +12268,9 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00074/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00094/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00041/"
           },
           {
@@ -11944,25 +12283,25 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00215/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00130/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00059/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00183/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00089/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00052/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00052/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00218/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00105/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00025/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00187/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00087/"
@@ -11975,6 +12314,9 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00090/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00076/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00089/"
@@ -12004,13 +12346,13 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00243/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00128/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00170/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00019/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00142/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00075/"
@@ -12025,10 +12367,10 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00073/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00157/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00044/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00044/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00093/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00077/"
@@ -12061,6 +12403,9 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00028/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00214/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00143/"
           },
           {
@@ -12085,16 +12430,10 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00012/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00094/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00198/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00065/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00180/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00124/"
@@ -12103,7 +12442,16 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00009/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00051/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00015/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00177/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00167/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00096/"
@@ -12118,19 +12466,22 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00209/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00136/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00063/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00027/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00003/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00149/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00016/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00210/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00069/"
@@ -12151,13 +12502,13 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00190/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00075/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00039/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00133/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00067/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00153/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00082/"
@@ -12175,7 +12526,13 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00034/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00087/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00206/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00155/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00089/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00084/"
@@ -12187,10 +12544,16 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00046/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00104/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00052/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00137/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00020/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00004/"
@@ -12199,16 +12562,10 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00099/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00120/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00011/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00035/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00058/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00064/"
@@ -12220,7 +12577,7 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00088/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00070/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00075/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00205/"
@@ -12268,9 +12625,6 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00220/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00187/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00103/"
           },
           {
@@ -12280,9 +12634,6 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00156/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00023/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00083/"
           },
           {
@@ -12290,9 +12641,6 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00189/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00076/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00056/"
@@ -12343,9 +12691,6 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00054/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00027/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00018/"
           },
           {
@@ -12382,12 +12727,6 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00072/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00210/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00177/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00044/"
           },
           {
@@ -12407,6 +12746,9 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00013/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00113/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00193/"
@@ -12445,7 +12787,7 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00043/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00214/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00130/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00048/"
@@ -12505,16 +12847,10 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00014/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00019/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00114/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00001/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00218/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00176/"
@@ -12523,10 +12859,10 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00200/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00067/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00134/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00167/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00067/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00034/"
@@ -12538,25 +12874,19 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00135/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00062/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00116/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00026/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00003/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00202/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00065/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00136/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00188/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00065/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00169/"
@@ -12592,13 +12922,13 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00080/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00067/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00120/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00038/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00153/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00087/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00020/"
@@ -12616,19 +12946,10 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00159/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00206/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00086/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00051/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00092/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00155/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00084/"
@@ -12646,10 +12967,10 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00009/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00104/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00051/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00051/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00058/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00053/"
@@ -12682,7 +13003,13 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00055/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00188/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00141/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00062/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00204/"
@@ -12712,10 +13039,16 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00184/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00057/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00128/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00069/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00157/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00057/"
           }
         ],
         "@type": "skos:Collection",
@@ -12723,8 +13056,8 @@
         "dc:description": "List of float configuration settings selected by the float Principal Investigator (PI). Configuration parameters selected for a float are stored in the float 'meta.nc' file, under CONFIG_PARAMETER_NAME and LAUNCH_CONFIG_PARAMETER_NAME, which are populated by R18 prefLabel. Detailed information (incl. Template_Values explanation) is in the user manual (https://dx.doi.org/10.13155/29825), in the Reference Table 18 section.",
         "dc:title": "Argo configuration parameter names",
         "skos:prefLabel": "Argo configuration parameter names",
-        "owl:versionInfo": "5",
-        "dc:date": "2025-12-13 02:00:01.0",
+        "owl:versionInfo": "12",
+        "dc:date": "2026-05-16 03:00:01.0",
         "skos:altLabel": "CONFIG_PARAMETER_NAME",
         "dc:creator": "Argo Data Management Team",
         "dc:alternative": "CONFIG_PARAMETER_NAME",

@@ -1,7 +1,7 @@
 {
   "name": "CC00175",
   "long_name": "CONFIG_ProfileIntermediateSlicesThickness_dbar",
-  "last_update": "2026-01-25T11:15:47.645664+00:00",
+  "last_update": "2026-09-15T15:05:41.750836+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00175/",
     "pav:hasVersion": {

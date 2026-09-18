@@ -1,7 +1,7 @@
 {
   "name": "OCR504_R10W",
   "long_name": "OCR-504 multispectral radiometer (upwelling radiance)",
-  "last_update": "2026-01-25T11:13:53.903802+00:00",
+  "last_update": "2026-09-15T15:05:08.953826+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_R10W/",
     "pav:authoredOn": "2025-08-28 11:45:52.0",
@@ -9,6 +9,15 @@
       "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_R10W/1/"
     },
     "dce:identifier": "SDN:R27::OCR504_R10W",
+    "pav:version": "1",
+    "skos:broader": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SATLANTIC/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+      }
+    ],
     "@type": "skos:Concept",
     "skos:related": [
       {
@@ -45,7 +54,6 @@
     "dc:date": "2025-08-28 11:45:52.0",
     "skos:altLabel": "OCR504_R10W",
     "skos:notation": "SDN:R27::OCR504_R10W",
-    "pav:version": "1",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

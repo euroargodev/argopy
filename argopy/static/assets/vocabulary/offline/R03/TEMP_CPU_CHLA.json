@@ -1,7 +1,7 @@
 {
   "name": "TEMP_CPU_CHLA",
   "long_name": "Thermistor signal from backscattering sensor",
-  "last_update": "2026-01-25T11:11:35.735948+00:00",
+  "last_update": "2026-09-15T15:04:41.369225+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_CPU_CHLA/",
     "pav:hasVersion": [

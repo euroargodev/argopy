@@ -1,7 +1,7 @@
 {
   "name": "T000508",
   "long_name": "CURRENT_BatteryPumpLastValueAsAscends_mA",
-  "last_update": "2026-01-25T11:13:24.025521+00:00",
+  "last_update": "2026-09-15T15:04:59.061895+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000508/",
     "pav:hasVersion": {

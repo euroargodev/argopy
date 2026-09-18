@@ -1,7 +1,7 @@
 {
   "name": "CC00105",
   "long_name": "CONFIG_MaxAttemptsGPSAcquisitionBeforeResetGPS_COUNT",
-  "last_update": "2026-01-25T11:15:28.297001+00:00",
+  "last_update": "2026-09-15T15:05:36.915371+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00105/",
     "pav:hasVersion": {

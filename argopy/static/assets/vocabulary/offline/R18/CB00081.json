@@ -1,7 +1,7 @@
 {
   "name": "CB00081",
   "long_name": "CONFIG_<short_sensor_name><cycle_phase_name>SamplingScheme<S>StopTime_seconds",
-  "last_update": "2026-01-25T11:15:52.653427+00:00",
+  "last_update": "2026-09-15T15:05:42.875615+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00081/",
     "pav:hasVersion": [

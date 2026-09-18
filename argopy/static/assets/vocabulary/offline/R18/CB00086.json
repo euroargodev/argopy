@@ -1,7 +1,7 @@
 {
   "name": "CB00086",
   "long_name": "CONFIG_<short_sensor_name><cycle_phase_name>SamplingScheme<S>SubSampling<SubS>DataProcessingMode_NUMBER",
-  "last_update": "2026-01-25T11:16:02.340773+00:00",
+  "last_update": "2026-09-15T15:05:45.378198+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00086/",
     "pav:hasVersion": [

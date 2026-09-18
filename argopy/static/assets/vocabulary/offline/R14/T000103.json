@@ -1,7 +1,7 @@
 {
   "name": "T000103",
   "long_name": "NUMBER_IridiumResets_COUNT",
-  "last_update": "2026-01-25T11:12:59.139985+00:00",
+  "last_update": "2026-09-15T15:04:51.621100+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000103/",
     "pav:hasVersion": {

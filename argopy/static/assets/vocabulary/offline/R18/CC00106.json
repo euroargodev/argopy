@@ -1,7 +1,7 @@
 {
   "name": "CC00106",
   "long_name": "CONFIG_MaxCycles_NUMBER",
-  "last_update": "2026-01-25T11:16:03.694121+00:00",
+  "last_update": "2026-09-15T15:05:45.388548+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00106/",
     "pav:hasVersion": {

@@ -1,14 +1,22 @@
 {
   "name": "ARVOR_D",
   "long_name": "Deep ARVOR float",
-  "last_update": "2026-01-25T11:11:13.944444+00:00",
+  "last_update": "2026-09-15T15:04:35.421666+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_D/",
     "pav:authoredOn": "2020-05-03 20:30:02.0",
-    "@type": "skos:Concept",
-    "skos:related": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_D/1/"
     },
+    "@type": "skos:Concept",
+    "skos:related": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0005/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
+      }
+    ],
     "skos:definition": {
       "@language": "en",
       "@value": "Deep ARVOR float. PLATFORM_TYPE_KEY = 120"
@@ -35,9 +43,6 @@
     "skos:notation": "SDN:R23::ARVOR_D",
     "pav:version": "1",
     "dce:identifier": "SDN:R23::ARVOR_D",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_D/1/"
-    },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

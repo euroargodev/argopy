@@ -1,7 +1,7 @@
 {
   "name": "UP_RADIANCE490",
   "long_name": "Upwelling radiance at 490 nanometers",
-  "last_update": "2026-01-25T11:11:29.859935+00:00",
+  "last_update": "2026-09-15T15:04:39.186403+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE490/",
     "pav:hasVersion": [

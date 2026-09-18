@@ -1,7 +1,7 @@
 {
   "name": "OPTODE_DOXY",
   "long_name": "Optode measuring dissolved oxygen",
-  "last_update": "2026-01-25T11:15:17.716718+00:00",
+  "last_update": "2026-09-15T15:05:33.463098+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/OPTODE_DOXY/",
     "pav:authoredOn": "2019-10-11 15:06:36.0",
@@ -28,6 +28,9 @@
     "skos:related": [
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE63_OPTODE/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CODA_T_ODO/"
@@ -61,9 +64,6 @@
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4330/"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/"
       }
     ],
     "skos:definition": {
