@@ -767,7 +767,7 @@ class SearchEngine(ArgoIndexSearchEngine):
                 and bounds[0] > bounds[1]
             ):
                 raise ValueError(
-                    f"Upper bound le={bounds[1]} must be small than the lower bound ge={bounds[0]}"
+                    f"Max bound le={bounds[1]} must be smaller than the min bound ge={bounds[0]}"
                 )
             return bounds
 
