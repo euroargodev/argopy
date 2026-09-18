@@ -2,11 +2,6 @@ import sys
 import os
 import logging
 import shutil
-
-import gc
-import os
-import resource
-import threading
 import pytest
 
 
@@ -36,6 +31,12 @@ def pytest_sessionfinish(session, exitstatus):
 @pytest.fixture(autouse=True)
 def _resource_tracker(request):
     """Track resource usage around every test to catch what leaks."""
+    try:
+        import resource
+        import threading
+    except:
+        print("Can't use _resource_tracker")
+
     proc = f"/proc/{os.getpid()}"
 
     def _fds():
@@ -45,7 +46,10 @@ def _resource_tracker(request):
             return -1
 
     def _rss():
-        return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        try:
+            return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        except Exception:
+            return -1
 
     def _threads():
         return threading.active_count()
