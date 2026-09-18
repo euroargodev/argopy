@@ -19,7 +19,14 @@ else:
 
 from ...options import OPTIONS
 from ...errors import GdacPathError, S3PathError, InvalidDataset, OptionValueError
-from ...utils import isconnected, has_aws_credentials, Registry, Chunker, shortcut2gdac, deprecated
+from ...utils import (
+    isconnected,
+    has_aws_credentials,
+    Registry,
+    Chunker,
+    shortcut2gdac,
+    deprecated,
+)
 
 from .. import httpstore, memorystore, filestore, ftpstore, s3store
 from .implementations.index_s3 import get_a_s3index
@@ -41,10 +48,10 @@ class ArgoIndexStoreProto(ABC):
     backend = "?"
     """Name of store backend (pandas or pyarrow)"""  # Pandas or Pyarrow
 
-    search_type : dict = {}
+    search_type: dict = {}
     """Dictionary with search meta-data"""
 
-    ext : str | None = None
+    ext: str | None = None
     """Storage file extension"""
 
     convention_supported = [
@@ -62,6 +69,9 @@ class ArgoIndexStoreProto(ABC):
         "meta",
         "argo_profile_detailled_index",
         "core+",
+        "argo_synthetic-profile_detailled_index",
+        "bgc-s+",
+        "synth+",
     ]
     """List of supported conventions"""
 
@@ -120,6 +130,7 @@ class ArgoIndexStoreProto(ABC):
             - ``aux``   or ``argo_aux-profile_index``
             - ``meta``  or ``ar_index_global_meta``
             - ``core+`` or ``argo_profile_detailled_index``
+            - ``bgc-s+`` or ``argo_synthetic-profile_detailled_index``
 
         cache : bool, default: False
             Use cache or not.
@@ -146,6 +157,8 @@ class ArgoIndexStoreProto(ABC):
             index_file = "ar_index_global_meta.txt"
         elif index_file in ["core+"]:
             index_file = "etc/argo-index/argo_profile_detailled_index.txt"
+        elif index_file in ["bgc-s+", "synth+"]:
+            index_file = "etc/argo-index/argo_synthetic-profile_detailled_index.txt"
         self.index_file = index_file
 
         # Default number of commented lines to skip at the beginning of csv index files
@@ -177,7 +190,9 @@ class ArgoIndexStoreProto(ABC):
 
             self.fs["src"] = ftpstore(
                 host=urlparse(self.host).hostname,  # host eg: ftp.ifremer.fr
-                port=0 if urlparse(self.host).port is None else urlparse(self.host).port,
+                port=(
+                    0 if urlparse(self.host).port is None else urlparse(self.host).port
+                ),
                 cache=cache,
                 cachedir=cachedir,
                 timeout=self.timeout,
@@ -186,11 +201,11 @@ class ArgoIndexStoreProto(ABC):
 
         elif "s3" in split_protocol(self.host)[0]:
             # On AWS S3, index files are not under DAC root:
-            if self.host == 's3://argo-gdac-sandbox/pub/idx':
-                self.root = 's3://argo-gdac-sandbox/pub'
-            if self.host == 's3://argo-gdac-sandbox/pub':
-                self.host = 's3://argo-gdac-sandbox/pub/idx'
-                self.root = 's3://argo-gdac-sandbox/pub'
+            if self.host == "s3://argo-gdac-sandbox/pub/idx":
+                self.root = "s3://argo-gdac-sandbox/pub"
+            if self.host == "s3://argo-gdac-sandbox/pub":
+                self.host = "s3://argo-gdac-sandbox/pub/idx"
+                self.root = "s3://argo-gdac-sandbox/pub"
 
             if "argo-gdac-sandbox/pub/idx" not in self.host:
                 log.info(
@@ -244,6 +259,8 @@ class ArgoIndexStoreProto(ABC):
                 convention = "ar_index_global_meta"
             elif convention in ["core+"]:
                 convention = "argo_profile_detailled_index"
+            elif convention in ["bgc-s+", "synth+"]:
+                convention = "argo_synthetic-profile_detailled_index"
         self._convention = convention
 
         # Check if the index file exists
@@ -304,7 +321,12 @@ class ArgoIndexStoreProto(ABC):
             else:
                 summary.append(
                     "Searched: True (%i %s, %0.4f%%) - %s"
-                    % (self.N_MATCH, match, self.N_MATCH * 100 / self.N_RECORDS, self.search_type)
+                    % (
+                        self.N_MATCH,
+                        match,
+                        self.N_MATCH * 100 / self.N_RECORDS,
+                        self.search_type,
+                    )
                 )
         else:
             summary.append("Searched: False")
@@ -507,16 +529,18 @@ class ArgoIndexStoreProto(ABC):
         """Reference table 4 "Argo data centres and institutions" as a dictionary"""
         if self._load_dict is None:
             from ...related import load_dict
+
             self._load_dict = load_dict
-        return self._load_dict('institutions')
+        return self._load_dict("institutions")
 
     @property
     def _r8(self):
         """Reference table 8 "Argo instrument types" as a dictionary"""
         if self._load_dict is None:
             from ...related import load_dict
+
             self._load_dict = load_dict
-        return self._load_dict('profilers')
+        return self._load_dict("profilers")
 
     @property
     def shape(self):
@@ -577,29 +601,98 @@ class ArgoIndexStoreProto(ABC):
             title = "Metadata directory file of the Argo GDAC"
         elif self.convention in ["argo_profile_detailled_index", "core+"]:
             title = "Detailed Profile directory file of the Argo GDAC"
+        elif self.convention in [
+            "argo_synthetic-profile_detailled_index",
+            "bgc-s+",
+            "synth+",
+        ]:
+            title = "Detailed Synthetic-Profile directory file of the Argo GDAC"
         return title
 
     @property
     def convention_columns(self) -> List[str]:
         """CSV file column names for the index convention"""
         if self.convention == "ar_index_global_prof":
-            columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
-                               'date_update']
-        elif self.convention in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
-            columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
-                               'parameters', 'parameter_data_mode', 'date_update']
+            columns = [
+                "file",
+                "date",
+                "latitude",
+                "longitude",
+                "ocean",
+                "profiler_type",
+                "institution",
+                "date_update",
+            ]
+        elif self.convention in [
+            "argo_bio-profile_index",
+            "argo_synthetic-profile_index",
+        ]:
+            columns = [
+                "file",
+                "date",
+                "latitude",
+                "longitude",
+                "ocean",
+                "profiler_type",
+                "institution",
+                "parameters",
+                "parameter_data_mode",
+                "date_update",
+            ]
         elif self.convention in ["argo_aux-profile_index"]:
-            columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
-                       'parameters', 'date_update']
+            columns = [
+                "file",
+                "date",
+                "latitude",
+                "longitude",
+                "ocean",
+                "profiler_type",
+                "institution",
+                "parameters",
+                "date_update",
+            ]
         elif self.convention in ["ar_index_global_meta"]:
-            columns = ['file', 'profiler_type', 'institution', 'date_update']
+            columns = ["file", "profiler_type", "institution", "date_update"]
         elif self.convention in ["argo_profile_detailled_index"]:
-            columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution', 'date_update',
-                       'profile_temp_qc', 'profile_psal_qc','profile_doxy_qc',
-                       'ad_psal_adjustment_mean','ad_psal_adjustment_deviation',
-                       'gdac_date_creation','gdac_date_update','n_levels',
-                       ]
-
+            columns = [
+                "file",
+                "date",
+                "latitude",
+                "longitude",
+                "ocean",
+                "profiler_type",
+                "institution",
+                "date_update",
+                "profile_temp_qc",
+                "profile_psal_qc",
+                "profile_doxy_qc",
+                "ad_psal_adjustment_mean",
+                "ad_psal_adjustment_deviation",
+                "gdac_date_creation",
+                "gdac_date_update",
+                "n_levels",
+            ]
+        elif self.convention in [
+            "argo_synthetic-profile_detailled_index",
+            "bgc-s+",
+            "synth+",
+        ]:
+            columns = [
+                "file",
+                "date",
+                "latitude",
+                "longitude",
+                "ocean",
+                "profiler_type",
+                "institution",
+                "parameters",
+                "parameter_data_mode",
+                "parameter_quality",
+                "date_update",
+                "gdac_date_creation",
+                "gdac_date_update",
+                "n_levels",
+            ]
         return columns
 
     def _same_origin(self, path):
@@ -783,8 +876,8 @@ class ArgoIndexStoreProto(ABC):
                     lambda x: int(x.split("_")[1].split(".nc")[0].replace("D", ""))
                 )
 
-            if 'profiler_type' in self.convention_columns:
-                df['profiler_type'] = df['profiler_type'].fillna(9999).astype(int)
+            if "profiler_type" in self.convention_columns:
+                df["profiler_type"] = df["profiler_type"].fillna(9999).astype(int)
 
             if completed:
                 # institution & profiler mapping for all users
@@ -947,7 +1040,7 @@ class ArgoIndexStoreProto(ABC):
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
-    def read_files(self, index : bool = False, multi : bool = False):
+    def read_files(self, index: bool = False, multi: bool = False):
         """Return file paths listed in index or search results
 
         Fall back on full index if search not triggered
@@ -1215,9 +1308,11 @@ file,date,latitude,longitude,ocean,profiler_type,institution,date_update,profile
 
         if chunksize is not None:
             chk_opts = {}
-            chk_opts.update({'chunks': {'wmo': 'auto'}})
-            chk_opts.update({'chunksize': {'wmo': chunksize}})
-            chunked = Chunker({'wmo': self.read_wmo(index=index)}, **chk_opts).fit_transform()
+            chk_opts.update({"chunks": {"wmo": "auto"}})
+            chk_opts.update({"chunksize": {"wmo": chunksize}})
+            chunked = Chunker(
+                {"wmo": self.read_wmo(index=index)}, **chk_opts
+            ).fit_transform()
             for grp in chunked:
                 yield [ArgoFloat(wmo, idx=self) for wmo in grp]
 
