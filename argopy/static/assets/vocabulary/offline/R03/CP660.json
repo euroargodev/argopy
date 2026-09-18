@@ -1,7 +1,7 @@
 {
   "name": "CP660",
   "long_name": "Particle beam attenuation at 660 nanometers",
-  "last_update": "2026-01-25T11:11:28.948266+00:00",
+  "last_update": "2026-09-15T15:04:38.990218+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/CP660/",
     "pav:hasVersion": [

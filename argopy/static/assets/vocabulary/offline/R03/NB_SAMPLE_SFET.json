@@ -1,7 +1,7 @@
 {
   "name": "NB_SAMPLE_SFET",
   "long_name": "Number of samples in each pressure bin for the SFET",
-  "last_update": "2026-01-25T11:11:26.004025+00:00",
+  "last_update": "2026-09-15T15:04:38.017740+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_SFET/",
     "pav:hasVersion": {

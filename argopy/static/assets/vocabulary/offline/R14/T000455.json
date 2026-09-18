@@ -1,7 +1,7 @@
 {
   "name": "T000455",
   "long_name": "TIME_DOXYSampleFrequencyDuringDescent_seconds",
-  "last_update": "2026-01-25T11:13:45.348912+00:00",
+  "last_update": "2026-09-15T15:05:04.411972+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000455/",
     "pav:hasVersion": {

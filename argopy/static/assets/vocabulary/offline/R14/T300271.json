@@ -1,7 +1,7 @@
 {
   "name": "T300271",
   "long_name": "DIAGNOSTICbit_ArgosTransmitterNegativeAcknowledgeRecieved_bit",
-  "last_update": "2026-01-25T11:13:05.443826+00:00",
+  "last_update": "2026-09-15T15:04:53.550608+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T300271/",
     "pav:hasVersion": {

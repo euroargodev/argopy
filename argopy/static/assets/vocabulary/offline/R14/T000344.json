@@ -1,7 +1,7 @@
 {
   "name": "T000344",
   "long_name": "FLAG_ArgosTransmitterExceptionStatus_bit",
-  "last_update": "2026-01-25T11:13:34.681130+00:00",
+  "last_update": "2026-09-15T15:05:02.967821+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000344/",
     "pav:hasVersion": {

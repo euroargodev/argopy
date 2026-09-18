@@ -1,7 +1,7 @@
 {
   "name": "T000277",
   "long_name": "FLAG_BitMaskMonthsIceDetectionActive_NUMBER",
-  "last_update": "2026-01-25T11:13:41.023671+00:00",
+  "last_update": "2026-09-15T15:05:04.382545+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000277/",
     "pav:hasVersion": [

@@ -1,7 +1,7 @@
 {
   "name": "T000540",
   "long_name": "VOLTAGE_BatterySBEAscent_volts",
-  "last_update": "2026-01-25T11:13:18.179319+00:00",
+  "last_update": "2026-09-15T15:04:57.271316+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000540/",
     "pav:hasVersion": {

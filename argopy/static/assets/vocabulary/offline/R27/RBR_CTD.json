@@ -1,7 +1,7 @@
 {
   "name": "RBR_CTD",
   "long_name": "RBR CTD",
-  "last_update": "2026-01-25T11:13:53.870939+00:00",
+  "last_update": "2026-09-15T15:05:07.820746+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/",
     "pav:authoredOn": "2025-10-08 10:58:28.0",
@@ -9,19 +9,20 @@
       "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/1/"
     },
     "dce:identifier": "SDN:R27::RBR_CTD",
+    "pav:version": "1",
     "@type": "skos:Concept",
     "skos:related": [
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/"
       }
     ],
     "skos:definition": {
@@ -45,7 +46,9 @@
     "dc:date": "2025-10-08 10:58:28.0",
     "skos:altLabel": "RBR_CTD",
     "skos:notation": "SDN:R27::RBR_CTD",
-    "pav:version": "1",
+    "skos:broader": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R26/current/RBR/"
+    },
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

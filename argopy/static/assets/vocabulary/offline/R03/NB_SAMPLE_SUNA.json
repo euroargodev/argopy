@@ -1,7 +1,7 @@
 {
   "name": "NB_SAMPLE_SUNA",
   "long_name": "Number of SUNA samples in each pressure bin",
-  "last_update": "2026-01-25T11:11:26.189635+00:00",
+  "last_update": "2026-09-15T15:04:38.236740+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_SUNA/",
     "pav:hasVersion": [

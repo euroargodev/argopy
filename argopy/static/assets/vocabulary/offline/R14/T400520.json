@@ -1,7 +1,7 @@
 {
   "name": "T400520",
   "long_name": "VOLTAGE_Battery7VStartAscentToSurface_volts",
-  "last_update": "2026-01-25T11:12:38.580445+00:00",
+  "last_update": "2026-09-15T15:04:46.766208+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T400520/",
     "pav:hasVersion": {

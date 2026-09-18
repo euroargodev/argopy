@@ -1,7 +1,7 @@
 {
   "name": "T000545",
   "long_name": "VOLTAGEDROP_BatteryStartProfile_volts",
-  "last_update": "2026-01-25T11:13:06.477097+00:00",
+  "last_update": "2026-09-15T15:04:53.946729+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000545/",
     "pav:hasVersion": {

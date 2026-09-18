@@ -1,40 +1,48 @@
 {
   "name": "T900004",
   "long_name": "CLOCK_DateGrounded_DDMMYYYY",
-  "last_update": "2026-01-25T11:13:32.599200+00:00",
+  "last_update": "2026-09-15T15:05:02.035485+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900004/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900004/1/"
-    },
-    "pav:authoredOn": "2025-12-11 11:04:53.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900004/2/"
-    },
-    "dce:identifier": "SDN:R14::T900004",
-    "pav:version": "2",
-    "skos:notation": "SDN:R14::T900004",
-    "skos:altLabel": "900004",
-    "dc:date": "2025-12-11 11:04:53.0",
-    "owl:versionInfo": "2",
-    "skos:prefLabel": {
-      "@language": "en",
-      "@value": "CLOCK_DateGrounded_DDMMYYYY"
-    },
-    "dc:identifier": "SDN:R14::T900004",
-    "skos:note": {
-      "@language": "en",
-      "@value": "accepted"
-    },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900004/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900004/3/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900004/1/"
+      }
+    ],
+    "@type": "skos:Concept",
     "skos:definition": {
       "@language": "en",
       "@value": "Deprecated - Date the float grounded. MC901 references grounding information. Template_Values:{unit:[YYYYMMDD, HHMMSS, YYYYMMDDHHMMSS, HHMM, MMSS, YYYY, DD, HH, MM]}."
     },
-    "@type": "skos:Concept",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "true",
+    "skos:note": {
+      "@language": "en",
+      "@value": "deprecated"
+    },
+    "dc:identifier": "SDN:R14::T900004",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "CLOCK_DateGrounded_DDMMYYYY"
+    },
+    "owl:versionInfo": "4",
+    "dc:date": "2026-07-24 12:36:48.0",
+    "skos:altLabel": "74",
+    "skos:notation": "SDN:R14::T900004",
+    "pav:version": "4",
+    "dce:identifier": "SDN:R14::T900004",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900004/4/"
+    },
+    "pav:authoredOn": "2026-07-24 12:36:48.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

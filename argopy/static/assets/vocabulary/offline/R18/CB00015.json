@@ -1,7 +1,7 @@
 {
   "name": "CB00015",
   "long_name": "CONFIG_CtdMinTransmittedTemperature_mdegC",
-  "last_update": "2026-01-25T11:15:37.548897+00:00",
+  "last_update": "2026-09-15T15:05:38.656291+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00015/",
     "pav:hasVersion": [

@@ -1,7 +1,7 @@
 {
   "name": "T000485",
   "long_name": "TIME_TUR3SampleFrequencyDuringAscent_seconds",
-  "last_update": "2026-01-25T11:13:27.515895+00:00",
+  "last_update": "2026-09-15T15:05:00.425643+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000485/",
     "pav:hasVersion": {

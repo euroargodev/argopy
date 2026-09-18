@@ -1,7 +1,7 @@
 {
   "name": "CC00060",
   "long_name": "CONFIG_GPSTimeout_seconds",
-  "last_update": "2026-01-25T11:15:46.993608+00:00",
+  "last_update": "2026-09-15T15:05:41.520675+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00060/",
     "pav:hasVersion": {

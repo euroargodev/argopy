@@ -1,7 +1,7 @@
 {
   "name": "T000267",
   "long_name": "DIAGNOSTICbit_PressureOffsetAfterReset_bit",
-  "last_update": "2026-01-25T11:13:06.065729+00:00",
+  "last_update": "2026-09-15T15:04:53.762377+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000267/",
     "pav:hasVersion": {

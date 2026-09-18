@@ -1,7 +1,7 @@
 {
   "name": "T000423",
   "long_name": "PRESSURE_InternalVacuumDuringDescent50dbar_inHg",
-  "last_update": "2026-01-25T11:13:30.724617+00:00",
+  "last_update": "2026-09-15T15:05:01.329196+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000423/",
     "pav:hasVersion": {

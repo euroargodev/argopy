@@ -1,4 +1,8 @@
+import subprocess
+import sys
+
 import pytest
+
 from argopy.utils.checkers import is_list_of_strings
 from argopy.utils.lists import list_multiprofile_file_variables, shortcut2gdac
 

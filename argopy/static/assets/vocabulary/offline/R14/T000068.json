@@ -1,7 +1,7 @@
 {
   "name": "T000068",
   "long_name": "CLOCK_TransmissionStart_HHMMSS",
-  "last_update": "2026-01-25T11:13:30.115907+00:00",
+  "last_update": "2026-09-15T15:05:01.070322+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000068/",
     "pav:hasVersion": {

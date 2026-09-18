@@ -1,37 +1,54 @@
 {
   "name": "PROVOR_III_JUMBO",
   "long_name": "PROVOR_III_JUMBO float",
-  "last_update": "2026-01-25T11:11:14.763113+00:00",
+  "last_update": "2026-09-15T15:04:34.550195+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III_JUMBO/",
-    "pav:authoredOn": "2024-09-11 11:40:41.0",
-    "pav:hasCurrentVersion": {
+    "pav:hasVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III_JUMBO/1/"
     },
-    "dce:identifier": "SDN:R23::PROVOR_III_JUMBO",
-    "pav:version": "1",
-    "skos:notation": "SDN:R23::PROVOR_III_JUMBO",
-    "skos:altLabel": "",
-    "dc:date": "2024-09-11 11:40:41.0",
-    "owl:versionInfo": "1",
-    "skos:prefLabel": {
-      "@language": "en",
-      "@value": "PROVOR_III_JUMBO float"
+    "pav:authoredOn": "2026-04-29 13:04:08.0",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III_JUMBO/2/"
     },
-    "dc:identifier": "SDN:R23::PROVOR_III_JUMBO",
+    "dce:identifier": "SDN:R23::PROVOR_III_JUMBO",
+    "@type": "skos:Concept",
+    "skos:related": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
+    },
+    "skos:definition": {
+      "@language": "en",
+      "@value": "PROVOR float with additional battery pack. PLATFORM_TYPE_KEY = 108."
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
     "skos:note": {
       "@language": "en",
       "@value": "accepted"
     },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
-    "skos:definition": {
+    "dc:identifier": "SDN:R23::PROVOR_III_JUMBO",
+    "skos:prefLabel": {
       "@language": "en",
-      "@value": "PROVOR float with additional battery pack. PLATFORM_ TYPE_ KEY = 108."
+      "@value": "PROVOR_III_JUMBO float"
     },
-    "@type": "skos:Concept",
+    "owl:versionInfo": "2",
+    "skos:narrower": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R08/current/836/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R08/current/891/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R08/current/890/"
+      }
+    ],
+    "dc:date": "2026-04-29 13:04:08.0",
+    "skos:altLabel": "PROVOR_III_JUMBO",
+    "skos:notation": "SDN:R23::PROVOR_III_JUMBO",
+    "pav:version": "2",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

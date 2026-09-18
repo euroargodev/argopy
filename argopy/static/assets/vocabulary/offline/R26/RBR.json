@@ -1,7 +1,7 @@
 {
   "name": "RBR",
   "long_name": "RBR Ltd",
-  "last_update": "2026-01-25T11:16:09.479432+00:00",
+  "last_update": "2026-09-15T15:05:46.912659+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R26/current/RBR/",
     "pav:authoredOn": "2019-10-11 15:08:43.0",
@@ -13,6 +13,38 @@
     "skos:notation": "SDN:R26::RBR",
     "skos:altLabel": "RBR",
     "dc:date": "2019-10-11 15:08:43.0",
+    "skos:narrower": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP4K/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3.1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES_A/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CODA_T_ODO/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/"
+      }
+    ],
     "@type": "skos:Concept",
     "skos:definition": {
       "@language": "en",
@@ -32,32 +64,6 @@
       "@value": "RBR Ltd"
     },
     "owl:versionInfo": "1",
-    "skos:narrower": [
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3/"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP4K/"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES_A/"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES/"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO/"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CODA_T_ODO/"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR/"
-      }
-    ],
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

@@ -6,6 +6,8 @@ Papers & proceedings citing Argopy
 
 #. Bartlett, Jenna  (2022). "An investigation of geostationary satellite imagery to compare developing and non-developing African easterly waves", Thesis and Dissertations. 5600. https://scholarsjunction.msstate.edu/td/5600
 
+#. Broullón, E., Williams, R. G., Naveira Garabato, A. C., Clément, L., & Fernández Castro, B. (2026). "The lifecycle of tracer variance in the North Atlantic". Geophysical Research Letters, 53, e2026GL122823. https://doi.org/10.1029/2026GL122823
+
 #. Chafik, et.al (2023). "The Faroe-Shetland Channel Jet: Structure, Variability, and Driving Mechanisms", Journal of Geophysical Research: Oceans. https://doi.org/10.1029/2022JC019083
 
 #. Chevillard C, Juza M, Dıaz-Barroso L, Reyes E, Escudier R and Tintore J (2024). "Capability of the Mediterranean Argo network to monitor sub-regional climate change indicators", Front. Mar. Sci. 11:1416486. https://doi.org/10.3389/fmars.2024.1416486
@@ -26,11 +28,17 @@ Papers & proceedings citing Argopy
 
 #. Gonzalez A. (2023). "The Argo Online School: An e-learning tool to get started with Argo", The Journal of Open Source Education, 7(80), 193, https://jose.theoj.org/papers/10.21105/jose.00193
 
+#. Hackl, Jürgen. (2026). "EuroFlood: a Python library and queryable index for the CEMS satellite-derived flood-depth archive of Europe." arXiv preprint https://arxiv.org/pdf/2607.21126
+
 #. Huda, Md Nurul  (2023). "Machine Learning for Improvement of Ocean Data Resolution for Weather Forecasting and Climatological Research", Thesis and Dissertations, Virginia Tech, http://hdl.handle.net/10919/116504
 
 #. Kerhalkar, S., Tandon, A., & MacKinnon, J. A. (2026). "Impacts of salinity stratification on sub-seasonal SST warming in the Northern Indian Ocean", Journal of Geophysical Research: Oceans, 131, e2025JC023486. https://doi.org/10.1029/2025JC023486
 
 #. Lehmann, N., Aybar, C., Shah, A., Passaro, M., Bamber, J. L., and Zhu, X. X. (2026): "OceanTACO: A Multi-Sensor Global Ocean Sea Surface State Dataset", Earth Syst. Sci. Data Discuss. [preprint], https://doi.org/10.5194/essd-2026-232, in review, 2026.
+
+#. Oke PR, Rykova T, Lovell JL, van Wijk EM, McMahon PM, Schallenberg C, Rintoul SR, Foppert A, Scott R, Pilo GS, Slawinski D, Krummel L, Strutton PG. (2026): "Argo Australia: over 20 years of impact". Marine & Freshwater Research 77, MF26047. https://doi.org/10.1071/MF26047
+
+#. Nikhil Parkar, M. Marimuthu, Aditi Agale, Vraj Prajapati, Arnav Parekar, Aditi Bambal, Shivam Chavan (2026): "A unified RAG-based framework for intelligent exploration of Argo and BGC-Argo oceanographic data". Ecological Informatics, 98. https://doi.org/10.1016/j.ecoinf.2026.103990
 
 #. Singh, Shikha and Sapkal, Mayur (2025). "A machine learning approach to identify upper ocean water masses in the Indian Ocean", CSI Transactions on ICT. https://doi.org/10.1007/s40012-025-00417-9.
 
@@ -54,7 +62,9 @@ Blog post & personal pages :
 
 - Samapriya Roy : https://samapriyaroy.medium.com/open-ocean-data-with-argofloats-tool-50efef6c4f05
 
-Academic references:
+Academic referencing/use-cases:
+
+- DeFeo, Jessica (2026). "Radiative Transfer Comparisons Between Satellite Ocean Color and BGC-Argo Float Chlorophyll". The State University of New Jersey, School of Graduate Studies. Dissertations & Theses, 2026. 32856575.
 
 - Sydney univ academic conda env : http://climate-cms.wikis.unsw.edu.au/Conda
 
@@ -63,3 +73,5 @@ Academic references:
 - Heliocloud : https://git.smce.nasa.gov/heliocloud/heliocloud-docker-images/-/blob/main/environment_pangeo_base_min.yml?ref_type=heads
 
 - `NMFS Hack days <https://nmfs-opensci.github.io/NMFSHackDays-2026/>`_: `Video <https://www.youtube.com/watch?v=0c5tHHZaaV4&t=660s>`_ and Notebooks to `load Argo-BGC data <https://nmfs-opensci.github.io/NMFSHackDays-2026/topics/2026-04-10/argopy.html>`_ and perform `Rrs data matchup <https://nmfs-opensci.github.io/NMFSHackDays-2026/topics/2026-04-10/argo-matchups.html>`_.
+
+- DTU M.Sc. course 25340 Digital Ocean: https://kurser.dtu.dk/course/25340, 38 students, 2026, ArgoPy with Jupyter notebooks, with markedly better outcomes than with Matlab (two 4 hours sessions). “...the coding exercises relating to the argo float were great and i learned a lot by doing..” “...Very good hands-on exercises. …(ArgoPy) more students moved forward faster instead of fighting with the computer….”.

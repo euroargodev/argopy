@@ -1,40 +1,48 @@
 {
   "name": "T900002",
   "long_name": "CLOCK_2ndSettlingBeforePark_YYYYMMDDHHMMSS",
-  "last_update": "2026-01-25T11:11:55.863337+00:00",
+  "last_update": "2026-09-15T15:04:42.565507+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900002/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900002/1/"
-    },
-    "pav:authoredOn": "2025-12-11 11:04:53.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900002/2/"
-    },
-    "dce:identifier": "SDN:R14::T900002",
-    "pav:version": "2",
-    "skos:notation": "SDN:R14::T900002",
-    "skos:altLabel": "900002",
-    "dc:date": "2025-12-11 11:04:53.0",
-    "owl:versionInfo": "2",
-    "skos:prefLabel": {
-      "@language": "en",
-      "@value": "CLOCK_2ndSettlingBeforePark_YYYYMMDDHHMMSS"
-    },
-    "dc:identifier": "SDN:R14::T900002",
-    "skos:note": {
-      "@language": "en",
-      "@value": "accepted"
-    },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900002/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900002/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900002/3/"
+      }
+    ],
+    "@type": "skos:Concept",
     "skos:definition": {
       "@language": "en",
       "@value": "Deprecated - Time when float was settled at the parking depth for the 2nd time. MC189 - buoyancy action. Template_Values:{unit:[YYYYMMDD, HHMMSS, YYYYMMDDHHMMSS, HHMM, MMSS, YYYY, DD, HH, MM]}."
     },
-    "@type": "skos:Concept",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "true",
+    "skos:note": {
+      "@language": "en",
+      "@value": "deprecated"
+    },
+    "dc:identifier": "SDN:R14::T900002",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "CLOCK_2ndSettlingBeforePark_YYYYMMDDHHMMSS"
+    },
+    "owl:versionInfo": "4",
+    "dc:date": "2026-07-24 12:36:46.0",
+    "skos:altLabel": "91",
+    "skos:notation": "SDN:R14::T900002",
+    "pav:version": "4",
+    "dce:identifier": "SDN:R14::T900002",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900002/4/"
+    },
+    "pav:authoredOn": "2026-07-24 12:36:46.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

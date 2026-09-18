@@ -1,7 +1,7 @@
 {
   "name": "CC00121",
   "long_name": "CONFIG_OilVolumeMinPerValveAction_cm^3",
-  "last_update": "2026-01-25T11:15:42.645181+00:00",
+  "last_update": "2026-09-15T15:05:40.088003+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00121/",
     "pav:hasVersion": {

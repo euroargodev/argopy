@@ -1,7 +1,7 @@
 {
   "name": "CC00202",
   "long_name": "CONFIG_TelemetryEncodeMessage_LOGICAL",
-  "last_update": "2026-01-25T11:15:56.007814+00:00",
+  "last_update": "2026-09-15T15:05:44.118548+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00202/",
     "pav:hasVersion": {

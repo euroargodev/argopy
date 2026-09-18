@@ -1,7 +1,7 @@
 {
   "name": "T000072",
   "long_name": "CLOCK_AscentInitiationFromDownTimeExpiryOffset_minutes",
-  "last_update": "2026-01-25T11:12:07.761556+00:00",
+  "last_update": "2026-09-15T15:04:45.519875+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000072/",
     "pav:hasVersion": {

@@ -1,7 +1,7 @@
 {
   "name": "T100311",
   "long_name": "FLAG_TelonicsPTTStatus_byte",
-  "last_update": "2026-01-25T11:13:35.869488+00:00",
+  "last_update": "2026-09-15T15:05:03.248254+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T100311/",
     "pav:hasVersion": {

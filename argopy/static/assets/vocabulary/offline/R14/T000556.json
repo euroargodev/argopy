@@ -1,7 +1,7 @@
 {
   "name": "T000556",
   "long_name": "NUMBER_<short_sensor_name>DescentIridiumMessages_COUNT",
-  "last_update": "2026-01-25T11:13:20.738059+00:00",
+  "last_update": "2026-09-15T15:04:57.932126+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000556/",
     "pav:hasVersion": [

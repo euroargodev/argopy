@@ -1,7 +1,7 @@
 {
   "name": "CB00094",
   "long_name": "CONFIG_<short_sensor_name>CpAscentPhaseDepthZone<N>SampleRate_hertz",
-  "last_update": "2026-01-25T11:15:24.041822+00:00",
+  "last_update": "2026-09-15T15:05:35.779669+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00094/",
     "pav:hasVersion": [

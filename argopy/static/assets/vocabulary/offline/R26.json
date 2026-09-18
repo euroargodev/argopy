@@ -1,7 +1,7 @@
 {
   "name": "SENSOR_MAKER",
   "long_name": "Argo sensor manufacturers",
-  "last_update": "2026-01-25T10:44:17.183716+00:00",
+  "last_update": "2026-09-15T15:04:21.873659+00:00",
   "data": {
     "@graph": [
       {
@@ -20,6 +20,12 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ISUS_V3/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSW/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_R10W/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_PAR/"
           },
           {
@@ -27,6 +33,9 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_R10W/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/"
@@ -39,9 +48,6 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_R10W/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSW/"
           }
         ],
         "@type": "skos:Concept",
@@ -836,6 +842,38 @@
         "skos:notation": "SDN:R26::RBR",
         "skos:altLabel": "RBR",
         "dc:date": "2019-10-11 15:08:43.0",
+        "skos:narrower": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP4K/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3.1/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES_A/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CODA_T_ODO/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/"
+          }
+        ],
         "@type": "skos:Concept",
         "skos:definition": {
           "@language": "en",
@@ -854,33 +892,7 @@
           "@language": "en",
           "@value": "RBR Ltd"
         },
-        "owl:versionInfo": "1",
-        "skos:narrower": [
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP4K/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES_A/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CODA_T_ODO/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR/"
-          }
-        ]
+        "owl:versionInfo": "1"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R26/current/APL_UW/",
@@ -1137,6 +1149,9 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.4/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_R10W/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/"
           },
           {
@@ -1144,6 +1159,9 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.5/"
@@ -1216,6 +1234,9 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.5/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V3.0/"
@@ -1291,6 +1312,9 @@
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.2/"

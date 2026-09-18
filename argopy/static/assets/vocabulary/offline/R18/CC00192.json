@@ -1,7 +1,7 @@
 {
   "name": "CC00192",
   "long_name": "CONFIG_SeeksToParkPeriodsIntervals_seconds",
-  "last_update": "2026-01-25T11:15:32.766073+00:00",
+  "last_update": "2026-09-15T15:05:37.969733+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00192/",
     "pav:hasVersion": {

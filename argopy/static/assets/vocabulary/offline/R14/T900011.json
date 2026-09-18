@@ -1,40 +1,48 @@
 {
   "name": "T900011",
   "long_name": "PRES_DescentToParkEnd_dbar",
-  "last_update": "2026-01-25T11:12:59.832045+00:00",
+  "last_update": "2026-09-15T15:04:48.807329+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900011/",
-    "pav:hasVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900011/1/"
-    },
-    "pav:authoredOn": "2025-12-11 11:04:54.0",
-    "pav:hasCurrentVersion": {
-      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900011/2/"
-    },
-    "dce:identifier": "SDN:R14::T900011",
-    "pav:version": "2",
-    "skos:notation": "SDN:R14::T900011",
-    "skos:altLabel": "900011",
-    "dc:date": "2025-12-11 11:04:54.0",
-    "owl:versionInfo": "2",
-    "skos:prefLabel": {
-      "@language": "en",
-      "@value": "PRES_DescentToParkEnd_dbar"
-    },
-    "dc:identifier": "SDN:R14::T900011",
-    "skos:note": {
-      "@language": "en",
-      "@value": "accepted"
-    },
-    "owl:deprecated": "false",
-    "void:inDataset": {
-      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-    },
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900011/3/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900011/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900011/2/"
+      }
+    ],
+    "@type": "skos:Concept",
     "skos:definition": {
       "@language": "en",
       "@value": "Deprecated - Pressure when the float reaches park depth but still goes through settling etc so not quite equivalent to ParkStart. JULD_DESCENT_END and JULD with MC=200. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
     },
-    "@type": "skos:Concept",
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "true",
+    "skos:note": {
+      "@language": "en",
+      "@value": "deprecated"
+    },
+    "dc:identifier": "SDN:R14::T900011",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "PRES_DescentToParkEnd_dbar"
+    },
+    "owl:versionInfo": "4",
+    "dc:date": "2026-07-24 12:36:54.0",
+    "skos:altLabel": "379",
+    "skos:notation": "SDN:R14::T900011",
+    "pav:version": "4",
+    "dce:identifier": "SDN:R14::T900011",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900011/4/"
+    },
+    "pav:authoredOn": "2026-07-24 12:36:54.0",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

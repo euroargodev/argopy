@@ -1,7 +1,7 @@
 {
   "name": "CC00223",
   "long_name": "CONFIG_ParkPressurePhase<D>_dbar",
-  "last_update": "2026-01-25T11:15:31.033428+00:00",
+  "last_update": "2026-09-15T15:05:37.754762+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00223/",
     "pav:authoredOn": "2025-12-12 11:41:10.0",

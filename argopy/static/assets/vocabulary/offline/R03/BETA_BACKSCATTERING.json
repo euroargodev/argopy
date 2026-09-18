@@ -1,7 +1,7 @@
 {
   "name": "BETA_BACKSCATTERING",
   "long_name": "Total angle specific volume from backscattering sensor at x nanometers",
-  "last_update": "2026-01-25T11:11:34.468579+00:00",
+  "last_update": "2026-09-15T15:04:41.024145+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/BETA_BACKSCATTERING/",
     "pav:hasVersion": [

@@ -94,7 +94,7 @@ class FloatStore(FloatStoreProto):
 
     @property
     def technicaldata(self) -> dict:
-        """A dictionary holding float technical data"""
+        """A dictionary of float technical data"""
         if self._technicaldata is None:
             self.load_technicaldata()
         return self._technicaldata

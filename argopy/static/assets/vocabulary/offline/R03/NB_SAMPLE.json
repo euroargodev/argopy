@@ -1,7 +1,7 @@
 {
   "name": "NB_SAMPLE",
   "long_name": "Number of samples in bin",
-  "last_update": "2026-01-25T11:11:34.258689+00:00",
+  "last_update": "2026-09-15T15:04:40.784090+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE/",
     "pav:hasVersion": [

@@ -1,16 +1,9 @@
 import numpy as np
 from contextlib import contextmanager
-import importlib
+import importlib.util
 
 
-def _importorskip(modname):
-    try:
-        importlib.import_module(modname)  # noqa: E402
-        has = True
-    except ImportError:
-        has = False
-    return has
-
+_importorskip = lambda modname: importlib.util.find_spec(modname) is not None
 
 has_mpl = _importorskip("matplotlib")
 has_cartopy = _importorskip("cartopy")
@@ -77,11 +70,23 @@ if has_mpl:
 if has_cartopy:
     import cartopy
     import cartopy.feature as cfeature
-    from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
+    # from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
+    from cartopy.mpl.gridliner import _east_west_formatted, _north_south_formatted
 
     land_feature = cfeature.NaturalEarthFeature(
         category="physical", name="land", scale="50m", facecolor=[0.4, 0.6, 0.7]
     )
+
+    def tox(v, pos=None):
+        return _east_west_formatted(v)
+
+    LONGITUDE_FORMATTER = mticker.FuncFormatter(tox)
+
+    def toy(v, pos=None):
+        return _north_south_formatted(v)
+
+    LATITUDE_FORMATTER = mticker.FuncFormatter(toy)
+
 else:
     land_feature = ()
 
@@ -103,7 +108,7 @@ def axes_style(style: str = STYLE["axes"]):
     """
     if has_seaborn:  # Execute within a seaborn context:
         if style == "argopy":
-            with sns.axes_style('whitegrid', rc=ARGOPY_STYLE):
+            with sns.axes_style("whitegrid", rc=ARGOPY_STYLE):
                 yield
         else:
             with sns.axes_style(style):
@@ -112,14 +117,7 @@ def axes_style(style: str = STYLE["axes"]):
         yield
 
 
-def latlongrid(
-    ax,
-    dx="auto",
-    dy="auto",
-    fontsize="auto",
-    label_style_arg={},
-    **kwargs
-):
+def latlongrid(ax, dx="auto", dy="auto", fontsize="auto", label_style_arg={}, **kwargs):
     """Add latitude/longitude grid line and labels to a cartopy geoaxes
 
     Parameters
@@ -139,8 +137,15 @@ def latlongrid(
     """
     if not isinstance(ax, cartopy.mpl.geoaxes.GeoAxesSubplot):
         raise ValueError("Please provide a cartopy.mpl.geoaxes.GeoAxesSubplot instance")
-    defaults = {"linewidth": 0.5, "color": ARGOPY_COLORS['BLUE'], "alpha": 0.5, "linestyle": ":"}
-    gl = ax.gridlines(crs=cartopy.crs.PlateCarree(), draw_labels=True, **{**defaults, **kwargs})
+    defaults = {
+        "linewidth": 0.5,
+        "color": ARGOPY_COLORS["BLUE"],
+        "alpha": 0.5,
+        "linestyle": ":",
+    }
+    gl = ax.gridlines(
+        crs=cartopy.crs.PlateCarree(), draw_labels=True, **{**defaults, **kwargs}
+    )
     if dx != "auto":
         gl.xlocator = mticker.FixedLocator(np.arange(-180, 180 + 1, dx))
     if dy != "auto":

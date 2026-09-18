@@ -1,7 +1,7 @@
 {
   "name": "PRES",
   "long_name": "Sea water pressure, equals 0 at sea-level",
-  "last_update": "2026-01-25T11:11:28.321176+00:00",
+  "last_update": "2026-09-15T15:04:39.000910+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/PRES/",
     "pav:hasVersion": [

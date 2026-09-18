@@ -1,7 +1,7 @@
 {
   "name": "CDOM",
   "long_name": "Concentration of coloured dissolved organic matter in sea water",
-  "last_update": "2026-01-25T11:11:29.740286+00:00",
+  "last_update": "2026-09-15T15:04:39.311425+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/CDOM/",
     "pav:hasVersion": [

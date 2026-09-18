@@ -1,7 +1,7 @@
 {
   "name": "CC00123",
   "long_name": "CONFIG_OilVolumePerPumpActionDescent_cm^3",
-  "last_update": "2026-01-25T11:15:53.802888+00:00",
+  "last_update": "2026-09-15T15:05:43.686004+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00123/",
     "pav:hasVersion": {
