@@ -507,6 +507,7 @@ class indexstore(ArgoIndexStoreProto):
         str
         """
 
+        # All columns date must be converted
         def convert_a_date(row):
             try:
                 return row.strftime("%Y%m%d%H%M%S")
@@ -533,7 +534,7 @@ class indexstore(ArgoIndexStoreProto):
         ]:
             s = s.set_column(1, "date", new_date)
 
-        if self.convention == "ar_index_global_prof":
+        if self.convention in ["ar_index_global_prof", "argo_profile_detailled_index"]:
             s = s.set_column(7, "date_update", new_date_update)
         elif self.convention in [
             "argo_bio-profile_index",
@@ -544,6 +545,32 @@ class indexstore(ArgoIndexStoreProto):
             s = s.set_column(8, "date_update", new_date_update)
         elif self.convention in ["ar_index_global_meta"]:
             s = s.set_column(3, "date_update", new_date_update)
+        elif self.convention in ["argo_synthetic-profile_detailled_index"]:
+            s = s.set_column(10, "date_update", new_date_update)
+
+        elif self.convention in ["argo_profile_detailled_index"]:
+            new_gdac_date_creation = pa.array(
+                    self.search["gdac_date_creation"].to_pandas().apply(convert_a_date)
+                )
+            s = s.set_column(11, "gdac_date_creation", new_gdac_date_creation)
+
+            new_gdac_date_update = pa.array(
+                    self.search["gdac_date_update"].to_pandas().apply(convert_a_date)
+                )
+            s = s.set_column(12, "gdac_date_update", new_gdac_date_creation)
+
+        elif self.convention in ["argo_synthetic-profile_detailled_index"]:
+            new_gdac_date_creation = pa.array(
+                    self.search["gdac_date_creation"].to_pandas().apply(convert_a_date)
+                )
+            s = s.set_column(11, "gdac_date_creation", new_gdac_date_creation)
+
+            new_gdac_date_update = pa.array(
+                    self.search["gdac_date_update"].to_pandas().apply(convert_a_date)
+                )
+            s = s.set_column(12, "gdac_date_update", new_gdac_date_creation)
+
+
 
         write_options = csv.WriteOptions(
             delimiter=",", include_header=False, quoting_style="none"

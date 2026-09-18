@@ -33,9 +33,10 @@ skip_nopyarrow = pytest.mark.skipif(not has_pyarrow, reason="Requires pyarrow")
 
 skip_pandas = pytest.mark.skipif(0, reason="Skipped tests for Pandas backend")
 skip_pyarrow = pytest.mark.skipif(0, reason="Skipped tests for Pyarrow backend")
-skip_CORE = pytest.mark.skipif(0, reason="Skipped tests for CORE index")
-skip_BGCs = pytest.mark.skipif(0, reason="Skipped tests for BGC synthetic index")
-skip_BGCb = pytest.mark.skipif(0, reason="Skipped tests for BGC bio index")
+skip_CORE = pytest.mark.skipif(1, reason="Skipped tests for CORE index")
+skip_BGCs = pytest.mark.skipif(1, reason="Skipped tests for BGC synthetic index")
+skip_BGCb = pytest.mark.skipif(1, reason="Skipped tests for BGC bio index")
+skip_CORE_DETAILLED = pytest.mark.skipif(0, reason="Skipped tests for CORE_DETAILLED index")
 
 """
 List gdac hosts to be tested. 
@@ -171,7 +172,7 @@ def ftp_shortname(ftp):
 
 
 class IndexStore_test_proto:
-    host, flist = argopy.tutorial.open_dataset("gdac")
+    default_host, _ = argopy.tutorial.open_dataset("gdac")
 
     search_scenarios = [(h, ap) for h in VALID_HOSTS for ap in VALID_SEARCHES]
     search_scenarios = [
@@ -266,7 +267,7 @@ class IndexStore_test_proto:
         return fetcher_args, N_RECORDS
 
     def new_idx(self, cache=False, cachedir=None, **kwargs):
-        host = kwargs["host"] if "host" in kwargs else self.host
+        host = kwargs["host"] if "host" in kwargs else self.default_host
         index_file = kwargs["index_file"] if "index_file" in kwargs else self.index_file
         convention = kwargs["convention"] if "convention" in kwargs else None
         fetcher_args, N_RECORDS = self._setup_store(
@@ -362,7 +363,7 @@ class IndexStore_test_proto:
     def test_index(self):
         def new_idx():
             return self.indexstore(
-                host=self.host, index_file=self.index_file, cache=False
+                host=self.default_host, index_file=self.index_file, cache=False
             )
 
         self.assert_index(new_idx().load())
@@ -377,7 +378,7 @@ class IndexStore_test_proto:
 
         with pytest.raises(OptionValueError):
             idx = self.indexstore(
-                host=self.host, index_file="ar_greylist.txt", cache=False
+                host=self.default_host, index_file="ar_greylist.txt", cache=False
             )
 
     @pytest.mark.parametrize(
@@ -636,3 +637,14 @@ class Test_IndexStore_pyarrow_BGC_synthetic(IndexStore_test_proto):
 
     indexstore = indexstore_pa
     index_file = "argo_synthetic-profile_index.txt"
+
+
+@skip_nopyarrow
+@skip_pyarrow
+@skip_CORE_DETAILLED
+class Test_IndexStore_pyarrow_CORE_DETAILLED(IndexStore_test_proto):
+    network = "core+"
+    from argopy.stores.index import indexstore_pa
+
+    indexstore = indexstore_pa
+    index_file = "argo_profile_detailled_index.txt"
