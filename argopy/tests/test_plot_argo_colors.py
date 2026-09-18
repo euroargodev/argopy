@@ -5,7 +5,7 @@ We test plotting functions from IndexFetcher and DataFetcher
 import pytest
 import logging
 
-from utils import (
+from argopy.tests.helpers.utils import (
     requires_matplotlib,
     requires_seaborn,
     has_matplotlib,

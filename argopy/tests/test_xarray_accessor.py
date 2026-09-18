@@ -8,8 +8,8 @@ import xarray as xr
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
 from argopy.errors import InvalidDatasetStructure, OptionValueError
-from utils import requires_gdac, _importorskip, _connectskip
-from mocked_http import mocked_server_address
+from argopy.tests.helpers.utils import requires_gdac, _importorskip, _connectskip
+from argopy.tests.helpers.mocked_http import mocked_httpserver
 
 
 has_gsw, requires_gsw = _importorskip("gsw")
@@ -26,7 +26,7 @@ def ds_pts(mocked_httpserver):
     try:
         for user_mode in ['standard', 'expert']:
             data[user_mode] = (
-                ArgoDataFetcher(src="erddap", mode=user_mode, server=mocked_server_address)
+                ArgoDataFetcher(src="erddap", mode=user_mode, server=mocked_httpserver)
                 .region([-20, -16., 0, 1, 0, 100., "2004-01-01", "2004-01-31"])
                 .load()
                 .data
