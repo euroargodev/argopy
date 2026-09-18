@@ -678,3 +678,60 @@ class SearchEngine(ArgoIndexSearchEngine):
         else:
             self._obj.search_type.update(namer(bounds))
             return search_filter
+
+    def n_levels(
+        self,
+        ge: Optional[int] = None,
+        le: Optional[int] = None,
+        nrows=None,
+        composed=False,
+    ):
+        def checker(
+            ge: Optional[int], le: Optional[int]
+        ) -> [Optional[int], Optional[int]]:
+            if "n_levels" not in self._obj.convention_columns:
+                raise InvalidDatasetStructure(
+                    "Cannot search for number of levels in this index)"
+                )
+            bounds = [ge, le]
+            if bounds[0] is not None and bounds[0] <= 0:
+                raise ValueError(
+                    f"The minimum number of levels 'ge' must be positive, {bounds[0]} provided"
+                )
+            if bounds[1] is not None and bounds[1] <= 0:
+                raise ValueError(
+                    f"The maximum number of levels 'le' must be positive, {bounds[1]} provided"
+                )
+            if (
+                bounds[0] is not None
+                and bounds[1] is not None
+                and bounds[0] > bounds[1]
+            ):
+                raise ValueError(
+                    f"Max bound le={bounds[1]} must be smaller than the min bound ge={bounds[0]}"
+                )
+            return bounds
+
+        def namer(bounds):
+            return {f"NLEVELS": bounds}
+
+        def composer(obj, bounds):
+            filt = []
+            if bounds[0] is not None:
+                filt.append(self._obj.index["n_levels"].ge(bounds[0]))
+            if bounds[1] is not None:
+                filt.append(self._obj.index["n_levels"].le(bounds[1]))
+            return obj._reduce_a_filter_list(filt, op="and")
+
+        bounds = checker(ge, le)
+        self._obj.load(nrows=self._obj._nrows_index)
+        search_filter = composer(self._obj, bounds)
+        if not composed:
+            self._obj.search_type = namer(bounds)
+            self._obj.search_filter = search_filter
+            self._obj.run(nrows=nrows)
+            return self._obj
+        else:
+            self._obj.search_type.update(namer(bounds))
+            return search_filter
+

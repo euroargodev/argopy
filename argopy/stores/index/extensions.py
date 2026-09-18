@@ -736,6 +736,22 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
     @abstractmethod
     def n_levels(self):
         """Search index profiles using the maximum number of pressure levels contained in a profile
+
+        Parameters
+        ----------
+        ge : float, optional
+            Minimal value.
+        le : float, optional
+            Maximal value
+
+        Returns
+        -------
+        :class:`ArgoIndex`
+
+        Notes
+        -----
+        This filter is on the number of points in a profile, NOT the max pressure depth.
+
         """
         raise NotImplementedError("Not implemented")
 
