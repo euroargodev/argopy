@@ -120,12 +120,11 @@ Examples
     :Data selection: |select_region| : region, |select_float| : float, |select_profile| : profile
     :Dataset: |ds_phy| : core+deep, |ds_bgc| : BGC
     :User mode: |mode_expert| : expert, |mode_standard| : standard, |mode_research| : research
-    :Data sources: |src_erddap| : erddap, |src_gdac| : gdac, |src_argovis| : argovis
+    :Data sources: |src_erddap| : erddap, |src_gdac| : gdac
 
 
 .. |src_erddap| replace:: ⭐
 .. |src_gdac| replace:: 🌐
-.. |src_argovis| replace:: 👁
 .. |ds_phy| replace:: 🟡+🔵
 .. |ds_bgc| replace:: 🟢
 .. |mode_expert| replace:: 🏄

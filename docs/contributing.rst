@@ -429,8 +429,8 @@ and FAIR principles.
 
 Therefore, the **Argopy** APIs to be used to provide access to third-party non-official data are based on specific argument or methods:
 
-- For the :class:`argopy.fetchers.ArgoDataFetcher` API: provide access to a third-party dataset with the **product** argument, which, when specified, will take precedance over the ``src`` argument to be used only for official data sources.
-- For the :class:`argopy.ArgoFloat` API: provide access to a third-party dataset with the **open_product** method, rather than the ``open_dataset()`` and ``open_profile`` methods to be used only for official data.
+- For the :class:`argopy.fetchers.ArgoDataFetcher` API: provide access to a third-party dataset with the **product** argument, which, when specified, will take precedence over the ``src`` argument to be used only for official data sources.
+- For the :class:`argopy.ArgoFloat` API: provide access to a third-party dataset with the :meth:`argopy.ArgoFloat.open_product` method, rather than the :meth:`argopy.ArgoFloat.open_dataset` and :meth:`argopy.ArgoFloat.open_profile` methods to be used only for official data sources.
 
 .. important::
 
@@ -461,14 +461,13 @@ This section is for those who which to make a third-product accessible through t
 Official Argo data are accessible through:
 
 - :meth:`argopy.ArgoFloat.open_dataset`,
-- :meth:`argopy.ArgoFloat.open_profile`,
-- and :meth:`argopy.ArgoFloat.open_profiles`.
+- :meth:`argopy.ArgoFloat.open_profile` and :meth:`argopy.ArgoFloat.open_profiles`.
 
-For third-party product use: :meth:`argopy.ArgoFloat.open_product`.
+For third-party product we use: :meth:`argopy.ArgoFloat.open_product`.
 
 This method receives the name of the product as a primary argument and is responsible for dispatching the request to a specific sub-module located under ``argopy/stores/float/products/``.
 
-Contributors should also update the list of valid products used by the checker.
+Contributors should also update the list of valid products used by the checker in the :class:`argopy.options.PRODUCT_LIST` dataclass.
 
 The return data can be anything, since this depends on the product.
 
