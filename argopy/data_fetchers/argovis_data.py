@@ -122,7 +122,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         }
 
     def __repr__(self):
-        summary = ["<product-datafetcher.argovis>"]
+        summary = ["<datafetcher.product.argovis>"]
         summary.append(self._repr_data_source)
         summary.append(self._repr_access_point)
         summary.append(self._repr_server)

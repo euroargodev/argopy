@@ -17,7 +17,7 @@ from argopy import xarray as xr # Lazily import large module
 import numpy as np
 import logging
 
-from argopy.options import OPTIONS, VALIDATE, PARALLEL_SETUP
+from argopy.options import OPTIONS, VALIDATE, PARALLEL_SETUP, PRODUCT_LIST
 from argopy.errors import (
     InvalidFetcherAccessPoint,
     InvalidFetcher,
@@ -73,11 +73,11 @@ class ArgoDataFetcher:
     mode: str, optional
         User mode. Eg: ``standard`` or ``expert``. Set to OPTIONS['mode'] by default if empty.
     src: str, optional
-         Source of the data to use. Eg: ``erddap``. Set to OPTIONS['src'] by default if empty.
+         Argo data source to use. Eg: ``erddap``. Set to OPTIONS['src'] by default if empty.
     ds: str, optional
         Name of the dataset to load. Eg: ``phy``. Set to OPTIONS['ds'] by default if empty.
     product: str, optional
-        The name of a third-party data source. Eg: ``argovis``. This parameter takes precedence over ``src``.
+        Name of a third-party product to use as data source. Eg: ``argovis``. This parameter takes precedence over ``src``.
     **fetcher_kwargs: optional
         Additional arguments passed on data source fetcher creation of each access points.
 
@@ -106,8 +106,8 @@ class ArgoDataFetcher:
 
         if product is not None:
             # Third-party products must update this section to be included:
-            if product.lower() not in ["argovis"]:
-                raise InvalidFetcher(f"The '{product}' product has no implementation. Available products are: ['argovis'].")
+            if product.lower() not in PRODUCT_LIST.datafetcher:
+                raise InvalidFetcher(f"The '{product}' product has no implementation. Available products are: {PRODUCT_LIST.datafetcher}.")
             self._src = product
 
         if self._dataset_id == "bgc":
@@ -201,7 +201,7 @@ class ArgoDataFetcher:
             self._mode == "expert" or self._mode == "research"
         ):
             raise OptionValueError(
-                "The 'argovis' data source fetching is only available in 'standard' user mode"
+                "The 'argovis' product is only available in 'standard' user mode"
             )
         if self._src == "gdac" and "bgc" in self._dataset_id:
             warnings.warn(
@@ -266,8 +266,12 @@ class ArgoDataFetcher:
         if self.fetcher:
             summary = [self.fetcher.__repr__()]
         else:
+            if self._src not in PRODUCT_LIST.datafetcher:
+                obj = f"datafetcher.{self._src}"
+            else:
+                obj = f"datafetcher.product.{self._src}"
             summary = [
-                "<datafetcher.%s> 'No access point initialised'" % self._src,
+                f"<{obj}> 'No access point initialised'",
                 "Available access points: %s" % ", ".join(self.Fetchers.keys()),
             ]
 

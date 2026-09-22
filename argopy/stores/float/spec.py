@@ -8,7 +8,7 @@ import logging
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from argopy.options import OPTIONS
+from argopy.options import OPTIONS, PRODUCT_LIST
 from argopy.errors import InvalidOption, DataNotFound
 from argopy.plot import dashboard
 from argopy.stores import ArgoIndex
@@ -1139,26 +1139,24 @@ class FloatStoreProto(ABC):
     def open_product(
         self, name: str = "", **kwargs
     ) -> xr.Dataset | Any:
-        """Open and decode an Argo third-party dataset
+        """Open and decode a third-party product for a given float
 
         Parameters
         ----------
         name: str
-            Name of the third-party dataset to open.
+            Name of the third-party product to open.
         \**kwargs
-            All the other arguments are passed to the product specific method.
+            All the other arguments are passed to the product facade.
 
         Returns
         -------
         :class:`xarray.Dataset` | Any
         """
 
-        # Third-party access modules must be located in argopy.stores.float.products
+        # Third-party access modules must be located in: argopy.stores.float.products
         # and the facade called from here.
 
-        valid_products = [] # To be populated by contributors
-
-        if name not in valid_products:
+        if name not in PRODUCT_LIST.argofloat:
             raise NotImplementedError(
-                "Dataset '%s' not found. Available third-party dataset for this float are: %s"
-                % (name, valid_products))
+                "Product '%s' not found. Available third-party product for this float are: %s"
+                % (name, PRODUCT_LIST.argofloat))

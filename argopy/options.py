@@ -10,7 +10,7 @@ import warnings
 import logging
 import fsspec
 import importlib
-
+from dataclasses import dataclass
 
 try:
     import distributed
@@ -80,6 +80,15 @@ DEFAULT = OPTIONS.copy()
 DATA_SOURCE_LIST = frozenset(["erddap", "gdac", "argovis"])
 _DATASET_LIST = frozenset(["phy", "bgc", "ref", "bgc-s", "bgc-b"])
 _USER_LEVEL_LIST = frozenset(["standard", "expert", "research"])
+
+@dataclass(frozen=True)
+class PRODUCT_LIST:
+    """A place to define the list of valid third-party products"""
+    datafetcher : tuple[str] = tuple(["argovis"]) # To be used with the 'product' argument
+    """List of valid values for the 'product' argument of the :class:`argopy.DataFetcher` class"""
+
+    argofloat: tuple[str] = tuple([]) # To be
+    """List of valid values for the :meth:`argopy.ArgoFloat.open_product` method"""
 
 
 # Define how to validate options:
