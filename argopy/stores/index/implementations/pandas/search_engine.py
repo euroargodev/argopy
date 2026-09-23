@@ -2,7 +2,7 @@ import warnings
 import logging
 import pandas as pd
 import numpy as np
-from typing import List
+from typing import List, Literal, Optional
 from functools import lru_cache
 
 from argopy.options import OPTIONS
@@ -11,7 +11,10 @@ from argopy.utils.monitored_threadpool import pmap
 from argopy.utils.checkers import is_indexbox, parse_indexbox, check_wmo, check_cyc
 from argopy.utils.casting import to_list
 from argopy.utils.geo import conv_lon
-from argopy.stores.index.extensions import register_ArgoIndex_accessor, ArgoIndexSearchEngine
+from argopy.stores.index.extensions import (
+    register_ArgoIndex_accessor,
+    ArgoIndexSearchEngine,
+)
 from argopy.stores.index.implementations.index_s3 import search_s3
 from argopy.stores.index.implementations.pandas.index import indexstore
 
@@ -48,7 +51,7 @@ def compute_params(param: str, obj):
 class SearchEngine(ArgoIndexSearchEngine):
 
     @search_s3
-    def wmo(self, WMOs, nrows=None, composed=False) -> indexstore:
+    def wmo(self, WMOs, nrows=None, composed=False):
         def checker(WMOs):
             WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
             log.debug(
@@ -56,7 +59,9 @@ class SearchEngine(ArgoIndexSearchEngine):
                 % ";".join([str(wmo) for wmo in WMOs])
             )
             if len(WMOs) > 30:
-                warnings.warn("Searching a large amount of Argo floats with the Pandas backend is quite slow. We strongly recommend to install Pyarrow to improve performances ! Pyarrow is about 10 times faster than Pandas for this use-case.")
+                warnings.warn(
+                    "Searching a large amount of Argo floats with the Pandas backend is quite slow. We strongly recommend to install Pyarrow to improve performances ! Pyarrow is about 10 times faster than Pandas for this use-case."
+                )
             return WMOs
 
         def namer(WMOs):
@@ -79,7 +84,7 @@ class SearchEngine(ArgoIndexSearchEngine):
             return search_filter
 
     @search_s3
-    def cyc(self, CYCs, nrows=None, composed=False) -> indexstore:
+    def cyc(self, CYCs, nrows=None, composed=False):
         def checker(CYCs):
             if self._obj.convention in ["ar_index_global_meta"]:
                 raise InvalidDatasetStructure(
@@ -91,7 +96,9 @@ class SearchEngine(ArgoIndexSearchEngine):
                 % (";".join([str(cyc) for cyc in CYCs]))
             )
             if len(CYCs) > 50:
-                warnings.warn("Searching a large amount of Argo float cycles with the Pandas backend is quite slow. We strongly recommend to install Pyarrow to improve performances ! Pyarrow is about 10 times faster than Pandas for this use-case.")
+                warnings.warn(
+                    "Searching a large amount of Argo float cycles with the Pandas backend is quite slow. We strongly recommend to install Pyarrow to improve performances ! Pyarrow is about 10 times faster than Pandas for this use-case."
+                )
             return CYCs
 
         def namer(CYCs):
@@ -130,7 +137,9 @@ class SearchEngine(ArgoIndexSearchEngine):
                 )
             )
             if len(WMOs) > 30 or len(CYCs) > 50:
-                warnings.warn("Searching a large amount of Argo float cycles with the Pandas backend is quite slow. We strongly recommend to install Pyarrow to improve performances ! Pyarrow is about 10 times faster than Pandas for this use-case.")
+                warnings.warn(
+                    "Searching a large amount of Argo float cycles with the Pandas backend is quite slow. We strongly recommend to install Pyarrow to improve performances ! Pyarrow is about 10 times faster than Pandas for this use-case."
+                )
             return WMOs, CYCs
 
         def namer(WMOs, CYCs):
@@ -159,7 +168,7 @@ class SearchEngine(ArgoIndexSearchEngine):
             BOX = parse_indexbox("date", BOX, **kwargs)
             is_indexbox(BOX)
             log.debug("Argo index searching for date in BOX=%s ..." % BOX)
-            return ("date", BOX)   # Return key to use for time axis
+            return ("date", BOX)  # Return key to use for time axis
 
         def namer(BOX):
             return {"DATE": BOX[4:6]}
@@ -355,9 +364,7 @@ class SearchEngine(ArgoIndexSearchEngine):
             return {"PARAMS": (PARAMs, logical)}
 
         def composer(obj, PARAMs, logical):
-            obj.index["variables"] = obj.index["parameters"].apply(
-                lambda x: x.split()
-            )
+            obj.index["variables"] = obj.index["parameters"].apply(lambda x: x.split())
             filt = pmap(obj, compute_params, PARAMs)
             obj.index = obj.index.drop("variables", axis=1)
             return obj._reduce_a_filter_list(filt, op=logical)
@@ -564,3 +571,167 @@ class SearchEngine(ArgoIndexSearchEngine):
         else:
             self._obj.search_type.update(namer(dac))
             return search_filter
+
+    def profile_qc(self, PARAMs: dict, logical="and", nrows=None, composed=False):
+        def checker(PARAMs):
+            if "profile_temp_qc" not in self._obj.convention_columns:
+                raise InvalidDatasetStructure(
+                    "Cannot search for profile QC in this index)"
+                )
+            # Validate PARAMs
+            [PARAMs.update({p: to_list(PARAMs[p])}) for p in PARAMs]
+            if not np.all(
+                [
+                    v in ["", " ", "1", "A", "B", "C", "D", "E", "F"]
+                    for vals in PARAMs.values()
+                    for v in vals
+                ]
+            ):
+                raise ValueError(
+                    "Profile QC must be a value in '', 'A', 'B', 'C', 'D', 'E', 'F'"
+                )
+            log.debug("Argo index searching for profile QC: %s ..." % PARAMs)
+            return PARAMs
+
+        def namer(PARAMs, logical):
+            return {"PROFQC": (PARAMs, logical)}
+
+        def composer(PARAMs, logical):
+            filt = []
+
+            for param in PARAMs:
+                qcflags = PARAMs[param]
+                filt.append(
+                    self._obj.index[f"profile_{param.lower()}_qc"].isin(qcflags)
+                )
+
+            return self._obj._reduce_a_filter_list(filt, op=logical)
+
+        PARAMs = checker(PARAMs)
+        self._obj.load(nrows=self._obj._nrows_index)
+        search_filter = composer(PARAMs, logical)
+        if not composed:
+            self._obj.search_type = namer(PARAMs, logical)
+            self._obj.search_filter = search_filter
+            self._obj.run(nrows=nrows)
+            return self._obj
+        else:
+            self._obj.search_type.update(namer(PARAMs, logical))
+            return search_filter
+
+    def psal_adj(
+        self,
+        where: Literal["mean", "dev"] = "mean",
+        ge: Optional[float] = 0.0,
+        le: Optional[float] = None,
+        nrows=None,
+        composed=False,
+    ):
+        def checker(
+            where: str, ge: Optional[float], le: Optional[float]
+        ) -> [str, Optional[float], Optional[float]]:
+            if where.lower() not in ["mean", "dev"]:
+                raise ValueError(
+                    f"'{where}': The 'where' argument must be 'mean' or 'dev'."
+                )
+            if "ad_psal_adjustment_mean" not in self._obj.convention_columns:
+                raise InvalidDatasetStructure(
+                    "Cannot search for salinity adjustment mean in this index)"
+                )
+            if "ad_psal_adjustment_deviation" not in self._obj.convention_columns:
+                raise InvalidDatasetStructure(
+                    "Cannot search for salinity adjustment deviation in this index)"
+                )
+
+            bounds = [where.lower(), ge, le]
+
+            if bounds[0] == "dev" and bounds[2] is not None and bounds[2] < 0:
+                raise ValueError(f"Deviation lower limit must be zero or positive")
+
+            return bounds
+
+        def namer(bounds):
+            return {f"PSAL_ADJ_{bounds[0].upper()}": bounds[1:]}
+
+        def composer(obj, bounds):
+            filt = []
+            pname: str = (
+                "ad_psal_adjustment_mean"
+                if bounds[0] == "mean"
+                else "ad_psal_adjustment_deviation"
+            )
+            if bounds[1] is not None:
+                filt.append(obj.index[pname].ge(bounds[1]))
+            if bounds[2] is not None:
+                filt.append(obj.index[pname].le(bounds[2]))
+
+            return obj._reduce_a_filter_list(filt, op="and")
+
+        bounds = checker(where, ge, le)
+        self._obj.load(nrows=self._obj._nrows_index)
+        search_filter = composer(self._obj, bounds)
+        if not composed:
+            self._obj.search_type = namer(bounds)
+            self._obj.search_filter = search_filter
+            self._obj.run(nrows=nrows)
+            return self._obj
+        else:
+            self._obj.search_type.update(namer(bounds))
+            return search_filter
+
+    def n_levels(
+        self,
+        ge: Optional[int] = None,
+        le: Optional[int] = None,
+        nrows=None,
+        composed=False,
+    ):
+        def checker(
+            ge: Optional[int], le: Optional[int]
+        ) -> [Optional[int], Optional[int]]:
+            if "n_levels" not in self._obj.convention_columns:
+                raise InvalidDatasetStructure(
+                    "Cannot search for number of levels in this index)"
+                )
+            bounds = [ge, le]
+            if bounds[0] is not None and bounds[0] <= 0:
+                raise ValueError(
+                    f"The minimum number of levels 'ge' must be positive, {bounds[0]} provided"
+                )
+            if bounds[1] is not None and bounds[1] <= 0:
+                raise ValueError(
+                    f"The maximum number of levels 'le' must be positive, {bounds[1]} provided"
+                )
+            if (
+                bounds[0] is not None
+                and bounds[1] is not None
+                and bounds[0] > bounds[1]
+            ):
+                raise ValueError(
+                    f"Max bound le={bounds[1]} must be smaller than the min bound ge={bounds[0]}"
+                )
+            return bounds
+
+        def namer(bounds):
+            return {f"NLEVELS": bounds}
+
+        def composer(obj, bounds):
+            filt = []
+            if bounds[0] is not None:
+                filt.append(self._obj.index["n_levels"].ge(bounds[0]))
+            if bounds[1] is not None:
+                filt.append(self._obj.index["n_levels"].le(bounds[1]))
+            return obj._reduce_a_filter_list(filt, op="and")
+
+        bounds = checker(ge, le)
+        self._obj.load(nrows=self._obj._nrows_index)
+        search_filter = composer(self._obj, bounds)
+        if not composed:
+            self._obj.search_type = namer(bounds)
+            self._obj.search_filter = search_filter
+            self._obj.run(nrows=nrows)
+            return self._obj
+        else:
+            self._obj.search_type.update(namer(bounds))
+            return search_filter
+
