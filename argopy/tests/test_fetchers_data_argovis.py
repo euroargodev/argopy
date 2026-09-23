@@ -115,8 +115,8 @@ def assert_fetcher(mocked_argovisserver, this_fetcher, cacheable=False):
 
 @requires_argovis
 class Test_Backend:
-    """ Test ERDDAP data fetching backend """
-    src = 'argovis'
+    """ Test data fetching backend """
+    product = 'argovis'
 
     #############
     # UTILITIES #
@@ -132,7 +132,7 @@ class Test_Backend:
 
     def _setup_fetcher(self, this_request, cached=False, parallel=False):
         """Helper method to set up options for a fetcher creation"""
-        defaults_args = {"src": self.src,
+        defaults_args = {"product": self.product,
                          "cache": cached,
                          "cachedir": self.cachedir,
                          "parallel": parallel,

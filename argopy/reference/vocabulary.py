@@ -172,7 +172,7 @@ class ArgoReferenceTable:
     """List of public attributes"""
 
     def __init__(self, identifier_or_parameter: str, *args, **kwargs) -> None:
-        """Create a :class:`ArgoReferenceTable` with an identifer, eg ``R25`` or a parameter name, eg ``SENSOR_MODEL``"""
+        """Create a :class:`ArgoReferenceTable` with an identifier, eg ``R25`` or a parameter name, eg ``SENSOR_MODEL``"""
         # Internal placeholders:
         self._Vocabulary2Parameter: dict[str, str] = Asset.load("vocabulary:description")[
             "data"

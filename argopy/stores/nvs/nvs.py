@@ -46,7 +46,7 @@ class NVS(Implementation):
     -----
     This class has a singleton design, i.e. only one instance creation is done and will be return on all subsequent instantiations.
 
-    This implies that to modify the creation options, they must be defined on the first instanciation in the session, otherwise they will be ignored.
+    This implies that to modify the creation options, they must be defined on the first instantiation in the session, otherwise they will be ignored.
 
 
     """

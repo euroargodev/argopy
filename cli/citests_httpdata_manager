@@ -801,7 +801,7 @@ class Lister:
             [this_URI.commit(self.dfile(uri, "js")) for uri in encode(facade.uri)]
 
         for ds in requests_seq:
-            fetcher = DataFetcher(src="argovis", ds=ds)
+            fetcher = DataFetcher(product="argovis", ds=ds)
             for access_point in requests_seq[ds]:
                 [
                     add_to_URI(fetcher.profile(*cfg))

@@ -10,6 +10,8 @@ What's New
 Coming up next (unreleased)
 ---------------------------
 
+.. currentmodule:: argopy
+
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -35,12 +37,11 @@ Internals
 
     - As another consequence, we needed to remove the explicit use of ``mocked_server_address`` in imports in test modules, because the server is now different for each (and all together useless in many locations).
 
-    - Make the mocked server "threaded" with ``ThreadingHTTPServer``. This allows the mocked HTTP server used in CI tests to handle multiple concurrent connections instead of handling requests one at a time (it was previously, based on the plain HTTPServer class).
+    - Make the mocked server "threaded" with ``ThreadingHTTPServer``. This allows the mocked HTTP server used in CI tests to handle multiple concurrent connections instead of handling one request at a time (it was previously, based on the plain HTTPServer class).
 
-    - As a consequence the mocked HTTP server was hit much often & faster, which  caused a "race" problem for cached fsspec stores. We found that this is a known issue documented `here <https://github.com/fsspec/filesystem_spec/issues/639>`_ but still has no fix. So we had to serialize the first download of each resource, to prevent that race to the meda-data registry managed internally by fsspec. Race to write the registry is now stop by the first cat to a file, all subsequent call are ok. This is the ``_cache_lock`` addition in stores.
+    - As a consequence the mocked HTTP server was hit much often & faster, which caused a "race" problem for the cached fsspec store. We found that this is a known issue documented `here <https://github.com/fsspec/filesystem_spec/issues/639>`_ but still has no fix. So we had to serialize the first download of each resource, to prevent that race to the meda-data registry managed internally by fsspec. Race to write the registry is now stop by the first cat to a file, all subsequent calls are ok. This is the ``_cache_lock`` addition in stores.
 
-    - Following on "race" issues, we tried to remove a bunch of warnings and possible erratic errors due to inconsistency in how we create xarray dataset in out internal stores. We make this consistent by having data fetched from local, HTTP, and FTP stores systematically opening a dataset from an in-memory byte buffers (io.BytesIO). We also added an explicit ``.load()`` immediately after opening to copy all variables into plain in-memory numpy arrays, hence detaching the dataset from the lazy backend array wrapper and the buffer it was opened from. The subsequent ``.close()`` then aim to release the underlying netCDF4/HDF5 handle deterministically, rather than deferring cleanup to garbage collection.
-
+    - Following on "race" issues, we tried to remove a bunch of warnings and possible erratic errors due to inconsistency in how we create xarray dataset in out internal stores. We make this consistent by having data fetched from local, HTTP, and FTP stores systematically opening a dataset from an in-memory byte buffers (io.BytesIO). We also added an explicit ``.load()`` immediately after opening to copy all variables into plain in-memory numpy arrays, hence detaching the dataset from the lazy backend array wrapper and the buffer it was opened from. The subsequent ``.close()`` then aims to release the underlying netCDF4/HDF5 handle deterministically, rather than deferring cleanup to garbage collection.
 
 - **Improve import time** with lazy and/or deferred import of large dependencies, optimization and finally removing of the auto-discovery of data/index fetchers :issue:`585` (:pr:`676`) by |charles| and (:pr:`624`) by |gmaze|.
 
@@ -56,7 +57,14 @@ Internals
 Documentation
 ^^^^^^^^^^^^^
 
-- **Define** a policy regarding **generative AI usage** in **argopy** contributions :issue:`637`. (:pr:`639`) by |quai20|.
+- **Define** a :ref:`policy <contributing.ai_policy>` regarding **generative AI usage** in **Argopy** contributions :issue:`637`. (:pr:`639`) by |quai20|.
+
+- **Define** a :ref:`policy and specific methods <product_distribution>` regarding the **access to third-party product** through **Argopy**. :issue:`638`. (:pr:`683`) by |gmaze|.
+
+Deprecation
+^^^^^^^^^^^
+
+- The value ``argovis`` for the ``src`` global option is deprecated, as well as for the DataFetcher ``src`` argument. From now on, to fetch data from the ``argovis`` server, you will need to use the ``product`` argument of the :class:`DataFetcher`. This is a consequence of the new **third-party product policy** introduced in (:pr:`683`).
 
 v1.4.0 (5 Jan. 2026)
 --------------------
@@ -159,7 +167,7 @@ v1.3.0 (22 Aug. 2025)
 
 .. versionadded:: v1.3.0
 
-    This new **argopy** version requires Python 3.11 !
+    This new **Argopy** version requires Python 3.11 !
 
 .. _v1.3.0-features:
 
@@ -218,13 +226,13 @@ Features and front-end API
 
 - **Optical modeling diagnostics for BGC data**. We introduce a preliminary implementation of standard diagnostics from optical modeling. These are available through the new :class:`Dataset.argo.optic` extension. All details are in the dedicated :ref:`complement-optical-modeling` documentation page and on the API reference. (:pr:`463`) by |gmaze|.
 
-- **Optimized diagnostic per profile**. If you want to execute your own diagnostic method on a collection of Argo profiles, **argopy** now provides an efficient method to do so: :meth:`Dataset.argo.reduce_profile`. Typical use case would include computation of the mixed layer depth or euphotic layer depth. All details are in the dedicated :ref:`perprofile-diag` documentation page and on the API reference of the method. (:pr:`463`) by |gmaze|.
+- **Optimized diagnostic per profile**. If you want to execute your own diagnostic method on a collection of Argo profiles, **Argopy** now provides an efficient method to do so: :meth:`Dataset.argo.reduce_profile`. Typical use case would include computation of the mixed layer depth or euphotic layer depth. All details are in the dedicated :ref:`perprofile-diag` documentation page and on the API reference of the method. (:pr:`463`) by |gmaze|.
 
 .. currentmodule:: argopy
 
 - :class:`ArgoIndex` **now support composition of several search criteria**. Thanks to a re-design of the Argo index search engine, it is now easy to use multiple search criteria to query an Argo files index. Checkout the dedicated :ref:`tools-argoindex` documentation page. (:pr:`470`) by |gmaze|.
  
-- **Fetch Argo data as** :class:`netCDF4.Dataset`. For the sake of compatibility with legacy codes and to encourage **argopy** adoption for all loading/reading operations, we now support data output as a `netCDF4 Dataset object <https://unidata.github.io/netcdf4-python/#netCDF4.Dataset>`_. This new feature is available at high level with the :class:`DataFetcher` and lower-level with the :class:`ArgoFloat` and :class:`gdacfs` classes. (:pr:`484`) by |gmaze|.
+- **Fetch Argo data as** :class:`netCDF4.Dataset`. For the sake of compatibility with legacy codes and to encourage **Argopy** adoption for all loading/reading operations, we now support data output as a `netCDF4 Dataset object <https://unidata.github.io/netcdf4-python/#netCDF4.Dataset>`_. This new feature is available at high level with the :class:`DataFetcher` and lower-level with the :class:`ArgoFloat` and :class:`gdacfs` classes. (:pr:`484`) by |gmaze|.
 
 .. _v1.2.0-internals:
 
@@ -247,7 +255,7 @@ v1.1.0 (18 March 2025)
 .. versionadded:: v1.1.0
 
     Most new features in this version can be considered *advanced tools*, since they require a more intimate knowledge
-    of the Argo dataset. Therefore, we re-organised and completed the **argopy** documentation to give them more visibility.
+    of the Argo dataset. Therefore, we re-organised and completed the **Argopy** documentation to give them more visibility.
 
 .. _v1.1.0-features:
 
@@ -348,7 +356,7 @@ v1.0.0 (16 Oct. 2024)
 
 .. versionadded:: v1.0.0
 
-    The team proudly assumes that **argopy** is all grown up !
+    The team proudly assumes that **Argopy** is all grown up !
 
     This version comes with improved performances and support for the BGC-Argo dataset.
     But since this is a major, we also introduces breaking changes and significant internal refactoring possibly with un-expected side effects ! So don't hesitate to `report issues on the source code repository <https://github.com/euroargodev/argopy/issues>`_.
@@ -524,7 +532,7 @@ Features and front-end API
 
 - **argovis** data source now support the new `API server <https://argovis-api.colorado.edu/docs>`_. This upgrade comes with a new option to define the optional API KEY to use. You can `get a free key here <https://argovis-keygen.colorado.edu/>`_. (:pr:`371`) by `Bill Katie-Anne Mills <https://github.com/bkatiemills>`_.
 
-- **argopy** is concerned about its environmental impact and we'd like to understand and optimize the carbon emissions of our digital activities. Starting June 1st 2024, we use `Green Coding <https://www.green-coding.io>`_ tools to assess energy consumption and CO2eq emissions from our activities on Github infrastructure. All results and data are available on the new dedicated web page: :ref:`Carbon emissions`. (:pr:`354`) by |gmaze|.
+- **Argopy** is concerned about its environmental impact and we'd like to understand and optimize the carbon emissions of our digital activities. Starting June 1st 2024, we use `Green Coding <https://www.green-coding.io>`_ tools to assess energy consumption and CO2eq emissions from our activities on Github infrastructure. All results and data are available on the new dedicated web page: :ref:`Carbon emissions`. (:pr:`354`) by |gmaze|.
 
 .. _v0.1.16-internals:
 
@@ -630,7 +638,7 @@ Features and front-end API
 
 - **Updated documentation**. In order to better introduce new features, we updated the documentation structure and content.
 
-- **argopy** cheatsheet ! Get most of the argopy API in a 2 pages pdf !
+- **Argopy** cheatsheet ! Get most of the argopy API in a 2 pages pdf !
 
 .. image:: _static/argopy-cheatsheet.png
   :height: 200px
@@ -667,7 +675,7 @@ Features and front-end API
     import xarray as xr
     ds = xr.open_dataset("dac/aoml/1901393/1901393_prof.nc", engine='argo')
 
-- **argopy now can provide authenticated access to the Argo CTD reference database for DMQC**. Using user/password new **argopy** options, it is possible to fetch the `Argo CTD reference database <http://www.argodatamgt.org/DMQC/Reference-data-base/Latest-Argo-Reference-DB>`_, with the :class:`CTDRefDataFetcher` class. (:pr:`256`) by |gmaze|
+- **argopy now can provide authenticated access to the Argo CTD reference database for DMQC**. Using user/password new **Argopy** options, it is possible to fetch the `Argo CTD reference database <http://www.argodatamgt.org/DMQC/Reference-data-base/Latest-Argo-Reference-DB>`_, with the :class:`CTDRefDataFetcher` class. (:pr:`256`) by |gmaze|
 
 .. code-block:: python
 
@@ -678,7 +686,7 @@ Features and front-end API
         ds = f.to_xarray()
 
 .. warning::
-    **argopy** is ready but the Argo CTD reference database for DMQC is not fully published on the Ifremer ERDDAP yet. This new feature will thus be fully operational soon, and while it's not, **argopy** should raise an ``ErddapHTTPNotFound`` error when using the new fetcher.
+    **Argopy** is ready but the Argo CTD reference database for DMQC is not fully published on the Ifremer ERDDAP yet. This new feature will thus be fully operational soon, and while it's not, **Argopy** should raise an ``ErddapHTTPNotFound`` error when using the new fetcher.
 
 - New option to control the expiration time of cache file: ``cache_expiration``.
 
@@ -838,7 +846,7 @@ v0.1.14rc1 (31 May 2023)
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- **argopy** cheatsheet ! Get most of the argopy API in a 2 pages pdf !
+- **Argopy** cheatsheet ! Get most of the argopy API in a 2 pages pdf !
 
 .. image:: _static/argopy-cheatsheet.png
   :height: 200px
@@ -873,7 +881,7 @@ Features and front-end API
     import xarray as xr
     ds = xr.open_dataset("dac/aoml/1901393/1901393_prof.nc", engine='argo')
 
-- **argopy now can provide authenticated access to the Argo CTD reference database for DMQC**. Using user/password new **argopy** options, it is possible to fetch the `Argo CTD reference database <http://www.argodatamgt.org/DMQC/Reference-data-base/Latest-Argo-Reference-DB>`_, with the :class:`CTDRefDataFetcher` class. (:pr:`256`) by |gmaze|
+- **argopy now can provide authenticated access to the Argo CTD reference database for DMQC**. Using user/password new **Argopy** options, it is possible to fetch the `Argo CTD reference database <http://www.argodatamgt.org/DMQC/Reference-data-base/Latest-Argo-Reference-DB>`_, with the :class:`CTDRefDataFetcher` class. (:pr:`256`) by |gmaze|
 
 .. code-block:: python
 
@@ -884,7 +892,7 @@ Features and front-end API
         ds = f.to_xarray()
 
 .. warning::
-    **argopy** is ready but the Argo CTD reference database for DMQC is not fully published on the Ifremer ERDDAP yet. This new feature will thus be fully operational soon, and while it's not, **argopy** should raise an ``ErddapHTTPNotFound`` error when using the new fetcher.
+    **Argopy** is ready but the Argo CTD reference database for DMQC is not fully published on the Ifremer ERDDAP yet. This new feature will thus be fully operational soon, and while it's not, **Argopy** should raise an ``ErddapHTTPNotFound`` error when using the new fetcher.
 
 - New option to control the expiration time of cache file: ``cache_expiration``.
 
@@ -993,7 +1001,7 @@ Internals
 Breaking changes
 ^^^^^^^^^^^^^^^^
 
-- Data source ``localftp`` is deprecated and removed from **argopy**. It's been replaced by the ``gdac`` data source with the appropriate ``ftp`` option. See :ref:`Data sources`. (:pr:`240`) by |gmaze|
+- Data source ``localftp`` is deprecated and removed from **Argopy**. It's been replaced by the ``gdac`` data source with the appropriate ``ftp`` option. See :ref:`Data sources`. (:pr:`240`) by |gmaze|
 
 - :class:`argopy.utilities.ArgoNVSReferenceTables` methods ``all_tbl`` and ``all_tbl_name`` are now properties, not methods.
 
@@ -1370,7 +1378,7 @@ Features and front-end API
     ds = ds.argo.teos10(['PV'])
     ds_teos10 = ds.argo.teos10(['SA', 'CT'], inplace=False)
 
-- **argopy** can now be installed with conda (:pr:`29`, :pr:`31`, :pr:`32`). By `F. Fernandes <https://github.com/ocefpaf>`_.
+- **Argopy** can now be installed with conda (:pr:`29`, :pr:`31`, :pr:`32`). By `F. Fernandes <https://github.com/ocefpaf>`_.
 
 .. code-block:: text
 
@@ -1421,7 +1429,7 @@ Breaking changes
 Internals
 ^^^^^^^^^
 
-- Now uses `fsspec <https://filesystem-spec.readthedocs.io>`_ as file system for caching as well as accessing local and remote files (:pr:`19`). This closes issues :issue:`12`, :issue:`15` and :issue:`17`. **argopy** fetchers must now use (or implement if necessary) one of the internal file systems available in the new module ``argopy.stores``. By |gmaze|.
+- Now uses `fsspec <https://filesystem-spec.readthedocs.io>`_ as file system for caching as well as accessing local and remote files (:pr:`19`). This closes issues :issue:`12`, :issue:`15` and :issue:`17`. **Argopy** fetchers must now use (or implement if necessary) one of the internal file systems available in the new module ``argopy.stores``. By |gmaze|.
 
 - Erddap fetcher now uses netcdf format to retrieve data (:pr:`19`).
 
