@@ -10,9 +10,8 @@ from argopy import IndexFetcher as ArgoIndexFetcher
 from argopy.errors import CacheFileNotFound, FileSystemHasNoCache, GdacPathError
 from argopy.utils.checkers import isconnected, is_list_of_strings
 
-from utils import requires_gdac, create_temp_folder, patch_ftp
-from mocked_http import mocked_httpserver
-from mocked_http import mocked_server_address as MOCKHTTP
+from argopy.tests.helpers.utils import requires_gdac, create_temp_folder, patch_ftp
+from argopy.tests.helpers.mocked_http import mocked_httpserver
 
 
 log = logging.getLogger("argopy.tests.index.gdac")
@@ -29,7 +28,7 @@ try to test them all:
 VALID_HOSTS = [
     argopy.tutorial.open_dataset("gdac")[0],
     #'https://data-argo.ifremer.fr',
-    MOCKHTTP,
+    "MOCKHTTP",
     # 'ftp://ftp.ifremer.fr/ifremer/argo',
     "MOCKFTP",
 ]
@@ -79,7 +78,7 @@ def create_fetcher(fetcher_args, access_point, xfail=False):
     return fetcher
 
 
-def assert_fetcher(mocked_erddapserver, this_fetcher, cacheable=False):
+def assert_fetcher(mocked_httpserver, this_fetcher, cacheable=False):
     """Assert a data fetcher.
 
     This should be used by all tests
@@ -116,6 +115,9 @@ class TestBackend:
     #############
     # UTILITIES #
     #############
+    @pytest.fixture(autouse=True)
+    def _setup(self, mocked_httpserver):
+        self.mocked_server_address = mocked_httpserver
 
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
@@ -123,7 +125,11 @@ class TestBackend:
         self.cachedir = create_temp_folder().folder
 
     def _patch_gdac(self, gdac):
-        return patch_ftp(gdac)
+        if gdac == 'MOCKFTP':
+            return patch_ftp(gdac)
+        elif gdac == 'MOCKHTTP':
+            return self.mocked_server_address
+        return gdac
 
     def _setup_fetcher(self, this_request, cached=False):
         """Helper method to set up options for a fetcher creation"""
@@ -149,6 +155,7 @@ class TestBackend:
                 **fetcher_args,
                 **{"cache": True, "cachedir": self.cachedir},
             }
+        log.info(fetcher_args)
         if not isconnected(fetcher_args["gdac"]):
             pytest.xfail("Fails because %s not available" % fetcher_args["gdac"])
         else:
