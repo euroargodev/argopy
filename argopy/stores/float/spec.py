@@ -97,7 +97,7 @@ class FloatStoreProto(ABC):
         ########################
         # These are used to improve performance by limiting data fetching
         # Data remained in memory, attached to the instance
-        # This is NOT similar to cache=True, for which data are writen on file
+        # This is NOT similar to cache=True, for which data are written on file
 
         # Filled by self.load_metadata(), returned by self.metadata:
         self._metadata: dict | None = None
@@ -566,7 +566,7 @@ class FloatStoreProto(ABC):
             - 'D': Descending profile files.
 
         auxiliary: Bool, default = False
-            Return files from the auxiliary folder. This requires the object to have been instanciated with the `aux=True` option.
+            Return files from the auxiliary folder. This requires the object to have been instantiated with the `aux=True` option.
 
         Returns
         -------
@@ -848,7 +848,7 @@ class FloatStoreProto(ABC):
             - 'A' (default): Ascending profile files,
             - 'D': Descending profile files.
         auxiliary: Bool, default = False
-            Return files from the auxiliary folder. This requires the object to have been instanciated with the `aux=True` option.
+            Return files from the auxiliary folder. This requires the object to have been instantiated with the `aux=True` option.
         cast: bool, default = True
             Determine if dataset variables should be cast or not.
 

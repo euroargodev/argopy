@@ -402,7 +402,7 @@ ArgoIndex extensions
 
 [TBD]
 
-.. _product_data_fetchers:
+.. _product_distribution:
 
 Distribute third-party products
 ===============================
@@ -442,7 +442,7 @@ Therefore, the **Argopy** APIs to be used to provide access to third-party non-o
 
     #. A contact person must be mentioned within the submodule.
 
-    #. Ressources must be attributed to the maintenance of the submodule for a reasonable minimal period of 2 years. If CI tests start to fail and no maintenance is provided: the product will follow the regular deprecation cycle (see below).
+    #. Resources must be attributed to the maintenance of the submodule for a reasonable minimal period of 2 years. If CI tests start to fail and no maintenance is provided: the product will follow the regular deprecation cycle (see below).
 
 
 Deprecation cycle:
@@ -456,7 +456,7 @@ Deprecation cycle:
 From the ArgoFloat class
 ------------------------
 
-This section is for those who which to make a third-product accessible through the :class:`argopy.ArgoFloat` store.
+This section is for those who wish to make a third-party product accessible through the :class:`argopy.ArgoFloat` store.
 
 Official Argo data are accessible through:
 
@@ -672,7 +672,7 @@ The people
 
 Please keep in mind that **Argopy** is developed and maintained by humans being.
 
-It is for us a fundamental aspect of the project that discussions (in issues or PR), even if happenning on github,
+It is for us a fundamental aspect of the project that discussions (in issues or PR), even if happening on github,
 are made between humans. Knowing this, it will be considered impolite to approach the **Argopy** dev community with AI-agent.
 
 Ethics, Ecology & Expertise

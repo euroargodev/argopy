@@ -45,9 +45,9 @@ Internals
 Documentation
 ^^^^^^^^^^^^^
 
-- **Define** a policy regarding **generative AI usage** in **Argopy** contributions :issue:`637`. (:pr:`639`) by |quai20|.
+- **Define** a :ref:`policy <contributing.ai_policy>` regarding **generative AI usage** in **Argopy** contributions :issue:`637`. (:pr:`639`) by |quai20|.
 
-- **Define** a policy and specific methods regarding the **access to third-party product** through **Argopy**. :issue:`638`. (:pr:`683`) by |gmaze|
+- **Define** a :ref:`policy and specific methods <product_distribution>` regarding the **access to third-party product** through **Argopy**. :issue:`638`. (:pr:`683`) by |gmaze|.
 
 Deprecation
 ^^^^^^^^^^^
