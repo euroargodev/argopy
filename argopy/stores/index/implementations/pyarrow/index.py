@@ -93,18 +93,22 @@ class indexstore(ArgoIndexStoreProto):
             # So I removed the option in c0a15ec68013c78d83f2689a8f9c062fdfa160ab
             return this_table
 
-        def csv2index(obj):
-            index = read_csv(obj, nrows=nrows)
-            # log.debug(index.column_names)
-            check_index_cols(
-                index.column_names,
-                convention=self.convention,
-            )
+        def preprocessing(index):
             if "longitude" in self.convention_columns:
                 index = index.append_column(
                     "longitude_360",
                     pa.array(conv_lon(index["longitude"].to_numpy(), "360")),
                 )
+
+            return index
+
+        def csv2index(obj):
+            index = read_csv(obj, nrows=nrows)
+            check_index_cols(
+                index.column_names,
+                convention=self.convention,
+            )
+            index = preprocessing(index)
             return index
 
         def index2cache_path(path, nrows=None):
@@ -432,6 +436,31 @@ class indexstore(ArgoIndexStoreProto):
             return flist
         else:
             return mono2multi(flist, convention=self.convention, sep=sep)
+
+    def read_profile_qc(self, param:str, index : bool = False)->List[str]:
+        column = f"profile_{param.lower()}_qc"
+        if column not in self.convention_columns:
+            raise InvalidDatasetStructure(
+                f"Cannot list for '{param}' profile QC in this index"
+            )
+
+        if hasattr(self, "search") and not index:
+            if self.N_MATCH == 0:
+                raise DataNotFound(
+                    "No data found in the index corresponding to your search criteria."
+                    " Search definition: %s" % self.cname
+                )
+            ps = self.search[column]
+        else:
+            if not hasattr(self, "index"):
+                self.load()
+            ps = self.index[column]
+        if len(ps) > 0:
+            plist = ps.unique().to_pylist()
+            plist = ["" if p is None else p for p in plist]
+            return sorted(plist)
+        else:
+            raise DataNotFound("This index is empty")
 
     def records_per_wmo_legacy(self, index=False):
         """Return the number of records per unique WMOs in search results

@@ -629,22 +629,25 @@ class SearchEngine(ArgoIndexSearchEngine):
 
     def profile_qc(self, PARAMs: dict, logical="and", nrows=None, composed=False):
         def checker(PARAMs):
-            if "profile_temp_qc" not in self._obj.convention_columns:
-                raise InvalidDatasetStructure(
-                    "Cannot search for profile QC in this index)"
-                )
             # Validate PARAMs
             [PARAMs.update({p: to_list(PARAMs[p])}) for p in PARAMs]
+            for param in PARAMs.keys():
+                if f"profile_{param.lower()}_qc" not in self._obj.convention_columns:
+                    raise InvalidDatasetStructure(
+                        f"Cannot search for '{param}' profile QC in this index"
+                    )
+
             if not np.all(
                 [
-                    v in ["", " ", "1", "A", "B", "C", "D", "E", "F"]
+                    v in ["", "A", "B", "C", "D", "E", "F", "N"]
                     for vals in PARAMs.values()
                     for v in vals
                 ]
             ):
                 raise ValueError(
-                    "Profile QC must be a value in '', 'A', 'B', 'C', 'D', 'E', 'F'"
+                    "Profile QC must be a value in '', 'A', 'B', 'C', 'D', 'E', 'F', 'N'"
                 )
+
             log.debug("Argo index searching for profile QC: %s ..." % PARAMs)
             return PARAMs
 
@@ -656,12 +659,22 @@ class SearchEngine(ArgoIndexSearchEngine):
 
             for param in PARAMs:
                 qcflags = PARAMs[param]
-                filt.append(
-                    pa.compute.is_in(
-                        self._obj.index[f"profile_{param.lower()}_qc"],
-                        pa.array(qcflags),
+                if self._obj.index[f"profile_{param.lower()}_qc"].type == pa.null():
+                    # Trick to handle a profile_<>_qc full of NaNs (eg: doxy)
+                    qcflags = [None if qc is "" else qc for qc in qcflags]
+                try:
+                    filt.append(
+                        pa.compute.is_in(
+                            self._obj.index[f"profile_{param.lower()}_qc"],
+                            pa.array(qcflags),
+                        )
                     )
-                )
+                except pa.ArrowTypeError:
+                    if self._obj.index[f"profile_{param.lower()}_qc"].drop_null().length() == 0:
+                        log.warning(f"Null search for {qcflags} in {param} profile qc because it is full of NaNs, return a filter with False on all rows.")
+                        filt.append(pa.array(np.full([len(self._obj.index['profile_doxy_qc']), ], np.False_)))
+                    else:
+                        raise
 
             return self._obj._reduce_a_filter_list(filt, op=logical)
 

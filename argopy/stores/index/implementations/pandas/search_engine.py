@@ -412,6 +412,8 @@ class SearchEngine(ArgoIndexSearchEngine):
                 raise InvalidDatasetStructure(
                     "Method not available for this index ('%s')" % self._obj.convention
                 )
+            log.debug("Argo index searching for parameter_data_mode: %s ..." % PARAMs)
+
             return PARAMs
 
         def namer(PARAMs, logical):
@@ -574,21 +576,23 @@ class SearchEngine(ArgoIndexSearchEngine):
 
     def profile_qc(self, PARAMs: dict, logical="and", nrows=None, composed=False):
         def checker(PARAMs):
-            if "profile_temp_qc" not in self._obj.convention_columns:
-                raise InvalidDatasetStructure(
-                    "Cannot search for profile QC in this index)"
-                )
             # Validate PARAMs
             [PARAMs.update({p: to_list(PARAMs[p])}) for p in PARAMs]
+            for param in PARAMs.keys():
+                if f"profile_{param.lower()}_qc" not in self._obj.convention_columns:
+                    raise InvalidDatasetStructure(
+                        f"Cannot search for '{param}' profile QC in this index"
+                    )
+
             if not np.all(
                 [
-                    v in ["", " ", "1", "A", "B", "C", "D", "E", "F"]
+                    v in ["", " ", "1", "A", "B", "C", "D", "E", "F", "N"]
                     for vals in PARAMs.values()
                     for v in vals
                 ]
             ):
                 raise ValueError(
-                    "Profile QC must be a value in '', 'A', 'B', 'C', 'D', 'E', 'F'"
+                    "A profile QC must be a value in '', 'A', 'B', 'C', 'D', 'E', 'F', 'N'"
                 )
             log.debug("Argo index searching for profile QC: %s ..." % PARAMs)
             return PARAMs

@@ -454,10 +454,10 @@ class ArgoIndexStoreProto(ABC):
                 else:
                     cname = ";".join(["DAC%s" % dac for dac in sorted(DAC)])
 
-            elif "PROFQC" == key:
+            elif key == "PROFQC":
                 PROFQC, LOG = self.search_type["PROFQC"]
                 cname = ("_%s_" % LOG).join(
-                    ["%s_%s" % (p, "".join(PROFQC[p])) for p in PROFQC]
+                    ["P%s_%s" % (p.upper(), "".join(PROFQC[p])) for p in PROFQC]
                 )
 
             elif "PSAL_ADJ_MEAN" == key:
@@ -1014,7 +1014,7 @@ class ArgoIndexStoreProto(ABC):
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
-    def read_dac_wmo(self, index=False):
+    def read_dac_wmo(self, index: bool = False):
         """Return a tuple of unique [DAC, WMO] pairs from the index or search results
 
         Fall back on full index if search not triggered
@@ -1070,6 +1070,8 @@ class ArgoIndexStoreProto(ABC):
             [lon_min, lon_max, lat_min, lat_max, datim_min, datim_max]
         """
         raise NotImplementedError("Not implemented")
+
+
 
     @abstractmethod
     def records_per_wmo(self):
