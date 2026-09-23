@@ -54,6 +54,7 @@
     argopy.data_fetchers.CTDRefDataFetcher
 
     argopy.options.set_options
+    argopy.options.PRODUCT_LIST
 
     argopy.tutorial.open_dataset
 
@@ -145,6 +146,7 @@
     argopy.related.TopoFetcher.cachepath
     argopy.related.TopoFetcher.uri
 
+    argopy.reference.NVScollection
     argopy.reference.ArgoNVSReferenceTables
     argopy.reference.ArgoNVSReferenceTables.search
     argopy.reference.ArgoNVSReferenceTables.valid_ref
@@ -404,6 +406,7 @@
     argopy.ArgoFloat.dac
     argopy.ArgoFloat.path
     argopy.ArgoFloat.metadata
+    argopy.ArgoFloat.open_product
 
     argopy.stores.ArgoFloat.plot
     argopy.stores.ArgoFloat.plot.trajectory
@@ -413,6 +416,10 @@
     argopy.ArgoFloat.plot.trajectory
     argopy.ArgoFloat.plot.scatter
     argopy.ArgoFloat.plot.map
+
+    argopy.stores.float.extensions.ArgoFloatAnyConfigParametersProto
+    argopy.stores.float.extensions.ArgoFloatConfigParametersProto
+    argopy.stores.float.extensions.ArgoFloatLaunchConfigParametersProto
 
     argopy.stores.ArgoFloat.config
     argopy.stores.ArgoFloat.config.n_params
