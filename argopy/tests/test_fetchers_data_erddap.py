@@ -10,8 +10,7 @@ from utils import (
     create_temp_folder,
 )
 
-from mocked_http import mocked_server_address
-from mocked_http import mocked_httpserver as mocked_erddapserver
+from mocked_http import mocked_httpserver
 
 import shutil
 from collections import ChainMap
@@ -94,7 +93,7 @@ def create_fetcher(fetcher_args, access_point):
     return fetcher
 
 
-def assert_fetcher(mocked_erddapserver, this_fetcher, cacheable=False):
+def assert_fetcher(mocked_httpserver, this_fetcher, cacheable=False):
     """Assert a data fetcher.
 
         This should be used by all tests asserting a fetcher
@@ -142,6 +141,9 @@ class Test_Backend:
     #############
     # UTILITIES #
     #############
+    @pytest.fixture(autouse=True)
+    def _setup(self, mocked_httpserver):
+        self.mocked_server_address = mocked_httpserver
 
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
@@ -156,7 +158,7 @@ class Test_Backend:
                          "parallel": parallel,
                          }
         if USE_MOCKED_SERVER:
-            defaults_args['server'] = mocked_server_address
+            defaults_args['server'] = self.mocked_server_address
 
         dataset = this_request.param['ds']
         user_mode = this_request.param['mode']
@@ -209,17 +211,17 @@ class Test_Backend:
     @pytest.mark.parametrize("fetcher", VALID_ACCESS_POINTS,
                              indirect=True,
                              ids=VALID_ACCESS_POINTS_IDS)
-    def test_fetching(self, mocked_erddapserver, fetcher):
-        assert_fetcher(mocked_erddapserver, fetcher, cacheable=False)
+    def test_fetching(self, mocked_httpserver, fetcher):
+        assert_fetcher(mocked_httpserver, fetcher, cacheable=False)
 
     @pytest.mark.parametrize("cached_fetcher", VALID_ACCESS_POINTS,
                              indirect=True,
                              ids=VALID_ACCESS_POINTS_IDS)
-    def test_fetching_cached(self, mocked_erddapserver, cached_fetcher):
-        assert_fetcher(mocked_erddapserver, cached_fetcher, cacheable=True)
+    def test_fetching_cached(self, mocked_httpserver, cached_fetcher):
+        assert_fetcher(mocked_httpserver, cached_fetcher, cacheable=True)
 
     @pytest.mark.parametrize("parallel_fetcher", VALID_PARALLEL_ACCESS_POINTS,
                              indirect=True,
                              ids=VALID_PARALLEL_ACCESS_POINTS_IDS)
-    def test_fetching_parallel_thread(self, mocked_erddapserver, parallel_fetcher):
-        assert_fetcher(mocked_erddapserver, parallel_fetcher, cacheable=False)
+    def test_fetching_parallel_thread(self, mocked_httpserver, parallel_fetcher):
+        assert_fetcher(mocked_httpserver, parallel_fetcher, cacheable=False)

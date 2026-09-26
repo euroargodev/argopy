@@ -24,6 +24,8 @@
     argopy.fetchers.ArgoDataFetcher.domain
     argopy.fetchers.ArgoDataFetcher.dashboard
     argopy.fetchers.ArgoDataFetcher.clear_cache
+    argopy.fetchers.ArgoDataFetcher.params_available
+    argopy.fetchers.ArgoDataFetcher.params_description
 
     argopy.fetchers.ArgoIndexFetcher
     argopy.fetchers.ArgoIndexFetcher.region

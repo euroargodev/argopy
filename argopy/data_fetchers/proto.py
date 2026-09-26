@@ -102,6 +102,10 @@ class ArgoDataFetcherProto(ABC):
         return UriCName(self).cname
 
     @property
+    def _valid_params(self):
+        raise NotImplementedError("Not implemented")
+
+    @property
     def sha(self) -> str:
         """ Returns a unique SHA for a specific cname / fetcher implementation"""
         path = "%s-%s-%s" % (self.definition, self.cname(), self.user_mode)
