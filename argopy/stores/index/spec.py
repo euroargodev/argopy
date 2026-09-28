@@ -113,7 +113,7 @@ class ArgoIndexStoreProto(ABC):
             - ``bgc-s`` or ``argo_synthetic-profile_index.txt``
             - ``aux``   or ``etc/argo-index/argo_aux-profile_index.txt``
             - ``meta``  or ``ar_index_global_meta.txt``
-            - ``core+`` or ``argo_profile_detailled_index.txt``
+            - ``core+`` or ``etc/argo-index/argo_profile_detailled_index.txt``
             - a local absolute path toward a file following an Argo index convention. When using a local file, you need to set the ``convention`` followed by the file.
 
         convention: str, default: None
