@@ -8,6 +8,7 @@ on:
   pull_request:
     branches-ignore:
       - 'dependabot*'
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -84,7 +85,7 @@ jobs:
           sudo chmod 600 /swapfile
           sudo mkswap /swapfile
           sudo swapon /swapfile
-          sudo swapon --show       
+          sudo swapon --show
 
       - name: Set environment variables
         run: |
