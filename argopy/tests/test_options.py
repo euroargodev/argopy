@@ -4,8 +4,8 @@ import platform
 import argopy
 from argopy.options import OPTIONS
 from argopy.errors import OptionValueError, GdacPathError, ErddapPathError
-from utils import requires_gdac, create_read_only_folder
-from mocked_http import mocked_httpserver, mocked_server_address
+from argopy.tests.helpers.utils import requires_gdac, create_read_only_folder
+from argopy.tests.helpers.mocked_http import mocked_httpserver
 import logging
 
 
@@ -38,8 +38,8 @@ def test_opt_ifremer_erddap(mocked_httpserver):
     with pytest.raises(ErddapPathError):
         argopy.set_options(erddap="invalid_path")
 
-    with argopy.set_options(erddap=mocked_server_address):
-        assert OPTIONS["erddap"] == mocked_server_address
+    with argopy.set_options(erddap=mocked_httpserver):
+        assert OPTIONS["erddap"] == mocked_httpserver
 
 
 def test_opt_dataset():

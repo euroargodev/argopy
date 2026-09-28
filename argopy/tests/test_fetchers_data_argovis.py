@@ -10,7 +10,6 @@ from utils import (
     create_temp_folder,
 )
 
-from mocked_http import mocked_server_address
 from mocked_http import mocked_httpserver as mocked_argovisserver
 
 import shutil
@@ -122,6 +121,9 @@ class Test_Backend:
     #############
     # UTILITIES #
     #############
+    @pytest.fixture(autouse=True)
+    def _setup(self, mocked_httpserver):
+        self.mocked_server_address = mocked_httpserver
 
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
@@ -136,7 +138,7 @@ class Test_Backend:
                          "parallel": parallel,
                          }
         if USE_MOCKED_SERVER:
-            defaults_args['server'] = mocked_server_address
+            defaults_args['server'] = self.mocked_server_address
 
         dataset = this_request.param['ds']
         user_mode = this_request.param['mode']

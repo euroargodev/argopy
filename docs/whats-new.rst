@@ -29,7 +29,19 @@ Features and front-end API
 Internals
 ^^^^^^^^^
 
-- **Annual upgrade to support last versions of dependencies**. (:pr:`681`) by |gmaze|.
+- **Annual upgrade to support last versions of dependencies**. (:pr:`681`, :pr:``) by |gmaze|. This implied a few changes in the code:
+
+    - Now kick-off a mocked HTTP server instance on each test module to improve performance and future proof use of parallel execution of the tests.
+
+    - Hence we removed the freshly added ``_free_port()`` because a port could have been taken between the call to ``_free_port()`` and the time to reach ``serve_mocked_httpserver()``. So port number is now selected when the mocked server is quick started by a test module.
+
+    - As another consequence, we needed to remove the explicit use of ``mocked_server_address`` in imports in test modules, because the server is now different for each (and all together useless in many locations).
+
+    - Make the mocked server "threaded" with ``ThreadingHTTPServer``. This allows the mocked HTTP server used in CI tests to handle multiple concurrent connections instead of handling one request at a time (it was previously, based on the plain HTTPServer class).
+
+    - As a consequence the mocked HTTP server was hit much often & faster, which caused a "race" problem for the cached fsspec store. We found that this is a known issue documented `here <https://github.com/fsspec/filesystem_spec/issues/639>`_ but still has no fix. So we had to serialize the first download of each resource, to prevent that race to the meda-data registry managed internally by fsspec. Race to write the registry is now stop by the first cat to a file, all subsequent calls are ok. This is the ``_cache_lock`` addition in stores.
+
+    - Following on "race" issues, we tried to remove a bunch of warnings and possible erratic errors due to inconsistency in how we create xarray dataset in out internal stores. We make this consistent by having data fetched from local, HTTP, and FTP stores systematically opening a dataset from an in-memory byte buffers (io.BytesIO). We also added an explicit ``.load()`` immediately after opening to copy all variables into plain in-memory numpy arrays, hence detaching the dataset from the lazy backend array wrapper and the buffer it was opened from. The subsequent ``.close()`` then aims to release the underlying netCDF4/HDF5 handle deterministically, rather than deferring cleanup to garbage collection.
 
 - **Improve import time** with lazy and/or deferred import of large dependencies, optimization and finally removing of the auto-discovery of data/index fetchers :issue:`585` (:pr:`676`) by |charles| and (:pr:`624`) by |gmaze|.
 
