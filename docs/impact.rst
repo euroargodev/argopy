@@ -10,6 +10,8 @@ Papers & proceedings citing Argopy
 
 #. Chafik, et.al (2023). "The Faroe-Shetland Channel Jet: Structure, Variability, and Driving Mechanisms", Journal of Geophysical Research: Oceans. https://doi.org/10.1029/2022JC019083
 
+#. Y. -S. Chang, Y. -J. Liao, B. Haobijam and T. H. Singh, "A Depth-Aware Ensemble Deep Learning Framework with Layer-wise Recursive Prediction for Multi-Source Subsurface Ocean Temperature and Salinity Forecasting", IEEE Transactions on Geoscience and Remote Sensing. doi: https://10.1109/TGRS.2026.3736768
+
 #. Chevillard C, Juza M, Dıaz-Barroso L, Reyes E, Escudier R and Tintore J (2024). "Capability of the Mediterranean Argo network to monitor sub-regional climate change indicators", Front. Mar. Sci. 11:1416486. https://doi.org/10.3389/fmars.2024.1416486
 
 #. Clay, S., Ringuette, M., Devred, E., Azetsu-Scott, K., Wang, Z., Greenan, B., Gordon, C., Gabriel, C.E., Childs, D., and Layton, C. (2026). "Physical, Chemical, Biological, and Optical Oceanographic Conditions in the Labrador Sea in 2024", Can. Tech. Rep. Fish. Aquat. Sci. 3752: vii + 58 p. https://doi.org/10.60825/327m-sm93
