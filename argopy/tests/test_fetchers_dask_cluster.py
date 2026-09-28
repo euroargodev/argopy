@@ -9,8 +9,8 @@ from argopy import DataFetcher
 from collections import ChainMap
 import xarray as xr
 
-from mocked_http import mocked_server_address, mocked_httpserver
-from utils import (
+from argopy.tests.helpers.mocked_http import mocked_httpserver
+from argopy.tests.helpers.utils import (
     requires_argovis,
     requires_erddap,
     requires_gdac,
@@ -95,10 +95,14 @@ class Test_Backend:
     #############
     # UTILITIES #
     #############
+    @pytest.fixture(autouse=True)
+    def _setup(self, mocked_httpserver):
+        self.mocked_server_address = mocked_httpserver
+
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
         self.client = Client(processes=False)
-        log.debug("Dask dashboard: %s" % self.client.dashboard_link)
+        # log.debug("Dask dashboard: %s" % self.client.dashboard_link) # Possibly prevent UTF-8 error on Windows
 
     def _test2fetcherargs(self, this_request):
         """Helper method to set up options for a fetcher creation"""
@@ -108,8 +112,8 @@ class Test_Backend:
             "chunks_maxsize": {"lon": 2.5, "lat": 2.5},
         }
         if USE_MOCKED_SERVER:
-            defaults_args["server"] = mocked_server_address
-            defaults_args["gdac"] = mocked_server_address
+            defaults_args["server"] = self.mocked_server_address
+            defaults_args["gdac"] = self.mocked_server_address
 
         src = this_request.param["src"]
         dataset = this_request.param["ds"]

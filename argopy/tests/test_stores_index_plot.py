@@ -1,11 +1,10 @@
 import pytest
 import logging
-import importlib
 
 import argopy
 from argopy.stores import ArgoIndex
 
-from utils import (
+from argopy.tests.helpers.utils import (
     requires_gdac,
     requires_matplotlib,
     requires_cartopy,
@@ -27,9 +26,6 @@ argopy.clear_cache()
 Select GDAC host to be use for plot accessor test 
 """
 VALID_HOST = argopy.tutorial.open_dataset("gdac")[0]  # Use local files
-# 'http1': mocked_server_address,  # Use the mocked http server
-# 'http2': 'https://data-argo.ifremer.fr',
-# 'ftp': "MOCKFTP",  # keyword to use a fake/mocked ftp server (running on localhost)
 
 """
 List WMO to be tested, one for each mission

@@ -426,7 +426,7 @@ class FloatStoreProto(ABC):
         cast: bool, optional, default = True
             Determine if the dataset variables should be cast or not. This is similar to opening the dataset directly with :class:`xarray.open_dataset` using the ``engine=`argo``` option.
             This will be ignored if the ``netCDF4` kwarg is set to True.
-        \**kwargs
+        **kwargs
             All the other arguments are passed to the GDAC store `open_dataset` method.
 
         Returns
@@ -461,7 +461,7 @@ class FloatStoreProto(ABC):
         ----------
         name: str, optional, default = "prof"
             Name of the dataset to open. It can be any key from the dictionary returned by :class:`ArgoFloat.ls_datasets`.
-        \**kwargs
+        **kwargs
             All the other arguments are passed to the :meth:`ArgoFloat.open_dataset` method.
 
         Returns
@@ -804,7 +804,7 @@ class FloatStoreProto(ABC):
         ----------
         name: str
             Name of the profile file to open. It can be any key from the dictionary returned by :class:`ArgoFloat.ls_profiles`.
-        \**kwargs
+        **kwargs
             All the other arguments are passed to the :meth:`ArgoFloat.open_profile` method.
 
         Returns
