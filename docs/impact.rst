@@ -44,6 +44,8 @@ Papers & proceedings citing Argopy
 
 #. Steinberg, J. M., Piecuch, C. G., Hamlington, B. D., Thompson, P. R., & Coats, S. (2024). "Influence of deep-ocean warming on coastal sea-level decadal trends in the Gulf of Mexico", Journal of Geophysical Research: Oceans, 129, e2023JC019681. https://doi.org/10.1029/2023JC019681
 
+#. Terzić, E., & Vilibić, I. (2026). "Observational evidence for accelerated warming and salinification propagating into the deep Mediterranean", Geophysical Research Letters, 53, e2026GL124518. https://doi.org/10.1029/2026GL124518
+
 #. Yao, L., Taylor, J.R. (2026). "Global climatology of submesoscale restratification using machine learning". Sci Rep (2026). https://doi.org/10.1038/s41598-026-41929-x
 
 #. Zhang, Y. (2023). "Python Data Analysis Techniques in Administrative Information Integration Management System". In: Atiquzzaman, M., Yen, N.Y., Xu, Z. (eds) Proceedings of the 4th International Conference on Big Data Analytics for Cyber-Physical System in Smart City - Volume 2. BDCPS 2022. Lecture Notes on Data Engineering and Communications Technologies, vol 168. Springer, Singapore. https://doi.org/10.1007/978-981-99-1157-8_35
