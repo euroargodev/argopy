@@ -156,6 +156,7 @@ class Test_OceanOPSDeployments:
         fig, ax, hdl = an_instance.plot_status()
         assert isinstance(fig, mpl.figure.Figure)
         assert isinstance(ax, cartopy.mpl.geoaxes.GeoAxesSubplot)
+        mpl.pyplot.close(fig)
 
 
 @pytest.mark.skipif(True, reason="Skipped temporarily, see http://github.com/euroargodev/argopy/issues/488")

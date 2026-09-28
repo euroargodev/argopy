@@ -159,6 +159,6 @@ def new_fs(
 
     # log_msg = "%s\n[sys sep=%s] vs [fs sep=%s]" % (log_msg, os.path.sep, fs.sep)
     # log.warning(log_msg)
-    log.debug(log_msg)
+    # log.debug(log_msg)
     # log_argopy_callerstack()
     return fs, cache_registry, fsspec_kwargs
