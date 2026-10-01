@@ -26,6 +26,8 @@ Features and front-end API
 
     Rq: As a consequence, the historical :class:`ArgoNVSReferenceTables` is deprecated. The ``ArgoNVSReferenceTables.tbl('R25')`` method can be replaced with the new :meth:`ArgoReferenceTable.to_dataframe`.
 
+- **Auto-documentation of the valid list of parameters** in the :class:`DataFetcher` new attributes :attr:`DataFetcher.params_available` and :attr:`DataFetcher.params_description`. These are the possible values for the ``params`` argument, see :ref:`<data-set-bgc-params>`. :issue:`490`.
+
 Internals
 ^^^^^^^^^
 

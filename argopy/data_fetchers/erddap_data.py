@@ -417,6 +417,16 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         vlist.sort()
         return vlist
 
+    @property
+    def _valid_params(self):
+        if self.dataset_id in ["phy", "core", "deep"]:
+            return list_core_parameters()
+        elif self.dataset_id in ["bgc", "bgc-s"]:
+            return self._bgc_vlist_avail
+        elif self.dataset_id == "ref":
+            return [p.upper() for p in ["pres", "temp", "psal", "ptmp"]]
+        raise ValueError
+
     def cname(self):
         """Return a unique string defining the constraints"""
         return self._cname()

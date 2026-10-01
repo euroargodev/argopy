@@ -292,12 +292,15 @@ class ArgoDataFetcher:
             "data",
             "index",
             "domain",
+            "params_available",
+            "params_description",
             "mission",
             "_loaded",
             "_request",
             "_cache",
             "_cachedir",
             "_parallel",
+            "_valid_params",
             "fetcher_kwargs",
         ]
         if key not in self.valid_access_points and key not in valid_attrs:
@@ -427,6 +430,33 @@ class ArgoDataFetcher:
             return "BGC"
         else:
             return "core+deep"
+
+    @property
+    def _valid_params(self):
+        if self._dataset_id in ['phy', 'core', 'deep']:
+            return list_core_parameters()
+        elif self._dataset_id in ['bgc', 'bgc-s']:
+            return list_bgc_s_parameters()
+        raise ValueError
+
+    @property
+    def params_available(self):
+        if self.fetcher:
+            return self.fetcher._valid_params
+        else:
+            return self._valid_params
+
+    @property
+    def params_description(self):
+        from argopy.reference import ArgoReferenceTable
+        art = ArgoReferenceTable('PARAMETER')
+        desc = {}
+        for p in self.params_available:
+            if p in art:
+                desc.update({p: f"{art[p].long_name}"})
+            else:
+                desc.update({p: None})
+        return desc
 
     def dashboard(self, **kw):
         """Open access point dashboard.
