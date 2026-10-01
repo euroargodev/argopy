@@ -64,7 +64,7 @@ from pathlib import Path
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 import argopy
-from argopy import DataFetcher, clear_cache, ArgoFloat
+from argopy import DataFetcher, clear_cache, ArgoFloat, ArgoIndex
 from argopy.related import (
     TopoFetcher,
     OceanOPSDeployments,
@@ -119,6 +119,7 @@ DEFAULT_TARGETS = [
     "github",
     "altim",
     "argofloat",
+    "argoindex",
 ]
 
 # Http requests time out in seconds:
@@ -169,6 +170,9 @@ def setup_args():
        nvs_store        - URIs accessed by NVS from test_stores_nvs
        docs             - URIs accessed by ArgoDocs from test_related/Test_ArgoDocs
        altim            - URIs accessed by open_sat_altim_report from test_related/Test_open_sat_altim_report
+
+       argofloat        - URIs accessed by ArgoFloat from test_stores_float/Test_FloatStore_Online
+       argoindex        - URIs accessed by ArgoIndex from test_stores_index/Test_IndexStore*
        
        ea_dataselection - URIs from https://dataselection.euro-argo.eu/api/trajectory accessed by test_plot_dashboards and test_related
        ifremer_api      - URIs from https://api.ifremer.fr
@@ -578,7 +582,7 @@ class Lister:
                     this_URI.commit(self.dfile(url, "gz"))
 
         clear_cache()
-        indexfs = argopy.ArgoIndex(
+        indexfs = ArgoIndex(
             index_file="argo_synthetic-profile_index.txt",  # corresponds to dataset in the erddap
             cache=True,
         )
@@ -1035,6 +1039,17 @@ class Lister:
 
             for key, uri in af.api_point.items():
                 this_URI.commit(self.dfile(uri, "json"))
+
+        return self.respond(this_URI)
+
+    @property
+    def argoindex(self):
+        this_URI = UriRegistry(name="argoindex")
+
+        for index_file in ['core', 'core+', 'bgc-b', 'bgc-s', 'meta', 'aux']:
+            idx = ArgoIndex(host='http', index_file=index_file)
+
+            this_URI.commit(self.dfile(idx.index_path, Path(idx.index_path).suffix.split('.')[-1]))
 
         return self.respond(this_URI)
 

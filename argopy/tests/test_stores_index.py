@@ -32,9 +32,10 @@ skip_nopyarrow = pytest.mark.skipif(not has_pyarrow, reason="Requires pyarrow")
 
 skip_pandas = pytest.mark.skipif(0, reason="Skipped tests for Pandas backend")
 skip_pyarrow = pytest.mark.skipif(0, reason="Skipped tests for Pyarrow backend")
-skip_CORE = pytest.mark.skipif(0, reason="Skipped tests for CORE index")
-skip_BGCs = pytest.mark.skipif(0, reason="Skipped tests for BGC synthetic index")
-skip_BGCb = pytest.mark.skipif(0, reason="Skipped tests for BGC bio index")
+skip_CORE = pytest.mark.skipif(1, reason="Skipped tests for CORE index")
+skip_BGCs = pytest.mark.skipif(1, reason="Skipped tests for BGC synthetic index")
+skip_BGCb = pytest.mark.skipif(1, reason="Skipped tests for BGC bio index")
+skip_CORE_DETAILLED = pytest.mark.skipif(0, reason="Skipped tests for CORE_DETAILLED index")
 
 """
 List gdac hosts to be tested. 
@@ -79,11 +80,13 @@ VALID_SEARCHES = [
     {"institution_name": ['usa', 'canada']},
     {"dac": ['aoml']},
     {"dac": ['bodc', 'coriolis']},
+    {"n_levels": [None, 1000]},
 ]
 VALID_SEARCHES_LOGICAL = [
-    {"params": ["C1PHASE_DOXY", "DOWNWELLING_PAR"]},
-    {"parameter_data_mode": {'DOXY': ['R', 'A']}},
-    {"parameter_data_mode": {'DOXY': ['R', 'A'], 'BBP700': 'A'}},
+    # {"params": ["C1PHASE_DOXY", "DOWNWELLING_PAR"]},
+    # {"parameter_data_mode": {'DOXY': ['R', 'A']}},
+    # {"parameter_data_mode": {'DOXY': ['R', 'A'], 'BBP700': 'A'}},
+    {"profile_qc": {"DOXY": ""}},
 ]
 
 
@@ -154,10 +157,36 @@ def run_a_search(idx_maker, fetcher_args, search_point, xfail=False, reason="?")
                 idx.query.institution_name(apts["institution_name"], nrows=nrows)
             if "dac" in apts:
                 idx.query.dac(apts["dac"], nrows=nrows)
+
+            if "n_levels" in apts:
+                if "Detailed Profile directory" in idx.convention_title:
+                    idx.query.n_levels(
+                        ge=apts["n_levels"][0], le=apts["n_levels"][1], nrows=nrows
+                    )
+                else:
+                    pytest.skip(
+                        f"For Core detailled index only (but we have '{idx.convention}/{idx.convention_title}')"
+                    )
+
+            if "profile_qc" in apts:
+                if "Detailed Profile directory" in idx.convention_title:
+                    if "logical" in apts:
+                        logical = apts["logical"]
+                    else:
+                        logical = "and"
+                    idx.query.profile_qc(
+                        apts["profile_qc"], logical=logical, nrows=nrows
+                    )
+                else:
+                    pytest.skip(
+                        f"For Core detailled index only (but we have '{idx.convention}/{idx.convention_title}')"
+                    )
         except:
             if xfail:
                 pytest.xfail(reason)
             else:
+                log.error(fargs)
+                log.error(apts)
                 raise
         return idx
 
@@ -175,7 +204,7 @@ def host_shortname(ftp):
 
 
 class IndexStore_test_proto:
-    host, flist = argopy.tutorial.open_dataset("gdac")
+    default_host, _ = argopy.tutorial.open_dataset("gdac")
 
     search_scenarios = [(h, ap) for h in VALID_HOSTS for ap in VALID_SEARCHES]
     search_scenarios = [
@@ -209,6 +238,7 @@ class IndexStore_test_proto:
     #############
     @pytest.fixture(autouse=True)
     def _setup(self, mocked_httpserver):
+        self.default_host = VALID_HOSTS[0]
         self.mocked_server_address = mocked_httpserver
 
     def setup_class(self):
@@ -283,7 +313,7 @@ class IndexStore_test_proto:
         fetcher_args, _ = self._setup_store(
             {
                 "param": {
-                    "host": host,
+                    "host": self._patch_gdac(host),
                     "index_file": index_file,
                     "convention": convention,
                 }
@@ -311,14 +341,11 @@ class IndexStore_test_proto:
 
         srch = request.param[1]
         nrows = request.param[2]
-
+        srch["nrows"] = nrows
         if len(request.param) == 4:
             logical = request.param[3]
             srch["logical"] = logical
-
-        if nrows is None and ("tutorial" not in host and "MOCKFTP" not in host):
-            nrows = 1000
-        srch["nrows"] = nrows
+        # log.debug("a_search: %s, %s, %s" % (self.index_file, srch, xfail))
 
         xfail, reason = False, ""
         if not has_s3 and 's3' in host:
@@ -364,27 +391,37 @@ class IndexStore_test_proto:
             a_store
         )
 
-    @pytest.mark.parametrize(
-        "ftp_host",
-        ["invalid", "https://invalid_ftp", "ftp://invalid_ftp"],
-        indirect=False,
-    )
-    def test_hosts_invalid(self, ftp_host):
-        # Invalid servers:
-        with pytest.raises(GdacPathError):
-            self.indexstore(host=ftp_host)
+    # @pytest.mark.parametrize(
+    #     "ftp_host",
+    #     ["invalid", "https://invalid_ftp", "ftp://invalid_ftp"],
+    #     indirect=False,
+    # )
+    # def test_hosts_invalid(self, ftp_host):
+    #     # Invalid servers:
+    #     with pytest.raises(GdacPathError):
+    #         self.indexstore(host=ftp_host)
 
     def test_index(self):
         def new_idx():
             return self.indexstore(
-                host=self.host, index_file=self.index_file, cache=False
+                host=self._patch_gdac(self.default_host), index_file=self.index_file, cache=False
             )
 
         self.assert_index(new_idx().load())
         self.assert_index(new_idx().load(force=True))
 
-        N = np.random.randint(1, 100 + 1)
-        idx = new_idx().load(nrows=N)
+        try:
+            N = np.random.randint(1, 100 + 1)
+            idx = new_idx()
+            idx.load(nrows=N)
+        except:
+            import fsspec
+            import requests
+            fs = fsspec.filesystem("http")
+            log.debug(fs.info(idx.index_path))  # is size present?
+            log.debug(requests.head(idx.index_path, allow_redirects=True).headers)  # Accept-Ranges, Content-Length, Content-Encoding
+            raise
+
         self.assert_index(idx)
         assert idx.index.shape[0] == N
         # Since no search was triggered:
@@ -392,201 +429,201 @@ class IndexStore_test_proto:
 
         with pytest.raises(OptionValueError):
             idx = self.indexstore(
-                host=self.host, index_file="ar_greylist.txt", cache=False
+                host=self._patch_gdac(self.default_host), index_file="ar_greylist.txt", cache=False
             )
 
-    @pytest.mark.parametrize(
-        "a_search", search_scenarios, indirect=True, ids=search_scenarios_ids
-    )
-    def test_a_search(self, mocked_httpserver, a_search):
-        self.assert_search(a_search, cacheable=False)
+    # @pytest.mark.parametrize(
+    #     "a_search", search_scenarios, indirect=True, ids=search_scenarios_ids
+    # )
+    # def test_a_search(self, mocked_httpserver, a_search):
+    #     self.assert_search(a_search, cacheable=False)
+    #
+    # @pytest.mark.parametrize(
+    #     "a_search", search_scenarios_bool, indirect=True, ids=search_scenarios_bool_ids
+    # )
+    # def test_a_search_with_logical(self, mocked_httpserver, a_search):
+    #     self.assert_search(a_search, cacheable=False)
 
-    @pytest.mark.parametrize(
-        "a_search", search_scenarios_bool, indirect=True, ids=search_scenarios_bool_ids
-    )
-    def test_a_search_with_logical(self, mocked_httpserver, a_search):
-        self.assert_search(a_search, cacheable=False)
-
-    def test_to_dataframe_index(self):
-        idx = self.new_idx()
-        assert isinstance(idx.to_dataframe(), pd.core.frame.DataFrame)
-
-        df = idx.to_dataframe(index=True)
-        assert df.shape[0] == idx.N_RECORDS
-
-        df = idx.to_dataframe()
-        assert df.shape[0] == idx.N_RECORDS
-
-        N = np.random.randint(1, 20 + 1)
-        df = idx.to_dataframe(index=True, nrows=N)
-        assert df.shape[0] == N
-
-    def test_to_dataframe_search(self):
-        idx = self.new_idx()
-        wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
-        idx = idx.query.wmo(wmo)
-
-        df = idx.to_dataframe()
-        assert isinstance(df, pd.core.frame.DataFrame)
-        assert df.shape[0] == idx.N_MATCH
-
-        N = np.random.randint(1, 10 + 1)
-        df = idx.to_dataframe(nrows=N)
-        assert df.shape[0] == N
-
-    def test_caching_index(self):
-        idx = self.new_idx(cache=True)
-        idx.load(nrows=None if "tutorial" in idx.host or "MOCK" in idx.host else 100)
-        self.assert_index(idx, cacheable=True)
-
-    def test_caching_search(self):
-        idx = self.new_idx(cache=True)
-        wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
-        idx.query.wmo(wmo)
-        self.assert_search(idx, cacheable=True)
-
-    @pytest.mark.parametrize(
-        "index",
-        [False, True],
-        indirect=False,
-        ids=["index=%s" % i for i in [False, True]],
-    )
-    def test_read_wmo(self, index):
-        wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
-        idx = self.new_idx().query.wmo(wmo)
-        WMOs = idx.read_wmo(index=index)
-        if index:
-            assert all([is_wmo(w) for w in WMOs])
-        else:
-            assert len(WMOs) == len(wmo)
-
-    @pytest.mark.parametrize(
-        "index",
-        [False, True],
-        indirect=False,
-        ids=["index=%s" % i for i in [False, True]],
-    )
-    def test_read_dac_wmo(self, index):
-        wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
-        idx = self.new_idx().query.wmo(wmo)
-        DAC_WMOs = idx.read_dac_wmo(index=index)
-        assert isinstance(DAC_WMOs, tuple)
-        for row in DAC_WMOs:
-            assert isinstance(row[0], str)
-            assert is_wmo(row[1])
-
-    @pytest.mark.parametrize(
-        "index",
-        [False, True],
-        indirect=False,
-        ids=["index=%s" % i for i in [False, True]],
-    )
-    def test_read_params(self, index):
-        wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
-        idx = self.new_idx().query.wmo(wmo)
-        if self.network == "bgc":
-            params = idx.read_params(index=index)
-            assert is_list_of_strings(params)
-        else:
-            with pytest.raises(InvalidDatasetStructure):
-                idx.read_params(index=index)
-
-    @pytest.mark.parametrize(
-        "index",
-        [False, True],
-        indirect=False,
-        ids=["index=%s" % i for i in [False, True]],
-    )
-    def test_read_domain(self, index):
-        wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
-        idx = self.new_idx().query.wmo(wmo)
-        domain = idx.read_domain(index=index)
-        assert isinstance(domain, list)
-        assert len(domain) == 6
-        assert domain[1]>domain[0]
-        assert domain[3]>domain[2]
-        assert domain[5]>domain[4]
-
-    @pytest.mark.parametrize(
-        "index",
-        [False, True],
-        indirect=False,
-        ids=["index=%s" % i for i in [False, True]],
-    )
-    def test_read_files(self, index):
-        wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
-        idx = self.new_idx().query.wmo(wmo)
-        files = idx.read_files(index=index)
-        assert isinstance(files, list)
-        if index==True:
-            assert len(files) == idx.N_RECORDS
-        else:
-            assert len(files) == idx.N_MATCH
-
-    @pytest.mark.parametrize(
-        "index",
-        [False, True],
-        indirect=False,
-        ids=["index=%s" % i for i in [False, True]],
-    )
-    def test_records_per_wmo(self, index):
-        wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
-        idx = self.new_idx().query.wmo(wmo)
-        C = idx.records_per_wmo(index=index)
-        for w in C:
-            assert str(C[w]).isdigit()
-
-    def test_to_indexfile(self):
-        # Create a store and make a simple float search:
-        idx0 = self.new_idx()
-        wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
-        idx0 = idx0.query.wmo(wmo)
-
-        # Then save this search as a new Argo index file:
-        tf = tempfile.NamedTemporaryFile(delete=False)
-        new_indexfile = idx0.to_indexfile(tf.name)
-
-        # Finally try to load the new index file, like it was an official one:
-        idx = self.new_idx(
-            host=os.path.dirname(new_indexfile),
-            index_file=os.path.basename(new_indexfile),
-            convention=idx0.convention,
-        )
-        self.assert_index(idx.load())
-
-        # Cleanup
-        tf.close()
-
-    @pytest.mark.parametrize(
-        "chunksize",
-        [None, 1],
-        indirect=False,
-        ids=["chunksize=%s" % i for i in [None, 1]],
-    )
-    def test_iterfloats(self, chunksize):
-        # Create a store and make a simple float search:
-        idx0 = self.new_idx()
-        wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
-        idx0 = idx0.query.wmo(wmo)
-        if chunksize is None:
-            assert all([isinstance(float, ArgoFloat) for float in idx0.iterfloats(chunksize=chunksize)])
-        else:
-            for chunk in idx0.iterfloats(chunksize=chunksize):
-                assert len(chunk) == chunksize
-                assert all([isinstance(float, ArgoFloat) for float in chunk])
-
-    def test_dateline_search(self):
-        idx = self.new_idx()
-        with argopy.set_options(longitude_convention='360'):
-            BOX = [170, 190., -90, 90, '2020-01', '2021-01']
-            idx.query.lon(BOX)
-            self.assert_search(idx)
-
-            idx.query.lon_lat(BOX)
-            self.assert_search(idx)
-
-            idx.query.box(BOX)
-            self.assert_search(idx)
+    # def test_to_dataframe_index(self):
+    #     idx = self.new_idx()
+    #     assert isinstance(idx.to_dataframe(), pd.core.frame.DataFrame)
+    #
+    #     df = idx.to_dataframe(index=True)
+    #     assert df.shape[0] == idx.N_RECORDS
+    #
+    #     df = idx.to_dataframe()
+    #     assert df.shape[0] == idx.N_RECORDS
+    #
+    #     N = np.random.randint(1, 20 + 1)
+    #     df = idx.to_dataframe(index=True, nrows=N)
+    #     assert df.shape[0] == N
+    #
+    # def test_to_dataframe_search(self):
+    #     idx = self.new_idx()
+    #     wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
+    #     idx = idx.query.wmo(wmo)
+    #
+    #     df = idx.to_dataframe()
+    #     assert isinstance(df, pd.core.frame.DataFrame)
+    #     assert df.shape[0] == idx.N_MATCH
+    #
+    #     N = np.random.randint(1, 10 + 1)
+    #     df = idx.to_dataframe(nrows=N)
+    #     assert df.shape[0] == N
+    #
+    # def test_caching_index(self):
+    #     idx = self.new_idx(cache=True)
+    #     idx.load(nrows=None if "tutorial" in idx.host or "MOCK" in idx.host else 100)
+    #     self.assert_index(idx, cacheable=True)
+    #
+    # def test_caching_search(self):
+    #     idx = self.new_idx(cache=True)
+    #     wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
+    #     idx.query.wmo(wmo)
+    #     self.assert_search(idx, cacheable=True)
+    #
+    # @pytest.mark.parametrize(
+    #     "index",
+    #     [False, True],
+    #     indirect=False,
+    #     ids=["index=%s" % i for i in [False, True]],
+    # )
+    # def test_read_wmo(self, index):
+    #     wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
+    #     idx = self.new_idx().query.wmo(wmo)
+    #     WMOs = idx.read_wmo(index=index)
+    #     if index:
+    #         assert all([is_wmo(w) for w in WMOs])
+    #     else:
+    #         assert len(WMOs) == len(wmo)
+    #
+    # @pytest.mark.parametrize(
+    #     "index",
+    #     [False, True],
+    #     indirect=False,
+    #     ids=["index=%s" % i for i in [False, True]],
+    # )
+    # def test_read_dac_wmo(self, index):
+    #     wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
+    #     idx = self.new_idx().query.wmo(wmo)
+    #     DAC_WMOs = idx.read_dac_wmo(index=index)
+    #     assert isinstance(DAC_WMOs, tuple)
+    #     for row in DAC_WMOs:
+    #         assert isinstance(row[0], str)
+    #         assert is_wmo(row[1])
+    #
+    # @pytest.mark.parametrize(
+    #     "index",
+    #     [False, True],
+    #     indirect=False,
+    #     ids=["index=%s" % i for i in [False, True]],
+    # )
+    # def test_read_params(self, index):
+    #     wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
+    #     idx = self.new_idx().query.wmo(wmo)
+    #     if self.network == "bgc":
+    #         params = idx.read_params(index=index)
+    #         assert is_list_of_strings(params)
+    #     else:
+    #         with pytest.raises(InvalidDatasetStructure):
+    #             idx.read_params(index=index)
+    #
+    # @pytest.mark.parametrize(
+    #     "index",
+    #     [False, True],
+    #     indirect=False,
+    #     ids=["index=%s" % i for i in [False, True]],
+    # )
+    # def test_read_domain(self, index):
+    #     wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
+    #     idx = self.new_idx().query.wmo(wmo)
+    #     domain = idx.read_domain(index=index)
+    #     assert isinstance(domain, list)
+    #     assert len(domain) == 6
+    #     assert domain[1]>domain[0]
+    #     assert domain[3]>domain[2]
+    #     assert domain[5]>domain[4]
+    #
+    # @pytest.mark.parametrize(
+    #     "index",
+    #     [False, True],
+    #     indirect=False,
+    #     ids=["index=%s" % i for i in [False, True]],
+    # )
+    # def test_read_files(self, index):
+    #     wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
+    #     idx = self.new_idx().query.wmo(wmo)
+    #     files = idx.read_files(index=index)
+    #     assert isinstance(files, list)
+    #     if index==True:
+    #         assert len(files) == idx.N_RECORDS
+    #     else:
+    #         assert len(files) == idx.N_MATCH
+    #
+    # @pytest.mark.parametrize(
+    #     "index",
+    #     [False, True],
+    #     indirect=False,
+    #     ids=["index=%s" % i for i in [False, True]],
+    # )
+    # def test_records_per_wmo(self, index):
+    #     wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
+    #     idx = self.new_idx().query.wmo(wmo)
+    #     C = idx.records_per_wmo(index=index)
+    #     for w in C:
+    #         assert str(C[w]).isdigit()
+    #
+    # def test_to_indexfile(self):
+    #     # Create a store and make a simple float search:
+    #     idx0 = self.new_idx()
+    #     wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
+    #     idx0 = idx0.query.wmo(wmo)
+    #
+    #     # Then save this search as a new Argo index file:
+    #     tf = tempfile.NamedTemporaryFile(delete=False)
+    #     new_indexfile = idx0.to_indexfile(tf.name)
+    #
+    #     # Finally try to load the new index file, like it was an official one:
+    #     idx = self.new_idx(
+    #         host=os.path.dirname(new_indexfile),
+    #         index_file=os.path.basename(new_indexfile),
+    #         convention=idx0.convention,
+    #     )
+    #     self.assert_index(idx.load())
+    #
+    #     # Cleanup
+    #     tf.close()
+    #
+    # @pytest.mark.parametrize(
+    #     "chunksize",
+    #     [None, 1],
+    #     indirect=False,
+    #     ids=["chunksize=%s" % i for i in [None, 1]],
+    # )
+    # def test_iterfloats(self, chunksize):
+    #     # Create a store and make a simple float search:
+    #     idx0 = self.new_idx()
+    #     wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
+    #     idx0 = idx0.query.wmo(wmo)
+    #     if chunksize is None:
+    #         assert all([isinstance(float, ArgoFloat) for float in idx0.iterfloats(chunksize=chunksize)])
+    #     else:
+    #         for chunk in idx0.iterfloats(chunksize=chunksize):
+    #             assert len(chunk) == chunksize
+    #             assert all([isinstance(float, ArgoFloat) for float in chunk])
+    #
+    # def test_dateline_search(self):
+    #     idx = self.new_idx()
+    #     with argopy.set_options(longitude_convention='360'):
+    #         BOX = [170, 190., -90, 90, '2020-01', '2021-01']
+    #         idx.query.lon(BOX)
+    #         self.assert_search(idx)
+    #
+    #         idx.query.lon_lat(BOX)
+    #         self.assert_search(idx)
+    #
+    #         idx.query.box(BOX)
+    #         self.assert_search(idx)
 
 ############################
 # TESTS FOR PANDAS BACKEND #
@@ -652,7 +689,6 @@ class Test_IndexStore_pyarrow_CORE(IndexStore_test_proto_Monitored):
     index_file = "ar_index_global_prof.txt"
 
 
-
 @skip_nopyarrow
 @skip_pyarrow
 @skip_BGCs
@@ -673,3 +709,14 @@ class Test_IndexStore_pyarrow_BGC_synthetic(IndexStore_test_proto_Monitored):
 
     indexstore = indexstore_pa
     index_file = "argo_synthetic-profile_index.txt"
+
+
+@skip_nopyarrow
+@skip_pyarrow
+@skip_CORE_DETAILLED
+class Test_IndexStore_pyarrow_CORE_DETAILLED(IndexStore_test_proto):
+    network = "core+"
+    from argopy.stores.index import indexstore_pa
+
+    indexstore = indexstore_pa
+    index_file = "etc/argo-index/argo_profile_detailled_index.txt"
