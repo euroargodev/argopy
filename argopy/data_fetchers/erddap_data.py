@@ -24,7 +24,7 @@ from ..utils.lists import list_bgc_s_variables, list_core_parameters
 from ..errors import ErddapServerError, DataNotFound
 from ..stores import httpstore, has_distributed, distributed
 from ..stores.index import indexstore_pd as ArgoIndex
-from ..utils import is_list_of_strings, to_list, Chunker
+from ..utils import is_list_of_strings, to_list, Chunker, split_box_at_dateline, lon_range_to_180
 from .proto import ArgoDataFetcherProto
 from .erddap_data_processors import pre_process, quote_string_constraints
 
@@ -891,9 +891,14 @@ class Fetch_box(ErddapArgoDataFetcher):
         return self
 
     def define_constraints(self):
-        """Define request constraints"""
-        self.erddap.constraints = {"longitude>=": self.BOX[0]}
-        self.erddap.constraints.update({"longitude<=": self.BOX[1]})
+        """Define request constraints
+
+        Erddap data longitudes are in [-180, 180], so the box longitude range is converted to this convention. The box
+        must not go through the date line, see :meth:`Fetch_box.uri`.
+        """
+        lon_min, lon_max = lon_range_to_180(self.BOX[0], self.BOX[1])
+        self.erddap.constraints = {"longitude>=": lon_min}
+        self.erddap.constraints.update({"longitude<=": lon_max})
         self.erddap.constraints.update({"latitude>=": self.BOX[2]})
         self.erddap.constraints.update({"latitude<=": self.BOX[3]})
         if self.user_mode in ["research"] and self.dataset_id not in ["ref"]:
@@ -911,38 +916,49 @@ class Fetch_box(ErddapArgoDataFetcher):
     def uri(self):
         """List of files to load for a request
 
+        A box going through the date line (only possible with the '360' longitude convention) is split into two
+        boxes, one on each side, with one URL for each.
+
         Returns
         -------
         list(str)
         """
         if not self.parallelize:
-            return [self.get_url()]
+            boxes = split_box_at_dateline(self.BOX)
+            if len(boxes) == 1:
+                return [self.get_url()]
         else:
             self.Chunker = Chunker(
                 {"box": self.BOX}, chunks=self.chunks, chunksize=self.chunks_maxsize
             )
-            boxes = self.Chunker.fit_transform()
-            urls = []
-            opts = {
-                "ds": self.dataset_id,
-                "mode": self.user_mode,
-                "fs": self.fs,
-                "server": self.server,
-            }
-            if self.dataset_id in ["bgc", "bgc-s"]:
-                opts["params"] = self._bgc_params
-                opts["measured"] = self._bgc_measured
-                opts["indexfs"] = self.indexfs
-            for box in boxes:
-                try:
-                    fb = Fetch_box(
-                        box=box,
-                        **opts,
-                    )
-                    urls.append(fb.get_url())
-                except DataNotFound:
-                    log.debug("This box fetcher will contain no data")
-                except ValueError as e:
-                    if 'not available for this access point' in str(e):
-                        log.debug("This box fetcher does not contained required data")
-            return urls
+            boxes = []
+            for box in self.Chunker.fit_transform():
+                boxes.extend(split_box_at_dateline(box))
+        return self._get_boxes_urls(boxes)
+
+    def _get_boxes_urls(self, boxes):
+        """List of URLs to load data for a list of boxes, with one box fetcher for each box"""
+        urls = []
+        opts = {
+            "ds": self.dataset_id,
+            "mode": self.user_mode,
+            "fs": self.fs,
+            "server": self.server,
+        }
+        if self.dataset_id in ["bgc", "bgc-s"]:
+            opts["params"] = self._bgc_params
+            opts["measured"] = self._bgc_measured
+            opts["indexfs"] = self.indexfs
+        for box in boxes:
+            try:
+                fb = Fetch_box(
+                    box=box,
+                    **opts,
+                )
+                urls.append(fb.get_url())
+            except DataNotFound:
+                log.debug("This box fetcher will contain no data")
+            except ValueError as e:
+                if 'not available for this access point' in str(e):
+                    log.debug("This box fetcher does not contained required data")
+        return urls

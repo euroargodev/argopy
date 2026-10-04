@@ -3,6 +3,8 @@ import xarray as xr
 from typing import Literal
 import logging
 
+from ..utils.geo import split_box_at_dateline, lon_range_to_180
+
 
 log = logging.getLogger("argopy.gdac.data")
 
@@ -93,9 +95,19 @@ def filter_points(ds: xr.Dataset, access_point: str = None, **kwargs) -> xr.Data
         BOX = kwargs["BOX"]
         # - box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max]
         # - box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
+
+        # Data longitudes are in [-180, 180], while a box going through the date line ('360' convention) is in [0, 360]:
+        # so we keep points in any part of the box, each part converted to [-180, 180]
+        in_lon_range = xr.zeros_like(ds["LONGITUDE"], dtype=bool)
+        for box in split_box_at_dateline(BOX):
+            lon_min, lon_max = lon_range_to_180(box[0], box[1])
+            in_lon_range = in_lon_range | ((ds["LONGITUDE"] >= lon_min) & (ds["LONGITUDE"] < lon_max))
+        if BOX[0] <= 180 < BOX[1]:
+            # Points on the date line can be at 180 or -180, but converted box parts only include -180
+            in_lon_range = in_lon_range | (ds["LONGITUDE"] == 180)
+
         ds = (
-            ds.where(ds["LONGITUDE"] >= BOX[0], drop=True)
-            .where(ds["LONGITUDE"] < BOX[1], drop=True)
+            ds.where(in_lon_range, drop=True)
             .where(ds["LATITUDE"] >= BOX[2], drop=True)
             .where(ds["LATITUDE"] < BOX[3], drop=True)
             .where(ds["PRES"] >= BOX[4], drop=True)  # todo what about PRES_ADJUSTED ?
