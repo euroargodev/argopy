@@ -1,7 +1,7 @@
 {
   "name": "T000521",
   "long_name": "VOLTAGE_BatteryCPUStartProfile_volts",
-  "last_update": "2026-09-15T15:04:53.771156+00:00",
+  "last_update": "2026-10-05T15:43:11.187706+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000521/",
     "pav:hasVersion": {

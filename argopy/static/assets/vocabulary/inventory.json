@@ -1,7 +1,7 @@
 {
   "name": "List of Argo NVS reference tables",
   "long_name": "List of Argo NVS reference table ids and description",
-  "last_update": "2026-09-16T09:29:15.378695+00:00",
+  "last_update": "2026-10-05T15:40:34.192204+00:00",
   "data": {
     "valid_ref": [
       "R01",
@@ -272,7 +272,7 @@
         "altLabel": "PI_NAME",
         "prefLabel": "Argo Principal Investigator (PI) names",
         "description": "List of Principal Investigator (PI) names in charge of Argo floats. Argo netCDF variable PI_NAME is populated by R40 altLabel.",
-        "date": "2026-09-05 03:00:01.0",
+        "date": "2026-10-03 03:00:03.0",
         "uri": "http://vocab.nerc.ac.uk/collection/R40/current/"
       },
       {
@@ -280,7 +280,7 @@
         "altLabel": "CONTROLLER_BOARD_TYPE",
         "prefLabel": "Argo controller board types and generations",
         "description": "List of Argo floats controller board types and generations. Argo netCDF variables CONTROLLER_BOARD_TYPE_PRIMARY and, when needed, CONTROLLER_BOARD_TYPE_SECONDARY, are populated by R28 altLabel.",
-        "date": "2026-01-27 02:00:01.0",
+        "date": "2026-09-22 03:00:01.0",
         "uri": "http://vocab.nerc.ac.uk/collection/R28/current/"
       },
       {
@@ -296,7 +296,7 @@
         "altLabel": "PROGRAM_NAME",
         "prefLabel": "Argo program name",
         "description": "List of Argo floats managed under the same lead agency. A program is bound to one country, one or several agencies with defined roles, and has contact points with defined roles. The same agency can implement multiple programs. Some cases such as EuroArgo (European Research Infrastructure Consortium) use a multinational agency and \"Europe\" as country. Argo netCDF variable PROGRAM_NAME is populated by R41 prefLabel.",
-        "date": "2026-05-01 03:00:00.0",
+        "date": "2026-09-30 03:00:01.0",
         "uri": "http://vocab.nerc.ac.uk/collection/R41/current/"
       },
       {

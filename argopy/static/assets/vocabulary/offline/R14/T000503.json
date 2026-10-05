@@ -1,7 +1,7 @@
 {
   "name": "T000503",
   "long_name": "CURRENT_BatterySampledbyFlntu_mA",
-  "last_update": "2026-09-15T15:05:03.472203+00:00",
+  "last_update": "2026-10-05T15:44:12.630718+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000503/",
     "pav:hasVersion": {

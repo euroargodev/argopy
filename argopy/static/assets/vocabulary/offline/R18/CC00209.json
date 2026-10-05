@@ -1,7 +1,7 @@
 {
   "name": "CC00209",
   "long_name": "CONFIG_TimeDelaybeforeDescentRetryWhenStuckAtSurface_minutes",
-  "last_update": "2026-09-15T15:05:38.875755+00:00",
+  "last_update": "2026-10-05T15:48:33.326895+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00209/",
     "pav:hasVersion": {

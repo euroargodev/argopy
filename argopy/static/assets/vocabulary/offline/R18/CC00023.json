@@ -1,7 +1,7 @@
 {
   "name": "CC00023",
   "long_name": "CONFIG_ClockPresetStartCycle_LOGICAL",
-  "last_update": "2026-09-15T15:05:36.205735+00:00",
+  "last_update": "2026-10-05T15:48:14.956403+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00023/",
     "pav:hasVersion": [

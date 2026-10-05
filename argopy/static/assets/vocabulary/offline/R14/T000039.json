@@ -1,7 +1,7 @@
 {
   "name": "T000039",
   "long_name": "PRES_SurfaceOffsetAfterReset_dbar",
-  "last_update": "2026-09-15T15:05:03.822451+00:00",
+  "last_update": "2026-10-05T15:44:15.443259+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000039/",
     "pav:hasVersion": {

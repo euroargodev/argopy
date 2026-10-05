@@ -1,7 +1,7 @@
 {
   "name": "CC00003",
   "long_name": "CONFIG_AscentAdjustmentToBuoyancy_seconds",
-  "last_update": "2026-09-15T15:05:39.087576+00:00",
+  "last_update": "2026-10-05T15:48:34.043426+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00003/",
     "pav:hasVersion": [

@@ -1,7 +1,7 @@
 {
   "name": "T900033",
   "long_name": "TEMP_ParkMean_degC",
-  "last_update": "2026-09-15T15:05:05.690911+00:00",
+  "last_update": "2026-10-05T15:44:28.451487+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900033/",
     "pav:hasVersion": [

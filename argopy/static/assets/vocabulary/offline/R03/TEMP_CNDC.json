@@ -1,7 +1,7 @@
 {
   "name": "TEMP_CNDC",
   "long_name": "Internal temperature of the conductivity cell",
-  "last_update": "2026-09-15T15:04:38.472539+00:00",
+  "last_update": "2026-10-05T15:41:35.722282+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_CNDC/",
     "pav:hasVersion": [

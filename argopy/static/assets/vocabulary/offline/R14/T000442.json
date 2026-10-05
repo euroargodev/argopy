@@ -1,7 +1,7 @@
 {
   "name": "T000442",
   "long_name": "STATUS_LimitSwitchINAtSurfaceStartXmit_NUMBER",
-  "last_update": "2026-09-15T15:04:47.437487+00:00",
+  "last_update": "2026-10-05T15:42:31.567881+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000442/",
     "pav:hasVersion": {

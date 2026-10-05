@@ -1,7 +1,7 @@
 {
   "name": "FIT_ERROR_NITRATE",
   "long_name": "Nitrate fit error",
-  "last_update": "2026-09-15T15:04:41.190958+00:00",
+  "last_update": "2026-10-05T15:41:52.906956+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/FIT_ERROR_NITRATE/",
     "pav:hasVersion": [

@@ -1,7 +1,7 @@
 {
   "name": "CC00093",
   "long_name": "CONFIG_IceDetectionEndTelemetryDay_NUMBER",
-  "last_update": "2026-09-15T15:05:37.808486+00:00",
+  "last_update": "2026-10-05T15:48:26.062330+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00093/",
     "pav:hasVersion": [

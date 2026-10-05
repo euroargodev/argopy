@@ -1,7 +1,7 @@
 {
   "name": "T000021",
   "long_name": "IRRADIANCE_W1_MeanBeforeAscent_uW/cm^2/nm",
-  "last_update": "2026-09-15T15:04:59.277825+00:00",
+  "last_update": "2026-10-05T15:43:47.142659+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000021/",
     "pav:hasVersion": {

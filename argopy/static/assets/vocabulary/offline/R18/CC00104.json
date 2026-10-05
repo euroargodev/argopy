@@ -1,7 +1,7 @@
 {
   "name": "CC00104",
   "long_name": "CONFIG_LoggingVerbosity_NUMBER",
-  "last_update": "2026-09-15T15:05:39.844883+00:00",
+  "last_update": "2026-10-05T15:48:39.766403+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00104/",
     "pav:hasVersion": [

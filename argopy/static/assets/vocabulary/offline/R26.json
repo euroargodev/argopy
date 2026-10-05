@@ -1,7 +1,7 @@
 {
   "name": "SENSOR_MAKER",
   "long_name": "Argo sensor manufacturers",
-  "last_update": "2026-09-15T15:04:21.873659+00:00",
+  "last_update": "2026-10-05T15:40:42.204220+00:00",
   "data": {
     "@graph": [
       {

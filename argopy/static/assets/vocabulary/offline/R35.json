@@ -1,7 +1,7 @@
 {
   "name": "BATTERY_SIZE",
   "long_name": "Argo battery size",
-  "last_update": "2026-09-15T15:04:21.371634+00:00",
+  "last_update": "2026-10-05T15:40:42.191932+00:00",
   "data": {
     "@graph": [
       {

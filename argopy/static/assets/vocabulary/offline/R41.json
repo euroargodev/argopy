@@ -1,7 +1,7 @@
 {
   "name": "PROGRAM_NAME",
   "long_name": "Argo program name",
-  "last_update": "2026-09-16T09:29:15.410504+00:00",
+  "last_update": "2026-10-05T15:40:42.189354+00:00",
   "data": {
     "@graph": [
       {
@@ -1511,6 +1511,40 @@
         "@type": "skos:Concept"
       },
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R41/current/R4100006/",
+        "pav:hasVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R41/current/R4100006/1/"
+        },
+        "pav:authoredOn": "2026-09-29 09:30:42.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R41/current/R4100006/2/"
+        },
+        "dce:identifier": "SDN:R41::R4100006",
+        "pav:version": "2",
+        "skos:notation": "SDN:R41::R4100006",
+        "skos:altLabel": "Argo BULGARIA",
+        "dc:date": "2026-09-29 09:30:42.0",
+        "owl:versionInfo": "2",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "Argo BULGARIA"
+        },
+        "dc:identifier": "SDN:R41::R4100006",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "owl:deprecated": "false",
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "skos:definition": {
+          "@language": "en",
+          "@value": "Bulgarian Argo program led by IO-BAS."
+        },
+        "@type": "skos:Concept"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R41/current/R4100044/",
         "pav:authoredOn": "2026-03-19 11:04:26.0",
         "pav:hasCurrentVersion": {
@@ -2208,37 +2242,6 @@
         "@type": "skos:Concept"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R41/current/R4100006/",
-        "pav:authoredOn": "2026-03-19 11:04:26.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R41/current/R4100006/1/"
-        },
-        "dce:identifier": "SDN:R41::R4100006",
-        "pav:version": "1",
-        "skos:notation": "SDN:R41::R4100006",
-        "skos:altLabel": "Argo Bulgaria",
-        "dc:date": "2026-03-19 11:04:26.0",
-        "owl:versionInfo": "1",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "Argo BULGARIA"
-        },
-        "dc:identifier": "SDN:R41::R4100006",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "owl:deprecated": "false",
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "skos:definition": {
-          "@language": "en",
-          "@value": "Bulgarian Argo program led by IO-BAS."
-        },
-        "@type": "skos:Concept"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R41/current/",
         "skos:member": [
           {
@@ -2386,6 +2389,9 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R41/current/R4100048/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R41/current/R4100006/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R41/current/R4100044/"
           },
           {
@@ -2446,13 +2452,10 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R41/current/R4100038/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R41/current/R4100062/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R41/current/R4100006/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R41/current/R4100068/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R41/current/R4100062/"
           }
         ],
         "@type": "skos:Collection",
@@ -2460,8 +2463,8 @@
         "dc:description": "List of Argo floats managed under the same lead agency. A program is bound to one country, one or several agencies with defined roles, and has contact points with defined roles. The same agency can implement multiple programs. Some cases such as EuroArgo (European Research Infrastructure Consortium) use a multinational agency and \"Europe\" as country. Argo netCDF variable PROGRAM_NAME is populated by R41 prefLabel.",
         "dc:title": "Argo program name",
         "skos:prefLabel": "Argo program name",
-        "owl:versionInfo": "5",
-        "dc:date": "2026-05-01 03:00:00.0",
+        "owl:versionInfo": "6",
+        "dc:date": "2026-09-30 03:00:01.0",
         "skos:altLabel": "PROGRAM_NAME",
         "dc:creator": "GOOS/OceanOPS Vocabulary Governance",
         "dc:alternative": "PROGRAM_NAME",

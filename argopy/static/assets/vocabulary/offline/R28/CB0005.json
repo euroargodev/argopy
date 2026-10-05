@@ -1,7 +1,7 @@
 {
   "name": "CB0005",
   "long_name": "I535",
-  "last_update": "2026-09-15T15:05:32.464120+00:00",
+  "last_update": "2026-10-05T15:47:33.009374+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0005/",
     "pav:hasVersion": {
@@ -16,19 +16,19 @@
     "@type": "skos:Concept",
     "skos:related": [
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/"
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_D/"
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_C/"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_C/"
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_D/"
       }
     ],
     "skos:definition": {

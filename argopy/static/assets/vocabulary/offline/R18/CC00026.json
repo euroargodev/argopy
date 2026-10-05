@@ -1,7 +1,7 @@
 {
   "name": "CC00026",
   "long_name": "CONFIG_ConnectionFailureTimeOut_minutes",
-  "last_update": "2026-09-15T15:05:37.963951+00:00",
+  "last_update": "2026-10-05T15:48:26.757756+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00026/",
     "pav:hasVersion": [
