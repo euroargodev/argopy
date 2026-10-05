@@ -7,10 +7,12 @@ What's New
 
 |pypi dwn| |conda dwn|
 
-Coming up next (unreleased)
----------------------------
+v1.5.0 (7 Oct. 2026)
+--------------------
 
 .. currentmodule:: argopy
+
+.. _v1.5.0-features:
 
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -25,6 +27,8 @@ Features and front-end API
     Check the full documentation page at :ref:`Argo vocabulary and references <argovocabulary>`. (:pr:`575`) by |gmaze|.
 
     Rq: As a consequence, the historical :class:`ArgoNVSReferenceTables` is deprecated. The ``ArgoNVSReferenceTables.tbl('R25')`` method can be replaced with the new :meth:`ArgoReferenceTable.to_dataframe`.
+
+.. _v1.5.0-internals:
 
 Internals
 ^^^^^^^^^
@@ -53,6 +57,7 @@ Internals
 
 - **Fix inconsistency** in checking availability of an :class:`ArgoFloat` configuration parameter, :issue:`643`. (:pr:`644`) by |gmaze|.
 
+.. _v1.5.0-doc:
 
 Documentation
 ^^^^^^^^^^^^^
@@ -60,6 +65,8 @@ Documentation
 - **Define** a :ref:`policy <contributing.ai_policy>` regarding **generative AI usage** in **Argopy** contributions :issue:`637`. (:pr:`639`) by |quai20|.
 
 - **Define** a :ref:`policy and specific methods <product_distribution>` regarding the **access to third-party product** through **Argopy**. :issue:`638`. (:pr:`683`) by |gmaze|.
+
+.. _v1.5.0-deprec:
 
 Deprecation
 ^^^^^^^^^^^
