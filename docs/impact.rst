@@ -4,6 +4,8 @@ Impact of Argopy
 Papers & proceedings citing Argopy
 ----------------------------------
 
+#. Adam, R. N., & Vergos, G. S. (2026). "A Cross-Calibrated Multi-Mission Assessment of Mediterranean Sea-Level Budget Closure (2005–2025)". Geomatics, 6(5), 110. https://doi.org/10.3390/geomatics6050110
+
 #. Bartlett, Jenna  (2022). "An investigation of geostationary satellite imagery to compare developing and non-developing African easterly waves", Thesis and Dissertations. 5600. https://scholarsjunction.msstate.edu/td/5600
 
 #. Broullón, E., Williams, R. G., Naveira Garabato, A. C., Clément, L., & Fernández Castro, B. (2026). "The lifecycle of tracer variance in the North Atlantic". Geophysical Research Letters, 53, e2026GL122823. https://doi.org/10.1029/2026GL122823
