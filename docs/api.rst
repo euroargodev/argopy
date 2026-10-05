@@ -503,3 +503,39 @@ Argovis
     data_fetchers.argovis_data.ArgovisDataFetcher
     data_fetchers.argovis_data.Fetch_wmo
     data_fetchers.argovis_data.Fetch_box
+
+
+.. _api-third-party-products:
+
+Third-party products
+====================
+
+Third-party (non-official) products accessible with :meth:`argopy.ArgoFloat.open_product`, see :ref:`product_distribution`.
+
+.. currentmodule:: argopy
+
+.. autosummary::
+    :toctree: generated/
+
+    ArgoFloat.open_product
+    options.PRODUCT_LIST
+
+.. _api-bgcargo-plus:
+
+BGC-Argo+
+---------
+
+See :ref:`bgcargo_plus_store` for usage.
+
+.. currentmodule:: argopy.stores.float.products.bgcargo_plus
+
+.. autosummary::
+    :toctree: generated/
+
+    BGCArgoPlusStore
+    BGCArgoPlusServerError
+    bgcargo_plus_url
+    bgcargo_plus_versions
+    bgcargo_plus_latest_version
+    resolve_bgcargo_plus_version
+    bgcargo_plus_server_available
