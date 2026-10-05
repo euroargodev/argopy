@@ -18,7 +18,7 @@ from argopy.stores import httpstore, filestore
 from argopy.options import OPTIONS
 from argopy.utils.format import urnparser
 from argopy.stores.nvs.utils import sparql_mapping_request, known_mappings
-
+from argopy.reference import ArgoReferenceTable
 
 
 def is_argo_table(item):
@@ -54,15 +54,19 @@ def save_data(file: str, name: str, long_name: str, data: dict):
         with open(json_file, "w") as f:
             json.dump(data, f, indent=2)
 
-        print(f"OVERWRITTEN: '{long_name}' in {file}.json")
+        if 'offline' not in str(root):
+            print(f"OVERWRITTEN: '{long_name}' in {file}.json")
 
     elif ex:
-        print(f"UNTOUCHED: '{long_name}' in {file}.json")
+        if 'offline' not in str(root):
+            print(f"UNTOUCHED: '{long_name}' in {file}.json")
 
     else:
         with open(json_file, "w") as f:
             json.dump(data, f, indent=2)
-        print(f"SAVED: '{long_name}' in {file}.json")
+
+        if 'offline' not in str(root):
+            print(f"SAVED: '{long_name}' in {file}.json")
 
 
 def asset_data_types():
@@ -152,11 +156,11 @@ def asset_data_types():
     ]
     [
         list_str.append("PROFILE_{}_QC".format(v))
-        for v in list(ArgoNVSReferenceTables().tbl(3)["altLabel"])
+        for v in ArgoReferenceTable('PARAMETER').keys()
     ]
     [
         list_str.append("{}_DATA_MODE".format(v))
-        for v in list(ArgoNVSReferenceTables().tbl(3)["altLabel"])
+        for v in ArgoReferenceTable('PARAMETER').keys()
     ]
 
     list_int = [
@@ -217,15 +221,14 @@ def asset_data_types():
 
 def asset_dict_institutions():
     """Save NVS Reference table 4"""
-    nvs = ArgoNVSReferenceTables(cache=True)
+    art = ArgoReferenceTable('DATA_CENTRE_CODES')
     institutions = {}
-    for row in nvs.tbl(4).iterrows():
-        institutions.update({row[1]["altLabel"]: row[1]["prefLabel"]})
+    [institutions.update({key: art[key].long_name}) for key in art.keys()]
 
     save_data(
         file="institutions",
         name="institutions",
-        long_name="Institution names from Argo reference table 4",
+        long_name="Institution names from Argo reference table 4 / 'DATA_CENTRE_CODES'",
         data={
             "institutions": institutions,
         },
@@ -234,15 +237,14 @@ def asset_dict_institutions():
 
 def asset_dict_profilers():
     """Save NVS Reference table 8"""
-    nvs = ArgoNVSReferenceTables(cache=True)
+    art = ArgoReferenceTable('ARGO_WMO_INST_TYPE')
     profilers = {}
-    for row in nvs.tbl(8).iterrows():
-        profilers.update({row[1]["altLabel"]: row[1]["prefLabel"]})
+    [profilers.update({key: art[key].long_name}) for key in art.keys()]
 
     save_data(
         file="profilers",
         name="profilers",
-        long_name="Profiler codes and description from Argo reference table 8",
+        long_name="Profiler codes and description from Argo reference table 8 / 'ARGO_WMO_INST_TYPE'",
         data={
             "profilers": profilers,
         },
@@ -386,6 +388,18 @@ def asset_ADMT_documentation():
             "title": "Quality control for BGC-Argo radiometry",
             "doi": "10.13155/62466",
             "id": 62466,
+        },
+        {
+            "category": "Quality control",
+            "title": "BGC-Argo quality control manual for pH",
+            "doi": "10.13155/97828",
+            "id": 97828,
+        },
+        {
+            "category": "Quality control",
+            "title": "BGC Argo quality control manual for particles backscattering",
+            "doi": "10.13155/60262",
+            "id": 60262,
         },
         {
             "category": "Cookbooks",
@@ -927,17 +941,17 @@ def asset_offline_nvs_mappings():
 def main():
 
 
-    # argopy.clear_cache()
+    argopy.clear_cache()
 
-    # asset_data_types()
-    # asset_dict_institutions()
-    # asset_dict_profilers()
-    # asset_API_Coriolis()
-    # asset_ADMT_documentation()
-    # asset_bgc_vars()
-    # asset_GDAC_servers()
-    # asset_netcdf_json_schema()
-    # asset_sensor_schema()
+    asset_data_types()
+    asset_dict_institutions()
+    asset_dict_profilers()
+    asset_API_Coriolis()
+    asset_ADMT_documentation()
+    asset_bgc_vars()
+    asset_GDAC_servers()
+    asset_netcdf_json_schema()
+    asset_sensor_schema()
 
     asset_vocabulary_inventory()
     asset_vocabulary_description()
@@ -951,6 +965,7 @@ if __name__ == "__main__":
     # Locate the static/assets folder of the library:
     ASSETS_FOLDER = Path(os.path.dirname(argopy.__file__)).joinpath("static", "assets")
 
+    argopy.set_options(api_timeout=30*60)
     fs = httpstore(cache=True)
 
     OVER_WRITE = False

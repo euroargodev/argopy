@@ -62,7 +62,8 @@ import hashlib
 import numpy as np
 from pathlib import Path
 
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+REPO_ROOT: Path = Path(__file__).parent.parent.parent
+sys.path.append(str(REPO_ROOT))
 import argopy
 from argopy import DataFetcher, clear_cache, ArgoFloat
 from argopy.related import (
@@ -74,15 +75,17 @@ from argopy.reference import ArgoNVSReferenceTables
 from argopy.stores.nvs.implementations.online.nvs import NVS as NVS_online
 
 
-log = logging.getLogger("argopy.cli.test_data")
+log = logging.getLogger("argopy.cli.tests_data")
 
 # Where to save remote data to:
-DATA_FOLDER = os.path.dirname(os.path.realpath(__file__)).replace(
-    "cli", "argopy/tests/test_data"
-)
+DATA_FOLDER = REPO_ROOT.joinpath("argopy/tests/test_data")
 
 # DB file to be used by the http server fixture to load content:
-DB_FILE = os.path.join(DATA_FOLDER, "httpmocked_uri_index.json")
+DB_FILE = DATA_FOLDER.joinpath("httpmocked_uri_index.json")
+
+print(REPO_ROOT)
+print(DATA_FOLDER)
+print(DB_FILE)
 
 # Dictionary mapping of file extension with http data content type
 CONTENT_TYPE = {
@@ -131,7 +134,7 @@ def setup_args():
     parser = argparse.ArgumentParser(
         description="argopy http mocked server test data manager",
         formatter_class=argparse.RawTextHelpFormatter,
-        epilog="%s\n(c) Argo-France/Ifremer/LOPS, 2023-2024" % icons_help_string,
+        epilog="%s\n(c) Argo-France/Ifremer/LOPS, 2023-2026" % icons_help_string,
     )
 
     def action_choicesDescriptions():
@@ -252,7 +255,7 @@ def log_file_desc(file, data, src):
         msg.append("🔸 %s" % src["uri"])
 
     msg.append(
-        "%s*, %s, %s" % (file.replace(DATA_FOLDER, "")[1:13], data[0:3], prt_size(size))
+        "%s*, %s, %s" % (file.replace(str(DATA_FOLDER), "")[1:13], data[0:3], prt_size(size))
     )
     return ", ".join(msg)
     # return " 🔸 ".join(msg)
@@ -266,12 +269,12 @@ def ls_files(load=True, target=None):
 
     L = Lister()
     for t in targets:
-        if Path(DB_FILE).exists():
+        if DB_FILE.exists():
             print("Listing data for '%s':" % t)
             with open(DB_FILE, "r") as f:
                 URIs = json.load(f)
             for item in L.load(t, refresh=False):
-                test_data_file = Path(DATA_FOLDER).joinpath(
+                test_data_file = DATA_FOLDER.joinpath(
                     "%s.%s" % (item["sha"], item["ext"])
                 )
                 for db_item in URIs:
@@ -1095,7 +1098,7 @@ def clear_data(target=None):
     L = Lister()
     for t in targets:
         n_delete = 0
-        if Path(DB_FILE).exists():
+        if DB_FILE.exists():
             print("Clearing data for '%s'" % t)
             with open(DB_FILE, "r") as f:
                 URIs = json.load(f)
@@ -1116,11 +1119,11 @@ def clear_data(target=None):
             Path(L.src(t)).unlink()
             print("\tCleared URI registry")
 
-    if Path(DB_FILE).exists():
+    if DB_FILE.exists():
         with open(DB_FILE, "r") as f:
             URIS = json.load(f)
         if len(URIS) == 0:
-            Path(DATA_FOLDER).joinpath(DB_FILE).unlink()
+            DATA_FOLDER.joinpath(DB_FILE).unlink()
 
 
 def consolidate(target=None):
