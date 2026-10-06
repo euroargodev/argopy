@@ -1,0 +1,359 @@
+[
+    {
+        "uri": "https://dataselection.euro-argo.eu/api/trajectory/6901929",
+        "ext": "json",
+        "sha": "86fefaa3fd8436f967d9d226765404d7e2542a72b8446ba802211eb9f75def7f",
+        "type": "application/json",
+        "ts": "2026-10-06 09:48:57"
+    },
+    {
+        "uri": "https://dataselection.euro-argo.eu/api/trajectory/5904797",
+        "ext": "json",
+        "sha": "28aa9ecc6cc62f53304aabc5d4514cd7607d986887509485bd0ffe2806f3d1a2",
+        "type": "application/json",
+        "ts": "2026-10-06 09:48:57"
+    },
+    {
+        "uri": "https://dataselection.euro-argo.eu/api/trajectory/6902755",
+        "ext": "json",
+        "sha": "237ec57996b0c89599212910ad056d4977d2391cfd4f6739b5b864450448d0f7",
+        "type": "application/json",
+        "ts": "2026-10-06 09:48:57"
+    },
+    {
+        "uri": "https://dataselection.euro-argo.eu/api/trajectory/2901623",
+        "ext": "json",
+        "sha": "d410e6e4cd9b1997eeca96d6c9d63101af097403e0b2d3ed363bc9779af7bf58",
+        "type": "application/json",
+        "ts": "2026-10-06 09:48:57"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/etc/argo-ast9-item13-AltimeterComparison/figures/2901623.png",
+        "ext": "png",
+        "sha": "1d08ef19cbfc76909fba6d03c90c5c9d5c17c68e40e3316e8ac41109eb33fe7b",
+        "type": "image/png",
+        "ts": "2026-10-06 09:48:17"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/etc/argo-ast9-item13-AltimeterComparison/figures/6901929.png",
+        "ext": "png",
+        "sha": "8b31f74aba6fe7f7093a5d0d7ebe17a044472e2982bf59c5ce7157597eb8fba5",
+        "type": "image/png",
+        "ts": "2026-10-06 09:48:17"
+    },
+    {
+        "uri": "https://dx.doi.org/10.13155/29825",
+        "ext": "html",
+        "sha": "ba3563da17c45d0cf54c76c6f064cd5f9349f1a27932706df6adb0faeec63777",
+        "type": "text/html",
+        "ts": "2026-10-06 09:46:10"
+    },
+    {
+        "uri": "https://dx.doi.org/10.13155/33951",
+        "ext": "html",
+        "sha": "153b4d3ac7f427e3bbeea9ec3b0a93c487fda47873f47ec33452fb61ff1ab605",
+        "type": "text/html",
+        "ts": "2026-10-06 09:46:10"
+    },
+    {
+        "uri": "https://dx.doi.org/10.13155/46542",
+        "ext": "html",
+        "sha": "a47129e3a128f0899792c7f4055c73c75d4f58a921d5f9479220140547c85d01",
+        "type": "text/html",
+        "ts": "2026-10-06 09:46:10"
+    },
+    {
+        "uri": "https://dx.doi.org/10.13155/40879",
+        "ext": "html",
+        "sha": "7e774d89fb0dd9623910539237a7e48dabb128fb47311e188e6bc559530fb4a4",
+        "type": "text/html",
+        "ts": "2026-10-06 09:46:10"
+    },
+    {
+        "uri": "https://dx.doi.org/10.13155/35385",
+        "ext": "html",
+        "sha": "86c30bc8cd0e4699271da5f8145e1ad2a4f92e5784e80c0e83ced4ff493f8ec1",
+        "type": "text/html",
+        "ts": "2026-10-06 09:46:10"
+    },
+    {
+        "uri": "https://dx.doi.org/10.13155/84370",
+        "ext": "html",
+        "sha": "81a689ce24c6900d604fbd1cf829be8d590b779896b398aa78fb83fe1d040026",
+        "type": "text/html",
+        "ts": "2026-10-06 09:46:10"
+    },
+    {
+        "uri": "https://dx.doi.org/10.13155/62466",
+        "ext": "html",
+        "sha": "bf5c13c46e58262a417766cb7ee83528f5e245de853d4d210f0923cdfc8d88bb",
+        "type": "text/html",
+        "ts": "2026-10-06 09:46:10"
+    },
+    {
+        "uri": "https://dx.doi.org/10.13155/97828",
+        "ext": "html",
+        "sha": "671de7781d554d612185553c0fd1c787e6fae0ad69d903030a8ea9d51cd6badf",
+        "type": "text/html",
+        "ts": "2026-10-06 09:46:10"
+    },
+    {
+        "uri": "https://dx.doi.org/10.13155/60262",
+        "ext": "html",
+        "sha": "ab32d6745febf0c8eee682f89836a4bf70681c733bf588a09e222c7361e1594b",
+        "type": "text/html",
+        "ts": "2026-10-06 09:46:10"
+    },
+    {
+        "uri": "https://dx.doi.org/10.13155/41151",
+        "ext": "html",
+        "sha": "dce5c0b88dda8a2d374c20dd50fc9a6c768a56731776c1d5c60dde49707b324b",
+        "type": "text/html",
+        "ts": "2026-10-06 09:46:10"
+    },
+    {
+        "uri": "https://dx.doi.org/10.13155/29824",
+        "ext": "html",
+        "sha": "980302fa35808db34ea92fbb30f5b43df4915037e48b8f6d6e8872dfdc17c340",
+        "type": "text/html",
+        "ts": "2026-10-06 09:46:10"
+    },
+    {
+        "uri": "https://dx.doi.org/10.13155/78994",
+        "ext": "html",
+        "sha": "ff86679c33b92e1e89b4ba5db9006def8d8e89e4c25f9616ecb1e7a2229b1aa8",
+        "type": "text/html",
+        "ts": "2026-10-06 09:46:10"
+    },
+    {
+        "uri": "https://dx.doi.org/10.13155/39795",
+        "ext": "html",
+        "sha": "cafd6dd329c2d1adadf5dc752f4c98ef4e1a2f463d0f3ac246820160263680e9",
+        "type": "text/html",
+        "ts": "2026-10-06 09:46:10"
+    },
+    {
+        "uri": "https://dx.doi.org/10.13155/39459",
+        "ext": "html",
+        "sha": "2e1d8835d1da66e42d095c30534b23959d1b22fda466b397f285025f138ec229",
+        "type": "text/html",
+        "ts": "2026-10-06 09:46:10"
+    },
+    {
+        "uri": "https://dx.doi.org/10.13155/39468",
+        "ext": "html",
+        "sha": "75e19ebe22535a74e91dcc5855a078084f74b12e6b214b4464b9ec2389381f7f",
+        "type": "text/html",
+        "ts": "2026-10-06 09:46:10"
+    },
+    {
+        "uri": "https://dx.doi.org/10.13155/47998",
+        "ext": "html",
+        "sha": "577127670305b7a06ab3ea77e5ac5e2aa693fe288e4eb711c181347f94725a7d",
+        "type": "text/html",
+        "ts": "2026-10-06 09:46:10"
+    },
+    {
+        "uri": "https://dx.doi.org/10.13155/54541",
+        "ext": "html",
+        "sha": "6a313102a5bd801690824452bd4fdee05e87e890c670214355cfc78932ff82b7",
+        "type": "text/html",
+        "ts": "2026-10-06 09:46:10"
+    },
+    {
+        "uri": "https://dx.doi.org/10.13155/46121",
+        "ext": "html",
+        "sha": "9f6f876163819e670f5287f58a01be659f8b6a3a48048b9fb3c745757c881666",
+        "type": "text/html",
+        "ts": "2026-10-06 09:46:10"
+    },
+    {
+        "uri": "https://dx.doi.org/10.13155/51541",
+        "ext": "html",
+        "sha": "13ede145ffeb1deaa7b445a4c094da587e03eb6bb9aac7bb95f3a567a56ef45c",
+        "type": "text/html",
+        "ts": "2026-10-06 09:46:10"
+    },
+    {
+        "uri": "https://dx.doi.org/10.13155/57195",
+        "ext": "html",
+        "sha": "442c404a3a8c39fdb023df1022c3ea3d44aa19ad4f5bf26563f9d55a6ab9fe53",
+        "type": "text/html",
+        "ts": "2026-10-06 09:46:10"
+    },
+    {
+        "uri": "https://dx.doi.org/10.13155/46120",
+        "ext": "html",
+        "sha": "54178ef5aab2a9dcd6cf5e81e30b09cd7f5d45a492e65bf516a0a4102408dd1a",
+        "type": "text/html",
+        "ts": "2026-10-06 09:46:10"
+    },
+    {
+        "uri": "https://dx.doi.org/10.13155/52154",
+        "ext": "html",
+        "sha": "210ae117281f44939303e772d03b83f3280f86523ddff392e89ae66d5e8f3fd5",
+        "type": "text/html",
+        "ts": "2026-10-06 09:46:10"
+    },
+    {
+        "uri": "https://dx.doi.org/10.13155/55637",
+        "ext": "html",
+        "sha": "941d81ad6852945dc830a63af6bbca89806f53c2b1cbf93556c85c42780d9588",
+        "type": "text/html",
+        "ts": "2026-10-06 09:46:10"
+    },
+    {
+        "uri": "https://dx.doi.org/10.13155/46202",
+        "ext": "html",
+        "sha": "97351132f7d20857963c0ad559c3c1c0099da3f491e2e37b42fc2f4c41af29d9",
+        "type": "text/html",
+        "ts": "2026-10-06 09:46:10"
+    },
+    {
+        "uri": "https://vocab.nerc.ac.uk/collection/R27/current/?_profile=nvs&_mediatype=application/ld+json",
+        "ext": "json",
+        "sha": "27d7b1ef7aaa76798f7f8eedc7fec0eb510c808949d926dc2ffa754fe958b870",
+        "type": "application/json",
+        "ts": "2026-10-06 09:35:53"
+    },
+    {
+        "uri": "https://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3835/?_profile=nvs&_mediatype=application/ld+json",
+        "ext": "json",
+        "sha": "b2c87b867baacd01cf414ed142fa809b07141e58a8250898156f086fe5715adf",
+        "type": "application/json",
+        "ts": "2026-10-06 09:35:53"
+    },
+    {
+        "uri": "https://vocab.nerc.ac.uk/collection/R27/current/?_profile=nvs&_mediatype=application/rdf+xml",
+        "ext": "xml",
+        "sha": "f12f9f2ab65033fdd55ab183255f6bcbcf7d9f239e2b8b8b5c06261139b340ef",
+        "type": "application/rdf+xml",
+        "ts": "2026-10-06 09:35:53"
+    },
+    {
+        "uri": "https://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3835/?_profile=nvs&_mediatype=application/rdf+xml",
+        "ext": "xml",
+        "sha": "3823c13a9c9530a61a32a5c9de3778bbd879c02fd4a02a4867ef637be9278f90",
+        "type": "application/rdf+xml",
+        "ts": "2026-10-06 09:35:53"
+    },
+    {
+        "uri": "https://vocab.nerc.ac.uk/collection/R27/current/?_profile=nvs&_mediatype=text/turtle",
+        "ext": "txt",
+        "sha": "09464cd6d5d7894199e81b714470d8cea9d4af635c4f5916259cf16b9c3f896e",
+        "type": "text/plain",
+        "ts": "2026-10-06 09:35:53"
+    },
+    {
+        "uri": "https://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3835/?_profile=nvs&_mediatype=text/turtle",
+        "ext": "txt",
+        "sha": "e18972636a59b71b32490395fb80cf1f820b25e539340428c7bcc77ae7282630",
+        "type": "text/plain",
+        "ts": "2026-10-06 09:35:53"
+    },
+    {
+        "uri": "https://vocab.nerc.ac.uk/sparql?query=\n    PREFIX dc: <http://purl.org/dc/elements/1.1/>\n    PREFIX sssom: <https://w3id.org/sssom/schema/>\n    PREFIX text: <http://jena.apache.org/text#>\n    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n\n    select ?subj ?pred ?obj where { ?a a sssom:Mapping .\n    ?a sssom:subject_id ?subj .\n    <http://vocab.nerc.ac.uk/collection/R08/current/> skos:member ?subj.\n    ?a sssom:predicate_id ?pred .\n    ?a sssom:object_id ?obj .\n    <http://vocab.nerc.ac.uk/collection/R23/current/> skos:member ?obj.}\n    ",
+        "ext": "json",
+        "sha": "eca3c0f2ed469fbe7f150c9e557e5003e8d171b12cbb4c66de1e997c9270cb96",
+        "type": "application/json",
+        "ts": "2026-10-06 09:35:53"
+    },
+    {
+        "uri": "https://www.ocean-ops.org/api/1/data/platform?exp=[\"networkPtfs.network.name='Argo' and ptfDepl.lon>=$var1 and ptfDepl.lon<=$var2 and ptfDepl.lat>=$var3 and ptfDepl.lat<=$var4 and ptfDepl.deplDate>=$var5 and ptfStatus>=$var6\", -90, 0, 0, 90, \"2022-01-01 00:00:00\", 4]&include=[\"ref\",\"ptfDepl.lat\",\"ptfDepl.lon\",\"ptfDepl.deplDate\",\"ptfStatus.id\",\"ptfStatus.name\",\"ptfStatus.description\",\"program.nameShort\",\"program.country.nameShort\",\"ptfModel.nameShort\",\"ptfDepl.noSite\"]",
+        "ext": "json",
+        "sha": "2dd1ce221e25128b947dacb8ea904de17ce1b12384f8aef909396aa8ae4c5957",
+        "type": "application/json",
+        "ts": "2026-10-06 09:32:47"
+    },
+    {
+        "uri": "https://www.ocean-ops.org/api/1/data/platform?exp=[\"networkPtfs.network.name='Argo' and ptfDepl.lon>=$var1 and ptfDepl.lon<=$var2 and ptfDepl.lat>=$var3 and ptfDepl.lat<=$var4 and ptfDepl.deplDate>=$var5\", -90, 0, 0, 90, \"2022-01-01 00:00:00\"]&include=[\"ref\",\"ptfDepl.lat\",\"ptfDepl.lon\",\"ptfDepl.deplDate\",\"ptfStatus.id\",\"ptfStatus.name\",\"ptfStatus.description\",\"program.nameShort\",\"program.country.nameShort\",\"ptfModel.nameShort\",\"ptfDepl.noSite\"]",
+        "ext": "json",
+        "sha": "e46a16b17affadcd7fbaee0e7028f1030d5ff90a81694c833da7adaa428c400e",
+        "type": "application/json",
+        "ts": "2026-10-06 09:32:47"
+    },
+    {
+        "uri": "https://www.ocean-ops.org/api/1/data/platform?exp=[\"networkPtfs.network.name='Argo' and ptfDepl.lon<=$var1 and ptfDepl.lat>=$var2 and ptfDepl.lat<=$var3 and ptfDepl.deplDate>=$var4 and ptfDepl.deplDate<=$var5 and ptfStatus>=$var6\", 0, 0, 90, \"2022-01-01 00:00:00\", \"2023-01-01 00:00:00\", 4]&include=[\"ref\",\"ptfDepl.lat\",\"ptfDepl.lon\",\"ptfDepl.deplDate\",\"ptfStatus.id\",\"ptfStatus.name\",\"ptfStatus.description\",\"program.nameShort\",\"program.country.nameShort\",\"ptfModel.nameShort\",\"ptfDepl.noSite\"]",
+        "ext": "json",
+        "sha": "a3dfd8ac41e22763e0020a8bea50535ec41cff15fc65ad64abde4c8aa096e580",
+        "type": "application/json",
+        "ts": "2026-10-06 09:32:47"
+    },
+    {
+        "uri": "https://www.ocean-ops.org/api/1/data/platform?exp=[\"networkPtfs.network.name='Argo' and ptfDepl.lon<=$var1 and ptfDepl.lat>=$var2 and ptfDepl.lat<=$var3 and ptfDepl.deplDate>=$var4 and ptfDepl.deplDate<=$var5\", 0, 0, 90, \"2022-01-01 00:00:00\", \"2023-01-01 00:00:00\"]&include=[\"ref\",\"ptfDepl.lat\",\"ptfDepl.lon\",\"ptfDepl.deplDate\",\"ptfStatus.id\",\"ptfStatus.name\",\"ptfStatus.description\",\"program.nameShort\",\"program.country.nameShort\",\"ptfModel.nameShort\",\"ptfDepl.noSite\"]",
+        "ext": "json",
+        "sha": "6270b81ef4a5a8e19ae77f895c77fdd0bd71f7596505911d329618eb8ee27d82",
+        "type": "application/json",
+        "ts": "2026-10-06 09:32:47"
+    },
+    {
+        "uri": "https://www.ocean-ops.org/api/1/data/platform?exp=[\"networkPtfs.network.name='Argo' and ptfDepl.lon>=$var1 and ptfDepl.lat>=$var2 and ptfDepl.lat<=$var3 and ptfDepl.deplDate>=$var4 and ptfDepl.deplDate<=$var5 and ptfStatus>=$var6\", -90, 0, 90, \"2022-01-01 00:00:00\", \"2023-01-01 00:00:00\", 4]&include=[\"ref\",\"ptfDepl.lat\",\"ptfDepl.lon\",\"ptfDepl.deplDate\",\"ptfStatus.id\",\"ptfStatus.name\",\"ptfStatus.description\",\"program.nameShort\",\"program.country.nameShort\",\"ptfModel.nameShort\",\"ptfDepl.noSite\"]",
+        "ext": "json",
+        "sha": "7321fca614893c8ec8cc62bc2179f4a5bcbc82970bf3948a5d22c770d2371b3c",
+        "type": "application/json",
+        "ts": "2026-10-06 09:32:47"
+    },
+    {
+        "uri": "https://www.ocean-ops.org/api/1/data/platform?exp=[\"networkPtfs.network.name='Argo' and ptfDepl.lon>=$var1 and ptfDepl.lat>=$var2 and ptfDepl.lat<=$var3 and ptfDepl.deplDate>=$var4 and ptfDepl.deplDate<=$var5\", -90, 0, 90, \"2022-01-01 00:00:00\", \"2023-01-01 00:00:00\"]&include=[\"ref\",\"ptfDepl.lat\",\"ptfDepl.lon\",\"ptfDepl.deplDate\",\"ptfStatus.id\",\"ptfStatus.name\",\"ptfStatus.description\",\"program.nameShort\",\"program.country.nameShort\",\"ptfModel.nameShort\",\"ptfDepl.noSite\"]",
+        "ext": "json",
+        "sha": "dfc6582dc67e6003d8add1b74bce6b8da7104315dffa4cecfc384aa5cd9b661a",
+        "type": "application/json",
+        "ts": "2026-10-06 09:32:47"
+    },
+    {
+        "uri": "https://www.ocean-ops.org/api/1/data/platform?exp=[\"networkPtfs.network.name='Argo' and ptfDepl.lon>=$var1 and ptfDepl.lon<=$var2 and ptfDepl.lat<=$var3 and ptfDepl.deplDate>=$var4 and ptfDepl.deplDate<=$var5 and ptfStatus>=$var6\", -90, 0, 90, \"2022-01-01 00:00:00\", \"2023-01-01 00:00:00\", 4]&include=[\"ref\",\"ptfDepl.lat\",\"ptfDepl.lon\",\"ptfDepl.deplDate\",\"ptfStatus.id\",\"ptfStatus.name\",\"ptfStatus.description\",\"program.nameShort\",\"program.country.nameShort\",\"ptfModel.nameShort\",\"ptfDepl.noSite\"]",
+        "ext": "json",
+        "sha": "5923f2965a8cf88a261e179203ab1699fe4fed43d8cd8767304633614c07a61f",
+        "type": "application/json",
+        "ts": "2026-10-06 09:32:47"
+    },
+    {
+        "uri": "https://www.ocean-ops.org/api/1/data/platform?exp=[\"networkPtfs.network.name='Argo' and ptfDepl.lon>=$var1 and ptfDepl.lon<=$var2 and ptfDepl.lat<=$var3 and ptfDepl.deplDate>=$var4 and ptfDepl.deplDate<=$var5\", -90, 0, 90, \"2022-01-01 00:00:00\", \"2023-01-01 00:00:00\"]&include=[\"ref\",\"ptfDepl.lat\",\"ptfDepl.lon\",\"ptfDepl.deplDate\",\"ptfStatus.id\",\"ptfStatus.name\",\"ptfStatus.description\",\"program.nameShort\",\"program.country.nameShort\",\"ptfModel.nameShort\",\"ptfDepl.noSite\"]",
+        "ext": "json",
+        "sha": "b525af3619e549419bc25d16bf2ad88650f97d8f6cef5e6b1110181ade4f1f76",
+        "type": "application/json",
+        "ts": "2026-10-06 09:32:47"
+    },
+    {
+        "uri": "https://www.ocean-ops.org/api/1/data/platform?exp=[\"networkPtfs.network.name='Argo' and ptfDepl.lon>=$var1 and ptfDepl.lon<=$var2 and ptfDepl.lat>=$var3 and ptfDepl.deplDate>=$var4 and ptfDepl.deplDate<=$var5 and ptfStatus>=$var6\", -90, 0, 0, \"2022-01-01 00:00:00\", \"2023-01-01 00:00:00\", 4]&include=[\"ref\",\"ptfDepl.lat\",\"ptfDepl.lon\",\"ptfDepl.deplDate\",\"ptfStatus.id\",\"ptfStatus.name\",\"ptfStatus.description\",\"program.nameShort\",\"program.country.nameShort\",\"ptfModel.nameShort\",\"ptfDepl.noSite\"]",
+        "ext": "json",
+        "sha": "f99dcbdb28e5fda186604deafaf0a7f2857c9d4a15a4fa583660f3b770caf604",
+        "type": "application/json",
+        "ts": "2026-10-06 09:32:47"
+    },
+    {
+        "uri": "https://www.ocean-ops.org/api/1/data/platform?exp=[\"networkPtfs.network.name='Argo' and ptfDepl.lon>=$var1 and ptfDepl.lon<=$var2 and ptfDepl.lat>=$var3 and ptfDepl.deplDate>=$var4 and ptfDepl.deplDate<=$var5\", -90, 0, 0, \"2022-01-01 00:00:00\", \"2023-01-01 00:00:00\"]&include=[\"ref\",\"ptfDepl.lat\",\"ptfDepl.lon\",\"ptfDepl.deplDate\",\"ptfStatus.id\",\"ptfStatus.name\",\"ptfStatus.description\",\"program.nameShort\",\"program.country.nameShort\",\"ptfModel.nameShort\",\"ptfDepl.noSite\"]",
+        "ext": "json",
+        "sha": "0a6b66400575b6b32fb4d029770c70ba4ff0b973e79237e41beea72a624aef06",
+        "type": "application/json",
+        "ts": "2026-10-06 09:32:47"
+    },
+    {
+        "uri": "https://www.ocean-ops.org/api/1/data/platform?exp=[\"networkPtfs.network.name='Argo' and ptfDepl.lon>=$var1 and ptfDepl.lon<=$var2 and ptfDepl.lat>=$var3 and ptfDepl.lat<=$var4 and ptfDepl.deplDate<=$var5 and ptfStatus>=$var6\", -90, 0, 0, 90, \"2023-01-01 00:00:00\", 4]&include=[\"ref\",\"ptfDepl.lat\",\"ptfDepl.lon\",\"ptfDepl.deplDate\",\"ptfStatus.id\",\"ptfStatus.name\",\"ptfStatus.description\",\"program.nameShort\",\"program.country.nameShort\",\"ptfModel.nameShort\",\"ptfDepl.noSite\"]",
+        "ext": "json",
+        "sha": "4a9e3960df6073af92d2ceb35525c5c2b656726fc92e66851c903c7cf5ac2eda",
+        "type": "application/json",
+        "ts": "2026-10-06 09:32:47"
+    },
+    {
+        "uri": "https://www.ocean-ops.org/api/1/data/platform?exp=[\"networkPtfs.network.name='Argo' and ptfDepl.lon>=$var1 and ptfDepl.lon<=$var2 and ptfDepl.lat>=$var3 and ptfDepl.lat<=$var4 and ptfDepl.deplDate<=$var5\", -90, 0, 0, 90, \"2023-01-01 00:00:00\"]&include=[\"ref\",\"ptfDepl.lat\",\"ptfDepl.lon\",\"ptfDepl.deplDate\",\"ptfStatus.id\",\"ptfStatus.name\",\"ptfStatus.description\",\"program.nameShort\",\"program.country.nameShort\",\"ptfModel.nameShort\",\"ptfDepl.noSite\"]",
+        "ext": "json",
+        "sha": "e2d3f37e53b7486e7e5eed35d3992e03572ddabd25077f108a5f0574787b43c0",
+        "type": "application/json",
+        "ts": "2026-10-06 09:32:47"
+    },
+    {
+        "uri": "https://www.ocean-ops.org/api/1/oceanops-api.yaml",
+        "ext": "yaml",
+        "sha": "4e2f9e17a10cdf4b1e9cb06c33e9927948fb229c3f10e63b46a6eef51910970b",
+        "type": "text/yaml",
+        "ts": "2026-10-06 09:32:47"
+    },
+    {
+        "uri": "https://coastwatch.pfeg.noaa.gov/erddap/griddap/GEBCO_2020.nc?elevation[(-67.00):10:(-54.00)][(81.00):10:(123.00)]",
+        "ext": "nc",
+        "sha": "1d16184686cce8f1b47b0170491f9ce23c3f58fa654beee9aece9158ed2f7d68",
+        "type": "application/x-netcdf",
+        "ts": "2026-10-06 09:32:14"
+    }
+]

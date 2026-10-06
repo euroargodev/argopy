@@ -23,7 +23,6 @@ Use this script to download all possible tests data to be used by the local http
 
 >>> citests_httpdata_manager -a download -t topo
 >>> citests_httpdata_manager -a download -t oops
->>> citests_httpdata_manager -a download -t nvs
 >>> citests_httpdata_manager -a download -t nvs_store
 >>> citests_httpdata_manager -a download -t docs
 
@@ -83,9 +82,9 @@ DATA_FOLDER = REPO_ROOT.joinpath("argopy/tests/test_data")
 # DB file to be used by the http server fixture to load content:
 DB_FILE = DATA_FOLDER.joinpath("httpmocked_uri_index.json")
 
-print(REPO_ROOT)
-print(DATA_FOLDER)
-print(DB_FILE)
+# print(REPO_ROOT)
+# print(DATA_FOLDER)
+# print(DB_FILE)
 
 # Dictionary mapping of file extension with http data content type
 CONTENT_TYPE = {
@@ -113,7 +112,7 @@ DEFAULT_TARGETS = [
     "argovis",
     "topo",
     "oops",
-    "nvs",
+    # "nvs", @deprecated
     "nvs_store",
     "docs",
     "altim",
@@ -168,7 +167,6 @@ def setup_args():
         
        topo             - URIs accessed by TopoFetcher with ds='gebco' from test_related/Test_TopoFetcher
        oops             - URIs accessed by OceanOPSDeployments from test_related/Test_OceanOPSDeployments
-       nvs              - URIs accessed by ArgoNVSReferenceTables from test_related/Test_ArgoNVSReferenceTables
        nvs_store        - URIs accessed by NVS from test_stores_nvs
        docs             - URIs accessed by ArgoDocs from test_related/Test_ArgoDocs
        altim            - URIs accessed by open_sat_altim_report from test_related/Test_open_sat_altim_report
@@ -255,7 +253,8 @@ def log_file_desc(file, data, src):
         msg.append("🔸 %s" % src["uri"])
 
     msg.append(
-        "%s*, %s, %s" % (file.replace(str(DATA_FOLDER), "")[1:13], data[0:3], prt_size(size))
+        "%s*, %s, %s"
+        % (file.replace(str(DATA_FOLDER), "")[1:13], data[0:3], prt_size(size))
     )
     return ", ".join(msg)
     # return " 🔸 ".join(msg)
@@ -892,21 +891,21 @@ class Lister:
 
         return self.respond(this_URI)
 
-    @property
-    def nvs(self):
-        this_URI = UriRegistry(name="nvs")
-        nvs = ArgoNVSReferenceTables()
-
-        for rtid in nvs.valid_ref:
-            url = nvs.get_url(rtid)
-            this_URI.commit(self.dfile(unquote(url), "json"))
-
-        fmts = {"ld+json": "json", "rdf+xml": "xml", "text/turtle": "txt"}
-        for fmt in fmts.keys():
-            url = nvs.get_url(3, fmt=fmt)
-            this_URI.commit(self.dfile(unquote(url), fmts[fmt]))
-
-        return self.respond(this_URI)
+    # @property
+    # def nvs(self):
+    #     this_URI = UriRegistry(name="nvs")
+    #     nvs = ArgoNVSReferenceTables()
+    #
+    #     for rtid in nvs.valid_ref:
+    #         url = nvs.get_url(rtid)
+    #         this_URI.commit(self.dfile(unquote(url), "json"))
+    #
+    #     fmts = {"ld+json": "json", "rdf+xml": "xml", "text/turtle": "txt"}
+    #     for fmt in fmts.keys():
+    #         url = nvs.get_url(3, fmt=fmt)
+    #         this_URI.commit(self.dfile(unquote(url), fmts[fmt]))
+    #
+    #     return self.respond(this_URI)
 
     @property
     def nvs_store(self):
