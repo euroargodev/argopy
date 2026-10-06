@@ -81,7 +81,7 @@ class ArgoDocs:
 
     @lru_cache
     def __init__(self, docid=None, cache=False):
-        self._catalogue = Asset.load('admt_documentation_catalogue')
+        self._catalogue = Asset.load('admt_documentation_catalogue')['data']['catalogue']
         self.docid = None
         self._ris = None
         self._fs = httpstore(cache=cache, cachedir=OPTIONS['cachedir'])
