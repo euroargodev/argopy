@@ -224,7 +224,7 @@ def can_xr_be_opened(src, file):
         return src
 
 
-def log_file_desc(file, data, src):
+def log_file_desc(file, data, src) -> str:
     size = float(os.stat(file).st_size / (1024 * 1024))
     prt_size = lambda x: "Size < 1Mb" if x < 1 else "Size = %0.2dMb" % x
     msg = []
@@ -326,7 +326,7 @@ class UriRegistry(UserList):
         elif overwrite:
             self.delete(entry)
             super().append(entry)
-        log.debug("commit: %s" % entry["uri"])
+        # log.debug("commit: %s" % entry["uri"])
         return self
 
     def delete(self, entry):
@@ -370,7 +370,7 @@ async def place_file(session: aiohttp.ClientSession, source: dict) -> None:
     """Download remote file and save it locally"""
     test_data_file = os.path.join(DATA_FOLDER, "%s.%s" % (source["sha"], source["ext"]))
     if OVERWRITE or not os.path.exists(test_data_file):
-        async with session.get(source["uri"], ssl=False, timeout=TIMEOUT) as r:
+        async with session.get(source["uri"], ssl=False) as r:
             if r.content_type not in CONTENT_TYPE.values():
                 print(
                     "Unexpected content type (%s) with this GET request: %s (%s extension)"
@@ -386,7 +386,9 @@ async def place_file(session: aiohttp.ClientSession, source: dict) -> None:
                 # if data[0:3] in [b'Err', b'<!D']:
                 #     raise ValueError(source)
                 await f.write(data)
-                print(log_file_desc(f.name, data, source))
+                msg = log_file_desc(f.name, data, source)
+                print(msg)
+                log.info(source)
                 return can_xr_be_opened(source, test_data_file)
     else:
         # print("%s already exists !" % test_data_file)
@@ -1067,18 +1069,20 @@ async def fetch_download_links(session: aiohttp.ClientSession, target=None):
 
 
 async def download(target=None):
-    connector = aiohttp.TCPConnector(limit=1, force_close=True)
+    connector = aiohttp.TCPConnector(limit=25, force_close=False)
+    timeout = aiohttp.ClientTimeout(total=TIMEOUT)#, sock_connect=20, sock_read=None)
     async with aiohttp.ClientSession(
-        connector=connector, timeout=aiohttp.ClientTimeout(total=TIMEOUT)
+        connector=connector, timeout=timeout,
     ) as session:
         urls = await fetch_download_links(session, target=target)
         return await asyncio.gather(*[place_file(session, url) for url in urls])
 
 
 async def dry_download(target=None):
-    connector = aiohttp.TCPConnector(limit=1, force_close=True)
+    connector = aiohttp.TCPConnector(limit=25, force_close=False)
+    timeout = aiohttp.ClientTimeout(total=TIMEOUT)#, sock_connect=20, sock_read=None)
     async with aiohttp.ClientSession(
-        connector=connector, timeout=aiohttp.ClientTimeout(total=TIMEOUT)
+        connector=connector, timeout=timeout,
     ) as session:
         return await fetch_download_links(session, target=target)
 
