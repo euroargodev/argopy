@@ -29,7 +29,7 @@ import contextlib
 from pathlib import Path
 import threading
 from collections import ChainMap
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from http.server import BaseHTTPRequestHandler, HTTPServer, ThreadingHTTPServer
 import pytest
 import logging
 from urllib.parse import unquote
@@ -97,6 +97,9 @@ if DB_FILE.exists():
         for pattern in PATTERNS:
             if resource["uri"].startswith(pattern):
                 MOCKED_REQUESTS[resource["uri"].replace(pattern, "")] = test_data_file
+                if 'detailled' in resource['uri']:
+                    log.info(resource["uri"].replace(pattern, ""))
+                    log.info(resource)
 
 else:
     raise RuntimeError(
@@ -186,6 +189,7 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
         # [log.debug("\t└─ '%s': %s" % (k, v) for k, v in self.headers.items())]
         # log.debug("Headers: ")
         # log.debug("\n".join([f"\t└─ '{k}': {self.headers[k]}" for k in self.headers.keys()]))
+        print("GET", self.path, self.headers.get("Range"), self.headers.get("Connection"))
 
         file_data = self.files.get(file_path)
         if "give_path" in self.headers:

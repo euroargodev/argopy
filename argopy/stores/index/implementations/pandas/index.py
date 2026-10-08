@@ -53,14 +53,26 @@ class indexstore(ArgoIndexStoreProto):
             )
             return this_table
 
-        def csv2index(obj):
+        def preprocessing(df)-> pd.DataFrame:
+            if "longitude" in self.convention_columns:
+                df["longitude_360"] = conv_lon(df["longitude"], "360")
+
+            if "Detailed Profile directory" in self.convention_title:
+                # Clean up missing values in specific columns:
+                for col in ['temp', 'psal', 'doxy']:
+                    df[f"profile_{col}_qc"] = df[f"profile_{col}_qc"].fillna("")
+                for col in ['mean', 'deviation']:
+                    df[f"ad_psal_adjustment_{col}"] = df[f"ad_psal_adjustment_{col}"].fillna("")
+
+            return df
+
+        def csv2index(obj)-> pd.DataFrame:
             index = read_csv(obj, nrows=nrows)
             check_index_cols(
                 index.columns.to_list(),
                 convention=self.convention,
             )
-            if "longitude" in self.convention_columns:
-                index["longitude_360"] = conv_lon(index["longitude"], "360")
+            index = preprocessing(index)
             return index
 
         def index2cache_path(path, nrows=None):
@@ -274,7 +286,7 @@ class indexstore(ArgoIndexStoreProto):
 
         return results
 
-    def read_params(self, index=False):
+    def read_params(self, index : bool =False):
         if "parameters" not in self.convention_columns:
             raise InvalidDatasetStructure("Cannot list parameters in this index")
         if hasattr(self, "search") and not index:
@@ -296,7 +308,7 @@ class indexstore(ArgoIndexStoreProto):
         else:
             raise DataNotFound("This index is empty")
 
-    def read_domain(self, index=False):
+    def read_domain(self, index : bool = False):
         if "longitude" not in self.convention_columns:
             raise InvalidDatasetStructure("Cannot list parameters in this index")
         tmin = lambda x: pd.to_datetime(str(int(x.min()))).to_numpy()  # noqa: E731
@@ -355,6 +367,30 @@ class indexstore(ArgoIndexStoreProto):
             return flist
         else:
             return mono2multi(flist, convention=self.convention, sep=sep)
+
+    def read_profile_qc(self, param:str, index : bool = False)->List[str]:
+        column = f"profile_{param.lower()}_qc"
+        if column not in self.convention_columns:
+            raise InvalidDatasetStructure(
+                f"Cannot list for '{param}' profile QC in this index"
+            )
+
+        if hasattr(self, "search") and not index:
+            if self.N_MATCH == 0:
+                raise DataNotFound(
+                    "No data found in the index corresponding to your search criteria."
+                    " Search definition: %s" % self.cname
+                )
+            ps = self.search[column]
+        else:
+            if not hasattr(self, "index"):
+                self.load()
+            ps = self.index[column]
+        if len(ps) > 0:
+            plist = ps.unique()
+            return sorted(list(plist))
+        else:
+            raise DataNotFound("This index is empty")
 
     def records_per_wmo_legacy(self, index=False):
         """Return the number of records per unique WMOs in search results

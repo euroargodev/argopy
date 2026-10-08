@@ -1,0 +1,44 @@
+[
+    {
+        "uri": "https://data-argo.ifremer.fr/ar_index_global_prof.txt.gz",
+        "ext": "gz",
+        "sha": "05c1dd2e89c619af221fa155a81c3cd4a262131187f8eb3a8eda266ae2706d53",
+        "type": "application/x-gzip",
+        "ts": "2026-05-19 13:14:14"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/etc/argo-index/argo_profile_detailled_index.txt",
+        "ext": "txt",
+        "sha": "d5ec94d13943fc58e5300f70e553dc28a3a5b5549f13887c8032a0d14013fd30",
+        "type": "text/plain",
+        "ts": "2026-05-19 13:14:14"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/argo_bio-profile_index.txt.gz",
+        "ext": "gz",
+        "sha": "109e79b4798289619a901d65865b957fe8064f390d06d4e7ee9eb40657bab444",
+        "type": "application/x-gzip",
+        "ts": "2026-05-19 13:14:15"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/argo_synthetic-profile_index.txt.gz",
+        "ext": "gz",
+        "sha": "608114c1d0fad1409ff406acd5fc04b86e071e5d2e76da15f55d9b0b635c86ec",
+        "type": "application/x-gzip",
+        "ts": "2026-05-19 13:14:15"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/ar_index_global_meta.txt.gz",
+        "ext": "gz",
+        "sha": "16cf055fdd8499b67ffa5717bb3e6e39b4fffc81ae173e27c50ce239918c265c",
+        "type": "application/x-gzip",
+        "ts": "2026-05-19 13:14:16"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/etc/argo-index/argo_aux-profile_index.txt",
+        "ext": "txt",
+        "sha": "254de02fb7392f248a68c0ef369b7ee10b6394eae2daedb92c7947161977aa17",
+        "type": "text/plain",
+        "ts": "2026-05-19 13:14:17"
+    }
+]
