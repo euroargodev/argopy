@@ -8,6 +8,7 @@ import pandas as pd
 import importlib
 import shutil
 import logging
+from unittest import mock
 from urllib.parse import urlparse
 
 import argopy
@@ -587,6 +588,33 @@ class IndexStore_test_proto:
 
             idx.query.box(BOX)
             self.assert_search(idx)
+
+    @pytest.mark.parametrize("deep", [True, False], ids=["deep", "shallow"])
+    def test_copy(self, deep):
+        idx = self.new_idx().load(nrows=12)
+        # A copy must not ask the server again if the index file exists:
+        with mock.patch.object(type(idx.fs["src"]), "exists") as exists:
+            idx_copy = idx.copy(deep=deep)
+        exists.assert_not_called()
+
+        assert idx_copy is not idx
+        assert idx_copy.host == idx.host
+        assert idx_copy.index_file == idx.index_file
+        assert idx_copy.convention == idx.convention
+        self.assert_index(idx_copy)
+        assert idx_copy.N_RECORDS == idx.N_RECORDS
+
+    def test_compressed_index_file(self):
+        idx = self.new_idx()
+        if not idx.index_file.endswith(".gz"):
+            pytest.skip("No compressed index file available on this host")
+
+        # We must not look for a compressed version of an already compressed index file:
+        src = type(idx.fs["src"])
+        with mock.patch.object(src, "exists", autospec=True, side_effect=src.exists) as exists:
+            idx_gz = self.new_idx(index_file=idx.index_file)
+        assert idx_gz.index_file == idx.index_file
+        assert not any([call.args[1].endswith(".gz.gz") for call in exists.call_args_list])
 
 ############################
 # TESTS FOR PANDAS BACKEND #
