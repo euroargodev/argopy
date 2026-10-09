@@ -48,16 +48,16 @@ List access points to be tested.
 For each access points, we list 1-to-2 scenario to make sure all possibilities are tested
 """
 ACCESS_POINTS = [
-    # {"float": [13857]},
-    # {"profile": [13857, 90]},
+    {"float": [13857]},
+    {"profile": [13857, 90]},
     {"region": [-20, -16.0, 0, 1, 0, 100.0]},
-    # {"region": [-20, -16.0, 0, 1, 0, 100.0, "1997-07-01", "1997-09-01"]},
+    {"region": [-20, -16.0, 0, 1, 0, 100.0, "1997-07-01", "1997-09-01"]},
 ]
-# PARALLEL_ACCESS_POINTS = [
-#     {"float": [1900468, 1900117, 1900386]},
-#     {"region": [-60, -55, 40.0, 45.0, 0.0, 20.0]},
-#     {"region": [-60, -55, 40.0, 45.0, 0.0, 20.0, "2007-08-01", "2007-09-01"]},
-# ]
+PARALLEL_ACCESS_POINTS = [
+    {"float": [1900468, 1900117, 1900386]},
+    {"region": [-60, -55, 40.0, 45.0, 0.0, 20.0]},
+    {"region": [-60, -55, 40.0, 45.0, 0.0, 20.0, "2007-08-01", "2007-09-01"]},
+]
 
 # """
 # List parallel methods to be tested.
