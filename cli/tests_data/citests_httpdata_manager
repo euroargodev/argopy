@@ -98,6 +98,7 @@ CONTENT_TYPE = {
     "turtle": "text/turtle",
     "nc": "application/x-netcdf",
     "ncHeader": "text/plain",
+    "csv": "text/csv",
     "txt": "text/plain",
     "html": "text/html",
     "png": "image/png",
@@ -124,7 +125,9 @@ DEFAULT_TARGETS = [
 ]
 
 # Http requests time out in seconds:
-TIMEOUT = 60 * 10
+TIMEOUT = 60 * 20
+MAX_CONCURRENT = 2
+MAX_RETRIES = 4
 
 
 def setup_args():
@@ -366,35 +369,6 @@ class UriRegistry(UserList):
         return self
 
 
-async def place_file(session: aiohttp.ClientSession, source: dict) -> None:
-    """Download remote file and save it locally"""
-    test_data_file = os.path.join(DATA_FOLDER, "%s.%s" % (source["sha"], source["ext"]))
-    if OVERWRITE or not os.path.exists(test_data_file):
-        async with session.get(source["uri"], ssl=False) as r:
-            if r.content_type not in CONTENT_TYPE.values():
-                print(
-                    "Unexpected content type (%s) with this GET request: %s (%s extension)"
-                    % (
-                        r.content_type,
-                        source["uri"],
-                        os.path.splitext(urlparse(source["uri"]).path)[1],
-                    )
-                )
-
-            async with aiofiles.open(test_data_file, "wb") as f:
-                data = await r.content.read(n=-1)  # load all read bytes !
-                # if data[0:3] in [b'Err', b'<!D']:
-                #     raise ValueError(source)
-                await f.write(data)
-                msg = log_file_desc(f.name, data, source)
-                print(msg)
-                log.info(source)
-                return can_xr_be_opened(source, test_data_file)
-    else:
-        # print("%s already exists !" % test_data_file)
-        return can_xr_be_opened(source, test_data_file)
-
-
 class Lister:
     def __init__(self, session: aiohttp.ClientSession = None):
         self.session = session
@@ -467,12 +441,10 @@ class Lister:
             uri = facade.uri
             for ii, url in enumerate(uri):
                 this_URI.commit(self.dfile(url, "nc"))
-                this_URI.commit(
-                    self.dfile(
-                        url.replace("." + facade.fetcher.erddap.response, ".ncHeader"),
-                        "ncHeader",
-                    )
-                )
+
+            uri = facade.fetcher._N_POINTS_uri
+            for ii, url in enumerate(uri):
+                this_URI.commit(self.dfile(url, "csv"))
 
         for ds in requests_seq:
             for mode in ["expert", "standard", "research"]:
@@ -568,12 +540,10 @@ class Lister:
             uri = facade.uri
             for ii, url in enumerate(uri):
                 this_URI.commit(self.dfile(url, "nc"))
-                this_URI.commit(
-                    self.dfile(
-                        url.replace("." + facade.fetcher.erddap.response, ".ncHeader"),
-                        "ncHeader",
-                    )
-                )
+
+            uri = facade.fetcher._N_POINTS_uri
+            for ii, url in enumerate(uri):
+                this_URI.commit(self.dfile(url, "csv"))
 
             uri = facade.fetcher.fs.urls_registry
             for ii, url in enumerate(uri):
@@ -1068,21 +1038,101 @@ async def fetch_download_links(session: aiohttp.ClientSession, target=None):
     return URI
 
 
+async def place_file(session: aiohttp.ClientSession, source: dict) -> None:
+    """Download remote file and save it locally"""
+    test_data_file = os.path.join(DATA_FOLDER, "%s.%s" % (source["sha"], source["ext"]))
+    if OVERWRITE or not os.path.exists(test_data_file):
+        async with session.get(source["uri"], ssl=False) as r:
+            if r.content_type not in CONTENT_TYPE.values():
+                print(
+                    "Unexpected content type (%s) with this GET request: %s (%s extension)"
+                    % (
+                        r.content_type,
+                        source["uri"],
+                        os.path.splitext(urlparse(source["uri"]).path)[1],
+                    )
+                )
+
+            async with aiofiles.open(test_data_file, "wb") as f:
+                data = await r.content.read(n=-1)  # load all read bytes !
+                # if data[0:3] in [b'Err', b'<!D']:
+                #     raise ValueError(source)
+                await f.write(data)
+                msg = log_file_desc(f.name, data, source)
+                print(msg)
+                log.info(source)
+                return can_xr_be_opened(source, test_data_file)
+    else:
+        # print("%s already exists !" % test_data_file)
+        return can_xr_be_opened(source, test_data_file)
+
+
+async def place_file_safe(session, url, sem):
+    """place_file with a semaphore"""
+    async with sem:  # limits how many run at once
+        for attempt in range(1, MAX_RETRIES + 1):
+            try:
+                return await place_file(session, url)
+            except (
+                aiohttp.ClientConnectorError,
+                aiohttp.ServerDisconnectedError,
+                asyncio.TimeoutError,
+            ) as e:
+                if attempt == MAX_RETRIES:
+                    raise
+
+                # wait = 2**attempt  # 2, 4, 8 seconds
+                retry_after = e.headers.get("Retry-After") if e.headers else None
+                wait = (
+                    int(retry_after)
+                    if retry_after and retry_after.isdigit()
+                    else 30 * 2 ** (attempt - 1)
+                )
+                print(
+                    f"[retry {attempt}/{MAX_RETRIES}] {url} -> {type(e).__name__}, waiting {wait}s"
+                )
+                await asyncio.sleep(wait)
+
+
 async def download(target=None):
-    connector = aiohttp.TCPConnector(limit=25, force_close=False)
-    timeout = aiohttp.ClientTimeout(total=TIMEOUT)#, sock_connect=20, sock_read=None)
+    connector = aiohttp.TCPConnector(limit=MAX_CONCURRENT, force_close=False)
+    timeout = aiohttp.ClientTimeout(
+        total=TIMEOUT,
+        sock_connect=30,  # keep short: connecting should be fast
+        sock_read=60 * 10,  # max silence while waiting for the server's answer
+    )
+    sem = asyncio.Semaphore(MAX_CONCURRENT)
+
     async with aiohttp.ClientSession(
-        connector=connector, timeout=timeout,
+        connector=connector,
+        timeout=timeout,
     ) as session:
         urls = await fetch_download_links(session, target=target)
-        return await asyncio.gather(*[place_file(session, url) for url in urls])
+        results = await asyncio.gather(
+            *[place_file_safe(session, url, sem) for url in urls],
+            return_exceptions=True,
+        )
+
+    failed = [(u, r) for u, r in zip(urls, results) if isinstance(r, Exception)]
+    if failed:
+        print(f"{len(failed)}/{len(urls)} downloads failed:")
+        for u, r in failed:
+            print(f"  {u}: {type(r).__name__}: {r}")
+
+    return results
 
 
 async def dry_download(target=None):
-    connector = aiohttp.TCPConnector(limit=25, force_close=False)
-    timeout = aiohttp.ClientTimeout(total=TIMEOUT)#, sock_connect=20, sock_read=None)
+    connector = aiohttp.TCPConnector(limit=MAX_CONCURRENT, force_close=False)
+    timeout = aiohttp.ClientTimeout(
+        total=TIMEOUT,
+        sock_connect=30,  # keep short: connecting should be fast
+        sock_read=60 * 10,  # max silence while waiting for the server's answer
+    )
+
     async with aiohttp.ClientSession(
-        connector=connector, timeout=timeout,
+        connector=connector,
+        timeout=timeout,
     ) as session:
         return await fetch_download_links(session, target=target)
 

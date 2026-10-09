@@ -1,4 +1,0 @@
-Error {
-    code=500;
-    message="Internal Server Error: IllegalArgumentException: unknown DataType == uint";
-}

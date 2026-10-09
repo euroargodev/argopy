@@ -1,0 +1,5 @@
+config_mission_number,cycle_number,direction,doxy_adjusted,doxy_adjusted_error,doxy_adjusted_qc,latitude,longitude,platform_number,position_qc,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,time,time_qc
+count,count,count,count,count,count,count,count,,count,count,count,count,count,count,count,count,count,count,count,count
+208,208,208,39,39,39,208,208,4903634,208,208,208,208,208,208,208,208,208,208,208,208
+117,117,117,57,57,57,117,117,6902976,117,117,117,117,117,117,117,117,117,117,117,117
+64,64,64,0,0,0,64,64,6904231,64,64,64,64,64,64,64,64,64,64,64,64

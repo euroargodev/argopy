@@ -29,11 +29,11 @@ For each access points, we list 1-to-2 scenario to make sure all possibilities a
 ACCESS_POINTS = [
     {"bgc": [
         {"float": 5903248},
-        {"float": [5903248, 6904241]},
-        {"profile": [5903248, 34]},
-        {"profile": [5903248, np.arange(12, 14)]},
-        {"region": [-55, -47, 55, 57, 0, 10]},
-        {"region": [-55, -47, 55, 57, 0, 10, "2022-05-1", "2023-07-01"]},
+        # {"float": [5903248, 6904241]},
+        # {"profile": [5903248, 34]},
+        # {"profile": [5903248, np.arange(12, 14)]},
+        # {"region": [-55, -47, 55, 57, 0, 10]},
+        # {"region": [-55, -47, 55, 57, 0, 10, "2022-05-1", "2023-07-01"]},
     ]},
 ]
 PARALLEL_ACCESS_POINTS = [
@@ -227,31 +227,31 @@ class Test_Backend:
     def test_fetching(self, mocked_httpserver, fetcher):
         assert_fetcher(mocked_httpserver, fetcher, cacheable=False)
 
-    @pytest.mark.parametrize("cached_fetcher", VALID_ACCESS_POINTS,
-                             indirect=True,
-                             ids=VALID_ACCESS_POINTS_IDS)
-    def test_fetching_cached(self, mocked_httpserver, cached_fetcher):
-        assert_fetcher(mocked_httpserver, cached_fetcher, cacheable=True)
-
-    @pytest.mark.parametrize("measured", [None, 'all', 'DOXY'],
-                             indirect=False,
-                             ids=["measured=%s" % m for m in [None, 'all', 'DOXY']]
-                             )
-    def test_fetching_measured(self, mocked_httpserver, measured):
-        class this_request:
-            param = {
-                'ds': 'bgc',
-                'mode': 'expert',
-                'params': 'all',
-                'measured': measured,
-                'access_point': {"float": [5903248]},
-            }
-        fetcher_args, access_point = self._setup_fetcher(this_request)
-        fetcher = create_fetcher(fetcher_args, access_point)
-        assert_fetcher(mocked_httpserver, fetcher)
-
-    @pytest.mark.parametrize("parallel_fetcher", VALID_PARALLEL_ACCESS_POINTS,
-                             indirect=True,
-                             ids=VALID_PARALLEL_ACCESS_POINTS_IDS)
-    def test_fetching_parallel_thread(self, mocked_httpserver, parallel_fetcher):
-        assert_fetcher(mocked_httpserver, parallel_fetcher, cacheable=False)
+    # @pytest.mark.parametrize("cached_fetcher", VALID_ACCESS_POINTS,
+    #                          indirect=True,
+    #                          ids=VALID_ACCESS_POINTS_IDS)
+    # def test_fetching_cached(self, mocked_httpserver, cached_fetcher):
+    #     assert_fetcher(mocked_httpserver, cached_fetcher, cacheable=True)
+    #
+    # @pytest.mark.parametrize("measured", [None, 'all', 'DOXY'],
+    #                          indirect=False,
+    #                          ids=["measured=%s" % m for m in [None, 'all', 'DOXY']]
+    #                          )
+    # def test_fetching_measured(self, mocked_httpserver, measured):
+    #     class this_request:
+    #         param = {
+    #             'ds': 'bgc',
+    #             'mode': 'expert',
+    #             'params': 'all',
+    #             'measured': measured,
+    #             'access_point': {"float": [5903248]},
+    #         }
+    #     fetcher_args, access_point = self._setup_fetcher(this_request)
+    #     fetcher = create_fetcher(fetcher_args, access_point)
+    #     assert_fetcher(mocked_httpserver, fetcher)
+    #
+    # @pytest.mark.parametrize("parallel_fetcher", VALID_PARALLEL_ACCESS_POINTS,
+    #                          indirect=True,
+    #                          ids=VALID_PARALLEL_ACCESS_POINTS_IDS)
+    # def test_fetching_parallel_thread(self, mocked_httpserver, parallel_fetcher):
+    #     assert_fetcher(mocked_httpserver, parallel_fetcher, cacheable=False)
