@@ -606,7 +606,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
             else:
                 try:
-                    results = self.fs.open_mfdataset(
+                    results, failed, _ = self.fs.open_mfdataset(
                         URI,
                         method="erddap",
                         max_workers=1,
@@ -617,7 +617,15 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                         preprocess=pre_process,
                         preprocess_opts=preprocess_opts,
                         final_opts={"data_vars": "all"},
+                        compute_details=True,
                     )
+                    if len(failed) > 0:
+                        # Without the 'parallel' option, a request must not return a part of the data only
+                        raise ErddapServerError(
+                            "Data incomplete: %i of the %i requests needed to load this box failed. "
+                            "You can retry the request, or check the log file. "
+                            "Failed requests: %s" % (len(failed), len(URI), failed)
+                        )
                     if results is not None:
                         if self.progress:
                             print("Final post-processing of the merged dataset () ...")

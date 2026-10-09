@@ -5,13 +5,15 @@ Argo data are stored with longitudes in [-180, 180]. With the '360' longitude co
 going through the date line, e.g. [175, 185]: data fetchers must then select data from 175 to 180 and from -180 to -175.
 
 These tests don't need any server:
-- for the erddap fetcher, we check the longitude ranges written in the request URLs,
+- for the erddap fetcher, we check the longitude ranges written in the request URLs, and we check what is returned
+  when the two requests of a box going through the date line give data, no data or a server error,
 - for the gdac fetcher, we check the filter applied on downloaded points, with a few sample floats.
 
 The argovis fetcher is not tested here, because the Argovis API handles longitudes larger than 180 itself.
 """
 
 import re
+from types import SimpleNamespace
 from urllib.parse import unquote
 
 import numpy as np
@@ -19,7 +21,10 @@ import pandas as pd
 import pytest
 import xarray as xr
 
+from aiohttp import ClientResponseError
+
 import argopy
+from argopy.errors import ErddapServerError
 from argopy.data_fetchers.erddap_data import Fetch_box as Erddap_Fetch_box
 from argopy.data_fetchers.gdac_data_processors import filter_points
 
@@ -122,6 +127,8 @@ class Test_Erddap_DatelineBox:
         with argopy.set_options(longitude_convention="360"):
             fetcher = Erddap_Fetch_box(box=box["lon_360"] + LAT_PRES_TIM, ds="phy", server=self.server)
             self.assert_requests(box, fetcher.uri)
+            # Without the parallel option, we know exactly which requests to expect:
+            assert self.requested_lon_ranges(fetcher.uri) == box["expected"]
 
     @pytest.mark.parametrize("box", BOXES, indirect=False, ids=BOXES_IDS)
     def test_request_parallel(self, box):
@@ -134,6 +141,71 @@ class Test_Erddap_DatelineBox:
                 chunks_maxsize={"lon": 2.5, "lat": 5, "dpt": 100},  # Make sure the box is split in several requests
             )
             self.assert_requests(box, fetcher.uri)
+
+
+class Test_Erddap_DatelineBox_Loading:
+    """Does the erddap fetcher return all the data of a box going through the date line ?
+
+    Such a box is loaded with two requests, one on each side of the date line. The server is never reached: we
+    replace the answer to each request with sample floats, with no data or with a server error.
+    """
+
+    server = "http://127.0.0.1:1/erddap"
+    box = [175, 185] + LAT_PRES_TIM
+    west = [175.5, 179.9]  # Sample floats returned by the 175 to 180 request
+    east = [-179.9, -175.5]  # Sample floats returned by the -180 to -175 request
+
+    @staticmethod
+    def sample_floats_at(longitudes):
+        return xr.Dataset(
+            {"LONGITUDE": ("N_POINTS", np.array(longitudes))},
+            coords={"N_POINTS": np.arange(len(longitudes))},
+        )
+
+    def load(self, monkeypatch, west, east):
+        """Load the box, with ``west`` and ``east`` the answers to the two requests
+
+        An answer is a list of sample floats longitudes, or an error to raise.
+        """
+
+        def open_dataset(url, *args, **kwargs):
+            answer = east if "longitude>=-180" in unquote(url) else west
+            if isinstance(answer, type) and issubclass(answer, FileNotFoundError):
+                raise FileNotFoundError(url)  # This is how the http store reports a request with no data
+            elif isinstance(answer, str):
+                raise ClientResponseError(SimpleNamespace(real_url=url), (), status=502, message=answer)
+            return self.sample_floats_at(answer)
+
+        # Sample floats don't have the variables of an erddap answer, so we skip their pre-processing:
+        monkeypatch.setattr("argopy.data_fetchers.erddap_data.pre_process", lambda ds, **kwargs: ds)
+
+        with argopy.set_options(longitude_convention="360"):
+            fetcher = Erddap_Fetch_box(box=self.box, ds="phy", server=self.server)
+            monkeypatch.setattr(fetcher.fs, "open_dataset", open_dataset)
+            return fetcher.to_xarray()
+
+    def test_both_sides(self, monkeypatch):
+        ds = self.load(monkeypatch, west=self.west, east=self.east)
+        assert sorted(ds["LONGITUDE"].values) == sorted(self.west + self.east)
+        assert list(ds["N_POINTS"].values) == [0, 1, 2, 3]
+
+    @pytest.mark.parametrize("side", ["west", "east"])
+    def test_no_data_on_one_side(self, monkeypatch, side):
+        """A side of the date line with no data is not an error: we get data from the other side"""
+        answers = {"west": self.west, "east": self.east}
+        answers[side] = FileNotFoundError
+        expected = self.east if side == "west" else self.west
+        ds = self.load(monkeypatch, **answers)
+        assert sorted(ds["LONGITUDE"].values) == sorted(expected)
+
+    @pytest.mark.parametrize("side", ["west", "east"])
+    @pytest.mark.parametrize("error", ["Proxy Error", "Payload Too Large", "Internal Server Error"])
+    def test_server_error_on_one_side(self, monkeypatch, side, error):
+        """A server error on one side must raise: data from the other side only would be half of the box"""
+        answers = {"west": self.west, "east": self.east}
+        answers[side] = error
+        with pytest.raises(ErddapServerError):
+            self.load(monkeypatch, **answers)
 
 
 class Test_Gdac_DatelineBox:
