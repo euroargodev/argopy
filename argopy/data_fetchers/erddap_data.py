@@ -524,13 +524,13 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         def getN(url):
             try:
                 csv = self.fs.download_url(url).decode('utf-8').split("\n")
-                if "Your query produced no matching results. (nRows = 0)" in csv:
-                    return 0
-                else:
-                    return int(csv[2].split(',')[csv[0].split(',').index('pres')])
+                for line in csv:
+                    if "Your query produced no matching results. (nRows = 0)" in line:
+                        return 0
+                return int(csv[2].split(',')[csv[0].split(',').index('pres')])
             except Exception:
                 raise ErddapServerError(
-                    "Erddap server can't return csv for url: %s " % url
+                    "Erddap server can't return csv for url: %s (%s)" % (url, csv)
                 )
 
         N = 0
