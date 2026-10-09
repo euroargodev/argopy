@@ -684,10 +684,6 @@ class ArgoIndexStoreProto(ABC):
         -------
         :class:`pandas.DataFrame`
         """
-        log.warning(
-            "Note that the long name for institution is now in 'institution_name' while the 'institution' column will hold the institution code -- Deprecated since version 1.4"
-        )
-
         def get_filename(s, index):
             if hasattr(self, "search") and not index:
                 fname = s.search_path
