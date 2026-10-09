@@ -236,26 +236,33 @@ class ArgoIndexStoreProto(ABC):
                 convention = "ar_index_global_meta"
         self._convention = convention
 
-        # Check if the index file exists
-        # Allow for up to 10 try to account for some slow servers
-        i_try, max_try, index_found = 0, 1 if "invalid" in self.host else 10, False
-        while i_try < max_try:
-            if not self.fs["src"].exists(self.index_path) and not self.fs["src"].exists(
-                self.index_path + ".gz"
-            ):
-                time.sleep(1)
-                i_try += 1
-            else:
-                index_found = True
-                break
-        if not index_found:
-            raise GdacPathError("Index file does not exist: %s" % self.index_path)
-        else:
-            # Will init search with full index by default:
+        if kwargs.get("_already_trusted", False):
+            # Copy of an instance that already passed the check below: no server request
             self._nrows_index = None
-            # Work with the compressed index if available:
-            if self.fs["src"].exists(self.index_path + ".gz"):
-                self.index_file += ".gz"
+        else:
+            # Check if the index file exists
+            # Allow for up to 10 try to account for some slow servers
+            i_try, max_try, index_found = 0, 1 if "invalid" in self.host else 10, False
+            while i_try < max_try:
+                if not self.fs["src"].exists(self.index_path) and not self.fs[
+                    "src"
+                ].exists(self.index_path + ".gz"):
+                    time.sleep(1)
+                    i_try += 1
+                else:
+                    index_found = True
+                    break
+            if not index_found:
+                raise GdacPathError("Index file does not exist: %s" % self.index_path)
+            else:
+                # Will init search with full index by default:
+                self._nrows_index = None
+                # Work with the compressed index if available:
+                # (no need to ask the server if we already work with the compressed index)
+                if not self.index_file.endswith(".gz") and self.fs["src"].exists(
+                    self.index_path + ".gz"
+                ):
+                    self.index_file += ".gz"
 
         if isinstance(self.fs["src"], s3store):
             # If the index host is on a S3 store, we add another file system that will be called to
@@ -1054,6 +1061,7 @@ file,profiler_type,institution,date_update
                 timeout=copy.deepcopy(self.timeout),
                 cache=copy.deepcopy(self.cache),
                 cachedir=copy.deepcopy(self.cachedir),
+                _already_trusted=True,
             )
             if hasattr(self, "index"):
                 obj._nrows_index = copy.deepcopy(self._nrows_index)
@@ -1069,6 +1077,7 @@ file,profiler_type,institution,date_update
                 timeout=copy.copy(self.timeout),
                 cache=copy.copy(self.cache),
                 cachedir=copy.copy(self.cachedir),
+                _already_trusted=True,
             )
             if hasattr(self, "index"):
                 obj._nrows_index = copy.copy(self._nrows_index)
