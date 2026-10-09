@@ -4,525 +4,525 @@
         "ext": "nc",
         "sha": "9b628fdfa706e7fefd0751123ff0608e5c20a57e62fdec8107d46b0ed6835566",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"1901393\"&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "5d557e2bf1e9b85b60e15ed1516e8099406e432895506aef31376e64c907b9c9",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"1901393|6902746\"&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
         "ext": "nc",
         "sha": "9dda67ac1e3fca6a147791645bda5c5cbf0b4db4767be683ef94830cecedac68",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"1901393|6902746\"&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "9010a8a0a13eb6051670bb3cebdbef7c1466db4de1a5b009a58ef8d29deeb6bd",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"6902746\"&cycle_number=~\"34\"&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
         "ext": "nc",
         "sha": "a01ebcc88c67402bbed8ca2ca2a00984bf22eae43e284c46323b1784109b10a5",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"6902746\"&cycle_number=~\"34\"&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "e387a1685f508f2a5e7534422dd956b7f88acf200eb86a030eaa61b3776c9d9e",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"6902746\"&cycle_number=~\"1|12\"&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
         "ext": "nc",
         "sha": "6918ebb21678ed4afaea25795956bcff02c9b8eb4680c21320e42a033eb449d8",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"6902746\"&cycle_number=~\"1|12\"&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "36aa21b82890519d9591fd933ef58467f4fa0ff4740357d066d28e26cfa5b535",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-20&longitude<=-16.0&latitude>=0&latitude<=1&pres>=0&pres<=100.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
         "ext": "nc",
         "sha": "7c3a19176d6b988bb1eaf062c057a5610b4263732b6cd2c3638f1d2bf847f510",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-20&longitude<=-16.0&latitude>=0&latitude<=1&pres>=0&pres<=100.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "1d9b27f80fdf13bb89b324af38984cc0973ea5a9bc4fa70c4f101a6eadae55f5",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-20&longitude<=-16.0&latitude>=0&latitude<=1&pres>=0&pres<=100.0&time>=1072915200.0&time<=1075507200.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
         "ext": "nc",
         "sha": "6659da36f0ec790950cc035377a6aba8e90ed1db2c770b582bfbc95bee830bff",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-20&longitude<=-16.0&latitude>=0&latitude<=1&pres>=0&pres<=100.0&time>=1072915200.0&time<=1075507200.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "870265327fd1d4d2505354b8a0bef0022e35d4240f3a8ec6084019cd890477be",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"1901393\"&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")",
         "ext": "nc",
         "sha": "32512780d58ca0df4b7a77302bee300c6538b4d5edf2523e6541c028782a46e4",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"1901393\"&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "4c5486510e153f54a95a929f7aba1e4ac71013423cb4635d5e6adacd1d644ba6",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"1901393|6902746\"&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")",
         "ext": "nc",
         "sha": "1bdabcd873e5df4cc55467bcb9eda0323f3b1181d20a75281cb08118ec4a698d",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"1901393|6902746\"&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "158f3389161646f59a9b12694dea9a86e5bb2c79d07ca4e738860849672391db",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"6902746\"&cycle_number=~\"34\"&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")",
         "ext": "nc",
         "sha": "3a6da1b027346db6f51ff448646b5f723fbc03385de68fdd4365909c12171fe1",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"6902746\"&cycle_number=~\"34\"&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "a408b7ae6eb628176c490a257c1510dd93c16f67749ff0822b327b1c8a1cf539",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"6902746\"&cycle_number=~\"1|12\"&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")",
         "ext": "nc",
         "sha": "f48857083d3f8a30db7b7c35b541db5c39035280646eb47af8ba65dbb587e78a",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"6902746\"&cycle_number=~\"1|12\"&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "c6b5d7f9d1a34b6783aecbfd3bc27f71bbfed351d35036af559ddf1ccf7b79bd",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-20&longitude<=-16.0&latitude>=0&latitude<=1&pres_adjusted>=0&pres_adjusted<=100.0&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")",
         "ext": "nc",
         "sha": "9220cb543038c779fc346c06f2868449ce3d201be3b7c24e0d4aa4c01273a9a4",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-20&longitude<=-16.0&latitude>=0&latitude<=1&pres_adjusted>=0&pres_adjusted<=100.0&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "4fc9d033ef95cb09ffb0f3ce1411a98f51006286a802820b129d839d89352cd4",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-20&longitude<=-16.0&latitude>=0&latitude<=1&pres_adjusted>=0&pres_adjusted<=100.0&time>=1072915200.0&time<=1075507200.0&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")",
         "ext": "nc",
         "sha": "f3bc9c5a878b1e190a86e4326855f6e0e6cb44fe3d46836c31eb2ac9812a7668",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-20&longitude<=-16.0&latitude>=0&latitude<=1&pres_adjusted>=0&pres_adjusted<=100.0&time>=1072915200.0&time<=1075507200.0&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "6d7eba2c5cecea2089ca560a9954a9803646cfe650ea4cb96d6f4335a95efdf3",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-reference.nc?cycle_number,latitude,longitude,platform_number,pres,psal,ptmp,temp,time&longitude>=-25&longitude<=-10&latitude>=36&latitude<=40&pres>=0&pres<=10.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
         "ext": "nc",
         "sha": "0f97280439abec15c50d6e73f8b18cc52ce57a833f0091ee02cf30830423a8f0",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-reference.csv?cycle_number,latitude,longitude,platform_number,pres,psal,ptmp,temp,time&longitude>=-25&longitude<=-10&latitude>=36&latitude<=40&pres>=0&pres<=10.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "55222cccb894370fb0558f8b2aceee3b10030e95a536d8a1a24bbd465ab2810a",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-reference.nc?cycle_number,latitude,longitude,platform_number,pres,psal,ptmp,temp,time&longitude>=-25&longitude<=-10&latitude>=36&latitude<=40&pres>=0&pres<=10.0&time>=1514764800.0&time<=1546300800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
         "ext": "nc",
         "sha": "3b78450daf9c2a79c7da5a4ebcbf98025f7851c3eca1c4cf4e633d8a92df44e5",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-reference.csv?cycle_number,latitude,longitude,platform_number,pres,psal,ptmp,temp,time&longitude>=-25&longitude<=-10&latitude>=36&latitude<=40&pres>=0&pres<=10.0&time>=1514764800.0&time<=1546300800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "864eba38ba92c5fecc4f6cca924f5e972dbceab3c8a9bf75fe7a177ce8456169",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"1900468\"&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
         "ext": "nc",
         "sha": "e10c98822ed9f75265b768b8e1601349bdc634ac99aef55bef3b34b3940a28f4",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"1900117\"&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
         "ext": "nc",
         "sha": "96a501c879887800a1b3f9c6f115ed0e11c8fe2d2598b78b4b1062f5f6af655c",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"1900386\"&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
         "ext": "nc",
         "sha": "3dc53aa9d79d89e021005f048b1bdd1cf552d1f250eb4fb2e9705cb3c3fd3393",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"1900468\"&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "b5943a7fdb7dbfeaf26fbb594c343afdfedddb493851b04f870e2d2a24239ee6",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"1900117\"&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "c972fae11f3845ba189bb790e620829bdc4a2e70056376731ae5dd5a7044c6ef",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"1900386\"&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "0e7aedec451319ceb8c4686cad29143598fec148e3f55dcb8b3fdc0bf7d02a4b",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-60.0&longitude<=-57.5&latitude>=40.0&latitude<=42.5&pres>=0.0&pres<=20.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
         "ext": "nc",
         "sha": "13081d60524682f9d961e9897db9a937b7e4d2c22f8027a307385d740978eb10",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-60.0&longitude<=-57.5&latitude>=42.5&latitude<=45.0&pres>=0.0&pres<=20.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
         "ext": "nc",
         "sha": "b6c336c2bc59c39262189481fd11edaaa33d1753da5d1d8951ac6417ea289b54",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-57.5&longitude<=-55.0&latitude>=40.0&latitude<=42.5&pres>=0.0&pres<=20.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
         "ext": "nc",
         "sha": "1889195e68f88bd79aea332cf7d19d2c35ec57fb28cfef9289dcd42bf0de04d3",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-57.5&longitude<=-55.0&latitude>=42.5&latitude<=45.0&pres>=0.0&pres<=20.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
         "ext": "nc",
         "sha": "57030019f17279c0eb94d0a7fd1667e13aaf32133a7280cee7b002e88373e030",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-60.0&longitude<=-57.5&latitude>=40.0&latitude<=42.5&pres>=0.0&pres<=20.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "affcf9caa6e8205f8c384dccd809e628d8e42057ae4253c4f6ae6cf7356db3a5",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-60.0&longitude<=-57.5&latitude>=42.5&latitude<=45.0&pres>=0.0&pres<=20.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "053567a8892133e6b45bcccee5a268ffc1c54de7ca540aaccc55d5f7f1c5adcb",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-57.5&longitude<=-55.0&latitude>=40.0&latitude<=42.5&pres>=0.0&pres<=20.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "3daf372a0b0ef954599708b0c67513702671e09345f64bd683d69beed8b69e71",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-57.5&longitude<=-55.0&latitude>=42.5&latitude<=45.0&pres>=0.0&pres<=20.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "f6af2b6c63b168ff06daae11c845060264f12350bd4cac6c2ebfb4ef1c33d1ac",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-60.0&longitude<=-57.5&latitude>=40.0&latitude<=42.5&pres>=0.0&pres<=20.0&time>=1185926400.0&time<=1188604800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
         "ext": "nc",
         "sha": "f4f6759fba4a93dce6a7634ae5c68f1a1049af8dd34e4536c81fc807ce07b66a",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-60.0&longitude<=-57.5&latitude>=42.5&latitude<=45.0&pres>=0.0&pres<=20.0&time>=1185926400.0&time<=1188604800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
         "ext": "nc",
         "sha": "ab4d680a8446f372a05c773c7c37e7ab5d0e99fba2aa58b23769a4e532454240",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-57.5&longitude<=-55.0&latitude>=40.0&latitude<=42.5&pres>=0.0&pres<=20.0&time>=1185926400.0&time<=1188604800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
         "ext": "nc",
         "sha": "b8c8a3bcf739bfc0dbee436e58be41b3a4ececc3fdc1744a61c350e74f80f5d7",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-57.5&longitude<=-55.0&latitude>=42.5&latitude<=45.0&pres>=0.0&pres<=20.0&time>=1185926400.0&time<=1188604800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
         "ext": "nc",
         "sha": "dd1725515b06a4531ad0ede96118e5a3a54e46285cfe897afbc195be562ca7d7",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-60.0&longitude<=-57.5&latitude>=40.0&latitude<=42.5&pres>=0.0&pres<=20.0&time>=1185926400.0&time<=1188604800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "25251e2d659f9a50531c8b8b87251134f06bbf22ae484fdb5fa54c5ed0233d15",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-60.0&longitude<=-57.5&latitude>=42.5&latitude<=45.0&pres>=0.0&pres<=20.0&time>=1185926400.0&time<=1188604800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "52c60e380ee2bca52ee433fe9a4544628adb13e0afbd80543664a41b9c3a58fe",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-57.5&longitude<=-55.0&latitude>=40.0&latitude<=42.5&pres>=0.0&pres<=20.0&time>=1185926400.0&time<=1188604800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "bb65edaa22c088377bb2cae4ffc1436933cdfaeb6ac9a27431b14a35cd7cd6ae",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-57.5&longitude<=-55.0&latitude>=42.5&latitude<=45.0&pres>=0.0&pres<=20.0&time>=1185926400.0&time<=1188604800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "fbae310a0d093641903b414eabc0e01fc97495796f849dc8b80e05ceeb63d388",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"1900468\"&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")",
         "ext": "nc",
         "sha": "e35600a5844e61ffd065872964ab0a959cc7006f2bd7d7096c7f6bbb0c248262",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"1900117\"&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")",
         "ext": "nc",
         "sha": "11954c0e695c2c32e5945567645475efe0568e15714b7b65e70af11a0a4ca369",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"1900386\"&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")",
         "ext": "nc",
         "sha": "14d54da780fdc3c22d6f110e0e3e1c95f63d9e0f4d6be11e4a849601f4f1a302",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"1900468\"&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "3f380ddd5acc2e87813e22d708d3d53b5984d2c99072ba81673c34a4a3bb7679",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"1900117\"&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "7eef5d6aaeda5ee8b77cccdef9f3bee0d60bc0362c94dc22186d6cb7ae8f7d13",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"1900386\"&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "43ff233bab8c0c41c81f8751b6e162a4435a7299af0d5c3b038fce6ee01048a7",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-60.0&longitude<=-57.5&latitude>=40.0&latitude<=42.5&pres_adjusted>=0.0&pres_adjusted<=20.0&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")",
         "ext": "nc",
         "sha": "63b64353606b346344b22182436b9334867d58ae21a584dbe8529d4570b5dcb9",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-60.0&longitude<=-57.5&latitude>=42.5&latitude<=45.0&pres_adjusted>=0.0&pres_adjusted<=20.0&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")",
         "ext": "nc",
         "sha": "eaf644cc25173f53de61b5e609424421fcf98b6aaa2ee513483c38644e603c89",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-57.5&longitude<=-55.0&latitude>=40.0&latitude<=42.5&pres_adjusted>=0.0&pres_adjusted<=20.0&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")",
         "ext": "nc",
         "sha": "2a555e59d2e21ef6f4ffbd9c5a4479cf12ee17172db5daa7d66e668ebc3eb1c9",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-57.5&longitude<=-55.0&latitude>=42.5&latitude<=45.0&pres_adjusted>=0.0&pres_adjusted<=20.0&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")",
         "ext": "nc",
         "sha": "a5a1d5e92133a2c65ef34df51a1638ae93316c6a2ce9cd2309aaa3c53f954d0e",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-60.0&longitude<=-57.5&latitude>=40.0&latitude<=42.5&pres_adjusted>=0.0&pres_adjusted<=20.0&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "5712ef2d26462a0c73913108dfde7033dfba12673c084c22078621bad69f2711",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-60.0&longitude<=-57.5&latitude>=42.5&latitude<=45.0&pres_adjusted>=0.0&pres_adjusted<=20.0&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "01b4e9435d305ce6698bb0efba0f94f65931aef746380fe39100419b8d811660",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-57.5&longitude<=-55.0&latitude>=40.0&latitude<=42.5&pres_adjusted>=0.0&pres_adjusted<=20.0&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "4ae102662c46a90cfbf8f7554e985e25907db386a8993ee1f8d4d24cdd3e8faa",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-57.5&longitude<=-55.0&latitude>=42.5&latitude<=45.0&pres_adjusted>=0.0&pres_adjusted<=20.0&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "2c3e1306ffaaef8dd8e5cced166c3bcbbe7f27819fe7ffc92422ff93b5d20226",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-60.0&longitude<=-57.5&latitude>=40.0&latitude<=42.5&pres_adjusted>=0.0&pres_adjusted<=20.0&time>=1185926400.0&time<=1188604800.0&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")",
         "ext": "nc",
         "sha": "8fdc88c71d071fbd09b6690fe2ac0705d0cd065c330b9282fdd06b50ae04299b",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-60.0&longitude<=-57.5&latitude>=42.5&latitude<=45.0&pres_adjusted>=0.0&pres_adjusted<=20.0&time>=1185926400.0&time<=1188604800.0&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")",
         "ext": "nc",
         "sha": "ef91055449ec002905cf4f8f61ccfa763bd15c5ec3909a7399c0f95cd99e787b",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-57.5&longitude<=-55.0&latitude>=40.0&latitude<=42.5&pres_adjusted>=0.0&pres_adjusted<=20.0&time>=1185926400.0&time<=1188604800.0&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")",
         "ext": "nc",
         "sha": "43dc6a8aade0b2e3268c9e32abc0c1fa48d7eb49cd4d4a74f3e56e1684ef551c",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-57.5&longitude<=-55.0&latitude>=42.5&latitude<=45.0&pres_adjusted>=0.0&pres_adjusted<=20.0&time>=1185926400.0&time<=1188604800.0&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")",
         "ext": "nc",
         "sha": "ea783da1b955f2d04000b385975934062e2606b83815c63f3ad3a75362b1fcd4",
         "type": "application/x-netcdf",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-60.0&longitude<=-57.5&latitude>=40.0&latitude<=42.5&pres_adjusted>=0.0&pres_adjusted<=20.0&time>=1185926400.0&time<=1188604800.0&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "895c9edc5422b3f339e83b9f1d425710de561c76b5b6bc0c51d8c6a747a1b145",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-60.0&longitude<=-57.5&latitude>=42.5&latitude<=45.0&pres_adjusted>=0.0&pres_adjusted<=20.0&time>=1185926400.0&time<=1188604800.0&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "db176713153b2f03a6666d27b41436606f33e67792bb1d9c2c9e26763190d40e",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-57.5&longitude<=-55.0&latitude>=40.0&latitude<=42.5&pres_adjusted>=0.0&pres_adjusted<=20.0&time>=1185926400.0&time<=1188604800.0&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "3a1e96d2a01362de8224834c45e1fb240c21105e92fec900be03b1d3a7740807",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=-57.5&longitude<=-55.0&latitude>=42.5&latitude<=45.0&pres_adjusted>=0.0&pres_adjusted<=20.0&time>=1185926400.0&time<=1188604800.0&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")&orderByCount(\"platform_number\")",
         "ext": "csv",
         "sha": "0f6e6c34ed0f6c7599ed2faaed92e315bc00c2e7f0a5a49b5e2c88427a16497c",
         "type": "text/csv",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/info/ArgoFloats/index.json",
         "ext": "json",
         "sha": "f912c39019f215a08583c457d9e71d5fb594429e38c31abec934454d397d5f8e",
         "type": "application/json",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/info/ArgoFloats-reference/index.json",
         "ext": "json",
         "sha": "f4bdba7f58e6710128352ffa25c4656e80198c3c8aa12732ec50031a987e5a1d",
         "type": "application/json",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/info/index.json",
         "ext": "json",
         "sha": "3390b51587135ad525d8886aaaac3ed55587b5e4a76004671fc568166beb5670",
         "type": "application/json",
-        "ts": "2026-10-09 13:34:01"
+        "ts": "2026-10-09 18:35:47"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.nc?config_mission_number,cycle_number,direction,doxy,doxy_adjusted,doxy_adjusted_error,doxy_adjusted_qc,doxy_qc,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc&platform_number=~\"5903248\"&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
