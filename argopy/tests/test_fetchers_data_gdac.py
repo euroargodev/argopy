@@ -35,8 +35,8 @@ Since the fetcher is compatible with host from local, http or ftp protocols, we 
 """
 HOSTS = [
     argopy.tutorial.open_dataset("gdac")[0],
-    "MOCKHTTP",
     "MOCKFTP",
+    "MOCKHTTP",
 ]
 
 if has_s3:
@@ -201,7 +201,7 @@ class TestBackend:
         gdac = this_request.param["host"]
         access_point = this_request.param["access_point"]
         N_RECORDS = (
-            None if "tutorial" in gdac or "MOCK" in gdac else 100
+            None if "tutorial" in gdac or "MOCKFTP" in gdac else 100
         )  # Make sure we're not going to load the full index
 
         fetcher_args = {
@@ -213,7 +213,8 @@ class TestBackend:
             "cachedir": self.cachedir,
             "parallel": False,
             # "progress": True,
-            "N_RECORDS": N_RECORDS,
+            "N_RECORDS": N_RECORDS, # In the loaded index
+            # "MAX_FILES": N_RECORDS, # In the search result
         }
 
         if not cached:
