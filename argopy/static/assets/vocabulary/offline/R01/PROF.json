@@ -1,7 +1,7 @@
 {
   "name": "PROF",
   "long_name": "Argo profile",
-  "last_update": "2026-09-15T15:05:11.689388+00:00",
+  "last_update": "2026-10-05T15:45:12.367056+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R01/current/PROF/",
     "pav:authoredOn": "2020-04-04 15:05:33.0",

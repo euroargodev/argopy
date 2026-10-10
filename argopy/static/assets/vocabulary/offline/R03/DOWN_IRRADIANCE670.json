@@ -1,7 +1,7 @@
 {
   "name": "DOWN_IRRADIANCE670",
   "long_name": "Downwelling irradiance at 670 nanometers",
-  "last_update": "2026-09-15T15:04:38.237751+00:00",
+  "last_update": "2026-10-05T15:41:34.303360+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/DOWN_IRRADIANCE670/",
     "pav:authoredOn": "2026-06-11 09:21:52.0",

@@ -1,7 +1,7 @@
 {
   "name": "SENSOR_MODEL",
   "long_name": "Argo sensor models",
-  "last_update": "2026-09-15T15:04:19.335984+00:00",
+  "last_update": "2026-10-05T15:40:42.156325+00:00",
   "data": {
     "@graph": [
       {
@@ -1074,8 +1074,12 @@
         "pav:hasCurrentVersion": {
           "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL_AP2/2/"
         },
+        "dce:identifier": "SDN:R27::ECO_FLBBFL_AP2",
         "@type": "skos:Concept",
         "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/"
+          },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/"
           },
@@ -1107,8 +1111,60 @@
         "skos:broader": {
           "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
         },
+        "pav:version": "2"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/",
+        "pav:hasVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/1/"
+        },
+        "pav:authoredOn": "2023-10-05 14:42:48.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/2/"
+        },
+        "dce:identifier": "SDN:R27::ECO_FLBBFL",
         "pav:version": "2",
-        "dce:identifier": "SDN:R27::ECO_FLBBFL_AP2"
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL_AP2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "A three-channel optical sensor fitted with two single-wavelength chlorophyll fluorometers and a single-angle scattering meter, depth-rated to 2000 m and designed for float applications. The two fluorometers are configured to detect chlorophyll-a fluorescence at 470 nm (excitation) / 695 nm (emission) wavelengths and chlorophyll-a fluorescence at 435 nm (excitation) / 695 nm (emission) wavelengths respectively, whereas the scattering meter (in-water centroid angle of 124 deg) is configured to measure backscattering at 700 nm wavelength. The instrument is part of the Environmental Characterization Optics (ECO) series tools, manufactured by Sea-Bird Scientific."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R27::ECO_FLBBFL",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "ECO_FLBBFL"
+        },
+        "owl:versionInfo": "2",
+        "dc:date": "2023-10-05 14:42:48.0",
+        "skos:altLabel": "ECO_FLBBFL",
+        "skos:notation": "SDN:R27::ECO_FLBBFL",
+        "skos:broader": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
+          }
+        ]
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SEASCAN_SSTD/",
@@ -2719,8 +2775,19 @@
         },
         "dce:identifier": "SDN:R27::ECO_FLBBCD_AP2",
         "pav:version": "1",
+        "skos:broader": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+          }
+        ],
         "@type": "skos:Concept",
         "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD/"
+          },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CDOM/"
           },
@@ -2751,15 +2818,60 @@
         "owl:versionInfo": "1",
         "dc:date": "2021-08-09 12:23:38.0",
         "skos:altLabel": "ECO_FLBBCD_AP2",
-        "skos:notation": "SDN:R27::ECO_FLBBCD_AP2",
+        "skos:notation": "SDN:R27::ECO_FLBBCD_AP2"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD/",
+        "pav:authoredOn": "2021-08-09 12:23:38.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD/1/"
+        },
+        "dce:identifier": "SDN:R27::ECO_FLBBCD",
+        "pav:version": "1",
         "skos:broader": [
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
           }
-        ]
+        ],
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD_AP2/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CDOM/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/"
+          }
+        ],
+        "skos:definition": {
+          "@language": "en",
+          "@value": "A three-channel optical sensor fitted with two single-wavelength fluorometers and a single-angle scattering meter, depth-rated to 2000 m and designed for float applications. The two fluorometers are configured to detect chlorophyll-a fluorescence at 470 nm (excitation) / 695 nm (emission) wavelengths and Fluorescent Dissolved Organic Matter (FDOM) at 370 nm (excitation) / 460 nm (emission) wavelengths respectively, whereas the scattering meter (in-water centroid angle of 124 deg) is configured to measure backscattering at 700 nm wavelength. The instrument is part of the Environmental Characterization Optics (ECO) series tools, originally developed and manufactured at WET Labs and rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2010."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R27::ECO_FLBBCD",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "ECO FLBBCD sensor package with two fluorometers and one scattering meter"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2021-08-09 12:23:38.0",
+        "skos:altLabel": "ECO_FLBBCD",
+        "skos:notation": "SDN:R27::ECO_FLBBCD"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V4.4.0/",
@@ -3289,56 +3401,6 @@
         "dc:date": "2025-08-28 11:45:52.0",
         "skos:altLabel": "OCR504_R10W",
         "skos:notation": "SDN:R27::OCR504_R10W"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/",
-        "pav:hasVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/1/"
-        },
-        "pav:authoredOn": "2023-10-05 14:42:48.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/2/"
-        },
-        "dce:identifier": "SDN:R27::ECO_FLBBFL",
-        "@type": "skos:Concept",
-        "skos:related": [
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/"
-          }
-        ],
-        "skos:definition": {
-          "@language": "en",
-          "@value": "A three-channel optical sensor fitted with two single-wavelength chlorophyll fluorometers and a single-angle scattering meter, depth-rated to 2000 m and designed for float applications. The two fluorometers are configured to detect chlorophyll-a fluorescence at 470 nm (excitation) / 695 nm (emission) wavelengths and chlorophyll-a fluorescence at 435 nm (excitation) / 695 nm (emission) wavelengths respectively, whereas the scattering meter (in-water centroid angle of 124 deg) is configured to measure backscattering at 700 nm wavelength. The instrument is part of the Environmental Characterization Optics (ECO) series tools, manufactured by Sea-Bird Scientific."
-        },
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "owl:deprecated": "false",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "dc:identifier": "SDN:R27::ECO_FLBBFL",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "ECO_FLBBFL"
-        },
-        "owl:versionInfo": "2",
-        "dc:date": "2023-10-05 14:42:48.0",
-        "skos:altLabel": "ECO_FLBBFL",
-        "skos:notation": "SDN:R27::ECO_FLBBFL",
-        "skos:broader": [
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
-          }
-        ],
-        "pav:version": "2"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.0/",
@@ -3932,56 +3994,6 @@
         }
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD/",
-        "pav:authoredOn": "2021-08-09 12:23:38.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD/1/"
-        },
-        "dce:identifier": "SDN:R27::ECO_FLBBCD",
-        "pav:version": "1",
-        "@type": "skos:Concept",
-        "skos:related": [
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CDOM/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/"
-          }
-        ],
-        "skos:definition": {
-          "@language": "en",
-          "@value": "A three-channel optical sensor fitted with two single-wavelength fluorometers and a single-angle scattering meter, depth-rated to 2000 m and designed for float applications. The two fluorometers are configured to detect chlorophyll-a fluorescence at 470 nm (excitation) / 695 nm (emission) wavelengths and Fluorescent Dissolved Organic Matter (FDOM) at 370 nm (excitation) / 460 nm (emission) wavelengths respectively, whereas the scattering meter (in-water centroid angle of 124 deg) is configured to measure backscattering at 700 nm wavelength. The instrument is part of the Environmental Characterization Optics (ECO) series tools, originally developed and manufactured at WET Labs and rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2010."
-        },
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "owl:deprecated": "false",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "dc:identifier": "SDN:R27::ECO_FLBBCD",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "ECO FLBBCD sensor package with two fluorometers and one scattering meter"
-        },
-        "owl:versionInfo": "1",
-        "dc:date": "2021-08-09 12:23:38.0",
-        "skos:altLabel": "ECO_FLBBCD",
-        "skos:notation": "SDN:R27::ECO_FLBBCD",
-        "skos:broader": [
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
-          }
-        ]
-      },
-      {
         "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/",
         "pav:hasVersion": [
           {
@@ -4256,8 +4268,12 @@
           "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB/1/"
         },
         "dce:identifier": "SDN:R27::ECO_FLBB",
+        "pav:version": "1",
         "@type": "skos:Concept",
         "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_AP2/"
+          },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/"
           },
@@ -4293,8 +4309,57 @@
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
           }
+        ]
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_AP2/",
+        "pav:authoredOn": "2021-08-09 12:23:38.0",
+        "pav:hasCurrentVersion": {
+          "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_AP2/1/"
+        },
+        "dce:identifier": "SDN:R27::ECO_FLBB_AP2",
+        "pav:version": "1",
+        "@type": "skos:Concept",
+        "skos:related": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/"
+          }
         ],
-        "pav:version": "1"
+        "skos:definition": {
+          "@language": "en",
+          "@value": "A dual-channel optical sensor fitted with a single-wavelength fluorometer and a scattering meter calibrated to determine backscattering, depth-rated to 2000 m and designed for float applications. The sensor operates by flashing blue (470 nm) and red (700 nm) beams in alternation from two light-emitting diodes (LEDs), to respectively stimulate chlorophyll fluorescence and illuminate the total particle field. The scattering sensor has an in-water centroid angle of 142 deg. The instrument is part of the Environmental Characterization Optics (ECO) series tools, originally developed and manufactured at WET Labs and rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2010."
+        },
+        "void:inDataset": {
+          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+        },
+        "owl:deprecated": "false",
+        "skos:note": {
+          "@language": "en",
+          "@value": "accepted"
+        },
+        "dc:identifier": "SDN:R27::ECO_FLBB_AP2",
+        "skos:prefLabel": {
+          "@language": "en",
+          "@value": "ECO FLbb-AP2 sensor package with fluorometer and scattering meter"
+        },
+        "owl:versionInfo": "1",
+        "dc:date": "2021-08-09 12:23:38.0",
+        "skos:altLabel": "ECO_FLBB_AP2",
+        "skos:notation": "SDN:R27::ECO_FLBB_AP2",
+        "skos:broader": [
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
+          }
+        ]
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE63_OPTODE/",
@@ -6317,53 +6382,6 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
           }
         ]
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_AP2/",
-        "pav:authoredOn": "2021-08-09 12:23:38.0",
-        "pav:hasCurrentVersion": {
-          "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_AP2/1/"
-        },
-        "dce:identifier": "SDN:R27::ECO_FLBB_AP2",
-        "@type": "skos:Concept",
-        "skos:related": [
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/"
-          }
-        ],
-        "skos:definition": {
-          "@language": "en",
-          "@value": "A dual-channel optical sensor fitted with a single-wavelength fluorometer and a scattering meter calibrated to determine backscattering, depth-rated to 2000 m and designed for float applications. The sensor operates by flashing blue (470 nm) and red (700 nm) beams in alternation from two light-emitting diodes (LEDs), to respectively stimulate chlorophyll fluorescence and illuminate the total particle field. The scattering sensor has an in-water centroid angle of 142 deg. The instrument is part of the Environmental Characterization Optics (ECO) series tools, originally developed and manufactured at WET Labs and rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2010."
-        },
-        "void:inDataset": {
-          "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-        },
-        "owl:deprecated": "false",
-        "skos:note": {
-          "@language": "en",
-          "@value": "accepted"
-        },
-        "dc:identifier": "SDN:R27::ECO_FLBB_AP2",
-        "skos:prefLabel": {
-          "@language": "en",
-          "@value": "ECO FLbb-AP2 sensor package with fluorometer and scattering meter"
-        },
-        "owl:versionInfo": "1",
-        "dc:date": "2021-08-09 12:23:38.0",
-        "skos:altLabel": "ECO_FLBB_AP2",
-        "skos:notation": "SDN:R27::ECO_FLBB_AP2",
-        "skos:broader": [
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
-          }
-        ],
-        "pav:version": "1"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB2/",

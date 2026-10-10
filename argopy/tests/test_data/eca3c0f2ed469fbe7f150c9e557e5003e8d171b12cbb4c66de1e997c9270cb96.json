@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head lang="en">
   <meta charset="UTF-8">
   <title>NVS</title>
   <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="/static/favicon.ico">
   <link rel="stylesheet" href="/static/nvs_vocprez.css">
-  <style> .group-row.hidden-row { display: none; } </style>
+  <style>
+    .group-row.hidden-row {
+      display: none;
+    }
+  </style>
 </head>
+
 <body>
   <div id="vocprez">
     made by <a href="http://github.com/rdflib/VocPrez">VocPrez</a>&nbsp;
@@ -14,60 +20,31 @@
   </div>
   <div id="header" style="grid-column:2; display:grid; grid-template-rows: 140px 50px;">
     <div id="header-logos" style="grid-row:1;">
-      <a href="https://eds.ukri.org/"><img src="/static/eds.svg" alt="UK RI logo" style="height:110px; float:left ;" /></a>
-      <a href="https://www.bodc.ac.uk/"><img src="/static/bodc-bw.svg" alt="BODC logo" style="height:110px; float:right ;" /></a>
+      <a href="https://eds.ukri.org/"><img src="/static/eds.svg" alt="UK RI logo"
+          style="height:110px; float:left ;" /></a>
+      <a href="https://www.bodc.ac.uk/"><img src="/static/bodc-bw.svg" alt="BODC logo"
+          style="height:110px; float:right ;" /></a>
     </div>
     <div id="header-title" style="grid-row:2;">
-    
+      
       <span>The NERC Vocabulary Server (NVS)</span>
-      <a href="https://sdc.ui.argo.grnet.gr/sdc/dashboard/Critical/VOCABULARY">Service Status</a>
+      <div class="dropdown">
+        <a>Service status</a>
+        <div class="dropdown-child">
+          <a href="https://monitoring.seadatanet.org/sdc/report-ar-group-details/Critical/SERVICEGROUPS/VOCABULARY/details"
+            target="_blank">SeaDataNet Monitoring</a>
+          <a href="https://github.com/British-Oceanographic-Data-Centre/NvsVocPrez/blob/master/ServiceStatus.md"
+            target="_blank">More information</a>
+        </div>
+      </div>
     </div>
     <div>
-    
+      
     </div>
 
   </div><!-- #header -->
   <div id="mainmenu" style="grid-column:2;">
-        <style>
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-        .dropdown > a {
-            cursor: default;
-            text-decoration: none;
-        }
-        .dropdown-child {
-            display: none;
-            position: absolute;
-            left:-7px;
-            transition: all 0.5s ease;
-            background-color: rgb(19, 50, 77);
-            min-width: 220px;
-            text-align: left;
-            padding-top: 10px;
-        }
-        .dropdown-child a {
-            padding: 20px;
-            text-decoration: none;
-            display: block;
-        }
-        .dropdown-child a:hover {
-            text-decoration: underline;
-        }
-        .dropdown:hover .dropdown-child {
-            display: block;
-        }
-        .dropdown-child:hover {
-            display: block;
-        }
-        /* for the bottom main menu */
-        #footer-top > .dropdown > .dropdown-child {
-            background-color: rgb(53, 80, 119);
-            top: -248px;
-            min-width: 270px;
-        }
-    </style>
+    
     <a href="/">NVS Home</a> |
     <a href="/collection/">Vocabularies</a> |
     <a href="/scheme/">Thesauri</a> |
@@ -86,7 +63,7 @@
     <a href="/about">About NVS</a>
   </div>
   <div id="content" style="grid-column:2;">
-      
+    
     <h1>SPARQL</h1>
     <p>
         This page allows you to lodge <a href="https://en.wikipedia.org/wiki/SPARQL">SPARQL</a> queries against the
@@ -236,46 +213,7 @@ curl 'http://vocab.nerc.ac.uk/sparql/sparql?query={YOUR_QUERY_URL_ENCODED}'<br /
   </div><!-- #content -->
   <div id="footer" style="grid-column:1/4;">
     <div id="footer-top">
-          <style>
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-        .dropdown > a {
-            cursor: default;
-            text-decoration: none;
-        }
-        .dropdown-child {
-            display: none;
-            position: absolute;
-            left:-7px;
-            transition: all 0.5s ease;
-            background-color: rgb(19, 50, 77);
-            min-width: 220px;
-            text-align: left;
-            padding-top: 10px;
-        }
-        .dropdown-child a {
-            padding: 20px;
-            text-decoration: none;
-            display: block;
-        }
-        .dropdown-child a:hover {
-            text-decoration: underline;
-        }
-        .dropdown:hover .dropdown-child {
-            display: block;
-        }
-        .dropdown-child:hover {
-            display: block;
-        }
-        /* for the bottom main menu */
-        #footer-top > .dropdown > .dropdown-child {
-            background-color: rgb(53, 80, 119);
-            top: -248px;
-            min-width: 270px;
-        }
-    </style>
+      
     <a href="/">NVS Home</a> |
     <a href="/collection/">Vocabularies</a> |
     <a href="/scheme/">Thesauri</a> |
@@ -302,9 +240,12 @@ curl 'http://vocab.nerc.ac.uk/sparql/sparql?query={YOUR_QUERY_URL_ENCODED}'<br /
       <p class="copyright">&copy; National Oceanography Centre, 2023</p>
     </div>
     <div id="vocprez2">
-      <span>made by</span> <a id="bottom-vocprez" href="http://github.com/rdflib/VocPrez">VocPrez</a>&nbsp;<a id="versionlink2" href="https://github.com/surroundaustralia/NvsVocPrez/releases/tag/1.0.0">for NVS</a>
+      <span>made by</span> <a id="bottom-vocprez" href="http://github.com/rdflib/VocPrez">VocPrez</a>&nbsp;<a
+        id="versionlink2" href="https://github.com/surroundaustralia/NvsVocPrez/releases/tag/1.0.0">for NVS</a>
     </div>
     <div id="footer-bottom-border"></div>
   </div><!-- #footer -->
+
 </body>
+
 </html>

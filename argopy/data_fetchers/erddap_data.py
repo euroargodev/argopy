@@ -507,29 +507,35 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         return url
 
     @property
-    def N_POINTS(self) -> int:
-        """Number of measurements expected to be returned by a request
+    def _N_POINTS_uri(self):
+        urls = []
+        for url in self.uri:
+            url = url.replace("." + self.erddap.response, ".csv")
+            urls.append(f'{url}&orderByCount("platform_number")')
+        return urls
 
-        This is an estimate that could be inaccurate with the synthetic BGC dataset
+    @property
+    def N_POINTS(self) -> int:
+        """Number of measurements expected to be returned by a request in 'expert' mode
+
+        This is an estimate that can be inaccurate with the synthetic BGC dataset
         """
 
-        def getNfromncHeader(url):
-            url = url.replace("." + self.erddap.response, ".ncHeader")
+        def getN(url):
             try:
-                ncHeader = str(self.fs.download_url(url))
-                if "Your query produced no matching results. (nRows = 0)" in ncHeader:
-                    return 0
-                else:
-                    lines = [line for line in ncHeader.splitlines() if "row = " in line][0]
-                    return int(lines.split("=")[1].split(";")[0])
+                csv = self.fs.download_url(url).decode('utf-8').split("\n")
+                for line in csv:
+                    if "Your query produced no matching results. (nRows = 0)" in line:
+                        return 0
+                return int(csv[2].split(',')[csv[0].split(',').index('pres')])
             except Exception:
                 raise ErddapServerError(
-                    "Erddap server can't return ncHeader for url: %s " % url
+                    "Erddap server can't return csv for url: %s (%s)" % (url, csv)
                 )
 
         N = 0
-        for url in self.uri:
-            N += getNfromncHeader(url)
+        for url in self._N_POINTS_uri:
+            N += getN(url)
         return N
 
     def pre_process(self, this_ds, *args, **kwargs):

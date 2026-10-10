@@ -13,6 +13,8 @@ Current versions of Argopy distributed with pypi and conda are:
 
 # How to release a Patch version
 
+If this release requires a change in dependencies version, upgrade to a Minor version release.
+
 ## Setup
 
 Don't change X Major and Y Minor, increase Z Patch only.
@@ -37,16 +39,19 @@ Does not apply for Patch release. Only consider deprecation policy for Major or 
 - [ ] Run [flake8](https://github.com/PyCQA/flake8) from repo root and fix errors
 
 ### Software distribution readiness
-- [ ] Possibly update ``./requirements.txt`` and ``./docs/requirements.txt`` if this Patch release requires a change in dependencies version to fix a bug.
-- [ ] Make sure that all CI tests are passed: [![CI tests](https://github.com/euroargodev/argopy/actions/workflows/pytests.yml/badge.svg?branch=releasevX.Y.Z)](https://github.com/euroargodev/argopy/actions/workflows/pytests.yml)
+- [ ] Make sure that all CI tests are passed:
+[![CI tests](https://github.com/euroargodev/argopy/actions/workflows/ci-ubuntu-core.yml/badge.svg?branch=releasevX.Y.Z)](https://github.com/euroargodev/argopy/actions/workflows/ci-ubuntu-core.yml?query=branch%3AreleasevX.Y.Z)
+[![CI tests](https://github.com/euroargodev/argopy/actions/workflows/ci-ubuntu-all.yml/badge.svg?branch=releasevX.Y.Z)](https://github.com/euroargodev/argopy/actions/workflows/ci-ubuntu-all.yml?query=branch%3AreleasevX.Y.Z)
+[![CI tests](https://github.com/euroargodev/argopy/actions/workflows/ci-macos-core.yml/badge.svg?branch=releasevX.Y.Z)](https://github.com/euroargodev/argopy/actions/workflows/ci-macos-core.yml?query=branch%3AreleasevX.Y.Z)
+[![CI tests](https://github.com/euroargodev/argopy/actions/workflows/ci-macos-all.yml/badge.svg?branch=releasevX.Y.Z)](https://github.com/euroargodev/argopy/actions/workflows/ci-macos-all.yml?query=branch%3AreleasevX.Y.Z)
+[![CI tests](https://github.com/euroargodev/argopy/actions/workflows/ci-windows-core.yml/badge.svg?branch=releasevX.Y.Z)](https://github.com/euroargodev/argopy/actions/workflows/ci-windows-core.yml?query=branch%3AreleasevX.Y.Z)
+[![CI tests](https://github.com/euroargodev/argopy/actions/workflows/ci-windows-all.yml/badge.svg?branch=releasevX.Y.Z)](https://github.com/euroargodev/argopy/actions/workflows/ci-windows-all.yml?query=branch%3AreleasevX.Y.Z)
 - [ ] Make sure the documentation for this release branch is [built on RTD](https://app.readthedocs.org/projects/argopy/builds/): [![Documentation Status](https://readthedocs.org/projects/argopy/badge/?version=releasevX.Y.Z)](https://argopy.readthedocs.io/en/releasevX.Y.Z)
 
 
 ### Preparation conclusion
 - [ ] Merge this PR to master
 - [ ] Update release date in ``./docs/whats-new.rst``
-- [ ] Verify that all CI tests are passed [![CI tests](https://github.com/euroargodev/argopy/actions/workflows/pytests.yml/badge.svg?branch=master)](https://github.com/euroargodev/argopy/actions/workflows/pytests.yml) 
-- [ ] Verify that RTD doc is built on the master branch [![Documentation Status](https://readthedocs.org/projects/argopy/badge/?version=latest)](https://argopy.readthedocs.io/en/latest)
 
 ## Publish the release
 - [ ] Last check the ``./setup.py`` file version of the release and that the [documentation is ready](https://readthedocs.org/projects/argopy/builds/)
@@ -82,7 +87,7 @@ Choose a release tag vX.Y.Z, fill in the release title and click on the `Auto-ge
 ### Update static content
 
 #### CI tests data
-- [ ] Update CI tests data used by mocked ftp and http servers. Use the CLI [citests_httpdata_manager](https://github.com/euroargodev/argopy/blob/master/cli/citests_httpdata_manager):
+- [ ] Update CI tests data used by the mocked http server. Use the CLI [citests_httpdata_manager](https://github.com/euroargodev/argopy/blob/master/cli/citests_httpdata_manager):
   ```bash
   cd cli
   ./citests_httpdata_manager -a clear --force --refresh
@@ -104,14 +109,30 @@ Choose a release tag vX.Y.Z, fill in the release title and click on the `Auto-ge
 
 ### Software distribution readiness
 - [ ] Possibly update ``./requirements.txt`` and ``./docs/requirements.txt`` if the dependencies versions were upgraded for a bug fix or new feature.
-- [ ] Make sure that all CI tests are passed: [![CI tests](https://github.com/euroargodev/argopy/actions/workflows/pytests.yml/badge.svg?branch=releasevX.Y.Z)](https://github.com/euroargodev/argopy/actions/workflows/pytests.yml)
+- [ ] Make sure that all CI tests are passed: 
+[![CI tests](https://github.com/euroargodev/argopy/actions/workflows/ci-ubuntu-core.yml/badge.svg?branch=releasevX.Y.Z)](https://github.com/euroargodev/argopy/actions/workflows/ci-ubuntu-core.yml?query=branch%3AreleasevX.Y.Z)
+[![CI tests](https://github.com/euroargodev/argopy/actions/workflows/ci-ubuntu-all.yml/badge.svg?branch=releasevX.Y.Z)](https://github.com/euroargodev/argopy/actions/workflows/ci-ubuntu-all.yml?query=branch%3AreleasevX.Y.Z)
+[![CI tests](https://github.com/euroargodev/argopy/actions/workflows/ci-macos-core.yml/badge.svg?branch=releasevX.Y.Z)](https://github.com/euroargodev/argopy/actions/workflows/ci-macos-core.yml?query=branch%3AreleasevX.Y.Z)
+[![CI tests](https://github.com/euroargodev/argopy/actions/workflows/ci-macos-all.yml/badge.svg?branch=releasevX.Y.Z)](https://github.com/euroargodev/argopy/actions/workflows/ci-macos-all.yml?query=branch%3AreleasevX.Y.Z)
+[![CI tests](https://github.com/euroargodev/argopy/actions/workflows/ci-windows-core.yml/badge.svg?branch=releasevX.Y.Z)](https://github.com/euroargodev/argopy/actions/workflows/ci-windows-core.yml?query=branch%3AreleasevX.Y.Z)
+[![CI tests](https://github.com/euroargodev/argopy/actions/workflows/ci-windows-all.yml/badge.svg?branch=releasevX.Y.Z)](https://github.com/euroargodev/argopy/actions/workflows/ci-windows-all.yml?query=branch%3AreleasevX.Y.Z)
+[![CI tests](https://github.com/euroargodev/argopy/actions/workflows/upstream-all.yml/badge.svg?branch=releasevX.Y.Z)](https://github.com/euroargodev/argopy/actions/workflows/upstream-all.yml?query=branch%3AreleasevX.Y.Z)
+[![CI tests](https://github.com/euroargodev/argopy/actions/workflows/upstream-core.yml/badge.svg?branch=releasevX.Y.Z)](https://github.com/euroargodev/argopy/actions/workflows/upstream-core.yml?query=branch%3AreleasevX.Y.Z)
 - [ ] Make sure the documentation for this release branch is [built on RTD](https://app.readthedocs.org/projects/argopy/builds/): [![Documentation Status](https://readthedocs.org/projects/argopy/badge/?version=releasevX.Y.Z)](https://argopy.readthedocs.io/en/releasevX.Y.Z)
 
 
 ### Preparation conclusion
 - [ ] Merge this PR to master
 - [ ] Update release date in ``./docs/whats-new.rst``
-- [ ] Verify that all CI tests are passed [![CI tests](https://github.com/euroargodev/argopy/actions/workflows/pytests.yml/badge.svg?branch=master)](https://github.com/euroargodev/argopy/actions/workflows/pytests.yml) 
+- [ ] Verify that all CI tests are passed: 
+[![CI tests](https://github.com/euroargodev/argopy/actions/workflows/ci-ubuntu-core.yml/badge.svg?branch=master)](https://github.com/euroargodev/argopy/actions/workflows/ci-ubuntu-core.yml?query=branch%3Amaster)
+[![CI tests](https://github.com/euroargodev/argopy/actions/workflows/ci-ubuntu-all.yml/badge.svg?branch=master)](https://github.com/euroargodev/argopy/actions/workflows/ci-ubuntu-all.yml?query=branch%3Amaster)
+[![CI tests](https://github.com/euroargodev/argopy/actions/workflows/ci-macos-core.yml/badge.svg?branch=master)](https://github.com/euroargodev/argopy/actions/workflows/ci-macos-core.yml?query=branch%3Amaster)
+[![CI tests](https://github.com/euroargodev/argopy/actions/workflows/ci-macos-all.yml/badge.svg?branch=master)](https://github.com/euroargodev/argopy/actions/workflows/ci-macos-all.yml?query=branch%3Amaster)
+[![CI tests](https://github.com/euroargodev/argopy/actions/workflows/ci-windows-core.yml/badge.svg?branch=master)](https://github.com/euroargodev/argopy/actions/workflows/ci-windows-core.yml?query=branch%3Amaster)
+[![CI tests](https://github.com/euroargodev/argopy/actions/workflows/ci-windows-all.yml/badge.svg?branch=master)](https://github.com/euroargodev/argopy/actions/workflows/ci-windows-all.yml?query=branch%3Amaster)
+- [![CI tests](https://github.com/euroargodev/argopy/actions/workflows/upstream-all.yml/badge.svg?branch=master)](https://github.com/euroargodev/argopy/actions/workflows/upstream-all.yml?query=branch%3Amaster)
+[![CI tests](https://github.com/euroargodev/argopy/actions/workflows/upstream-core.yml/badge.svg?branch=master)](https://github.com/euroargodev/argopy/actions/workflows/upstream-core.yml?query=branch%3Amaster)
 - [ ] Verify that RTD doc is built on the master branch [![Documentation Status](https://readthedocs.org/projects/argopy/badge/?version=latest)](https://argopy.readthedocs.io/en/latest)
 
 ## Publish the release

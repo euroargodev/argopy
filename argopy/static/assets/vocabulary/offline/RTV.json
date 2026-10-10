@@ -1,7 +1,7 @@
 {
   "name": "CYCLE_TIMING_VARIABLE",
   "long_name": "Argo float cycle timing variables",
-  "last_update": "2026-09-15T15:04:16.686844+00:00",
+  "last_update": "2026-10-05T15:40:42.112272+00:00",
   "data": {
     "@graph": [
       {

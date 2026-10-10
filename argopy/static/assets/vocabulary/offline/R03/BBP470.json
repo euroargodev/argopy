@@ -1,7 +1,7 @@
 {
   "name": "BBP470",
   "long_name": "Particle backscattering at 470 nanometers",
-  "last_update": "2026-09-15T15:04:39.626328+00:00",
+  "last_update": "2026-10-05T15:41:43.600011+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/BBP470/",
     "pav:hasVersion": [

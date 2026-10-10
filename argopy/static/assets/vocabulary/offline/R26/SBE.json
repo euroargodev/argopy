@@ -1,7 +1,7 @@
 {
   "name": "SBE",
   "long_name": "Sea-Bird Scientific",
-  "last_update": "2026-09-15T15:05:47.130953+00:00",
+  "last_update": "2026-10-05T15:49:26.938919+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
     "pav:hasVersion": {

@@ -14,7 +14,7 @@ from argopy.plot import dashboard
 from argopy.stores import ArgoIndex
 from argopy.utils.format import argo_split_path
 from argopy.utils.lists import shortcut2gdac
-from argopy.utils.checkers import check_wmo, check_cyc, to_list
+from argopy.utils.checkers import check_wmo, check_cyc
 from argopy.utils.decorators import deprecated
 
 
@@ -316,7 +316,9 @@ class FloatStoreProto(ABC):
             # Ensure the protocol is included for non-local files on FTP and S3 servers:
             for ip, p in enumerate(paths):
                 if self.host_protocol == "ftp":
-                    paths[ip] = f"ftp://{self.fs.fs.host}:{self.fs.fs.port}{fsspec.core.split_protocol(p)[-1]}"
+                    paths[ip] = (
+                        f"ftp://{self.fs.fs.host}:{self.fs.fs.port}{fsspec.core.split_protocol(p)[-1]}"
+                    )
 
                 if self.host_protocol == "s3":
                     paths[ip] = "s3://" + fsspec.core.split_protocol(p)[-1]
@@ -360,7 +362,9 @@ class FloatStoreProto(ABC):
             # Ensure the protocol is included for non-local files on FTP and S3 servers:
             for ip, p in enumerate(paths):
                 if self.host_protocol == "ftp":
-                    paths[ip] = f"ftp://{self.fs.fs.host}:{self.fs.fs.port}{fsspec.core.split_protocol(p)[-1]}"
+                    paths[ip] = (
+                        f"ftp://{self.fs.fs.host}:{self.fs.fs.port}{fsspec.core.split_protocol(p)[-1]}"
+                    )
 
                 if self.host_protocol == "s3":
                     paths[ip] = "s3://" + fsspec.core.split_protocol(p)[-1]
@@ -495,6 +499,7 @@ class FloatStoreProto(ABC):
         :class:`pandas.DataFrame`
             A DataFrame with ["cycle_number", "dataset", "direction", "data_mode", "stem", "path"] columns for each mono-cycle netcdf files. The extra columns `auxiliary` is added if the instance was created with the appropriate option.
         """
+
         def stem2cyc(s) -> int:
             ii = -2 if "aux" in s else -1
             if s.split("_")[ii][-1] == "D":
@@ -678,7 +683,7 @@ class FloatStoreProto(ABC):
                         )
                         for key, uri in fl.items():
                             self._ls_prof[key] = uri
-                    except:
+                    except:  # noqa: E722
                         pass
 
             if self._aux:
@@ -690,7 +695,7 @@ class FloatStoreProto(ABC):
                             )
                             for key, uri in fl.items():
                                 self._ls_prof[key] = uri
-                        except:
+                        except:  # noqa: E722
                             pass
 
         return self._ls_prof
@@ -825,7 +830,7 @@ class FloatStoreProto(ABC):
         direction: Literal["A", "D"] = "A",
         auxiliary: bool = False,
         cast: bool = True,
-        netCDF4:bool = False,
+        netCDF4: bool = False,
         **kwargs,
     ):
         """Open and decode one or more profile files
@@ -1136,16 +1141,14 @@ class FloatStoreProto(ABC):
 
         raise NotImplementedError
 
-    def open_product(
-        self, name: str = "", **kwargs
-    ) -> xr.Dataset | Any:
+    def open_product(self, name: str = "", **kwargs) -> xr.Dataset | Any:
         """Open and decode a third-party product for a given float
 
         Parameters
         ----------
         name: str
             Name of the third-party product to open.
-        \**kwargs
+        **kwargs
             All the other arguments are passed to the product facade.
 
         Returns
@@ -1159,4 +1162,5 @@ class FloatStoreProto(ABC):
         if name not in PRODUCT_LIST.argofloat:
             raise NotImplementedError(
                 "Product '%s' not found. Available third-party product for this float are: %s"
-                % (name, PRODUCT_LIST.argofloat))
+                % (name, PRODUCT_LIST.argofloat)
+            )

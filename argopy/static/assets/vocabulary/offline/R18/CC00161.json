@@ -1,7 +1,7 @@
 {
   "name": "CC00161",
   "long_name": "CONFIG_PressureTargetToleranceDuringDriftAtProfileDepth_dbar",
-  "last_update": "2026-09-15T15:05:42.830345+00:00",
+  "last_update": "2026-10-05T15:48:57.680195+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00161/",
     "pav:hasVersion": {

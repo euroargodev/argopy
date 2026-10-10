@@ -12,8 +12,8 @@ import warnings
 from typing import Optional
 
 import netCDF4
-from argopy import pandas as pd # Lazily import large module
-from argopy import xarray as xr # Lazily import large module
+from argopy import pandas as pd  # Lazily import large module
+from argopy import xarray as xr  # Lazily import large module
 import numpy as np
 import logging
 
@@ -90,7 +90,14 @@ class ArgoDataFetcher:
 
     """
 
-    def __init__(self, mode: str = "", src: str = "", ds: str = "", product: Optional[str]= None,  **fetcher_kwargs):
+    def __init__(
+        self,
+        mode: str = "",
+        src: str = "",
+        ds: str = "",
+        product: Optional[str] = None,
+        **fetcher_kwargs,
+    ):
         """Create a fetcher instance
 
         Returns
@@ -107,7 +114,9 @@ class ArgoDataFetcher:
         if product is not None:
             # Third-party products must update this section to be included:
             if product.lower() not in PRODUCT_LIST.datafetcher:
-                raise InvalidFetcher(f"The '{product}' product has no implementation. Available products are: {PRODUCT_LIST.datafetcher}.")
+                raise InvalidFetcher(
+                    f"The '{product}' product has no implementation. Available products are: {PRODUCT_LIST.datafetcher}."
+                )
             self._src = product
 
         if self._dataset_id == "bgc":
@@ -115,17 +124,21 @@ class ArgoDataFetcher:
 
         try:
             server = OPTIONS[self._src]
-            if self._src == 'erddap':
+            if self._src == "erddap":
                 from argopy.data_fetchers import erddap_data as Fetchers
-            elif self._src == 'gdac':
+            elif self._src == "gdac":
                 from argopy.data_fetchers import gdac_data as Fetchers
-            elif self._src == 'argovis':
+            elif self._src == "argovis":
                 from argopy.data_fetchers import argovis_data as Fetchers
         except Exception:
-            raise ValueError(f"An error occurred while loading the {self._src} data fetcher !")
+            raise ValueError(
+                f"An error occurred while loading the {self._src} data fetcher !"
+            )
 
         # Ensure we're loading the data fetcher with the current options for server value:
-        Fetchers.api_server_check = Fetchers.api_server_check.replace(Fetchers.api_server, server)
+        Fetchers.api_server_check = Fetchers.api_server_check.replace(
+            Fetchers.api_server, server
+        )
         Fetchers.api_server = server
 
         # Auto-discovery of access points for this fetcher:
@@ -363,7 +376,9 @@ class ArgoDataFetcher:
         if not isinstance(self._data, xr.Dataset) or self._request != self.__repr__():
             self.load()
             if self._data is None:
-                raise DataNotFound("Seems like no data were found. Try to use to_xarray() explicitly")
+                raise DataNotFound(
+                    "Seems like no data were found. Try to use to_xarray() explicitly"
+                )
         return self._data
 
     @property
@@ -727,8 +742,10 @@ class ArgoDataFetcher:
             )
         xds = self.fetcher.to_xarray(**kwargs)
         xds = self.postprocess(xds)
-        target = xds.to_netcdf(path=None)  # todo: include encoding for any possible Argo variable
-        return netCDF4.Dataset(None, memory=target, diskless=True, mode='r')
+        target = xds.to_netcdf(
+            path=None
+        )  # todo: include encoding for any possible Argo variable
+        return netCDF4.Dataset(None, memory=target, diskless=True, mode="r")
 
     def to_dataframe(self, **kwargs) -> pd.DataFrame:
         """Fetch and return data as :class:`pandas.DataFrame`
@@ -1014,15 +1031,19 @@ class ArgoIndexFetcher:
         # Load data source access points:
         try:
             server = OPTIONS[self._src]
-            if self._src == 'erddap':
+            if self._src == "erddap":
                 from argopy.data_fetchers import erddap_index as Fetchers
-            elif self._src == 'gdac':
+            elif self._src == "gdac":
                 from argopy.data_fetchers import gdac_index as Fetchers
         except Exception:
-            raise ValueError(f"An error occurred while loading the {self._src} index fetcher !")
+            raise ValueError(
+                f"An error occurred while loading the {self._src} index fetcher !"
+            )
 
         # Ensure we're loading the data fetcher with the current options for server value:
-        Fetchers.api_server_check = Fetchers.api_server_check.replace(Fetchers.api_server, server)
+        Fetchers.api_server_check = Fetchers.api_server_check.replace(
+            Fetchers.api_server, server
+        )
         Fetchers.api_server = server
 
         # if self._src not in AVAILABLE_INDEX_SOURCES:

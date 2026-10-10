@@ -1,7 +1,7 @@
 {
   "name": "CC00089",
   "long_name": "CONFIG_IceDetectionTestDuration_seconds",
-  "last_update": "2026-09-15T15:05:39.631210+00:00",
+  "last_update": "2026-10-05T15:48:38.837554+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00089/",
     "pav:hasVersion": [

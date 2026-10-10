@@ -1,7 +1,7 @@
 {
   "name": "BPROF",
   "long_name": "B-Argo profile",
-  "last_update": "2026-09-15T15:05:11.567110+00:00",
+  "last_update": "2026-10-05T15:45:11.643204+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R01/current/BPROF/",
     "pav:authoredOn": "2020-04-04 15:05:33.0",

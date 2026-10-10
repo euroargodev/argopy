@@ -1,7 +1,7 @@
 {
   "name": "CC00137",
   "long_name": "CONFIG_PistonPositionHyperRetraction_COUNT",
-  "last_update": "2026-09-15T15:05:39.849633+00:00",
+  "last_update": "2026-10-05T15:48:40.263467+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00137/",
     "pav:hasVersion": {

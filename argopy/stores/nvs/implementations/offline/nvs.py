@@ -15,10 +15,7 @@ def fmt2uri(fmt):
     if fmt in d.keys():
         return d[fmt]
 
-    raise ValueError(
-            "Invalid format. Must be 'json' in offline mode."
-        )
-
+    raise ValueError("Invalid format. Must be 'json' in offline mode.")
 
 
 class NVS(NVSProto):
@@ -57,9 +54,11 @@ class NVS(NVSProto):
 
     def load_vocabulary(self, rtid: str, fmt: str = "json") -> dict:
         url = self._vocabulary2uri(rtid, fmt=fmt)
-        return Asset().load(url)['data']
+        return Asset().load(url)["data"]
 
-    def _concept2uri(self, conceptid: str, rtid: str | None = None, fmt: str = "json") -> str:
+    def _concept2uri(
+        self, conceptid: str, rtid: str | None = None, fmt: str = "json"
+    ) -> str:
         """Return URI of a given concept
 
         Parameters
@@ -77,18 +76,21 @@ class NVS(NVSProto):
         if rtid is None:
             reftable = concept2vocabulary(conceptid)
             if reftable is None:
-                raise ValueError('Invalid Concept')
+                raise ValueError("Invalid Concept")
             if len(reftable) > 1:
                 raise ValueError(
-                    f"This Concept appears in more than one Vocabulary: {reftable}. You must specified with the 'rtid' argument which one to use.")
+                    f"This Concept appears in more than one Vocabulary: {reftable}. You must specified with the 'rtid' argument which one to use."
+                )
             else:
                 rtid = reftable[0]
         return f"vocabulary:offline:{rtid}:{conceptid}{fmt2uri(fmt)}"
 
-    def load_concept(self, conceptid: str, rtid: str | None = None, fmt: str = "json") -> dict:
+    def load_concept(
+        self, conceptid: str, rtid: str | None = None, fmt: str = "json"
+    ) -> dict:
         url = self._concept2uri(conceptid, rtid, fmt=fmt)
-        return Asset().load(url)['data']
+        return Asset().load(url)["data"]
 
     def load_mapping(self, subjectid: str, objectid: str, fmt: str = "json") -> dict:
         url = f"vocabulary:offline:mapping:{subjectid}_{objectid}"
-        return Asset().load(url)['data']['content']
+        return Asset().load(url)["data"]["content"]

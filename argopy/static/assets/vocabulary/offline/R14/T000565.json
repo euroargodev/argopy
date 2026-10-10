@@ -1,7 +1,7 @@
 {
   "name": "T000565",
   "long_name": "NUMBER_SBEFPCommandTimeouts_COUNT",
-  "last_update": "2026-09-15T15:05:02.285649+00:00",
+  "last_update": "2026-10-05T15:44:05.640044+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000565/",
     "pav:hasVersion": {

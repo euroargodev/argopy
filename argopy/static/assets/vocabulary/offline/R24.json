@@ -1,7 +1,7 @@
 {
   "name": "PLATFORM_MAKER",
   "long_name": "Argo platform maker",
-  "last_update": "2026-09-15T15:04:15.976079+00:00",
+  "last_update": "2026-10-05T15:40:42.101077+00:00",
   "data": {
     "@graph": [
       {
@@ -509,16 +509,7 @@
         "@type": "skos:Concept",
         "skos:related": [
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/"
-          },
-          {
             "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_IV/"
-          },
-          {
-            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR2/"
@@ -527,16 +518,25 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/"
           },
           {
-            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_D/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_C/"
           },
           {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/"
+          },
+          {
             "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_II/"
+          },
+          {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_D/"
           },
           {
             "@id": "http://vocab.nerc.ac.uk/collection/R23/current/POPS_PROVOR/"

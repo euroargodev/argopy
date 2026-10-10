@@ -1,7 +1,7 @@
 {
   "name": "OCR504_ICSW",
   "long_name": "OCR-504 multispectral radiometer (downwelling irradiance)",
-  "last_update": "2026-09-15T15:05:10.957628+00:00",
+  "last_update": "2026-10-05T15:45:08.004827+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/",
     "pav:authoredOn": "2025-08-28 11:45:52.0",

@@ -1,7 +1,7 @@
 {
   "name": "T000536",
   "long_name": "VOLTAGE_BatteryPumpAscentEnd_volts",
-  "last_update": "2026-09-15T15:04:44.759738+00:00",
+  "last_update": "2026-10-05T15:42:16.161820+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000536/",
     "pav:hasVersion": {

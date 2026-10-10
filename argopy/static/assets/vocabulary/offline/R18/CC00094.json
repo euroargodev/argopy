@@ -1,7 +1,7 @@
 {
   "name": "CC00094",
   "long_name": "CONFIG_IceDetectionTelemetryTimeout_minutes",
-  "last_update": "2026-09-15T15:05:36.690019+00:00",
+  "last_update": "2026-10-05T15:48:17.553573+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00094/",
     "pav:hasVersion": [

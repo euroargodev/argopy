@@ -1,7 +1,7 @@
 {
   "name": "CB00037",
   "long_name": "CONFIG_FlntuMaxTransmittedTurbidity_COUNT",
-  "last_update": "2026-09-15T15:05:34.040989+00:00",
+  "last_update": "2026-10-05T15:48:02.440362+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00037/",
     "pav:hasVersion": [

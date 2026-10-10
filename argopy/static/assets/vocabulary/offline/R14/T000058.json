@@ -1,7 +1,7 @@
 {
   "name": "T000058",
   "long_name": "CLOCK_TimeFromStartUp_hours",
-  "last_update": "2026-09-15T15:04:45.084760+00:00",
+  "last_update": "2026-10-05T15:42:17.851450+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000058/",
     "pav:hasVersion": {

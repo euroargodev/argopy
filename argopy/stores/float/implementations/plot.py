@@ -1,8 +1,8 @@
 import numpy as np
 from typing import Any
 
-from ....plot import scatter_plot, scatter_map, ArgoColors
-from ....utils import list_multiprofile_file_variables, list_bgc_s_variables, to_list
+from ....plot import scatter_plot, scatter_map
+from ....utils import list_multiprofile_file_variables, list_bgc_s_variables
 from ..extensions import ArgoFloatPlotProto
 
 
@@ -94,13 +94,13 @@ class ArgoFloatPlot(ArgoFloatPlotProto):
 
     def map(
         self,
-        param : str,
-        ds : str ="prof",
-        pres : float = 0.0,
-        pres_axis : str = 'PRES',
-        pres_bin_size : float = 100.0,
-        select : str = "middle",
-        **kwargs
+        param: str,
+        ds: str = "prof",
+        pres: float = 0.0,
+        pres_axis: str = "PRES",
+        pres_bin_size: float = 100.0,
+        select: str = "middle",
+        **kwargs,
     ) -> Any:
         """Plot a map of one dataset parameter, possibly sliced at a given pressure value.
 
@@ -173,24 +173,30 @@ class ArgoFloatPlot(ArgoFloatPlotProto):
                 "'%s' parameter is not available in the '%s' dataset (%s)"
                 % (param, ds, self._obj.ls_datasets()[ds])
             )
-        param_toplot : str = param
+        param_toplot: str = param
 
         # Slice dataset to the appropriate level, if necessary:
-        if 'N_LEVELS' in this_ds[param].dims:
+        if "N_LEVELS" in this_ds[param].dims:
             if pres == 0 or pres == -1:
                 if pres == 0:
+
                     def reducer(p, y):
                         """shallowest_value"""
                         for data in zip(p, y):
                             if ~np.isnan(data[0]):
                                 return data[1]
+
                 elif pres == -1:
+
                     def reducer(p, y):
                         """deepest_value"""
                         for data in zip(p[::-1], y[::-1]):
                             if ~np.isnan(data[0]):
                                 return data[1]
-                this_ds[f"_{param}_slice"] = this_ds.argo.reduce_profile(reducer, params=[pres_axis, param])
+
+                this_ds[f"_{param}_slice"] = this_ds.argo.reduce_profile(
+                    reducer, params=[pres_axis, param]
+                )
                 param_toplot = f"_{param}_slice"
 
             else:
@@ -199,9 +205,9 @@ class ArgoFloatPlot(ArgoFloatPlotProto):
                     pres + pres_bin_size / 2,
                     10000.0,
                 ]
-                this_ds = this_ds.argo.groupby_pressure_bins(bins=bins, select=select, axis=pres_axis).isel(
-                    N_LEVELS=0
-                )
+                this_ds = this_ds.argo.groupby_pressure_bins(
+                    bins=bins, select=select, axis=pres_axis
+                ).isel(N_LEVELS=0)
 
         # Check if param will be plotted using a discrete and known Argo colormap
         discrete, cmap = False, "Spectral_r"

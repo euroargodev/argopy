@@ -10,7 +10,7 @@ from argopy.utils.format import urnparser
 
 
 class NVScollection:
-    """ A class to handle any NVS collection table """
+    """A class to handle any NVS collection table"""
 
     def __init__(
         self,
@@ -24,12 +24,14 @@ class NVScollection:
             self._cache = kwargs.get("cache", True)
             self._cachedir = kwargs.get("cachedir", OPTIONS["cachedir"])
             self._timeout = kwargs.get("timeout", OPTIONS["api_timeout"])
-            self.fs = httpstore(cache=self._cache, cachedir=self._cachedir, timeout=self._timeout)
+            self.fs = httpstore(
+                cache=self._cache, cachedir=self._cachedir, timeout=self._timeout
+            )
 
     @property
     def valid_ref(self):
         df = self._FullCollection()
-        return df['ID'].to_list()
+        return df["ID"].to_list()
 
     def _valid_ref(self, rtid):
         """No validation"""
@@ -49,14 +51,20 @@ class NVScollection:
             if k["@type"] == "skos:Collection":
                 Collection_name = k["dc:alternative"]
             elif k["@type"] == "skos:Concept":
-                content["altLabel"].append(urnparser(k['skos:notation'])['termid'])
+                content["altLabel"].append(urnparser(k["skos:notation"])["termid"])
                 content["prefLabel"].append(k["skos:prefLabel"]["@value"])
-                content["definition"].append(k["skos:definition"]["@value"] if k["skos:definition"] != '' else None)
+                content["definition"].append(
+                    k["skos:definition"]["@value"]
+                    if k["skos:definition"] != ""
+                    else None
+                )
                 content["deprecated"].append(k["owl:deprecated"])
-                content["urn"].append(k['skos:notation'])
+                content["urn"].append(k["skos:notation"])
                 content["id"].append(k["@id"])
         df = pd.DataFrame.from_dict(content)
-        df['deprecated'] = df.apply(lambda x: True if x['deprecated']=='true' else False, axis=1)
+        df["deprecated"] = df.apply(
+            lambda x: True if x["deprecated"] == "true" else False, axis=1
+        )
         df.name = Collection_name
         return df
 
@@ -78,7 +86,7 @@ class NVScollection:
                 name = k["dc:alternative"]
                 desc = k["dc:description"]
                 url = k["@id"]
-                tid = k['@id'].split('/')[-3]
+                tid = k["@id"].split("/")[-3]
                 result.append((tid, title, name, desc, url))
         return result
 
@@ -86,7 +94,10 @@ class NVScollection:
     def _FullCollection(self):
         url = f"{self.nvs}/collection/?_profile=nvs&_mediatype=application/ld+json"
         js = self.fs.open_json(url)
-        return pd.DataFrame(self._jsFullCollection(js), columns=['ID', 'title', 'name', 'description', 'url'])
+        return pd.DataFrame(
+            self._jsFullCollection(js),
+            columns=["ID", "title", "name", "description", "url"],
+        )
 
     def get_url(self, rtid, fmt="ld+json"):
         """Return URL toward a given reference table for a given format
@@ -215,7 +226,7 @@ class NVScollection:
         return results
 
 
-@deprecated("Update your code to use 'ArgoReferenceTable' instead.", version='1.5')
+@deprecated("Update your code to use 'ArgoReferenceTable' instead.", version="1.5")
 class ArgoNVSReferenceTables(NVScollection):
     """Argo Reference Tables
 
@@ -224,7 +235,8 @@ class ArgoNVSReferenceTables(NVScollection):
         The class is deprecated. Update your code to use :class:`ArgoReferenceTable` instead.
 
     """
-    valid_ref = Asset.load('vocabulary:inventory')['data']['valid_ref'].copy()
+
+    valid_ref = Asset.load("vocabulary:inventory")["data"]["valid_ref"].copy()
 
     """List of all available Reference Tables"""
 
@@ -246,7 +258,7 @@ class ArgoNVSReferenceTables(NVScollection):
         else:
             # If rtid is a string, convert to uppercase and standardize
             rtid_str = str(rtid).strip().upper()
-            if rtid_str.startswith('R') and len(rtid_str) > 1:
+            if rtid_str.startswith("R") and len(rtid_str) > 1:
                 # If it starts with 'R', ensure the numeric part is two digits
                 prefix = rtid_str[0]
                 suffix = rtid_str[1:]
@@ -255,7 +267,7 @@ class ArgoNVSReferenceTables(NVScollection):
                     rtid_str = f"{prefix}{num:02d}"
                 except ValueError:
                     pass  # Keep the original string if conversion fails
-            elif ~rtid_str.startswith('R'):
+            elif ~rtid_str.startswith("R"):
                 try:
                     num = int(rtid_str)
                     rtid_str = f"R{num}"

@@ -1,17 +1,10 @@
-import os
-import json
 import pandas as pd
 from functools import lru_cache
 import requests
 
 from ..stores import httpstore, memorystore
 from ..options import OPTIONS
-from .utils import path2assets
-
-
-# Load the ADMT documentation catalogue:
-with open(os.path.join(path2assets, "admt_documentation_catalogue.json"), "rb") as f:
-    ADMT_CATALOGUE = json.load(f)['data']['catalogue']
+from argopy.utils.locals import Asset
 
 
 class ArgoDocs:
@@ -31,7 +24,6 @@ class ArgoDocs:
     >>> ArgoDocs(35385).open_pdf(page=12)
 
     """
-    _catalogue = ADMT_CATALOGUE
 
     class RIS:
         """Make a RIS file structure from a TXT file"""
@@ -89,6 +81,7 @@ class ArgoDocs:
 
     @lru_cache
     def __init__(self, docid=None, cache=False):
+        self._catalogue = Asset.load('admt_documentation_catalogue')['data']['catalogue']
         self.docid = None
         self._ris = None
         self._fs = httpstore(cache=cache, cachedir=OPTIONS['cachedir'])

@@ -1,7 +1,7 @@
 {
   "name": "EM",
   "long_name": "Electromagnetic sensor",
-  "last_update": "2026-09-15T15:05:08.099885+00:00",
+  "last_update": "2026-10-05T15:44:48.054816+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/EM/",
     "pav:authoredOn": "2021-08-18 14:32:12.0",

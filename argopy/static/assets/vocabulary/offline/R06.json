@@ -1,7 +1,7 @@
 {
   "name": "DATA_STATE_INDICATOR",
   "long_name": "Argo data state indicators",
-  "last_update": "2026-09-15T15:04:17.761525+00:00",
+  "last_update": "2026-10-05T15:40:42.124683+00:00",
   "data": {
     "@graph": [
       {

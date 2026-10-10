@@ -1,7 +1,7 @@
 {
   "name": "SBE41N",
   "long_name": "Sea-Bird Scientific SBE 41N CTD",
-  "last_update": "2026-09-15T15:05:08.548977+00:00",
+  "last_update": "2026-10-05T15:44:52.028877+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N/",
     "pav:hasVersion": {

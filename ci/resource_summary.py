@@ -18,8 +18,9 @@ OUTPUT_JSON = f"{OUTPUT_DIR}/resource_summary.json"
 
 # Helpers
 
+
 def gb(value):
-    return round(value / (1024 ** 3), 2)
+    return round(value / (1024**3), 2)
 
 
 def format_seconds(seconds):
@@ -53,6 +54,7 @@ def get_system_info():
 
 # System summary mode
 
+
 def print_system_summary():
     info = get_system_info()
 
@@ -76,6 +78,7 @@ def print_system_summary():
 # Monitoring
 # ============================================================
 
+
 def monitor(stop_event, samples):
     psutil.cpu_percent(interval=0.1)
 
@@ -83,13 +86,15 @@ def monitor(stop_event, samples):
         cpu = psutil.cpu_percent(interval=None)
         mem = psutil.virtual_memory()
 
-        samples.append({
-            "timestamp": time.time(),
-            "cpu_percent": cpu,
-            "ram_used_gb": gb(mem.used),
-            "ram_available_gb": gb(mem.available),
-            "ram_percent": mem.percent
-        })
+        samples.append(
+            {
+                "timestamp": time.time(),
+                "cpu_percent": cpu,
+                "ram_used_gb": gb(mem.used),
+                "ram_available_gb": gb(mem.available),
+                "ram_percent": mem.percent,
+            }
+        )
 
         time.sleep(SAMPLE_INTERVAL)
 
@@ -98,18 +103,15 @@ def monitor(stop_event, samples):
 # Run command
 # ============================================================
 
+
 def run_command(command):
-    return subprocess.Popen(
-        command,
-        shell=True,
-        stdout=sys.stdout,
-        stderr=sys.stderr
-    )
+    return subprocess.Popen(command, shell=True, stdout=sys.stdout, stderr=sys.stderr)
 
 
 # ============================================================
 # Summary
 # ============================================================
+
 
 def summarize(command, start_time, end_time, returncode, samples):
     duration = end_time - start_time
@@ -120,20 +122,16 @@ def summarize(command, start_time, end_time, returncode, samples):
 
     return {
         "timestamp": datetime.now().isoformat(),
-
         "system": get_system_info(),
-
         "command": command,
         "duration_seconds": round(duration, 2),
         "duration_minutes": format_seconds(duration),
         "exit_code": returncode,
-
         "cpu": {
             "avg_percent": round(statistics.mean(cpu_values), 2),
             "max_percent": round(max(cpu_values), 2),
             "min_percent": round(min(cpu_values), 2),
         },
-
         "memory": {
             "avg_used_gb": round(statistics.mean(ram_values), 2),
             "peak_used_gb": round(max(ram_values), 2),
@@ -141,8 +139,7 @@ def summarize(command, start_time, end_time, returncode, samples):
             "avg_percent": round(statistics.mean(ram_pct_values), 2),
             "max_percent": round(max(ram_pct_values), 2),
         },
-
-        "samples_collected": len(samples)
+        "samples_collected": len(samples),
     }
 
 
@@ -156,6 +153,7 @@ def save_json(summary):
 # ============================================================
 # Main
 # ============================================================
+
 
 def main():
     if len(sys.argv) < 2:
@@ -183,10 +181,7 @@ def main():
     samples = []
     stop_event = threading.Event()
 
-    watcher = threading.Thread(
-        target=monitor,
-        args=(stop_event, samples)
-    )
+    watcher = threading.Thread(target=monitor, args=(stop_event, samples))
 
     watcher.daemon = True
 
@@ -207,7 +202,7 @@ def main():
         start_time=start_time,
         end_time=end_time,
         returncode=process.returncode,
-        samples=samples
+        samples=samples,
     )
 
     save_json(summary)

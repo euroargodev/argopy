@@ -1,7 +1,7 @@
 {
   "name": "CC00051",
   "long_name": "CONFIG_DownTimeSpringSummer_hours",
-  "last_update": "2026-09-15T15:05:38.614120+00:00",
+  "last_update": "2026-10-05T15:48:31.574380+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00051/",
     "pav:hasVersion": [

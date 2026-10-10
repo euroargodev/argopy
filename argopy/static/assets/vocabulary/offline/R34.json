@@ -1,7 +1,7 @@
 {
   "name": "BATTERY_TYPE",
   "long_name": "Argo battery type",
-  "last_update": "2026-09-15T15:04:22.009010+00:00",
+  "last_update": "2026-10-05T15:40:42.206058+00:00",
   "data": {
     "@graph": [
       {
