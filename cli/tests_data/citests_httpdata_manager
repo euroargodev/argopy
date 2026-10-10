@@ -645,7 +645,7 @@ class Lister:
             ],
         }
 
-        fetcher = DataFetcher(src="gdac", gdac=server, ds="phy", MAX_FILES=100)
+        fetcher = DataFetcher(src="gdac", gdac=server, ds="phy", N_RECORDS=100)
         for access_point in requests_seq:
             [
                 add_to_URI(fetcher.profile(*cfg))
