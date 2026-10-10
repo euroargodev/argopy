@@ -82,7 +82,7 @@ Choose a release tag vX.Y.Z, fill in the release title and click on the `Auto-ge
 ### Update static content
 
 #### CI tests data
-- [ ] Update CI tests data used by mocked ftp and http servers. Use the CLI [citests_httpdata_manager](https://github.com/euroargodev/argopy/blob/master/cli/citests_httpdata_manager):
+- [ ] Update CI tests data used by the mocked http server. Use the CLI [citests_httpdata_manager](https://github.com/euroargodev/argopy/blob/master/cli/citests_httpdata_manager):
   ```bash
   cd cli
   ./citests_httpdata_manager -a clear --force --refresh
