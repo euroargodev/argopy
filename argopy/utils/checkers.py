@@ -290,8 +290,9 @@ def is_box(box: list, errors: str = "raise"):
 
     return True
 
+
 def parse_indexbox(dimension, BOX=None, **kwargs):
-    """ Parse and standardize user arguments for index box queries.x
+    """Parse and standardize user arguments for index box queries.x
 
     This utility converts various user input formats (full BOX, range list, single value, or ge/le keywords)
     into a standard 6-element index box: [lon_min, lon_max, lat_min, lat_max, date_min, date_max].
@@ -341,20 +342,20 @@ def parse_indexbox(dimension, BOX=None, **kwargs):
 
     # Templates for each dimension: (lon_min, lon_max, lat_min, lat_max, date_min, date_max)
     templates = {
-        "lon":   lambda ge, le:   [ge, le, -90., 90., '1900-01-01', '2100-12-31'],
-        "lat":   lambda ge, le:   [-180., 180., ge, le, '1900-01-01', '2100-12-31'],
-        "date":  lambda ge, le:   [-180., 180., -90., 90., ge, le],
+        "lon": lambda ge, le: [ge, le, -90.0, 90.0, "1900-01-01", "2100-12-31"],
+        "lat": lambda ge, le: [-180.0, 180.0, ge, le, "1900-01-01", "2100-12-31"],
+        "date": lambda ge, le: [-180.0, 180.0, -90.0, 90.0, ge, le],
     }
     # Defaults for ge/le per dimension
     defaults = {
-        "lon":   (-180., 180.),
-        "lat":   (-90., 90.),
-        "date":  ('1900-01-01', '2100-12-31'),
+        "lon": (-180.0, 180.0),
+        "lat": (-90.0, 90.0),
+        "date": ("1900-01-01", "2100-12-31"),
     }
 
-    if 'ge' in kwargs or 'le' in kwargs:
-        ge = kwargs.get('ge', defaults[dimension][0])
-        le = kwargs.get('le', defaults[dimension][1])
+    if "ge" in kwargs or "le" in kwargs:
+        ge = kwargs.get("ge", defaults[dimension][0])
+        le = kwargs.get("le", defaults[dimension][1])
         BOX = templates[dimension](ge, le)
     else:
         match BOX:
@@ -373,7 +374,7 @@ def parse_indexbox(dimension, BOX=None, **kwargs):
                     )
                 else:
                     ge, le = (BOX, defaults[dimension][1])
-                    BOX = templates[dimension](ge, le)                    
+                    BOX = templates[dimension](ge, le)
             case str():
                 # Single date [date, date+1)
                 d0 = pd.to_datetime(BOX)
@@ -384,6 +385,7 @@ def parse_indexbox(dimension, BOX=None, **kwargs):
             case _:
                 raise ValueError("Unsupported argument format")
     return BOX
+
 
 def is_list_of_strings(lst):
     return isinstance(lst, list) and all(isinstance(elem, str) for elem in lst)
@@ -838,26 +840,28 @@ def isAPIconnected(src="erddap", data=True):
     bool
     """
     if data:
-        if src == 'erddap':
+        if src == "erddap":
             from argopy.data_fetchers import erddap_data as Fetcher
-        elif src == 'gdac':
+        elif src == "gdac":
             from argopy.data_fetchers import gdac_data as Fetcher
-        elif src == 'argovis':
+        elif src == "argovis":
             from argopy.data_fetchers import argovis_data as Fetcher
         else:
             raise ValueError(f"{src} is not a valid data source (no fetcher found)")
 
     else:
-        if src == 'erddap':
+        if src == "erddap":
             from argopy.data_fetchers import erddap_index as Fetcher
-        elif src == 'gdac':
+        elif src == "gdac":
             from argopy.data_fetchers import gdac_index as Fetcher
         else:
             raise ValueError(f"{src} is not a valid index source (no fetcher found)")
 
     # Ensure we're loading the data fetcher with the current options for server value:
     server = OPTIONS[src]
-    Fetcher.api_server_check = Fetcher.api_server_check.replace(Fetcher.api_server, server)
+    Fetcher.api_server_check = Fetcher.api_server_check.replace(
+        Fetcher.api_server, server
+    )
     Fetcher.api_server = server
 
     if getattr(Fetcher, "api_server_check", None):

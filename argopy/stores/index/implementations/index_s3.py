@@ -235,15 +235,20 @@ class s3index:
         if self._sql_logic == "split":
             sql = []
             for wmo in WMOs:
-                sql.append(self.sql_formaters['search_wmo']['split'](wmo=wmo))
+                sql.append(self.sql_formaters["search_wmo"]["split"](wmo=wmo))
 
         elif self._sql_logic == "single":
             sql = "SELECT * FROM s3object s WHERE "
             if len(WMOs) > 1:
-                sql += " OR ".join([self.sql_formaters['search_wmo']['single'](wmo=wmo) for wmo in WMOs])
+                sql += " OR ".join(
+                    [
+                        self.sql_formaters["search_wmo"]["single"](wmo=wmo)
+                        for wmo in WMOs
+                    ]
+                )
 
             else:
-                sql += self.sql_formaters['search_wmo']['single'](wmo=WMOs[0])
+                sql += self.sql_formaters["search_wmo"]["single"](wmo=WMOs[0])
 
         if nrows is not None:
             sql += " LIMIT %i" % nrows
@@ -262,19 +267,19 @@ class s3index:
         if self._sql_logic == "split":
             sql = []
             for cyc in CYCs:
-                sql.append(self.sql_formaters['search_cyc']['split'](cyc=cyc))
+                sql.append(self.sql_formaters["search_cyc"]["split"](cyc=cyc))
 
         elif self._sql_logic == "single":
             sql = "SELECT * FROM s3object s WHERE "
             if len(CYCs) > 1:
                 sql += " OR ".join(
                     [
-                        self.sql_formaters['search_cyc']['single'](cyc=cyc)
+                        self.sql_formaters["search_cyc"]["single"](cyc=cyc)
                         for cyc in CYCs
                     ]
                 )
             else:
-                sql += self.sql_formaters['search_cyc']['single'](cyc=CYCs[0])
+                sql += self.sql_formaters["search_cyc"]["single"](cyc=CYCs[0])
 
         if nrows is not None:
             sql += " LIMIT %i" % nrows
@@ -295,7 +300,9 @@ class s3index:
             sql = []
             for wmo in WMOs:
                 for cyc in CYCs:
-                    sql.append(self.sql_formaters['search_wmo_cyc']['split'](wmo=wmo, cyc=cyc))
+                    sql.append(
+                        self.sql_formaters["search_wmo_cyc"]["split"](wmo=wmo, cyc=cyc)
+                    )
 
         elif self._sql_logic == "single":
             sql = "SELECT * FROM s3object s WHERE "
@@ -303,7 +310,9 @@ class s3index:
                 if len(CYCs) > 1:
                     sql += " OR ".join(
                         [
-                            self.sql_formaters['search_wmo_cyc']['single'](wmo=wmo, cyc=cyc)
+                            self.sql_formaters["search_wmo_cyc"]["single"](
+                                wmo=wmo, cyc=cyc
+                            )
                             for wmo in WMOs
                             for cyc in CYCs
                         ]
@@ -311,7 +320,9 @@ class s3index:
                 else:
                     sql += " OR ".join(
                         [
-                            self.sql_formaters['search_wmo_cyc']['single'](wmo=wmo, cyc=CYCs[0])
+                            self.sql_formaters["search_wmo_cyc"]["single"](
+                                wmo=wmo, cyc=CYCs[0]
+                            )
                             for wmo in WMOs
                         ]
                     )
@@ -319,12 +330,16 @@ class s3index:
                 if len(CYCs) > 1:
                     sql += " OR ".join(
                         [
-                            self.sql_formaters['search_wmo_cyc']['single'](wmo=WMOs[0], cyc=cyc)
+                            self.sql_formaters["search_wmo_cyc"]["single"](
+                                wmo=WMOs[0], cyc=cyc
+                            )
                             for cyc in CYCs
                         ]
                     )
                 else:
-                    sql += self.sql_formaters['search_wmo_cyc']['single'](wmo=WMOs[0], cyc=CYCs[0])
+                    sql += self.sql_formaters["search_wmo_cyc"]["single"](
+                        wmo=WMOs[0], cyc=CYCs[0]
+                    )
 
         if nrows is not None:
             sql += " LIMIT %i" % nrows
@@ -333,21 +348,32 @@ class s3index:
         self.run()
         return self
 
-    def search_institution_code(self, institution_code: list[str],  nrows=None):
+    def search_institution_code(self, institution_code: list[str], nrows=None):
         CODEs = to_list(institution_code)
 
         if self._sql_logic == "split":
             sql = []
             for code in CODEs:
-                sql.append(self.sql_formaters['search_institution_code']['split'](code=code))
+                sql.append(
+                    self.sql_formaters["search_institution_code"]["split"](code=code)
+                )
 
         elif self._sql_logic == "single":
             sql = "SELECT * FROM s3object s WHERE "
             if len(CODEs) > 1:
-                sql += " OR ".join([self.sql_formaters['search_institution_code']['single'](code=code) for code in CODEs])
+                sql += " OR ".join(
+                    [
+                        self.sql_formaters["search_institution_code"]["single"](
+                            code=code
+                        )
+                        for code in CODEs
+                    ]
+                )
 
             else:
-                sql += self.sql_formaters['search_institution_code']['single'](code=CODEs[0])
+                sql += self.sql_formaters["search_institution_code"]["single"](
+                    code=CODEs[0]
+                )
 
         if nrows is not None:
             sql += " LIMIT %i" % nrows
@@ -356,21 +382,26 @@ class s3index:
         self.run()
         return self
 
-    def search_dac(self, dac: list[str],  nrows=None):
+    def search_dac(self, dac: list[str], nrows=None):
         DACs = to_list(dac)
 
         if self._sql_logic == "split":
             sql = []
             for dac in DACs:
-                sql.append(self.sql_formaters['search_dac']['split'](dac=dac))
+                sql.append(self.sql_formaters["search_dac"]["split"](dac=dac))
 
         elif self._sql_logic == "single":
             sql = "SELECT * FROM s3object s WHERE "
             if len(DACs) > 1:
-                sql += " OR ".join([self.sql_formaters['search_dac']['single'](dac=dac) for dac in DACs])
+                sql += " OR ".join(
+                    [
+                        self.sql_formaters["search_dac"]["single"](dac=dac)
+                        for dac in DACs
+                    ]
+                )
 
             else:
-                sql += self.sql_formaters['search_dac']['single'](dac=DACs[0])
+                sql += self.sql_formaters["search_dac"]["single"](dac=DACs[0])
 
         if nrows is not None:
             sql += " LIMIT %i" % nrows
@@ -537,12 +568,14 @@ class s3index_meta(s3index):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.sql_formaters.update({
-            "search_wmo": {
-                "split": "SELECT * FROM s3object s WHERE s._1 LIKE '%/{wmo}/{wmo}_meta.nc'".format,
-                "single": "s._1 LIKE '%/{wmo}/{wmo}_meta.nc'".format,
-            },
-        })
+        self.sql_formaters.update(
+            {
+                "search_wmo": {
+                    "split": "SELECT * FROM s3object s WHERE s._1 LIKE '%/{wmo}/{wmo}_meta.nc'".format,
+                    "single": "s._1 LIKE '%/{wmo}/{wmo}_meta.nc'".format,
+                },
+            }
+        )
 
     @property
     @requires_pyarrow
@@ -606,7 +639,9 @@ def search_s3(func, *args, **kwargs):
             idx.search = getattr(idx.fs["s3"], idx.ext)
             return idx
         else:
-            log.debug("Argo index searching using boto3 SQL request not available for composition")
+            log.debug(
+                "Argo index searching using boto3 SQL request not available for composition"
+            )
 
     if (
         func.__name__ == "cyc"
@@ -626,7 +661,9 @@ def search_s3(func, *args, **kwargs):
             idx.search = getattr(idx.fs["s3"], idx.ext)
             return idx
         else:
-            log.debug("Argo index searching using boto3 SQL request not available for composition")
+            log.debug(
+                "Argo index searching using boto3 SQL request not available for composition"
+            )
 
     if (
         func.__name__ == "wmo_cyc"
@@ -650,7 +687,9 @@ def search_s3(func, *args, **kwargs):
             idx.search = getattr(idx.fs["s3"], idx.ext)
             return idx
         else:
-            log.debug("Argo index searching using boto3 SQL request not available for composition")
+            log.debug(
+                "Argo index searching using boto3 SQL request not available for composition"
+            )
 
     if (
         func.__name__ == "institution_code"
@@ -662,16 +701,16 @@ def search_s3(func, *args, **kwargs):
             CODEs = to_list(CODEs)
             log.debug(
                 "Argo index searching for INSTITUTION CODEs=[%s] using boto3 SQL request ..."
-                % (
-                    ";".join([str(code) for code in CODEs]),
-                )
+                % (";".join([str(code) for code in CODEs]),)
             )
             valid_codes = []
             for code in CODEs:
-                if idx.valid('institution_code', code):
+                if idx.valid("institution_code", code):
                     valid_codes.append(code.upper())
             if len(valid_codes) == 0:
-                raise OptionValueError(f"No valid codes found for institution in {CODEs}. Valid codes are: {idx.valid.institution_code}")
+                raise OptionValueError(
+                    f"No valid codes found for institution in {CODEs}. Valid codes are: {idx.valid.institution_code}"
+                )
 
             idx.fs["s3"].search_institution_code(valid_codes, nrows=nrows)
             idx.search_type = {"INST_CODE": valid_codes}
@@ -679,7 +718,9 @@ def search_s3(func, *args, **kwargs):
             idx.search = getattr(idx.fs["s3"], idx.ext)
             return idx
         else:
-            log.debug("Argo index search using boto3 SQL request not available for composition")
+            log.debug(
+                "Argo index search using boto3 SQL request not available for composition"
+            )
 
     if (
         func.__name__ == "institution_name"
@@ -691,9 +732,7 @@ def search_s3(func, *args, **kwargs):
             NAMEs = to_list(NAMEs)
             log.debug(
                 "Argo index searching for INSTITUTION NAMEs=[%s] using boto3 SQL request ..."
-                % (
-                    ";".join([str(name) for name in NAMEs]),
-                )
+                % (";".join([str(name) for name in NAMEs]),)
             )
             # Get codes matching names:
             CODEs = []
@@ -703,7 +742,9 @@ def search_s3(func, *args, **kwargs):
                         CODEs.append(code)
             if len(CODEs) == 0:
                 valid_names = ", ".join(idx.valid.institution_name)
-                raise OptionValueError(f"No valid institution name found in {NAMEs}. Valid names are any string in: '{valid_names}'")
+                raise OptionValueError(
+                    f"No valid institution name found in {NAMEs}. Valid names are any string in: '{valid_names}'"
+                )
 
             idx.fs["s3"].search_institution_code(CODEs, nrows=nrows)
             idx.search_type = {"INST_NAME": NAMEs}
@@ -711,8 +752,9 @@ def search_s3(func, *args, **kwargs):
             idx.search = getattr(idx.fs["s3"], idx.ext)
             return idx
         else:
-            log.debug("Argo index search using boto3 SQL request not available for composition")
-
+            log.debug(
+                "Argo index search using boto3 SQL request not available for composition"
+            )
 
     if (
         func.__name__ == "dac"
@@ -724,9 +766,7 @@ def search_s3(func, *args, **kwargs):
             DACs = to_list(DACs)
             log.debug(
                 "Argo index searching for DACs=[%s] using boto3 SQL request ..."
-                % (
-                    ";".join([str(dac) for dac in DACs]),
-                )
+                % (";".join([str(dac) for dac in DACs]),)
             )
             idx.fs["s3"].search_dac(DACs, nrows=nrows)
             idx.search_type = {"DAC": DACs}
@@ -734,6 +774,8 @@ def search_s3(func, *args, **kwargs):
             idx.search = getattr(idx.fs["s3"], idx.ext)
             return idx
         else:
-            log.debug("Argo index searching using boto3 SQL request not available for composition")
+            log.debug(
+                "Argo index searching using boto3 SQL request not available for composition"
+            )
 
     return func(*args, **kwargs)

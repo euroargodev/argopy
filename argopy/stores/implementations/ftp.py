@@ -133,16 +133,15 @@ class ftpstore(httpstore):
                     % data
                 )
             if data[0:3] == b"CDF":
-                if 'engine' not in xr_opts:
-                    xr_opts['engine'] = 'scipy'
+                if "engine" not in xr_opts:
+                    xr_opts["engine"] = "scipy"
             elif data[0:3] == b"\x89HD":
-                if 'engine' not in xr_opts:
-                    xr_opts['engine'] = 'h5netcdf'
+                if "engine" not in xr_opts:
+                    xr_opts["engine"] = "h5netcdf"
 
             data = io.BytesIO(data)
 
             return data, xr_opts
-
 
         def load_lazily(url, errors="raise", xr_opts={}, akoverwrite: bool = False):
             """Check if url support lazy access and return kerchunk data along with xarray option to open it lazily
@@ -213,7 +212,9 @@ class ftpstore(httpstore):
             if not netCDF4:
                 ds = xr.open_dataset(target, **xr_opts)
                 if not lazy:
-                    ds = ds.load()  # materialize into plain numpy arrays, detach from the backend buffer
+                    ds = (
+                        ds.load()
+                    )  # materialize into plain numpy arrays, detach from the backend buffer
                     ds.close()  # explicitly release the netCDF4/HDF5 handle right away
 
                 if "source" not in ds.encoding:
@@ -432,9 +433,9 @@ class ftpstore(httpstore):
                     results,
                     dim=concat_dim,
                     data_vars="minimal",  # Only data variables in which the dimension already appears are included.
-                    coords="all",         # All coordinate variables will be concatenated, except those corresponding
-                                          # to other dimensions.
-                    compat="override",    # skip comparing and pick variable from first dataset,
+                    coords="all",  # All coordinate variables will be concatenated, except those corresponding
+                    # to other dimensions.
+                    compat="override",  # skip comparing and pick variable from first dataset,
                 )
                 return ds
             else:

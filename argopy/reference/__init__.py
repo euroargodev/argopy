@@ -28,7 +28,7 @@ ArgoReferenceMapping provides direct access to relationships between ArgoReferen
 """
 
 # Deprecated:
-from .reference_tables import NVScollection, ArgoNVSReferenceTables
+from .reference_tables import NVScollection, ArgoNVSReferenceTables  # noqa F401
 
 # New APIs:
 from .concept import ArgoReferenceValue
@@ -39,5 +39,5 @@ __all__ = (
     "ArgoReferenceTable",
     "ArgoReferenceValue",
     "ArgoReferenceMapping",
-    "ArgoNVSReferenceTables", # Deprecated since v1.5
+    "ArgoNVSReferenceTables",  # Deprecated since v1.5
 )

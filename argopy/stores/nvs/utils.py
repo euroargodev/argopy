@@ -106,13 +106,13 @@ def id2urn(uri: str) -> str:
             raise ValueError(
                 f"{uri} is not a valid NVS id, only R* and P* collections are allowed."
             )
-    except:
+    except:  # noqa: E722
         raise ValueError(
             f"{uri} is not a valid NVS id, only R* and P* collections are allowed."
         )
     try:
         termid = parts[1 + [parts.index(p) for p in parts if p == "current"][0]]
-    except:
+    except:  # noqa: E722
         termid = ""
     return f"SDN:{listid}::{termid}"
 
@@ -140,7 +140,7 @@ def url2predicate(uri: str) -> str | None:
     """
     try:
         return uri.split("/")[-2].replace("#", ":").replace("core", "skos")
-    except:
+    except:  # noqa: E722
         return None
 
 
@@ -300,7 +300,7 @@ def curate_r18definition(definition: str) -> dict[str, "TemplateValues"] | None:
 
 def bindings2df(data: list[dict]) -> pd.DataFrame:
     """Transform a list of bindings to a :class:`pd.DataFrame`"""
-    id2concept = lambda x: urnparser(id2urn(x))["termid"]
+    id2concept = lambda x: urnparser(id2urn(x))["termid"]  # noqa: E731
     b = []
     for binding in data:
         b.append(

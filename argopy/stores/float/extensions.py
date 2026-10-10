@@ -4,7 +4,7 @@ import pandas as pd
 
 from argopy.utils.casting_param import cast_config_parameter
 from argopy.utils.decorators import register_accessor
-from argopy.utils.casting import to_list, to_bool
+from argopy.utils.casting import to_list
 from argopy.utils.format import group_cycles_by_missions, cfgnameparser
 
 
@@ -96,7 +96,7 @@ class ArgoFloatAnyConfigParametersProto(ArgoFloatExtension):
     def __len__(self):
         return self.n_params
 
-    def __contains__(self, item)->bool:
+    def __contains__(self, item) -> bool:
         if not item.startswith("CONFIG_"):
             item = f"CONFIG_{item}"
         return item in self.parameters
@@ -118,7 +118,7 @@ class ArgoFloatAnyConfigParametersProto(ArgoFloatExtension):
 
     def _ipython_key_completions_(self):
         """Provide method for key-autocompletions in IPython."""
-        return [p.replace('CONFIG_','') for p in self.parameters]
+        return [p.replace("CONFIG_", "") for p in self.parameters]
 
 
 class ArgoFloatLaunchConfigParametersProto(ArgoFloatAnyConfigParametersProto):
@@ -163,6 +163,7 @@ class ArgoFloatLaunchConfigParametersProto(ArgoFloatAnyConfigParametersProto):
         # User manual section on "Configuration parameters"
         argopy.ArgoDocs(29825).open_pdf(55)  # as of Version 3.44.0
     """
+
     def __call__(self, *args, **kwargs) -> NoReturn:
         raise ValueError(
             "ArgoFloat.launchconfig cannot be called directly. Use "
@@ -179,12 +180,16 @@ class ArgoFloatLaunchConfigParametersProto(ArgoFloatAnyConfigParametersProto):
         data = []
         for param in self.parameters:
             pname = cfgnameparser(param)
-            this = {'Name': f"{pname['label']}"}
-            this.update({'Unit': f"{pname['unit']}"})
-            this.update({f"Value": self[param]})
-            this.update({'CONFIG_PARAMETER_NAME': f"{param}"})
+            this = {"Name": f"{pname['label']}"}
+            this.update({"Unit": f"{pname['unit']}"})
+            this.update({"Value": self[param]})
+            this.update({"CONFIG_PARAMETER_NAME": f"{param}"})
             data.append(this)
-        return pd.DataFrame(data, dtype=object).sort_values(by='Name').reset_index(drop=True)
+        return (
+            pd.DataFrame(data, dtype=object)
+            .sort_values(by="Name")
+            .reset_index(drop=True)
+        )
 
 
 class ArgoFloatConfigParametersProto(ArgoFloatAnyConfigParametersProto):
@@ -283,7 +288,9 @@ class ArgoFloatConfigParametersProto(ArgoFloatAnyConfigParametersProto):
         """
         raise NotImplementedError
 
-    def for_cycles(self, param: str, cycle_numbers: int | list[int]) -> int | float | str | bool | list[int | float | str | bool]:
+    def for_cycles(
+        self, param: str, cycle_numbers: int | list[int]
+    ) -> int | float | str | bool | list[int | float | str | bool]:
         """Retrieve a configuration parameter for cycle number(s)
 
         Parameters
@@ -324,17 +331,22 @@ class ArgoFloatConfigParametersProto(ArgoFloatAnyConfigParametersProto):
         else:
             mlist = [m for m in to_list(missions) if m in self.missions]
         if len(mlist) == 0:
-            raise ValueError(f"Invalid list of mission numbers. Valid values are: {self.missions}")
+            raise ValueError(
+                f"Invalid list of mission numbers. Valid values are: {self.missions}"
+            )
 
-        columns = group_cycles_by_missions(self.cycles, output='group')
+        columns = group_cycles_by_missions(self.cycles, output="group")
         data = []
         for param in self.parameters:
             pname = cfgnameparser(param)
-            this = {'Name': f"{pname['label']}"}
-            this.update({'Unit': f"{pname['unit']}"})
+            this = {"Name": f"{pname['label']}"}
+            this.update({"Unit": f"{pname['unit']}"})
             for m in mlist:
                 this.update({f"Mission # {m} / Cycles # {columns[m]}": self[param, m]})
-            this.update({'CONFIG_PARAMETER_NAME': f"{param}"})
+            this.update({"CONFIG_PARAMETER_NAME": f"{param}"})
             data.append(this)
-        return pd.DataFrame(data, dtype=object).sort_values(by='Name').reset_index(drop=True)
-
+        return (
+            pd.DataFrame(data, dtype=object)
+            .sort_values(by="Name")
+            .reset_index(drop=True)
+        )

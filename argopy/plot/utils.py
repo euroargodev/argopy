@@ -3,7 +3,7 @@ from contextlib import contextmanager
 import importlib.util
 
 
-_importorskip = lambda modname: importlib.util.find_spec(modname) is not None
+_importorskip = lambda modname: importlib.util.find_spec(modname) is not None  # noqa: E731
 
 has_mpl = _importorskip("matplotlib")
 has_cartopy = _importorskip("cartopy")

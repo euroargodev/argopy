@@ -81,6 +81,7 @@ DATA_SOURCE_LIST = frozenset(["erddap", "gdac", "argovis"])
 _DATASET_LIST = frozenset(["phy", "bgc", "ref", "bgc-s", "bgc-b"])
 _USER_LEVEL_LIST = frozenset(["standard", "expert", "research"])
 
+
 @dataclass(frozen=True)
 class PRODUCT_LIST:
     """A place to define the list of valid third-party products
@@ -89,10 +90,13 @@ class PRODUCT_LIST:
     -----
     This is a read-only dataclass
     """
-    datafetcher : tuple[str] = tuple(["argovis"]) # To be used with the 'product' argument
+
+    datafetcher: tuple[str] = tuple(
+        ["argovis"]
+    )  # To be used with the 'product' argument
     """List of valid values for the ``product`` argument of the :class:`argopy.DataFetcher` class"""
 
-    argofloat: tuple[str] = tuple([]) # To be
+    argofloat: tuple[str] = tuple([])  # To be
     """List of valid values for the :meth:`argopy.ArgoFloat.open_product` method"""
 
 
@@ -134,10 +138,11 @@ def validate_parallel_method(method):
     else:
         return False
 
+
 def validate_data_source(src):
-    if src == 'argovis':
+    if src == "argovis":
         warnings.warn(
-            f"'argovis' as a 'src' option is no longer accepted and will raise an error soon. To fetch data from the Argovis server, please update your code to use the new DataFetcher 'product' argument dedicated to third-party providers like Argovis -- Deprecated since version 1.5",
+            "'argovis' as a 'src' option is no longer accepted and will raise an error soon. To fetch data from the Argovis server, please update your code to use the new DataFetcher 'product' argument dedicated to third-party providers like Argovis -- Deprecated since version 1.5",
             category=FutureWarning,
             stacklevel=2,
         )
@@ -161,8 +166,8 @@ _VALIDATORS = {
     PASSWORD: lambda x: isinstance(x, str) or x is None,
     PARALLEL: validate_parallel,
     PARALLEL_DEFAULT_METHOD: validate_parallel_method,
-    LON: lambda x: x in ['180', '360'],
-    NVS: lambda x: (isinstance(x, str) and x.startswith('http')) or x is None,
+    LON: lambda x: x in ["180", "360"],
+    NVS: lambda x: (isinstance(x, str) and x.startswith("http")) or x is None,
 }
 
 

@@ -177,7 +177,7 @@ class ArgoAccessor:
                 )
                 N_PROF = len(np.unique(dummy_argo_uid))
             else:
-                N_PROF = 0.
+                N_PROF = 0.0
         else:
             N_PROF = len(np.unique(self._obj["N_PROF"]))
         return N_PROF
@@ -209,7 +209,7 @@ class ArgoAccessor:
                     .values
                 )
             else:
-                N_LEVELS = 0.
+                N_LEVELS = 0.0
         else:
             N_LEVELS = len(np.unique(self._obj["N_LEVELS"]))
         return N_LEVELS
@@ -221,7 +221,7 @@ class ArgoAccessor:
             if self.N_PROF > 0:
                 N_POINTS = self.N_PROF * self.N_LEVELS
             else:
-                N_POINTS = 0.
+                N_POINTS = 0.0
         else:
             N_POINTS = len(np.unique(self._obj["N_POINTS"]))
         return N_POINTS
@@ -517,7 +517,9 @@ class ArgoAccessor:
             i_uid, prof = grp
             for iv, vname in enumerate(this.data_vars):
                 try:
-                    count[i_prof, iv] = len(np.unique(prof[vname]))  # This is very long because it must read all the data !
+                    count[i_prof, iv] = len(
+                        np.unique(prof[vname])
+                    )  # This is very long because it must read all the data !
                 except Exception:
                     log.error(
                         "point2profile: An error happened when dealing with the '%s' data variable"
@@ -629,7 +631,9 @@ class ArgoAccessor:
                 "Method only available for a collection of profiles (N_PROF dimension)"
             )
         ds = self._obj
-        ds = ds.argo.datamode.split()  # Otherwise this method will fail with BGC netcdf files
+        ds = (
+            ds.argo.datamode.split()
+        )  # Otherwise this method will fail with BGC netcdf files
 
         # Remove all variables for which a dimension is length=0 (eg: N_HISTORY)
         # todo: We should be able to find a way to keep them somewhere in the data structure
@@ -916,7 +920,9 @@ class ArgoAccessor:
             core_params.remove("PSAL")
 
         # Apply transforms and filters:
-        this = this.argo.filter_qc(QC_list=1, QC_fields=["POSITION_QC", f"{self._TNAME}_QC"])
+        this = this.argo.filter_qc(
+            QC_list=1, QC_fields=["POSITION_QC", f"{self._TNAME}_QC"]
+        )
         this = this.argo.datamode.merge(params=core_params)
         this = this.argo.datamode.filter(params=core_params, dm="D")
 
@@ -1053,7 +1059,7 @@ class ArgoAccessor:
         for co in coords:
             ds_out.coords[co] = this_dsp[co]
 
-        ds_out = ds_out.drop_vars(["N_LEVELS", "Z_LEVELS"], errors='ignore')
+        ds_out = ds_out.drop_vars(["N_LEVELS", "Z_LEVELS"], errors="ignore")
         ds_out = ds_out[np.sort(ds_out.data_vars)]
         ds_out = ds_out.argo.cast_types()
         ds_out.attrs = self.attrs  # Preserve original attributes
@@ -1482,9 +1488,9 @@ class ArgoAccessor:
 
         if "SIG0" in vlist:
             SIG0 = xr.DataArray(sig0, coords=this["TEMP"].coords, name="SIG0")
-            SIG0.attrs[
-                "long_name"
-            ] = "Potential density anomaly with reference pressure of 0 dbar"
+            SIG0.attrs["long_name"] = (
+                "Potential density anomaly with reference pressure of 0 dbar"
+            )
             SIG0.attrs["standard_name"] = "sea_water_sigma_theta"
             SIG0.attrs["unit"] = "kg/m^3"
             that.append(SIG0)
@@ -1523,7 +1529,7 @@ class ArgoAccessor:
             that.append(CS)
 
         # Create a dataset with all new variables:
-        that = xr.merge(that, compat='no_conflicts')
+        that = xr.merge(that, compat="no_conflicts")
         # Add to the dataset essential Argo variables (allows to keep using the argo accessor):
         that = that.assign(
             {
@@ -1811,7 +1817,10 @@ class ArgoAccessor:
             # Compute fractional year:
             # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L334
             DATES = np.array(
-                [toYearFraction(d) for d in pd.to_datetime(this_one[self._TNAME].values)]
+                [
+                    toYearFraction(d)
+                    for d in pd.to_datetime(this_one[self._TNAME].values)
+                ]
             )[np.newaxis, :]
 
             # Read measurements:
@@ -2009,11 +2018,12 @@ class ArgoAccessor:
         # Add zarr compression to encoding:
         if "encoding" not in kwargs:
             from numcodecs import Blosc
+
             compressor = Blosc(cname="zstd", clevel=3, shuffle=2)
             encoding = {}
             for v in self._obj:
                 encoding.update({v: {"compressor": compressor}})
-            kwargs.update({'encoding': encoding})
+            kwargs.update({"encoding": encoding})
 
         # Convert to a zarr file using compression:
         return self._obj.to_zarr(*args, **kwargs)
@@ -2105,8 +2115,10 @@ class ArgoAccessor:
         for param in plist:
             if param not in self._obj:
                 raise ValueError(f"Parameter {param} not in dataset")
-            if 'N_LEVELS' not in self._obj[param].dims:
-                raise ValueError(f"Parameter {param} must have the 'N_LEVELS' dimension")
+            if "N_LEVELS" not in self._obj[param].dims:
+                raise ValueError(
+                    f"Parameter {param} must have the 'N_LEVELS' dimension"
+                )
 
         # There should be one input core dimension 'N_LEVELS' for each argument of the reduce function
         input_core_dims = [["N_LEVELS"] for _ in plist]
@@ -2119,11 +2131,9 @@ class ArgoAccessor:
         ufunc_kwargs = dict(
             kwargs=kwargs,  # Keywords arguments to be passed to the reduce function
             input_core_dims=input_core_dims,
-
             # dimensions allowed to change size. Must be set!
             # must also appear in ``input_core_dims`` for at least one argument
             exclude_dims=set(("N_LEVELS",)),
-
             vectorize=True,  # loop over non-core dims
             dask="parallelized",
         )
@@ -2134,13 +2144,23 @@ class ArgoAccessor:
         )
         return reduced
 
-    def map_vars_to_dict(self, var_key: str, var_val:str, duplicate:bool=False) -> dict[Any, Any]:
-        return map_vars_to_dict(self._obj, var_key=var_key, var_val=var_val, duplicate=duplicate)
+    def map_vars_to_dict(
+        self, var_key: str, var_val: str, duplicate: bool = False
+    ) -> dict[Any, Any]:
+        return map_vars_to_dict(
+            self._obj, var_key=var_key, var_val=var_val, duplicate=duplicate
+        )
 
 
 def open_Argo_dataset(filename_or_obj):
     time_coder = xr.coders.CFDatetimeCoder(use_cftime=False)
-    ds = xr.open_dataset(filename_or_obj, decode_cf=1, decode_times=time_coder, mask_and_scale=1, decode_timedelta=True)
+    ds = xr.open_dataset(
+        filename_or_obj,
+        decode_cf=1,
+        decode_times=time_coder,
+        mask_and_scale=1,
+        decode_timedelta=True,
+    )
     ds = cast_Argo_variable_type(ds)
     return ds
 

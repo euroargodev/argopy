@@ -96,7 +96,7 @@ class Props:
     )
     """A subset of attrs, to be used to validate export/search possible values"""
 
-    extra = ('R03', 'R14', 'R18')
+    extra = ("R03", "R14", "R18")
     """List of Vocabularies for which Concept definition string provides 'extra' meta-data"""
 
 
@@ -236,7 +236,7 @@ class ArgoReferenceValue:
         # Once we have a 'name' and a 'reference', we can load raw data from NVS
         self._nvs = self._nvs_store.load_concept(name, reference)
 
-        return {'name': name, 'reference': reference}
+        return {"name": name, "reference": reference}
 
     def __init_explicit(self, data: Any) -> dict[str, Any]:
         """Create instance with JSON data provided, typically using ArgoReferenceValue.from_dict()"""
@@ -247,11 +247,11 @@ class ArgoReferenceValue:
         if name == "" or name is None:
             name = urnparser(id2urn(self.nvs["@id"]))["termid"]
 
-        reference : str = urnparser(self.nvs["dce:identifier"])[
+        reference: str = urnparser(self.nvs["dce:identifier"])[
             "listid"
         ]  # eg 'dce:identifier' = 'SDN:R27::UNKNOWN'
 
-        return {'name': name, 'reference': reference}
+        return {"name": name, "reference": reference}
 
     def __init__(self, name: str, reference: Optional[str] = None, **kwargs) -> None:
         """Create a :class:`ArgoReferenceValue` with a value name
@@ -262,17 +262,17 @@ class ArgoReferenceValue:
         reference: str, optional, default=None
             If the value name is found in more than one reference table, an identifier (eg ``RR2``) or a parameter (eg ``RT_QC_FLAG``) must be specified.
         """
-        self._nvs_store : NVS = NVS(nvs=kwargs.get("nvs", OPTIONS["nvs"]))
+        self._nvs_store: NVS = NVS(nvs=kwargs.get("nvs", OPTIONS["nvs"]))
 
         if kwargs.get("data", None) is None:
             props = self.__init_implicit(name=name, reference=reference)
         else:
             props = self.__init_explicit(data=kwargs.get("data"))
 
-        self.name = props['name']
+        self.name = props["name"]
         """Value name"""
 
-        self.reference = props['reference']
+        self.reference = props["reference"]
         """Table identifier this value is from, eg ``R25``"""
 
         # And populate all attributes:
@@ -347,7 +347,6 @@ class ArgoReferenceValue:
         self.sameas = sameas
         """Mapping of other objects this value is a "same as" subject for"""
 
-
     def __setattr__(self, attr, value):
         """Set attribute value, with read-only after instantiation policy for public attributes"""
         if attr in self.attrs and not caller_function().startswith("__init"):
@@ -413,7 +412,6 @@ class ArgoReferenceValue:
         else:
             summary.append("extra: (no extra attributes from definition string)")
 
-
         return "\n".join(summary)
 
     def __str__(self):
@@ -445,7 +443,7 @@ class ArgoReferenceValue:
         return [p for p in Props.keys]
 
     @property
-    def nvs(self)-> dict[str, Any]:
+    def nvs(self) -> dict[str, Any]:
         """Raw NVS server response, json-like"""
         return self._nvs
 

@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from pandas import DataFrame
-from typing import Any, Optional, List, Dict
+from typing import Any, Optional, Dict
 from dataclasses import dataclass
 
 from argopy.options import OPTIONS
@@ -174,9 +174,9 @@ class ArgoReferenceTable:
     def __init__(self, identifier_or_parameter: str, *args, **kwargs) -> None:
         """Create a :class:`ArgoReferenceTable` with an identifier, eg ``R25`` or a parameter name, eg ``SENSOR_MODEL``"""
         # Internal placeholders:
-        self._Vocabulary2Parameter: dict[str, str] = Asset.load("vocabulary:description")[
-            "data"
-        ]["Vocabulary2Parameter"]
+        self._Vocabulary2Parameter: dict[str, str] = Asset.load(
+            "vocabulary:description"
+        )["data"]["Vocabulary2Parameter"]
         self._df: pd.DataFrame | None = None  # Dataframe export
         self._d: dict[str, ArgoReferenceValue] | None = (
             {}
@@ -188,7 +188,9 @@ class ArgoReferenceTable:
         elif identifier_or_parameter in self._Vocabulary2Parameter.values():
             parameter: str = identifier_or_parameter
             identifier: str = [
-                k for k, v in self._Vocabulary2Parameter.items() if v == identifier_or_parameter
+                k
+                for k, v in self._Vocabulary2Parameter.items()
+                if v == identifier_or_parameter
             ][0]
         else:
             raise ValueError(
@@ -201,7 +203,7 @@ class ArgoReferenceTable:
         """Netcdf parameter this table is the reference for, eg ``SENSOR_MODEL``"""
 
         # Once we have an id in 'name' we can load raw data from NVS
-        self._nvs_store : NVS = NVS(nvs=kwargs.get("nvs", OPTIONS["nvs"]))
+        self._nvs_store: NVS = NVS(nvs=kwargs.get("nvs", OPTIONS["nvs"]))
         self.nvs: dict[str, Any] = self._nvs_store.load_vocabulary(self.identifier)
         """Raw NVS server response, json-like"""
 
@@ -259,7 +261,7 @@ class ArgoReferenceTable:
         return cls(urn["listid"])
 
     @classmethod
-    def valid_identifiers(cls)->Dict[str, str]:
+    def valid_identifiers(cls) -> Dict[str, str]:
         """Return the a dictionary of all available tables
 
         Returns

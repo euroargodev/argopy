@@ -165,15 +165,17 @@ def argo_split_path(this_path):  # noqa C901
     try:
         # Adjust origin and path for local files:
         # This ensures that output['path'] is agnostic to users and can be reused on any gdac compliant architecture
-        if 'dac' in path_parts:
+        if "dac" in path_parts:
             idac = path_parts.index("dac")
-        elif 'aux' in path_parts:
+        elif "aux" in path_parts:
             idac = path_parts.index("aux")
         else:
-            raise ValueError("This is not a Argo GDAC compliant file path (no 'dac' or 'aux'")
-        output["origin"] = sep.join(path_parts[0 : idac])
+            raise ValueError(
+                "This is not a Argo GDAC compliant file path (no 'dac' or 'aux'"
+            )
+        output["origin"] = sep.join(path_parts[0:idac])
         output["origin"] = sep if output["origin"] == "" else output["origin"]
-        output["path"] = sep.join(path_parts[idac :])
+        output["path"] = sep.join(path_parts[idac:])
 
         # Extract file information
         if path_parts[-1] == "profiles":
@@ -260,7 +262,7 @@ def argo_split_path(this_path):  # noqa C901
                 output["data_mode"] = "R, Real-time data (implicit)"
 
     output["auxiliary"] = False
-    if 'aux' in path_parts:
+    if "aux" in path_parts:
         output["type"] = f"Auxiliary {output['type']}"
         output["auxiliary"] = True
 
@@ -419,13 +421,17 @@ def cfgnameparser(name: str) -> dict[str, str]:
 
     Unit is always lower case.
     """
-    assert name.split("_")[0] == 'CONFIG', "This is not a valid configuration parameter (see R18 prefLabel)"
+    assert (
+        name.split("_")[0] == "CONFIG"
+    ), "This is not a valid configuration parameter (see R18 prefLabel)"
     unit = name.split("_")[-1]
     label = "".join(name.split("_")[1:-1])
-    return {'label': label, 'unit': unit.lower()}
+    return {"label": label, "unit": unit.lower()}
 
 
-def group_cycles_by_missions(cycles: dict[int, int], output: Literal['group', 'list'] = 'group') -> dict[int, str] | dict[int, list[int]]:
+def group_cycles_by_missions(
+    cycles: dict[int, int], output: Literal["group", "list"] = "group"
+) -> dict[int, str] | dict[int, list[int]]:
     """
 
     Parameters
@@ -440,7 +446,7 @@ def group_cycles_by_missions(cycles: dict[int, int], output: Literal['group', 'l
         A dictionary mapping mission numbers (keys) on group of cycle numbers (values). If output is set to 'group', values are a string (eg '1>3') and if output is set to 'list', values are the list of cycle numbers as integers.
 
     """
-    is_suite = lambda x: list(range(np.min(x), np.max(x) + 1)) == sorted(x)
+    is_suite = lambda x: list(range(np.min(x), np.max(x) + 1)) == sorted(x)  # noqa: E731
 
     def group_consecutive(lst):
         if not lst:
@@ -465,7 +471,7 @@ def group_cycles_by_missions(cycles: dict[int, int], output: Literal['group', 'l
         for cyc, mis in cycles.items():
             if mis == m:
                 mission_cycles[int(m)].append(cyc)
-    if output == 'list':
+    if output == "list":
         return mission_cycles
 
     else:
@@ -485,7 +491,7 @@ def group_cycles_by_missions(cycles: dict[int, int], output: Literal['group', 'l
         return results
 
 
-def mono2multi(flist : list[str], convention : str = 'core', sep :str = '/') -> list[str]:
+def mono2multi(flist: list[str], convention: str = "core", sep: str = "/") -> list[str]:
     """Convert a list of mono-profile files to a list of multi-profile files
 
     The multi-profile file name is based on an :class:`ArgoIndex` convention.
@@ -503,6 +509,7 @@ def mono2multi(flist : list[str], convention : str = 'core', sep :str = '/') -> 
     -------
     list(str)
     """
+
     def _mono2multi(mono_path):
         meta = argo_split_path(mono_path)
 
@@ -529,7 +536,9 @@ def mono2multi(flist : list[str], convention : str = 'core', sep :str = '/') -> 
             )
 
         else:
-            raise ValueError("Method not available for this index (only 'ar_index_global_prof' and 'argo_synthetic-profile_index' allowed).")
+            raise ValueError(
+                "Method not available for this index (only 'ar_index_global_prof' and 'argo_synthetic-profile_index' allowed)."
+            )
 
     new_uri = [_mono2multi(uri)[2:] for uri in flist]
     new_uri = list(set(new_uri))
@@ -552,13 +561,15 @@ def urnparser(urn: str) -> dict[str]:
         Components of the URN: 'listid', 'version' and 'termid'
     """
     pp = urn.split(":")
-    if len(pp) == 4 and pp[0] == 'SDN':
-        return {'listid': pp[1], 'version': pp[2], 'termid': pp[3]}
+    if len(pp) == 4 and pp[0] == "SDN":
+        return {"listid": pp[1], "version": pp[2], "termid": pp[3]}
     else:
-        raise ValueError(f"This NVS URN '{urn}' does not follow the pattern: 'SDN:listid:version:termid' or 'SDN:listid::termid' for NVS2.0")
+        raise ValueError(
+            f"This NVS URN '{urn}' does not follow the pattern: 'SDN:listid:version:termid' or 'SDN:listid::termid' for NVS2.0"
+        )
 
 
-def ppliststr(l: list[str], last : str = 'and', n : int | None = None) -> str:
+def ppliststr(lst: list[str], last: str = "and", n: int | None = None) -> str:
     """Pretty print a list of strings
 
     Examples
@@ -570,21 +581,21 @@ def ppliststr(l: list[str], last : str = 'and', n : int | None = None) -> str:
         ppliststr(['a', 'b', 'c', 'd'], n=3) -> "'a', 'b', 'c' and more ..."
 
     """
-    n = n if n is not None else len(l)
+    n = n if n is not None else len(lst)
     if n == 0:
         return ""
 
     s: str = ""
     ii: int = 0
-    m: int = len(l)
+    m: int = len(lst)
     while ii < m:
-        item = l[ii]
+        item = lst[ii]
         if ii == n:
             s += f" {last} more ..."
             break
         if ii == 0:
             s += f"'{item}'"
-        elif ii == len(l) - 1:
+        elif ii == len(lst) - 1:
             s += f" {last} '{item}'"
         else:
             s += f", '{item}'"
