@@ -1,3 +1,38 @@
 [build-system]
-requires = ["setuptools>=42", "wheel"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "argopy"
+version = "1.5.0"
+description = "A python library for Argo data beginners and experts"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{name = "argopy Developers", email = "gmaze@ifremer.fr"}]
+license-files = ["LICENSE", "LICENSES/*"]
+dynamic = ["dependencies"]
+classifiers = [ "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Topic :: Scientific/Engineering",
+        "Intended Audience :: Science/Research",
+        "Operating System :: OS Independent",
+        "Operating System :: POSIX",
+        "Operating System :: MacOS",
+        "Operating System :: Microsoft :: Windows",
+        "Development Status :: 5 - Production/Stable", ]  # unchanged
+
+[project.urls]
+Homepage = "https://github.com/euroargodev/argopy"
+
+[project.entry-points."xarray.backends"]
+argo = "argopy.xarray:ArgoEngine"
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[tool.setuptools.packages.find]
+include = ["argopy*"]
+exclude = ["argopy.tests*"]
+
+[tool.setuptools.package-data]
+argopy = ["static/assets/*", "static/css/*"]
