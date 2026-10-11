@@ -7,8 +7,8 @@ What's New
 
 |pypi dwn| |conda dwn|
 
-v1.5.0 (7 Oct. 2026)
---------------------
+v1.5.0 (11 Oct. 2026)
+---------------------
 
 .. currentmodule:: argopy
 
@@ -17,7 +17,12 @@ v1.5.0 (7 Oct. 2026)
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- **New methods to access mono-cycle profile files** from :class:`ArgoFloat` instances using :class:`ArgoFloat.ls_profiles`, :class:`ArgoFloat.open_profile` and :class:`ArgoFloat.open_profiles` methods. (:pr:`590`) by |gmaze|.
+- **New methods to work with mono-cycle profile files** from :class:`ArgoFloat` instances with:
+    - :class:`ArgoFloat.ls_profiles`,
+    - :class:`ArgoFloat.open_profile`,
+    - and :class:`ArgoFloat.open_profiles` methods.
+
+    Check the full documentation page at :ref:`List and load profiles <tools-argofloat-profiles>`. (:pr:`590`) by |gmaze|.
 
 - **New full Argo vocabulary support** for:
     - reference values: :class:`ArgoReferenceValue`,
@@ -26,7 +31,7 @@ Features and front-end API
 
     Check the full documentation page at :ref:`Argo vocabulary and references <argovocabulary>`. (:pr:`575`) by |gmaze|.
 
-    Rq: As a consequence, the historical :class:`ArgoNVSReferenceTables` is deprecated. The ``ArgoNVSReferenceTables.tbl('R25')`` method can be replaced with the new :meth:`ArgoReferenceTable.to_dataframe`.
+    Rq: As a consequence, the :class:`ArgoNVSReferenceTables` is deprecated. The ``ArgoNVSReferenceTables.tbl('R25')`` method can be replaced with the new :meth:`ArgoReferenceTable.to_dataframe`.
 
 .. _v1.5.0-internals:
 
@@ -35,9 +40,9 @@ Internals
 
 - **Annual upgrade to support last versions of dependencies**. (:pr:`681`, :pr:`685`) by |gmaze|.
 
-- **Improve import time** with lazy and/or deferred import of large dependencies, optimization and finally removing of the auto-discovery of data/index fetchers :issue:`585` (:pr:`676`) by |charles| and (:pr:`624`) by |gmaze|.
+- **Improve import time** with lazy and/or deferred import of large dependencies, optimization and finally removing of the auto-discovery of data/index fetchers, :issue:`585` (:pr:`676`) by |charles| and (:pr:`624`) by |gmaze|.
 
-- **Update USA GDAC url** :issue:`624` (:pr:`634`) by |gmaze|.
+- **Update USA GDAC url**, :issue:`624` (:pr:`634`) by |gmaze|.
 
 - **Fix bug** whereby some unit tests would raise  ``fsspec.exceptions.FSTimeoutError``, :issue:`593`. (:pr:`640`) by |gmaze|.
 
@@ -50,16 +55,16 @@ Internals
 Documentation
 ^^^^^^^^^^^^^
 
-- **Define** a :ref:`policy <contributing.ai_policy>` regarding **generative AI usage** in **Argopy** contributions :issue:`637`. (:pr:`639`) by |quai20|.
+- **Define** a :ref:`policy <contributing.ai_policy>` regarding **generative AI usage** in **Argopy** contributions, :issue:`637`. (:pr:`639`) by |quai20|.
 
-- **Define** a :ref:`policy and specific methods <product_distribution>` regarding the **access to third-party product** through **Argopy**. :issue:`638`. (:pr:`683`) by |gmaze|.
+- **Define** a :ref:`policy and specific methods <product_distribution>` regarding the **access to third-party product** through **Argopy**, :issue:`638`. (:pr:`683`) by |gmaze|.
 
 .. _v1.5.0-deprec:
 
 Deprecation
 ^^^^^^^^^^^
 
-- The value ``argovis`` for the ``src`` global option is deprecated, as well as for the DataFetcher ``src`` argument. From now on, to fetch data from the ``argovis`` server, you will need to use the ``product`` argument of the :class:`DataFetcher`. This is a consequence of the new **third-party product policy** introduced in (:pr:`683`).
+- The value ``argovis`` for the ``src`` global option is deprecated, as well as for the DataFetcher ``src`` argument. From now on, to fetch data from the ``argovis`` server, you will need to use the ``product`` argument of the :class:`DataFetcher`. This is a consequence of the new :ref:`policy for third-party products <product_distribution>` introduced in (:pr:`683`).
 
 v1.4.0 (5 Jan. 2026)
 --------------------
