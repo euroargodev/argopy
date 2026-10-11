@@ -1,8 +1,26 @@
 import io
 import pandas as pd
 import logging
-from decorator import decorator
 import warnings
+
+
+try:
+    from decorator import decorator
+
+except ModuleNotFoundError:
+
+    import functools
+
+    def decorator(caller):
+        """Turn caller(func, *args, **kwargs) into a signature-preserving decorator."""
+        @functools.wraps(caller)
+        def make_decorator(func):
+            @functools.wraps(func)
+            def wrapper(*args, **kwargs):
+                return caller(func, *args, **kwargs)
+            return wrapper
+        return make_decorator
+
 
 from ....utils.checkers import (
     check_index_cols,
@@ -15,6 +33,8 @@ from ....utils.checkers import (
 from ....utils import redact, to_list
 from ....errors import InvalidDatasetStructure, OptionValueError
 from ... import s3store
+
+
 
 try:
     import pyarrow.csv as csv  # noqa: F401
