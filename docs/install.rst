@@ -37,18 +37,15 @@ Required dependencies
 
 **argopy** >= 1.3 requires Python 3.11
 
-- xarray >= 2025.7.0, <=2025.9.0
+- xarray >= 2025.7.0
 - scipy
-- numpy
 - erddapy
 - netCDF4
 - h5netcdf
-- fsspec >= 2025.5.1
+- fsspec
 - toolz
 - requests
-- aiohttp <= 3.12.15
-- decorator
-- packaging
+- aiohttp
 
 Requirement dependencies details can be found `here <https://github.com/euroargodev/argopy/blob/master/requirements.txt>`_.
 
