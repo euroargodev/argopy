@@ -2,24 +2,8 @@ import io
 import pandas as pd
 import logging
 import warnings
-
-
-try:
-    from decorator import decorator
-
-except ModuleNotFoundError:
-
-    import functools
-
-    def decorator(caller):
-        """Turn caller(func, *args, **kwargs) into a signature-preserving decorator."""
-        @functools.wraps(caller)
-        def make_decorator(func):
-            @functools.wraps(func)
-            def wrapper(*args, **kwargs):
-                return caller(func, *args, **kwargs)
-            return wrapper
-        return make_decorator
+import functools
+import inspect
 
 
 from ....utils.checkers import (
@@ -33,7 +17,6 @@ from ....utils.checkers import (
 from ....utils import redact, to_list
 from ....errors import InvalidDatasetStructure, OptionValueError
 from ... import s3store
-
 
 
 try:
@@ -58,6 +41,29 @@ if HAS_BOTO3:
 
 
 log = logging.getLogger("argopy.stores.index.s3")
+
+
+def decorator(caller):
+    """Turn caller(func, *args, **kwargs) into a signature-preserving decorator.
+
+    Like decorator.decorator (without kwsyntax=True), the call is bound to
+    func's signature and defaults are applied, so `caller` always receives
+    positional-or-keyword parameters in args, in declaration order.
+    """
+
+    @functools.wraps(caller)
+    def make_decorator(func):
+        sig = inspect.signature(func)
+
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            bound = sig.bind(*args, **kwargs)
+            bound.apply_defaults()
+            return caller(func, *bound.args, **bound.kwargs)
+
+        return wrapper
+
+    return make_decorator
 
 
 @decorator
