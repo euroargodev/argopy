@@ -33,6 +33,8 @@ Features and front-end API
 
     Rq: As a consequence, the :class:`ArgoNVSReferenceTables` is deprecated. The ``ArgoNVSReferenceTables.tbl('R25')`` method can be replaced with the new :meth:`ArgoReferenceTable.to_dataframe`.
 
+- **New Argo index search queries** for upper and/or lower limits of profiles longitude, latitude and date. See :meth:`ArgoIndex.query.lon`, :meth:`ArgoIndex.query.lat` and :meth:`ArgoIndex.query.date` for examples. (:pr:`583`) by |jdogo|.
+
 .. _v1.5.0-internals:
 
 Internals
@@ -1573,6 +1575,7 @@ v0.1.0 (17 Mar. 2020)
 .. |quai20| replace:: `K. Balem <http://www.github.com/quai20>`__
 .. |fricour| replace:: `F. Ricour <https://www.github.com/fricour>`__
 .. |charles| replace:: `C. Turner <https://github.com/charles-turner-1>`__
+.. |jdogo| replace:: `J. Dogo <https://github.com/Jade2097>`__
 
 .. |pypi dwn| image:: https://img.shields.io/pypi/dm/argopy?label=Pypi%20downloads
    :target: //pypi.org/project/argopy/
