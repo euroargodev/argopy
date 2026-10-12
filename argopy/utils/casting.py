@@ -5,12 +5,12 @@ import xarray as xr
 import logging
 from copy import deepcopy
 from typing import Any
+import json
 
 from argopy.utils.assets import Asset
 
 
 log = logging.getLogger("argopy.utils.casting")
-DATA_TYPES = Asset.load('data_types')['data']
 
 
 def cast_Argo_variable_type(ds: xr.Dataset, overwrite=True) -> xr.Dataset:
@@ -26,6 +26,7 @@ def cast_Argo_variable_type(ds: xr.Dataset, overwrite=True) -> xr.Dataset:
     -------
     :class:`xarray.DataSet`
     """
+    DATA_TYPES = Asset.load('data_types')['data']
 
     def cast_this(da, type, exception_to_raise=None):
         """Low-level casting of DataArray values"""
