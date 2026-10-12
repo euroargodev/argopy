@@ -137,9 +137,10 @@ Choose a release tag vX.Y.Z, fill in the release title and click on the `Auto-ge
 
 ## Publish the release
 
-- [ ] Last check the ``./setup.py`` file version of the release and that the [documentation is ready](https://readthedocs.org/projects/argopy/builds/)
+- [ ] Last check the ``./pyproject.toml`` file version of the release and that the [documentation is ready](https://readthedocs.org/projects/argopy/builds/)
 - [ ] ["Create a new release"](https://github.com/euroargodev/argopy/releases/new) on GitHub.
-Choose a release tag vX.Y.Z, fill in the release title and click on the `Auto-generate release notes` button. Once ready, publish the release. This will trigger the [publish Github action](https://github.com/euroargodev/argopy/blob/master/.github/workflows/pythonpublish.yml) that will push the release on [Pypi](https://pypi.org/project/argopy/#history).
+Choose a release tag vX.Y.Z, fill in the release title and click on the `Auto-generate release notes` button. Once ready, publish the release. This will trigger the [publish Github action](https://github.com/euroargodev/argopy/blob/master/.github/workflows/pythonpublish.yml).
+- Go to the [action job](https://github.com/euroargodev/argopy/blob/master/.github/workflows/pythonpublish.yml) and "Review pending deployments" in order to manually finalize the publication.
 - [ ] Checkout on [Pypi](https://pypi.org/project/argopy/#history) and [Conda](https://github.com/conda-forge/argopy-feedstock/pulls) that the new release is distributed (this can take 2/3 days for conda).
 
 [![Publish on pypi](https://github.com/euroargodev/argopy/actions/workflows/pythonpublish.yml/badge.svg)](https://github.com/euroargodev/argopy/actions/workflows/pythonpublish.yml)
