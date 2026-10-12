@@ -34,11 +34,12 @@ from argopy.utils.mappers import map_vars_to_dict
 from argopy.utils.checkers import is_list_of_strings
 from argopy.utils.casting import (
     cast_Argo_variable_type,
-    DATA_TYPES,
     to_list,
 )
 from argopy.utils.lists import list_core_parameters
 from argopy.utils.geo import toYearFraction
+from argopy.utils.assets import Asset
+
 
 log = logging.getLogger("argopy.xarray")
 
@@ -111,6 +112,8 @@ class ArgoAccessor:
 
         # Variables present in the initial dataset
         self._vars = list(xarray_obj.variables.keys())
+
+        self._DATA_TYPES = Asset.load('data_types')['data']
 
         # Store the initial list of dimensions
         self._dims = list(xarray_obj.sizes.keys())
@@ -1283,7 +1286,7 @@ class ArgoAccessor:
                 dv
                 for dv in list(this_dsp.data_vars)
                 if set(["N_LEVELS", "N_PROF"]) == set(this_dsp[dv].dims)
-                and dv not in DATA_TYPES["data"]["str"]
+                and dv not in self._DATA_TYPES["str"]
             ]
         else:
             datavars = [
@@ -1292,7 +1295,7 @@ class ArgoAccessor:
                 if set(["N_LEVELS", "N_PROF"]) == set(this_dsp[dv].dims)
                 and "QC" not in dv
                 and "ERROR" not in dv
-                and dv not in DATA_TYPES["data"]["str"]
+                and dv not in self._DATA_TYPES["str"]
             ]
 
         # All other variables:

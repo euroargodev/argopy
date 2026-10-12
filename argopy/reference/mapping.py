@@ -9,7 +9,7 @@ from argopy.stores.nvs import NVS
 from argopy.stores.nvs.utils import bindings2df, id2urn, url2predicate
 from argopy.stores.nvs.utils import known_mappings
 from argopy.utils.format import ppliststr, urnparser
-from argopy.utils.locals import Asset
+from argopy.utils.assets import Asset
 
 
 id2concept = lambda x: urnparser(id2urn(x))["termid"]  # noqa: E731

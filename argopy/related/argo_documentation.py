@@ -1,12 +1,10 @@
-import os
-import json
 import pandas as pd
 from functools import lru_cache
 import requests
 
 from ..stores import httpstore, memorystore
 from ..options import OPTIONS
-from argopy.utils.locals import Asset
+from argopy.utils.assets import Asset
 
 
 class ArgoDocs:

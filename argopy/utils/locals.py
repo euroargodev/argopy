@@ -319,3 +319,8 @@ def show_options(file=sys.stdout):  # noqa: C901
         if 'password' in k.lower() or 'api_key' in k.lower() and v is not None:
             v = "***"
         print(f"{k:<20}: {v}", file=file)
+
+
+def caller_function():
+    """Return the name of the function calling wherever ``caller_function()`` is called"""
+    return frame_info(2).function

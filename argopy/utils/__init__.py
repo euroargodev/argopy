@@ -19,7 +19,7 @@ from .checkers import (  # noqa: F401
     erddap_ds_exists,
     has_aws_credentials,
 )
-from .casting import DATA_TYPES, cast_Argo_variable_type, to_list
+from .casting import cast_Argo_variable_type, to_list
 from .decorators import deprecated, doc_inherit, register_accessor
 from .lists import (
     list_multiprofile_file_variables,
@@ -92,7 +92,6 @@ __all__ = (
     "erddap_ds_exists",
     "has_aws_credentials",
     # Data type casting:
-    "DATA_TYPES",
     "cast_Argo_variable_type",
     "to_list",
     # Decorators:
