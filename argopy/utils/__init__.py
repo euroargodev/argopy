@@ -42,8 +42,8 @@ from .locals import (  # noqa: F401
     modified_environ,
     get_sys_info,  # noqa: F401
     netcdf_and_hdf5_versions,  # noqa: F401
-    Asset,
 )
+from .assets import Asset
 from .monitors import monitor_status, badge, fetch_status  # noqa: F401
 from .geo import (
     wmo2box,
