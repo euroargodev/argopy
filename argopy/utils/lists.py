@@ -183,13 +183,6 @@ def list_bgc_s_variables() -> List[str]:
     :meth:`argopy.utils.list_radiometry_variables`
     :meth:`argopy.utils.list_radiometry_parameters`,
     """
-    # path2assets = importlib.util.find_spec(
-    #     "argopy.static.assets"
-    # ).submodule_search_locations[0]
-    #
-    # with open(os.path.join(path2assets, "variables_bgc_synthetic.json"), "r") as f:
-    #     vlist = json.load(f)
-    # return vlist["data"]["variables"]
     return Asset.load('variables_bgc_synthetic')["data"]["variables"]
 
 
@@ -339,13 +332,6 @@ def shortcut2gdac(short: str = None) -> Union[str, dict]:
     :func:`argopy.utils.list_gdac_servers`, :class:`argopy.gdacfs`, :meth:`argopy.utils.check_gdac_path`
 
     """
-    # path2assets = importlib.util.find_spec(
-    #     "argopy.static.assets"
-    # ).submodule_search_locations[0]
-    # with open(os.path.join(path2assets, "gdac_servers.json"), "r") as f:
-    #     vlist = json.load(f)
-    # shortcuts = vlist["data"]["shortcuts"]
-
     shortcuts = Asset.load('gdac_servers')["data"]["shortcuts"]
 
     if short is not None:
