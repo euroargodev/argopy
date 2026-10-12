@@ -7,7 +7,7 @@ What's New
 
 |pypi dwn| |conda dwn|
 
-v1.5.0 (11 Oct. 2026)
+v1.5.0 (12 Oct. 2026)
 ---------------------
 
 .. currentmodule:: argopy
@@ -67,6 +67,8 @@ Deprecation
 ^^^^^^^^^^^
 
 - The value ``argovis`` for the ``src`` global option is deprecated, as well as for the DataFetcher ``src`` argument. From now on, to fetch data from the ``argovis`` server, you will need to use the ``product`` argument of the :class:`DataFetcher`. This is a consequence of the new :ref:`policy for third-party products <product_distribution>` introduced in (:pr:`683`).
+
+- The :class:`ArgoNVSReferenceTables` is deprecated. The ``ArgoNVSReferenceTables.tbl()`` method can be replaced with the new :meth:`ArgoReferenceTable.to_dataframe`. (:pr:`575`) by |gmaze|.
 
 v1.4.0 (5 Jan. 2026)
 --------------------
