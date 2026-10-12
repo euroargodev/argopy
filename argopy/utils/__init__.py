@@ -68,9 +68,6 @@ from .carbon import GreenCoding, Github
 from . import optical_modeling
 from .carbonate import calculate_uncertainties, error_propagation
 
-import importlib
-path2assets = importlib.util.find_spec('argopy.static.assets').submodule_search_locations[0]
-
 
 __all__ = (
     # Checkers:
@@ -119,7 +116,6 @@ __all__ = (
     "float_wmo",
     "ListStrProperty",
     # Locals (environments, versions, systems):
-    "path2assets",
     "show_versions",
     "show_options",
     "modified_environ",
