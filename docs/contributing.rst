@@ -4,12 +4,13 @@ Contributing to argopy
 
 .. contents:: Table of contents:
    :local:
+   :depth: 1
 
 First off, thanks for taking the time to contribute!
 
 .. note::
 
-  Large parts of this document came from the `Xarray <http://xarray.pydata.org/en/stable/contributing.html>`_
+  Large parts of this document come from the `Xarray <http://xarray.pydata.org/en/stable/contributing.html>`_
   and `Pandas <http://pandas.pydata.org/pandas*docs/stable/contributing.html>`_ contributing guides.
 
 If you seek **support** for your argopy usage or if you don't want to read
@@ -19,9 +20,9 @@ Where to start?
 ===============
 
 All contributions, bug reports, bug fixes, documentation improvements,
-enhancements, and ideas are welcome.
+enhancements, new features, and ideas are welcome.
 
-If you are brand new to *argopy* or open source development, we recommend going
+If you are brand new to **Argopy** or open source development, we recommend going
 through the `GitHub "issues" tab <https://github.com/euroargodev/argopy/issues>`_
 to find issues that interest you. There are a number of issues listed under
 `Documentation <https://github.com/euroargodev/argopy/issues?q=is%3Aissue+is%3Aopen+label%3Adocumentation>`_
@@ -39,7 +40,7 @@ and `Good first issue <https://github.com/euroargodev/argopy/discussions?discuss
 Bug reports and enhancement requests
 ====================================
 
-Bug reports are an important part of making *argopy* more stable. Having a complete bug
+Bug reports are an important part of making **Argopy** more stable. Having a complete bug
 report will allow others to reproduce the bug and provide insight into fixing. See
 `this stackoverflow article <https://stackoverflow.com/help/mcve>`_ for tips on
 writing a good bug report.
@@ -60,7 +61,7 @@ Bug reports must:
       ...
       ```
 
-#. Include the full version string of *argopy* and its dependencies. You can use the
+#. Include the full version string of **Argopy** and its dependencies. You can use the
    built in function::
 
       >>> import argopy
@@ -78,7 +79,7 @@ Contributing to the documentation
 =================================
 
 If you're not the developer type, contributing to the documentation is still of
-huge value. You don't even have to be an expert on *argopy* to do so! In fact,
+huge value. You don't even have to be an expert on **Argopy** to do so! In fact,
 there are sections of the docs that are worse off after being written by
 experts. If something in the docs doesn't make sense to you, updating the
 relevant section after you figure it out is a great way to ensure it will help
@@ -88,7 +89,7 @@ the next person.
    :local:
 
 
-About the *argopy* documentation
+About the **Argopy** documentation
 --------------------------------
 
 The documentation is written in **reStructuredText**, which is almost like writing
@@ -99,7 +100,7 @@ complex changes to the documentation as well.
 
 Some other important things to know about the docs:
 
-- The *argopy* documentation consists of two parts: the docstrings in the code
+- The **Argopy** documentation consists of two parts: the docstrings in the code
   itself and the docs in this folder ``argopy/docs/``.
 
   The docstrings are meant to provide a clear explanation of the usage of the
@@ -110,7 +111,7 @@ Some other important things to know about the docs:
 - The docstrings follow the **Numpy Docstring Standard**, which is used widely
   in the Scientific Python community. This standard specifies the format of
   the different sections of the docstring. See `this document
-  <https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt>`_
+  <https://numpydoc.readthedocs.io/en/latest/format.html#docstring-standard>`_
   for a detailed explanation, or look at some of the existing functions to
   extend it in a similar manner.
 
@@ -137,15 +138,15 @@ Some other important things to know about the docs:
   doc build. This approach means that code examples will always be up to date,
   but it does make the doc building a bit more complex.
 
-- Our API documentation in ``docs/api.rst`` houses the auto-generated
-  documentation from the docstrings. For classes, there are a few subtleties
-  around controlling which methods and attributes have pages auto-generated.
+- Our API documentation in ``docs/api.rst`` houses an organised collection of all
+  auto-generated documentation from the docstrings. For classes, there are a few
+  subtleties around controlling which methods and attributes have pages auto-generated.
 
   Every method should be included in a ``toctree`` in ``api.rst``, else Sphinx
   will emit a warning.
 
 
-How to build the *argopy* documentation
+How to build the **Argopy** documentation
 ---------------------------------------
 
 Requirements
@@ -158,7 +159,6 @@ the specific environment ``argopy-docs``:
     $ ./ci/envs_manager -i argopy-docs
     $ conda activate argopy-docs
     $ pip install -e .
-    $ pip install -r docs/requirements.txt
 
 Building the documentation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -185,8 +185,8 @@ If you want to do a full clean build, do:
 
 .. _working.code:
 
-Working with the code
-=====================
+Contributing to the code base
+=============================
 
 Development workflow
 --------------------
@@ -261,8 +261,10 @@ incorporated into argopy.
 
 .. _contributing.dev_env:
 
-Virtual environment
--------------------
+Conda environment
+-----------------
+
+We use `conda <https://docs.conda.io/projects/conda/en/stable/user-guide/install/index.html>`_/`mamba <https://mamba.readthedocs.io/>`_ to manage Python environments for developments and CI tests.
 
 We created a short command line script to help manage argopy virtual environments. It's available in the "ci" folder of the repository.
 
@@ -308,6 +310,9 @@ Then, you can simply install the default dev environment like this:
     $ pip install -e .
     $ python -c 'import argopy; argopy.show_versions()'
 
+.. note::
+
+    ``./ci/envs_manager`` is based on `mamba <https://mamba.readthedocs.io/>`_, much faster than `conda <https://docs.conda.io/projects/conda/en/stable/user-guide/install/index.html>`_.
 
 Code standards
 --------------
@@ -316,12 +321,12 @@ Writing good code is not just about what you write. It is also about *how* you
 write it. During Continuous Integration testing, several
 tools will be run to check your code for stylistic errors.
 Generating any warnings will cause the test to fail.
-Thus, good style is a requirement for submitting code to *argopy*.
+Thus, good style is a requirement for submitting code to *Argopy*.
 
 Code Formatting
 ---------------
 
-*argopy* uses several tools to ensure a consistent code format throughout the project:
+**Argopy** uses several tools to ensure a consistent code format throughout the project:
 
 * `Flake8 <http://flake8.pycqa.org/en/latest/>`_ for general code quality
 
@@ -336,27 +341,158 @@ and then run from the root of the argopy repository::
 to qualify your code.
 
 
+Test-driven development/code writing
+------------------------------------
+
+[TBD]
+
+
+Backwards Compatibility
+-----------------------
+
+[TBD]
+
+
+Testing With Continuous Integration
+-----------------------------------
+
+[TBD]
+
+
 .. _contributing.code:
 
-Contributing to the code base
-=============================
+Adding new extensions to **Argopy** facades
+===========================================
 
-.. contents:: Code Base:
+.. contents::
    :local:
+
+.. _dataset_extensions:
+
+Extensions for the 'argo' Xarray Dataset accessor
+-------------------------------------------------
+
+Have a look to existing submodules located under ``argopy/extensions``.
+
+Basically an extension implementation is of the form:
+
+.. code-block:: python
+
+    from argopy.extensions import register_argo_accessor, ArgoAccessorExtension
+
+    @register_argo_accessor("canyon_b")
+    class CanyonB(ArgoAccessorExtension):
+        ...
+
+Here, the class will be accessible as an extension as ``Dataset.argo.canyon_b``.
+
+[TBC]
+
+.. _argofloat_extensions:
+
+ArgoFloat extensions
+--------------------
+
+[TBD]
+
+.. _argoindex_extensions:
+
+ArgoIndex extensions
+--------------------
+
+[TBD]
+
+.. _product_distribution:
+
+Distribute third-party products
+===============================
+
+The goal of **Argopy** is to help scientists to access the Argo dataset, through high-level APIs for beginners as
+well as low-level APIs for users gaining expertise with the dataset.
+
+The Argo dataset is officially referenced with a DOI, and possibly a DOI for each monthly snapshots. These data are
+officially distributed by GDAC through http, ftp, s3 and erddap servers. The GDAC servers are the data sources for **Argopy** .
+
+Several groups are also developing Argo-based dataset. Such third-party dataset provide opinionated versions of the
+official Argo dataset (eg: possibly with specific quality controls, vertical interpolation, new variables computation, etc...).
+
+The **Argopy**  team believes that: **for users, a clear distinction must be made between the Argo official
+versus opinionated dataset**.
+
+A *clear distinction* is necessary to preserve the Argo Data Management Team work reputation and to not engage the Argo
+responsibility for scientific results based on non-official third-party dataset. Such a distinction is also necessary
+to make users aware of the origin of the dataset they work with.
+
+The **Argopy**  team also believes that such Argo-based, but opinionated third-party, dataset should also be made
+available through **Argopy** APIs. This choice is made to promote science analysis, the inter-comparison of products
+and FAIR principles.
+
+Therefore, the **Argopy** APIs to be used to provide access to third-party non-official data are based on specific argument or methods:
+
+- For the :class:`argopy.fetchers.ArgoDataFetcher` API: provide access to a third-party dataset with the **product** argument, which, when specified, will take precedence over the ``src`` argument to be used only for official data sources.
+- For the :class:`argopy.ArgoFloat` API: provide access to a third-party dataset with the :meth:`argopy.ArgoFloat.open_product` method, rather than the :meth:`argopy.ArgoFloat.open_dataset` and :meth:`argopy.ArgoFloat.open_profile` methods to be used only for official data sources.
+
+.. important::
+
+    For third-party products to be made accessible through **Argopy** facades, a couple of requirements are to be met:
+
+    #. The data production procedure and the data content are fully documented in a peer-reviewed document with an online DOI. This may not necessarily be a journal article. What is expected is that the product has already received positive feedbacks from the community and/or ADMT.
+
+    #. The submodule has to be fully tested to ensure reliability under all the OS **Argopy** supports.
+
+    #. A contact person must be mentioned within the submodule.
+
+    #. Resources must be attributed to the maintenance of the submodule for a reasonable minimal period of 2 years. If CI tests start to fail and no maintenance is provided: the product will follow the regular deprecation cycle (see below).
+
+
+Deprecation cycle:
+
+- If CI tests are failed for vX.Y.Z release, product is marked as deprecated since version = vX.Y.Z, CI tests are marked x-failed from now on.
+- On next release, if code is marked as deprecated since version = vX.(Y-1).Z : do nothing (2nd and last version with deprecation warning)
+- On next release, if code is marked as deprecated since version = vX.(Y-2).Z : delete code (code will raise an error)
+
+.. _argofloat_product:
+
+From the ArgoFloat class
+------------------------
+
+This section is for those who wish to make a third-party product accessible through the :class:`argopy.ArgoFloat` store.
+
+Official Argo data are accessible through:
+
+- :meth:`argopy.ArgoFloat.open_dataset`,
+- :meth:`argopy.ArgoFloat.open_profile` and :meth:`argopy.ArgoFloat.open_profiles`.
+
+For third-party product we use: :meth:`argopy.ArgoFloat.open_product`.
+
+This method receives the name of the product as a primary argument and is responsible for dispatching the request to a specific sub-module located under ``argopy/stores/float/products/``.
+
+Contributors should also update the list of valid products used by the checker in the :class:`argopy.options.PRODUCT_LIST` dataclass.
+
+The return data can be anything, since this depends on the product.
+
+Contributors will keep in mind to use our internal :class:`argopy.stores.ftpstore`, :class:`argopy.stores.httpstore` and :class:`argopy.stores.s3store` stores if necessary, or possibly the private :class:`argopy.ArgoFloat.fs` and :class:`argopy.ArgoFloat.idx` instances.
+
 
 .. _data_fetchers:
 
-Data fetchers
--------------
+From the DataFetcher class
+--------------------------
+
+This section is for those who which to make a third-product accessible through the :class:`DataFetcher` facade.
 
 Introduction
 ^^^^^^^^^^^^
-If you want to add your own data fetcher for a new service, then, keep in mind that:
+
+.. warning::
+
+    This section needs to be updated with new requirements for data fetchers.
 
 * Data fetchers are responsible for:
 
   * loading all available data from a given source and providing at least a :func:`to_xarray()` method
   * making data compliant to Argo standards (data type, variable name, attributes, etc ...)
+  * be compatible and take in consideration all arguments passed to the :class:`DataFetcher` facade.
 
 * Data fetchers must:
 
@@ -366,6 +502,8 @@ If you want to add your own data fetcher for a new service, then, keep in mind t
     *  ``access_points``, eg: ['wmo', 'box']
     *  ``exit_formats``, eg: ['xarray']
     *  ``dataset_ids``, eg: ['phy', 'ref', 'bgc']
+    *  ``api_server``, eg: "https://argovis-api.colorado.edu"
+    *  ``api_server_check``, eg: "https://argovis-api.colorado.edu/ping"
 
   * provides the facade API (:class:`argopy.fetchers.ArgoDataFetcher`) methods to transform or filter data
     according to user level or requests. These must includes:
@@ -390,11 +528,10 @@ Inheritance
 Inherit from the :class:`argopy.data_fetchers.proto.ArgoDataFetcherProto`.
 This enforces minimal internal design compliance.
 
-Auto-discovery of fetcher properties
-""""""""""""""""""""""""""""""""""""
+Fetcher properties
+""""""""""""""""""
 
-The new fetcher must come with the ``access_points``, ``exit_formats`` and ``dataset_ids`` properties at the top of the
-file, e.g.:
+The new fetcher must come with the ``access_points``, ``exit_formats``, ``dataset_ids``, ``api_server``, ``api_server_check`` properties at the top of the file, e.g.:
 
 .. code-block:: python
 
@@ -411,11 +548,16 @@ required. These variables are used by the facade
 to auto-discover the fetcher capabilities. The ``dataset_ids``
 property is used to determine which variables can be retrieved.
 
+The ``api_server_check`` property is used to ping the data source and monitor for availability.
+
+Fetcher access points
+"""""""""""""""""""""
+
 Auto-discovery of fetcher access points
 """""""""""""""""""""""""""""""""""""""
 
 The new fetcher must come at least with a ``Fetch_box`` or
-``Fetch_wmo`` class, basically one for each of the ``access_points``
+``Fetch_wmo`` implementations, basically one for each of the ``access_points``
 listed as properties. More generally we may have a main class that
 provides the key functionality to retrieve data from the source,
 and then classes for each of the ``access_points`` of your fetcher.
@@ -472,7 +614,7 @@ for json requests:
 Output data format
 """"""""""""""""""
 
-Last but not least, about the output data. In **argopy**, we want
+Last but not least, about the output data. In **Argopy**, we want
 to provide data for both expert and standard users. This is explained
 and illustrated in the `documentation
 here <https://argopy.readthedocs.io/en/latest/user_mode.html>`__.
@@ -482,5 +624,75 @@ not part of the Argo ADMT vocabulary. For instance,
 variables like: ``bgcMeasKeys`` or ``geoLocation`` are not allowed. This will ensure
 that whatever the data source set by users, the output xarray or
 dataframe will be formatted and contain the same variables. This will
-also ensure that other argopy features can be used on the new fetcher
+also ensure that other **Argopy** features can be used on the new fetcher
 output, like plotting or xarray data manipulation.
+
+.. _contributing.ai_policy:
+
+Policy regarding AI powered contributions
+=========================================
+
+.. contents:: AI powered contributions:
+   :local:
+
+AI Usage Policy
+---------------
+
+The argopy developing team has set some rules for generative AI usage. These rules are not definitive and may be updated in the future.
+
+- **All generative AI usage in any form must be disclosed.** If AI was used to generate a significant
+  portion of your contribution (beyond simple autocomplete), we ask that you **disclose it** within the
+  code or PR description. You must state the tool you used along with a sentence saying that the work was AI-assisted.
+
+- **Pull requests and issues created by AI are forbidden.**
+  If AI isn't disclosed but a maintainer suspects its use within a PR or issue **creation**, the PR will be closed.
+  AI assistance can be used for discussions inside PR or issues, but must always be supervized and reviewed by a human eye before submission.
+
+- **Media.**
+  Text and code are the only acceptable AI-generated content, per the
+  other rules in this policy.
+
+These rules apply to all contributors, including maintainers.
+
+Human Accountability
+--------------------
+
+**The human contributor is 100% responsible for the contribution.**
+
+If you submit a Pull Request that includes AI-generated code, documentation, or
+comments:
+
+- You must **fully understand** the code you submit, and the context in which it is included inside the global project or **Argopy**.
+- You must be able to explain the "**why**" behind the implementation during the
+  review process.
+- You are responsible for the long-term maintenance of that code.
+
+The people
+----------
+
+Please keep in mind that **Argopy** is developed and maintained by humans being.
+
+It is for us a fundamental aspect of the project that discussions (in issues or PR), even if happening on github,
+are made between humans. Knowing this, it will be considered impolite to approach the **Argopy** dev community with AI-agent.
+
+Ethics, Ecology & Expertise
+---------------------------
+
+For more than 20 years, the Argo program has been a key element in the observation and understanding of climate change
+and its impact on the ocean. Argo is incremental in monitoring how the human-driven climate change negatively impact
+the ocean state and marine life (`check the IPCC special report on ocean <https://www.ipcc.ch/srocc/>`_ or
+`that brief overview also from the IPCC <https://www.ipcc.ch/report/ar6/wg1/downloads/factsheets/IPCC_AR6_WGI_Sectoral_Fact_Sheet_Marine_Ecosystems_Fisheries.pdf>`_).
+So, it is of primary and inherent concern to Argo to limit its environmental footprint.
+
+We like to think that **Argopy** is part of the Argo ecosystem.
+
+As sustainable software developers, the **Argopy** team aims to better understand the generative
+AI’s environmental impact, following our preliminary work in
+`monitoring the carbon footprint of maintaining and developing Argopy <https://argopy.readthedocs.io/en/latest/energy.html>`_.
+But very little information are available on the generative AI’s environmental impact and "current GAI models are deployed mainly
+in carbon-intensive regions" (`Ding et al, 2025 <https://doi.org/10.1016/j.xinn.2025.100866>`_).
+
+With that, 2 things to keep in mind when contributing to the development of **Argopy** :
+
+- **Ethics & Ecology** : Not knowing the - presumably very large - impact of generative AI on CO2 emissions (and use of limited Earth resources), it is important to us that we adopt a conservative and limited approach regarding GAI usage in contributing to **Argopy** in order to limit its environmental footprint.
+- **Expertise** : **Argopy**, as part of a public research infrastructure, has more duty in developing/preserving a technical and scientific expertise for the public good, than participating in a blind race to productivity gain (in the `social acceleration sense <https://en.wikipedia.org/wiki/Social_acceleration>`_, an argument echoing the `slow science <https://en.wikipedia.org/wiki/Slow_science>`_ approach at work within **Argopy**). It is thus also important to us that we adopt a conservative and limited approach regarding GAI usage in contributing to **Argopy** to preserve a good level of human expertise regarding the produced code and our associated ability to disseminate our expertise to the end-users.

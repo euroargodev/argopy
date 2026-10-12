@@ -35,8 +35,8 @@ from argopy.utils.checkers import (
     is_list_of_datasets,
     is_list_of_dicts,
 )
-from utils import requires_connection, requires_connected_argovis, create_temp_folder
-from mocked_http import mocked_httpserver, mocked_server_address
+from argopy.tests.helpers.utils import requires_connection, create_temp_folder
+from argopy.tests.helpers.mocked_http import mocked_httpserver
 
 
 log = logging.getLogger("argopy.tests.stores")
@@ -220,6 +220,10 @@ class Test_HttpStore:
     #########
     # UTILS #
     #########
+    @pytest.fixture(autouse=True)
+    def _setup(self, mocked_httpserver):
+        self.mocked_server_address = mocked_httpserver
+
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
         # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
@@ -241,12 +245,12 @@ class Test_HttpStore:
         """
         for server_to_mock in [self.repo, "https://api.ifremer.fr/"]:
             if server_to_mock in uri:
-                uri = uri.replace(server_to_mock, mocked_server_address + "/")
+                uri = uri.replace(server_to_mock, self.mocked_server_address + "/")
         return uri
 
-    def test_load_mocked_server(self, mocked_httpserver):
-        """This will easily ensure that the module scope fixture is available to all methods !"""
-        assert True
+    # def test_load_mocked_server(self, mocked_httpserver):
+    #     """This will easily ensure that the module scope fixture is available to all methods !"""
+    #     assert True
 
     #########
     # TESTS #
@@ -459,6 +463,7 @@ class Test_MemoryStore:
 
 
 @skip_this
+@pytest.mark.usefixtures("mocked_ftpserver")
 class Test_FtpStore:
     fs = None
     mf_nc = ["dac/csiro/5900865/profiles/D5900865_00%i.nc" % i for i in [1, 2]]
@@ -470,14 +475,14 @@ class Test_FtpStore:
     def host(self):
         # h = 'ftp.ifremer.fr'
         h = urlparse(pytest.MOCKFTP).hostname
-        log.debug("Using FTP host: %s" % h)
+        # log.debug("Using FTP host: %s" % h)
         return h
 
     @property
     def port(self):
         # p = 0
         p = int(urlparse(pytest.MOCKFTP).port)
-        log.debug("Using FTP port: %i" % p)
+        # log.debug("Using FTP port: %i" % p)
         return p
 
     @pytest.fixture

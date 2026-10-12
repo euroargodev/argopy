@@ -1,0 +1,73 @@
+{
+  "name": "CC00062",
+  "long_name": "CONFIG_GroundingModeDeepZoneThickness_dbar",
+  "last_update": "2026-10-05T15:49:17.470444+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00062/",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00062/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00062/3/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00062/4/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00062/1/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
+      "@language": "en",
+      "@value": "In case of grounding during the descent to profile depth phase, this parameter (PM18 in float user manual) defines the thickness of a new deep zone (from profile start pressure) for the purpose of data reduction. The thickness of the slices is 1 dbar in this zone. Should be set to 0 to disable this function. Template_Values:{unit:[bar, dbar, cbar, mbar, inHg]}."
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "false",
+    "skos:note": {
+      "@language": "en",
+      "@value": "accepted"
+    },
+    "dc:identifier": "SDN:R18::CC00062",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "CONFIG_GroundingModeDeepZoneThickness_dbar"
+    },
+    "owl:versionInfo": "5",
+    "dc:date": "2026-05-15 10:00:35.0",
+    "skos:altLabel": "Core Config 62",
+    "skos:notation": "SDN:R18::CC00062",
+    "pav:version": "5",
+    "dce:identifier": "SDN:R18::CC00062",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00062/5/"
+    },
+    "pav:authoredOn": "2026-05-15 10:00:35.0",
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

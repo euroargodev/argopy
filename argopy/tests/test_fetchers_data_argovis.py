@@ -10,7 +10,6 @@ from utils import (
     create_temp_folder,
 )
 
-from mocked_http import mocked_server_address
 from mocked_http import mocked_httpserver as mocked_argovisserver
 
 import shutil
@@ -116,12 +115,15 @@ def assert_fetcher(mocked_argovisserver, this_fetcher, cacheable=False):
 
 @requires_argovis
 class Test_Backend:
-    """ Test ERDDAP data fetching backend """
-    src = 'argovis'
+    """ Test data fetching backend """
+    product = 'argovis'
 
     #############
     # UTILITIES #
     #############
+    @pytest.fixture(autouse=True)
+    def _setup(self, mocked_httpserver):
+        self.mocked_server_address = mocked_httpserver
 
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
@@ -130,13 +132,13 @@ class Test_Backend:
 
     def _setup_fetcher(self, this_request, cached=False, parallel=False):
         """Helper method to set up options for a fetcher creation"""
-        defaults_args = {"src": self.src,
+        defaults_args = {"product": self.product,
                          "cache": cached,
                          "cachedir": self.cachedir,
                          "parallel": parallel,
                          }
         if USE_MOCKED_SERVER:
-            defaults_args['server'] = mocked_server_address
+            defaults_args['server'] = self.mocked_server_address
 
         dataset = this_request.param['ds']
         user_mode = this_request.param['mode']

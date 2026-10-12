@@ -5,12 +5,13 @@ This file covers the argopy.plot.plot submodule
 import pytest
 from unittest.mock import patch
 import logging
+import tempfile
 from typing import Callable
+import pickle
 
 import argopy
-from utils import (
+from argopy.tests.helpers.utils import (
     requires_gdac,
-    requires_connection,
     requires_matplotlib,
     requires_ipython,
     requires_cartopy,
@@ -31,7 +32,7 @@ from argopy.plot.plot import (
 from argopy.plot.argo_colors import ArgoColors
 from argopy.errors import InvalidDatasetStructure
 from argopy import DataFetcher
-from mocked_http import mocked_server_address
+from argopy.tests.helpers.mocked_http import mocked_httpserver
 
 
 if has_matplotlib:
@@ -49,11 +50,15 @@ argopy.clear_cache()
 
 
 class Test_open_sat_altim_report:
+    @pytest.fixture(autouse=True)
+    def _setup(self, mocked_httpserver):
+        self.mocked_server_address = mocked_httpserver
+
     WMOs = [2901623, [2901623, 6901929]]
 
-    def test_load_mocked_server(self, mocked_httpserver):
-        """This will easily ensure that the module scope fixture is available to all methods !"""
-        assert True
+    # def test_load_mocked_server(self, mocked_httpserver):
+    #     """This will easily ensure that the module scope fixture is available to all methods !"""
+    #     assert True
 
     @pytest.mark.parametrize(
         "WMOs", WMOs, ids=["For unique WMO", "For a list of WMOs"], indirect=False
@@ -66,7 +71,7 @@ class Test_open_sat_altim_report:
             import IPython
 
         dsh = open_sat_altim_report(
-            WMO=WMOs, embed=embed, api_server=mocked_server_address
+            WMO=WMOs, embed=embed, api_server=self.mocked_server_address
         )
 
         if has_ipython and embed is not None:
@@ -90,7 +95,7 @@ class Test_open_sat_altim_report:
     def test_invalid_method(self):
         with pytest.raises(ValueError):
             open_sat_altim_report(
-                WMO=self.WMOs[0], embed="dummy_method", api_server=mocked_server_address
+                WMO=self.WMOs[0], embed="dummy_method", api_server=self.mocked_server_address
             )
 
 
@@ -100,11 +105,14 @@ class Test_plot_trajectory:
     src = "gdac"
     local_gdac = argopy.tutorial.open_dataset("gdac")[0]
     requests = {
+        "float": [[2901623]],
         # "float": [[2901623], [2901623, 6901929, 5906072]],
         # "profile": [[2901623, 12], [6901929, [5, 45]]],
         "region": [
-            [-60, -40, 40.0, 60.0, 0.0, 10.0],
-            [-60, -40, 40.0, 60.0, 0.0, 10.0, "2007-08-01", "2007-09-01"],
+            # [-60, -40, 40.0, 60.0, 0.0, 10.0],
+            # [-60, -40, 40.0, 60.0, 0.0, 10.0, "2007-08-01", "2007-09-01"]
+            [-20, -16.0, 0, 1, 0, 100.0],
+            # [-20, -16.0, 0, 1, 0, 100.0, "1997-07-01", "1997-09-01"],
         ],
     }
 
@@ -139,14 +147,33 @@ class Test_plot_trajectory:
         expected_lg_type = mpl.legend.Legend if with_legend else type(None)
         assert isinstance(ax.get_legend(), expected_lg_type)
 
+        try:
+            with tempfile.NamedTemporaryFile(delete=True, mode='wb') as fid:
+                pickle.dump(fig, fid)
+        except:
+            raise
+
         mpl.pyplot.close(fig)
 
     @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
+    def test_with_a_float(self, opts):
+        if 'float' in self.requests:
+            with argopy.set_options(src=self.src, gdac=self.local_gdac):
+                for arg in self.requests["float"]:
+                    loader = DataFetcher(cache=False).float(arg).load()
+                    self.__test_traj_plot(loader.index, opts)
+        else:
+            pytest.xfail("Because no WMO available in coverage")
+
+    @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
     def test_with_a_region(self, opts):
-        with argopy.set_options(src=self.src, gdac=self.local_gdac):
-            for arg in self.requests["region"]:
-                loader = DataFetcher(cache=True).region(arg).load()
-                self.__test_traj_plot(loader.index, opts)
+        if 'region' in self.requests:
+            with argopy.set_options(src=self.src, gdac=self.local_gdac):
+                for arg in self.requests["region"]:
+                    loader = DataFetcher(cache=False).region(arg).load()
+                    self.__test_traj_plot(loader.index, opts)
+        else:
+            pytest.xfail("Because no BOX available in coverage")
 
 
 @requires_gdac
@@ -158,8 +185,10 @@ class Test_bar_plot:
         # "float": [[2901623], [2901623, 6901929, 5906072]],
         # "profile": [[2901623, 12], [6901929, [5, 45]]],
         "region": [
-            [-60, -40, 40.0, 60.0, 0.0, 10.0],
-            [-60, -40, 40.0, 60.0, 0.0, 10.0, "2007-08-01", "2007-09-01"],
+            # [-60, -40, 40.0, 60.0, 0.0, 10.0],
+            # [-60, -40, 40.0, 60.0, 0.0, 10.0, "2007-08-01", "2007-09-01"],
+            [-20, -16.0, 0, 1, 0, 100.0],
+            [-20, -16.0, 0, 1, 0, 100.0, "1997-07-01", "1997-09-01"],
         ],
     }
 
@@ -192,8 +221,10 @@ class Test_scatter_map:
         # "float": [[2901623], [2901623, 6901929, 5906072]],
         # "profile": [[2901623, 12], [6901929, [5, 45]]],
         "region": [
-            [-60, -40, 40.0, 60.0, 0.0, 10.0],
-            [-60, -40, 40.0, 60.0, 0.0, 10.0, "2007-08-01", "2007-09-01"],
+            # [-60, -40, 40.0, 60.0, 0.0, 10.0],
+            # [-60, -40, 40.0, 60.0, 0.0, 10.0, "2007-08-01", "2007-09-01"],
+            [-20, -16.0, 0, 1, 0, 100.0],
+            [-20, -16.0, 0, 1, 0, 100.0, "1997-07-01", "1997-09-01"],
         ],
     }
 
@@ -226,7 +257,7 @@ class Test_scatter_map:
     def test_with_a_dataset_of_points(self, opts):
         with argopy.set_options(src=self.src, gdac=self.local_gdac):
             for arg in self.requests["region"]:
-                loader = DataFetcher(cache=True).region(arg).load()
+                loader = DataFetcher(cache=False).region(arg).load()
                 with pytest.raises(InvalidDatasetStructure):
                     self.__test(loader.data, (None, None, None), opts)
 
@@ -234,7 +265,7 @@ class Test_scatter_map:
     def test_with_a_dataset_of_profiles(self, opts):
         with argopy.set_options(src=self.src, gdac=self.local_gdac):
             for arg in self.requests["region"]:
-                loader = DataFetcher(cache=True).region(arg).load()
+                loader = DataFetcher(cache=False).region(arg).load()
                 dsp = loader.data.argo.point2profile()
                 # with pytest.warns(UserWarning):
                 #     self.__test(dsp, (None, None, None), opts)
@@ -244,7 +275,7 @@ class Test_scatter_map:
     def test_with_a_dataframe_of_index(self, opts):
         with argopy.set_options(src=self.src, gdac=self.local_gdac):
             for arg in self.requests["region"]:
-                loader = DataFetcher(cache=True).region(arg).load()
+                loader = DataFetcher(cache=False).region(arg).load()
                 self.__test(loader.index, (None, None, None), opts)
 
 
@@ -260,7 +291,7 @@ class Test_scatter_plot:
     def setup_ds(self):
         """Create a real xarray Dataset for all tests."""
         self.ds = (
-            DataFetcher(src=self.src, gdac=self.local_gdac, cache=True)
+            DataFetcher(src=self.src, gdac=self.local_gdac, cache=False)
             .region([-60, -40, 40.0, 60.0, 0.0, 10.0])
             .data
         )

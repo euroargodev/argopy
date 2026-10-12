@@ -11,6 +11,7 @@ import fsspec
 from pathlib import Path
 import warnings
 from netCDF4 import Dataset
+import threading
 
 from ...options import OPTIONS
 from ...errors import InvalidMethod, DataNotFound
@@ -19,7 +20,11 @@ from ..spec import ArgoStoreProto
 from ..filesystems import has_distributed, distributed
 from ..filesystems import tqdm
 
+
 log = logging.getLogger("argopy.stores.implementation.local")
+
+_cache_lock = threading.Lock()
+# Used to lock threads to prevent race to the cached meda-data of fsspec
 
 
 class filestore(ArgoStoreProto):
@@ -71,8 +76,9 @@ class filestore(ArgoStoreProto):
         if "js_opts" in kwargs:
             js_opts.update(kwargs["js_opts"])
 
-        with self.open(url, **open_opts) as of:
-            js = json.load(of, **js_opts)
+        with _cache_lock:
+            with self.open(url, **open_opts) as of:
+                js = json.load(of, **js_opts)
 
         if len(js) == 0:
             if errors == "raise":
@@ -121,17 +127,26 @@ class filestore(ArgoStoreProto):
             tuple: (data, _) or (None, _) if errors == "ignore"
             """
             try:
-                data = self.fs.cat_file(path)
+                with _cache_lock:
+                    data = self.fs.cat_file(path)
 
                 if data[0:3] != b"CDF" and data[0:3] != b"\x89HD":
                     raise TypeError(
                         "We didn't get a CDF or HDF5 binary data as expected ! We get: %s"
                         % data
                     )
-                if data[0:3] == b"\x89HD":
-                    data = io.BytesIO(data)
 
-                return data, None
+                if data[0:3] == b"CDF":
+                    if 'engine' not in xr_opts:
+                        xr_opts['engine'] = 'scipy'
+                elif data[0:3] == b"\x89HD":
+                    if 'engine' not in xr_opts:
+                        xr_opts['engine'] = 'h5netcdf'
+
+                data = io.BytesIO(data)
+
+                return data, xr_opts
+
             except FileNotFoundError as e:
                 if errors == "raise":
                     raise e
@@ -178,7 +193,7 @@ class filestore(ArgoStoreProto):
                 return None
 
         if not lazy:
-            target, _ = load_in_memory(path, errors=errors, xr_opts=xr_opts)
+            target, xr_opts = load_in_memory(path, errors=errors, xr_opts=xr_opts)
         else:
             target, xr_opts = load_lazily(
                 path,
@@ -190,6 +205,9 @@ class filestore(ArgoStoreProto):
         if target is not None:
             if not netCDF4:
                 ds = xr.open_dataset(target, **xr_opts)
+                if not lazy:
+                    ds = ds.load()  # materialize into plain numpy arrays, detach from the backend buffer
+                    ds.close()  # explicitly release the netCDF4/HDF5 handle right away
 
                 if "source" not in ds.encoding:
                     if isinstance(path, str):
@@ -418,6 +436,7 @@ class filestore(ArgoStoreProto):
         :class:`pandas.DataFrame`
         """
         log.debug("Reading csv: %s" % path)
-        with self.open(path) as of:
-            df = pd.read_csv(of, **kwargs)
+        with _cache_lock:
+            with self.open(path) as of:
+                df = pd.read_csv(of, **kwargs)
         return df

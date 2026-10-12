@@ -5,7 +5,7 @@ Carbon emissions
 
 Why
 ---
-The **argopy** team is concerned about the environmental impact of your favorite software development activities.
+The **argopy** team is concerned about the environmental impact of your favorite software development activities. See for instance our position on `AI powered contributions <https://argopy.readthedocs.io/en/latest/contributing.html#id46>`_ to **argopy**.
 
 Starting June 1st 2024, we're experimenting with the `Green Metrics Tools <https://metrics.green-coding.io>`_ from `Green Coding <https://www.green-coding.io>`_ to get an estimate of the energy used and CO2eq emitted by our development activities on Github infrastructure.
 

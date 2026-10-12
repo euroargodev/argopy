@@ -2,4 +2,4 @@
 skip = *.nc,*.ipynb,./local_work,./float_source,./binder,./.github,*.log,./.git,./docs/_build,./docs/_static,./argopy/tests/test_data,./build,./docs/mycache_folder,./docs/examples/cache_bgc,./argopy/static/assets/*.json
 count =
 quiet-level = 3
-ignore-words-list = PRES, pres, idel
+ignore-words-list = PRES, pres, idel, fo, developpement

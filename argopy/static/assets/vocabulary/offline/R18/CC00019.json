@@ -1,0 +1,70 @@
+{
+  "name": "CC00019",
+  "long_name": "CONFIG_ClockAscentEndTimeProfile1_HHMM",
+  "last_update": "2026-10-05T15:48:06.744509+00:00",
+  "data": {
+    "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00019/",
+    "pav:hasVersion": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00019/2/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00019/1/"
+      },
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00019/3/"
+      }
+    ],
+    "@type": "skos:Concept",
+    "skos:definition": {
+      "@language": "en",
+      "@value": "Never used on the GDAC. Ascent end time of Profile 1 (expected time at the surface of Profile 1). Template_Values:{unit:[YYYYMMDD, HHMMSS, YYYYMMDDHHMMSS, HHMM, MMSS, YYYY, DD, HH, MM]}."
+    },
+    "void:inDataset": {
+      "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+    },
+    "owl:deprecated": "true",
+    "skos:note": {
+      "@language": "en",
+      "@value": "deprecated"
+    },
+    "dc:identifier": "SDN:R18::CC00019",
+    "skos:prefLabel": {
+      "@language": "en",
+      "@value": "CONFIG_ClockAscentEndTimeProfile1_HHMM"
+    },
+    "owl:versionInfo": "4",
+    "dc:date": "2026-03-09 09:11:24.0",
+    "skos:altLabel": "Core Config 19",
+    "skos:notation": "SDN:R18::CC00019",
+    "pav:version": "4",
+    "dce:identifier": "SDN:R18::CC00019",
+    "pav:hasCurrentVersion": {
+      "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00019/4/"
+    },
+    "pav:authoredOn": "2026-03-09 09:11:24.0",
+    "@context": {
+      "cpm": "http://purl.org/voc/cpm#",
+      "qudt": "https://qudt.org/2.1/schema/qudt#",
+      "void": "http://rdfs.org/ns/void#",
+      "pav": "http://purl.org/pav/",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "dce": "http://purl.org/dc/elements/1.1/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "iop": "https://w3id.org/iadopt/ont#",
+      "ns1": "http://www.w3.org/ns/dx/prof/",
+      "puv": "https://w3id.org/env/puv#",
+      "semapv": "http://w3id.org/semapv/vocab/",
+      "dct": "http://purl.org/dc/terms/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "reg": "http://purl.org/linked-data/registry#",
+      "sssom": "https://w3id.org/sssom/schema/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "grg": "http://www.isotc211.org/schemas/grg/",
+      "prov": "https://www.w3.org/ns/prov#",
+      "dc": "http://purl.org/dc/terms/"
+    }
+  }
+}

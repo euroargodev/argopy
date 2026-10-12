@@ -1,12 +1,12 @@
 import pytest
 import xarray as xr
 import pandas as pd
-from collections import ChainMap, OrderedDict
+from collections import ChainMap
 import shutil
 
-from mocked_http import mocked_httpserver, mocked_server_address
+from argopy.tests.helpers.mocked_http import mocked_httpserver
 
-from utils import (
+from argopy.tests.helpers.utils import (
     requires_matplotlib,
     requires_cartopy,
     requires_oops,
@@ -18,7 +18,6 @@ from utils import (
 import argopy
 from argopy.related import (
     TopoFetcher,
-    ArgoNVSReferenceTables,
     OceanOPSDeployments,
     ArgoDocs,
     load_dict, mapp_dict,
@@ -41,6 +40,10 @@ if has_ipython:
 class Test_TopoFetcher():
     box = [81, 123, -67, -54]
 
+    @pytest.fixture(autouse=True)
+    def _setup(self, mocked_httpserver):
+        self.mocked_server_address = mocked_httpserver
+
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
         # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
@@ -53,7 +56,7 @@ class Test_TopoFetcher():
         remove_test_dir()
 
     def make_a_fetcher(self, cached=False):
-        opts = {'ds': 'gebco', 'stride': [10, 10], 'server': mocked_server_address}
+        opts = {'ds': 'gebco', 'stride': [10, 10], 'server': self.mocked_server_address}
         if cached:
             opts = ChainMap(opts, {'cache': True, 'cachedir': self.cachedir})
         return TopoFetcher(self.box, **opts)
@@ -63,9 +66,9 @@ class Test_TopoFetcher():
         assert isinstance(ds, xr.Dataset)
         assert 'elevation' in ds.data_vars
 
-    def test_load_mocked_server(self, mocked_httpserver):
-        """This will easily ensure that the module scope fixture is available to all methods !"""
-        assert True
+    # def test_load_mocked_server(self, mocked_httpserver):
+    #     """This will easily ensure that the module scope fixture is available to all methods !"""
+    #     assert True
 
     params = [True, False]
     ids_params = ["cached=%s" % p for p in params]
@@ -73,75 +76,6 @@ class Test_TopoFetcher():
     def test_fetching(self, params):
         fetcher = self.make_a_fetcher(cached=params)
         self.assert_fetcher(fetcher)
-
-
-class Test_ArgoNVSReferenceTables:
-
-    def setup_class(self):
-        """setup any state specific to the execution of the given class"""
-        # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
-        self.cachedir = create_temp_folder().folder
-        self.nvs = ArgoNVSReferenceTables(cache=True, cachedir=self.cachedir, nvs=mocked_server_address)
-
-    def teardown_class(self):
-        """Cleanup once we are finished."""
-        def remove_test_dir():
-            shutil.rmtree(self.cachedir)
-        remove_test_dir()
-
-    def test_load_mocked_server(self, mocked_httpserver):
-        """This will easily ensure that the module scope fixture is available to all methods !"""
-        assert True
-
-    def test_valid_ref(self):
-        assert is_list_of_strings(self.nvs.valid_ref)
-
-    opts = [3, '12', 'R09']
-    opts_ids = ["rtid is a %s" % type(o) for o in opts]
-    @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
-    def test_tbl(self, opts):
-        assert isinstance(self.nvs.tbl(opts), pd.DataFrame)
-
-    opts = [3, '12', 'R09']
-    opts_ids = ["rtid is a %s" % type(o) for o in opts]
-    @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
-    def test_tbl_name(self, opts):
-        names = self.nvs.tbl_name(opts)
-        assert isinstance(names, tuple)
-        assert isinstance(names[0], str)
-        assert isinstance(names[1], str)
-        assert isinstance(names[2], str)
-
-    def test_all_tbl(self):
-        all = self.nvs.all_tbl
-        assert isinstance(all, OrderedDict)
-        assert isinstance(all[list(all.keys())[0]], pd.DataFrame)
-
-    def test_all_tbl_name(self):
-        all = self.nvs.all_tbl_name
-        assert isinstance(all, OrderedDict)
-        assert isinstance(all[list(all.keys())[0]], tuple)
-
-    opts = ["ld+json", "rdf+xml", "text/turtle", "invalid"]
-    opts_ids = ["fmt=%s" % o for o in opts]
-    @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
-    def test_get_url(self, opts):
-        if opts != 'invalid':
-            url = self.nvs.get_url(3, fmt=opts)
-            assert isinstance(url, str)
-            if "json" in opts:
-                data = self.nvs.fs.open_json(url)
-                assert isinstance(data, dict)
-            elif "xml" in opts:
-                data = self.nvs.fs.download_url(url)
-                assert data[0:5] == b'<?xml'
-            else:
-                # log.debug(self.nvs.fs.fs.info(url))
-                data = self.nvs.fs.download_url(url)
-                assert data[0:6] == b'PREFIX'
-        else:
-            with pytest.raises(ValueError):
-                self.nvs.get_url(3, fmt=opts)
 
 
 @requires_oops
@@ -171,6 +105,10 @@ class Test_OceanOPSDeployments:
         ([-90, 0, 0, 90, '2022-01-01', None], False)]
     scenarios_ids = ["%s, %s" % (opt[0], opt[1]) for opt in scenarios]
 
+    @pytest.fixture(autouse=True)
+    def _setup(self, mocked_httpserver):
+        self.mocked_server_address = mocked_httpserver
+
     @pytest.fixture
     def an_instance(self, request):
         """ Fixture to create a OceanOPS_Deployments instance for a given set of arguments """
@@ -185,14 +123,14 @@ class Test_OceanOPSDeployments:
         oops = OceanOPSDeployments(**args)
 
         # Adjust server info to use the mocked HTTP server:
-        oops.api = mocked_server_address
+        oops.api = self.mocked_server_address
         oops.model = 'data/platform'
 
         return oops
 
-    def test_load_mocked_server(self, mocked_httpserver):
-        """This will easily ensure that the module scope fixture is available to all methods !"""
-        assert True
+    # def test_load_mocked_server(self, mocked_httpserver):
+    #     """This will easily ensure that the module scope fixture is available to all methods !"""
+    #     assert True
 
     @pytest.mark.parametrize("an_instance", scenarios, indirect=True, ids=scenarios_ids)
     def test_init(self, an_instance):
@@ -218,10 +156,14 @@ class Test_OceanOPSDeployments:
         fig, ax, hdl = an_instance.plot_status()
         assert isinstance(fig, mpl.figure.Figure)
         assert isinstance(ax, cartopy.mpl.geoaxes.GeoAxesSubplot)
+        mpl.pyplot.close(fig)
 
 
 @pytest.mark.skipif(True, reason="Skipped temporarily, see http://github.com/euroargodev/argopy/issues/488")
 class Test_ArgoDocs:
+    @pytest.fixture(autouse=True)
+    def _setup(self, mocked_httpserver):
+        self.mocked_server_address = mocked_httpserver
 
     @pytest.fixture
     def an_instance(self, request):
@@ -231,14 +173,14 @@ class Test_ArgoDocs:
         Ad = ArgoDocs(docid=docid, cache=False)
 
         # Adjust server info to use the mocked HTTP server:
-        Ad._doiserver = mocked_server_address
-        Ad._archimer = mocked_server_address
+        Ad._doiserver = self.mocked_server_address
+        Ad._archimer = self.mocked_server_address
 
         return Ad
 
-    def test_load_mocked_server(self, mocked_httpserver):
-        """This will easily ensure that the module scope fixture is available to all methods !"""
-        assert True
+    # def test_load_mocked_server(self, mocked_httpserver):
+    #     """This will easily ensure that the module scope fixture is available to all methods !"""
+    #     assert True
 
     @pytest.mark.parametrize("an_instance", [None], indirect=True, ids=["docid=%s" % t for t in [None]])
     def test_list(self, an_instance):
@@ -321,11 +263,11 @@ def test_invalid_dictionnary_key():
 @pytest.mark.parametrize("params", [[6901929, None], [6901929, 12]], indirect=False, ids=['float', 'profile'])
 def test_get_coriolis_profile_id(params, mocked_httpserver):
     with create_temp_folder() as temp_folder:
-        with argopy.set_options(cachedir=temp_folder, server=mocked_server_address):
+        with argopy.set_options(cachedir=temp_folder, server=mocked_httpserver):
             assert isinstance(get_coriolis_profile_id(params[0], params[1]), pd.core.frame.DataFrame)
 
 @pytest.mark.parametrize("params", [[6901929, None], [6901929, 12]], indirect=False, ids=['float', 'profile'])
 def test_get_ea_profile_page(params, mocked_httpserver):
     with create_temp_folder() as temp_folder:
         with argopy.set_options(cachedir=temp_folder):
-            assert is_list_of_strings(get_ea_profile_page(params[0], params[1], api_server=mocked_server_address))
+            assert is_list_of_strings(get_ea_profile_page(params[0], params[1], api_server=mocked_httpserver))

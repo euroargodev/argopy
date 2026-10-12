@@ -39,16 +39,13 @@ Required dependencies
 
 - xarray >= 2025.7.0
 - scipy
-- numpy
 - erddapy
 - netCDF4
 - h5netcdf
-- fsspec >= 2025.5.1
+- fsspec
 - toolz
 - requests
 - aiohttp
-- decorator
-- packaging
 
 Requirement dependencies details can be found `here <https://github.com/euroargodev/argopy/blob/master/requirements.txt>`_.
 

@@ -276,10 +276,10 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
             and not self.parallelize
             and self.parallel_method == "sequential"
         ):
-            warnings.warn(
-                "Found more than 50 files to load, this may take a while to process sequentially ! "
-                "Consider using another data source (eg: 'erddap') or the 'parallel=True' option to improve processing time."
-            )
+            msg = f"Found more than 50 files to load ({len(URI)} !), this may take a while to process sequentially ! Consider using another data source (eg: 'erddap') or the 'parallel=True' option to improve processing time."
+            warnings.warn(msg)
+            log.info(msg)
+
         elif len(URI) == 0:
             raise DataNotFound("No data found for: %s" % self.indexfs.cname)
 
@@ -311,9 +311,7 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         }
         if self.parallel_method in ["thread"]:
             opts["method"] = "thread"
-            opts["open_dataset_opts"] = {
-                "xr_opts": {"decode_cf": 1, "use_cftime": 0, "mask_and_scale": 1}
-            }
+            opts["open_dataset_opts"] = {"xr_opts": {"engine": "argo"}}
 
         elif (self.parallel_method in ["process"]) | (
             has_distributed

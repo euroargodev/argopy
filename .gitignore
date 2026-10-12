@@ -1,4 +1,5 @@
 .DS_Store
+CLAUDE.md
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -203,3 +204,4 @@ argopy/tests/dummy_fileA.txt
 argopy/tests/test_local.py
 argopy/tests/test_tobeignored*.py
 argopy/tests/test_tobeignored.py
+/ci/artifacts

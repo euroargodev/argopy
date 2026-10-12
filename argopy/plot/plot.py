@@ -8,12 +8,15 @@
 #
 import warnings
 import logging
+import os
+import json
 from copy import copy
 
-import xarray as xr
-import pandas as pd
+from argopy import pandas as pd  # Lazily import large module
+from argopy import xarray as xr  # Lazily import large module
 import numpy as np
 from typing import Union
+import importlib
 
 from ..options import OPTIONS
 from ..utils.loggers import warnUnless
@@ -34,7 +37,7 @@ if has_mpl:
 
 if has_seaborn:
     # STYLE["axes"] = "dark"
-    import seaborn as sns
+    from argopy import seaborn as sns  # Lazily import large module
 
 if has_cartopy:
     import cartopy.crs as ccrs
@@ -313,7 +316,7 @@ def bar_plot(
     by: str = "institution",
     style: str = STYLE["axes"],
     with_seaborn: bool = has_seaborn,
-    **kwargs
+    **kwargs,
 ):
     """Create a bar plot for an Argo index dataframe
 
@@ -376,7 +379,7 @@ def scatter_map(  # noqa: C901
     cbarmaxlabels: int = 12,
     set_global: bool = False,
     padding: Union[str, list] = "auto",
-    **kwargs
+    **kwargs,
 ):
     """Try-to-be generic function to create a scatter plot on a map from **argopy** :class:`xarray.Dataset` or :class:`pandas.DataFrame` data
 
@@ -499,7 +502,11 @@ def scatter_map(  # noqa: C901
 
     hue = guess_trajvar(data) if hue is None else hue
 
-    if isinstance(data, xr.Dataset) and data.argo.N_LEVELS > 1 and 'N_LEVELS' in data[hue].dims:
+    if (
+        isinstance(data, xr.Dataset)
+        and data.argo.N_LEVELS > 1
+        and "N_LEVELS" in data[hue].dims
+    ):
         warnings.warn(
             f"More than one N_LEVELS found in this dataset for '{hue}', scatter_map will use the first level only"
         )
@@ -690,7 +697,7 @@ def scatter_map(  # noqa: C901
         dx="auto",
         dy="auto",
         label_style_arg={"color": COLORS["BLUE"], "fontsize": 10},
-        **{"color": COLORS["BLUE"], "alpha": 0.7}
+        **{"color": COLORS["BLUE"], "alpha": 0.7},
     )
     ax.get_xaxis().set_visible(False)
     ax.get_yaxis().set_visible(False)
@@ -723,15 +730,15 @@ def scatter_map(  # noqa: C901
 
 
 def scatter_plot(
-    ds : xr.Dataset,
-    param : str,
-    x : str = "TIME",
-    y : str = "PRES",
-    figsize : tuple =(18, 6),
-    cmap : 'str | mpl.colors.Colormap | ArgoColors | None' = None,
-    vmin : int | float | None = None,
-    vmax : int | float | None = None,
-    s : int = 4,
+    ds: xr.Dataset,
+    param: str,
+    x: str = "TIME",
+    y: str = "PRES",
+    figsize: tuple = (18, 6),
+    cmap: "str | mpl.colors.Colormap | ArgoColors | None" = None,
+    vmin: int | float | None = None,
+    vmax: int | float | None = None,
+    s: int = 4,
     cbar: bool = False,
     style: str = STYLE["axes"],
     **kwargs,
@@ -747,60 +754,61 @@ def scatter_plot(
     """
     warnUnless(has_mpl, "requires matplotlib installed")
 
-
-
-    #deprecation
-    if 'this_param' in kwargs:
+    # deprecation
+    if "this_param" in kwargs:
         warnings.warn(
-            f"The argument 'this_param' is deprecated since version 1.4.0. Please update your code to use 'param' instead.",
+            "The argument 'this_param' is deprecated since version 1.4.0. Please update your code to use 'param' instead.",
             category=DeprecationWarning,
             stacklevel=2,
         )
-        param = kwargs['this_param']  # Safe fallback on new argument
-    if 'this_x' in kwargs:
+        param = kwargs["this_param"]  # Safe fallback on new argument
+    if "this_x" in kwargs:
         warnings.warn(
-            f"The argument 'this_x' is deprecated since version 1.4.0. Please update your code to use 'x' instead.",
+            "The argument 'this_x' is deprecated since version 1.4.0. Please update your code to use 'x' instead.",
             category=DeprecationWarning,
             stacklevel=2,
         )
-        x = kwargs['this_x']  # Safe fallback on new argument
-    if 'this_y' in kwargs:
+        x = kwargs["this_x"]  # Safe fallback on new argument
+    if "this_y" in kwargs:
         warnings.warn(
-            f"The argument 'this_y' is deprecated since version 1.4.0. Please update your code to use 'y' instead.",
+            "The argument 'this_y' is deprecated since version 1.4.0. Please update your code to use 'y' instead.",
             category=DeprecationWarning,
             stacklevel=2,
         )
-        y = kwargs['this_y']  # Safe fallback on new argument
+        y = kwargs["this_y"]  # Safe fallback on new argument
 
     if param in Asset.load('data_types')["data"]["str"]:
-        raise ValueError("scatter_plot does not support string data type (yet !)")        
-
+        raise ValueError(
+            "scatter_plot does not support parameter of string type (yet !)"
+        )
     # Transform the 'cmap' argument into a mpl.colors.Colormap instance
     a_color = None
     if cmap is None:
         cmap = guess_cmap(param)
         if cmap is not None:
-            a_color = ArgoColors(cmap, N=kwargs.get('N', None))
-            cmap: 'mpl.colors.Colormap' = a_color.cmap
+            a_color = ArgoColors(cmap, N=kwargs.get("N", None))
+            cmap: "mpl.colors.Colormap" = a_color.cmap
         else:
-            a_color = ArgoColors('gist_ncar', N=kwargs.get('N', None))
-            cmap: 'mpl.colors.Colormap' = a_color.cmap
+            a_color = ArgoColors("gist_ncar", N=kwargs.get("N", None))
+            cmap: "mpl.colors.Colormap" = a_color.cmap
 
     elif isinstance(cmap, str):
-        a_color = ArgoColors(cmap, N=kwargs.get('N', None))
-        cmap: 'mpl.colors.Colormap' = a_color.cmap
+        a_color = ArgoColors(cmap, N=kwargs.get("N", None))
+        cmap: "mpl.colors.Colormap" = a_color.cmap
 
     elif isinstance(cmap, ArgoColors):
-        a_color : ArgoColors = copy(cmap)
-        cmap: 'mpl.colors.Colormap' = a_color.cmap
+        a_color: ArgoColors = copy(cmap)
+        cmap: "mpl.colors.Colormap" = a_color.cmap
 
     if has_mpl and not isinstance(cmap, mpl.colors.Colormap):
-        raise ValueError(f"'cmap' argument must be a str or `ArgoColors` or `~matplotlib.colors.Colormap` or None. Got '{type(cmap)}' instead.")
+        raise ValueError(
+            f"'cmap' argument must be a str or `ArgoColors` or `~matplotlib.colors.Colormap` or None. Got '{type(cmap)}' instead."
+        )
 
-    cbticklabels = 'auto'
+    cbticklabels = "auto"
     if a_color and a_color.registered:
         cbticklabels = a_color.ticklabels
-        vmin, vmax = a_color.definition['ticks'][0], a_color.definition['ticks'][-1]+1
+        vmin, vmax = a_color.definition["ticks"][0], a_color.definition["ticks"][-1] + 1
 
     def get_vlabel(this_v):
         attrs = this_v.attrs
@@ -813,16 +821,26 @@ def scatter_plot(
         units = attrs["units"] if "units" in attrs else None
         return "%s\n[%s]" % (name, units) if units else name
 
-    # Read variables for the plot:
+    # Read/reshape variables for the plot:
     x_da, y_da = ds[x], ds[y]
     if "INTERPOLATED" in y:
+        # "PRES_INTERPOLATED" or "PRES_ADJUSTED_INTERPOLATED"
+        # We'll be using pcolormesh instead of scatter
         x_bounds, y_bounds = np.meshgrid(x_da, y_da, indexing="ij")
     c_da = ds[param]
 
     # Possibly broadcast x_da, y_da on c dimensions:
-    if not x_da.shape == y_da.shape or not x_da.shape == c_da.shape or not y_da.shape == c_da.shape:
+    if (
+        not x_da.shape == y_da.shape
+        or not x_da.shape == c_da.shape
+        or not y_da.shape == c_da.shape
+    ):
         x_da = x_da.broadcast_like(c_da)
         y_da = y_da.broadcast_like(c_da)
+
+        if x_da.shape == y_da.shape and not y_da.shape == c_da.shape:
+            c_da = c_da.broadcast_like(x_da)
+
         assert x_da.shape == y_da.shape
         assert y_da.shape == c_da.shape
 
@@ -852,7 +870,7 @@ def scatter_plot(
             if isinstance(cbticklabels, dict):
                 cbar.set_ticks(to_list([k + 0.5 for k in cbticklabels.keys()]))
                 cbar.set_ticklabels(to_list([k for k in cbticklabels.values()]))
-            
+
         ylim = ax.get_ylim()
         if "PRES" in y:
             ax.invert_yaxis()

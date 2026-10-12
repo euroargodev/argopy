@@ -1,8 +1,10 @@
-Gallery and tutorials
-=====================
+Gallery of examples
+===================
 
-Here's a list of examples and tutorials on how to use **argopy**. Contributions are highly welcomed and appreciated. So, if you are interested in contributing, please consult the
+Here's a list of examples on how to use **Argopy**. Contributions are highly welcomed and appreciated. So, if you are interested in contributing, please consult the
 :doc:`contributing` guide.
+
+Tutorials and information on training sessions can be found on the dedicated page here: :doc:`tutorials`.
 
 
 Examples
@@ -112,26 +114,17 @@ Examples
                     :fas:`file-arrow-down` Download notebook
 
 
-Tutorials
----------
-
-.. important::
-
-    **For all possible Argopy tutorials, please visit the dedicated repository at:** https://github.com/euroargodev/argopy-training
-
-
 .. dropdown:: Notebook tags Legend
     :open:
 
     :Data selection: |select_region| : region, |select_float| : float, |select_profile| : profile
     :Dataset: |ds_phy| : core+deep, |ds_bgc| : BGC
     :User mode: |mode_expert| : expert, |mode_standard| : standard, |mode_research| : research
-    :Data sources: |src_erddap| : erddap, |src_gdac| : gdac, |src_argovis| : argovis
+    :Data sources: |src_erddap| : erddap, |src_gdac| : gdac
 
 
 .. |src_erddap| replace:: ⭐
 .. |src_gdac| replace:: 🌐
-.. |src_argovis| replace:: 👁
 .. |ds_phy| replace:: 🟡+🔵
 .. |ds_bgc| replace:: 🟢
 .. |mode_expert| replace:: 🏄

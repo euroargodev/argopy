@@ -12,6 +12,7 @@ import json
 import importlib
 
 from argopy.options import OPTIONS
+from argopy.utils.loggers import frame_info
 
 
 PIP_INSTALLED = {}
@@ -160,11 +161,11 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
                 ("erddapy", get_version),
                 ("fsspec", get_version),
                 ("aiohttp", get_version),
-                ("packaging", get_version),
+                # ("packaging", get_version),
                 # will come with xarray, Using 'version' to make API compatible with several fsspec releases
                 ("requests", get_version),
                 ("toolz", get_version),
-                ("decorator", get_version),
+                # ("decorator", get_version),
             ]
         ),
         "ext.util": sorted(
@@ -303,7 +304,7 @@ def modified_environ(*remove, **update):
 
 
 def show_options(file=sys.stdout):  # noqa: C901
-    """Print options of argopy
+    """Print options of Argopy
 
     Parameters
     ----------
@@ -315,4 +316,6 @@ def show_options(file=sys.stdout):  # noqa: C901
     opts = copy.deepcopy(OPTIONS)
     opts = dict(sorted(opts.items()))
     for k, v in opts.items():
-        print(f"{k}: {v}", file=file)
+        if 'password' in k.lower() or 'api_key' in k.lower() and v is not None:
+            v = "***"
+        print(f"{k:<20}: {v}", file=file)

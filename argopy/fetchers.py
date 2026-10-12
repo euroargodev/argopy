@@ -1,5 +1,3 @@
-#!/bin/env python
-# -*coding: UTF-8 -*-
 """
 
 High level helper methods to load Argo data from any source
@@ -11,16 +9,16 @@ Validity of access points parameters (eg: wmo) is made here, not at the data/ind
 
 import os
 import warnings
+from typing import Optional
 
 import netCDF4
-
-import xarray as xr
-import pandas as pd
+from argopy import pandas as pd  # Lazily import large module
+from argopy import xarray as xr  # Lazily import large module
 import numpy as np
 import logging
 
-from .options import OPTIONS, VALIDATE, PARALLEL_SETUP
-from .errors import (
+from argopy.options import OPTIONS, VALIDATE, PARALLEL_SETUP, PRODUCT_LIST
+from argopy.errors import (
     InvalidFetcherAccessPoint,
     InvalidFetcher,
     OptionValueError,
@@ -31,17 +29,12 @@ from .related import (
 )
 from .utils.checkers import is_box, is_indexbox, check_wmo, check_cyc
 from .utils.lists import (
-    list_available_data_src,
-    list_available_index_src,
     list_core_parameters,
     list_radiometry_parameters,
     list_bgc_s_parameters,
 )
 from .plot import plot_trajectory, bar_plot, open_sat_altim_report, scatter_plot
 
-
-AVAILABLE_DATA_SOURCES = list_available_data_src()
-AVAILABLE_INDEX_SOURCES = list_available_index_src()
 
 log = logging.getLogger("argopy.fetchers.facade")
 
@@ -80,9 +73,11 @@ class ArgoDataFetcher:
     mode: str, optional
         User mode. Eg: ``standard`` or ``expert``. Set to OPTIONS['mode'] by default if empty.
     src: str, optional
-         Source of the data to use. Eg: ``erddap``. Set to OPTIONS['src'] by default if empty.
+         Argo data source to use. Eg: ``erddap``. Set to OPTIONS['src'] by default if empty.
     ds: str, optional
         Name of the dataset to load. Eg: ``phy``. Set to OPTIONS['ds'] by default if empty.
+    product: str, optional
+        Name of a third-party product to use as data source. Eg: ``argovis``. This parameter takes precedence over ``src``.
     **fetcher_kwargs: optional
         Additional arguments passed on data source fetcher creation of each access points.
 
@@ -95,9 +90,15 @@ class ArgoDataFetcher:
 
     """
 
-    def __init__(self, mode: str = "", src: str = "", ds: str = "", **fetcher_kwargs):
+    def __init__(
+        self,
+        mode: str = "",
+        src: str = "",
+        ds: str = "",
+        product: Optional[str] = None,
+        **fetcher_kwargs,
+    ):
         """Create a fetcher instance
-
 
         Returns
         -------
@@ -110,10 +111,35 @@ class ArgoDataFetcher:
         self._src = OPTIONS["src"] if src == "" else VALIDATE("src", src)
         self.fetcher_kwargs = {**fetcher_kwargs}
 
+        if product is not None:
+            # Third-party products must update this section to be included:
+            if product.lower() not in PRODUCT_LIST.datafetcher:
+                raise InvalidFetcher(
+                    f"The '{product}' product has no implementation. Available products are: {PRODUCT_LIST.datafetcher}."
+                )
+            self._src = product
+
         if self._dataset_id == "bgc":
             self._dataset_id = "bgc-s"
 
-        Fetchers = AVAILABLE_DATA_SOURCES[self._src]
+        try:
+            server = OPTIONS[self._src]
+            if self._src == "erddap":
+                from argopy.data_fetchers import erddap_data as Fetchers
+            elif self._src == "gdac":
+                from argopy.data_fetchers import gdac_data as Fetchers
+            elif self._src == "argovis":
+                from argopy.data_fetchers import argovis_data as Fetchers
+        except Exception:
+            raise ValueError(
+                f"An error occurred while loading the {self._src} data fetcher !"
+            )
+
+        # Ensure we're loading the data fetcher with the current options for server value:
+        Fetchers.api_server_check = Fetchers.api_server_check.replace(
+            Fetchers.api_server, server
+        )
+        Fetchers.api_server = server
 
         # Auto-discovery of access points for this fetcher:
         # rq: Access point names for the facade are not the same as the access point of fetchers
@@ -188,7 +214,7 @@ class ArgoDataFetcher:
             self._mode == "expert" or self._mode == "research"
         ):
             raise OptionValueError(
-                "The 'argovis' data source fetching is only available in 'standard' user mode"
+                "The 'argovis' product is only available in 'standard' user mode"
             )
         if self._src == "gdac" and "bgc" in self._dataset_id:
             warnings.warn(
@@ -253,8 +279,12 @@ class ArgoDataFetcher:
         if self.fetcher:
             summary = [self.fetcher.__repr__()]
         else:
+            if self._src not in PRODUCT_LIST.datafetcher:
+                obj = f"datafetcher.{self._src}"
+            else:
+                obj = f"datafetcher.product.{self._src}"
             summary = [
-                "<datafetcher.%s> 'No access point initialised'" % self._src,
+                f"<{obj}> 'No access point initialised'",
                 "Available access points: %s" % ", ".join(self.Fetchers.keys()),
             ]
 
@@ -346,7 +376,9 @@ class ArgoDataFetcher:
         if not isinstance(self._data, xr.Dataset) or self._request != self.__repr__():
             self.load()
             if self._data is None:
-                raise DataNotFound("Seems like no data were found. Try to use to_xarray() explicitly")
+                raise DataNotFound(
+                    "Seems like no data were found. Try to use to_xarray() explicitly"
+                )
         return self._data
 
     @property
@@ -710,8 +742,10 @@ class ArgoDataFetcher:
             )
         xds = self.fetcher.to_xarray(**kwargs)
         xds = self.postprocess(xds)
-        target = xds.to_netcdf(path=None)  # todo: include encoding for any possible Argo variable
-        return netCDF4.Dataset(None, memory=target, diskless=True, mode='r')
+        target = xds.to_netcdf(
+            path=None
+        )  # todo: include encoding for any possible Argo variable
+        return netCDF4.Dataset(None, memory=target, diskless=True, mode="r")
 
     def to_dataframe(self, **kwargs) -> pd.DataFrame:
         """Fetch and return data as :class:`pandas.DataFrame`
@@ -995,14 +1029,31 @@ class ArgoIndexFetcher:
         self._src = OPTIONS["src"] if src == "" else VALIDATE("src", src)
 
         # Load data source access points:
-        if self._src not in AVAILABLE_INDEX_SOURCES:
-            raise InvalidFetcher(
-                "Requested index fetcher '%s' not available ! "
-                "Please try again with any of: %s"
-                % (self._src, "\n".join(AVAILABLE_INDEX_SOURCES))
+        try:
+            server = OPTIONS[self._src]
+            if self._src == "erddap":
+                from argopy.data_fetchers import erddap_index as Fetchers
+            elif self._src == "gdac":
+                from argopy.data_fetchers import gdac_index as Fetchers
+        except Exception:
+            raise ValueError(
+                f"An error occurred while loading the {self._src} index fetcher !"
             )
-        else:
-            Fetchers = AVAILABLE_INDEX_SOURCES[self._src]
+
+        # Ensure we're loading the data fetcher with the current options for server value:
+        Fetchers.api_server_check = Fetchers.api_server_check.replace(
+            Fetchers.api_server, server
+        )
+        Fetchers.api_server = server
+
+        # if self._src not in AVAILABLE_INDEX_SOURCES:
+        #     raise InvalidFetcher(
+        #         "Requested index fetcher '%s' not available ! "
+        #         "Please try again with any of: %s"
+        #         % (self._src, "\n".join(AVAILABLE_INDEX_SOURCES))
+        #     )
+        # else:
+        #     Fetchers = AVAILABLE_INDEX_SOURCES[self._src]
 
         # Auto-discovery of access points for this fetcher:
         # rq: Access point names for the facade are not the same as the access point of fetchers

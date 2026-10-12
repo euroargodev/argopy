@@ -104,7 +104,7 @@ class OpticalModeling(ArgoAccessorExtension):
         But the euphotic depth can also be estimated using the exponential decay of light with depth, described by Beer's Law [1]_:
 
         .. math::
-            I(z) = I_0 \exp(-K_{PAR}\\,z)
+            I(z) = I_0 \\exp(-K_{PAR}\\,z)
 
         If we solve for $I(Z_e)=0.01 I_0$ we get:
 
@@ -207,7 +207,7 @@ class OpticalModeling(ArgoAccessorExtension):
 
         References
         ----------
-        .. [1] Morel, A. (1988), Optical modeling of the upper ocean in relation to its biogenous matter content (case I waters), J. Geophys. Res., 93(C9), 10749–10768, doi:10.1029/JC093iC09p10749.
+        .. [1] Morel, A. (1988), Optical modeling of the upper ocean in relation to its biogenous matter content (case I waters), J. Geophys. Res., 93(C9), 10749-10768, doi:10.1029/JC093iC09p10749.
 
         Examples
         --------
@@ -288,11 +288,11 @@ class OpticalModeling(ArgoAccessorExtension):
 
         Notes
         -----
-        This is the closest level $z$ in the vertical axis for which PAR is about a threshold value $t$, with some tolerance $\epsilon$:
+        This is the closest level $z$ in the vertical axis for which PAR is about a threshold value $t$, with some tolerance $\\epsilon$:
 
         .. math::
 
-            z | abs(PAR(z) - t) < \epsilon
+            z | abs(PAR(z) - t) < \\epsilon
 
         A default value of 15 is used because it is the theoretical value below which the Fchla is no longer
         quenched (For correction of NPQ purposes).

@@ -1,7 +1,7 @@
 import copy
 import numpy as np
-import pandas as pd
-import xarray as xr
+from argopy import pandas as pd  # Lazily import large module
+from argopy import xarray as xr  # Lazily import large module
 import logging
 import time
 from abc import ABC, abstractmethod
@@ -18,18 +18,22 @@ else:
 
 from ...options import OPTIONS
 from ...errors import GdacPathError, S3PathError, InvalidDataset, OptionValueError
-from ...utils import isconnected, has_aws_credentials
-from ...utils import Registry
-from ...utils import Chunker
-from ...utils import shortcut2gdac
+from ...utils import (
+    isconnected,
+    has_aws_credentials,
+    Registry,
+    Chunker,
+    shortcut2gdac,
+)
 
 from .. import httpstore, memorystore, filestore, ftpstore, s3store
 from .implementations.index_s3 import get_a_s3index
 from .implementations.plot import ArgoIndexPlot
+from .implementations.valid import ArgoIndexSearchValid
 
 try:
+    from argopy import pyarrow as pa  # Lazily import large module
     import pyarrow.csv as csv  # noqa: F401
-    import pyarrow as pa
     import pyarrow.parquet as pq  # noqa: F401
 except ModuleNotFoundError:
     pass
@@ -42,10 +46,10 @@ class ArgoIndexStoreProto(ABC):
     backend = "?"
     """Name of store backend (pandas or pyarrow)"""  # Pandas or Pyarrow
 
-    search_type = {}
+    search_type: dict = {}
     """Dictionary with search meta-data"""
 
-    ext = None
+    ext: str | None = None
     """Storage file extension"""
 
     convention_supported = [
@@ -69,9 +73,9 @@ class ArgoIndexStoreProto(ABC):
 
     def __init__(
         self,
-        host: str = None,
+        host: str | None = None,
         index_file: str = "ar_index_global_prof.txt",
-        convention: str = None,
+        convention: str | None = None,
         cache: bool = False,
         cachedir: str = "",
         timeout: int = 0,
@@ -163,16 +167,15 @@ class ArgoIndexStoreProto(ABC):
 
         elif "ftp" in split_protocol(self.host)[0]:
             if "ifremer" not in host:
-                log.info(
-                    """Working with a non-official Argo ftp server: %s. Raise on issue if you wish to add your own to the valid list of FTP servers: https://github.com/euroargodev/argopy/issues/new?title=New%%20FTP%%20server"""
-                    % host
-                )
+                log.info(f"Working with a non-official Argo ftp server: {host}")
             if not isconnected(host):
                 raise GdacPathError("This host (%s) is not alive !" % host)
 
             self.fs["src"] = ftpstore(
                 host=urlparse(self.host).hostname,  # host eg: ftp.ifremer.fr
-                port=0 if urlparse(self.host).port is None else urlparse(self.host).port,
+                port=(
+                    0 if urlparse(self.host).port is None else urlparse(self.host).port
+                ),
                 cache=cache,
                 cachedir=cachedir,
                 timeout=self.timeout,
@@ -181,11 +184,11 @@ class ArgoIndexStoreProto(ABC):
 
         elif "s3" in split_protocol(self.host)[0]:
             # On AWS S3, index files are not under DAC root:
-            if self.host == 's3://argo-gdac-sandbox/pub/idx':
-                self.root = 's3://argo-gdac-sandbox/pub'
-            if self.host == 's3://argo-gdac-sandbox/pub':
-                self.host = 's3://argo-gdac-sandbox/pub/idx'
-                self.root = 's3://argo-gdac-sandbox/pub'
+            if self.host == "s3://argo-gdac-sandbox/pub/idx":
+                self.root = "s3://argo-gdac-sandbox/pub"
+            if self.host == "s3://argo-gdac-sandbox/pub":
+                self.host = "s3://argo-gdac-sandbox/pub/idx"
+                self.root = "s3://argo-gdac-sandbox/pub"
 
             if "argo-gdac-sandbox/pub/idx" not in self.host:
                 log.info(
@@ -282,17 +285,28 @@ class ArgoIndexStoreProto(ABC):
             summary.append("In memory: True (%i records)" % self.N_RECORDS)
         elif "s3" in self.host:
             summary.append(
-                "In memory: False [But there's no need to load the full index with a S3 host to make wmo/cycles searches]"
+                "In memory: False [But there's no need to load the full index with a S3 host]"
             )
         else:
             summary.append("In memory: False")
 
         if hasattr(self, "search"):
             match = "matches" if self.N_MATCH > 1 else "match"
-            summary.append(
-                "Searched: True (%i %s, %0.4f%%)"
-                % (self.N_MATCH, match, self.N_MATCH * 100 / self.N_RECORDS)
-            )
+            if "s3" in self.host:
+                summary.append(
+                    "Searched: True (%i %s) - %s"
+                    % (self.N_MATCH, match, self.search_type)
+                )
+            else:
+                summary.append(
+                    "Searched: True (%i %s, %0.4f%%) - %s"
+                    % (
+                        self.N_MATCH,
+                        match,
+                        self.N_MATCH * 100 / self.N_RECORDS,
+                        self.search_type,
+                    )
+                )
         else:
             summary.append("Searched: False")
         return "\n".join(summary)
@@ -361,14 +375,14 @@ class ArgoIndexStoreProto(ABC):
                     self._format(BOX[5], "tim"),
                 )
 
-            elif "WMO" == key:
+            elif key == "WMO":
                 WMO = self.search_type["WMO"]
                 if len(WMO) == 1:
                     cname = "WMO%i" % (WMO[0])
                 else:
                     cname = ";".join(["WMO%i" % wmo for wmo in sorted(WMO)])
 
-            elif "CYC" == key:
+            elif key == "CYC":
                 CYC = self.search_type["CYC"]
                 if len(CYC) == 1:
                     cname = "CYC%i" % (CYC[0])
@@ -376,17 +390,17 @@ class ArgoIndexStoreProto(ABC):
                     cname = ";".join(["CYC%i" % cyc for cyc in sorted(CYC)])
                 cname = "%s" % cname
 
-            elif "PARAMS" == key:
+            elif key == "PARAMS":
                 PARAM, LOG = self.search_type["PARAMS"]
                 cname = ("_%s_" % LOG).join(PARAM)
 
-            elif "DMODE" == key:
+            elif key == "DMODE":
                 DMODE, LOG = self.search_type["DMODE"]
                 cname = ("_%s_" % LOG).join(
                     ["%s_%s" % (p, "".join(DMODE[p])) for p in DMODE]
                 )
 
-            elif "PTYPE" == key:
+            elif key == "PTYPE":
                 PTYPE = self.search_type["PTYPE"]
                 if len(PTYPE) == 1:
                     cname = "PTYPE%i" % (PTYPE[0])
@@ -394,10 +408,33 @@ class ArgoIndexStoreProto(ABC):
                     cname = ";".join(["PTYPE%i" % pt for pt in sorted(PTYPE)])
                 cname = "%s" % cname
 
-            elif "PLABEL" == key:
+            elif key == "PLABEL":
                 PLABEL = self.search_type["PLABEL"]
-                LOG = 'or'
-                cname = ("_%s_" % LOG).join(PLABEL)
+                if len(PLABEL) == 1:
+                    cname = "PLABEL%s" % (PLABEL[0])
+                else:
+                    cname = ";".join(["PLABEL%s" % inst for inst in sorted(PLABEL)])
+
+            elif key == "INST_CODE":
+                INST_CODE = self.search_type["INST_CODE"]
+                if len(INST_CODE) == 1:
+                    cname = "ICODE%s" % (INST_CODE[0])
+                else:
+                    cname = ";".join(["INAME%s" % inst for inst in sorted(INST_CODE)])
+
+            elif key == "INST_NAME":
+                INST_NAME = self.search_type["INST_NAME"]
+                if len(INST_NAME) == 1:
+                    cname = "INAME%s" % (INST_NAME[0])
+                else:
+                    cname = ";".join(["INAME%s" % inst for inst in sorted(INST_NAME)])
+
+            elif key == "DAC":
+                DAC = self.search_type["DAC"]
+                if len(DAC) == 1:
+                    cname = "DAC%s" % (DAC[0])
+                else:
+                    cname = ";".join(["DAC%s" % dac for dac in sorted(DAC)])
 
             C.append(cname)
 
@@ -447,16 +484,18 @@ class ArgoIndexStoreProto(ABC):
         """Reference table 4 "Argo data centres and institutions" as a dictionary"""
         if self._load_dict is None:
             from ...related import load_dict
+
             self._load_dict = load_dict
-        return self._load_dict('institutions')
+        return self._load_dict("institutions")
 
     @property
     def _r8(self):
         """Reference table 8 "Argo instrument types" as a dictionary"""
         if self._load_dict is None:
             from ...related import load_dict
+
             self._load_dict = load_dict
-        return self._load_dict('profilers')
+        return self._load_dict("profilers")
 
     @property
     def shape(self):
@@ -472,6 +511,8 @@ class ArgoIndexStoreProto(ABC):
             return self.search.shape[0]
         elif hasattr(self, "index"):
             return self.index.shape[0]
+        elif "s3" in self.host:
+            return np.inf
         else:
             raise InvalidDataset("You must, at least, load the index first !")
 
@@ -482,7 +523,7 @@ class ArgoIndexStoreProto(ABC):
         if hasattr(self, "index"):
             return self.index.shape[0]
         elif "s3" in self.host:
-            return np.Inf
+            return np.inf
         else:
             raise InvalidDataset("Load the index first !")
 
@@ -519,16 +560,46 @@ class ArgoIndexStoreProto(ABC):
     def convention_columns(self) -> List[str]:
         """CSV file column names for the index convention"""
         if self.convention == "ar_index_global_prof":
-            columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
-                               'date_update']
-        elif self.convention in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
-            columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
-                               'parameters', 'parameter_data_mode', 'date_update']
+            columns = [
+                "file",
+                "date",
+                "latitude",
+                "longitude",
+                "ocean",
+                "profiler_type",
+                "institution",
+                "date_update",
+            ]
+        elif self.convention in [
+            "argo_bio-profile_index",
+            "argo_synthetic-profile_index",
+        ]:
+            columns = [
+                "file",
+                "date",
+                "latitude",
+                "longitude",
+                "ocean",
+                "profiler_type",
+                "institution",
+                "parameters",
+                "parameter_data_mode",
+                "date_update",
+            ]
         elif self.convention in ["argo_aux-profile_index"]:
-            columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
-                       'parameters', 'date_update']
+            columns = [
+                "file",
+                "date",
+                "latitude",
+                "longitude",
+                "ocean",
+                "profiler_type",
+                "institution",
+                "parameters",
+                "date_update",
+            ]
         elif self.convention in ["ar_index_global_meta"]:
-            columns = ['file', 'profiler_type', 'institution', 'date_update']
+            columns = ["file", "profiler_type", "institution", "date_update"]
 
         return columns
 
@@ -638,19 +709,19 @@ class ArgoIndexStoreProto(ABC):
         return [self.fs["client"].cachepath(p) for p in path]
 
     def to_dataframe(self, nrows=None, index=False, completed=True):  # noqa: C901
-        """Return index or search results as :class:`pandas.DataFrame`
+        """Return index or search results as a :class:`pandas.DataFrame`
 
         If search not triggered, fall back on full index by default. Using index=True force to return the full index.
 
         Parameters
         ----------
-        nrows: {int, None}, default: None
+        nrows: int, default: None
             Will return only the first `nrows` of search results. None returns all.
         index: bool, default: False
             Force to return the index, even if a search was performed with this store instance.
         completed: bool, default: True
-            Complete the raw index columns with: Platform Number (WMO), Cycle Number, Institution and Profiler details
-            This is adding an extra computation, so if you care about performances, you may set this to False.
+            Complete the raw index columns with: Platform Number (WMO), Cycle Number, Institution name and Profiler labels.
+            This is adding an extra computation time, so if you care about performances, you may set this to False.
 
         Returns
         -------
@@ -681,7 +752,7 @@ class ArgoIndexStoreProto(ABC):
 
         if self.cache and self.fs["client"].exists(fname):
             log.debug(
-                "[%s] already processed as Dataframe, loading ... src='%s'"
+                "[%s] already processed as a Dataframe, loading ... src='%s'"
                 % (src, fname)
             )
             df = self._read(self.fs["client"].fs, fname, fmt="pd")
@@ -708,18 +779,15 @@ class ArgoIndexStoreProto(ABC):
                     lambda x: int(x.split("_")[1].split(".nc")[0].replace("D", ""))
                 )
 
-            if 'profiler_type' in self.convention_columns:
-                df['profiler_type'] = df['profiler_type'].fillna(9999).astype(int)
+            if "profiler_type" in self.convention_columns:
+                df["profiler_type"] = df["profiler_type"].fillna(9999).astype(int)
 
             if completed:
                 # institution & profiler mapping for all users
                 # todo: may be we need to separate this for standard and expert users
                 institution_dictionary = self._r4
-                df["tmp1"] = df["institution"].apply(
+                df["institution_name"] = df["institution"].apply(
                     lambda x: mapp_dict(institution_dictionary, x)
-                )
-                df = df.rename(
-                    columns={"institution": "institution_code", "tmp1": "institution"}
                 )
                 df["dac"] = df["file"].apply(lambda x: x.split("/")[0])
 
@@ -875,10 +943,17 @@ class ArgoIndexStoreProto(ABC):
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
-    def read_files(self, index=False):
+    def read_files(self, index: bool = False, multi: bool = False):
         """Return file paths listed in index or search results
 
         Fall back on full index if search not triggered
+
+        Parameters
+        ----------
+        index: bool, optional, default = False
+            Use search results (False, default) or full index (True)
+        multi: bool, optional, default = False
+            Transform the list of mono-profile files to multi-profile files. Only available for 'core' and 'bgc-s' index conventions.
 
         Returns
         -------
@@ -1120,9 +1195,11 @@ file,profiler_type,institution,date_update
 
         if chunksize is not None:
             chk_opts = {}
-            chk_opts.update({'chunks': {'wmo': 'auto'}})
-            chk_opts.update({'chunksize': {'wmo': chunksize}})
-            chunked = Chunker({'wmo': self.read_wmo(index=index)}, **chk_opts).fit_transform()
+            chk_opts.update({"chunks": {"wmo": "auto"}})
+            chk_opts.update({"chunksize": {"wmo": chunksize}})
+            chunked = Chunker(
+                {"wmo": self.read_wmo(index=index)}, **chk_opts
+            ).fit_transform()
             for grp in chunked:
                 yield [ArgoFloat(wmo, idx=self) for wmo in grp]
 
@@ -1132,3 +1209,4 @@ file,profiler_type,institution,date_update
 
     # Possibly register extensions without specific implementations:
     plot = xr.core.utils.UncachedAccessor(ArgoIndexPlot)
+    valid = xr.core.utils.UncachedAccessor(ArgoIndexSearchValid)

@@ -4,14 +4,13 @@ dask = pytest.importorskip("dask", reason="Requires 'Dask' and 'distributed'")
 distributed = pytest.importorskip("distributed", reason="Requires 'Dask' and 'distributed'")
 from dask.distributed import Client
 
-
 import logging
 from argopy import DataFetcher
 from collections import ChainMap
 import xarray as xr
 
-from mocked_http import mocked_server_address, mocked_httpserver
-from utils import (
+from argopy.tests.helpers.mocked_http import mocked_httpserver
+from argopy.tests.helpers.utils import (
     requires_argovis,
     requires_erddap,
     requires_gdac,
@@ -96,20 +95,25 @@ class Test_Backend:
     #############
     # UTILITIES #
     #############
+    @pytest.fixture(autouse=True)
+    def _setup(self, mocked_httpserver):
+        self.mocked_server_address = mocked_httpserver
+
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
-        # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
-        self.client = Client(processes=True)
-        log.debug("Dask dashboard: %s" % self.client.dashboard_link)
+        self.client = Client(processes=False)
+        # log.debug("Dask dashboard: %s" % self.client.dashboard_link) # Possibly prevent UTF-8 error on Windows
 
     def _test2fetcherargs(self, this_request):
         """Helper method to set up options for a fetcher creation"""
         defaults_args = {
             "parallel": self.client,
+            # "parallel": client,
             "chunks_maxsize": {"lon": 2.5, "lat": 2.5},
         }
         if USE_MOCKED_SERVER:
-            defaults_args["server"] = mocked_server_address
+            defaults_args["server"] = self.mocked_server_address
+            defaults_args["gdac"] = self.mocked_server_address
 
         src = this_request.param["src"]
         dataset = this_request.param["ds"]
@@ -136,7 +140,8 @@ class Test_Backend:
 
     def teardown_class(self):
         """Cleanup once we are finished."""
-        self.client.close()
+        # self.client.close() # Raise an error on py3.12, cf https://github.com/euroargodev/argopy/issues/678
+        ...
 
     #########
     # TESTS #

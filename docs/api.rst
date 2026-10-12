@@ -64,142 +64,8 @@ Properties
    DataFetcher.uri
 
 
-Argo file stores
-================
-
-.. autosummary::
-    :toctree: generated/
-
-    gdacfs
-
-ArgoFloat
----------
-.. autosummary::
-    :toctree: generated/
-
-    ArgoFloat
-
-List of extensions:
-
-.. currentmodule:: argopy
-
-.. autosummary::
-   :toctree: generated/
-   :template: autosummary/accessor.rst
-
-   ArgoFloat.plot
-
-This extension provides the following **plotting methods** for one Argo float data:
-
-.. autosummary::
-   :toctree: generated/
-   :template: autosummary/accessor_method.rst
-
-   ArgoFloat.plot.trajectory
-   ArgoFloat.plot.map
-   ArgoFloat.plot.scatter
-
-ArgoIndex
----------
-
-.. autosummary::
-    :toctree: generated/
-
-    ArgoIndex
-
-List of extensions:
-
-.. currentmodule:: argopy
-
-.. autosummary::
-   :toctree: generated/
-   :template: autosummary/accessor.rst
-
-   ArgoIndex.query
-   ArgoIndex.plot
-
-**Search on a single property** of a file record:
-
-.. autosummary::
-   :toctree: generated/
-   :template: autosummary/accessor_method.rst
-
-   ArgoIndex.query.wmo
-   ArgoIndex.query.cyc
-   ArgoIndex.query.lon
-   ArgoIndex.query.lat
-   ArgoIndex.query.date
-   ArgoIndex.query.params
-   ArgoIndex.query.parameter_data_mode
-   ArgoIndex.query.profiler_type
-   ArgoIndex.query.profiler_label
-
-**Search on at least two properties** of a file record:
-
-.. autosummary::
-   :toctree: generated/
-   :template: autosummary/accessor_method.rst
-
-   ArgoIndex.query.wmo_cyc
-   ArgoIndex.query.lon_lat
-   ArgoIndex.query.box
-   ArgoIndex.query.compose
-
-**Plotting methods**:
-
-.. autosummary::
-   :toctree: generated/
-   :template: autosummary/accessor_method.rst
-
-    ArgoIndex.plot.trajectory
-    ArgoIndex.plot.bar
-
-Argo meta/related data
-======================
-
-.. autosummary::
-   :toctree: generated/
-
-   status
-   ArgoDocs
-   ArgoDOI
-   ArgoNVSReferenceTables
-   OceanOPSDeployments
-   CTDRefDataFetcher
-   TopoFetcher
-
-.. _Module Visualisation:
-
-Data visualisation
-==================
-
-Visualisation functions available at the ``argopy`` module level:
-
-.. currentmodule:: argopy
-
-.. autosummary::
-   :toctree: generated/
-
-    dashboard
-    ArgoColors
-
-
-All other visualisation functions are in the :mod:`argopy.plot` submodule:
-
-.. currentmodule:: argopy.plot
-
-.. autosummary::
-   :toctree: generated/
-
-    open_sat_altim_report
-    scatter_map
-    bar_plot
-    scatter_plot
-    latlongrid
-
-
-Dataset.argo (xarray accessor)
-==============================
+Dataset.argo (xarray accessor to work with Argo dataset)
+========================================================
 
 .. currentmodule:: xarray
 
@@ -319,6 +185,194 @@ Misc
     Dataset.argo.to_zarr
     Dataset.argo.reduce_profile
 
+ArgoFloat (data and meta-data fetcher for one float)
+====================================================
+
+.. currentmodule:: argopy
+
+.. autosummary::
+    :toctree: generated/
+
+    ArgoFloat
+
+**Extension: Plot**
+
+.. currentmodule:: argopy
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor.rst
+
+   ArgoFloat.plot
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
+
+   ArgoFloat.plot.trajectory
+   ArgoFloat.plot.map
+   ArgoFloat.plot.scatter
+
+**Extension: Configuration and launch configuration parameters**
+
+.. currentmodule:: argopy
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor.rst
+
+   ArgoFloat.config
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
+
+   ArgoFloat.config.n_params
+   ArgoFloat.config.parameters
+   ArgoFloat.config.n_missions
+   ArgoFloat.config.missions
+   ArgoFloat.config.cycles
+   ArgoFloat.config.for_cycles
+   ArgoFloat.config.to_dataframe
+
+.. currentmodule:: argopy
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor.rst
+
+   ArgoFloat.launchconfig
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
+
+   ArgoFloat.launchconfig.n_params
+   ArgoFloat.launchconfig.parameters
+   ArgoFloat.launchconfig.to_dataframe
+
+
+ArgoIndex (explore Argo files index)
+====================================
+
+.. currentmodule:: argopy
+
+.. autosummary::
+    :toctree: generated/
+
+    ArgoIndex
+
+List of extensions:
+
+.. currentmodule:: argopy
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor.rst
+
+   ArgoIndex.query
+   ArgoIndex.plot
+
+**Search on a single property** of a file record:
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
+
+   ArgoIndex.query.wmo
+   ArgoIndex.query.cyc
+   ArgoIndex.query.lon
+   ArgoIndex.query.lat
+   ArgoIndex.query.date
+   ArgoIndex.query.params
+   ArgoIndex.query.parameter_data_mode
+   ArgoIndex.query.profiler_type
+   ArgoIndex.query.profiler_label
+   ArgoIndex.query.institution_code
+   ArgoIndex.query.institution_name
+   ArgoIndex.query.dac
+
+**Search on at least two properties** of a file record:
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
+
+   ArgoIndex.query.wmo_cyc
+   ArgoIndex.query.lon_lat
+   ArgoIndex.query.box
+   ArgoIndex.query.compose
+
+**Plotting methods**:
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
+
+    ArgoIndex.plot.trajectory
+    ArgoIndex.plot.bar
+
+Argo vocabulary: referencing system
+===================================
+
+.. autosummary::
+   :toctree: generated/
+
+    ArgoReferenceValue
+    ArgoReferenceTable
+    ArgoReferenceMapping
+    ArgoNVSReferenceTables (deprecated) <reference.ArgoNVSReferenceTables>
+
+Other Argo related data
+=======================
+
+.. autosummary::
+   :toctree: generated/
+
+   status
+   ArgoDocs
+   ArgoDOI
+   OceanOPSDeployments
+   CTDRefDataFetcher
+   TopoFetcher
+
+GDAC file stores
+================
+
+.. autosummary::
+    :toctree: generated/
+
+    gdacfs
+
+.. _Module Visualisation:
+
+Data visualisation
+==================
+
+Visualisation functions available at the ``argopy`` module level:
+
+.. currentmodule:: argopy
+
+.. autosummary::
+   :toctree: generated/
+
+    dashboard
+    ArgoColors
+
+
+All other visualisation functions are in the :mod:`argopy.plot` submodule:
+
+.. currentmodule:: argopy.plot
+
+.. autosummary::
+   :toctree: generated/
+
+    open_sat_altim_report
+    scatter_map
+    bar_plot
+    scatter_plot
+    latlongrid
+
 
 Utilities
 =========
@@ -333,8 +387,6 @@ Lists
 .. autosummary::
    :toctree: generated/
 
-    list_available_data_src
-    list_available_index_src
     list_standard_variables
     list_multiprofile_file_variables
     list_core_parameters
@@ -343,6 +395,7 @@ Lists
     list_radiometry_variables
     list_radiometry_parameters
     list_gdac_servers
+    shortcut2gdac
 
 Checkers
 --------
@@ -359,12 +412,13 @@ Checkers
     isalive
     isAPIconnected
 
-
 Misc
---------
+----
 
 .. autosummary::
    :toctree: generated/
+
+    cast_Argo_variable_type
 
     float_wmo
     Registry
@@ -378,6 +432,7 @@ Misc
     Github
 
     optical_modeling
+    wmo2box
 
 Argopy helpers
 ==============
@@ -386,11 +441,12 @@ Argopy helpers
 .. autosummary::
    :toctree: generated/
 
-   set_options
-   clear_cache
-   tutorial.open_dataset
-   show_versions
-   xarray.ArgoEngine
+    set_options
+    show_options
+    clear_cache
+    tutorial.open_dataset
+    show_versions
+    xarray.ArgoEngine
 
 
 Internals
@@ -412,6 +468,7 @@ File systems
     stores.ftpstore
     stores.s3store
     stores.ArgoKerchunker
+    utils.Asset
 
 Fetcher sources
 ---------------

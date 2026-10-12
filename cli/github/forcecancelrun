@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+OWNER='euroargodev'
+REPO='argopy'
+
+gh api -X POST /repos/$OWNER/$REPO/actions/runs/$1/force-cancel

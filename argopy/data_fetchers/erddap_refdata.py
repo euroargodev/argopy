@@ -4,26 +4,14 @@ Fetcher to retrieve ship-based CTD reference data from Ifremer erddap
 
 import xarray as xr
 import logging
+from erddapy.erddapy import ERDDAP  # noqa: F401
+
 from ..options import OPTIONS
 from ..utils.chunking import Chunker
 from ..utils.geo import conv_lon
 from ..stores import httpstore_erddap_auth
 from .erddap_data import ErddapArgoDataFetcher
 from .erddap_data_processors import _add_attributes
-
-# Load erddapy according to available version (breaking changes in v0.8.0)
-try:
-    from erddapy import ERDDAP
-    from erddapy.utilities import parse_dates, quote_string_constraints
-except:  # noqa: E722
-    # >= v0.8.0
-    from erddapy.erddapy import ERDDAP  # noqa: F401
-    from erddapy.erddapy import (  # noqa: F401
-        _quote_string_constraints as quote_string_constraints,
-    )
-    from erddapy.erddapy import parse_dates  # noqa: F401
-
-    # Soon ! https://github.com/ioos/erddapy
 
 
 log = logging.getLogger("argopy.erddap.refdata")

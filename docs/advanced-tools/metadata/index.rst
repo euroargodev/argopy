@@ -21,7 +21,7 @@ topography, altimetry, in-situ reference data from Argo float and GOSHIP, etc ..
     :maxdepth: 2
     :hidden:
 
-    Argo reference tables (NVS) <nvs_ref_tables>
+    Argo vocabulary and NVS <nvs_ref_tables>
     admt_documentation
     deployment_plan
     gdac_doi

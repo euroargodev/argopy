@@ -1,6 +1,7 @@
 from .checkers import (  # noqa: F401
     is_box,
     is_indexbox,
+    parse_indexbox,
     is_list_of_strings,
     is_list_of_dicts,
     is_list_of_datasets,
@@ -21,8 +22,6 @@ from .checkers import (  # noqa: F401
 from .casting import DATA_TYPES, cast_Argo_variable_type, to_list
 from .decorators import deprecated, doc_inherit, register_accessor
 from .lists import (
-    list_available_data_src,
-    list_available_index_src,
     list_multiprofile_file_variables,
     list_core_parameters,
     list_standard_variables,
@@ -36,13 +35,14 @@ from .lists import (
 from .caching import clear_cache, lscache
 from .monitored_threadpool import MyThreadPoolExecutor as MonitoredThreadPoolExecutor
 from .chunking import Chunker
-from .accessories import Registry, float_wmo
+from .accessories import Registry, float_wmo, ListStrProperty
 from .locals import (  # noqa: F401
     show_versions,
     show_options,
     modified_environ,
     get_sys_info,  # noqa: F401
     netcdf_and_hdf5_versions,  # noqa: F401
+    Asset,
 )
 from .monitors import monitor_status, badge, fetch_status  # noqa: F401
 from .geo import (
@@ -67,6 +67,9 @@ from .loggers import warnUnless, log_argopy_callerstack
 from .carbon import GreenCoding, Github
 from . import optical_modeling
 from .carbonate import calculate_uncertainties, error_propagation
+
+import importlib
+path2assets = importlib.util.find_spec('argopy.static.assets').submodule_search_locations[0]
 
 
 __all__ = (
@@ -97,8 +100,6 @@ __all__ = (
     "doc_inherit",
     "register_accessor",
     # Lists:
-    "list_available_data_src",
-    "list_available_index_src",
     "list_multiprofile_file_variables",
     "list_standard_variables",
     "list_core_parameters",
@@ -117,10 +118,13 @@ __all__ = (
     # Accessories classes (specific objects):
     "Registry",
     "float_wmo",
-    # Locals (environments, versions, systems, assets):
+    "ListStrProperty",
+    # Locals (environments, versions, systems):
+    "path2assets",
     "show_versions",
     "show_options",
     "modified_environ",
+    "Asset",
     # Monitors
     "monitor_status",
     # Geo (space/time data utilities)

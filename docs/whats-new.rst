@@ -7,32 +7,127 @@ What's New
 
 |pypi dwn| |conda dwn|
 
+v1.5.0 (12 Oct. 2026)
+---------------------
 
-Coming up next (unreleased)
----------------------------
+.. currentmodule:: argopy
+
+.. _v1.5.0-features:
+
+Features and front-end API
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- **New methods to work with mono-cycle profile files** from :class:`ArgoFloat` instances with:
+    - :class:`ArgoFloat.ls_profiles`,
+    - :class:`ArgoFloat.open_profile`,
+    - and :class:`ArgoFloat.open_profiles` methods.
+
+    Check the full documentation page at :ref:`List and load profiles <tools-argofloat-profiles>`. (:pr:`590`) by |gmaze|.
+
+- **New full Argo vocabulary support** for:
+    - reference values: :class:`ArgoReferenceValue`,
+    - reference tables: :class:`ArgoReferenceTable`,
+    - and mappings: :class:`ArgoReferenceMapping`.
+
+    Check the full documentation page at :ref:`Argo vocabulary and references <argovocabulary>`. (:pr:`575`) by |gmaze|.
+
+    Rq: As a consequence, the :class:`ArgoNVSReferenceTables` is deprecated. The ``ArgoNVSReferenceTables.tbl('R25')`` method can be replaced with the new :meth:`ArgoReferenceTable.to_dataframe`.
+
+- **New Argo index search queries** for upper and/or lower limits of profiles longitude, latitude and date. See :meth:`ArgoIndex.query.lon`, :meth:`ArgoIndex.query.lat` and :meth:`ArgoIndex.query.date` for examples. (:pr:`583`) by |jdogo|.
+
+.. _v1.5.0-internals:
+
+Internals
+^^^^^^^^^
+
+- **Annual upgrade to support last versions of dependencies**. (:pr:`681`, :pr:`685`) by |gmaze|.
+
+- **Improve import time** with lazy and/or deferred import of large dependencies, optimization and finally removing of the auto-discovery of data/index fetchers, :issue:`585` (:pr:`676`) by |charles| and (:pr:`624`) by |gmaze|.
+
+- **Update USA GDAC url**, :issue:`624` (:pr:`634`) by |gmaze|.
+
+- **Fix bug** whereby some unit tests would raise  ``fsspec.exceptions.FSTimeoutError``, :issue:`593`. (:pr:`640`) by |gmaze|.
+
+- **Fix bug** whereby :meth:`Dataset.argo.point2profile` would return un-ordered ``N_PROF`` coordinate instead of a clean ``0..N_PROF-1`` range, :issue:`632`. (:pr:`658`) by |gmaze|.
+
+- **Fix inconsistency** in checking availability of an :class:`ArgoFloat` configuration parameter, :issue:`643`. (:pr:`644`) by |gmaze|.
+
+.. _v1.5.0-doc:
+
+Documentation
+^^^^^^^^^^^^^
+
+- **Define** a :ref:`policy <contributing.ai_policy>` regarding **generative AI usage** in **Argopy** contributions, :issue:`637`. (:pr:`639`) by |quai20|.
+
+- **Define** a :ref:`policy and specific methods <product_distribution>` regarding the **access to third-party product** through **Argopy**, :issue:`638`. (:pr:`683`) by |gmaze|.
+
+.. _v1.5.0-deprec:
+
+Deprecation
+^^^^^^^^^^^
+
+- The value ``argovis`` for the ``src`` global option is deprecated, as well as for the DataFetcher ``src`` argument. From now on, to fetch data from the ``argovis`` server, you will need to use the ``product`` argument of the :class:`DataFetcher`. This is a consequence of the new :ref:`policy for third-party products <product_distribution>` introduced in (:pr:`683`).
+
+- The :class:`ArgoNVSReferenceTables` is deprecated. The ``ArgoNVSReferenceTables.tbl()`` method can be replaced with the new :meth:`ArgoReferenceTable.to_dataframe`. (:pr:`575`) by |gmaze|.
+
+v1.4.0 (5 Jan. 2026)
+--------------------
+
+.. _v1.4.0-features:
 
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. currentmodule:: xarray
 
-- **Predict nutrients and carbonates in the global ocean with their uncertainties** with the two new classes :class:`Dataset.argo.canyon_b` and :class:`Dataset.argo.content`. The first class allows users to make predictions of the water-column nutrient concentrations (NO3, PO4, SiOH4) and carbonate system variables (AT, DIC, pHT, pCO2) using the :ref:`CANYON-B model (see doc.)<complement-canyon-b>` while the second class provides improved predictions of carbonate system variables using the :ref:`CONTENT (see doc.)<complement-content>` model. (:pr:`535` and :pr:`542`) by |fricour|.
+- **Predict nutrients and carbonates in the global ocean with their uncertainties** with the two new classes :class:`Dataset.argo.canyon_b` and :class:`Dataset.argo.content`. The first class allows users to make predictions of the water-column nutrient concentrations (NO3, PO4, SiOH4) and carbonate system variables (AT, DIC, pHT, pCO2) using the :ref:`CANYON-B model (see doc.)<complement-canyon-b>` while the second class provides improved predictions of carbonate system variables using the :ref:`CONTENT (see doc.)<complement-content>` model. (:pr:`535` and :pr:`542`) by |fricour|. It goes as simply as:
+
+.. code-block:: python
+
+    from argopy import DataFetcher
+    ArgoSet = DataFetcher(ds='bgc', params='DOXY', measured='DOXY').float(1902605)
+    ds = ArgoSet.to_xarray()
+    ds.argo.canyon_b.predict()
+    # or
+    ds.argo.content.predict()
 
 
 .. currentmodule:: argopy
 
+- **New extensions** :class:`ArgoFloat.config` **and** :class:`ArgoFloat.launchconfig` to easily access one float configuration parameter values. (:pr:`558`) by |gmaze|.
+
+- **New queries to search institution**-related entries in an :class:`ArgoIndex`: :meth:`ArgoIndex.query.institution_code`, :meth:`ArgoIndex.query.institution_name` and :meth:`ArgoIndex.query.dac`, :issue:`527`. (:pr:`528`) by |gmaze|.
+
+.. _v1.4.0-internals:
+
 Internals
 ^^^^^^^^^
-
+- **Add llms.txt generation**, a file to provide information to help LLMs use **Argopy** documentation. See https://llmstxt.org for more.
+- **Fix bug** whereby an error was raise when interpolating on SDL a dataset loaded from an :class:`ArgoFloat` instance. (:pr:`564`) by |gmaze|.
+- **Fix bug** whereby a scatter_plot would fail for a parameter with only N_PROF as dimensions. (:pr:`564`) by |gmaze|.
 - **Fix bug** whereby missing values in <PARAM>_QC variables of xarray dataset were casted as 0 instead of 9. (:commit:`d7bbc23ab386c88a03ae2e9fca7ad274bb1ebcab`) by |gmaze|.
-
+- **Fix upstream compatibility** and imposes xarray >=2025.7 and <=2025.9.0. (:issue:`539`).
 - Removed python 3.10 environments from `ci/env_managers` CLI utility. (:pr:`557`) by |gmaze|.
+
+.. _v1.4.0-breaking:
 
 Breaking changes
 ^^^^^^^^^^^^^^^^
 
-- Deprecation warning for :func:`plot.scatter_plot` arguments ``this_x`` and ``this_y`` that are replaced by ``x`` and ``y``. (:pr:`557`) by |gmaze|.
+- In the :class:`pandas.DataFrame` output of the :meth:`ArgoIndex.to_dataframe` method (:pr:`528`) by |gmaze|:
+
+  - column `institution_code` is renamed `institution`, to preserve the original Argo index file column name,
+  - column `institution` is renamed by `institution_name`, to make explicit this is an **Argopy** addition.
+
+- Deprecation warning for :func:`plot.scatter_plot` arguments ``this_x``, ``this_y`` and ``param`` that are replaced by ``x``, ``y`` and ``param``. (:pr:`557`) by |gmaze|.
 - Internal refactoring, former `argopy.utils.transform` now `argopy.utils.transformers`, former `argopy.utils.compute` now `argopy.utils.computers`. (:pr:`557`) by |gmaze|.
+
+.. _v1.4.0-energy:
+
+Energy
+^^^^^^
+
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.4.0%20%5BgCO2eq%5D-1666-black?style=plastic&labelColor=grey
 
 v1.3.1 (22 Oct. 2025)
 ---------------------
@@ -50,7 +145,6 @@ Features and front-end API
 
 Internals
 ^^^^^^^^^
-
 - For mainteners, add a public CLI script ``cli/update_json_assets`` to update static assets. (:pr:`540`) by |gmaze|.
 
 - **Update list of Reference tables** with R14 on "Argo technical parameter names" and R31 on "Argo float ending cause". The :class:`ArgoNVSReferenceTables` internal list of valid reference tables is now taken from a static asset file generated with ``cli/update_json_assets`` on each new release. (:pr:`540`) by |gmaze|.
@@ -65,20 +159,19 @@ Internals
 
 - **Fix upstream compatibility** whereby xarray >= 2025.8 deprecation cycle for changing default keyword arguments in :meth:`xarray.merge` and :meth:`xarray.concat` would make Argopy to fail with internal data processing, :issue:`521`. (:pr:`504`) by |gmaze|.
 
-
 .. _v1.3.1-energy:
 
 Energy
 ^^^^^^
 
-.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.3.1%20%5BgCO2eq%5D-TBA-black?style=plastic&labelColor=grey
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.3.1%20%5BgCO2eq%5D-1186-black?style=plastic&labelColor=grey
 
 v1.3.0 (22 Aug. 2025)
 ---------------------
 
 .. versionadded:: v1.3.0
 
-    This new **argopy** version requires Python 3.11 !
+    This new **Argopy** version requires Python 3.11 !
 
 .. _v1.3.0-features:
 
@@ -122,7 +215,7 @@ Breaking changes
 Energy
 ^^^^^^
 
-.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.3.0%20%5BgCO2eq%5D-TBA-black?style=plastic&labelColor=grey
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.3.0%20%5BgCO2eq%5D-1258-black?style=plastic&labelColor=grey
 
 
 v1.2.0 (9 June 2025)
@@ -137,13 +230,13 @@ Features and front-end API
 
 - **Optical modeling diagnostics for BGC data**. We introduce a preliminary implementation of standard diagnostics from optical modeling. These are available through the new :class:`Dataset.argo.optic` extension. All details are in the dedicated :ref:`complement-optical-modeling` documentation page and on the API reference. (:pr:`463`) by |gmaze|.
 
-- **Optimized diagnostic per profile**. If you want to execute your own diagnostic method on a collection of Argo profiles, **argopy** now provides an efficient method to do so: :meth:`Dataset.argo.reduce_profile`. Typical use case would include computation of the mixed layer depth or euphotic layer depth. All details are in the dedicated :ref:`perprofile-diag` documentation page and on the API reference of the method. (:pr:`463`) by |gmaze|.
+- **Optimized diagnostic per profile**. If you want to execute your own diagnostic method on a collection of Argo profiles, **Argopy** now provides an efficient method to do so: :meth:`Dataset.argo.reduce_profile`. Typical use case would include computation of the mixed layer depth or euphotic layer depth. All details are in the dedicated :ref:`perprofile-diag` documentation page and on the API reference of the method. (:pr:`463`) by |gmaze|.
 
 .. currentmodule:: argopy
 
 - :class:`ArgoIndex` **now support composition of several search criteria**. Thanks to a re-design of the Argo index search engine, it is now easy to use multiple search criteria to query an Argo files index. Checkout the dedicated :ref:`tools-argoindex` documentation page. (:pr:`470`) by |gmaze|.
  
-- **Fetch Argo data as** :class:`netCDF4.Dataset`. For the sake of compatibility with legacy codes and to encourage **argopy** adoption for all loading/reading operations, we now support data output as a `netCDF4 Dataset object <https://unidata.github.io/netcdf4-python/#netCDF4.Dataset>`_. This new feature is available at high level with the :class:`DataFetcher` and lower-level with the :class:`ArgoFloat` and :class:`gdacfs` classes. (:pr:`484`) by |gmaze|.
+- **Fetch Argo data as** :class:`netCDF4.Dataset`. For the sake of compatibility with legacy codes and to encourage **Argopy** adoption for all loading/reading operations, we now support data output as a `netCDF4 Dataset object <https://unidata.github.io/netcdf4-python/#netCDF4.Dataset>`_. This new feature is available at high level with the :class:`DataFetcher` and lower-level with the :class:`ArgoFloat` and :class:`gdacfs` classes. (:pr:`484`) by |gmaze|.
 
 .. _v1.2.0-internals:
 
@@ -157,7 +250,7 @@ Internals
 Energy
 ^^^^^^
 
-.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.2.0%20%5BgCO2eq%5D-1328.99-black?style=plastic&labelColor=grey
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.2.0%20%5BgCO2eq%5D-0.27-black?style=plastic&labelColor=grey
 
 
 v1.1.0 (18 March 2025)
@@ -166,7 +259,7 @@ v1.1.0 (18 March 2025)
 .. versionadded:: v1.1.0
 
     Most new features in this version can be considered *advanced tools*, since they require a more intimate knowledge
-    of the Argo dataset. Therefore, we re-organised and completed the **argopy** documentation to give them more visibility.
+    of the Argo dataset. Therefore, we re-organised and completed the **Argopy** documentation to give them more visibility.
 
 .. _v1.1.0-features:
 
@@ -259,7 +352,7 @@ Internals
 Energy
 ^^^^^^
 
-.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.1.0%20%5BgCO2eq%5D-1328.99-black?style=plastic&labelColor=grey
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.1.0%20%5BgCO2eq%5D-4302.71-black?style=plastic&labelColor=grey
 
 
 v1.0.0 (16 Oct. 2024)
@@ -267,7 +360,7 @@ v1.0.0 (16 Oct. 2024)
 
 .. versionadded:: v1.0.0
 
-    The team proudly assumes that **argopy** is all grown up !
+    The team proudly assumes that **Argopy** is all grown up !
 
     This version comes with improved performances and support for the BGC-Argo dataset.
     But since this is a major, we also introduces breaking changes and significant internal refactoring possibly with un-expected side effects ! So don't hesitate to `report issues on the source code repository <https://github.com/euroargodev/argopy/issues>`_.
@@ -443,7 +536,7 @@ Features and front-end API
 
 - **argovis** data source now support the new `API server <https://argovis-api.colorado.edu/docs>`_. This upgrade comes with a new option to define the optional API KEY to use. You can `get a free key here <https://argovis-keygen.colorado.edu/>`_. (:pr:`371`) by `Bill Katie-Anne Mills <https://github.com/bkatiemills>`_.
 
-- **argopy** is concerned about its environmental impact and we'd like to understand and optimize the carbon emissions of our digital activities. Starting June 1st 2024, we use `Green Coding <https://www.green-coding.io>`_ tools to assess energy consumption and CO2eq emissions from our activities on Github infrastructure. All results and data are available on the new dedicated web page: :ref:`Carbon emissions`. (:pr:`354`) by |gmaze|.
+- **Argopy** is concerned about its environmental impact and we'd like to understand and optimize the carbon emissions of our digital activities. Starting June 1st 2024, we use `Green Coding <https://www.green-coding.io>`_ tools to assess energy consumption and CO2eq emissions from our activities on Github infrastructure. All results and data are available on the new dedicated web page: :ref:`Carbon emissions`. (:pr:`354`) by |gmaze|.
 
 .. _v0.1.16-internals:
 
@@ -539,7 +632,7 @@ Features and front-end API
 
 - **New xarray argo accessor features**. Easily retrieve an Argo sample index and domain extent with the ``index`` and ``domain`` properties. Get a list with all possible (PLATFORM_NUMBER, CYCLE_NUMBER) with the ``list_WMO_CYC`` method. (:pr:`278`) by |gmaze|
 
-- **New search methods for Argo reference tables**. It is now possible to search for a string in tables title and/or description using the :meth:`related.ArgoNVSReferenceTables.search` method.
+- **New search methods for Argo reference tables**. It is now possible to search for a string in tables title and/or description using the :meth:`reference.ArgoNVSReferenceTables.search` method.
 
 .. code-block:: python
 
@@ -549,7 +642,7 @@ Features and front-end API
 
 - **Updated documentation**. In order to better introduce new features, we updated the documentation structure and content.
 
-- **argopy** cheatsheet ! Get most of the argopy API in a 2 pages pdf !
+- **Argopy** cheatsheet ! Get most of the argopy API in a 2 pages pdf !
 
 .. image:: _static/argopy-cheatsheet.png
   :height: 200px
@@ -586,7 +679,7 @@ Features and front-end API
     import xarray as xr
     ds = xr.open_dataset("dac/aoml/1901393/1901393_prof.nc", engine='argo')
 
-- **argopy now can provide authenticated access to the Argo CTD reference database for DMQC**. Using user/password new **argopy** options, it is possible to fetch the `Argo CTD reference database <http://www.argodatamgt.org/DMQC/Reference-data-base/Latest-Argo-Reference-DB>`_, with the :class:`CTDRefDataFetcher` class. (:pr:`256`) by |gmaze|
+- **argopy now can provide authenticated access to the Argo CTD reference database for DMQC**. Using user/password new **Argopy** options, it is possible to fetch the `Argo CTD reference database <http://www.argodatamgt.org/DMQC/Reference-data-base/Latest-Argo-Reference-DB>`_, with the :class:`CTDRefDataFetcher` class. (:pr:`256`) by |gmaze|
 
 .. code-block:: python
 
@@ -597,7 +690,7 @@ Features and front-end API
         ds = f.to_xarray()
 
 .. warning::
-    **argopy** is ready but the Argo CTD reference database for DMQC is not fully published on the Ifremer ERDDAP yet. This new feature will thus be fully operational soon, and while it's not, **argopy** should raise an ``ErddapHTTPNotFound`` error when using the new fetcher.
+    **Argopy** is ready but the Argo CTD reference database for DMQC is not fully published on the Ifremer ERDDAP yet. This new feature will thus be fully operational soon, and while it's not, **Argopy** should raise an ``ErddapHTTPNotFound`` error when using the new fetcher.
 
 - New option to control the expiration time of cache file: ``cache_expiration``.
 
@@ -613,7 +706,7 @@ Internals
 
 - New utilities to handle a collection of datasets: :func:`utils.drop_variables_not_in_all_datasets` will drop variables that are not in all datasets (the lowest common denominator) and :func:`utils.fill_variables_not_in_all_datasets` will add empty variables to dataset so that all the collection have the same data_vars and coords. These functions are used by stores to concat/merge a collection of datasets (chunks).
 
-- :func:`related.load_dict` now relies on :class:`ArgoNVSReferenceTables` instead of static pickle files.
+- :func:`related.load_dict` now relies on :class:`reference.ArgoNVSReferenceTables` instead of static pickle files.
 
 - :class:`argopy.ArgoColors` colormap for Argo Data-Mode has now a fourth value to account for a white space FillValue.
 
@@ -757,7 +850,7 @@ v0.1.14rc1 (31 May 2023)
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- **argopy** cheatsheet ! Get most of the argopy API in a 2 pages pdf !
+- **Argopy** cheatsheet ! Get most of the argopy API in a 2 pages pdf !
 
 .. image:: _static/argopy-cheatsheet.png
   :height: 200px
@@ -792,7 +885,7 @@ Features and front-end API
     import xarray as xr
     ds = xr.open_dataset("dac/aoml/1901393/1901393_prof.nc", engine='argo')
 
-- **argopy now can provide authenticated access to the Argo CTD reference database for DMQC**. Using user/password new **argopy** options, it is possible to fetch the `Argo CTD reference database <http://www.argodatamgt.org/DMQC/Reference-data-base/Latest-Argo-Reference-DB>`_, with the :class:`CTDRefDataFetcher` class. (:pr:`256`) by |gmaze|
+- **argopy now can provide authenticated access to the Argo CTD reference database for DMQC**. Using user/password new **Argopy** options, it is possible to fetch the `Argo CTD reference database <http://www.argodatamgt.org/DMQC/Reference-data-base/Latest-Argo-Reference-DB>`_, with the :class:`CTDRefDataFetcher` class. (:pr:`256`) by |gmaze|
 
 .. code-block:: python
 
@@ -803,7 +896,7 @@ Features and front-end API
         ds = f.to_xarray()
 
 .. warning::
-    **argopy** is ready but the Argo CTD reference database for DMQC is not fully published on the Ifremer ERDDAP yet. This new feature will thus be fully operational soon, and while it's not, **argopy** should raise an ``ErddapHTTPNotFound`` error when using the new fetcher.
+    **Argopy** is ready but the Argo CTD reference database for DMQC is not fully published on the Ifremer ERDDAP yet. This new feature will thus be fully operational soon, and while it's not, **Argopy** should raise an ``ErddapHTTPNotFound`` error when using the new fetcher.
 
 - New option to control the expiration time of cache file: ``cache_expiration``.
 
@@ -912,7 +1005,7 @@ Internals
 Breaking changes
 ^^^^^^^^^^^^^^^^
 
-- Data source ``localftp`` is deprecated and removed from **argopy**. It's been replaced by the ``gdac`` data source with the appropriate ``ftp`` option. See :ref:`Data sources`. (:pr:`240`) by |gmaze|
+- Data source ``localftp`` is deprecated and removed from **Argopy**. It's been replaced by the ``gdac`` data source with the appropriate ``ftp`` option. See :ref:`Data sources`. (:pr:`240`) by |gmaze|
 
 - :class:`argopy.utilities.ArgoNVSReferenceTables` methods ``all_tbl`` and ``all_tbl_name`` are now properties, not methods.
 
@@ -1289,7 +1382,7 @@ Features and front-end API
     ds = ds.argo.teos10(['PV'])
     ds_teos10 = ds.argo.teos10(['SA', 'CT'], inplace=False)
 
-- **argopy** can now be installed with conda (:pr:`29`, :pr:`31`, :pr:`32`). By `F. Fernandes <https://github.com/ocefpaf>`_.
+- **Argopy** can now be installed with conda (:pr:`29`, :pr:`31`, :pr:`32`). By `F. Fernandes <https://github.com/ocefpaf>`_.
 
 .. code-block:: text
 
@@ -1340,7 +1433,7 @@ Breaking changes
 Internals
 ^^^^^^^^^
 
-- Now uses `fsspec <https://filesystem-spec.readthedocs.io>`_ as file system for caching as well as accessing local and remote files (:pr:`19`). This closes issues :issue:`12`, :issue:`15` and :issue:`17`. **argopy** fetchers must now use (or implement if necessary) one of the internal file systems available in the new module ``argopy.stores``. By |gmaze|.
+- Now uses `fsspec <https://filesystem-spec.readthedocs.io>`_ as file system for caching as well as accessing local and remote files (:pr:`19`). This closes issues :issue:`12`, :issue:`15` and :issue:`17`. **Argopy** fetchers must now use (or implement if necessary) one of the internal file systems available in the new module ``argopy.stores``. By |gmaze|.
 
 - Erddap fetcher now uses netcdf format to retrieve data (:pr:`19`).
 
@@ -1483,6 +1576,8 @@ v0.1.0 (17 Mar. 2020)
 .. |gmaze| replace:: `G. Maze <http://www.github.com/gmaze>`__
 .. |quai20| replace:: `K. Balem <http://www.github.com/quai20>`__
 .. |fricour| replace:: `F. Ricour <https://www.github.com/fricour>`__
+.. |charles| replace:: `C. Turner <https://github.com/charles-turner-1>`__
+.. |jdogo| replace:: `J. Dogo <https://github.com/Jade2097>`__
 
 .. |pypi dwn| image:: https://img.shields.io/pypi/dm/argopy?label=Pypi%20downloads
    :target: //pypi.org/project/argopy/
@@ -1495,4 +1590,5 @@ v0.1.0 (17 Mar. 2020)
 .. |release date| image:: https://img.shields.io/github/release-date/euroargodev/argopy?display_date=published_at
    :target: //github.com/euroargodev/argopy/releases
 .. |eqco2_since_last_release| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_carbonfootprint_since_last_release.json
+.. |eqco2_baseline| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_carbonfootprint_baseline.json
 
