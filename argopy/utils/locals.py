@@ -164,11 +164,11 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
                 ("erddapy", get_version),
                 ("fsspec", get_version),
                 ("aiohttp", get_version),
-                ("packaging", get_version),
+                # ("packaging", get_version),
                 # will come with xarray, Using 'version' to make API compatible with several fsspec releases
                 ("requests", get_version),
                 ("toolz", get_version),
-                ("decorator", get_version),
+                # ("decorator", get_version),
             ]
         ),
         "ext.util": sorted(

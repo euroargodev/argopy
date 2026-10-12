@@ -6,12 +6,10 @@ dependencies:
 
 # CORE:
   - aiohttp
-  - decorator
   - erddapy
   - fsspec
   - h5netcdf
   - netCDF4
-  - packaging
   - requests
   - scipy
   - toolz
