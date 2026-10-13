@@ -16,6 +16,7 @@ from argopy.utils.format import argo_split_path
 from argopy.utils.lists import shortcut2gdac
 from argopy.utils.checkers import check_wmo, check_cyc
 from argopy.utils.decorators import deprecated
+from argopy.utils import hyperspectral
 
 
 log = logging.getLogger("argopy.stores.ArgoFloat")
@@ -1164,3 +1165,29 @@ class FloatStoreProto(ABC):
                 "Product '%s' not found. Available third-party product for this float are: %s"
                 % (name, PRODUCT_LIST.argofloat)
             )
+
+    def _compute_wavelengths(self) -> np.ndarray:
+        if 'meta_aux' not in self.ls_datasets():
+            raise InvalidDatasetStructure("Cannot compute wavelengths without auxiliary data. You should at least use the aux=True option to create an ArgoFloat instance including auxiliary data.")
+
+        meta_aux = self.dataset("meta_aux")
+
+        coefs = hyperspectral.read_coefs(meta_aux)
+
+        pixel_start = self.launchconfig["CONFIG_RamsesAccOutputPixelBegin_NUMBER"]
+        pixel_stop = self.launchconfig["CONFIG_RamsesAccOutputPixelEnd_NUMBER"]
+        pixel_bin = self.launchconfig["CONFIG_RamsesAccOutputBinningSize_NUMBER"]
+
+        binned_pixel = "PROVOR" in self.metadata["platform"]["type"]
+
+        return hyperspectral.compute_ramses_wavelengths(
+            coefs["c0s"],
+            coefs["c1s"],
+            coefs["c2s"],
+            coefs["c3s"],
+            coefs["c4s"],
+            pixel_start,
+            pixel_stop,
+            pixel_bin,
+            binned_pixel,
+        )
