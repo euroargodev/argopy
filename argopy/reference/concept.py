@@ -7,7 +7,8 @@ from dataclasses import dataclass
 
 from argopy.options import OPTIONS
 from argopy.errors import OptionValueError
-from argopy.utils.locals import Asset, caller_function
+from argopy.utils.assets import Asset
+from argopy.utils.locals import caller_function
 from argopy.utils.format import urnparser, ppliststr
 from argopy.utils.checkers import to_list
 from argopy.utils.casting import Encoder

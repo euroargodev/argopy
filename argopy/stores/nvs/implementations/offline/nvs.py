@@ -1,6 +1,6 @@
 from typing import Any
 
-from argopy.utils.locals import Asset
+from argopy.utils.assets import Asset
 from argopy.stores.nvs.spec import NVSProto
 from argopy.stores.nvs.utils import concept2vocabulary
 

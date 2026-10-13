@@ -9,7 +9,7 @@ from dataclasses import dataclass, make_dataclass
 from typing import Any
 import pandas as pd
 
-from argopy.utils.locals import Asset
+from argopy.utils.assets import Asset
 from argopy.utils.format import urnparser
 
 

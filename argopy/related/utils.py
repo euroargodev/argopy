@@ -1,11 +1,8 @@
-import importlib
 import logging
 from argopy.reference import ArgoReferenceTable
 
+
 log = logging.getLogger("argopy.related.utils")
-path2assets = importlib.util.find_spec(
-    "argopy.static.assets"
-).submodule_search_locations[0]
 
 
 def load_dict(ptype):

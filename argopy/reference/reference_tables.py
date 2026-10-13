@@ -4,7 +4,7 @@ import collections
 
 from argopy.stores import httpstore
 from argopy.options import OPTIONS
-from argopy.utils.locals import Asset
+from argopy.utils.assets import Asset
 from argopy.utils.decorators import deprecated
 from argopy.utils.format import urnparser
 

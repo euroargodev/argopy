@@ -6,7 +6,8 @@ from dataclasses import dataclass
 
 from argopy.options import OPTIONS
 from argopy.errors import NoDataLeft, OptionValueError
-from argopy.utils.locals import Asset, caller_function
+from argopy.utils.assets import Asset
+from argopy.utils.locals import caller_function
 from argopy.utils.format import ppliststr, urnparser
 from argopy.utils.checkers import to_list
 from argopy.stores.nvs import NVS, id2urn
