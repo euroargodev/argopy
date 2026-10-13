@@ -7,6 +7,18 @@ What's New
 
 |pypi dwn| |conda dwn|
 
+
+Coming up next
+--------------
+.. currentmodule:: argopy
+
+
+Internals
+^^^^^^^^^
+
+- **Internal refactoring to use the utility class for static assets loading**. (:pr:`549`) by |gmaze|.
+
+
 v1.5.0 (12 Oct. 2026)
 ---------------------
 
