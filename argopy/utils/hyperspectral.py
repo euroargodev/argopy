@@ -51,7 +51,7 @@ def read_coefs(ds: xr.Dataset) -> Dict[str, Any]:
         coefs = all_coefs["DOWN_IRRADIANCE_SPECTRUM"]
     else:
         raise InvalidDatasetStructure(
-            "'DOWN_IRRADIANCE_SPECTRUM' is not a parameter in this dataset"
+            "Parameter 'DOWN_IRRADIANCE_SPECTRUM' is not available in this dataset"
         )
 
     coefs_d: Dict[str, Any] = {}
