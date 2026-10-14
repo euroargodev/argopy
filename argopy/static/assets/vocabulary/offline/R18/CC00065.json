@@ -1,7 +1,7 @@
 {
   "name": "CC00065",
   "long_name": "CONFIG_GroundingModePresAdjustment_dbar",
-  "last_update": "2026-09-15T15:05:44.272111+00:00",
+  "last_update": "2026-10-05T15:49:07.035384+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00065/",
     "pav:hasVersion": {

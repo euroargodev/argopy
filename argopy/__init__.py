@@ -18,6 +18,7 @@ except Exception:
 import importlib.util
 import sys
 
+
 def lazy_import(name, optional=False):
     """
     Lazily import a module.
@@ -60,6 +61,7 @@ def lazy_import(name, optional=False):
     loader.exec_module(module)
     return module
 
+
 xarray = lazy_import("xarray")
 pandas = lazy_import("pandas")
 erddapy = lazy_import("erddapy")
@@ -70,7 +72,8 @@ pyarrow = lazy_import("pyarrow", optional=True)
 seaborn = lazy_import("seaborn", optional=True)
 
 # Loggers
-import logging
+import logging  # noqa: E402
+
 log = logging.getLogger(__name__)
 log.addHandler(logging.NullHandler())
 
@@ -97,14 +100,19 @@ from .utils import MonitoredThreadPoolExecutor  # noqa: E402, F401
 from .utils import monitor_status as status  # noqa: E402
 from .related import TopoFetcher, OceanOPSDeployments, ArgoDocs, ArgoDOI  # noqa: E402
 from .extensions import CanyonMED  # noqa: E402
-from .reference import ArgoReferenceTable, ArgoReferenceValue, ArgoReferenceMapping, ArgoNVSReferenceTables # noqa: E402
+from .reference import (  # noqa: E402
+    ArgoReferenceTable,
+    ArgoReferenceValue,
+    ArgoReferenceMapping,
+    ArgoNVSReferenceTables,
+)  # noqa: E402
+
 #
 __all__ = (
     # Top-level classes:
     "DataFetcher",
     "IndexFetcher",
     "ArgoAccessor",
-
     # Utilities promoted to top-level functions:
     "set_options",
     "reset_options",
@@ -114,26 +122,22 @@ __all__ = (
     "status",
     "clear_cache",
     "lscache",
-
     # Meta-data and other related dataset helpers class:
     "OceanOPSDeployments",  # Class
     "CTDRefDataFetcher",  # Class
     "ArgoDocs",  # Class
     "TopoFetcher",  # Class
     "ArgoDOI",  # Class
-
     # Argo Referencing system (vocabulary):
     "ArgoNVSReferenceTables",  # deprecated in v1.5
     "ArgoReferenceTable",
     "ArgoReferenceValue",
     "ArgoReferenceMapping",
-
     # Advanced Argo data stores:
     "ArgoFloat",  # Class
     "ArgoIndex",  # Class
     "gdacfs",  # Class
-    "NVS", # Class
-
+    "NVS",  # Class
     # Submodules:
     # "utils",
     "errors",
@@ -141,10 +145,8 @@ __all__ = (
     "ArgoColors",  # Class
     "stores",
     "tutorial",
-
     # Argo xarray accessor extensions
     "CanyonMED",
-
     # Constants
-    "__version__"
+    "__version__",
 )

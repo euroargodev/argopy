@@ -1,7 +1,7 @@
 {
   "name": "CB0008",
   "long_name": "APMT",
-  "last_update": "2026-09-15T15:05:32.689959+00:00",
+  "last_update": "2026-10-05T15:47:34.108394+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0008/",
     "pav:hasVersion": {
@@ -14,13 +14,13 @@
     "@type": "skos:Concept",
     "skos:related": [
       {
+        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_IV/"
+      },
+      {
         "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/"
-      },
-      {
-        "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_IV/"
       }
     ],
     "skos:definition": {

@@ -1,7 +1,7 @@
 {
   "name": "T000519",
   "long_name": "VOLTAGE_Battery18V_volts",
-  "last_update": "2026-09-15T15:05:04.237870+00:00",
+  "last_update": "2026-10-05T15:44:18.889857+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000519/",
     "pav:hasVersion": {

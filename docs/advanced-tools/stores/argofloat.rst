@@ -92,6 +92,8 @@ So finally, you can open any of these datasets using the corresponding keyword:
         af.open_dataset('meta', netCDF4=True)
 
 
+.. _tools-argofloat-profiles:
+
 List and load profiles
 ----------------------
 

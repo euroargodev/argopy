@@ -7,15 +7,38 @@ What's New
 
 |pypi dwn| |conda dwn|
 
-Coming up next (unreleased)
----------------------------
 
+Coming up next
+--------------
 .. currentmodule:: argopy
 
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- **New methods to access mono-cycle profile files** from :class:`ArgoFloat` instances using :class:`ArgoFloat.ls_profiles`, :class:`ArgoFloat.open_profile` and :class:`ArgoFloat.open_profiles` methods. (:pr:`590`) by |gmaze|.
+- **New third-party product** `BGC-Argo+ <https://www.bgc-argo-plus.info>`_ accessible from :class:`ArgoFloat` instances with ``ArgoFloat.open_product('BGCArgoPlus')``. See the :ref:`BGC-Argo+ documentation <bgcargo_plus_store>`. (:pr:`623`) by |RaphaelBajon|.
+
+Internals
+^^^^^^^^^
+
+- **Internal refactoring to use the utility class for static assets loading**. (:pr:`549`) by |gmaze|.
+
+
+v1.5.0 (12 Oct. 2026)
+---------------------
+
+.. currentmodule:: argopy
+
+.. _v1.5.0-features:
+
+Features and front-end API
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- **New methods to work with mono-cycle profile files** from :class:`ArgoFloat` instances with:
+    - :class:`ArgoFloat.ls_profiles`,
+    - :class:`ArgoFloat.open_profile`,
+    - and :class:`ArgoFloat.open_profiles` methods.
+
+    Check the full documentation page at :ref:`List and load profiles <tools-argofloat-profiles>`. (:pr:`590`) by |gmaze|.
 
 - **New full Argo vocabulary support** for:
     - reference values: :class:`ArgoReferenceValue`,
@@ -24,30 +47,20 @@ Features and front-end API
 
     Check the full documentation page at :ref:`Argo vocabulary and references <argovocabulary>`. (:pr:`575`) by |gmaze|.
 
-    Rq: As a consequence, the historical :class:`ArgoNVSReferenceTables` is deprecated. The ``ArgoNVSReferenceTables.tbl('R25')`` method can be replaced with the new :meth:`ArgoReferenceTable.to_dataframe`.
+    Rq: As a consequence, the :class:`ArgoNVSReferenceTables` is deprecated. The ``ArgoNVSReferenceTables.tbl('R25')`` method can be replaced with the new :meth:`ArgoReferenceTable.to_dataframe`.
 
-- **New third-party product** `BGC-Argo+ <https://www.bgc-argo-plus.info>`_ accessible from :class:`ArgoFloat` instances with ``ArgoFloat.open_product('BGCArgoPlus')``. See the :ref:`BGC-Argo+ documentation <bgcargo_plus_store>`. (:pr:`623`) by |RaphaelBajon|.
+- **New Argo index search queries** for upper and/or lower limits of profiles longitude, latitude and date. See :meth:`ArgoIndex.query.lon`, :meth:`ArgoIndex.query.lat` and :meth:`ArgoIndex.query.date` for examples. (:pr:`583`) by |jdogo|.
+
+.. _v1.5.0-internals:
 
 Internals
 ^^^^^^^^^
 
-- **Annual upgrade to support last versions of dependencies**. (:pr:`681`, :pr:``) by |gmaze|. This implied a few changes in the code:
+- **Annual upgrade to support last versions of dependencies**. (:pr:`681`, :pr:`685`) by |gmaze|.
 
-    - Now kick-off a mocked HTTP server instance on each test module to improve performance and future proof use of parallel execution of the tests.
+- **Improve import time** with lazy and/or deferred import of large dependencies, optimization and finally removing of the auto-discovery of data/index fetchers, :issue:`585` (:pr:`676`) by |charles| and (:pr:`624`) by |gmaze|.
 
-    - Hence we removed the freshly added ``_free_port()`` because a port could have been taken between the call to ``_free_port()`` and the time to reach ``serve_mocked_httpserver()``. So port number is now selected when the mocked server is quick started by a test module.
-
-    - As another consequence, we needed to remove the explicit use of ``mocked_server_address`` in imports in test modules, because the server is now different for each (and all together useless in many locations).
-
-    - Make the mocked server "threaded" with ``ThreadingHTTPServer``. This allows the mocked HTTP server used in CI tests to handle multiple concurrent connections instead of handling one request at a time (it was previously, based on the plain HTTPServer class).
-
-    - As a consequence the mocked HTTP server was hit much often & faster, which caused a "race" problem for the cached fsspec store. We found that this is a known issue documented `here <https://github.com/fsspec/filesystem_spec/issues/639>`_ but still has no fix. So we had to serialize the first download of each resource, to prevent that race to the meda-data registry managed internally by fsspec. Race to write the registry is now stop by the first cat to a file, all subsequent calls are ok. This is the ``_cache_lock`` addition in stores.
-
-    - Following on "race" issues, we tried to remove a bunch of warnings and possible erratic errors due to inconsistency in how we create xarray dataset in out internal stores. We make this consistent by having data fetched from local, HTTP, and FTP stores systematically opening a dataset from an in-memory byte buffers (io.BytesIO). We also added an explicit ``.load()`` immediately after opening to copy all variables into plain in-memory numpy arrays, hence detaching the dataset from the lazy backend array wrapper and the buffer it was opened from. The subsequent ``.close()`` then aims to release the underlying netCDF4/HDF5 handle deterministically, rather than deferring cleanup to garbage collection.
-
-- **Improve import time** with lazy and/or deferred import of large dependencies, optimization and finally removing of the auto-discovery of data/index fetchers :issue:`585` (:pr:`676`) by |charles| and (:pr:`624`) by |gmaze|.
-
-- **Update USA GDAC url** :issue:`624` (:pr:`634`) by |gmaze|.
+- **Update USA GDAC url**, :issue:`624` (:pr:`634`) by |gmaze|.
 
 - **Fix bug** whereby some unit tests would raise  ``fsspec.exceptions.FSTimeoutError``, :issue:`593`. (:pr:`640`) by |gmaze|.
 
@@ -55,18 +68,23 @@ Internals
 
 - **Fix inconsistency** in checking availability of an :class:`ArgoFloat` configuration parameter, :issue:`643`. (:pr:`644`) by |gmaze|.
 
+.. _v1.5.0-doc:
 
 Documentation
 ^^^^^^^^^^^^^
 
-- **Define** a :ref:`policy <contributing.ai_policy>` regarding **generative AI usage** in **Argopy** contributions :issue:`637`. (:pr:`639`) by |quai20|.
+- **Define** a :ref:`policy <contributing.ai_policy>` regarding **generative AI usage** in **Argopy** contributions, :issue:`637`. (:pr:`639`) by |quai20|.
 
-- **Define** a :ref:`policy and specific methods <product_distribution>` regarding the **access to third-party product** through **Argopy**. :issue:`638`. (:pr:`683`) by |gmaze|.
+- **Define** a :ref:`policy and specific methods <product_distribution>` regarding the **access to third-party product** through **Argopy**, :issue:`638`. (:pr:`683`) by |gmaze|.
+
+.. _v1.5.0-deprec:
 
 Deprecation
 ^^^^^^^^^^^
 
-- The value ``argovis`` for the ``src`` global option is deprecated, as well as for the DataFetcher ``src`` argument. From now on, to fetch data from the ``argovis`` server, you will need to use the ``product`` argument of the :class:`DataFetcher`. This is a consequence of the new **third-party product policy** introduced in (:pr:`683`).
+- The value ``argovis`` for the ``src`` global option is deprecated, as well as for the DataFetcher ``src`` argument. From now on, to fetch data from the ``argovis`` server, you will need to use the ``product`` argument of the :class:`DataFetcher`. This is a consequence of the new :ref:`policy for third-party products <product_distribution>` introduced in (:pr:`683`).
+
+- The :class:`ArgoNVSReferenceTables` is deprecated. The ``ArgoNVSReferenceTables.tbl()`` method can be replaced with the new :meth:`ArgoReferenceTable.to_dataframe`. (:pr:`575`) by |gmaze|.
 
 v1.4.0 (5 Jan. 2026)
 --------------------
@@ -1576,6 +1594,7 @@ v0.1.0 (17 Mar. 2020)
 .. |fricour| replace:: `F. Ricour <https://www.github.com/fricour>`__
 .. |charles| replace:: `C. Turner <https://github.com/charles-turner-1>`__
 .. |RaphaelBajon| replace:: `R. Bajon <https://www.github.com/RaphaelBajon>`__
+.. |jdogo| replace:: `J. Dogo <https://github.com/Jade2097>`__
 
 .. |pypi dwn| image:: https://img.shields.io/pypi/dm/argopy?label=Pypi%20downloads
    :target: //pypi.org/project/argopy/

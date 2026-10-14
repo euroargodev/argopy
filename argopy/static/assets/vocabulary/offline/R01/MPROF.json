@@ -1,7 +1,7 @@
 {
   "name": "MPROF",
   "long_name": "Argo profile merged",
-  "last_update": "2026-09-15T15:05:11.520620+00:00",
+  "last_update": "2026-10-05T15:45:11.190561+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R01/current/MPROF/",
     "pav:hasVersion": {

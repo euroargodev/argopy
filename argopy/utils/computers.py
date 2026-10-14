@@ -30,7 +30,7 @@ log = logging.getLogger("argopy.utils.compute")
 def linear_interpolation_remap(
     z, data, z_regridded, z_dim=None, z_regridded_dim="regridded", output_dim="remapped"
 ) -> xr.Dataset:
-    from scipy.interpolate import interp1d # deferred imports
+    from scipy.interpolate import interp1d  # deferred imports
 
     # interpolation called in xarray ufunc
     def _regular_interp(x, y, target_values):
@@ -49,9 +49,9 @@ def linear_interpolation_remap(
                 ~np.isnan(target_values), target_values, np.nanmax(x) + 1
             )
             # Interpolate with fill value parameter to extend min pressure toward 0
-            interpolated = interp1d(
-                x, y, bounds_error=False, fill_value=(y[0], y[-1])
-            )(target_values)
+            interpolated = interp1d(x, y, bounds_error=False, fill_value=(y[0], y[-1]))(
+                target_values
+            )
         return interpolated
 
     # infer dim from input

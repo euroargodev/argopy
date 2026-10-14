@@ -86,7 +86,7 @@ class httpstore(ArgoStoreProto):
             Registered and curated URL
         """
         self.urls_registry.commit(url)
-        log.debug(f"Curated: {url}")
+        # log.debug(f"Curated: {url}")
         return url
 
     def download_url(

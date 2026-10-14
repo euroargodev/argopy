@@ -1,7 +1,7 @@
 {
   "name": "CC00012",
   "long_name": "CONFIG_AscentVerticalThresholdForBuoyancyAction_dbar",
-  "last_update": "2026-09-15T15:05:34.608812+00:00",
+  "last_update": "2026-10-05T15:48:06.097065+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00012/",
     "pav:hasVersion": {

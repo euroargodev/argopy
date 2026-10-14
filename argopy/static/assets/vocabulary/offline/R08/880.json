@@ -1,7 +1,7 @@
 {
   "name": "880",
   "long_name": "S2A float with RBR conductivity sensor",
-  "last_update": "2026-09-15T15:05:13.935259+00:00",
+  "last_update": "2026-10-05T15:45:27.744992+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/880/",
     "pav:hasVersion": {

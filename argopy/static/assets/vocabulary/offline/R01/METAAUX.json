@@ -1,7 +1,7 @@
 {
   "name": "METAAUX",
   "long_name": "Argo auxiliary meta-data",
-  "last_update": "2026-09-15T15:05:11.580565+00:00",
+  "last_update": "2026-10-05T15:45:12.104850+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R01/current/METAAUX/",
     "pav:hasVersion": {

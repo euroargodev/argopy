@@ -1,7 +1,7 @@
 {
   "name": "CC00153",
   "long_name": "CONFIG_PressureMaxBeforeEmergencyAscent_dbar",
-  "last_update": "2026-09-15T15:05:39.470138+00:00",
+  "last_update": "2026-10-05T15:48:36.968434+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00153/",
     "pav:hasVersion": [

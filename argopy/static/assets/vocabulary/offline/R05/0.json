@@ -1,7 +1,7 @@
 {
   "name": "0",
   "long_name": "Argos location accuracy >1500m radius",
-  "last_update": "2026-09-15T15:04:36.762651+00:00",
+  "last_update": "2026-10-05T15:41:24.758214+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R05/current/0/",
     "pav:authoredOn": "2020-04-04 15:05:33.0",

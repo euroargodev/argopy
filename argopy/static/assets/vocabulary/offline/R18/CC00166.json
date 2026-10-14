@@ -1,7 +1,7 @@
 {
   "name": "CC00166",
   "long_name": "CONFIG_PressureThresholdDataReduction_dbar",
-  "last_update": "2026-09-15T15:05:34.429266+00:00",
+  "last_update": "2026-10-05T15:48:04.721720+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00166/",
     "pav:hasVersion": [

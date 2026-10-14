@@ -1,7 +1,7 @@
 {
   "name": "15",
   "long_name": "Supplemental sensor exclusion list test",
-  "last_update": "2026-09-15T15:04:42.208997+00:00",
+  "last_update": "2026-10-05T15:41:59.934145+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R11/current/15/",
     "pav:hasVersion": {

@@ -1,7 +1,7 @@
 {
   "name": "CC00243",
   "long_name": "CONFIG_EndOfLifeAtDepth_LOGICAL",
-  "last_update": "2026-09-15T15:05:37.564782+00:00",
+  "last_update": "2026-10-05T15:48:24.002498+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00243/",
     "pav:hasVersion": [

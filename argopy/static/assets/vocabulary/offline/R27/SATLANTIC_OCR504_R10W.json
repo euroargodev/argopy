@@ -1,7 +1,7 @@
 {
   "name": "SATLANTIC_OCR504_R10W",
   "long_name": "OCR-504 multispectral radiometer (upwelling radiance)",
-  "last_update": "2026-09-15T15:05:10.945822+00:00",
+  "last_update": "2026-10-05T15:45:08.217018+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_R10W/",
     "pav:hasVersion": {

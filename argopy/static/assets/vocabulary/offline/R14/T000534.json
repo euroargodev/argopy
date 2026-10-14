@@ -1,7 +1,7 @@
 {
   "name": "T000534",
   "long_name": "VOLTAGE_BatteryPistonPumpOn_volts",
-  "last_update": "2026-09-15T15:05:02.804669+00:00",
+  "last_update": "2026-10-05T15:44:08.262814+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000534/",
     "pav:hasVersion": {

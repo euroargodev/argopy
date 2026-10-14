@@ -1,7 +1,7 @@
 {
   "name": "CC00199",
   "long_name": "CONFIG_SurfaceWaitPeriodAfterEmergencyAscent_minutes",
-  "last_update": "2026-09-15T15:05:34.412000+00:00",
+  "last_update": "2026-10-05T15:48:04.503158+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00199/",
     "pav:hasVersion": {

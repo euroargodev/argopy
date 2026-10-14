@@ -1,7 +1,7 @@
 {
   "name": "843",
   "long_name": "POPS ice platform using PROVOR float with SBE conductivity sensor",
-  "last_update": "2026-09-15T15:05:13.082970+00:00",
+  "last_update": "2026-10-05T15:45:21.708799+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/843/",
     "pav:authoredOn": "2020-05-03 20:28:54.0",

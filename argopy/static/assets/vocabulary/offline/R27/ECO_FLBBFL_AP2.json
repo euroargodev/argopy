@@ -1,7 +1,7 @@
 {
   "name": "ECO_FLBBFL_AP2",
   "long_name": "ECO_FLBBFL_AP2",
-  "last_update": "2026-09-15T15:05:07.527587+00:00",
+  "last_update": "2026-10-05T15:44:42.742768+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL_AP2/",
     "pav:hasVersion": {
@@ -11,8 +11,12 @@
     "pav:hasCurrentVersion": {
       "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL_AP2/2/"
     },
+    "dce:identifier": "SDN:R27::ECO_FLBBFL_AP2",
     "@type": "skos:Concept",
     "skos:related": [
+      {
+        "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/"
+      },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/"
       },
@@ -45,7 +49,6 @@
       "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
     },
     "pav:version": "2",
-    "dce:identifier": "SDN:R27::ECO_FLBBFL_AP2",
     "@context": {
       "cpm": "http://purl.org/voc/cpm#",
       "qudt": "https://qudt.org/2.1/schema/qudt#",

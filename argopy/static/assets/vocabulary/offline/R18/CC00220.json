@@ -1,7 +1,7 @@
 {
   "name": "CC00220",
   "long_name": "CONFIG_ValveActionPeriodFactorBuoyancyReduction_NUMBER",
-  "last_update": "2026-09-15T15:05:40.845363+00:00",
+  "last_update": "2026-10-05T15:48:46.533149+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00220/",
     "pav:hasVersion": {

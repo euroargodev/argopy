@@ -1,7 +1,7 @@
 {
   "name": "BBP",
   "long_name": "Particle backscattering at x nanometers",
-  "last_update": "2026-09-15T15:04:39.693558+00:00",
+  "last_update": "2026-10-05T15:41:42.992930+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/BBP/",
     "pav:hasVersion": [

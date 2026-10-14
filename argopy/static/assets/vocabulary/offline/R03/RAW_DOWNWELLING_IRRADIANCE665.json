@@ -1,7 +1,7 @@
 {
   "name": "RAW_DOWNWELLING_IRRADIANCE665",
   "long_name": "Raw downwelling irradiance at 665 nanometers",
-  "last_update": "2026-09-15T15:04:37.916000+00:00",
+  "last_update": "2026-10-05T15:41:32.349403+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE665/",
     "pav:authoredOn": "2026-06-11 09:21:52.0",

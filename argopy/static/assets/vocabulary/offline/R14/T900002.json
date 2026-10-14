@@ -1,7 +1,7 @@
 {
   "name": "T900002",
   "long_name": "CLOCK_2ndSettlingBeforePark_YYYYMMDDHHMMSS",
-  "last_update": "2026-09-15T15:04:42.565507+00:00",
+  "last_update": "2026-10-05T15:42:02.048788+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T900002/",
     "pav:hasVersion": [

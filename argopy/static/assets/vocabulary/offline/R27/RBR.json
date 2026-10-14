@@ -1,7 +1,7 @@
 {
   "name": "RBR",
   "long_name": "RBR unknown CTD model",
-  "last_update": "2026-09-15T15:05:07.744729+00:00",
+  "last_update": "2026-10-05T15:44:45.396504+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR/",
     "pav:authoredOn": "2019-10-11 14:49:00.0",

@@ -1,7 +1,7 @@
 {
   "name": "MOLAR_DOXY",
   "long_name": "Uncompensated (pressure and salinity) oxygen concentration reported by the oxygen sensor",
-  "last_update": "2026-09-15T15:04:40.221029+00:00",
+  "last_update": "2026-10-05T15:41:47.285115+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/MOLAR_DOXY/",
     "pav:hasVersion": [

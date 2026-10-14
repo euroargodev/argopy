@@ -1,7 +1,7 @@
 {
   "name": "T000268",
   "long_name": "DIAGNOSTICbit_VacuumPressure_bit",
-  "last_update": "2026-09-15T15:04:43.295537+00:00",
+  "last_update": "2026-10-05T15:42:06.272404+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000268/",
     "pav:hasVersion": {

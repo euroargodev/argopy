@@ -37,10 +37,10 @@ def ds_pts(mocked_httpserver):
 
     if "expert" not in data:
         # We don't have what we need for testing, skip this test module:
-        pytest.xfail("Could not retrieve erddap data in expert mode")
+        pytest.xfail("Cannot retrieve erddap data in expert mode")
     elif "standard" not in data:
         # We don't have what we need for testing, skip this test module:
-        pytest.xfail("Could not retrieve erddap data in standard mode")
+        pytest.xfail("Cannot retrieve erddap data in standard mode")
     else:
         return data
 
@@ -211,12 +211,12 @@ class Test_create_float_source:
     def test_error_user_mode(self):
         with argopy.set_options(gdac=self.local_gdac):
             with pytest.raises(InvalidDatasetStructure):
-                ds = ArgoDataFetcher(src="gdac", mode='standard').float([6901929, 2901623]).load().data
+                ds = ArgoDataFetcher(src="gdac", mode='standard').float([6901929, 1900468]).load().data
                 ds.argo.create_float_source()
 
     def test_opt_force(self):
         with argopy.set_options(gdac=self.local_gdac):
-            expert_ds = ArgoDataFetcher(src="gdac", mode='expert').float([2901623]).load().data
+            expert_ds = ArgoDataFetcher(src="gdac", mode='expert').float([6901929]).load().data
 
             with pytest.raises(OptionValueError):
                 expert_ds.argo.create_float_source(force='dummy')
@@ -233,7 +233,7 @@ class Test_create_float_source:
 
     def test_filecreate(self):
         with argopy.set_options(gdac=self.local_gdac):
-            expert_ds = ArgoDataFetcher(src="gdac", mode='expert').float([6901929, 2901623]).load().data
+            expert_ds = ArgoDataFetcher(src="gdac", mode='expert').float([6901929, 1900468]).load().data
 
             N_file = len(np.unique(expert_ds['PLATFORM_NUMBER']))
             with tempfile.TemporaryDirectory() as folder_output:

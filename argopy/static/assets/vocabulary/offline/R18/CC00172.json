@@ -1,7 +1,7 @@
 {
   "name": "CC00172",
   "long_name": "CONFIG_ProfileEvasionBrakingFactor_NUMBER",
-  "last_update": "2026-09-15T15:05:45.524544+00:00",
+  "last_update": "2026-10-05T15:49:16.222131+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00172/",
     "pav:hasVersion": [

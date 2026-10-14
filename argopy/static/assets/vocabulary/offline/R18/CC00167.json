@@ -1,7 +1,7 @@
 {
   "name": "CC00167",
   "long_name": "CONFIG_PressureThresholdDataReductionIntermediateToDeep_dbar",
-  "last_update": "2026-09-15T15:05:38.823653+00:00",
+  "last_update": "2026-10-05T15:48:32.313462+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00167/",
     "pav:hasVersion": [

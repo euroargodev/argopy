@@ -1,7 +1,7 @@
 {
   "name": "CC00182",
   "long_name": "CONFIG_PumpActionMaxTimeAscent_csec",
-  "last_update": "2026-09-15T15:05:38.877015+00:00",
+  "last_update": "2026-10-05T15:48:33.059183+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00182/",
     "pav:hasVersion": {

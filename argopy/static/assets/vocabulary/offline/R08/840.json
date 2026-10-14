@@ -1,7 +1,7 @@
 {
   "name": "840",
   "long_name": "PROVOR float with no conductivity sensor",
-  "last_update": "2026-09-15T15:05:13.938338+00:00",
+  "last_update": "2026-10-05T15:45:27.508864+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/840/",
     "pav:authoredOn": "2020-05-03 20:28:54.0",

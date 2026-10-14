@@ -1,7 +1,7 @@
 {
   "name": "CC00126",
   "long_name": "CONFIG_ParkPressure_dbar",
-  "last_update": "2026-09-15T15:05:34.463808+00:00",
+  "last_update": "2026-10-05T15:48:04.915983+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00126/",
     "pav:hasVersion": {

@@ -1,7 +1,7 @@
 {
   "name": "NSAVGUP",
   "long_name": "Near-surface sampling: averaged, unpumped",
-  "last_update": "2026-09-15T15:04:33.215014+00:00",
+  "last_update": "2026-10-05T15:41:04.456089+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R16/current/NSAVGUP/",
     "pav:authoredOn": "2020-05-03 20:29:08.0",

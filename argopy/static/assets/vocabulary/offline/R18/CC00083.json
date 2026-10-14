@@ -1,7 +1,7 @@
 {
   "name": "CC00083",
   "long_name": "CONFIG_IceDetectionPressureInterval_dbar",
-  "last_update": "2026-09-15T15:05:41.081391+00:00",
+  "last_update": "2026-10-05T15:48:47.543962+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00083/",
     "pav:hasVersion": [

@@ -1,7 +1,7 @@
 {
   "name": "2B",
   "long_name": "Level 2, class B processing stage",
-  "last_update": "2026-09-15T15:04:37.237640+00:00",
+  "last_update": "2026-10-05T15:41:28.298074+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R06/current/2B/",
     "pav:authoredOn": "2020-04-04 15:05:33.0",

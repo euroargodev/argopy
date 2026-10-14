@@ -1,7 +1,7 @@
 {
   "name": "PROVOR",
   "long_name": "PROVOR float",
-  "last_update": "2026-09-15T15:04:35.669832+00:00",
+  "last_update": "2026-10-05T15:41:18.606463+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/",
     "pav:authoredOn": "2020-05-03 20:30:02.0",
@@ -27,16 +27,16 @@
     "@type": "skos:Concept",
     "skos:related": [
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0010/"
+        "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0011/"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0005/"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0009/"
+        "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0010/"
       },
       {
-        "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0011/"
+        "@id": "http://vocab.nerc.ac.uk/collection/R28/current/CB0009/"
       },
       {
         "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"

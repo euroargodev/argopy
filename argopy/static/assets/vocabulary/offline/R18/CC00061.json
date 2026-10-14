@@ -1,7 +1,7 @@
 {
   "name": "CC00061",
   "long_name": "CONFIG_GroundingMode_NUMBER",
-  "last_update": "2026-09-15T15:05:35.071148+00:00",
+  "last_update": "2026-10-05T15:48:09.220422+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00061/",
     "pav:hasVersion": [

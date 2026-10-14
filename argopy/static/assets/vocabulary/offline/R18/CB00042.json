@@ -1,7 +1,7 @@
 {
   "name": "CB00042",
   "long_name": "CONFIG_SunaMinTransmittedNitrateConcentration_umol/L",
-  "last_update": "2026-09-15T15:05:41.956065+00:00",
+  "last_update": "2026-10-05T15:48:52.960642+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CB00042/",
     "pav:hasVersion": [

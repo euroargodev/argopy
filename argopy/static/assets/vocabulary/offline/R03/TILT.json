@@ -1,7 +1,7 @@
 {
   "name": "TILT",
   "long_name": "Inclination of the float axis in respect to the local vertical",
-  "last_update": "2026-09-15T15:04:40.010861+00:00",
+  "last_update": "2026-10-05T15:41:45.587313+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TILT/",
     "pav:hasVersion": [

@@ -1,7 +1,7 @@
 {
   "name": "ARGO_WMO_INST_TYPE",
   "long_name": "Argo instrument types",
-  "last_update": "2026-09-15T15:04:20.104391+00:00",
+  "last_update": "2026-10-05T15:40:42.167747+00:00",
   "data": {
     "@graph": [
       {

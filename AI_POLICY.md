@@ -29,7 +29,7 @@ comments:
 
 Please keep in mind that **Argopy** is developed and maintained by humans being.
 
-It is for us a fundamental aspect of the project that discussions (in issues or PR), even if happenning on github, are made between humans. Knowing this, it will be considered impolite to approach the **Argopy** dev community with AI-agent.
+It is for us a fundamental aspect of the project that discussions (in issues or PR), even if happening on github, are made between humans. Knowing this, it will be considered impolite to approach the **Argopy** dev community with AI-agent.
 
 ## Ethics, Ecology & Expertise
 

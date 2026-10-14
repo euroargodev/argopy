@@ -1,7 +1,7 @@
 {
   "name": "CC00033",
   "long_name": "CONFIG_CycleTime_hours",
-  "last_update": "2026-09-15T15:05:44.794134+00:00",
+  "last_update": "2026-10-05T15:49:11.336104+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00033/",
     "pav:hasVersion": {

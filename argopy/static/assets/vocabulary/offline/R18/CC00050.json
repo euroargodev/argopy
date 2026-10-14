@@ -1,7 +1,7 @@
 {
   "name": "CC00050",
   "long_name": "CONFIG_DownTimeExpiryTimeOfDay_minutes",
-  "last_update": "2026-09-15T15:05:43.723133+00:00",
+  "last_update": "2026-10-05T15:49:03.446747+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00050/",
     "pav:hasVersion": {
