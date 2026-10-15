@@ -9,7 +9,7 @@ import numpy as np
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from argopy.options import OPTIONS, PRODUCT_LIST
-from argopy.errors import InvalidOption, DataNotFound
+from argopy.errors import InvalidOption, DataNotFound, InvalidDatasetStructure
 from argopy.plot import dashboard
 from argopy.stores import ArgoIndex
 from argopy.utils.format import argo_split_path
@@ -65,19 +65,19 @@ class FloatStoreProto(ABC):
         self.timeout: int = OPTIONS["api_timeout"] if timeout == 0 else timeout
         self._aux: bool = bool(aux)
 
-        if not self._online and (
-            self.host.startswith("http")
-            or self.host.startswith("ftp")
-            or self.host.startswith("s3")
-        ):
-            if self.host.startswith("http://127.0.0.1"):
-                pass
-                # Allow to use the online implementation with a local server.
-            else:
-                raise InvalidOption(
-                    "Trying to work with remote host '%s' without a web connection. Check your connection parameters or try to work with a local GDAC path."
-                    % self.host
-                )
+        # if not self._online and (
+        #     self.host.startswith("http")
+        #     or self.host.startswith("ftp")
+        #     or self.host.startswith("s3")
+        # ):
+        #     if self.host.startswith("http://127.0.0.1"):
+        #         pass
+        #         # Allow to use the online implementation with a local server.
+        #     else:
+        #         raise InvalidOption(
+        #             "Trying to work with remote host '%s' without a web connection. Check your connection parameters or try to work with a local GDAC path."
+        #             % self.host
+        #         )
 
         if "idx" not in kwargs:
             self.idx: ArgoIndex = ArgoIndex(
@@ -1170,13 +1170,26 @@ class FloatStoreProto(ABC):
         if 'meta_aux' not in self.ls_datasets():
             raise InvalidDatasetStructure("Cannot compute wavelengths without auxiliary data. You should at least use the aux=True option to create an ArgoFloat instance including auxiliary data.")
 
-        meta_aux = self.dataset("meta_aux")
+        def read_ramses_pixel(pixel:Literal['PixelBegin', 'PixelEnd', 'BinningSize'])->int:
+            cfg_param = f"CONFIG_RamsesAccOutput{pixel}_NUMBER"
 
+            if cfg_param in self.auxlaunchconfig:
+                pixel_value = self.auxlaunchconfig[cfg_param]
+            elif cfg_param in self.launchconfig:
+                pixel_value = self.launchconfig[cfg_param]
+            else:
+                raise InvalidDatasetStructure(f"'{cfg_param}' cannot be found in the meta-aux (nore meta) configuration parameters")
+
+            return pixel_value
+
+        # Load calibration coefficients:
+        meta_aux = self.dataset("meta_aux")
         coefs = hyperspectral.read_coefs(meta_aux)
 
-        pixel_start = self.launchconfig["CONFIG_RamsesAccOutputPixelBegin_NUMBER"]
-        pixel_stop = self.launchconfig["CONFIG_RamsesAccOutputPixelEnd_NUMBER"]
-        pixel_bin = self.launchconfig["CONFIG_RamsesAccOutputBinningSize_NUMBER"]
+        # Load pixel indexes (not mission dependents):
+        pixel_start = read_ramses_pixel('PixelBegin')
+        pixel_end = read_ramses_pixel('PixelEnd')
+        pixel_bin = read_ramses_pixel('BinningSize')
 
         binned_pixel = "PROVOR" in self.metadata["platform"]["type"]
 
@@ -1187,7 +1200,7 @@ class FloatStoreProto(ABC):
             coefs["c3s"],
             coefs["c4s"],
             pixel_start,
-            pixel_stop,
+            pixel_end,
             pixel_bin,
             binned_pixel,
         )

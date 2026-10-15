@@ -350,3 +350,5 @@ class ArgoFloatConfigParametersProto(ArgoFloatAnyConfigParametersProto):
             .sort_values(by="Name")
             .reset_index(drop=True)
         )
+
+

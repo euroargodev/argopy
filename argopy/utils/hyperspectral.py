@@ -29,18 +29,14 @@ def read_coefs(ds: xr.Dataset) -> Dict[str, Any]:
             "This function is only for one float auxiliary metadata file"
         )
 
-    if "PARAMETER" in ds and "PREDEPLOYMENT_CALIB_COEFFICIENT" in ds:
-        sub_ds = ds[
-            ["PARAMETER", "PREDEPLOYMENT_CALIB_COEFFICIENT"]
-        ]  # both have dim: (N_PARAMS, )
-    else:
+    if not ("PARAMETER" in ds and "PREDEPLOYMENT_CALIB_COEFFICIENT" in ds):
         raise InvalidDatasetStructure(
             "Cannot read pre-deployment calibration coefficients from this dataset (missing variables 'PREDEPLOYMENT_CALIB_COEFFICIENT')"
         )
 
     try:
         all_coefs = map_vars_to_dict(
-            sub_ds, "PARAMETER", "PREDEPLOYMENT_CALIB_COEFFICIENT"
+            ds, "PARAMETER", "PREDEPLOYMENT_CALIB_COEFFICIENT"
         )
     except:  # noqa: E722
         raise InvalidDatasetStructure(
@@ -51,7 +47,7 @@ def read_coefs(ds: xr.Dataset) -> Dict[str, Any]:
         coefs = all_coefs["DOWN_IRRADIANCE_SPECTRUM"]
     else:
         raise InvalidDatasetStructure(
-            "Parameter 'DOWN_IRRADIANCE_SPECTRUM' is not available in this dataset"
+            "Parameter 'DOWN_IRRADIANCE_SPECTRUM' is not available in this auxiliary metadata dataset"
         )
 
     coefs_d: Dict[str, Any] = {}
