@@ -1,3 +1,6 @@
+"""
+Low-level functions for hyperspectral sensors (eg: RAMSES)
+"""
 import warnings
 import numpy as np
 import xarray as xr
@@ -8,7 +11,7 @@ from argopy.utils.mappers import map_vars_to_dict
 
 
 def read_coefs(ds: xr.Dataset) -> Dict[str, Any]:
-    """Read predeployment calibration coefficients for down irradiance spectrum
+    """Read pre-deployment calibration coefficients for down irradiance spectrum
 
     Parameters
     ----------
@@ -18,6 +21,7 @@ def read_coefs(ds: xr.Dataset) -> Dict[str, Any]:
     Returns
     -------
     coefs: Dict[str, Any]
+        All possible coefficients, typically: ['c0s', 'c1s', 'c2s', 'c3s', 'c4s', 'CalAQ', 'Back1', 'Back2']
 
     Raises
     ------
@@ -76,32 +80,100 @@ def compute_ramses_wavelengths(
     c4s: float,
     pixel_start: int,
     pixel_stop: int,
-    pixel_bin: int,
-    binned_pixel: bool = False,
+    bin_size: int,
+    pixel_binned: bool = False,
 ) -> np.ndarray:
-    """Compute RAMSES hyperspectral wavelengths
+    """Compute one RAMSES hyperspectral wavelengths array
 
-    polynomial computation of the wavelengths
+    Implement the polynomial computation of the wavelengths, as described in the user manual "Processing
+    BGC-Argo radiometric data at the DAC Level".
 
     Parameters
     ----------
-    c0s: float, c1s: float, c2s: float, c3s: float, c4s: float
-        Predeployment calibration coefficients for down irradiance spectrum
-    pixel_start: int, pixel_stop: int, pixel_bin: int
+    c0s: float
+        Pre-deployment calibration coefficients for down irradiance spectrum
+    c1s: float
+        Pre-deployment calibration coefficients for down irradiance spectrum
+    c2s: float
+        Pre-deployment calibration coefficients for down irradiance spectrum
+    c3s: float
+        Pre-deployment calibration coefficients for down irradiance spectrum
+    c4s: float
+        Pre-deployment calibration coefficients for down irradiance spectrum
 
-    binned_pixel: bool, default = False
-        Should we return wavelengths using pixel-binned estimate, or not.
+    pixel_start: int
+        Starting index of the wavelength region of interest within the 1..244 pixels transmitted by the sensor. Only used if argument
+        ``pixel_binned`` is True.
+    pixel_stop: int
+        Ending index of the wavelength region of interest within the 2..245 pixels transmitted by the sensor. Only used if argument
+        ``pixel_binned`` is True.
+    bin_size: int
+        Size if the wavelength region of interest within the 0..255 pixels transmitted by the sensor. Only used if argument
+        ``pixel_binned`` is True.
+
+    pixel_binned: bool, default = False
+        Should we return wavelengths using pixel-binned estimate, or not. See details of the computation below.
+
+    Returns
+    -------
+    :class:`numpy.ndarray`
+        A wavelengths array
 
     Notes
     -----
     For each pixel i (from 0 to 255), the wavelength of the pixel is computed from the sensor meta
-    data c0s, c1s, c2s, c3s and c4s according to:
+    data coefficients ``c0s``, ``c1s``, ``c2s``, ``c3s`` and ``c4s`` according to:
 
-    WAVELENGTH_DOWN_IRR(i) = c0s+c1s(i+1)+c2s(i+1)2+c3s(i+1)3+c4s(i+1)4
+    .. math::
 
-    If with_pixel = False: all 255 pixels i from 1 to 255 are transmitted by the float, including
-    the dark pixels between DarkPixelBegin ... DarkPixelEnd indices. The N_VALUES dimension of the
-    hyperspectral data is 255.
+        \lambda(i) = c0s + c1s(i+1) + c2s(i+1)^2 + c3s(i+1)^3 + c4s(i+1)^4
+
+    where $i = 1 .. 255$.
+
+    If **pixel_binned = False**:
+
+    We consider that all 255 pixels i from 1 to 255 are transmitted by the float, including the dark pixels between
+    DarkPixelBegin ... DarkPixelEnd indices. The N_VALUES dimension of the hyperspectral data is thus 255.
+
+    If **pixel_binned = True**:
+
+    We consider that the size of the wavelengths array depends on how the 255 pixels (the first DeadPixel 0 is
+    always excluded) were binned.
+
+    1.
+        The wavelength region of interest is chosen by using the ``pixel_start`` and ``pixel_stop`` arguments:
+        Typically:
+
+        - ``pixel_start`` = $i_{min}$ = 5, but can be either from 1 to 244
+        - ``pixel_stop`` = $i_{max}$ = 144, but can be either from 2 to 245
+
+    2.
+        The spectral resolution is possibly reduced by grouping sets of adjacent pixels using the ``bin_size``
+        argument. Typically:
+
+        - ``bin_size`` = $N_{pixel}$ = 2, but can be either 1, 2 or 4
+
+        The new pixel's value returned by the float is the average of the binned pixels rounded to the minimum integer
+        (and not the closest). Binning is performed by the float before transmission. Individual pixel data are lost
+        (unless ``bin_size`` = 1).
+
+
+    As a result, the N_VALUES dimension of the hyperspectral data is given by the following formula:
+
+    .. math::
+
+        N_{VALUES} = \\frac{i_{max} - i_{min} + 1}{N_{pixel}}
+
+    The corresponding wavelengths :math:`\lambda_b(i_b)` or each binned pixels $i_b$ are calculated by bin-averaging the
+    sensor's full wavelength scale, :math:`\lambda(i)`, from the equation above, into the same grouped pixels $i_b$ as
+    determined by the configuration parameters:
+
+    .. math::
+
+        \lambda_b(i_b) = \\frac{1}{N_{pixel}} \\sum_{i=i_{min}+(i_b-1)N_{pixel}}^{i_{min}+i_b*N_{pixel}-1} \lambda(i)
+
+    where $i_{b} = 1 .. N_{VALUES}$.
+
 
     """
     wavelengths = np.zeros((255,))
@@ -115,18 +187,14 @@ def compute_ramses_wavelengths(
         )
 
     # Possibly stop here (eg: APEX float):
-    if not binned_pixel:
+    if not pixel_binned:
         return wavelengths
 
-    # else, consider the pixel configuration (eg: PROVOR float):
-
-    # Imin=5 "5 is when the first pixel is pixel 0 "the dead pixel" / discussion with Edouard we stay as it is "
+    # Else, consider a pixel bin configuration (eg: PROVOR float):
     Imin = pixel_start
-
-    # Imax=144 "144 is when the first pixel is pixel 0 "the dead pixel" / discussion with Edouard we stay as it is "
     Imax = pixel_stop
+    Nbin = bin_size
 
-    Nbin = pixel_bin
     N_VALUES = (Imax - Imin + 1) / Nbin
 
     if N_VALUES != np.fix(N_VALUES):
