@@ -7,7 +7,7 @@ Argo vocabulary and Reference
 
 The Argo GDAC database and netcdf format are strict and based on a collection of parameters fully documented and convention. Most of these parameters are allowed to take only referenced values organised in tables and related with miscellaneous mappings. All reference tables can be found in the `Argo user manual <https://doi.org/10.13155/29825>`_.
 
-Argo references (tables, values, mappings) are machine-to-machine accessible from a `NVS server <https://vocab.nerc.ac.uk>`_ where the **Argo Vocabulary Task Team (AVTT)** maintains up-to-date the entire Argo vocabulary.
+Argo references (tables, values, mappings) are machine-to-machine accessible from a `NVS server <https://vocab.nerc.ac.uk>`_ where the **Argo Vocabulary and Format Task Team (AVFTT)** maintains up-to-date the entire Argo vocabulary.
 
 **Argopy** provides a facilitated access to the Argo vocabulary, specifically:
 
@@ -19,7 +19,7 @@ Argo references (tables, values, mappings) are machine-to-machine accessible fro
 
 .. note::
 
-    The AVTT work is managed on Github where a list of NVS collection-specific repositories is hosted under the `nvs-vocabs organisation <https://github.com/nvs-vocabs>`_.
+    The AVFTT work is managed on Github where a list of NVS collection-specific repositories is hosted under the `nvs-vocabs organisation <https://github.com/nvs-vocabs>`_.
 
     The management of issues related to vocabularies is done on this `repository <https://github.com/nvs-vocabs/ArgoVocabs>`_.
 
@@ -381,7 +381,7 @@ Reference **value relationships**
 
 **A class to work with Argo Reference Value Relationships, a.k.a. NVS "mapping".**
 
-More explanation from the `AVTT documentation
+More explanation from the `AVFTT documentation
 <https://github.com/OneArgo/ArgoVocabs?tab=readme-ov-file#ivb-mappings>`_:
 
     Mappings are used to inform relationship between concepts. For
@@ -390,7 +390,7 @@ More explanation from the `AVTT documentation
     ``platform_maker``, etc. They are used by the `FileChecker <https://github.com/OneArgo/ArgoFormatChecker>`_ to ensure
     the consistency between these metadata fields in the Argo dataset.
 
-The relationship is also called a *predicate*. The `AVTT documentation
+The relationship is also called a *predicate*. The `AVFTT documentation
 <https://github.com/OneArgo/ArgoVocabs?tab=readme-ov-file#ivb-mappings>`_ indicates that there are two kinds of predicates:
 
 - "narrower/broader" when there is a hierarchy between the subject and the object,
@@ -471,7 +471,7 @@ Export method
     # Export all mapping relationships in a DataFrame:
     arm.to_dataframe()
 
-    # To export mapping using AVTT jargon:
+    # To export mapping using AVFTT jargon:
     arm.to_dataframe(raw=True)
 
 .. ipython:: python
