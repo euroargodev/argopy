@@ -67,7 +67,7 @@ from .loggers import warnUnless, log_argopy_callerstack
 from .carbon import GreenCoding, Github
 from . import optical_modeling
 from .carbonate import calculate_uncertainties, error_propagation
-
+from . import hyperspectral
 
 __all__ = (
     # Checkers:
@@ -157,4 +157,6 @@ __all__ = (
     # Carbonate calculations
     "calculate_uncertainties",
     "error_propagation",
+    # for the hyperspectral
+    "hyperspectral"
 )

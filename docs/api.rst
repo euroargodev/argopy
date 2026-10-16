@@ -2,7 +2,7 @@
 API reference
 #############
 
-This page provides an auto-generated summary of argopy's API. For more details and examples, refer to the relevant chapters in the main part of the documentation.
+This page provides an auto-generated summary of Argopy's API. For more details and examples, refer to the relevant chapters in the main part of the documentation.
 
 .. contents::
    :local:
@@ -251,6 +251,38 @@ ArgoFloat (data and meta-data fetcher for one float)
    ArgoFloat.launchconfig.parameters
    ArgoFloat.launchconfig.to_dataframe
 
+.. note::
+
+    The same methods are available for the auxiliary metadata using :class:`ArgoFloat.auxlaunchconfig` and :class:`ArgoFloat.auxconfig`.
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor.rst
+
+   ArgoFloat.auxlaunchconfig
+   ArgoFloat.auxconfig
+
+**Extension: RAMSES sensor radiometric data**
+
+.. currentmodule:: argopy
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor.rst
+
+   ArgoFloat.ramses
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
+
+   ArgoFloat.ramses.wavelengths
+   ArgoFloat.ramses.wavelengths_by_cycle
+   ArgoFloat.ramses.launch_wavelengths
+
+   ArgoFloat.ramses.coefs
+   ArgoFloat.ramses.binned_pixel
+   ArgoFloat.ramses.cycle_strides
 
 ArgoIndex (explore Argo files index)
 ====================================

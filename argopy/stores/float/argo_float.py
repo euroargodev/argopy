@@ -11,12 +11,15 @@ import logging
 import xarray as xr
 
 from argopy.utils.checkers import isconnected
-from .implementations.plot import ArgoFloatPlot
+from argopy.stores.float.implementations.plot import ArgoFloatPlot
+from argopy.stores.float.implementations.meta_aux_config import AuxLaunchConfigParameters, AuxConfigParameters
+from argopy.stores.float.implementations.ramses import ArgoFloatRamses
+
 
 log = logging.getLogger("argopy.stores.ArgoFloat")
 
 
-if isconnected():
+if False and isconnected():
     from .implementations.online.float import FloatStore
 
     log.info("Using ONLINE Argo Float implementation")
@@ -159,6 +162,11 @@ class ArgoFloat(FloatStore):
         af.config.to_dataframe(missions=1)
         af.config.to_dataframe(missions=[1, 2])
 
+    .. code-block:: python
+        :caption: Ramses sensor wavelengths
+
+        af.ramses
+
     """
 
     def __init__(self, *args, **kwargs):
@@ -166,3 +174,6 @@ class ArgoFloat(FloatStore):
 
     # Possibly register extensions:
     plot = xr.core.utils.UncachedAccessor(ArgoFloatPlot)
+    auxlaunchconfig = xr.core.utils.UncachedAccessor(AuxLaunchConfigParameters)
+    auxconfig = xr.core.utils.UncachedAccessor(AuxConfigParameters)
+    ramses = xr.core.utils.UncachedAccessor(ArgoFloatRamses)

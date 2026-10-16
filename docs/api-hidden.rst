@@ -134,6 +134,10 @@
     argopy.utils.optical_modeling.Z_iPAR_threshold
     argopy.utils.optical_modeling.DCM
 
+    argopy.utils.hyperspectral
+    argopy.utils.hyperspectral.read_coefs
+    argopy.utils.hyperspectral.compute_ramses_wavelengths
+
     argopy.related.load_dict
     argopy.related.get_coriolis_profile_id
     argopy.related.get_ea_profile_page
@@ -388,6 +392,7 @@
     argopy.errors.InvalidDatasetStructure
 
     argopy.stores.float.spec.FloatStoreProto
+    argopy.stores.float.utils
     argopy.stores.ArgoFloat
     argopy.ArgoFloat._ls
     argopy.ArgoFloat.ls_datasets
@@ -446,6 +451,55 @@
     argopy.ArgoFloat.launchconfig.n_params
     argopy.ArgoFloat.launchconfig.parameters
     argopy.ArgoFloat.launchconfig.to_dataframe
+
+    argopy.stores.ArgoFloat.auxconfig
+    argopy.stores.ArgoFloat.auxconfig.n_params
+    argopy.stores.ArgoFloat.auxconfig.parameters
+    argopy.stores.ArgoFloat.auxconfig.n_missions
+    argopy.stores.ArgoFloat.auxconfig.missions
+    argopy.stores.ArgoFloat.auxconfig.cycles
+    argopy.stores.ArgoFloat.auxconfig.for_cycles
+    argopy.stores.ArgoFloat.auxconfig.to_dataframe
+    argopy.ArgoFloat.auxconfig
+    argopy.ArgoFloat.auxconfig.n_params
+    argopy.ArgoFloat.auxconfig.parameters
+    argopy.ArgoFloat.auxconfig.n_missions
+    argopy.ArgoFloat.auxconfig.missions
+    argopy.ArgoFloat.auxconfig.cycles
+    argopy.ArgoFloat.auxconfig.for_cycles
+    argopy.ArgoFloat.auxconfig.to_dataframe
+
+    argopy.stores.ArgoFloat.auxlaunchconfig
+    argopy.stores.ArgoFloat.auxlaunchconfig.n_params
+    argopy.stores.ArgoFloat.auxlaunchconfig.parameters
+    argopy.stores.ArgoFloat.auxlaunchconfig.to_dataframe
+    argopy.ArgoFloat.auxlaunchconfig
+    argopy.ArgoFloat.auxlaunchconfig.n_params
+    argopy.ArgoFloat.auxlaunchconfig.parameters
+    argopy.ArgoFloat.auxlaunchconfig.to_dataframe
+
+    argopy.stores.ArgoFloat.ramses
+    argopy.stores.ArgoFloat.ramses.coefs
+    argopy.stores.ArgoFloat.ramses.binned_pixel
+    argopy.stores.ArgoFloat.ramses.cycle_strides
+    argopy.stores.ArgoFloat.ramses.launch_wavelengths
+    argopy.stores.ArgoFloat.ramses.wavelengths_by_cycle
+    argopy.stores.ArgoFloat.ramses.wavelengths
+    argopy.stores.float.utils.ramses
+    argopy.stores.float.utils.ramses.DEFAULT_STRIDES
+    argopy.stores.float.utils.ramses.has_meta_aux
+    argopy.stores.float.utils.ramses.floatype_formulae
+    argopy.stores.float.utils.ramses.read_launch_pixel_strides
+    argopy.stores.float.utils.ramses.read_pixel_strides_by_cycle
+    argopy.stores.float.utils.ramses.read_pixel_strides
+    argopy.ArgoFloat.ramses
+    argopy.ArgoFloat.ramses.coefs
+    argopy.ArgoFloat.ramses.binned_pixel
+    argopy.ArgoFloat.ramses.cycle_strides
+    argopy.ArgoFloat.ramses.launch_wavelengths
+    argopy.ArgoFloat.ramses.wavelengths_by_cycle
+    argopy.ArgoFloat.ramses.wavelengths
+    argopy.ArgoFloat.ramses.cycle_strides
 
     argopy.stores.NVS
     argopy.stores.NVS.load_vocabulary
