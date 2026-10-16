@@ -18,6 +18,7 @@ These classes are all explained in the following sections:
 * :doc:`Store for float files <argofloat>`
 * :doc:`Store for index files <argoindex>`
 * :doc:`Store for GDAC files <gdac_filesystem>`
+* :doc:`Third-party product: BGC-Argo+ <bgcargo_plus>`
 
 .. toctree::
     :maxdepth: 2
@@ -26,6 +27,7 @@ These classes are all explained in the following sections:
     Store for float files <argofloat>
     Store for index files <argoindex>
     Store for GDAC files <gdac_filesystem>
+    Third-party product: BGC-Argo+ <bgcargo_plus>
 
 
 In a nutshell
