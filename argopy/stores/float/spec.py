@@ -992,8 +992,8 @@ class FloatStoreProto(ABC):
             for res in results:
                 for fname in res.keys():
                     key = fname2key(fname)
-                    self._ds_profiles[key] = ds
-                    r.append(ds)
+                    self._ds_profiles[key] = res[fname]
+                    r.append(res[fname])
             results = r
 
         if isinstance(results, list) and len(results) == 1:
