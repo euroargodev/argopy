@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import NoReturn, Any
+from typing import NoReturn, Any, Dict
 import pandas as pd
 
 from argopy.utils.casting_param import cast_config_parameter
@@ -352,3 +352,54 @@ class ArgoFloatConfigParametersProto(ArgoFloatAnyConfigParametersProto):
         )
 
 
+class ArgoFloatRamsesProto(ArgoFloatExtension):
+    """Extension providing access to the RAMSES censor parameters/variables"""
+
+    _coefs: Dict[str, Any] = None
+    """Internal place holder for pre-deployment calibration coefficients"""
+
+    _binned_pixel: bool
+    """Wavelengths computation formulae flag (True: binned average, False: pixel based)"""
+
+    def __call__(self, *args, **kwargs) -> NoReturn:
+        raise ValueError(
+            "ArgoFloat.ramses cannot be called directly. Use "
+            "an explicit method instead, e.g. ArgoFloat.ramses.launch_wavelengths(...)"
+        )
+
+    @property
+    def coefs(self) -> Dict[str, Any]:
+        """Pre-deployment calibration coefficients
+
+        These coefficients are extracted from the 'DOWN_IRRADIANCE_SPECTRUM' value of the 'PREDEPLOYMENT_CALIB_COEFFICIENT' parameter.
+
+        Returns
+        -------
+        Dict[str, Any]
+            A dictionary with coefficients name in keys and value in values
+        """
+        return self._coefs
+
+    @property
+    def binned_pixel(self) -> bool:
+        """Wavelengths computation formulae flag (True: binned average, False: pixel based)
+
+        Notes
+        -----
+        This flag is True if the platform type is "PROVOR", otherwise it is False
+        """
+        return self._binned_pixel
+
+    @property
+    @abstractmethod
+    def launch_wavelengths(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def wavelengths_by_cycle(self, *args, **kwargs):
+        raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def wavelengths(self):
+        raise NotImplementedError

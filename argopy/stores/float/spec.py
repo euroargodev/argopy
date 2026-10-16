@@ -17,12 +17,6 @@ from argopy.utils.format import argo_split_path
 from argopy.utils.lists import shortcut2gdac
 from argopy.utils.checkers import check_wmo, check_cyc
 from argopy.utils.decorators import deprecated
-from argopy.utils import hyperspectral
-from argopy.stores.float.utils import (
-    read_ramses_default_pixel_strides,
-    read_ramses_pixel_strides_by_cycle,
-    read_ramses_pixel_strides,
-)
 
 
 log = logging.getLogger("argopy.stores.ArgoFloat")
@@ -456,20 +450,10 @@ class FloatStoreProto(ABC):
 
         file = self.ls_datasets()[name]
 
-        # if "xr_opts" not in kwargs and cast is True:
-        #     kwargs.update({"xr_opts": {"engine": "argo"}})
-
-        default_kwargs = {
-            "decode_cf": 1,
-            "decode_times": xr.coders.CFDatetimeCoder(use_cftime=False),
-            "mask_and_scale": 1,
-            "decode_timedelta": True,
-        }
-        kwargs = kwargs | default_kwargs
+        if "xr_opts" not in kwargs and cast is True:
+            kwargs.update({"xr_opts": {"engine": "argo"}})
 
         ds = self.fs.open_dataset(file, **kwargs)
-        if cast:
-            ds = cast_Argo_variable_type(ds)
         self._ds_datasets[name] = ds
         return ds
 
@@ -800,22 +784,11 @@ class FloatStoreProto(ABC):
                 f"The profile key '{name}' does not match any of the known profile files ({self.ls_profiles().keys()})"
             )
 
-        # if "xr_opts" not in kwargs and cast is True:
-        #     kwargs.update({"xr_opts": {"engine": "argo"}})
+        if "xr_opts" not in kwargs and cast is True:
+            kwargs.update({"xr_opts": {"engine": "argo"}})
 
         file = self.ls_profiles()[name]
-
-        default_kwargs = {
-            "decode_cf": 1,
-            "decode_times": xr.coders.CFDatetimeCoder(use_cftime=False),
-            "mask_and_scale": 1,
-            "decode_timedelta": True,
-        }
-        kwargs = kwargs | default_kwargs
-
         ds = self.fs.open_dataset(file, **kwargs)
-        if cast:
-            ds = cast_Argo_variable_type(ds)
         self._ds_profiles[name] = ds
         return ds
 
@@ -993,9 +966,9 @@ class FloatStoreProto(ABC):
 
         if netCDF4:
             kwargs["open_dataset_opts"] = {"netCDF4": True}
-        # else:
-        # if cast is True:
-        #     kwargs["open_dataset_opts"] = {"xr_opts": {"engine": "argo"}}
+        else:
+            if cast is True:
+                kwargs["open_dataset_opts"] = {"xr_opts": {"engine": "argo"}}
 
         if "concat" not in kwargs:
             kwargs["concat"] = False
@@ -1019,8 +992,6 @@ class FloatStoreProto(ABC):
             for res in results:
                 for fname in res.keys():
                     key = fname2key(fname)
-                    if cast:
-                        ds = cast_Argo_variable_type(res[fname])
                     self._ds_profiles[key] = ds
                     r.append(ds)
             results = r
@@ -1177,96 +1148,3 @@ class FloatStoreProto(ABC):
                 "Product '%s' not found. Available third-party product for this float are: %s"
                 % (name, PRODUCT_LIST.argofloat)
             )
-
-    def _compute_ramses_launch_wavelengths(self) -> np.ndarray:
-
-        if "meta_aux" not in self.ls_datasets():
-            raise InvalidDatasetStructure(
-                "Cannot compute wavelengths without auxiliary data. You should at least use the aux=True option to create an ArgoFloat instance including auxiliary data."
-            )
-
-        # Load calibration coefficients:
-        meta_aux = self.dataset("meta_aux")
-        coefs = hyperspectral.read_coefs(meta_aux)
-
-        # Load "launch" pixel indexes (not mission dependents):
-        default_strides = read_ramses_default_pixel_strides(self)
-
-        return hyperspectral.compute_ramses_wavelengths(
-            coefs["c0s"],
-            coefs["c1s"],
-            coefs["c2s"],
-            coefs["c3s"],
-            coefs["c4s"],
-            default_strides["PixelBegin"],
-            default_strides["PixelEnd"],
-            default_strides["BinningSize"],
-            binned_pixel := "PROVOR" in self.metadata["platform"]["type"],
-        )
-
-    def _compute_ramses_wavelengths_by_cycle(self, cycle_number: int) -> np.ndarray:
-
-        if "meta_aux" not in self.ls_datasets():
-            raise InvalidDatasetStructure(
-                "Cannot compute wavelengths without auxiliary data. You should at least use the aux=True option to create an ArgoFloat instance including auxiliary data."
-            )
-
-        # Load calibration coefficients:
-        meta_aux = self.dataset("meta_aux")
-        coefs = hyperspectral.read_coefs(meta_aux)
-
-        # Load pixel indexes for this cycle:
-        strides = read_ramses_pixel_strides_by_cycle(self, cycle_number)
-
-        binned_pixel = "PROVOR" in self.metadata["platform"]["type"]
-
-        return hyperspectral.compute_ramses_wavelengths(
-            coefs["c0s"],
-            coefs["c1s"],
-            coefs["c2s"],
-            coefs["c3s"],
-            coefs["c4s"],
-            strides["PixelBegin"],
-            strides["PixelEnd"],
-            strides["BinningSize"],
-            binned_pixel := "PROVOR" in self.metadata["platform"]["type"],
-        )
-
-    def _compute_ramses_wavelengths(self) -> Dict[int, np.ndarray]:
-
-        if "meta_aux" not in self.ls_datasets():
-            raise InvalidDatasetStructure(
-                "Cannot compute wavelengths without auxiliary data. You should at least use the aux=True option to create an ArgoFloat instance including auxiliary data."
-            )
-
-        # Load calibration coefficients:
-        meta_aux = self.dataset("meta_aux")
-        coefs = hyperspectral.read_coefs(meta_aux)
-
-        # Load pixel indexes for all cycles:
-        all_strides = read_ramses_pixel_strides(self)
-
-        binned_pixel = "PROVOR" in self.metadata["platform"]["type"]
-
-        items = []
-        for cyc in self.CYCLE_NUMBERS:
-            items.append(
-                (
-                    coefs["c0s"],
-                    coefs["c1s"],
-                    coefs["c2s"],
-                    coefs["c3s"],
-                    coefs["c4s"],
-                    all_strides[cyc]["PixelBegin"],
-                    all_strides[cyc]["PixelEnd"],
-                    all_strides[cyc]["BinningSize"],
-                    binned_pixel,
-                )
-            )
-
-        with ThreadPoolExecutor() as executor:
-            futures = [
-                executor.submit(hyperspectral.compute_ramses_wavelengths, *item)
-                for item in items
-            ]
-            return [future.result() for future in futures]

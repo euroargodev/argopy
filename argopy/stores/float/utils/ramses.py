@@ -2,7 +2,19 @@ from typing import Dict, Literal
 from argopy.errors import InvalidDatasetStructure
 
 
-def read_ramses_default_pixel_strides(af: "ArgoFloat") -> Dict[str, int]:
+def has_meta_aux(af: "ArgoFloat")-> None:
+    if "meta_aux" not in af.ls_datasets():
+        raise InvalidDatasetStructure(
+            "Cannot compute wavelengths without auxiliary metadata. You should at least use the aux=True option to create an ArgoFloat instance including auxiliary data."
+        )
+
+
+def floatype_formulae(af: "ArgoFloat")-> bool:
+    """Which formulae do we need to use ?"""
+    return "PROVOR" in af.metadata["platform"]["type"]
+
+
+def read_default_pixel_strides(af: "ArgoFloat") -> Dict[str, int]:
     def read(pixel: Literal['PixelBegin', 'PixelEnd', 'BinningSize']) -> int:
         cfg_param = f"CONFIG_RamsesAccOutput{pixel}_NUMBER"
 
@@ -27,7 +39,7 @@ def read_ramses_default_pixel_strides(af: "ArgoFloat") -> Dict[str, int]:
     return strides
 
 
-def read_ramses_pixel_strides_by_cycle(af: "ArgoFloat", cycle_number) -> Dict[str, int]:
+def read_pixel_strides_by_cycle(af: "ArgoFloat", cycle_number) -> Dict[str, int]:
     def read(pixel: Literal['PixelBegin', 'PixelEnd', 'BinningSize'], cycle) -> int:
         cfg_param = f"CONFIG_RamsesAccOutput{pixel}_NUMBER"
 
@@ -42,7 +54,7 @@ def read_ramses_pixel_strides_by_cycle(af: "ArgoFloat", cycle_number) -> Dict[st
         return pixel_value
 
     # Load default "launch" pixel indexes:
-    default_strides = read_ramses_default_pixel_strides(af)
+    default_strides = read_default_pixel_strides(af)
 
     # Overwrite pixel indexes for a given cycle number if necessary:
     keys = ('PixelBegin', 'PixelEnd', 'BinningSize')
@@ -54,7 +66,7 @@ def read_ramses_pixel_strides_by_cycle(af: "ArgoFloat", cycle_number) -> Dict[st
     return strides
 
 
-def read_ramses_pixel_strides(af: "ArgoFloat") -> Dict[int, Dict[str, int]]:
+def read_pixel_strides(af: "ArgoFloat") -> Dict[int, Dict[str, int]]:
     def read(pixel: Literal['PixelBegin', 'PixelEnd', 'BinningSize']) -> int:
         cfg_param = f"CONFIG_RamsesAccOutput{pixel}_NUMBER"
         values = [None for cyc in af.CYCLE_NUMBERS]
@@ -69,19 +81,34 @@ def read_ramses_pixel_strides(af: "ArgoFloat") -> Dict[int, Dict[str, int]]:
 
         return values
 
-    # Load default "launch" pixel indexes:
-    default_strides = read_ramses_default_pixel_strides(af)
+    def describe_origin(strides) -> str:
+        s = []
+        for key, val in strides.items():
+            if val is not None:
+                s.append(key)
+        s = ", ".join(s)
 
-    # Overwrite pixel indexes for a given cycle number if necessary:
+        return "launch config" if len(s) == 0 else f"mission specific ({s})"
+
+    # Load default "launch" pixel indexes:
+    default_strides = read_default_pixel_strides(af)
+
+    # Load pixel indexes for all cycles and overwrite default pixel indexes if necessary:
     strides = {}
+    mission_strides = {}
     for ii, cyc in enumerate(af.CYCLE_NUMBERS):
         strides[cyc] = {}
+        mission_strides[cyc] = {}
 
     keys = ('PixelBegin', 'PixelEnd', 'BinningSize')
     for key in keys:
-        stride = read(key)
+        stride = read(key) # Will return None if not specified
         for ii, cyc in enumerate(af.CYCLE_NUMBERS):
+            mission_strides[cyc][key] = stride[ii] # Record mission strides to document origin below
             strides[cyc][key] = default_strides[key] if stride[ii] is None else stride[ii]
+
+    for ii, cyc in enumerate(af.CYCLE_NUMBERS):
+        strides[cyc]['origin'] = describe_origin(mission_strides[cyc])
 
     return strides
 
