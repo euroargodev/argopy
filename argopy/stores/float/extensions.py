@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import NoReturn, Any, Dict
+from typing import NoReturn, Any, Dict, List
 import pandas as pd
 
 from argopy.utils.casting_param import cast_config_parameter
@@ -353,7 +353,7 @@ class ArgoFloatConfigParametersProto(ArgoFloatAnyConfigParametersProto):
 
 
 class ArgoFloatRamsesProto(ArgoFloatExtension):
-    """Extension providing access to the RAMSES censor parameters/variables"""
+    """Extension providing access to the RAMSES sensor parameters/variables"""
 
     _coefs: Dict[str, Any] = None
     """Internal place holder for pre-deployment calibration coefficients"""
@@ -368,7 +368,7 @@ class ArgoFloatRamsesProto(ArgoFloatExtension):
         )
 
     @property
-    def coefs(self) -> Dict[str, Any]:
+    def coefs(self) -> Dict[str, float | List[float]]:
         """Pre-deployment calibration coefficients
 
         These coefficients are extracted from the 'DOWN_IRRADIANCE_SPECTRUM' value of the 'PREDEPLOYMENT_CALIB_COEFFICIENT' parameter.
@@ -377,6 +377,10 @@ class ArgoFloatRamsesProto(ArgoFloatExtension):
         -------
         Dict[str, Any]
             A dictionary with coefficients name in keys and value in values
+
+        See Also
+        --------
+        :func:`argopy.utils.hyperspectral.read_coefs`
         """
         return self._coefs
 

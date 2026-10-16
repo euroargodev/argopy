@@ -4,13 +4,12 @@ from concurrent.futures import ThreadPoolExecutor
 
 from argopy.stores.float.extensions import ArgoFloatRamsesProto
 
-# from argopy.errors import InvalidDatasetStructure
 from argopy.utils import hyperspectral
 from argopy.stores.float.utils import ramses as ramses_utils
 
 
 class ArgoFloatRamses(ArgoFloatRamsesProto):
-    """Extension providing access to the RAMSES censor parameters/variables
+    """Extension providing access to the RAMSES sensor parameters/variables
 
     Examples
     --------
@@ -18,16 +17,19 @@ class ArgoFloatRamses(ArgoFloatRamsesProto):
 
         from argopy import ArgoFloat
 
-        af = ArgoFloat(1902578, aux=True)  # mission-specific pixels
-        # af = ArgoFloat(3902759, aux=True)  # launch config pixels
+        af = ArgoFloat(1902578, aux=True)
 
-        af.ramses.coefs
-        af.ramses.binned_pixel
-        af.ramses.cycle_strides
+        af.ramses.coefs          # Dict[str, float | List[float]]
+        af.ramses.binned_pixel   # Bool
+        af.ramses.cycle_strides  # Dict[int, Dict[str, int]]
 
-        af.ramses.launch_wavelengths
-        af.ramses.wavelengths
-        af.ramses.wavelengths_by_cycle(3)
+        af.ramses.launch_wavelengths      # np.ndarray
+        af.ramses.wavelengths_by_cycle(3) # np.ndarray
+        af.ramses.wavelengths             # Dict[int, np.ndarray]
+
+    See Also
+    --------
+    :mod:`argopy.utils.hyperspectral`
 
     """
 
@@ -47,8 +49,13 @@ class ArgoFloatRamses(ArgoFloatRamsesProto):
         self._cycle_strides = None
 
     @property
-    def cycle_strides(self):
-        """Pixel indexes for all cycles"""
+    def cycle_strides(self)->Dict[int, Dict[str, int]]:
+        """Pixel indexes for all cycles
+
+        See Also
+        --------
+        :class:`ArgoFloat.ramses_utils.read_pixel_strides`
+        """
         if self._cycle_strides is None:
             self._cycle_strides = ramses_utils.read_pixel_strides(self._obj)
         return self._cycle_strides
@@ -64,7 +71,7 @@ class ArgoFloatRamses(ArgoFloatRamsesProto):
         """
 
         # Load "launch" pixel indexes (not mission dependents):
-        default_strides = ramses_utils.read_default_pixel_strides(self._obj)
+        launch_strides = ramses_utils.read_launch_pixel_strides(self._obj)
 
         return hyperspectral.compute_ramses_wavelengths(
             self.coefs["c0s"],
@@ -72,9 +79,9 @@ class ArgoFloatRamses(ArgoFloatRamsesProto):
             self.coefs["c2s"],
             self.coefs["c3s"],
             self.coefs["c4s"],
-            default_strides["PixelBegin"],
-            default_strides["PixelEnd"],
-            default_strides["BinningSize"],
+            launch_strides["PixelBegin"],
+            launch_strides["PixelEnd"],
+            launch_strides["BinningSize"],
             self.binned_pixel,
         )
 
