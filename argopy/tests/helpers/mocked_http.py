@@ -33,7 +33,7 @@ import logging
 import socket
 import threading
 from collections import ChainMap
-from http.server import BaseHTTPRequestHandler, HTTPServer, ThreadingHTTPServer
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import unquote
 
@@ -52,7 +52,7 @@ LOG_SERVER_CONTENT = (
 # them, because importing this module runs its whole body first.
 port: int | None = None
 mocked_server_address: str | None = None
-_httpd: HTTPServer | None = None
+_httpd: ThreadingHTTPServer | None = None
 
 
 def _start_server():
@@ -66,7 +66,7 @@ def _start_server():
     """
     global _httpd, port, mocked_server_address
     if _httpd is None:
-        _httpd = HTTPServer(("127.0.0.1", 0), HTTPTestHandler)
+        _httpd = ThreadingHTTPServer(("127.0.0.1", 0), HTTPTestHandler)
         port = _httpd.server_address[1]
         mocked_server_address = "http://127.0.0.1:%i" % port
         th = threading.Thread(target=_httpd.serve_forever, daemon=True)
