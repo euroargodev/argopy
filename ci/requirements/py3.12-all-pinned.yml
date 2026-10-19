@@ -59,6 +59,7 @@ dependencies:
   - pytest-cov = 6.2.1
   - pytest-env = 1.1.5
   - pytest-localftpserver
+  - pytest-xdist = 3.8.0
   - setuptools = 80.9.0
 #  - sphinx = -
 

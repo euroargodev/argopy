@@ -36,6 +36,33 @@ def _isolate_argopy_cache_per_xdist_worker():
             yield
 
 
+def pytest_configure(config):
+    """Give each pytest-xdist worker its own log file.
+
+    Every worker loads the logging plugin with the same ``log_file`` and opens
+    it in "w" mode, so they clobber each other. Suffix the path with the worker
+    id (e.g. ``argopy-tests_gw0.log``). This conftest is not an initial
+    conftest, so the logging plugin has usually already opened its file by the
+    time this runs: swap the handler rather than just editing the option.
+    ``set_log_path`` resolves relative paths against the rootdir, so anchor
+    the path to the invocation dir, where the controller's log is written.
+    """
+    worker = os.environ.get("PYTEST_XDIST_WORKER")
+    if not worker:
+        return
+    log_file = config.option.log_file or config.getini("log_file")
+    if not log_file:
+        return
+    base, ext = os.path.splitext(log_file)
+    path = os.path.join(
+        str(config.invocation_params.dir), "%s_%s%s" % (base, worker, ext)
+    )
+    config.option.log_file = path
+    plugin = config.pluginmanager.get_plugin("logging-plugin")
+    if plugin is not None:
+        plugin.set_log_path(path)
+
+
 def pytest_sessionstart(session):
     log.debug("Starting tests session")
     log.debug("Initial session state: %s" % session)
