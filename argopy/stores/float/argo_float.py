@@ -19,7 +19,7 @@ from argopy.stores.float.implementations.ramses import ArgoFloatRamses
 log = logging.getLogger("argopy.stores.ArgoFloat")
 
 
-if False and isconnected():
+if isconnected():
     from .implementations.online.float import FloatStore
 
     log.info("Using ONLINE Argo Float implementation")
