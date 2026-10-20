@@ -19,10 +19,12 @@ class ArgoFloatRamses(ArgoFloatRamsesProto):
 
         af = ArgoFloat(1902578, aux=True)
 
+        # Attributes provide information about the computation:
         af.ramses.coefs          # Dict[str, float | List[float]]
         af.ramses.binned_pixel   # Bool
         af.ramses.cycle_strides  # Dict[int, Dict[str, int]]
 
+        # Methods to compute wavelengths in 3 complementary ways:
         af.ramses.launch_wavelengths      # np.ndarray
         af.ramses.wavelengths_by_cycle(3) # np.ndarray
         af.ramses.wavelengths             # Dict[int, np.ndarray]
@@ -30,6 +32,11 @@ class ArgoFloatRamses(ArgoFloatRamsesProto):
     See Also
     --------
     :mod:`argopy.utils.hyperspectral`
+
+    Notes
+    -----
+    This extension remains an experimental feature that can change its signature without deprecation warnings.
+    In particular, methods may return different data types in the future.
 
     """
 
