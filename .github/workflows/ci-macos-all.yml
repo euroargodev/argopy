@@ -114,7 +114,7 @@ jobs:
     
       - name: Test with pytest
         run: |
-          python ci/resource_summary.py pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 -n auto --dist loadfile --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}} --junitxml=junit.xml -o junit_family=legacy
+          python ci/resource_summary.py pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}} --junitxml=junit.xml -o junit_family=legacy
 
       - name: Resource summary
         if: always()
@@ -180,5 +180,5 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: Argopy-Tests-All-${{matrix.python-version}}-${{matrix.os}}
-          path: argopy-tests-*.log
+          path: ${{env.LOG_FILE}}
           retention-days: 90
