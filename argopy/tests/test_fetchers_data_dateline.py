@@ -21,6 +21,7 @@ import argopy
 from argopy.errors import ErddapServerError
 from argopy.data_fetchers.erddap_data import Fetch_box as Erddap_Fetch_box
 from argopy.data_fetchers.gdac_data_processors import filter_points
+from argopy.tests.helpers.utils import requires_ipython
 
 
 # Latitude, pressure and time limits of all the boxes tested here:
@@ -133,6 +134,7 @@ def test_erddap_no_data_on_one_side(monkeypatch, west, east, expected):
     assert sorted(ds["LONGITUDE"].values) == sorted(expected)
 
 
+@requires_ipython  # Failed requests are only reported by the thread pool executor when IPython is installed
 @pytest.mark.parametrize(
     "west, east",
     [(SERVER_ERROR, EAST), (WEST, SERVER_ERROR)],
