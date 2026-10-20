@@ -93,6 +93,25 @@ def read_pixel_strides_by_cycle(af: "ArgoFloat", cycle_number) -> Dict[str, int]
 
 
 def read_pixel_strides(af: "ArgoFloat") -> Dict[int, Dict[str, int]]:
+    """
+
+    Parameters
+    ----------
+    af: :class:`argopy.ArgoFloat`
+
+    Returns
+    -------
+    Dict[int, Dict[str, int]]
+        A dictionary with cycle numbers as keys and strides definition as values
+
+    Examples
+    --------
+    ..code-block:: python
+
+        strides = read_pixel_strides(af)
+
+        pd.DataFrame.from_dict(strides, orient='index')
+    """
     def read(pixel: Literal["PixelBegin", "PixelEnd", "BinningSize"]) -> int:
         cfg_param = f"CONFIG_RamsesAccOutput{pixel}_NUMBER"
         values = [None for cyc in af.CYCLE_NUMBERS]
