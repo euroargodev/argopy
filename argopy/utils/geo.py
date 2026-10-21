@@ -63,6 +63,61 @@ def conv_lon(x, conv: str = "180"):
     return np.frompyfunc(c, 1, 1)(x)
 
 
+def split_box_at_dateline(box: list) -> list:
+    """Split a box going through the date line into two boxes, one on each side
+
+    A box can only go through the date line with the '360' longitude convention, e.g. [175, 185].
+    Longitudes of the returned boxes are in the same convention as the input box.
+
+    Parameters
+    ----------
+    box: list
+        A box starting with [lon_min, lon_max, ...]. Other box limits are not modified.
+
+    Returns
+    -------
+    list(list)
+        A list with one box, or two boxes if the box goes through the date line.
+
+    Examples
+    --------
+    >>> split_box_at_dateline([175, 185, -5, 5])
+    [[175, 180, -5, 5], [180, 185, -5, 5]]
+    >>> split_box_at_dateline([185, 190, -5, 5])
+    [[185, 190, -5, 5]]
+    """
+    lon_min, lon_max = box[0], box[1]
+    if lon_min < 180 < lon_max:
+        return [[lon_min, 180] + box[2:], [180, lon_max] + box[2:]]
+    return [box]
+
+
+def lon_range_to_180(lon_min: float, lon_max: float) -> tuple:
+    """Convert a longitude range to the [-180, 180] convention of Argo data
+
+    The longitude range must not go through the date line, see :func:`split_box_at_dateline`.
+
+    Parameters
+    ----------
+    lon_min: float
+    lon_max: float
+
+    Returns
+    -------
+    tuple(float, float)
+
+    Examples
+    --------
+    >>> lon_range_to_180(175, 180)
+    (175, 180)
+    >>> lon_range_to_180(180, 185)
+    (-180, -175)
+    """
+    if lon_min >= 180:
+        return lon_min - 360, lon_max - 360
+    return lon_min, lon_max
+
+
 def wmo2box(wmo_id: int):
     """Convert WMO square box number into a latitude/longitude box
 
