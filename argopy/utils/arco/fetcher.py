@@ -180,7 +180,6 @@ class MassFetcher(object):
         self.argo_files = idx.read_files(multi=True)
         self.N_RECORDS = len(self.argo_files)
 
-
     def __repr__(self):
         summary = [f"<argopy.MassFetcher.{self.protocol}>"]
         summary.append(f"Host: {self.host}")
