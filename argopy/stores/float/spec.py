@@ -1,4 +1,4 @@
-from typing import Union, Any, Literal, Optional, List
+from typing import Union, Any, Literal, Optional, List, Dict
 import fsspec.core
 import xarray as xr
 from pathlib import Path
@@ -6,12 +6,13 @@ import pandas as pd
 from abc import ABC, abstractmethod
 import logging
 import numpy as np
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor
 
 from argopy.options import OPTIONS, PRODUCT_LIST
-from argopy.errors import InvalidOption, DataNotFound
+from argopy.errors import InvalidOption, DataNotFound, InvalidDatasetStructure
 from argopy.plot import dashboard
 from argopy.stores import ArgoIndex
+from argopy.utils.casting import cast_Argo_variable_type
 from argopy.utils.format import argo_split_path
 from argopy.utils.lists import shortcut2gdac
 from argopy.utils.checkers import check_wmo, check_cyc
@@ -64,19 +65,19 @@ class FloatStoreProto(ABC):
         self.timeout: int = OPTIONS["api_timeout"] if timeout == 0 else timeout
         self._aux: bool = bool(aux)
 
-        if not self._online and (
-            self.host.startswith("http")
-            or self.host.startswith("ftp")
-            or self.host.startswith("s3")
-        ):
-            if self.host.startswith("http://127.0.0.1"):
-                pass
-                # Allow to use the online implementation with a local server.
-            else:
-                raise InvalidOption(
-                    "Trying to work with remote host '%s' without a web connection. Check your connection parameters or try to work with a local GDAC path."
-                    % self.host
-                )
+        # if not self._online and (
+        #     self.host.startswith("http")
+        #     or self.host.startswith("ftp")
+        #     or self.host.startswith("s3")
+        # ):
+        #     if self.host.startswith("http://127.0.0.1"):
+        #         pass
+        #         # Allow to use the online implementation with a local server.
+        #     else:
+        #         raise InvalidOption(
+        #             "Trying to work with remote host '%s' without a web connection. Check your connection parameters or try to work with a local GDAC path."
+        #             % self.host
+        #         )
 
         if "idx" not in kwargs:
             self.idx: ArgoIndex = ArgoIndex(
@@ -777,14 +778,6 @@ class FloatStoreProto(ABC):
             # Open the BGC 'Synthetic' profile file for cycle number 12:
             ds = af.open_profile('S12')
         """
-        # d2s = (
-        #     lambda x: str(x)
-        #     .replace("'", "")
-        #     .replace(":", "_")
-        #     .replace("{", "")
-        #     .replace("}", "")
-        #     .replace(" ", "")
-        # )
 
         if name not in self.ls_profiles():
             raise ValueError(
@@ -794,7 +787,6 @@ class FloatStoreProto(ABC):
         if "xr_opts" not in kwargs and cast is True:
             kwargs.update({"xr_opts": {"engine": "argo"}})
 
-        # key = f"{name}-{d2s(kwargs)}"
         file = self.ls_profiles()[name]
         ds = self.fs.open_dataset(file, **kwargs)
         self._ds_profiles[name] = ds
@@ -1092,12 +1084,8 @@ class FloatStoreProto(ABC):
 
                 # Small optimisation to handle a large number of cycles:
                 results = []
-                ConcurrentExecutor = ThreadPoolExecutor()
-                with ConcurrentExecutor as executor:
-                    future_todo = {
-                        executor.submit(self.profile, cyc): cyc for cyc in cycs
-                    }
-                    futures = as_completed(future_todo)
+                with ThreadPoolExecutor() as executor:
+                    futures = [executor.submit(self.profile, cyc) for cyc in cycs]
                     for future in futures:
                         results.append(future.result())
 
@@ -1128,12 +1116,8 @@ class FloatStoreProto(ABC):
 
                 # Small optimisation to handle a large number of cycles:
                 results = []
-                ConcurrentExecutor = ThreadPoolExecutor()
-                with ConcurrentExecutor as executor:
-                    future_todo = {
-                        executor.submit(self.profile, key): key for key in keys
-                    }
-                    futures = as_completed(future_todo)
+                with ThreadPoolExecutor() as executor:
+                    futures = [executor.submit(self.profile, key) for key in keys]
                     for future in futures:
                         results.append(future.result())
 

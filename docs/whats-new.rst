@@ -12,6 +12,10 @@ Coming up next
 --------------
 .. currentmodule:: argopy
 
+Features and front-end API
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- **RAMSES wavelengths computation** through a new extension :class:`ArgoFloat.ramses`. This remains an experimental feature that can change without honoring the deprecation cycle. (:pr:`700`) by |gmaze|.
 
 Internals
 ^^^^^^^^^
