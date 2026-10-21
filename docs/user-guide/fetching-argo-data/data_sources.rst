@@ -14,7 +14,7 @@ Data sources
 
 .. hint::
 
-    **argopy** can fetch data from several data sources. To make sure you understand where you're getting data from, have a look at this section.
+    **Argopy** can fetch data from several data sources. To make sure you understand where you're getting data from, have a look at this section.
 
 .. contents:: Contents
    :local:
@@ -25,30 +25,37 @@ Let's start with standard import:
     :okwarning:
 
     import argopy
-    from argopy import DataFetcher as ArgoDataFetcher
+    from argopy import DataFetcher
     argopy.reset_options()
 
 Available data sources
 ----------------------
 
-**argopy** can get access to Argo data from the following sources:
+**Argopy** can get access to Argo data from the following official sources:
 
 1. ⭐ the `Ifremer erddap server <http://www.ifremer.fr/erddap>`__ (Default).
     The erddap server database is updated daily and doesn’t require you to download anymore data than what you need.
     You can select this data source with the keyword ``erddap`` and methods described below.
     The Ifremer erddap dataset is based on mono-profile files of the GDAC.
-    Since this is the most efficient method to fetcher Argo data, it's the default data source in **argopy**.
+    Since this is the most efficient method to fetcher Argo data, it's the default data source in **Argopy**.
 
 2. 🌐 an Argo GDAC server or any other GDAC-compliant local folder.
-    You can fetch data from any of the 3 official GDAC online servers: the Ifremer https and ftp and the US https.
-    This data source can also point toward your own local copy of a `GDAC
-    server content <http://www.argodatamgt.org/Access-to-data/Argo-GDAC-ftp-https-and-s3-servers>`__. You can list
-    all available GDAC servers from :meth:`utils.list_gdac_servers` and you can select this data source with the keyword
-    ``gdac`` and methods described below.
+    You can fetch data from any of the official GDAC servers:
 
-3. 👁 the `Argovis server <https://argovis.colorado.edu/>`__.
+    - https://data-argo.ifremer.fr
+    - https://nrlgodae1.nrlmry.navy.mil/pub/outgoing/argo
+    - ftp://ftp.ifremer.fr/ifremer/argo
+    - `s3://argo-gdac-sandbox/pub <https://argo-gdac-sandbox.s3.eu-west-3.amazonaws.com/pub/index.html#pub/>`_
+    - your own local copy of a `GDAC server content <http://www.argodatamgt.org/Access-to-data/Argo-GDAC-ftp-https-and-s3-servers>`__.
+
+    You can list all available GDAC servers and their nicknames from :meth:`utils.list_gdac_servers` and you can select
+    this data source with the keyword ``gdac`` and methods described below.
+
+**Argopy** can also get access to Argo data through third-party products like:
+
+1. the `Argovis server <https://argovis.colorado.edu/>`__.
     The Argovis server database is updated daily and only provides access to curated Argo data (QC=1 only).
-    You can select this data source with the keyword ``argovis`` and methods described below.
+    You can select this data source with the argument ``product`` and keyword ``argovis``.
 
 
 Selecting a source
@@ -69,14 +76,21 @@ You have several ways to specify which data source you want to use:
     :okwarning:
 
     with argopy.set_options(src='erddap'):
-        loader = ArgoDataFetcher().profile(6902746, 34)
+        fetcher = DataFetcher().profile(6902746, 34)
 
 -  **with an argument in the data fetcher**:
 
 .. ipython:: python
     :okwarning:
 
-    loader = ArgoDataFetcher(src='erddap').profile(6902746, 34)
+    fetcher = DataFetcher(src='erddap').profile(6902746, 34)
+
+To select a third-party product, you can use the argument ``product`` that will take precedence over ``src``:
+
+.. ipython:: python
+    :okwarning:
+
+    fetcher = DataFetcher(product='argovis').profile(6902746, 34)
 
 
 Comparing data sources
@@ -85,9 +99,13 @@ Comparing data sources
 Features
 ~~~~~~~~
 
-Each of the data sources have their own features and capabilities. In the table are summarized the **argopy** support for each data sources. Note that an unchecked dataset does not mean that it is not available in the data source, only that **argopy** does not support it, yet.
+Each of the data sources have their own features and capabilities. In the table are summarized the **Argopy** support
+for each data sources and available third-party products.
 
-.. list-table:: Table of **argopy** data sources features
+Note that an unchecked dataset does not mean that it is not available in the data source, only that **Argopy** does
+not support it.
+
+.. list-table:: Table of **Argopy** data sources and products features
     :header-rows: 1
     :stub-columns: 2
 
@@ -98,9 +116,9 @@ Each of the data sources have their own features and capabilities. In the table 
       - ``argovis``
     * -
       -
-      - ⭐
-      - 🌐
-      - 👁
+      - *official*
+      - *official*
+      - *third-party*
     * - :ref:`Access Points: <data-selection>`
       -
       -
@@ -183,9 +201,20 @@ Fetched data and variables
 
 .. tabs::
 
-    .. tab:: **GDAC** servers
+    .. tab:: **GDAC** server: http
 
-        Let's retrieve one float data from a local sample of the GDAC (a GDAC sample can be downloaded automatically with the method :meth:`argopy.tutorial.open_dataset`):
+        Let's retrieve one float data from the Ifremer GDAC http server, the default choice:
+
+        .. ipython:: python
+            :okwarning:
+
+            with argopy.set_options(src='gdac', gdac='https'):
+                ds = DataFetcher().float(1900857).load().data
+                print(ds)
+
+    .. tab:: **GDAC** server: local
+
+        Let's now retrieve one float data from a local sample of the GDAC (a GDAC sample can be downloaded automatically with the method :meth:`argopy.tutorial.open_dataset`):
 
         .. ipython:: python
             :okwarning:
@@ -195,10 +224,10 @@ Fetched data and variables
 
             # then fetch data:
             with argopy.set_options(src='gdac', gdac=gdacroot):
-                ds = ArgoDataFetcher().float(1900857).load().data
+                ds = DataFetcher().float(1900857).load().data
                 print(ds)
 
-    .. tab:: **erddap** API
+    .. tab:: **GDAC** server: erddap API
 
         Let’s now retrieve the latest data for this float from the ``erddap``:
 
@@ -206,20 +235,8 @@ Fetched data and variables
             :okwarning:
 
             with argopy.set_options(src='erddap'):
-                ds = ArgoDataFetcher().float(1900857).load().data
+                ds = DataFetcher().float(1900857).load().data
                 print(ds)
-
-    .. tab:: **argovis** API
-
-        And with ``argovis``:
-
-        .. ipython:: python
-            :okwarning:
-
-            with argopy.set_options(src='argovis'):
-                ds = ArgoDataFetcher().float(1900857).load().data
-                print(ds)
-
 
 .. _api-status:
 
@@ -261,7 +278,7 @@ one with full support from data centers and with nearly a 100% time
 availability, is a GDAC https server. Two servers are available:
 
 -  France Coriolis: https://data-argo.ifremer.fr
--  USA GODAE: https://usgodae.org/pub/outgoing/argo
+-  USA GODAE: https://nrlgodae1.nrlmry.navy.mil/pub/outgoing/argo
 
 If you want to get your own copy of the GDAC server content, you have 2 options detailed below.
 

@@ -1,7 +1,7 @@
 {
   "name": "T000032",
   "long_name": "PRES_SurfaceOffsetNotTruncatedPlus5dbar_dbar",
-  "last_update": "2026-01-25T11:12:08.821098+00:00",
+  "last_update": "2026-10-05T15:42:22.859510+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000032/",
     "pav:hasVersion": {

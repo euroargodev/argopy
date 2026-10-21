@@ -9,11 +9,8 @@ from dataclasses import dataclass, make_dataclass
 from typing import Any
 import pandas as pd
 
-from argopy.utils.locals import Asset
+from argopy.utils.assets import Asset
 from argopy.utils.format import urnparser
-
-Vocabulary2Concept = Asset.load("vocabulary:mapping")["data"]["Vocabulary2Concept"]
-Vocabulary2Parameter = Asset.load("vocabulary:mapping")["data"]["Vocabulary2Parameter"]
 
 
 @lru_cache
@@ -34,6 +31,8 @@ def concept2vocabulary(name: str) -> list[str] | None:
         concept2vocabulary('FLOAT_COASTAL') # ['R22']
 
     """
+    Vocabulary2Concept = Asset.load("vocabulary:description")["data"]["Vocabulary2Concept"]
+
     name = name.strip().upper()
     found: list[str] = []
     for vocabulary in Vocabulary2Concept:
@@ -66,6 +65,8 @@ def check_vocabulary(input: str) -> str | None:
         check_vocabulary('dummy')  # Return: None
 
     """
+    Vocabulary2Parameter = Asset.load("vocabulary:description")["data"]["Vocabulary2Parameter"]
+
     input = input.strip().upper()
     for vocab in Vocabulary2Parameter:
         if input == vocab or input == Vocabulary2Parameter[vocab]:
@@ -105,13 +106,13 @@ def id2urn(uri: str) -> str:
             raise ValueError(
                 f"{uri} is not a valid NVS id, only R* and P* collections are allowed."
             )
-    except:
+    except:  # noqa: E722
         raise ValueError(
             f"{uri} is not a valid NVS id, only R* and P* collections are allowed."
         )
     try:
         termid = parts[1 + [parts.index(p) for p in parts if p == "current"][0]]
-    except:
+    except:  # noqa: E722
         termid = ""
     return f"SDN:{listid}::{termid}"
 
@@ -139,7 +140,7 @@ def url2predicate(uri: str) -> str | None:
     """
     try:
         return uri.split("/")[-2].replace("#", ":").replace("core", "skos")
-    except:
+    except:  # noqa: E722
         return None
 
 
@@ -299,7 +300,7 @@ def curate_r18definition(definition: str) -> dict[str, "TemplateValues"] | None:
 
 def bindings2df(data: list[dict]) -> pd.DataFrame:
     """Transform a list of bindings to a :class:`pd.DataFrame`"""
-    id2concept = lambda x: urnparser(id2urn(x))["termid"]
+    id2concept = lambda x: urnparser(id2urn(x))["termid"]  # noqa: E731
     b = []
     for binding in data:
         b.append(

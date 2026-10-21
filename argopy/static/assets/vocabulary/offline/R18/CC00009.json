@@ -1,7 +1,7 @@
 {
   "name": "CC00009",
   "long_name": "CONFIG_AscentSpeedStartPressureThresholdForSlowPhase_dbar",
-  "last_update": "2026-01-25T11:15:37.537596+00:00",
+  "last_update": "2026-10-05T15:48:31.322133+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00009/",
     "pav:hasVersion": {

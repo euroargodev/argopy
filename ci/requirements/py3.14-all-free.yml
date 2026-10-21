@@ -1,0 +1,68 @@
+name: argopy-tests
+channels:
+  - conda-forge
+dependencies:
+  - python = 3.14
+
+# CORE:
+  - aiohttp
+  - erddapy
+  - fsspec
+  - h5netcdf
+  - netCDF4
+  - requests
+  - scipy
+  - toolz
+  - xarray >=2025.7.0
+
+# EXT.UTIL:
+  - gsw
+  - pyco2sys
+  - tqdm
+
+# EXT.FILES:
+  - boto3
+  - kerchunk
+  - numcodecs
+  - s3fs
+  - zarr
+
+# EXT.PERF:
+  - dask
+  - distributed
+  - joblib
+  - numba
+  - pyarrow
+
+# EXT.PLOT:
+  - IPython
+  - cartopy
+  - ipykernel
+  - ipywidgets
+  - matplotlib
+  - pyproj
+  - seaborn
+
+# DEV:
+  - aiofiles
+  - black
+  - bottleneck
+  - cfgrib
+  - cftime
+  - codespell
+  - flake8
+  - numpy
+  - pandas
+  - pip
+  - psutil
+  - pytest
+  - pytest-cov
+  - pytest-env
+  - pytest-localftpserver
+  - setuptools
+#  - sphinx
+
+# PIP:
+  - pip:
+      - pytest-reportlog
+      - pyasynchat

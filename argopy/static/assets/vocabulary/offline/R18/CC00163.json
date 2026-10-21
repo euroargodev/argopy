@@ -1,7 +1,7 @@
 {
   "name": "CC00163",
   "long_name": "CONFIG_PressureTargetToleranceForStabilisationAtParkingDepth_dbar",
-  "last_update": "2026-01-25T11:15:51.790490+00:00",
+  "last_update": "2026-10-05T15:48:59.961755+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00163/",
     "pav:hasVersion": {

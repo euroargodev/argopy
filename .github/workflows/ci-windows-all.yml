@@ -27,7 +27,7 @@ jobs:
     outputs:
       skipped: ${{ steps.detect-skip.outputs.trigger-found }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 2
       - uses: xarray-contrib/ci-trigger@v1.2
@@ -57,13 +57,15 @@ jobs:
         experimental: [false]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v6.0.0
+        uses: aws-actions/configure-aws-credentials@v6.3.0
         with:
           aws-region: us-west-1
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ga-ci-tests-argopy-01
           role-duration-seconds: 7200
+        continue-on-error: true
+
       - name: Set environment variables
         run: |
           echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-all-pinned.yml" >> $GITHUB_ENV
@@ -99,11 +101,11 @@ jobs:
       - name: Available system resources
         run: |
           python ci/resource_summary.py --system
-    
+
       - name: Test with pytest
         run: |
           python ci/resource_summary.py pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}} --junitxml=junit.xml -o junit_family=legacy
- 
+
       - name: Resource summary
         if: always()
         run: |
@@ -145,7 +147,7 @@ jobs:
 
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           report_type: test_results
@@ -153,7 +155,7 @@ jobs:
           fail_ci_if_error: false
           env_vars: RUNNER_OS,PYTHON_VERSION
 
-      - name: Upload tests log to GA
+      - name: Save tests log as artifact
         uses: actions/upload-artifact@v7
         with:
           name: Argopy-Tests-All-${{matrix.python-version}}-${{matrix.os}}

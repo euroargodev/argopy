@@ -8,6 +8,7 @@ import pandas as pd
 import importlib
 import shutil
 import logging
+from unittest import mock
 from urllib.parse import urlparse
 
 import argopy
@@ -19,12 +20,13 @@ from argopy.errors import (
 from argopy.utils.checkers import is_list_of_strings, is_wmo
 from argopy.stores.index import indexstore_pd
 from argopy.stores import ArgoFloat
-from utils import create_temp_folder, has_s3
-from mocked_http import mocked_httpserver, mocked_server_address
-from utils import patch_ftp
+from argopy.tests.helpers.utils import create_temp_folder, has_s3, patch_ftp
+from argopy.tests.helpers.mocked_http import mocked_httpserver
 
 
 log = logging.getLogger("argopy.tests.indexstores")
+
+pytestmark = pytest.mark.usefixtures("mocked_ftpserver")
 
 has_pyarrow = importlib.util.find_spec("pyarrow") is not None
 skip_nopyarrow = pytest.mark.skipif(not has_pyarrow, reason="Requires pyarrow")
@@ -41,9 +43,12 @@ Since the fetcher is compatible with host from local, http, ftp or s3 protocols,
 """
 VALID_HOSTS = [
     argopy.tutorial.open_dataset("gdac")[0],  # Use local files
-    mocked_server_address,  # Use the mocked http server
+    "MOCKHTTP",  # Use the mocked http server
     "MOCKFTP",  # keyword to use a fake/mocked ftp server (running on localhost)
 ]
+
+if has_pyarrow:
+    import pyarrow as pa
 
 if has_s3:
     # todo Create a mocked server for s3 tests
@@ -97,6 +102,11 @@ def run_a_search(idx_maker, fetcher_args, search_point, xfail=False, reason="?")
             nrows = None
         try:
             idx = idx_maker(**fargs)
+
+            idx._nrows_index = nrows
+            # Internal trick to ensure the full index will load only nrows,
+            # because each search point triggers: idx.load(nrows=idx._nrows_index)
+
             if "wmo" in apts:
                 idx.query.wmo(apts["wmo"], nrows=nrows)
             if "cyc" in apts:
@@ -155,11 +165,11 @@ def run_a_search(idx_maker, fetcher_args, search_point, xfail=False, reason="?")
     return core(fetcher_args, search_point)
 
 
-def ftp_shortname(ftp):
+def host_shortname(ftp):
     """Get a short name for scenarios IDs, given a FTP host"""
     if ftp == "MOCKFTP":
         return "ftp_mocked"
-    elif "localhost" in ftp or "127.0.0.1" in ftp:
+    elif ftp == "MOCKHTTP":
         return "http_mocked"
     else:
         return (lambda x: "file" if x == "" else x)(urlparse(ftp).scheme)
@@ -170,26 +180,26 @@ class IndexStore_test_proto:
 
     search_scenarios = [(h, ap) for h in VALID_HOSTS for ap in VALID_SEARCHES]
     search_scenarios = [
-        (h, ap, n) for h in VALID_HOSTS for ap in VALID_SEARCHES for n in [2]
+        (h, ap, nrows) for h in VALID_HOSTS for ap in VALID_SEARCHES for nrows in [None, 2]
     ]
     search_scenarios_ids = [
-        "%s, %s, nrows=%s" % (ftp_shortname(fix[0]),
-                              "%s[n=%i]" % (list(fix[1].keys())[0], len(fix[1][list(fix[1].keys())[0]])),
+        "%s, %s, nrows=%s" % (host_shortname(fix[0]),
+                              "%s[narg=%i]" % (list(fix[1].keys())[0], len(fix[1][list(fix[1].keys())[0]])),
                               str(fix[2]))
         for fix in search_scenarios
     ]
 
     search_scenarios_bool = [
-        (h, ap, n, b)
+        (h, ap, nrows, b)
         for h in VALID_HOSTS
         for ap in VALID_SEARCHES_LOGICAL
-        for n in [None, 2]
+        for nrows in [None, 2]
         for b in ["and", "or"]
     ]
     search_scenarios_bool_ids = [
         "%s, %s, nrows=%s, logical='%s'"
-        % (ftp_shortname(fix[0]),
-           "%s[n=%i]" % (list(fix[1].keys())[0], len(fix[1][list(fix[1].keys())[0]])),
+        % (host_shortname(fix[0]),
+           "%s[narg=%i]" % (list(fix[1].keys())[0], len(fix[1][list(fix[1].keys())[0]])),
            str(fix[2]),
            str(fix[3]))
         for fix in search_scenarios_bool
@@ -198,11 +208,17 @@ class IndexStore_test_proto:
     #############
     # UTILITIES #
     #############
+    @pytest.fixture(autouse=True)
+    def _setup(self, mocked_httpserver):
+        self.mocked_server_address = mocked_httpserver
 
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
         # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
         self.cachedir = create_temp_folder().folder
+        if has_pyarrow:
+            log.warning(f"cpu_count: {pa.cpu_count()}")
+            log.warning(f"io_thread_count: {pa.io_thread_count()}")
 
     def teardown_class(self):
         """Cleanup once we are finished."""
@@ -212,8 +228,12 @@ class IndexStore_test_proto:
 
         remove_test_dir()
 
-    def _patch_ftp(self, ftp):
-        return patch_ftp(ftp)
+    def _patch_gdac(self, gdac):
+        if gdac == 'MOCKFTP':
+            return patch_ftp(gdac)
+        elif gdac == 'MOCKHTTP':
+            return self.mocked_server_address
+        return gdac
 
     def create_store(self, store_args, xfail=False, reason="?"):
         def core(fargs):
@@ -242,10 +262,10 @@ class IndexStore_test_proto:
             index_file = this_request["param"]["index_file"]
             convention = this_request["param"]["convention"]
         N_RECORDS = (
-            None if "tutorial" in host or "MOCK" in host else 100
+            None if "tutorial" in host or "MOCKFTP" in host else 1000
         )  # Make sure we're not going to load the full index
         fetcher_args = {
-            "host": self._patch_ftp(host),
+            "host": self._patch_gdac(host),
             "index_file": index_file,
             "cache": False,
             "convention": convention,
@@ -261,7 +281,7 @@ class IndexStore_test_proto:
         host = kwargs["host"] if "host" in kwargs else self.host
         index_file = kwargs["index_file"] if "index_file" in kwargs else self.index_file
         convention = kwargs["convention"] if "convention" in kwargs else None
-        fetcher_args, N_RECORDS = self._setup_store(
+        fetcher_args, _ = self._setup_store(
             {
                 "param": {
                     "host": host,
@@ -288,14 +308,18 @@ class IndexStore_test_proto:
     @pytest.fixture
     def a_search(self, request):
         """Fixture to create an Index fetcher for a given host and access point"""
-        host = request.param[0]
+        host = self._patch_gdac(request.param[0])
+
         srch = request.param[1]
         nrows = request.param[2]
-        srch["nrows"] = nrows
+
         if len(request.param) == 4:
             logical = request.param[3]
             srch["logical"] = logical
-        # log.debug("a_search: %s, %s, %s" % (self.index_file, srch, xfail))
+
+        if nrows is None and ("tutorial" not in host and "MOCKFTP" not in host):
+            nrows = 1000
+        srch["nrows"] = nrows
 
         xfail, reason = False, ""
         if not has_s3 and 's3' in host:
@@ -303,7 +327,7 @@ class IndexStore_test_proto:
         elif 's3' in host:
             xfail, reason = 0, 's3 is experimental (search)'
 
-        yield run_a_search(self.new_idx, {"host": host, "cache": True}, srch, xfail=xfail, reason=reason)
+        yield run_a_search(self.indexstore, {"host": host, "cache": True}, srch, xfail=xfail, reason=reason)
 
     def assert_index(self, this_idx, cacheable=False):
         assert hasattr(this_idx, "index")
@@ -334,7 +358,7 @@ class IndexStore_test_proto:
         "a_store",
         VALID_HOSTS,
         indirect=True,
-        ids=["%s" % ftp_shortname(ftp) for ftp in VALID_HOSTS],
+        ids=["%s" % host_shortname(ftp) for ftp in VALID_HOSTS],
     )
     def test_hosts(self, mocked_httpserver, a_store):
         self.assert_index(
@@ -565,6 +589,33 @@ class IndexStore_test_proto:
             idx.query.box(BOX)
             self.assert_search(idx)
 
+    @pytest.mark.parametrize("deep", [True, False], ids=["deep", "shallow"])
+    def test_copy(self, deep):
+        idx = self.new_idx().load(nrows=12)
+        # A copy must not ask the server again if the index file exists:
+        with mock.patch.object(type(idx.fs["src"]), "exists") as exists:
+            idx_copy = idx.copy(deep=deep)
+        exists.assert_not_called()
+
+        assert idx_copy is not idx
+        assert idx_copy.host == idx.host
+        assert idx_copy.index_file == idx.index_file
+        assert idx_copy.convention == idx.convention
+        self.assert_index(idx_copy)
+        assert idx_copy.N_RECORDS == idx.N_RECORDS
+
+    def test_compressed_index_file(self):
+        idx = self.new_idx()
+        if not idx.index_file.endswith(".gz"):
+            pytest.skip("No compressed index file available on this host")
+
+        # We must not look for a compressed version of an already compressed index file:
+        src = type(idx.fs["src"])
+        with mock.patch.object(src, "exists", autospec=True, side_effect=src.exists) as exists:
+            idx_gz = self.new_idx(index_file=idx.index_file)
+        assert idx_gz.index_file == idx.index_file
+        assert not any([call.args[1].endswith(".gz.gz") for call in exists.call_args_list])
+
 ############################
 # TESTS FOR PANDAS BACKEND #
 ############################
@@ -596,11 +647,32 @@ class Test_IndexStore_pandas_BGC_bio(IndexStore_test_proto):
 #############################
 # TESTS FOR PYARROW BACKEND #
 #############################
+import gc
+
+@skip_nopyarrow
+@skip_pyarrow
+class IndexStore_test_proto_Monitored(IndexStore_test_proto):
+    @pytest.fixture(autouse=True)
+    def _pyarrow_snapshot(self):
+        gc.collect()
+        pool = pa.default_memory_pool()
+        before_bytes = pool.bytes_allocated()
+        before_cpu = pa.cpu_count()
+
+        yield
+
+        gc.collect()
+        after_bytes = pool.bytes_allocated()
+        leaked = after_bytes - before_bytes
+
+        if leaked > 1 * 1024 * 1024:
+            print(f"[PYARROW LEAK] Mbytes still allocated after test: {leaked/1024/1024:,}")
+
 
 @skip_nopyarrow
 @skip_pyarrow
 @skip_CORE
-class Test_IndexStore_pyarrow_CORE(IndexStore_test_proto):
+class Test_IndexStore_pyarrow_CORE(IndexStore_test_proto_Monitored):
     network = "core"
     from argopy.stores.index import indexstore_pa
 
@@ -608,10 +680,11 @@ class Test_IndexStore_pyarrow_CORE(IndexStore_test_proto):
     index_file = "ar_index_global_prof.txt"
 
 
+
 @skip_nopyarrow
 @skip_pyarrow
 @skip_BGCs
-class Test_IndexStore_pyarrow_BGC_bio(IndexStore_test_proto):
+class Test_IndexStore_pyarrow_BGC_bio(IndexStore_test_proto_Monitored):
     network = "bgc"
     from argopy.stores.index import indexstore_pa
 
@@ -622,7 +695,7 @@ class Test_IndexStore_pyarrow_BGC_bio(IndexStore_test_proto):
 @skip_nopyarrow
 @skip_pyarrow
 @skip_BGCb
-class Test_IndexStore_pyarrow_BGC_synthetic(IndexStore_test_proto):
+class Test_IndexStore_pyarrow_BGC_synthetic(IndexStore_test_proto_Monitored):
     network = "bgc"
     from argopy.stores.index import indexstore_pa
 

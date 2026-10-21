@@ -1,7 +1,7 @@
 import copy
 import numpy as np
-import pandas as pd
-import xarray as xr
+from argopy import pandas as pd  # Lazily import large module
+from argopy import xarray as xr  # Lazily import large module
 import logging
 import time
 from abc import ABC, abstractmethod
@@ -10,7 +10,6 @@ from urllib.parse import urlparse
 from typing import Union, List  # noqa: F401
 from pathlib import Path
 import sys
-import warnings
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -19,7 +18,13 @@ else:
 
 from ...options import OPTIONS
 from ...errors import GdacPathError, S3PathError, InvalidDataset, OptionValueError
-from ...utils import isconnected, has_aws_credentials, Registry, Chunker, shortcut2gdac, deprecated
+from ...utils import (
+    isconnected,
+    has_aws_credentials,
+    Registry,
+    Chunker,
+    shortcut2gdac,
+)
 
 from .. import httpstore, memorystore, filestore, ftpstore, s3store
 from .implementations.index_s3 import get_a_s3index
@@ -27,8 +32,8 @@ from .implementations.plot import ArgoIndexPlot
 from .implementations.valid import ArgoIndexSearchValid
 
 try:
+    from argopy import pyarrow as pa  # Lazily import large module
     import pyarrow.csv as csv  # noqa: F401
-    import pyarrow as pa
     import pyarrow.parquet as pq  # noqa: F401
 except ModuleNotFoundError:
     pass
@@ -41,10 +46,10 @@ class ArgoIndexStoreProto(ABC):
     backend = "?"
     """Name of store backend (pandas or pyarrow)"""  # Pandas or Pyarrow
 
-    search_type : dict = {}
+    search_type: dict = {}
     """Dictionary with search meta-data"""
 
-    ext : str | None = None
+    ext: str | None = None
     """Storage file extension"""
 
     convention_supported = [
@@ -162,16 +167,15 @@ class ArgoIndexStoreProto(ABC):
 
         elif "ftp" in split_protocol(self.host)[0]:
             if "ifremer" not in host:
-                log.info(
-                    """Working with a non-official Argo ftp server: %s. Raise on issue if you wish to add your own to the valid list of FTP servers: https://github.com/euroargodev/argopy/issues/new?title=New%%20FTP%%20server"""
-                    % host
-                )
+                log.info(f"Working with a non-official Argo ftp server: {host}")
             if not isconnected(host):
                 raise GdacPathError("This host (%s) is not alive !" % host)
 
             self.fs["src"] = ftpstore(
                 host=urlparse(self.host).hostname,  # host eg: ftp.ifremer.fr
-                port=0 if urlparse(self.host).port is None else urlparse(self.host).port,
+                port=(
+                    0 if urlparse(self.host).port is None else urlparse(self.host).port
+                ),
                 cache=cache,
                 cachedir=cachedir,
                 timeout=self.timeout,
@@ -180,11 +184,11 @@ class ArgoIndexStoreProto(ABC):
 
         elif "s3" in split_protocol(self.host)[0]:
             # On AWS S3, index files are not under DAC root:
-            if self.host == 's3://argo-gdac-sandbox/pub/idx':
-                self.root = 's3://argo-gdac-sandbox/pub'
-            if self.host == 's3://argo-gdac-sandbox/pub':
-                self.host = 's3://argo-gdac-sandbox/pub/idx'
-                self.root = 's3://argo-gdac-sandbox/pub'
+            if self.host == "s3://argo-gdac-sandbox/pub/idx":
+                self.root = "s3://argo-gdac-sandbox/pub"
+            if self.host == "s3://argo-gdac-sandbox/pub":
+                self.host = "s3://argo-gdac-sandbox/pub/idx"
+                self.root = "s3://argo-gdac-sandbox/pub"
 
             if "argo-gdac-sandbox/pub/idx" not in self.host:
                 log.info(
@@ -238,26 +242,33 @@ class ArgoIndexStoreProto(ABC):
                 convention = "ar_index_global_meta"
         self._convention = convention
 
-        # Check if the index file exists
-        # Allow for up to 10 try to account for some slow servers
-        i_try, max_try, index_found = 0, 1 if "invalid" in self.host else 10, False
-        while i_try < max_try:
-            if not self.fs["src"].exists(self.index_path) and not self.fs["src"].exists(
-                self.index_path + ".gz"
-            ):
-                time.sleep(1)
-                i_try += 1
-            else:
-                index_found = True
-                break
-        if not index_found:
-            raise GdacPathError("Index file does not exist: %s" % self.index_path)
-        else:
-            # Will init search with full index by default:
+        if kwargs.get("_already_trusted", False):
+            # Copy of an instance that already passed the check below: no server request
             self._nrows_index = None
-            # Work with the compressed index if available:
-            if self.fs["src"].exists(self.index_path + ".gz"):
-                self.index_file += ".gz"
+        else:
+            # Check if the index file exists
+            # Allow for up to 10 try to account for some slow servers
+            i_try, max_try, index_found = 0, 1 if "invalid" in self.host else 10, False
+            while i_try < max_try:
+                if not self.fs["src"].exists(self.index_path) and not self.fs[
+                    "src"
+                ].exists(self.index_path + ".gz"):
+                    time.sleep(1)
+                    i_try += 1
+                else:
+                    index_found = True
+                    break
+            if not index_found:
+                raise GdacPathError("Index file does not exist: %s" % self.index_path)
+            else:
+                # Will init search with full index by default:
+                self._nrows_index = None
+                # Work with the compressed index if available:
+                # (no need to ask the server if we already work with the compressed index)
+                if not self.index_file.endswith(".gz") and self.fs["src"].exists(
+                    self.index_path + ".gz"
+                ):
+                    self.index_file += ".gz"
 
         if isinstance(self.fs["src"], s3store):
             # If the index host is on a S3 store, we add another file system that will be called to
@@ -296,7 +307,12 @@ class ArgoIndexStoreProto(ABC):
             else:
                 summary.append(
                     "Searched: True (%i %s, %0.4f%%) - %s"
-                    % (self.N_MATCH, match, self.N_MATCH * 100 / self.N_RECORDS, self.search_type)
+                    % (
+                        self.N_MATCH,
+                        match,
+                        self.N_MATCH * 100 / self.N_RECORDS,
+                        self.search_type,
+                    )
                 )
         else:
             summary.append("Searched: False")
@@ -475,16 +491,18 @@ class ArgoIndexStoreProto(ABC):
         """Reference table 4 "Argo data centres and institutions" as a dictionary"""
         if self._load_dict is None:
             from ...related import load_dict
+
             self._load_dict = load_dict
-        return self._load_dict('institutions')
+        return self._load_dict("institutions")
 
     @property
     def _r8(self):
         """Reference table 8 "Argo instrument types" as a dictionary"""
         if self._load_dict is None:
             from ...related import load_dict
+
             self._load_dict = load_dict
-        return self._load_dict('profilers')
+        return self._load_dict("profilers")
 
     @property
     def shape(self):
@@ -549,16 +567,46 @@ class ArgoIndexStoreProto(ABC):
     def convention_columns(self) -> List[str]:
         """CSV file column names for the index convention"""
         if self.convention == "ar_index_global_prof":
-            columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
-                               'date_update']
-        elif self.convention in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
-            columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
-                               'parameters', 'parameter_data_mode', 'date_update']
+            columns = [
+                "file",
+                "date",
+                "latitude",
+                "longitude",
+                "ocean",
+                "profiler_type",
+                "institution",
+                "date_update",
+            ]
+        elif self.convention in [
+            "argo_bio-profile_index",
+            "argo_synthetic-profile_index",
+        ]:
+            columns = [
+                "file",
+                "date",
+                "latitude",
+                "longitude",
+                "ocean",
+                "profiler_type",
+                "institution",
+                "parameters",
+                "parameter_data_mode",
+                "date_update",
+            ]
         elif self.convention in ["argo_aux-profile_index"]:
-            columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
-                       'parameters', 'date_update']
+            columns = [
+                "file",
+                "date",
+                "latitude",
+                "longitude",
+                "ocean",
+                "profiler_type",
+                "institution",
+                "parameters",
+                "date_update",
+            ]
         elif self.convention in ["ar_index_global_meta"]:
-            columns = ['file', 'profiler_type', 'institution', 'date_update']
+            columns = ["file", "profiler_type", "institution", "date_update"]
 
         return columns
 
@@ -686,11 +734,6 @@ class ArgoIndexStoreProto(ABC):
         -------
         :class:`pandas.DataFrame`
         """
-        warnings.warn(
-            "Note that the long name for institution is now in 'institution_name' while the 'institution' column will hold the institution code -- Deprecated since version 1.4",
-            category=FutureWarning,
-            stacklevel=2,
-        )
 
         def get_filename(s, index):
             if hasattr(self, "search") and not index:
@@ -743,8 +786,8 @@ class ArgoIndexStoreProto(ABC):
                     lambda x: int(x.split("_")[1].split(".nc")[0].replace("D", ""))
                 )
 
-            if 'profiler_type' in self.convention_columns:
-                df['profiler_type'] = df['profiler_type'].fillna(9999).astype(int)
+            if "profiler_type" in self.convention_columns:
+                df["profiler_type"] = df["profiler_type"].fillna(9999).astype(int)
 
             if completed:
                 # institution & profiler mapping for all users
@@ -907,7 +950,7 @@ class ArgoIndexStoreProto(ABC):
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
-    def read_files(self, index : bool = False, multi : bool = False):
+    def read_files(self, index: bool = False, multi: bool = False):
         """Return file paths listed in index or search results
 
         Fall back on full index if search not triggered
@@ -1058,6 +1101,7 @@ file,profiler_type,institution,date_update
                 timeout=copy.deepcopy(self.timeout),
                 cache=copy.deepcopy(self.cache),
                 cachedir=copy.deepcopy(self.cachedir),
+                _already_trusted=True,
             )
             if hasattr(self, "index"):
                 obj._nrows_index = copy.deepcopy(self._nrows_index)
@@ -1073,6 +1117,7 @@ file,profiler_type,institution,date_update
                 timeout=copy.copy(self.timeout),
                 cache=copy.copy(self.cache),
                 cachedir=copy.copy(self.cachedir),
+                _already_trusted=True,
             )
             if hasattr(self, "index"):
                 obj._nrows_index = copy.copy(self._nrows_index)
@@ -1159,9 +1204,11 @@ file,profiler_type,institution,date_update
 
         if chunksize is not None:
             chk_opts = {}
-            chk_opts.update({'chunks': {'wmo': 'auto'}})
-            chk_opts.update({'chunksize': {'wmo': chunksize}})
-            chunked = Chunker({'wmo': self.read_wmo(index=index)}, **chk_opts).fit_transform()
+            chk_opts.update({"chunks": {"wmo": "auto"}})
+            chk_opts.update({"chunksize": {"wmo": chunksize}})
+            chunked = Chunker(
+                {"wmo": self.read_wmo(index=index)}, **chk_opts
+            ).fit_transform()
             for grp in chunked:
                 yield [ArgoFloat(wmo, idx=self) for wmo in grp]
 

@@ -1,7 +1,7 @@
 {
   "name": "T500271",
   "long_name": "DIAGNOSTICbit_ArgosTransmitterPowerCycled_bit",
-  "last_update": "2026-01-25T11:11:45.068203+00:00",
+  "last_update": "2026-10-05T15:42:03.643125+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T500271/",
     "pav:hasVersion": {

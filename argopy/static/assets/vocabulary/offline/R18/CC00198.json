@@ -1,7 +1,7 @@
 {
   "name": "CC00198",
   "long_name": "CONFIG_SurfaceValveMaxTimeAdditionalActions_csec",
-  "last_update": "2026-01-25T11:15:36.943872+00:00",
+  "last_update": "2026-10-05T15:48:30.623598+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00198/",
     "pav:hasVersion": {

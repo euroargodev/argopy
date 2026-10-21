@@ -1,7 +1,7 @@
 {
   "name": "CC00024",
   "long_name": "CONFIG_ClockStartCycle_minutes",
-  "last_update": "2026-01-25T11:15:21.735850+00:00",
+  "last_update": "2026-10-05T15:48:07.856247+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00024/",
     "pav:hasVersion": {

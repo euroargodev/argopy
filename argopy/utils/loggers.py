@@ -49,9 +49,8 @@ def log_argopy_callerstack(level="debug"):
                 log.warning(msg)
 
 
+FrameInfo = namedtuple("FrameInfo", ["filename", "lineno", "function"])
 
-
-FrameInfo = namedtuple('FrameInfo', ['filename', 'lineno', 'function'])
 
 def frame_info(walkback=0):
     #  CC-BY SA 4.0 https://stackoverflow.com/a/74635438/24920824

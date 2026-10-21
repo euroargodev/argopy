@@ -34,11 +34,12 @@ from argopy.utils.mappers import map_vars_to_dict
 from argopy.utils.checkers import is_list_of_strings
 from argopy.utils.casting import (
     cast_Argo_variable_type,
-    DATA_TYPES,
     to_list,
 )
 from argopy.utils.lists import list_core_parameters
 from argopy.utils.geo import toYearFraction
+from argopy.utils.assets import Asset
+
 
 log = logging.getLogger("argopy.xarray")
 
@@ -111,6 +112,8 @@ class ArgoAccessor:
 
         # Variables present in the initial dataset
         self._vars = list(xarray_obj.variables.keys())
+
+        self._DATA_TYPES = Asset.load('data_types')['data']
 
         # Store the initial list of dimensions
         self._dims = list(xarray_obj.sizes.keys())
@@ -562,9 +565,9 @@ class ArgoAccessor:
                     )
                     raise
 
-        # Variables with a unique value for each profile:
+        # Variables with a unique value for each profiles:
         list_1d = list(np.array(this.data_vars)[count.sum(axis=0) == count.shape[0]])
-        # Variables with more than 1 value for each profile:
+        # Variables with more than 1 value for each profiles:
         list_2d = list(np.array(this.data_vars)[count.sum(axis=0) != count.shape[0]])
 
         # Create new empty dataset:
@@ -621,7 +624,6 @@ class ArgoAccessor:
 
         # Restore coordinate variables:
         new_ds = new_ds.set_coords([c for c in coords_list if c in new_ds])
-        new_ds["N_PROF"] = np.arange(N_PROF)
         if "N_LEVELS" in new_ds["LATITUDE"].dims:
             new_ds["LATITUDE"] = new_ds["LATITUDE"].isel(
                 N_LEVELS=0
@@ -634,6 +636,7 @@ class ArgoAccessor:
             new_ds.argo.cast_types() if not drop else cast_Argo_variable_type(new_ds)
         )
         new_ds = new_ds[np.sort(new_ds.data_vars)]
+        new_ds["N_PROF"] = np.arange(N_PROF)
         new_ds.encoding = self.encoding  # Preserve low-level encoding information
         new_ds.attrs = self.attrs  # Preserve original attributes
         if not drop:
@@ -1318,7 +1321,7 @@ class ArgoAccessor:
                 dv
                 for dv in list(this_dsp.data_vars)
                 if set(["N_LEVELS", "N_PROF"]) == set(this_dsp[dv].dims)
-                and dv not in DATA_TYPES["data"]["str"]
+                and dv not in self._DATA_TYPES["str"]
             ]
         else:
             datavars = [
@@ -1327,7 +1330,7 @@ class ArgoAccessor:
                 if set(["N_LEVELS", "N_PROF"]) == set(this_dsp[dv].dims)
                 and "QC" not in dv
                 and "ERROR" not in dv
-                and dv not in DATA_TYPES["data"]["str"]
+                and dv not in self._DATA_TYPES["str"]
             ]
 
         # All other variables:

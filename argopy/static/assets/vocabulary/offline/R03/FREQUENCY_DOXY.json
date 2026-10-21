@@ -1,7 +1,7 @@
 {
   "name": "FREQUENCY_DOXY",
   "long_name": "Frequency reported by oxygen sensor",
-  "last_update": "2026-01-25T11:11:30.516353+00:00",
+  "last_update": "2026-10-05T15:41:42.337685+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/FREQUENCY_DOXY/",
     "pav:hasVersion": [

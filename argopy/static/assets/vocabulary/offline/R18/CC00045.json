@@ -1,7 +1,7 @@
 {
   "name": "CC00045",
   "long_name": "CONFIG_DescentToProfTimeOut_hours",
-  "last_update": "2026-01-25T11:16:00.914180+00:00",
+  "last_update": "2026-10-05T15:49:13.555919+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00045/",
     "pav:hasVersion": {

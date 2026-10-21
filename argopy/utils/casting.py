@@ -1,23 +1,16 @@
 import sys
-import os
 import numpy as np
 import pandas as pd
 import xarray as xr
-import importlib
-import json
 import logging
 from copy import deepcopy
 from typing import Any
+import json
+
+from argopy.utils.assets import Asset
 
 
 log = logging.getLogger("argopy.utils.casting")
-
-path2assets = importlib.util.find_spec(
-    "argopy.static.assets"
-).submodule_search_locations[0]
-
-with open(os.path.join(path2assets, "data_types.json"), "r") as f:
-    DATA_TYPES = json.load(f)
 
 
 def cast_Argo_variable_type(ds: xr.Dataset, overwrite=True) -> xr.Dataset:
@@ -33,6 +26,7 @@ def cast_Argo_variable_type(ds: xr.Dataset, overwrite=True) -> xr.Dataset:
     -------
     :class:`xarray.DataSet`
     """
+    DATA_TYPES = Asset.load('data_types')['data']
 
     def cast_this(da, type, exception_to_raise=None):
         """Low-level casting of DataArray values"""
@@ -46,15 +40,15 @@ def cast_Argo_variable_type(ds: xr.Dataset, overwrite=True) -> xr.Dataset:
             else:
                 msg = ["Oops! %s occurred" % sys.exc_info()[0]]
                 msg.append(
-                    "Fail to cast %s[%s] from '%s' to %s"
+                    "Fail to cast %s[%s] from '%s' to '%s'"
                     % (da.name, da.dims, da.dtype, type)
                 )
                 try:
                     msg.append("Unique values:", np.unique(da))
                 except Exception:
-                    msg.append("Can't read unique values !")
+                    msg.append("And I can't read unique values !")
                     pass
-                log.debug("\n".join(msg))
+                log.debug(" ".join(msg))
         return da
 
     def cast_this_da(da, v):
@@ -62,14 +56,14 @@ def cast_Argo_variable_type(ds: xr.Dataset, overwrite=True) -> xr.Dataset:
         # print("Casting %s ..." % da.name)
         da.attrs["casted"] = 0
 
-        if v in DATA_TYPES["data"]["str"] and da.dtype == "O":  # Object
+        if v in DATA_TYPES["str"] and da.dtype == "O":  # Object
             try:
                 da = cast_this(da, str, exception_to_raise=UnicodeDecodeError)
             except UnicodeDecodeError:
                 da = da.str.decode(encoding="unicode_escape")
                 da = cast_this(da, str)
 
-        if v in DATA_TYPES["data"]["int"]:  # and da.dtype == 'O':  # Object
+        if v in DATA_TYPES["int"]:  # and da.dtype == 'O':  # Object
             if "conventions" in da.attrs:
                 convname = "conventions"
             elif "convention" in da.attrs:
@@ -91,7 +85,7 @@ def cast_Argo_variable_type(ds: xr.Dataset, overwrite=True) -> xr.Dataset:
             da = cast_this(da, float)
             da = cast_this(da, int)
 
-        if v in DATA_TYPES["data"]["datetime"] and da.dtype == "O":  # Object
+        if v in DATA_TYPES["datetime"] and da.dtype == "O":  # Object
             if (
                 "conventions" in da.attrs
                 and da.attrs["conventions"] == "YYYYMMDDHHMISS"

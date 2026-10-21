@@ -1,0 +1,4 @@
+config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme
+count,count,count,count,count,count,,count,count,count,count,count,count,count,count,count,count,count,count,count,count,count,count,count,count,count
+12,12,12,12,12,12,4900882,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12
+6,6,6,6,6,6,4900883,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6

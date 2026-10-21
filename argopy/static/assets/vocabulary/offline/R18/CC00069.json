@@ -1,7 +1,7 @@
 {
   "name": "CC00069",
   "long_name": "CONFIG_IceDetection_degC",
-  "last_update": "2026-01-25T11:16:05.879741+00:00",
+  "last_update": "2026-10-05T15:49:20.106902+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00069/",
     "pav:hasVersion": {

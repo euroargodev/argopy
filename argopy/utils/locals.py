@@ -9,10 +9,7 @@ import contextlib
 import copy
 import shutil
 import json
-from typing import Any
 import importlib
-from pathlib import Path
-import pandas as pd
 
 from argopy.options import OPTIONS
 from argopy.utils.loggers import frame_info
@@ -164,11 +161,11 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
                 ("erddapy", get_version),
                 ("fsspec", get_version),
                 ("aiohttp", get_version),
-                ("packaging", get_version),
+                # ("packaging", get_version),
                 # will come with xarray, Using 'version' to make API compatible with several fsspec releases
                 ("requests", get_version),
                 ("toolz", get_version),
-                ("decorator", get_version),
+                # ("decorator", get_version),
             ]
         ),
         "ext.util": sorted(
@@ -322,81 +319,6 @@ def show_options(file=sys.stdout):  # noqa: C901
         if 'password' in k.lower() or 'api_key' in k.lower() and v is not None:
             v = "***"
         print(f"{k:<20}: {v}", file=file)
-
-
-class Asset:
-    """Internal asset loader
-
-    Assets are loaded using an instance of :class:`argopy.stores.filestore`.
-
-    Notes
-    -----
-    This is **single-instance** class, whereby a single instance will be created during a session, whatever the number of calls is made. This avoids to create too many, and unnecessary, instances of file stores.
-
-    Examples
-    --------
-    .. code-block:: python
-        :caption: Examples of asset files loading
-
-        Asset.load('data_types')
-        Asset.load('data_types.json')
-        Asset.load('schema:argo.float.schema')
-        Asset.load('canyon-b:wgts_AT.txt', header=None, sep="\t")
-    """
-
-    _fs: Any = None
-    _instance: "Asset | None" = None
-    _initialized: bool = False
-
-    def __new__(cls, *args: Any, **kwargs: Any) -> "Asset":
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-        return cls._instance
-
-    def __init__(self, *args, **kwargs) -> None:
-        if not self._initialized:
-            from argopy.stores import filestore
-
-            self._fs = filestore(cache=True, cachedir=OPTIONS["cachedir"])
-            path2assets = importlib.util.find_spec(
-                "argopy.static.assets"
-            ).submodule_search_locations[0]
-            self._path = Path(path2assets)
-            self._initialized = True
-
-    def _load(self, name: str, **kwargs) -> dict | pd.DataFrame:
-        suffix = Path(name).suffix
-        if suffix in [".csv", ".txt"]:
-            load = self._fs.read_csv
-        else:
-            load = self._fs.open_json
-            if suffix != ".json":  # eg: '.schema'
-                name = f"{name}.json"
-
-        name = name.strip()
-        name = name.split(":")
-        return load(self._path.joinpath(*name), **kwargs)
-
-    @classmethod
-    def load(cls, name: str = None, **kwargs) -> Any:
-        """Load an asset file
-
-        Parameters
-        ----------
-        name: str
-            The *name* of the asset file to load.
-            If no suffix is indicated, it is assumed to be a JSON file with a `.json` extension.
-            If the asset is in sub-folders, use semicolons ':' as separator (eg: 'schema:argo.float.schema')
-        **kwargs:
-            All other arguments are passed down to the loading method.
-
-        Notes
-        -----
-        If the asset `name` has a `.txt` or `.csv` suffix, the :meth:`argopy.stores.filestore.read_csv` is used.
-
-        For all other asset `name`, the :meth:`argopy.stores.filestore.load_json` is used by default.
-        """
-        return cls()._load(name=name, **kwargs)
 
 
 def caller_function():

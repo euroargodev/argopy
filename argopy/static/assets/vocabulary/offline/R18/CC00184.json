@@ -1,7 +1,7 @@
 {
   "name": "CC00184",
   "long_name": "CONFIG_PumpActionMaxTimeReposition_csec",
-  "last_update": "2026-01-25T11:16:08.474578+00:00",
+  "last_update": "2026-10-05T15:49:19.639518+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00184/",
     "pav:hasVersion": {

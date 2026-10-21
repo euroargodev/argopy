@@ -62,8 +62,11 @@ class ArgoIndex(indexstore):
         idx.query.wmo_cyc(1901393, [1,12])
 
         idx.query.lat([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
+        idx.query.lat(ge=40., le=45.)  # Take lower and/or upper limits
         idx.query.lon([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
+        idx.query.lon(ge=-60, le=-55)  # Take lower and/or upper limits
         idx.query.date([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
+        idx.query.date(ge='2007-08-01', le='2007-09-01')  # Take lower and/or upper limits
         idx.query.lon_lat([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
         idx.query.box([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
 
