@@ -54,6 +54,10 @@ class GreenCoding:
     workflows = [
         {"ID": "22344160", "Name": "CI tests"},
         {"ID": "25052179", "Name": "CI tests upstream"},
+        {"ID": "267065198", "Name": "CI tests - Ubuntu - Core"},
+        {"ID": "267065199", "Name": "CI tests - Ubuntu - All"},
+        {"ID": "369209580", "Name": "CI tests Upstream - All"},
+        {"ID": "369209582", "Name": "CI tests Upstream - Core"},
     ]
     """List of github actions workflow parameters"""
 
@@ -346,7 +350,7 @@ class GreenCoding:
             % len(self.gh.ls_PRmerged_since_last_release)
         )
         summary.append(
-            "Workflows analysed: %s"
+            "Analysed GA workflows: %s"
             % ", ".join(
                 ["%s [%s]" % (wkf["Name"], wkf["ID"]) for wkf in self.workflows]
             )
