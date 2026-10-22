@@ -15,7 +15,7 @@ TEOS-10 variables
 
 .. currentmodule:: xarray
 
-You can compute additional ocean variables from `TEOS-10 <http://teos-10.org/>`_. The default list of variables is: 'SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP' ('SOUND_SPEED', 'CNDC' are optional). `Simply raise an issue to add a new one <https://github.com/euroargodev/argopy/issues/new/choose>`_.
+You can compute additional ocean variables from `TEOS-10 <http://teos-10.org/>`_. The default list of variables is: 'SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP' ('SOUND_SPEED', 'CNDC', 'O2SOL' are optional). `Simply raise an issue to add a new one <https://github.com/euroargodev/argopy/issues/new/choose>`_.
 
 This can be done using the :meth:`Dataset.argo.teos10` method and indicating the list of variables you want to compute:
 
@@ -32,6 +32,12 @@ This can be done using the :meth:`Dataset.argo.teos10` method and indicating the
 
     ds['SA']
 
+
+Oxygen solubility can be computed with ``ds.argo.teos10(['O2SOL'])``. The
+``O2SOL`` variable is calculated using ``gsw.O2sol`` and is expressed in
+micromoles per kilogram, for equilibrium with air at a standard atmosphere
+of 101325 Pa. For floats with oxygen measurements in the same units, apparent
+oxygen utilization (AOU) can then be calculated as ``ds['O2SOL'] - ds['DOXY']``.
 
 .. _complement-nutrients-carbonate:
 
