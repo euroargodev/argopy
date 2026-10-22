@@ -12,6 +12,10 @@ Coming up next
 --------------
 .. currentmodule:: argopy
 
+Features and front-end API
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- **New third-party product** `BGC-Argo+ <https://www.bgc-argo-plus.info>`_ accessible from :class:`ArgoFloat` instances with ``ArgoFloat.open_product('BGCArgoPlus')``. See the :ref:`BGC-Argo+ documentation <bgcargo_plus_store>`. (:pr:`623`) by |RaphaelBajon|.
 
 Internals
 ^^^^^^^^^
@@ -1589,6 +1593,7 @@ v0.1.0 (17 Mar. 2020)
 .. |quai20| replace:: `K. Balem <http://www.github.com/quai20>`__
 .. |fricour| replace:: `F. Ricour <https://www.github.com/fricour>`__
 .. |charles| replace:: `C. Turner <https://github.com/charles-turner-1>`__
+.. |RaphaelBajon| replace:: `R. Bajon <https://www.github.com/RaphaelBajon>`__
 .. |jdogo| replace:: `J. Dogo <https://github.com/Jade2097>`__
 
 .. |pypi dwn| image:: https://img.shields.io/pypi/dm/argopy?label=Pypi%20downloads
@@ -1603,4 +1608,3 @@ v0.1.0 (17 Mar. 2020)
    :target: //github.com/euroargodev/argopy/releases
 .. |eqco2_since_last_release| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_carbonfootprint_since_last_release.json
 .. |eqco2_baseline| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_carbonfootprint_baseline.json
-

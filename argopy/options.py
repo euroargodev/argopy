@@ -96,7 +96,7 @@ class PRODUCT_LIST:
     )  # To be used with the 'product' argument
     """List of valid values for the ``product`` argument of the :class:`argopy.DataFetcher` class"""
 
-    argofloat: tuple[str] = tuple([])  # To be
+    argofloat: tuple[str] = tuple(["BGCArgoPlus"]) 
     """List of valid values for the :meth:`argopy.ArgoFloat.open_product` method"""
 
 

@@ -83,6 +83,12 @@ class ArgoFloat(FloatStore):
 
 
     .. code-block:: python
+        :caption: Load third-party (non-official) products
+
+        ds = af.open_product('BGCArgoPlus')  # BGC-Argo+ dataset (https://www.bgc-argo-plus.info)
+
+
+    .. code-block:: python
         :caption: Other attributes and methods
 
         af.CYCLE_NUMBERS  # List of unique cycle numbers (as given by file names under 'profiles' GDAC folder)
