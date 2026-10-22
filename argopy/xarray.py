@@ -1362,7 +1362,7 @@ class ArgoAccessor:
         """Add TEOS10 variables to the dataset
 
         By default, adds: 'SA', 'CT'
-        Other possible variables: 'SIG0', 'N2', 'PV', 'PTEMP', 'SOUND_SPEED'
+        Other possible variables: 'SIG0', 'N2', 'PV', 'PTEMP', 'SOUND_SPEED', 'CNDC', 'O2SOL'
         Relies on the gsw library.
 
         If one exists, the correct CF standard name will be added to the attrs.
@@ -1392,6 +1392,9 @@ class ArgoAccessor:
                 Add sound speed
             * ``CNDC``
                 Add Electrical Conductivity
+            * ``O2SOL``
+                Add oxygen solubility in micromoles per kilogram, in equilibrium
+                with air at a standard atmosphere of 101325 Pa, using ``gsw.O2sol``.
 
         inplace: boolean, True by default
             * If True, return the input :class:`xarray.Dataset` with new TEOS10 variables
@@ -1405,7 +1408,7 @@ class ArgoAccessor:
         if not with_gsw:
             raise ModuleNotFoundError("This functionality requires the gsw library")
 
-        allowed = ["SA", "CT", "SIG0", "N2", "PV", "PTEMP", "SOUND_SPEED", "CNDC"]
+        allowed = ["SA", "CT", "SIG0", "N2", "PV", "PTEMP", "SOUND_SPEED", "CNDC", "O2SOL"]
         if any(var not in allowed for var in vlist):
             raise ValueError(
                 f"vlist must be a subset of {allowed}, instead found {vlist}"
@@ -1473,6 +1476,10 @@ class ArgoAccessor:
         if "SOUND_SPEED" in vlist:
             cs = gsw.sound_speed(sa, ct, pres)
 
+        # Oxygen solubility:
+        if "O2SOL" in vlist:
+            o2sol = gsw.O2sol(sa, ct, pres, lon, lat)
+
         # Back to the dataset:
         that = []
         if "SA" in vlist:
@@ -1530,6 +1537,12 @@ class ArgoAccessor:
             CS.attrs["standard_name"] = "speed_of_sound_in_sea_water"
             CS.attrs["unit"] = "m/s"
             that.append(CS)
+
+        if "O2SOL" in vlist:
+            O2SOL = xr.DataArray(o2sol, coords=this["TEMP"].coords, name="O2SOL")
+            O2SOL.attrs["long_name"] = "Oxygen solubility"
+            O2SOL.attrs["unit"] = "umol/kg"
+            that.append(O2SOL)
 
         # Create a dataset with all new variables:
         that = xr.merge(that, compat="no_conflicts")
