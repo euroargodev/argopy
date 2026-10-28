@@ -12,6 +12,11 @@ Coming up next
 --------------
 .. currentmodule:: argopy
 
+Features and front-end API
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Add optional oxygen solubility (``O2SOL``) to :meth:`Dataset.argo.teos10`, computed using ``gsw.O2sol`` in micromoles per kilogram (:issue:`693`).
+
 
 Internals
 ^^^^^^^^^
