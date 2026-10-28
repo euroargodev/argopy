@@ -8,5 +8,7 @@ https://github.com/euroargodev/argopy-osnet
 API may change anytime, not all files may be necessary in here and shall be removed/refactored without notice.
 """
 from argopy.utils.arco.fetcher import MassFetcher
+from argopy.utils.arco.flat import FlatData
 
-__all__ = ('MassFetcher')
+
+__all__ = ('MassFetcher', 'FlatData')
