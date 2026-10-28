@@ -18,7 +18,7 @@ from argopy.utils.loggers import frame_info
 PIP_INSTALLED = {}
 try:
     reqs = subprocess.check_output(
-        [sys.executable, "-m", "pip", "list", "--format", "json"]
+        [sys.executable, "-m", "pip", "list", "--format", "json"], stderr=subprocess.DEVNULL
     )
     reqs = json.loads(reqs.decode())
     [PIP_INSTALLED.update({mod["name"]: mod["version"]}) for mod in reqs]
