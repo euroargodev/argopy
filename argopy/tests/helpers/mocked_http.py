@@ -25,24 +25,58 @@ The HTTPTestHandler class below is taken from the fsspec tests suite at:
 https://github.com/fsspec/filesystem_spec/blob/55c5d71e657445cbfbdba15049d660a5c9639ff0/fsspec/tests/conftest.py
 
 """
+
 import contextlib
-from pathlib import Path
+import importlib
+import json
+import logging
+import socket
 import threading
 from collections import ChainMap
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-import pytest
-import logging
+from pathlib import Path
 from urllib.parse import unquote
-import socket
-import json
-import importlib
 
+import pytest
 
 requests = pytest.importorskip("requests")
 log = logging.getLogger("argopy.tests.mocked_http")
 LOG_SERVER_CONTENT = (
     False  # Should we list all files/uris available from the mocked server in the log ?
 )
+
+# A single mocked HTTP server is started once per process by _start_server()
+# (called at the bottom of this module, i.e. at import time). ``port`` and
+# ``mocked_server_address`` are filled in when that server binds -- before any
+# test module that does ``from mocked_http import mocked_server_address`` reads
+# them, because importing this module runs its whole body first.
+port: int | None = None
+mocked_server_address: str | None = None
+_httpd: ThreadingHTTPServer | None = None
+
+
+def _start_server():
+    """Start the process-wide mocked HTTP server, once, and keep it running.
+
+    The server binds an OS-assigned free port *atomically* (bind to port 0, then
+    read the chosen port back) so parallel pytest-xdist workers (and the xdist
+    controller) never race for the same port. It runs on a daemon thread for the
+    whole life of the process, so there is always exactly one server per process.
+    Idempotent; returns the server URL.
+    """
+    global _httpd, port, mocked_server_address
+    if _httpd is None:
+        _httpd = ThreadingHTTPServer(("127.0.0.1", 0), HTTPTestHandler)
+        port = _httpd.server_address[1]
+        mocked_server_address = "http://127.0.0.1:%i" % port
+        th = threading.Thread(target=_httpd.serve_forever, daemon=True)
+        th.start()
+        log.info(
+            "Mocked HTTP server up and ready at %s, serving %i URI. (id=%s)"
+            % (mocked_server_address, len(HTTPTestHandler.files), id(_httpd))
+        )
+    return mocked_server_address
+
 
 """
 Load test data and create a dictionary mapping of URL requests as keys, and expected responses as values
@@ -272,9 +306,7 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
 
             self._respond(200, response_headers)
         elif "give_range" in self.headers:
-            self._respond(
-                200, {"Content-Range": "0-%i/%i" % (n - 1, n)}
-            )
+            self._respond(200, {"Content-Range": "0-%i/%i" % (n - 1, n)})
         elif "give_etag" in self.headers:
             self._respond(200, {"ETag": "xxx"})
         else:
@@ -283,32 +315,20 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
 
 @contextlib.contextmanager
 def serve_mocked_httpserver():
-    httpd = ThreadingHTTPServer(("127.0.0.1", 0), HTTPTestHandler)
-    port = httpd.server_address[1]
-    mocked_server_address = "http://127.0.0.1:%i" % port
+    """Backwards-compatible shim for callers written as a context manager.
 
-    th = threading.Thread(target=httpd.serve_forever)
-    th.daemon = True
-    th.start()
-    try:
-        log.info(
-            "Mocked HTTP server up and ready at %s, serving %i URI. (id=%s)"
-            % (mocked_server_address, len(HTTPTestHandler.files), id(httpd))
-        )
-        if LOG_SERVER_CONTENT:
-            # Use these lines to log test data name and content
-            for f in HTTPTestHandler.files.keys():
-                log.info(f)
-                log.info("└─ %s" % HTTPTestHandler.files[f][0:10])
-        yield mocked_server_address
-    finally:
-        httpd.socket.close()
-        httpd.shutdown()
-        th.join()
-        log.info("Teardown mocked HTTP server with id=%s" % id(httpd))
+    The server is process-lived, so this neither starts nor stops it -- it just
+    makes sure it is running and yields its address.
+    """
+    yield _start_server()
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def mocked_httpserver():
-    with serve_mocked_httpserver() as s:
-        yield s
+    yield _start_server()
+
+
+# Start the server at import time so it is up in every process (the xdist
+# controller and every worker) regardless of which tests need it - once this
+# module gets imported, we will have a server on a free port.
+_start_server()
