@@ -16,6 +16,8 @@ Coming up next
 Internals
 ^^^^^^^^^
 
+- **Fix bug** whereby importing Argopy writes to stderr if pip is not available. :issue:`703`. (:pr:``) by |gmaze|.
+
 - **Internal refactoring to use the utility class for static assets loading**. (:pr:`549`) by |gmaze|.
 
 
