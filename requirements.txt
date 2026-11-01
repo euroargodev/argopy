@@ -1,4 +1,4 @@
-xarray>=2025.7
+xarray>=2026.9.0
 scipy  # eg: used a lot as xarray engine
 #numpy  # can be removed, comes with xarray
 erddapy
