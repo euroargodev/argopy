@@ -11,7 +11,7 @@ from argopy.utils.computers import linear_interpolation_remap, pchip_interpolati
 class StandardLevels:
     """A dataclass for standard pressure levels"""
     value: np.array
-    tolerance: np.array = None
+    tolerance: np.array = None # To check - Florian: Keep it for now (to None), should not be in V2 implementation of EasyOneArgo
 
     def __post_init__(self):
         if np.any(sorted(self.value) != self.value) | (np.any(self.value < 0.0)):
@@ -21,6 +21,7 @@ class StandardLevels:
 
     @classmethod
     def from_product(cls, product_name: str):
+
         valid_products = ["easyoneargolite"]
         if product_name.lower() not in valid_products:
             raise ValueError(
@@ -28,32 +29,21 @@ class StandardLevels:
             )
 
         if product_name.lower() == "easyoneargolite":
-            pTolerance = None
-            std = [2.0]
-            [std.append(z) for z in np.arange(5, 250, 5.0)]
-            [std.append(z) for z in np.arange(250, 350, 10.0)]
-            [std.append(z) for z in np.arange(350, 500, 25.0)]
-            [std.append(z) for z in np.arange(500, 1000, 50.0)]
-            [std.append(z) for z in np.arange(1000, 2000, 100.0)]
-            [std.append(z) for z in np.arange(2000, 6000, 200.0)]
-
-            # [std.append(z) for z in np.arange(5, 100, 5.)]
-            # [std.append(z) for z in np.arange(100, 350, 10.)]
-            # [std.append(z) for z in np.arange(350, 500, 25.)]
-            # [std.append(z) for z in np.arange(500, 2000, 50.)]
-            # [std.append(z) for z in np.arange(2000, 6000, 200.)]
-
-            std.append(6000.0)
+            # EasyOneArgo product standard levels (107 levels) based on Wong et al. (2026)
+            # See https://archimer.ifremer.fr/doc/00960/107206/
+            std = np.concatenate([
+                [2.0],
+                np.arange(5, 250, 5.0),
+                np.arange(250, 350, 10.0),
+                np.arange(350, 500, 25.0),
+                np.arange(500, 1000, 50.0),
+                np.arange(1000, 2000, 100.0),
+                np.arange(2000, 6000, 200.0),
+                [6000.0]
+            ])
             std_lev = np.array(std, dtype=np.float32)
 
-            scale = 3.0
-            pTolerance = [scale * (std_lev[0] - 0.0)]  # 1st level near surface
-            for ip, _ in enumerate(std_lev[0:-1]):
-                local_spacing = std_lev[ip + 1] - std_lev[ip]
-                pTolerance.append(scale * local_spacing)
-            pTolerance = np.array(pTolerance, dtype=np.float32)
-
-            return cls(value=std_lev, tolerance=pTolerance)
+            return cls(value=std_lev, tolerance=None)
 
 
 def read_da_list(dsp: xr.Dataset) -> tuple[xr.DataArray]:
@@ -128,7 +118,6 @@ class Interpolator(ArgoAccessorExtension):
             Available interpolation methods:
 
             - ``mrst-pchip`` (default): Apply:
-
                 - Multiply-Rotated Salinity-Temperature PCHIP Method on temperature and salinity (Barker and McDougall, 2020)
                 - Piecewise Cubic Hermite Interpolating Polynomial method on all other parameters
             - ``pchip``: Apply the Piecewise Cubic Hermite Interpolating Polynomial method on all parameters

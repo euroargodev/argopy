@@ -1137,32 +1137,20 @@ class ArgoAccessor:
         https://doi.org/10.1175/JTECH-D-19-0211.1.
 
         """
-        pTolerance = None
+        pTolerance = None # To check - Florian: Need to remove that, not used anymore in V2 implementation of EasyOneArgoLite
         if isinstance(std_lev, str):
             if std_lev == "EasyOneArgoLite":
-                std = [2.]
-                [std.append(z) for z in np.arange(5, 250, 5.)]
-                [std.append(z) for z in np.arange(250, 350, 10.)]
-                [std.append(z) for z in np.arange(350, 500, 25.)]
-                [std.append(z) for z in np.arange(500, 1000, 50.)]
-                [std.append(z) for z in np.arange(1000, 2000, 100.)]
-                [std.append(z) for z in np.arange(2000, 6000, 200.)]
-
-                # [std.append(z) for z in np.arange(5, 100, 5.)]
-                # [std.append(z) for z in np.arange(100, 350, 10.)]
-                # [std.append(z) for z in np.arange(350, 500, 25.)]
-                # [std.append(z) for z in np.arange(500, 2000, 50.)]
-                # [std.append(z) for z in np.arange(2000, 6000, 200.)]
-
-                std.append(6000.)
+                std = np.concatenate([
+                    [2.0],
+                    np.arange(5, 250, 5.0),
+                    np.arange(250, 350, 10.0),
+                    np.arange(350, 500, 25.0),
+                    np.arange(500, 1000, 50.0),
+                    np.arange(1000, 2000, 100.0),
+                    np.arange(2000, 6000, 200.0),
+                    [6000.0]
+                ])
                 std_lev = np.array(std, dtype=np.float32)
-
-                scale = 3.
-                pTolerance = [scale * (std_lev[0] - 0.)]  # 1st level near surface
-                for ip, _ in enumerate(std_lev[0:-1]):
-                    local_spacing = std_lev[ip + 1] - std_lev[ip]
-                    pTolerance.append(scale * local_spacing)
-                pTolerance = np.array(pTolerance, dtype=np.float32)
 
         elif (type(std_lev) is np.ndarray) | (type(std_lev) is list):
             std_lev = np.array(std_lev)
