@@ -120,6 +120,7 @@ class ArgoAccessor:
         self.encoding = xarray_obj.encoding
         self.attrs = xarray_obj.attrs
 
+        self._shape = {"N_POINTS": None, "N_PROF": None, "N_LEVELS": None}
         if "N_PROF" in self._dims:
             self._type = "profile"
         elif "N_POINTS" in self._dims:
@@ -166,68 +167,99 @@ class ArgoAccessor:
     @property
     def N_PROF(self):
         """Number of profiles"""
-        if self._type == "point":
-            if self.N_POINTS > 0:
-                dummy_argo_uid = xr.DataArray(
-                    self.uid(
-                        self._obj["PLATFORM_NUMBER"].values,
-                        self._obj["CYCLE_NUMBER"].values,
-                        self._obj["DIRECTION"].values,
-                    ),
-                    dims="N_POINTS",
-                    coords={"N_POINTS": self._obj["N_POINTS"]},
-                    name="dummy_argo_uid",
-                )
-                N_PROF = len(np.unique(dummy_argo_uid))
+        if self._shape["N_PROF"] is None:
+            if self._type == "point":
+                if self.N_POINTS > 0:
+                    if "ARCOID" in self._obj:
+                        self._shape["N_PROF"] = len(
+                            np.unique((self._obj["ARCOID"] / 1000).astype(int))
+                        )
+                    else:
+                        dummy_argo_uid = xr.DataArray(
+                            self.uid(
+                                self._obj["PLATFORM_NUMBER"].values,
+                                self._obj["CYCLE_NUMBER"].values,
+                                self._obj["DIRECTION"].values,
+                            ),
+                            dims="N_POINTS",
+                            coords={"N_POINTS": self._obj["N_POINTS"]},
+                            name="dummy_argo_uid",
+                        )
+                        self._shape["N_PROF"] = len(np.unique(dummy_argo_uid))
+                else:
+                    self._shape["N_PROF"] = 0.0
             else:
-                N_PROF = 0.0
-        else:
-            N_PROF = len(np.unique(self._obj["N_PROF"]))
-        return N_PROF
+                self._shape["N_PROF"] = len(np.unique(self._obj["N_PROF"]))
+        return self._shape["N_PROF"]
 
     @property
     def N_LEVELS(self):
         """Number of vertical levels"""
-        if self._type == "point":
-            if self.N_POINTS > 0:
-                dummy_argo_uid = xr.DataArray(
-                    self.uid(
-                        self._obj["PLATFORM_NUMBER"].values,
-                        self._obj["CYCLE_NUMBER"].values,
-                        self._obj["DIRECTION"].values,
-                    ),
-                    dims="N_POINTS",
-                    coords={"N_POINTS": self._obj["N_POINTS"]},
-                    name="dummy_argo_uid",
-                )
-                N_LEVELS = int(
-                    xr.DataArray(
-                        np.ones_like(self._obj["N_POINTS"].values),
-                        dims="N_POINTS",
-                        coords={"N_POINTS": self._obj["N_POINTS"]},
-                    )
-                    .groupby(dummy_argo_uid)
-                    .sum()
-                    .max()
-                    .values
-                )
+        if self._shape["N_LEVELS"] is None:
+            if self._type == "point":
+                if self.N_POINTS > 0:
+                    if "ARCOID" in self._obj:
+                        this = xr.DataArray(
+                            np.ones_like(self._obj["N_POINTS"].values),
+                            dims="N_POINTS",
+                            coords={"N_POINTS": self._obj["N_POINTS"]},
+                            name="counter",
+                        ).to_dataset()
+                        this["ARCOID"] = self._obj["ARCOID"]
+                        N_LEVELS = (
+                            this.groupby(
+                                ARCOID=xr.groupers.UniqueGrouper(
+                                    labels=np.unique(this["ARCOID"])
+                                )
+                            )
+                            .sum()
+                            .max()["counter"]
+                            .values
+                        )
+                        self._shape["N_LEVELS"] = int(N_LEVELS[np.newaxis][0])
+
+                    else:
+                        dummy_argo_uid = xr.DataArray(
+                            self.uid(
+                                self._obj["PLATFORM_NUMBER"].values,
+                                self._obj["CYCLE_NUMBER"].values,
+                                self._obj["DIRECTION"].values,
+                            ),
+                            dims="N_POINTS",
+                            coords={"N_POINTS": self._obj["N_POINTS"]},
+                            name="dummy_argo_uid",
+                        )
+                        self._shape["N_LEVELS"] = int(
+                            xr.DataArray(
+                                np.ones_like(self._obj["N_POINTS"].values),
+                                dims="N_POINTS",
+                                coords={"N_POINTS": self._obj["N_POINTS"]},
+                            )
+                            .groupby(dummy_argo_uid)
+                            .sum()
+                            .max()
+                            .values
+                        )
+                else:
+                    self._shape["N_LEVELS"] = 0.0
             else:
-                N_LEVELS = 0.0
-        else:
-            N_LEVELS = len(np.unique(self._obj["N_LEVELS"]))
-        return N_LEVELS
+                self._shape["N_LEVELS"] = len(np.unique(self._obj["N_LEVELS"]))
+
+        return self._shape["N_LEVELS"]
 
     @property
     def N_POINTS(self):
         """Number of measurement points"""
-        if self._type == "profile":
-            if self.N_PROF > 0:
-                N_POINTS = self.N_PROF * self.N_LEVELS
+        if self._shape["N_POINTS"] is None:
+            if self._type == "profile":
+                if self.N_PROF > 0:
+                    self._shape["N_POINTS"] = self.N_PROF * self.N_LEVELS
+                else:
+                    self._shape["N_POINTS"] = 0.0
             else:
-                N_POINTS = 0.0
-        else:
-            N_POINTS = len(np.unique(self._obj["N_POINTS"]))
-        return N_POINTS
+                self._shape["N_POINTS"] = len(np.unique(self._obj["N_POINTS"]))
+
+        return self._shape["N_POINTS"]
 
     def add_history(self, txt):
         if "Processing_history" in self._obj.attrs:
@@ -280,16 +312,19 @@ class ArgoAccessor:
     def _dummy_argo_uid(self):
         if self._type == "point":
             if self.N_POINTS > 0:
-                return xr.DataArray(
-                    self.uid(
-                        self._obj["PLATFORM_NUMBER"].values,
-                        self._obj["CYCLE_NUMBER"].values,
-                        self._obj["DIRECTION"].values,
-                    ),
-                    dims="N_POINTS",
-                    coords={"N_POINTS": self._obj["N_POINTS"]},
-                    name="dummy_argo_uid",
-                )
+                if "ARCOID" in self._obj:
+                    return self._obj["ARCOID"]
+                else:
+                    return xr.DataArray(
+                        self.uid(
+                            self._obj["PLATFORM_NUMBER"].values,
+                            self._obj["CYCLE_NUMBER"].values,
+                            self._obj["DIRECTION"].values,
+                        ),
+                        dims="N_POINTS",
+                        coords={"N_POINTS": self._obj["N_POINTS"]},
+                        name="dummy_argo_uid",
+                    )
             else:
                 raise NoData("Cannot create UID for an empty dataset")
         else:

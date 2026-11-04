@@ -29,6 +29,32 @@ from argopy.stores.index.implementations.pyarrow.index import indexstore
 log = logging.getLogger("argopy.stores.index.pa")
 
 
+
+def filter_by_wmo(table, wmos):
+    """Return the rows of `table` whose "file" path belongs to one of `wmos`.
+
+    Parameters
+    ----------
+    table : pyarrow.Table
+        Index or search table with a "file" column (e.g. "dac/<wmo>/profiles/...").
+    wmos : iterable of int or str
+        WMOs to keep.
+
+    Returns
+    -------
+    pyarrow.Table
+    """
+    # Compare as strings to avoid casting the whole column to int
+    value_set = pa.array([str(int(w)) for w in wmos], type=pa.string())
+
+    extracted = pa.compute.extract_regex(table["file"], pattern=r"/(?P<wmo>\d+)/")
+    wmo_col = pa.compute.struct_field(extracted, "wmo")  # null where no match
+
+    mask = pa.compute.is_in(wmo_col, value_set=value_set)
+    # return table.filter(mask)
+    return mask
+
+
 @lru_cache(maxsize=25_000)
 def compute_wmo(wmo: int, obj):
     return pa.compute.match_substring_regex(obj.index["file"], pattern="/%i/" % wmo)
@@ -75,8 +101,7 @@ class SearchEngine(ArgoIndexSearchEngine):
             return {"WMO": WMOs}
 
         def composer(obj, WMOs):
-            filt = pmap(obj, compute_wmo, WMOs)
-            return obj._reduce_a_filter_list(filt, op="or")
+            return filter_by_wmo(obj.index, WMOs)
 
         WMOs = checker(WMOs)
         self._obj.load(nrows=self._obj._nrows_index)
