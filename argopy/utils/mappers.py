@@ -63,10 +63,11 @@ def map_vars_to_dict(
         ds[key].item().strip() if ds[key].dtype.kind == "U" else ds[key].item()
     )
 
+    sub_ds = ds[[var_key, var_val]]
     shared_dim = ds[var_key].dims[0]
     result = {}
-    for ii in ds[shared_dim]:
-        this_param = ds.sel({shared_dim: ii})
+    for ii in sub_ds[shared_dim]:
+        this_param = sub_ds.sel({shared_dim: ii})
         pname = read(this_param, var_key)
         pvalue = read(this_param, var_val)
         if pname in result and not duplicate:

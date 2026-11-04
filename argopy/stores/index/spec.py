@@ -1165,7 +1165,7 @@ file,profiler_type,institution,date_update
         """
         return self._copy(deep=deep)
 
-    def iterfloats(self, index=False, chunksize: int = None):
+    def iterfloats(self, index=False, chunksize: int = None, **kwargs):
         """Iterate over unique Argo floats in the full index or search results
 
         By default, iterate over a single float, otherwise use the `chunksize` argument to iterate over chunk of floats.
@@ -1214,7 +1214,7 @@ file,profiler_type,institution,date_update
 
         else:
             for wmo in wmos:
-                yield ArgoFloat(wmo, idx=self)
+                yield ArgoFloat(wmo, idx=self, **kwargs)
 
     # Possibly register extensions without specific implementations:
     plot = xr.core.utils.UncachedAccessor(ArgoIndexPlot)
