@@ -224,22 +224,25 @@ class Interpolator(ArgoAccessorExtension):
                     ds_out[da].attrs["long_name"] = f"Interpolated {ds_out[da].attrs['long_name']}"
 
         elif method == "mrst-pchip":
-            # T/S are interpolated together as CT/SA
-            # then all other parameters are interpolated with pchip, one after the other
-            ds_out['CT'], ds_out['SA'] = mrst_pchip_interpolation_remap(
+            # Following Wong et al. (2026), MRST-PCHIP is applied on temperature and salinity, not on CT and SA.
+            # From Wong et al. (2026), step 1 -> interpolate by using "gsw_SA_CT_interp" for TS
+            # For all other parameters, the interpolation uses PCHIP, one after the other
+            ds_out['PSAL'], ds_out['TEMP'] = mrst_pchip_interpolation_remap(
                                 this_dsp[axis],
-                                this_dsp['CT'],
-                                this_dsp['SA'],
+                                this_dsp['PSAL'],
+                                this_dsp['TEMP'],
                                 this_dsp["Z_LEVELS"],
+                                z_dim="N_LEVELS",
+                                z_regridded_dim="Z_LEVELS",
                                 output_dim=f"{axis}_INTERPOLATED"
                             )
-            for da in ['CT', 'SA']:
+            for da in ['TEMP', 'PSAL']:
                 ds_out[da].attrs = this_dsp[da].attrs  # Preserve attributes
                 if "long_name" in ds_out[da].attrs:
                     ds_out[da].attrs["long_name"] = f"Interpolated {ds_out[da].attrs['long_name']}"
 
             for da in datavars:
-                if da not in ['CT', 'SA']:
+                if da not in ['TEMP', 'PSAL']:
                     ds_out[da] = pchip_interpolation_remap(
                         this_dsp[axis],
                         this_dsp[da],
@@ -251,6 +254,11 @@ class Interpolator(ArgoAccessorExtension):
                     ds_out[da].attrs = this_dsp[da].attrs  # Preserve attributes
                     if "long_name" in ds_out[da].attrs:
                         ds_out[da].attrs["long_name"] = f"Interpolated {ds_out[da].attrs['long_name']}"
+
+        else:
+            raise ValueError(
+                f"Invalid interpolation method '{method}'. Must be one of: 'mrst-pchip', 'pchip', 'linear'."
+            )
 
         ds_out[f"{axis}_INTERPOLATED"].attrs = this_dsp[axis].attrs
         if "long_name" in ds_out[f"{axis}_INTERPOLATED"].attrs:

@@ -89,7 +89,6 @@ def _linear_interp(x: np.ndarray, y: np.ndarray, xi: np.ndarray) -> np.ndarray:
     This consumes one single profile data as low-level structures, like numpy 1D arrays
 
     Expected to be used by `linear_interpolation_remap` and called by :func:`xr.apply_ufunc`
-
     """
     yi_empty = np.full(
         len(xi), np.nan, dtype=np.float32
@@ -160,7 +159,7 @@ def _pchip_interp(x: np.ndarray, y: np.ndarray, xi: np.ndarray) -> np.ndarray:
 
     Expected to be used by `pchip_interpolation_remap` and called by :func:`xr.apply_ufunc`
 
-    Follows Barker and McDougall (2020) requirements and EasyOneArgo - Lite specs for clean-up.
+    Follows Wong et al. (2026) EasyOneArgo - Lite specs for clean-up.
     """
     yi_empty = np.full(
         len(xi), np.nan, dtype=np.float32
@@ -220,14 +219,14 @@ def _pchip_interp(x: np.ndarray, y: np.ndarray, xi: np.ndarray) -> np.ndarray:
     return yi
 
 
-def _mrst_pchip_interp(x: np.ndarray, sa: np.ndarray, ct: np.ndarray, xi: np.ndarray) -> (np.ndarray, np.ndarray):
+def _mrst_pchip_interp(x: np.ndarray, sa: np.ndarray, ct: np.ndarray, xi: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     """:func:`gsw.sa_ct_interp` interpolation of a profile
 
     This consumes one single profile data of SA/CT as low-level structures, like numpy 1D arrays
 
     Expected to be used by `mrstpchip_interpolation_remap` and called by :func:`xr.apply_ufunc`
 
-    Follows Barker and McDougall (2020) requirements and EasyOneArgo - Lite specs for clean-up.
+    Follows Wong et al. (2026) EasyOneArgo - Lite specs for clean-up.
     """
     yi_empty = np.full(
         len(xi), np.nan, dtype=np.float32
@@ -291,7 +290,12 @@ def _mrst_pchip_interp(x: np.ndarray, sa: np.ndarray, ct: np.ndarray, xi: np.nda
 
 
 def linear_interpolation_remap(
-    z, data, z_regridded, z_dim=None, z_regridded_dim="regridded", output_dim="remapped"
+    z,
+    data,
+    z_regridded,
+    z_dim=None,
+    z_regridded_dim="Z_LEVELS",
+    output_dim="PRES_INTERPOLATED"
 ) -> xr.Dataset:
     """Vertical interpolation of one dataset variable, using 1-D linear interpolation
 
@@ -305,14 +309,15 @@ def linear_interpolation_remap(
         Output vertical pressure axis (eg: ds['Z_LEVELS'])
     z_dim: default = None
         Input vertical dimension name (eg: "N_LEVELS"). Inferred from ``z`` by default.
-    z_regridded_dim:
-        Eg: "Z_LEVELS"
-    output_dim:
+    z_regridded_dim: str, optional, default='Z_LEVELS'
+        Name of the output vertical dimension.
+    output_dim: str, optional, default='PRES_INTERPOLATED'
+        Name of the new vertical dimension
     """
     # infer dim from input
     if z_dim is None:
         if len(z.dims) != 1:
-            raise RuntimeError("if z_dim is not specified, x must be a 1D array.")
+            raise RuntimeError("if z_dim is not specified, z must be a 1D array.")
         dim = z.dims[0]
     else:
         dim = z_dim
@@ -355,7 +360,7 @@ def pchip_interpolation_remap(
         Input variable to interpolate (eg: ds['TEMP'])
     z_regridded: :class:`xarray.DataArray`
         Output vertical pressure axis (eg: ds['Z_LEVELS'])
-    z_dim:str, optional, default = None
+    z_dim: str, optional, default = None
         Name of the input vertical dimension (typically "N_LEVELS").
         If set to None, it is inferred from the input vertical pressure axis.
     z_regridded_dim: str, optional, default='Z_LEVELS'
@@ -369,7 +374,7 @@ def pchip_interpolation_remap(
     # Infer dimension from input:
     if z_dim is None:
         if len(z.dims) != 1:
-            raise RuntimeError("if z_dim is not specified, x must be a 1D array.")
+            raise RuntimeError("if z_dim is not specified, z must be a 1D array.")
         dim = z.dims[0]
     else:
         dim = z_dim
@@ -401,22 +406,45 @@ def pchip_interpolation_remap(
 
 def mrst_pchip_interpolation_remap(
     z,
-    Tdata,
     Sdata,
+    Tdata,
     z_regridded,
+    z_dim=None,
+    z_regridded_dim="Z_LEVELS",
     output_dim="PRES_INTERPOLATED"
 ):
     """Vertical interpolation of temperature/salinity, using the MRST-PCHIP method
 
     MRST-PCHIP: Multiply-Rotated Salinity-Temperature PCHIP Method
 
+    Parameters
+    ----------
+    z: :class:`xarray.DataArray`
+        Input vertical pressure axis (eg: ds['PRES'])
+    Sdata: :class:`xarray.DataArray`
+        Input salinity variable to interpolate (eg: ds['PSAL'])
+    Tdata: :class:`xarray.DataArray`
+        Input temperature variable to interpolate (eg: ds['TEMP'])
+    z_regridded: :class:`xarray.DataArray`
+        Output vertical pressure axis (eg: ds['Z_LEVELS'])
+    z_dim: str, optional, default = None
+        Name of the input vertical dimension (typically "N_LEVELS").
+        If set to None, it is inferred from the input vertical pressure axis.
+    z_regridded_dim: str, optional, default='Z_LEVELS'
+        Name of the output vertical dimension.
+    output_dim: str, optional, default='PRES_INTERPOLATED'
+        Name of the new vertical dimension
     """
     if not with_gsw:
         raise ValueError("The mrst-pchip interpolation method requires the gsw library")
 
-    # Infer dimension from input:
-    dim = z.dims[0]
-    z_regridded_dim = z_regridded.dims[0]
+    # infer dim from input
+    if z_dim is None:
+        if len(z.dims) != 1:
+            raise RuntimeError("if z_dim is not specified, z must be a 1D array.")
+        dim = z.dims[0]
+    else:
+        dim = z_dim
 
     # Set kwargs for xarray.apply_ufunc miscellaneaous versions:
     input_core_dims = [[dim], [dim], [dim], [z_regridded_dim]]
