@@ -1137,20 +1137,14 @@ class ArgoAccessor:
         https://doi.org/10.1175/JTECH-D-19-0211.1.
 
         """
-        pTolerance = None # To check - Florian: Need to remove that, not used anymore in V2 implementation of EasyOneArgoLite
         if isinstance(std_lev, str):
             if std_lev == "EasyOneArgoLite":
-                std = np.concatenate([
-                    [2.0],
-                    np.arange(5, 250, 5.0),
-                    np.arange(250, 350, 10.0),
-                    np.arange(350, 500, 25.0),
-                    np.arange(500, 1000, 50.0),
-                    np.arange(1000, 2000, 100.0),
-                    np.arange(2000, 6000, 200.0),
-                    [6000.0]
-                ])
-                std_lev = np.array(std, dtype=np.float32)
+                from argopy.extensions.interpolation import StandardLevels
+                std_lev = StandardLevels.from_product(std_lev).value
+            else:
+                raise ValueError(
+                    "Standard levels must be a string for pre-defined values. Available options are: 'EasyOneArgoLite'"
+                )
 
         elif (type(std_lev) is np.ndarray) | (type(std_lev) is list):
             std_lev = np.array(std_lev)
@@ -1212,8 +1206,7 @@ class ArgoAccessor:
                 this_dsp["Z_LEVELS"],
                 z_dim="N_LEVELS",
                 z_regridded_dim="Z_LEVELS",
-                output_dim="remapped",
-                zTolerance=pTolerance,
+                output_dim="remapped"
             )
             ds_out[dv].attrs = this_dsp[dv].attrs  # Preserve attributes
             if "long_name" in ds_out[dv].attrs:

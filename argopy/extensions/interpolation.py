@@ -11,17 +11,19 @@ from argopy.utils.computers import linear_interpolation_remap, pchip_interpolati
 class StandardLevels:
     """A dataclass for standard pressure levels"""
     value: np.array
-    tolerance: np.array = None # To check - Florian: Keep it for now (to None), should not be in V2 implementation of EasyOneArgo
 
     def __post_init__(self):
         if np.any(sorted(self.value) != self.value) | (np.any(self.value < 0.0)):
             raise ValueError(
                 "Standard levels must be a list or a numpy array of positive and sorted values"
             )
+        if self.value.size < 2:
+            raise ValueError(
+                "Standard levels must have at least 2 values"
+            )
 
     @classmethod
     def from_product(cls, product_name: str):
-
         valid_products = ["easyoneargolite"]
         if product_name.lower() not in valid_products:
             raise ValueError(
@@ -31,7 +33,7 @@ class StandardLevels:
         if product_name.lower() == "easyoneargolite":
             # EasyOneArgo product standard levels (107 levels) based on Wong et al. (2026)
             # See https://archimer.ifremer.fr/doc/00960/107206/
-            std = np.concatenate([
+            std_lev = np.concatenate([
                 [2.0],
                 np.arange(5, 250, 5.0),
                 np.arange(250, 350, 10.0),
@@ -40,10 +42,9 @@ class StandardLevels:
                 np.arange(1000, 2000, 100.0),
                 np.arange(2000, 6000, 200.0),
                 [6000.0]
-            ])
-            std_lev = np.array(std, dtype=np.float32)
+            ]).astype(np.float32)
 
-            return cls(value=std_lev, tolerance=None)
+            return cls(value=std_lev)
 
 
 def read_da_list(dsp: xr.Dataset) -> tuple[xr.DataArray]:
@@ -118,6 +119,7 @@ class Interpolator(ArgoAccessorExtension):
             Available interpolation methods:
 
             - ``mrst-pchip`` (default): Apply:
+
                 - Multiply-Rotated Salinity-Temperature PCHIP Method on temperature and salinity (Barker and McDougall, 2020)
                 - Piecewise Cubic Hermite Interpolating Polynomial method on all other parameters
             - ``pchip``: Apply the Piecewise Cubic Hermite Interpolating Polynomial method on all parameters
@@ -215,8 +217,7 @@ class Interpolator(ArgoAccessorExtension):
                     this_dsp["Z_LEVELS"],
                     z_dim="N_LEVELS",
                     z_regridded_dim="Z_LEVELS",
-                    output_dim=f"{axis}_INTERPOLATED",
-                    zTolerance=std_lev.tolerance,
+                    output_dim=f"{axis}_INTERPOLATED"
                 )
                 ds_out[da].attrs = this_dsp[da].attrs  # Preserve attributes
                 if "long_name" in ds_out[da].attrs:
@@ -230,8 +231,7 @@ class Interpolator(ArgoAccessorExtension):
                                 this_dsp['CT'],
                                 this_dsp['SA'],
                                 this_dsp["Z_LEVELS"],
-                                output_dim=f"{axis}_INTERPOLATED",
-                                zTolerance=std_lev.tolerance,
+                                output_dim=f"{axis}_INTERPOLATED"
                             )
             for da in ['CT', 'SA']:
                 ds_out[da].attrs = this_dsp[da].attrs  # Preserve attributes
@@ -246,8 +246,7 @@ class Interpolator(ArgoAccessorExtension):
                         this_dsp["Z_LEVELS"],
                         z_dim="N_LEVELS",
                         z_regridded_dim="Z_LEVELS",
-                        output_dim=f"{axis}_INTERPOLATED",
-                        zTolerance=std_lev.tolerance,
+                        output_dim=f"{axis}_INTERPOLATED"
                     )
                     ds_out[da].attrs = this_dsp[da].attrs  # Preserve attributes
                     if "long_name" in ds_out[da].attrs:
