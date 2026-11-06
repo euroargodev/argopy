@@ -4,7 +4,37 @@ from typing import Literal
 from dataclasses import dataclass
 
 from argopy.extensions.utils import register_argo_accessor, ArgoAccessorExtension
-from argopy.utils.computers import linear_interpolation_remap, pchip_interpolation_remap, mrst_pchip_interpolation_remap
+from argopy.utils.computers import (
+    linear_interpolation_remap,
+    pchip_interpolation_remap,
+    mrst_pchip_interpolation_remap
+)
+
+
+def _median_filter(x: np.ndarray, y: np.ndarray) -> np.ndarray:
+    """Wong et al.(2026) median filter. 
+    Used to filter out isolated spikes in CHLA, CHLA_FLUORESCENCE and BBP700 data.
+    The window size of the median filter depends on PROF_RES, the median value of the pressure
+    differences such that: 
+    
+    PROF_RES = MEDIAN(PRESn-PRESn-1) for all n levels of the selected data.
+    For PROF_RES >= 3 dbar, w = 5.
+    For 1 dbar < PROF_RES < 3 dbar, w = 7.
+    For PROF_RES <= 1 dbar, w = 11.
+    """
+
+    # Keep only valid values for x (pressure) and y (parameter to filter)
+    mask = ~np.isnan(x) & ~np.isnan(y)
+    y_filtered = y.copy()
+    if np.count_nonzero(mask) < 2:
+        return y_filtered
+    xv, yv = x[mask], y[mask]
+
+    prof_res = np.median(np.diff(xv))
+    w = 5 if prof_res >= 3 else (7 if prof_res > 1 else 11) # window size
+    h = int((w - 1) / 2) # half window size
+    y_filtered[mask] = np.array([np.median(yv[max(0, i - h): i + h + 1]) for i in range(yv.size)])
+    return y_filtered
 
 
 @dataclass(frozen=True)
@@ -75,7 +105,6 @@ def read_da_list(dsp: xr.Dataset) -> tuple[xr.DataArray]:
 
     return datavars, coords, solovars
 
-
 @register_argo_accessor("interp")
 class Interpolator(ArgoAccessorExtension):
     """Interpolation methods
@@ -83,15 +112,163 @@ class Interpolator(ArgoAccessorExtension):
     Examples
     --------
     .. code-block:: python
-        :caption: Example
+        :caption: Interpolate onto EasyOneArgoLite standard levels following Wong et al. (2026)
 
         from argopy import DataFetcher
 
+        ds = DataFetcher(ds="bgc", mode="expert").float(6904240).to_xarray()
+        ds_interp = ds.argo.interp()
 
+    .. code-block:: python
+        :caption: Choose standard levels and the interpolation method
+
+        ds_interp = ds.argo.interp.spl([10, 20, 50, 100], method="linear")
     """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+    def __call__(self, axis: str = "PRES"):
+        """Interpolate measurements onto EasyOneArgoLite standard pressure levels following Wong et al. (2026).
+        
+        Each variable (TEMP, PSAL, DOXY, etc.) is interpolated with its own specifications.
+
+        - TEMP, PSAL: MRST-PCHIP method following Barker and McDougall (2020)
+        - DOXY, NITRATE, PH_IN_SITU_TOTAL: linear interpolation
+        - DOWN_IRRADIANCE380/412/443/490/555, DOWNWELLING_PAR: log transformation followed by linear interpolation and then antilog transformation
+        - CHLA, CHLA_FLUORESCENCE, BBP700: median filter (to remove spikes) followed by linear interpolation
+
+        Interpolated values are removed where there is no observation in the "box" of a standard level or deeper than 1% below the deepest observation.
+
+        Parameters
+        ----------
+        axis: str, default: ``PRES``
+            The dataset variable to use as pressure axis. This can be ``PRES`` or ``PRES_ADJUSTED``.
+
+        Returns
+        -------
+        :class:`xarray.Dataset`
+
+        Notes
+        -----
+        Only the interpolation part of Wong et al. (2026) is applied (no data mode and QC selection pre-interpolation)
+
+        References
+        ----------
+        Barker, P. M., and T. J. McDougall, 2020: Two Interpolation Methods Using Multiply-Rotated 
+        Piecewise Cubic Hermite Interpolating Polynomials. J. Atmos. Oceanic Technol., 37, 605-619,
+        https://doi.org/10.1175/JTECH-D-19-0211.1.
+        
+        Wong Annie, Rannou Jean-Philippe, Carval Thierry, Fontaine Laure, Schmechtig Catherine, Bittig Henry (2026). 
+        EasyOneArgo data product specification. Ifremer. https://doi.org/10.13155/107206.
+        """
+
+        if axis not in ["PRES", "PRES_ADJUSTED"]:
+            raise ValueError("'axis' option must be 'PRES' or 'PRES_ADJUSTED'")
+
+        std_lev = StandardLevels.from_product("EasyOneArgoLite")
+
+        # Handle input data structure: points or profiles -> need to work with profiles
+        if self._argo._type == "point":
+            this_dsp = self._argo.point2profile()
+        else:
+            this_dsp = self._obj.copy(deep=True)
+
+        # Add new vertical dimension
+        this_dsp["Z_LEVELS"] = xr.DataArray(std_lev.value, dims={"Z_LEVELS": std_lev.value})
+
+        # Get some lists of xr.DataArray
+        datavars, coords, solovars = read_da_list(this_dsp)
+
+        # Create a dataset that will hold interpolation results
+        ds_out = xr.Dataset()
+
+        # Save some keyword arguments for the interpolation functions
+        kwargs = dict(z_dim="N_LEVELS", z_regridded_dim="Z_LEVELS", output_dim=f"{axis}_INTERPOLATED")
+
+        # T/S: MRST-PCHIP method following Barker and McDougall (2020)
+        for suffix in ["", "_ADJUSTED"]:
+            temp, psal = f"TEMP{suffix}", f"PSAL{suffix}"
+            if temp in datavars and psal in datavars:
+                ds_out[psal], ds_out[temp] = mrst_pchip_interpolation_remap(
+                    this_dsp[axis],
+                    this_dsp[psal],
+                    this_dsp[temp],
+                    this_dsp["Z_LEVELS"],
+                    **kwargs
+                )
+
+        # Other parameters
+        for da in datavars:
+            param = da.removesuffix("_ADJUSTED")
+
+            if da in ds_out:
+                continue
+
+            elif param in ['PRES', 'DOXY', 'NITRATE', 'PH_IN_SITU_TOTAL']:
+                ds_out[da] = linear_interpolation_remap(
+                    this_dsp[axis], this_dsp[da], this_dsp["Z_LEVELS"], **kwargs
+                )
+
+            elif param in ['DOWN_IRRADIANCE380', 'DOWN_IRRADIANCE412', 'DOWN_IRRADIANCE443',
+                        'DOWN_IRRADIANCE490', 'DOWN_IRRADIANCE555', 'DOWNWELLING_PAR']:
+                log_da = np.log(this_dsp[da].where(this_dsp[da] > 0)) # log transformation, only for positive values
+                # Any NaN remaining in log_da will be discarded in linear_interpolation_remap
+                ds_out[da] = linear_interpolation_remap(
+                    this_dsp[axis],
+                    log_da,
+                    this_dsp["Z_LEVELS"],
+                    **kwargs
+                )
+                ds_out[da] = np.exp(ds_out[da]) # antilog transformation
+
+            elif param in ['CHLA', 'CHLA_FLUORESCENCE', 'BBP700']:
+                # Median filter to remove spikes, profile by profile
+                filtered_da = xr.apply_ufunc(
+                    _median_filter,
+                    this_dsp[axis],
+                    this_dsp[da],
+                    input_core_dims=[["N_LEVELS"], ["N_LEVELS"]],
+                    output_core_dims=[["N_LEVELS"]],
+                    vectorize=True,
+                    dask="parallelized",
+                    output_dtypes=[this_dsp[da].dtype],
+                  )
+                # Any NaN remaining in filtered_da will be discarded in linear_interpolation_remap
+                ds_out[da] = linear_interpolation_remap(
+                    this_dsp[axis],
+                    filtered_da,
+                    this_dsp["Z_LEVELS"],
+                    **kwargs
+                )
+
+            else:
+                continue  # Skip variables that are not in the list of parameters to interpolate
+
+        for da in ds_out.data_vars:
+            ds_out[da].attrs = this_dsp[da].attrs  # Preserve attributes
+            if "long_name" in ds_out[da].attrs:
+                ds_out[da].attrs["long_name"] = f"Interpolated {ds_out[da].attrs['long_name']}"
+
+        ds_out[f"{axis}_INTERPOLATED"].attrs = this_dsp[axis].attrs
+        if "long_name" in ds_out[f"{axis}_INTERPOLATED"].attrs:
+            ds_out[f"{axis}_INTERPOLATED"].attrs["long_name"] = f"Standard {axis} levels"
+
+        for sv in solovars:
+            ds_out[sv] = this_dsp[sv]
+
+        for co in coords:
+            ds_out.coords[co] = this_dsp[co]
+
+        ds_out = ds_out.drop_vars(["N_LEVELS", "Z_LEVELS"])
+        ds_out = ds_out[np.sort(ds_out.data_vars)]
+        ds_out = ds_out.argo.cast_types()
+        ds_out.attrs = self._argo.attrs.copy()  # Preserve original attributes
+        ds_out.argo.add_history(
+            f"Interpolated on EasyOneArgoLite standard {axis} levels following Wong et al. (2026) (see Argopy documentation for details)"
+            )
+
+        return ds_out
 
     def spl(
         self,

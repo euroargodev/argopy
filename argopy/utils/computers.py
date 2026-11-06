@@ -45,7 +45,7 @@ class Msg:
 #
 
 
-def std_level_boxes(levels: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+def _std_level_boxes(levels: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     """Wong et al. (2026) 'box' edges [low, high) for each standard level"""
     mid = (levels[1:] + levels[:-1]) / 2
     lo = np.concatenate([[levels[0] - (levels[1] - levels[0]) / 2], mid])
@@ -134,7 +134,7 @@ def _linear_interp(x: np.ndarray, y: np.ndarray, xi: np.ndarray) -> np.ndarray:
     # Step 2 - remove interpolated/extrapolated points from step 1 where there are no original data within the "box"
     # Box of level i is [lo[i], hi[i]): lower boundary included, upper boundary excluded
     if xi.size > 1:
-        lo, hi = std_level_boxes(xi)
+        lo, hi = _std_level_boxes(xi)
         # in_box[i, j] is True if observation j is in the box of level i
         in_box = (x[np.newaxis, :] >= lo[:, np.newaxis]) & (x[np.newaxis, :] < hi[:, np.newaxis]) # used broadcasting
         no_data_in_box = ~in_box.any(axis=1)
@@ -206,7 +206,7 @@ def _pchip_interp(x: np.ndarray, y: np.ndarray, xi: np.ndarray) -> np.ndarray:
     # Step 2 - remove interpolated/extrapolated points from step 1 where there are no original data within the "box"
     # Box of level i is [lo[i], hi[i]): lower boundary included, upper boundary excluded
     if xi.size > 1:
-        lo, hi = std_level_boxes(xi)
+        lo, hi = _std_level_boxes(xi)
         # in_box[i, j] is True if observation j is in the box of level i
         in_box = (x[np.newaxis, :] >= lo[:, np.newaxis]) & (x[np.newaxis, :] < hi[:, np.newaxis]) # used broadcasting
         no_data_in_box = ~in_box.any(axis=1)
@@ -274,7 +274,7 @@ def _mrst_pchip_interp(x: np.ndarray, sa: np.ndarray, ct: np.ndarray, xi: np.nda
     # Remove interpolated/extrapolated points from step 1 where there are no original data within the "box"
     # Box of level i is [lo[i], hi[i]): lower boundary included, upper boundary excluded
     if xi.size > 1:
-        lo, hi = std_level_boxes(xi)
+        lo, hi = _std_level_boxes(xi)
         # in_box[i, j] is True if observation j is in the box of level i
         in_box = (x[np.newaxis, :] >= lo[:, np.newaxis]) & (x[np.newaxis, :] < hi[:, np.newaxis]) # used broadcasting
         no_data_in_box = ~in_box.any(axis=1)
