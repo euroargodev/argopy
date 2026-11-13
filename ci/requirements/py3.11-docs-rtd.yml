@@ -22,6 +22,7 @@ dependencies:
 
 # EXT.FILES:
   - boto3 = 1.38.27
+  - h5py = 3.16.0  # required by kerchunk
   - kerchunk = 0.2.7
   - numcodecs = 0.13.1
   - s3fs = 2025.5.1
