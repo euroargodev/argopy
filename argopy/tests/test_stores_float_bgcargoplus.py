@@ -54,6 +54,18 @@ requires_bgcargo_plus_server = pytest.mark.skipif(
 )
 
 
+# Version returned by the mocked server for 'latest', the default version
+MOCK_LATEST_VERSION = "v1.0"
+
+
+@pytest.fixture
+def offline_latest():
+    """Mock the lookup of the most recent version on the server, so that the default 'latest' needs no network."""
+    target = "argopy.stores.float.products.bgcargo_plus.bgcargo_plus_latest_version"
+    with patch(target, return_value=MOCK_LATEST_VERSION) as mock_latest:
+        yield mock_latest
+
+
 def _mock_fs(store: BGCArgoPlusStore) -> MagicMock:
     """Replace the store file system by a mock, so that no connection is made."""
     store._fs = MagicMock()
@@ -82,6 +94,7 @@ def _make_dummy_dataset() -> xr.Dataset:
 # Unit tests — bgcargo_plus_url()
 # ---------------------------------------------------------------------------
 
+@pytest.mark.usefixtures("offline_latest")
 class TestBGCArgoPlusURL:
     def test_returns_string(self):
         url = bgcargo_plus_url(TEST_WMO)
@@ -99,15 +112,16 @@ class TestBGCArgoPlusURL:
         url = bgcargo_plus_url(TEST_WMO)
         assert str(TEST_WMO) in url
 
-    def test_contains_default_version(self):
+    def test_default_version_is_latest(self, offline_latest):
         url = bgcargo_plus_url(TEST_WMO)
-        assert BGCARGO_PLUS_DEFAULT_VERSION in url
+        offline_latest.assert_called_once()
+        assert f"/{MOCK_LATEST_VERSION}/" in url
 
-    def test_custom_version(self):
-        custom = "v0.1_2025_12"
-        url = bgcargo_plus_url(TEST_WMO, version=custom)
-        assert custom in url
-        assert BGCARGO_PLUS_DEFAULT_VERSION not in url
+    def test_custom_version(self, offline_latest):
+        url = bgcargo_plus_url(TEST_WMO, version=TEST_VERSION)
+        assert f"/{TEST_VERSION}/" in url
+        assert f"/{MOCK_LATEST_VERSION}/" not in url
+        offline_latest.assert_not_called()
 
     def test_unsupported_version_raises(self):
         with pytest.raises(ValueError, match="Unsupported"):
@@ -120,8 +134,6 @@ class TestBGCArgoPlusURL:
     @pytest.mark.parametrize(
         "version, expected",
         [
-            ("v0.0_2025_09", f"/outliers_removed/v0.0_2025_09/{TEST_WMO}_Sprof_processed.nc"),
-            ("v0.1_2025_12", f"/outliers_removed/v0.1_2025_12/{TEST_WMO}_Sprof_BGCArgoPlus.nc"),
             ("v0.1_2026_04", f"/outliers_removed/v0.1_2026_04/Individual_Floats/{TEST_WMO}_Sprof_BGCArgoPlus.nc"),
             ("v1.0", f"/outliers_removed/v1.0/Individual_Floats/{TEST_WMO}_Sprof_BGCArgoPlus.nc"),
         ],
@@ -131,13 +143,15 @@ class TestBGCArgoPlusURL:
         assert bgcargo_plus_url(TEST_WMO, version=version).endswith(expected)
 
     def test_default_version_supported(self):
-        assert BGCARGO_PLUS_DEFAULT_VERSION in BGCARGO_PLUS_PATH_TEMPLATES
+        assert BGCARGO_PLUS_DEFAULT_VERSION == "latest"
+        assert MOCK_LATEST_VERSION in BGCARGO_PLUS_PATH_TEMPLATES
 
 
 # ---------------------------------------------------------------------------
 # Unit tests — BGCArgoPlusStore()
 # ---------------------------------------------------------------------------
 
+@pytest.mark.usefixtures("offline_latest")
 class TestBGCArgoPlusStoreUnit:
     def test_wmo_stored(self):
         store = BGCArgoPlusStore(TEST_WMO)
@@ -149,11 +163,12 @@ class TestBGCArgoPlusStoreUnit:
 
     def test_default_version(self):
         store = BGCArgoPlusStore(TEST_WMO)
-        assert store.version == BGCARGO_PLUS_DEFAULT_VERSION
+        assert store.requested_version == "latest"
+        assert store.version == MOCK_LATEST_VERSION
 
     def test_custom_version(self):
-        store = BGCArgoPlusStore(TEST_WMO, version="v0.1_2025_12")
-        assert store.version == "v0.1_2025_12"
+        store = BGCArgoPlusStore(TEST_WMO, version=TEST_VERSION)
+        assert store.version == TEST_VERSION
 
     def test_unsupported_version_raises(self):
         with pytest.raises(ValueError, match="Unsupported"):
@@ -219,6 +234,7 @@ class TestBGCArgoPlusStoreUnit:
 # Unit tests — unreachable server
 # ---------------------------------------------------------------------------
 
+@pytest.mark.usefixtures("offline_latest")
 class TestBGCArgoPlusServerUnreachable:
     def test_no_connection_at_init(self):
         """Creating a store must not connect to the server."""
@@ -302,10 +318,8 @@ SERVER_LISTING = [
     f"{_ROOT}/?C=N;O=D",
     f"{_ROOT}/?C=S;O=A",
     f"{_ROOT}/v1.0/",
-    f"{_ROOT}/v0.0_2025_09/",
     f"{_ROOT}/README.txt",
     f"{_ROOT}/v0.1_2026_04/",
-    f"{_ROOT}/v0.1_2025_12/",
 ]
 
 
@@ -317,12 +331,12 @@ def _mock_server(listing=SERVER_LISTING):
 class TestBGCArgoPlusVersions:
     def test_paper_and_default_versions(self):
         assert BGCARGO_PLUS_PAPER_VERSION == "v0.1_2026_04"
-        assert BGCARGO_PLUS_DEFAULT_VERSION == "v1.0"
+        assert BGCARGO_PLUS_DEFAULT_VERSION == "latest"
         assert BGCARGO_PLUS_PAPER_VERSION in BGCARGO_PLUS_PATH_TEMPLATES
 
     def test_versions_sorted_and_filtered(self):
         with _mock_server():
-            assert bgcargo_plus_versions() == ["v0.0_2025_09", "v0.1_2025_12", "v0.1_2026_04", "v1.0"]
+            assert bgcargo_plus_versions() == ["v0.1_2026_04", "v1.0"]
 
     def test_versions_sorted_numerically(self):
         listing = [f"{_ROOT}/{v}/" for v in ["v1.10", "v1.2_2026_10", "v1.2"]]
@@ -350,19 +364,21 @@ class TestBGCArgoPlusVersions:
 
     def test_resolve(self):
         assert resolve_bgcargo_plus_version("paper") == BGCARGO_PLUS_PAPER_VERSION
-        assert resolve_bgcargo_plus_version("v0.1_2025_12") == "v0.1_2025_12"
+        assert resolve_bgcargo_plus_version("v1.0") == "v1.0"
         with _mock_server():
             assert resolve_bgcargo_plus_version("latest") == "v1.0"
+            assert resolve_bgcargo_plus_version() == "v1.0"
 
     def test_store_paper(self):
         store = BGCArgoPlusStore(TEST_WMO, version="paper")
         assert store.version == BGCARGO_PLUS_PAPER_VERSION
         assert store.requested_version == "paper"
 
-    def test_store_latest_resolved_lazily(self):
+    @pytest.mark.parametrize("kwargs", [{}, {"version": "latest"}], ids=["default", "latest"])
+    def test_store_latest_resolved_lazily(self, kwargs):
         """'latest' must not list the server when the store is created, only on first use, and only once."""
         with _mock_server() as mock_httpstore:
-            store = BGCArgoPlusStore(TEST_WMO, version="latest")
+            store = BGCArgoPlusStore(TEST_WMO, **kwargs)
             mock_httpstore.assert_not_called()
             assert store.version == "v1.0"
             assert store.version == "v1.0"
@@ -435,7 +451,7 @@ class TestArgoFloatOpenProductBGCArgoPlus:
         """version kwarg must reach BGCArgoPlusStore constructor."""
         dummy_ds = _make_dummy_dataset()
         af = self._make_mock_argofloat()
-        custom_version = "v0.1_2025_12"
+        custom_version = TEST_VERSION
         mock_store_cls = MagicMock(
             return_value=MagicMock(open_dataset=MagicMock(return_value=dummy_ds))
         )
@@ -454,7 +470,7 @@ class TestArgoFloatOpenProductBGCArgoPlus:
 
         with patch(STORE_CLASS, mock_store_cls):
             af.open_product("BGCArgoPlus")
-            assert mock_store_cls.call_args[1].get("version") == BGCARGO_PLUS_DEFAULT_VERSION
+            assert mock_store_cls.call_args[1].get("version") == "latest"
 
     def test_unknown_product_raises(self):
         af = self._make_mock_argofloat()
