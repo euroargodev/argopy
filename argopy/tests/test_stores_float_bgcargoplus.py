@@ -15,6 +15,7 @@ Run::
 """
 
 import socket
+import urllib.error
 from unittest.mock import MagicMock, patch
 
 import aiohttp
@@ -297,13 +298,27 @@ class TestBGCArgoPlusServerUnreachable:
             mock_check.assert_called_once()
             assert "server available : False" in repr(store)
 
-    @pytest.mark.parametrize("reachable", [True, False])
-    def test_server_available(self, reachable):
-        target = "argopy.stores.float.products.bgcargo_plus.socket.create_connection"
-        side_effect = None if reachable else ConnectionRefusedError(61, "Connection refused")
-        with patch(target, side_effect=side_effect) as mock_conn:
-            assert bgcargo_plus_server_available(timeout=1) is reachable
-            mock_conn.assert_called_once()
+    @pytest.mark.parametrize(
+        "status, side_effect, expected",
+        [
+            (200, None, True),
+            (None, urllib.error.HTTPError(BGCARGO_PLUS_SERVER, 503, "Service Unavailable", {}, None), False),
+            (None, urllib.error.URLError(ConnectionRefusedError(61, "Connection refused")), False),
+            (None, TimeoutError("timed out"), False),
+        ],
+        ids=["up", "http-503", "refused", "timeout"],
+    )
+    def test_server_available(self, status, side_effect, expected):
+        """The check needs an HTTP success answer from the dataset root folder, not only an open port."""
+        target = "argopy.stores.float.products.bgcargo_plus.urllib.request.urlopen"
+        response = MagicMock(status=status)
+        response.__enter__.return_value = response
+        with patch(target, return_value=response, side_effect=side_effect) as mock_open:
+            assert bgcargo_plus_server_available(timeout=1) is expected
+            mock_open.assert_called_once()
+            request = mock_open.call_args[0][0]
+            assert request.get_method() == "HEAD"
+            assert request.full_url == f"{BGCARGO_PLUS_SERVER}/bgc_argo_plus/outliers_removed/"
 
 
 
@@ -488,6 +503,14 @@ class TestArgoFloatOpenProductBGCArgoPlus:
 # Integration tests (network required)
 # ---------------------------------------------------------------------------
 
+def _skip_if_server_down(func, *args, **kwargs):
+    """Call ``func``, skip the test if the BGC-Argo+ server cannot be reached during the call."""
+    try:
+        return func(*args, **kwargs)
+    except (BGCArgoPlusServerError, aiohttp.ClientConnectionError, TimeoutError) as exc:
+        pytest.skip(f"BGC-Argo+ server unreachable: {exc}")
+
+
 @requires_connection
 @requires_bgcargo_plus_server
 class TestBGCArgoPlusIntegration:
@@ -498,37 +521,37 @@ class TestBGCArgoPlusIntegration:
         import fsspec
         url = bgcargo_plus_url(TEST_WMO)
         fs = fsspec.filesystem("https")
-        assert fs.exists(url), f"BGC-Argo+ file not found: {url}"
+        assert _skip_if_server_down(fs.exists, url), f"BGC-Argo+ file not found: {url}"
 
     def test_open_dataset_returns_xarray(self):
         store = BGCArgoPlusStore(TEST_WMO)
-        ds = store.open_dataset()
+        ds = _skip_if_server_down(store.open_dataset)
         assert isinstance(ds, xr.Dataset)
 
     def test_dataset_has_pressure(self):
         store = BGCArgoPlusStore(TEST_WMO)
-        ds = store.open_dataset()
+        ds = _skip_if_server_down(store.open_dataset)
         assert "PRES" in ds or any("PRES" in v.upper() for v in ds.data_vars)
 
     def test_latest_version_on_server(self):
-        versions = bgcargo_plus_versions()
+        versions = _skip_if_server_down(bgcargo_plus_versions)
         assert BGCARGO_PLUS_PAPER_VERSION in versions
-        assert bgcargo_plus_latest_version() == versions[-1]
+        assert _skip_if_server_down(bgcargo_plus_latest_version) == versions[-1]
 
     def test_argofloat_open_product_latest(self):
         from argopy import ArgoFloat
-        ds = ArgoFloat(TEST_WMO).open_product("BGCArgoPlus", version="latest")
+        ds = _skip_if_server_down(ArgoFloat(TEST_WMO).open_product, "BGCArgoPlus", version="latest")
         assert isinstance(ds, xr.Dataset)
 
     def test_argofloat_open_product_bgcargo_plus(self):
         from argopy import ArgoFloat
-        ds = ArgoFloat(TEST_WMO).open_product("BGCArgoPlus")
+        ds = _skip_if_server_down(ArgoFloat(TEST_WMO).open_product, "BGCArgoPlus")
         assert isinstance(ds, xr.Dataset)
 
     def test_profile2point_returns_point_dataset(self):
         """profile2point() should convert the profile dataset to a point cloud."""
         store = BGCArgoPlusStore(TEST_WMO)
-        ds = store.open_dataset()
+        ds = _skip_if_server_down(store.open_dataset)
         ds_point = ds.argo.profile2point()
         assert isinstance(ds_point, xr.Dataset)
         assert "N_POINTS" in ds_point.dims
@@ -538,7 +561,7 @@ class TestBGCArgoPlusIntegration:
         """profile2point() followed by point2profile() should recover the same
         number of profiles and be free of TypeError from bytes/str mixing."""
         store = BGCArgoPlusStore(TEST_WMO)
-        ds = store.open_dataset()
+        ds = _skip_if_server_down(store.open_dataset)
         n_prof_original = ds.sizes["N_PROF"]
         ds_point = ds.argo.profile2point()
         ds_back = ds_point.argo.point2profile()

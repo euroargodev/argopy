@@ -38,6 +38,8 @@ from __future__ import annotations
 import logging
 import re
 import socket
+import urllib.error
+import urllib.request
 
 import aiohttp
 import fsspec
@@ -77,21 +79,26 @@ class BGCArgoPlusServerError(APIServerError):
 
 
 def bgcargo_plus_server_available(timeout: float = 5) -> bool:
-    """Check if the BGC-Argo+ server accepts connections.
+    """Check if the BGC-Argo+ server is up and serves the dataset.
+
+    Send an HTTPS ``HEAD`` request to the dataset root folder, :data:`BGCARGO_PLUS_ROOT`. A port that accepts
+    connections is not enough: the server must answer with a success status.
 
     Parameters
     ----------
     timeout : float, optional
-        Connection timeout in seconds.
+        Request timeout in seconds.
 
     Returns
     -------
     bool
     """
+    url = f"{BGCARGO_PLUS_SERVER}{BGCARGO_PLUS_ROOT}/"
     try:
-        with socket.create_connection((BGCARGO_PLUS_HOST, BGCARGO_PLUS_PORT), timeout=timeout):
-            return True
-    except OSError:
+        with urllib.request.urlopen(urllib.request.Request(url, method="HEAD"), timeout=timeout) as response:
+            return 200 <= response.status < 400
+    except (urllib.error.URLError, OSError, ValueError) as exc:  # HTTPError is a URLError
+        log.debug("BGC-Argo+ server check failed for %s: %s", url, exc)
         return False
 
 
@@ -335,7 +342,7 @@ class BGCArgoPlusStore:
 
     @property
     def server_available(self) -> bool:
-        """Whether the BGC-Argo+ server accepts connections.
+        """Whether the BGC-Argo+ server is up and serves the dataset.
 
         The server is checked once, on first access, with :func:`bgcargo_plus_server_available`.
         """
