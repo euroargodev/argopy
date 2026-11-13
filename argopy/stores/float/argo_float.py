@@ -83,7 +83,7 @@ class ArgoFloat(FloatStore):
 
 
     .. code-block:: python
-        :caption: Load third-party (non-official) products
+        :caption: Load third-party product: BGC-Argo+
 
         ds = af.open_product('BGCArgoPlus')  # BGC-Argo+ dataset (https://www.bgc-argo-plus.info)
 
