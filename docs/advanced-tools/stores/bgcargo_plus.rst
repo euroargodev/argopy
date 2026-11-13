@@ -63,18 +63,18 @@ The BGC-Argo+ dataset is versioned. Use the ``version`` keyword to choose which 
 
    af = ArgoFloat(6903091)
 
-   ds = af.open_product('BGCArgoPlus')                          # Default: v1.0
-   ds = af.open_product('BGCArgoPlus', version='paper')         # Version from the reference paper, v0.1_2026_04
-   ds = af.open_product('BGCArgoPlus', version='latest')        # Most recent version on the SOEST server
-   ds = af.open_product('BGCArgoPlus', version='v0.1_2025_12')  # A specific version
+   ds = af.open_product('BGCArgoPlus')                   # Default: most recent version on the SOEST server
+   ds = af.open_product('BGCArgoPlus', version='latest')  # Same as above
+   ds = af.open_product('BGCArgoPlus', version='paper')   # Version from the reference paper, v0.1_2026_04
+   ds = af.open_product('BGCArgoPlus', version='v1.0')    # A specific version
 
-- The default version is :data:`~argopy.stores.float.products.bgcargo_plus.BGCARGO_PLUS_DEFAULT_VERSION` = ``"v1.0"``.
+- ``'latest'`` (the default) looks up the most recent version available on the SOEST server. This requires a
+  connection to the server, and the result will change when a new version is published: use a version tag to
+  make your analysis reproducible.
 - ``'paper'`` is the version described in the reference paper,
   Bushinsky et al. (2026, `doi:10.5194/essd-2026-311 <https://doi.org/10.5194/essd-2026-311>`_):
   :data:`~argopy.stores.float.products.bgcargo_plus.BGCARGO_PLUS_PAPER_VERSION` = ``"v0.1_2026_04"``,
   archived at `doi:10.5281/zenodo.19709012 <https://doi.org/10.5281/zenodo.19709012>`_.
-- ``'latest'`` looks up the most recent version available on the SOEST server. This requires a connection
-  to the server, and the result will change when a new version is published.
 
 You can list the versions available on the server with:
 

@@ -107,21 +107,19 @@ BGCARGO_PLUS_ROOT = "/bgc_argo_plus/outliers_removed"
 
 # Path template on the server for each supported dataset version
 BGCARGO_PLUS_PATH_TEMPLATES = {
-    "v0.0_2025_09": "/bgc_argo_plus/outliers_removed/v0.0_2025_09/{wmo}_Sprof_processed.nc",
-    "v0.1_2025_12": "/bgc_argo_plus/outliers_removed/v0.1_2025_12/{wmo}_Sprof_BGCArgoPlus.nc",
-    "v0.1_2026_04": "/bgc_argo_plus/outliers_removed/v0.1_2026_04/Individual_Floats/{wmo}_Sprof_BGCArgoPlus.nc",
-    "v1.0": "/bgc_argo_plus/outliers_removed/v1.0/Individual_Floats/{wmo}_Sprof_BGCArgoPlus.nc",
+    "v0.1_2026_04": BGCARGO_PLUS_ROOT + "/v0.1_2026_04/Individual_Floats/{wmo}_Sprof_BGCArgoPlus.nc",
+    "v1.0": BGCARGO_PLUS_ROOT + "/v1.0/Individual_Floats/{wmo}_Sprof_BGCArgoPlus.nc",
 }
 
 # Path template assumed for versions released after this module (see :func:`bgcargo_plus_url`)
-BGCARGO_PLUS_PATH_TEMPLATE_NEW = "/bgc_argo_plus/outliers_removed/{version}/Individual_Floats/{wmo}_Sprof_BGCArgoPlus.nc"
+BGCARGO_PLUS_PATH_TEMPLATE_NEW = BGCARGO_PLUS_ROOT + "/{version}/Individual_Floats/{wmo}_Sprof_BGCArgoPlus.nc"
 
 # Version described in the reference paper: Bushinsky et al. (2026), https://doi.org/10.5194/essd-2026-311,
 # with dataset DOI https://doi.org/10.5281/zenodo.19709012.
 BGCARGO_PLUS_PAPER_VERSION = "v0.1_2026_04"
 
-# Default version
-BGCARGO_PLUS_DEFAULT_VERSION = "v1.0"
+# Default version: the most recent version available on the server, looked up when first needed
+BGCARGO_PLUS_DEFAULT_VERSION = "latest"
 
 # Version folder names on the server, with or without a release date, e.g. 'v0.1_2026_04' or 'v1.0'
 _VERSION_PATTERN = re.compile(r"^v(\d+)\.(\d+)(?:_(\d{4})_(\d{2}))?$")
@@ -143,7 +141,7 @@ def bgcargo_plus_versions(timeout: int = 0) -> list[str]:
     Returns
     -------
     list[str]
-        Version tags sorted from the oldest to the most recent, e.g. ``['v0.0_2025_09', 'v0.1_2025_12', 'v0.1_2026_04', 'v1.0']``.
+        Version tags sorted from the oldest to the most recent, e.g. ``['v0.1_2026_04', 'v1.0']``.
 
     Raises
     ------
@@ -161,7 +159,11 @@ def bgcargo_plus_versions(timeout: int = 0) -> list[str]:
     except _SERVER_ERRORS as exc:
         raise _server_error(exc) from exc
     names = [(e["name"] if isinstance(e, dict) else e).rstrip("/").split("/")[-1] for e in entries]
-    return sorted((n for n in names if _VERSION_PATTERN.match(n)), key=_version_key)
+    versions = sorted((n for n in names if _VERSION_PATTERN.match(n)), key=_version_key)
+    for old_version in ['v0.0_2025_09', 'v0.1_2025_12']: # remove old versions prior to the paper version
+        if old_version in versions:
+            versions.remove(old_version)
+    return versions
 
 
 def bgcargo_plus_latest_version(timeout: int = 0) -> str:
@@ -196,13 +198,21 @@ def resolve_bgcargo_plus_version(version: str = BGCARGO_PLUS_DEFAULT_VERSION, ti
     return version
 
 
-
 def _new_httpstore(cache: bool = False, cachedir: str = "", timeout: int = 0) -> httpstore:
     """Create an :class:`httpstore` for the BGC-Argo+ server."""
     opts = {"cache": cache, "cachedir": cachedir}
     if timeout:
         opts["client_kwargs"] = {"timeout": aiohttp.ClientTimeout(total=timeout)}
     return httpstore(**opts)
+
+
+def _bgcargoplus_attrs(ds: xr.Dataset, version: str) -> None:
+    """Add a custom attribute to the dataset store indicating the BGC-Argo+ version used for outlier removal."""
+    history = ds.attrs.get('history', '')
+    if 'BGC-Argo+' not in history:
+        history += f"; BGC-Argo+ processing ({version}) for outliers "
+    ds.attrs['history'] = history
+    ds.attrs['BGC-Argo+_version'] = version
 
 
 def bgcargo_plus_url(wmo: int, version: str = BGCARGO_PLUS_DEFAULT_VERSION, check: bool = True) -> str:
@@ -213,8 +223,8 @@ def bgcargo_plus_url(wmo: int, version: str = BGCARGO_PLUS_DEFAULT_VERSION, chec
     wmo : int
         Float WMO number.
     version : str, optional
-        Dataset version tag, e.g. ``"v1.0"``, or ``"paper"`` or ``"latest"``,
-        see :func:`resolve_bgcargo_plus_version`.
+        Dataset version tag, e.g. ``"v1.0"``, or ``"paper"`` or ``"latest"`` (default, requires a connection
+        to the server), see :func:`resolve_bgcargo_plus_version`.
     check : bool, optional
         If True, only accept versions listed in :data:`BGCARGO_PLUS_PATH_TEMPLATES`. If False, a version
         tag unknown to this module (e.g. a new release on the server) is accepted and assumed to follow
@@ -263,7 +273,7 @@ class BGCArgoPlusStore:
         BGC-Argo+ dataset version, default :data:`BGCARGO_PLUS_DEFAULT_VERSION`. It can be:
 
         - ``"paper"``: the version from the reference paper, :data:`BGCARGO_PLUS_PAPER_VERSION`,
-        - ``"latest"``: the most recent version available on the server, looked up on first use,
+        - ``"latest"`` (default): the most recent version available on the server, looked up on first use,
         - any version tag from :data:`BGCARGO_PLUS_PATH_TEMPLATES`, e.g. ``"v1.0"``.
     cache : bool, optional
         Cache downloaded files locally (passed to :class:`httpstore`).
@@ -275,12 +285,14 @@ class BGCArgoPlusStore:
     Examples
     --------
     >>> from argopy.stores.float.products.bgcargo_plus import BGCArgoPlusStore
-    >>> store = BGCArgoPlusStore(6903091)
+    >>> store = BGCArgoPlusStore(6903091)  # Most recent version on the server
     >>> ds = store.open_dataset()
     >>> store.url
     'https://ftp.soest.hawaii.edu/bgc_argo_plus/...'
-    >>> BGCArgoPlusStore(6903091, version='latest').version  # Most recent version on the server
+    >>> store.version
     'v1.0'
+    >>> BGCArgoPlusStore(6903091, version='paper').version  # Version from the reference paper
+    'v0.1_2026_04'
     """
 
     def __init__(
@@ -384,6 +396,7 @@ class BGCArgoPlusStore:
                 f"(version='{self.version}') from {self.url}.\n"
                 f"Original error: {exc}"
             ) from exc
+        _bgcargoplus_attrs(ds, self.version)
         return ds
 
     def __repr__(self) -> str:
