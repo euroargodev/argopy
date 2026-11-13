@@ -16,9 +16,9 @@ BGC-Argo+ product
    outlier-removed compilation of BGC-Argo float data curated by the `HI-Cycles
    <https://hi-cycles.org>`_ group at the School of Ocean and Earth Science
    and Technology (SOEST), University of Hawaiʻi at Mānoa (Bushinsky et al, 2026, submitted). Individual float files are
-   served on the SOEST FTP server::
+   served over HTTPS by the SOEST web file storage::
 
-       ftp://ftp.soest.hawaii.edu/bgc_argo_plus/outliers_removed/<version>/
+       https://ftp.soest.hawaii.edu/bgc_argo_plus/outliers_removed/<version>/
 
    Relative to the standard GDAC ``Sprof`` files, BGC-Argo+ files provide:
 
@@ -63,16 +63,17 @@ The BGC-Argo+ dataset is versioned. Use the ``version`` keyword to choose which 
 
    af = ArgoFloat(6903091)
 
-   ds = af.open_product('BGCArgoPlus')                          # Default: version from the reference paper
-   ds = af.open_product('BGCArgoPlus', version='paper')         # Same as above, v0.1_2026_04
+   ds = af.open_product('BGCArgoPlus')                          # Default: v1.0
+   ds = af.open_product('BGCArgoPlus', version='paper')         # Version from the reference paper, v0.1_2026_04
    ds = af.open_product('BGCArgoPlus', version='latest')        # Most recent version on the SOEST server
-   ds = af.open_product('BGCArgoPlus', version='v1.0_2026_08')  # A specific version
+   ds = af.open_product('BGCArgoPlus', version='v0.1_2025_12')  # A specific version
 
-- ``'paper'`` (the default) is the version described in the reference paper,
+- The default version is :data:`~argopy.stores.float.products.bgcargo_plus.BGCARGO_PLUS_DEFAULT_VERSION` = ``"v1.0"``.
+- ``'paper'`` is the version described in the reference paper,
   Bushinsky et al. (2026, `doi:10.5194/essd-2026-311 <https://doi.org/10.5194/essd-2026-311>`_):
   :data:`~argopy.stores.float.products.bgcargo_plus.BGCARGO_PLUS_PAPER_VERSION` = ``"v0.1_2026_04"``,
   archived at `doi:10.5281/zenodo.19709012 <https://doi.org/10.5281/zenodo.19709012>`_.
-- ``'latest'`` looks up the most recent version available on the SOEST FTP server. This requires a connection
+- ``'latest'`` looks up the most recent version available on the SOEST server. This requires a connection
   to the server, and the result will change when a new version is published.
 
 You can list the versions available on the server with:
@@ -81,13 +82,13 @@ You can list the versions available on the server with:
 
    from argopy.stores.float.products.bgcargo_plus import bgcargo_plus_versions, bgcargo_plus_latest_version
 
-   bgcargo_plus_versions()        # ['v0.0_2025_09', 'v0.1_2025_12', 'v0.1_2026_04', 'v1.0_2026_08']
-   bgcargo_plus_latest_version()  # 'v1.0_2026_08'
+   bgcargo_plus_versions()        # ['v0.0_2025_09', 'v0.1_2025_12', 'v0.1_2026_04', 'v1.0']
+   bgcargo_plus_latest_version()  # 'v1.0'
 
 Server availability
 -------------------
 
-BGC-Argo+ files are served by a single FTP server. If it cannot be reached (server down, network issue), a
+BGC-Argo+ files are served by a single HTTPS server. If it cannot be reached (server down, network issue), a
 :class:`~argopy.stores.float.products.bgcargo_plus.BGCArgoPlusServerError` is raised. You can check the
 server beforehand with:
 
@@ -103,4 +104,4 @@ See also
 - :ref:`BGC-Argo+ API reference <api-bgcargo-plus>`.
 - :ref:`tools-argofloat`: the parent :class:`~argopy.ArgoFloat` documentation.
 - `BGC-Argo+ website <https://www.bgc-argo-plus.info>`_
-- `SOEST FTP index <https://ftp.soest.hawaii.edu/bgc_argo_plus/>`_
+- `SOEST server index <https://ftp.soest.hawaii.edu/bgc_argo_plus/>`_
