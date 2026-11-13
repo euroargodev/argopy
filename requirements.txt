@@ -4,6 +4,7 @@ scipy  # eg: used a lot as xarray engine
 erddapy
 netCDF4
 h5netcdf
+h5py
 fsspec
 toolz
 requests  # because it's optional in fsspec

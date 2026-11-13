@@ -9,6 +9,7 @@ dependencies:
   - erddapy = 2.2.4
   - fsspec = 2025.5.1
   - h5netcdf = 1.6.3
+  - h5py = 3.16.0
   - netCDF4 = 1.7.2
   - requests = 2.32.4
   - scipy = 1.16.0
@@ -22,7 +23,6 @@ dependencies:
 
 # EXT.FILES:
   - boto3 = 1.38.27
-  - h5py = 3.16.0  # required by kerchunk
   - kerchunk = 0.2.8
   - numcodecs = 0.16.1
   - s3fs = 2025.5.1

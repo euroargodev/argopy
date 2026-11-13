@@ -9,6 +9,7 @@ dependencies:
   - erddapy
   - fsspec
   - h5netcdf
+  - h5py
   - netCDF4
   - requests
   - scipy
@@ -22,7 +23,6 @@ dependencies:
 
 # EXT.FILES:
 #  - boto3
-#  - h5py  # required by kerchunk
 #  - kerchunk
 #  - numcodecs
 #  - s3fs
