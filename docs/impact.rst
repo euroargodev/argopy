@@ -12,7 +12,7 @@ Papers & proceedings citing Argopy
 
 #. Chafik, et.al (2023). "The Faroe-Shetland Channel Jet: Structure, Variability, and Driving Mechanisms", Journal of Geophysical Research: Oceans. https://doi.org/10.1029/2022JC019083
 
-#. Y. -S. Chang, Y. -J. Liao, B. Haobijam and T. H. Singh, "A Depth-Aware Ensemble Deep Learning Framework with Layer-wise Recursive Prediction for Multi-Source Subsurface Ocean Temperature and Salinity Forecasting", IEEE Transactions on Geoscience and Remote Sensing. doi: https://10.1109/TGRS.2026.3736768
+#. Chang Y. -S., Liao Y. -J. , Haobijam B. and Singh T. H., "A Depth-Aware Ensemble Deep Learning Framework with Layer-wise Recursive Prediction for Multi-Source Subsurface Ocean Temperature and Salinity Forecasting", IEEE Transactions on Geoscience and Remote Sensing. doi: https://10.1109/TGRS.2026.3736768
 
 #. Chevillard C, Juza M, Dıaz-Barroso L, Reyes E, Escudier R and Tintore J (2024). "Capability of the Mediterranean Argo network to monitor sub-regional climate change indicators", Front. Mar. Sci. 11:1416486. https://doi.org/10.3389/fmars.2024.1416486
 
@@ -44,6 +44,8 @@ Papers & proceedings citing Argopy
 
 #. Nikhil Parkar, M. Marimuthu, Aditi Agale, Vraj Prajapati, Arnav Parekar, Aditi Bambal, Shivam Chavan (2026): "A unified RAG-based framework for intelligent exploration of Argo and BGC-Argo oceanographic data". Ecological Informatics, 98. https://doi.org/10.1016/j.ecoinf.2026.103990
 
+#. Silva, D. A., Gangopadhyay, A., Sasaki, D. K., Dottori, M., da Silveira, I. C. A., Belo, W. C., & Martins, R. P. (2026): "Synoptic pathways of mid-depth salinity maximum intrusions in the South Brazil Bight". Journal of Geophysical Research: Oceans, 131, e2025JC023411. https://doi.org/10.1029/2025JC023411
+
 #. Singh, Shikha and Sapkal, Mayur (2025). "A machine learning approach to identify upper ocean water masses in the Indian Ocean", CSI Transactions on ICT. https://doi.org/10.1007/s40012-025-00417-9.
 
 #. Steinberg, J. M., Piecuch, C. G., Hamlington, B. D., Thompson, P. R., & Coats, S. (2024). "Influence of deep-ocean warming on coastal sea-level decadal trends in the Gulf of Mexico", Journal of Geophysical Research: Oceans, 129, e2023JC019681. https://doi.org/10.1029/2023JC019681
@@ -70,7 +72,9 @@ Blog post & personal pages :
 
 Academic referencing/use-cases:
 
-- DeFeo, Jessica (2026). "Radiative Transfer Comparisons Between Satellite Ocean Color and BGC-Argo Float Chlorophyll". The State University of New Jersey, School of Graduate Studies. Dissertations & Theses, 2026. 32856575.
+- DeFeo, Jessica (2026): "Radiative Transfer Comparisons Between Satellite Ocean Color and BGC-Argo Float Chlorophyll". The State University of New Jersey, School of Graduate Studies. Dissertations & Theses, 2026. 32856575.
+
+- Y. Jenniges et al (2026): "comfort-db: A Python toolkit to access, preprocess and explore the oceanographic {COMFORT} dataset". https://arxiv.org/abs/2611.09353
 
 - Sydney univ academic conda env : http://climate-cms.wikis.unsw.edu.au/Conda
 
