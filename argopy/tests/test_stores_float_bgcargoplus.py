@@ -14,10 +14,10 @@ Run::
     pytest argopy/tests/test_stores_float_bgcargoplus.py
 """
 
-import ftplib
 import socket
 from unittest.mock import MagicMock, patch
 
+import aiohttp
 import numpy as np
 import pytest
 import xarray as xr
@@ -31,7 +31,8 @@ from argopy.stores.float.products.bgcargo_plus import (
     BGCArgoPlusServerError,
     bgcargo_plus_server_available,
     BGCARGO_PLUS_DEFAULT_VERSION,
-    BGCARGO_PLUS_FTP_HOST,
+    BGCARGO_PLUS_HOST,
+    BGCARGO_PLUS_SERVER,
     BGCARGO_PLUS_PATH_TEMPLATES,
     BGCArgoPlusStore,
     bgcargo_plus_url,
@@ -46,15 +47,15 @@ from argopy.tests.helpers.utils import requires_connection
 TEST_WMO = 6903091
 TEST_VERSION = "v0.1_2026_04"
 STORE_CLASS = "argopy.stores.float.products.bgcargo_plus.BGCArgoPlusStore"
-FTPSTORE_CLASS = "argopy.stores.float.products.bgcargo_plus.ftpstore"
+HTTPSTORE_CLASS = "argopy.stores.float.products.bgcargo_plus.httpstore"
 
 requires_bgcargo_plus_server = pytest.mark.skipif(
-    not bgcargo_plus_server_available(), reason="Requires the BGC-Argo+ FTP server"
+    not bgcargo_plus_server_available(), reason="Requires the BGC-Argo+ server"
 )
 
 
 def _mock_fs(store: BGCArgoPlusStore) -> MagicMock:
-    """Replace the store FTP file system by a mock, so that no connection is made."""
+    """Replace the store file system by a mock, so that no connection is made."""
     store._fs = MagicMock()
     return store._fs
 
@@ -86,13 +87,13 @@ class TestBGCArgoPlusURL:
         url = bgcargo_plus_url(TEST_WMO)
         assert isinstance(url, str)
 
-    def test_starts_with_ftp(self):
+    def test_starts_with_https(self):
         url = bgcargo_plus_url(TEST_WMO)
-        assert url.startswith("ftp://")
+        assert url.startswith(f"https://{BGCARGO_PLUS_HOST}/")
 
     def test_contains_correct_host(self):
         url = bgcargo_plus_url(TEST_WMO)
-        assert BGCARGO_PLUS_FTP_HOST in url
+        assert BGCARGO_PLUS_HOST in url
 
     def test_contains_wmo(self):
         url = bgcargo_plus_url(TEST_WMO)
@@ -122,11 +123,11 @@ class TestBGCArgoPlusURL:
             ("v0.0_2025_09", f"/outliers_removed/v0.0_2025_09/{TEST_WMO}_Sprof_processed.nc"),
             ("v0.1_2025_12", f"/outliers_removed/v0.1_2025_12/{TEST_WMO}_Sprof_BGCArgoPlus.nc"),
             ("v0.1_2026_04", f"/outliers_removed/v0.1_2026_04/Individual_Floats/{TEST_WMO}_Sprof_BGCArgoPlus.nc"),
-            ("v1.0_2026_08", f"/outliers_removed/v1.0_2026_08/Individual_Floats/{TEST_WMO}_Sprof_BGCArgoPlus.nc"),
+            ("v1.0", f"/outliers_removed/v1.0/Individual_Floats/{TEST_WMO}_Sprof_BGCArgoPlus.nc"),
         ],
     )
     def test_path_per_version(self, version, expected):
-        """Each dataset version has its own layout on the FTP server."""
+        """Each dataset version has its own layout on the server."""
         assert bgcargo_plus_url(TEST_WMO, version=version).endswith(expected)
 
     def test_default_version_supported(self):
@@ -169,17 +170,17 @@ class TestBGCArgoPlusStoreUnit:
         assert "BGCArgoPlusStore" in r
 
     def test_open_dataset_mocked(self):
-        """open_dataset() should delegate to ftpstore and return a Dataset."""
+        """open_dataset() should delegate to httpstore, with the 'argo' engine, and return a Dataset."""
         dummy_ds = _make_dummy_dataset()
         store = BGCArgoPlusStore(TEST_WMO)
 
         with patch.object(_mock_fs(store), "open_dataset", return_value=dummy_ds) as mock_od:
             ds = store.open_dataset()
-            mock_od.assert_called_once_with(store.url)
+            mock_od.assert_called_once_with(store.url, xr_opts={"engine": "argo"})
             assert isinstance(ds, xr.Dataset)
 
     def test_open_dataset_extra_kwargs_forwarded(self):
-        """Extra kwargs should be passed through to the underlying ftpstore."""
+        """Extra kwargs should be passed through to the underlying httpstore."""
         dummy_ds = _make_dummy_dataset()
         store = BGCArgoPlusStore(TEST_WMO)
 
@@ -189,35 +190,28 @@ class TestBGCArgoPlusStoreUnit:
             assert "lazy" in call_kwargs
             assert call_kwargs["lazy"] is True
 
+    def test_open_dataset_xr_opts_merged(self):
+        """User xr_opts are merged with, and can override, the default 'argo' engine."""
+        store = BGCArgoPlusStore(TEST_WMO)
+        with patch.object(_mock_fs(store), "open_dataset", return_value=_make_dummy_dataset()) as mock_od:
+            store.open_dataset(xr_opts={"engine": "h5netcdf", "decode_times": False})
+            assert mock_od.call_args[1]["xr_opts"] == {"engine": "h5netcdf", "decode_times": False}
+
     def test_open_dataset_file_not_found(self):
-        """A FileNotFoundError should be raised when the FTP file is missing."""
+        """A FileNotFoundError should be raised when the file is missing on the server (HTTP 404)."""
         store = BGCArgoPlusStore(TEST_WMO)
 
         with patch.object(
-            _mock_fs(store), "open_dataset", side_effect=FileNotFoundError("550 File not found")
+            _mock_fs(store), "open_dataset", side_effect=FileNotFoundError("404 Not Found")
         ):
             with pytest.raises(FileNotFoundError, match=str(TEST_WMO)):
                 store.open_dataset()
 
     def test_invalid_wmo_raises(self):
-        """An invalid WMO should raise before any FTP connection is made."""
+        """An invalid WMO should raise before any connection is made."""
         with pytest.raises(Exception):  # argopy raises ValueError or similar
             BGCArgoPlusStore(999)  # 999 is not a valid Argo WMO
 
-    def test_bytes_variables_decoded(self):
-        """Byte-string variables must be decoded to str, PLATFORM_NUMBER cast to int."""
-        raw = xr.Dataset(
-            {
-                "PLATFORM_NUMBER": ("N_PROF", np.array([b"6903091 ", b"6903091 "])),
-                "DATA_MODE": ("N_PROF", np.array([b"D", b"A"])),
-            }
-        )
-        store = BGCArgoPlusStore(TEST_WMO)
-        with patch.object(_mock_fs(store), "open_dataset", return_value=raw):
-            ds = store.open_dataset()
-        assert ds["DATA_MODE"].dtype.kind == "U"
-        assert ds["PLATFORM_NUMBER"].dtype.kind == "i"
-        assert int(ds["PLATFORM_NUMBER"][0]) == TEST_WMO
 
 
 
@@ -227,17 +221,17 @@ class TestBGCArgoPlusStoreUnit:
 
 class TestBGCArgoPlusServerUnreachable:
     def test_no_connection_at_init(self):
-        """Creating a store must not connect to the FTP server."""
-        with patch(FTPSTORE_CLASS) as mock_ftpstore:
+        """Creating a store must not connect to the server."""
+        with patch(HTTPSTORE_CLASS) as mock_httpstore:
             store = BGCArgoPlusStore(TEST_WMO)
-            assert store.url.startswith("ftp://")
-            mock_ftpstore.assert_not_called()
+            assert store.url.startswith("https://")
+            mock_httpstore.assert_not_called()
 
     def test_fs_created_once(self):
-        with patch(FTPSTORE_CLASS) as mock_ftpstore:
+        with patch(HTTPSTORE_CLASS) as mock_httpstore:
             store = BGCArgoPlusStore(TEST_WMO)
             assert store.fs is store.fs
-            mock_ftpstore.assert_called_once()
+            mock_httpstore.assert_called_once()
 
     @pytest.mark.parametrize(
         "error",
@@ -245,13 +239,13 @@ class TestBGCArgoPlusServerUnreachable:
             ConnectionRefusedError(61, "Connection refused"),
             TimeoutError("timed out"),
             socket.gaierror(8, "nodename nor servname provided"),
-            ftplib.error_temp("421 Too many connections"),
+            aiohttp.ServerDisconnectedError(),
         ],
-        ids=["refused", "timeout", "dns", "busy"],
+        ids=["refused", "timeout", "dns", "disconnected"],
     )
     def test_server_error_when_connecting(self, error):
         store = BGCArgoPlusStore(TEST_WMO)
-        with patch(FTPSTORE_CLASS, side_effect=error):
+        with patch(HTTPSTORE_CLASS, side_effect=error):
             with pytest.raises(BGCArgoPlusServerError, match="Cannot reach the BGC-Argo\\+ server"):
                 store.open_dataset()
 
@@ -272,8 +266,8 @@ class TestBGCArgoPlusServerUnreachable:
 
         af = MagicMock(WMO=TEST_WMO, cache=False, cachedir="", timeout=0)
         af.open_product = FloatStoreProto.open_product.__get__(af, type(af))
-        with patch(FTPSTORE_CLASS, side_effect=ConnectionRefusedError(61, "Connection refused")):
-            with pytest.raises(BGCArgoPlusServerError, match="ftp.soest.hawaii.edu"):
+        with patch(HTTPSTORE_CLASS, side_effect=ConnectionRefusedError(61, "Connection refused")):
+            with pytest.raises(BGCArgoPlusServerError, match=BGCARGO_PLUS_SERVER):
                 af.open_product("BGCArgoPlus")
 
     def test_server_available_checked_lazily(self):
@@ -301,42 +295,48 @@ class TestBGCArgoPlusServerUnreachable:
 # Unit tests — 'paper' and 'latest' versions
 # ---------------------------------------------------------------------------
 
-# What ftpstore.ls returns for the root folder, unsorted, with a non-version entry
+# What httpstore.ls(detail=False) returns for the root folder (links of the Apache index page),
+# unsorted, with non-version entries
+_ROOT = f"{BGCARGO_PLUS_SERVER}/bgc_argo_plus/outliers_removed"
 SERVER_LISTING = [
-    {"name": "/bgc_argo_plus/outliers_removed/v1.0_2026_08", "type": "directory"},
-    {"name": "/bgc_argo_plus/outliers_removed/v0.0_2025_09", "type": "directory"},
-    {"name": "/bgc_argo_plus/outliers_removed/README.txt", "type": "file"},
-    {"name": "/bgc_argo_plus/outliers_removed/v0.1_2026_04", "type": "directory"},
-    {"name": "/bgc_argo_plus/outliers_removed/v0.1_2025_12", "type": "directory"},
+    f"{_ROOT}/?C=N;O=D",
+    f"{_ROOT}/?C=S;O=A",
+    f"{_ROOT}/v1.0/",
+    f"{_ROOT}/v0.0_2025_09/",
+    f"{_ROOT}/README.txt",
+    f"{_ROOT}/v0.1_2026_04/",
+    f"{_ROOT}/v0.1_2025_12/",
 ]
 
 
 def _mock_server(listing=SERVER_LISTING):
-    """Patch the module ftpstore so that listing the server returns ``listing``."""
-    return patch(FTPSTORE_CLASS, return_value=MagicMock(ls=MagicMock(return_value=listing)))
+    """Patch the module httpstore so that listing the server returns ``listing``."""
+    return patch(HTTPSTORE_CLASS, return_value=MagicMock(ls=MagicMock(return_value=listing)))
 
 
 class TestBGCArgoPlusVersions:
-    def test_paper_version_is_default(self):
+    def test_paper_and_default_versions(self):
         assert BGCARGO_PLUS_PAPER_VERSION == "v0.1_2026_04"
-        assert BGCARGO_PLUS_DEFAULT_VERSION == BGCARGO_PLUS_PAPER_VERSION
+        assert BGCARGO_PLUS_DEFAULT_VERSION == "v1.0"
+        assert BGCARGO_PLUS_PAPER_VERSION in BGCARGO_PLUS_PATH_TEMPLATES
 
     def test_versions_sorted_and_filtered(self):
         with _mock_server():
-            assert bgcargo_plus_versions() == ["v0.0_2025_09", "v0.1_2025_12", "v0.1_2026_04", "v1.0_2026_08"]
+            assert bgcargo_plus_versions() == ["v0.0_2025_09", "v0.1_2025_12", "v0.1_2026_04", "v1.0"]
 
     def test_versions_sorted_numerically(self):
-        listing = [{"name": f"/bgc_argo_plus/outliers_removed/{v}"} for v in ["v1.10_2027_01", "v1.2_2026_10"]]
+        listing = [f"{_ROOT}/{v}/" for v in ["v1.10", "v1.2_2026_10", "v1.2"]]
         with _mock_server(listing):
-            assert bgcargo_plus_latest_version() == "v1.10_2027_01"
+            assert bgcargo_plus_versions() == ["v1.2", "v1.2_2026_10", "v1.10"]
+            assert bgcargo_plus_latest_version() == "v1.10"
 
     def test_versions_from_plain_names(self):
-        with _mock_server(["v0.1_2026_04", "v1.0_2026_08/"]):
-            assert bgcargo_plus_versions() == ["v0.1_2026_04", "v1.0_2026_08"]
+        with _mock_server(["v0.1_2026_04", "v1.0/"]):
+            assert bgcargo_plus_versions() == ["v0.1_2026_04", "v1.0"]
 
     def test_latest_version(self):
         with _mock_server():
-            assert bgcargo_plus_latest_version() == "v1.0_2026_08"
+            assert bgcargo_plus_latest_version() == "v1.0"
 
     def test_latest_version_empty_server(self):
         with _mock_server([]):
@@ -344,7 +344,7 @@ class TestBGCArgoPlusVersions:
                 bgcargo_plus_latest_version()
 
     def test_versions_server_unreachable(self):
-        with patch(FTPSTORE_CLASS, side_effect=ConnectionRefusedError(61, "Connection refused")):
+        with patch(HTTPSTORE_CLASS, side_effect=ConnectionRefusedError(61, "Connection refused")):
             with pytest.raises(BGCArgoPlusServerError):
                 bgcargo_plus_versions()
 
@@ -352,7 +352,7 @@ class TestBGCArgoPlusVersions:
         assert resolve_bgcargo_plus_version("paper") == BGCARGO_PLUS_PAPER_VERSION
         assert resolve_bgcargo_plus_version("v0.1_2025_12") == "v0.1_2025_12"
         with _mock_server():
-            assert resolve_bgcargo_plus_version("latest") == "v1.0_2026_08"
+            assert resolve_bgcargo_plus_version("latest") == "v1.0"
 
     def test_store_paper(self):
         store = BGCArgoPlusStore(TEST_WMO, version="paper")
@@ -361,20 +361,20 @@ class TestBGCArgoPlusVersions:
 
     def test_store_latest_resolved_lazily(self):
         """'latest' must not list the server when the store is created, only on first use, and only once."""
-        with _mock_server() as mock_ftpstore:
+        with _mock_server() as mock_httpstore:
             store = BGCArgoPlusStore(TEST_WMO, version="latest")
-            mock_ftpstore.assert_not_called()
-            assert store.version == "v1.0_2026_08"
-            assert store.version == "v1.0_2026_08"
-            assert mock_ftpstore.call_count == 1
-            assert "/v1.0_2026_08/Individual_Floats/" in store.url
+            mock_httpstore.assert_not_called()
+            assert store.version == "v1.0"
+            assert store.version == "v1.0"
+            assert mock_httpstore.call_count == 1
+            assert "/v1.0/Individual_Floats/" in store.url
 
     def test_store_latest_unknown_to_module(self):
         """A new release on the server, not yet in BGCARGO_PLUS_PATH_TEMPLATES, must still be usable."""
-        listing = SERVER_LISTING + [{"name": "/bgc_argo_plus/outliers_removed/v1.1_2027_02"}]
+        listing = SERVER_LISTING + [f"{_ROOT}/v1.1/"]
         with _mock_server(listing):
             store = BGCArgoPlusStore(TEST_WMO, version="latest")
-            assert store.url.endswith(f"/v1.1_2027_02/Individual_Floats/{TEST_WMO}_Sprof_BGCArgoPlus.nc")
+            assert store.url.endswith(f"/v1.1/Individual_Floats/{TEST_WMO}_Sprof_BGCArgoPlus.nc")
 
     def test_url_unknown_version_rejected_by_default(self):
         with pytest.raises(ValueError, match="'paper'"):
@@ -475,15 +475,14 @@ class TestArgoFloatOpenProductBGCArgoPlus:
 @requires_connection
 @requires_bgcargo_plus_server
 class TestBGCArgoPlusIntegration:
-    """Live FTP tests, skipped without an internet connection or if the BGC-Argo+ server is down."""
+    """Live tests, skipped without an internet connection or if the BGC-Argo+ server is down."""
 
     def test_url_reachable(self):
-        """The SOEST FTP should serve a file for a known BGC float."""
+        """The SOEST server should serve a file for a known BGC float."""
         import fsspec
         url = bgcargo_plus_url(TEST_WMO)
-        fs = fsspec.filesystem("ftp", host=BGCARGO_PLUS_FTP_HOST)
-        path = url.replace(f"ftp://{BGCARGO_PLUS_FTP_HOST}", "")
-        assert fs.exists(path), f"BGC-Argo+ file not found: {url}"
+        fs = fsspec.filesystem("https")
+        assert fs.exists(url), f"BGC-Argo+ file not found: {url}"
 
     def test_open_dataset_returns_xarray(self):
         store = BGCArgoPlusStore(TEST_WMO)

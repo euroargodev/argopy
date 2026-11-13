@@ -11,9 +11,9 @@ outlier-removed version of BGC-Argo float data curated at SOEST / University of
 Hawaiʻi at Mānoa (Bushinsky et al, 2026, submitted: https://doi.org/10.5194/essd-2026-311).
 Dataset reference: 10.5281/zenodo.19353191.
 
-Individual float files are served on the SOEST FTP server::
+Individual float files are served over HTTPS by the SOEST web file storage::
 
-    ftp://ftp.soest.hawaii.edu/bgc_argo_plus/outliers_removed/<version>/
+    https://ftp.soest.hawaii.edu/bgc_argo_plus/outliers_removed/<version>/
 
 Contact: Raphaël Bajon (rbajon@hawaii.edu).
 
@@ -35,40 +35,49 @@ You can also use the store directly::
 
 from __future__ import annotations
 
-import ftplib
 import logging
 import re
 import socket
 
-import numpy as np
+import aiohttp
+import fsspec
 import xarray as xr
 
 from argopy.errors import APIServerError
-from argopy.stores.implementations.ftp import ftpstore
+from argopy.stores.implementations.http import httpstore
 from argopy.utils.checkers import check_wmo
 
+log = logging.getLogger("argopy.stores.ArgoFloat.BGCArgoPlusStore")
 
-log = logging.getLogger("argopy.stores.BGCArgoPlusStore")
+# Host of the BGC-Argo+ server
+# (the data used to be served over FTP on this host, they are now only served over HTTPS)
+BGCARGO_PLUS_HOST = "ftp.soest.hawaii.edu"
 
-# Host of the BGC-Argo+ FTP server
-BGCARGO_PLUS_FTP_HOST = "ftp.soest.hawaii.edu"
+# HTTPS port of the BGC-Argo+ server
+BGCARGO_PLUS_PORT = 443
 
-# Port of the BGC-Argo+ FTP server
-BGCARGO_PLUS_FTP_PORT = 21
+# Base URL of the BGC-Argo+ server
+BGCARGO_PLUS_SERVER = f"https://{BGCARGO_PLUS_HOST}"
 
-# Errors raised when the FTP server cannot be reached (refused, timed out, unknown host, busy)
-_SERVER_ERRORS = (ConnectionError, TimeoutError, socket.gaierror, ftplib.error_temp)
+# Errors raised when the server cannot be reached (refused, timed out, unknown host)
+_SERVER_ERRORS = (
+    ConnectionError,
+    TimeoutError,
+    socket.gaierror,
+    aiohttp.ClientConnectionError,
+    fsspec.FSTimeoutError,
+)
 
 
 class BGCArgoPlusServerError(APIServerError):
-    """Raise when the BGC-Argo+ FTP server cannot be reached."""
+    """Raise when the BGC-Argo+ server cannot be reached."""
 
     def __str__(self):
         return str(self.value)
 
 
 def bgcargo_plus_server_available(timeout: float = 5) -> bool:
-    """Check if the BGC-Argo+ FTP server accepts connections.
+    """Check if the BGC-Argo+ server accepts connections.
 
     Parameters
     ----------
@@ -80,7 +89,7 @@ def bgcargo_plus_server_available(timeout: float = 5) -> bool:
     bool
     """
     try:
-        with socket.create_connection((BGCARGO_PLUS_FTP_HOST, BGCARGO_PLUS_FTP_PORT), timeout=timeout):
+        with socket.create_connection((BGCARGO_PLUS_HOST, BGCARGO_PLUS_PORT), timeout=timeout):
             return True
     except OSError:
         return False
@@ -88,53 +97,53 @@ def bgcargo_plus_server_available(timeout: float = 5) -> bool:
 
 def _server_error(exc: Exception) -> BGCArgoPlusServerError:
     return BGCArgoPlusServerError(
-        f"Cannot reach the BGC-Argo+ server ftp://{BGCARGO_PLUS_FTP_HOST}:{BGCARGO_PLUS_FTP_PORT} "
+        f"Cannot reach the BGC-Argo+ server {BGCARGO_PLUS_SERVER} "
         f"({type(exc).__name__}: {exc}). The server may be down or unreachable from your network, "
         f"please try again later."
     )
 
-# Root folder on the FTP server
+# Root folder on the server
 BGCARGO_PLUS_ROOT = "/bgc_argo_plus/outliers_removed"
 
-# Path template on the FTP server for each supported dataset version
+# Path template on the server for each supported dataset version
 BGCARGO_PLUS_PATH_TEMPLATES = {
     "v0.0_2025_09": "/bgc_argo_plus/outliers_removed/v0.0_2025_09/{wmo}_Sprof_processed.nc",
     "v0.1_2025_12": "/bgc_argo_plus/outliers_removed/v0.1_2025_12/{wmo}_Sprof_BGCArgoPlus.nc",
     "v0.1_2026_04": "/bgc_argo_plus/outliers_removed/v0.1_2026_04/Individual_Floats/{wmo}_Sprof_BGCArgoPlus.nc",
-    "v1.0_2026_08": "/bgc_argo_plus/outliers_removed/v1.0_2026_08/Individual_Floats/{wmo}_Sprof_BGCArgoPlus.nc",
+    "v1.0": "/bgc_argo_plus/outliers_removed/v1.0/Individual_Floats/{wmo}_Sprof_BGCArgoPlus.nc",
 }
 
-# Path template 
+# Path template assumed for versions released after this module (see :func:`bgcargo_plus_url`)
 BGCARGO_PLUS_PATH_TEMPLATE_NEW = "/bgc_argo_plus/outliers_removed/{version}/Individual_Floats/{wmo}_Sprof_BGCArgoPlus.nc"
 
 # Version described in the reference paper: Bushinsky et al. (2026), https://doi.org/10.5194/essd-2026-311,
 # with dataset DOI https://doi.org/10.5281/zenodo.19709012.
 BGCARGO_PLUS_PAPER_VERSION = "v0.1_2026_04"
 
-# Default version 
-BGCARGO_PLUS_DEFAULT_VERSION = BGCARGO_PLUS_PAPER_VERSION
+# Default version
+BGCARGO_PLUS_DEFAULT_VERSION = "v1.0"
 
-# Version folder names on the server
-_VERSION_PATTERN = re.compile(r"^v(\d+)\.(\d+)_(\d{4})_(\d{2})$")
+# Version folder names on the server, with or without a release date, e.g. 'v0.1_2026_04' or 'v1.0'
+_VERSION_PATTERN = re.compile(r"^v(\d+)\.(\d+)(?:_(\d{4})_(\d{2}))?$")
 
 
 def _version_key(version: str) -> tuple:
-    """Sort key for version tags: (major, minor, year, month)."""
-    return tuple(int(x) for x in _VERSION_PATTERN.match(version).groups())
+    """Sort key for version tags: (major, minor, year, month), a missing date counts as 0."""
+    return tuple(int(x) if x else 0 for x in _VERSION_PATTERN.match(version).groups())
 
 
 def bgcargo_plus_versions(timeout: int = 0) -> list[str]:
-    """List the BGC-Argo+ dataset versions available on the FTP server.
+    """List the BGC-Argo+ dataset versions available on the server.
 
     Parameters
     ----------
     timeout : int, optional
-        FTP connection timeout in seconds.
+        Connection timeout in seconds.
 
     Returns
     -------
     list[str]
-        Version tags sorted from the oldest to the most recent, e.g. ``['v0.0_2025_09', ..., 'v1.0_2026_08']``.
+        Version tags sorted from the oldest to the most recent, e.g. ``['v0.0_2025_09', 'v0.1_2025_12', 'v0.1_2026_04', 'v1.0']``.
 
     Raises
     ------
@@ -147,8 +156,8 @@ def bgcargo_plus_versions(timeout: int = 0) -> list[str]:
     >>> bgcargo_plus_versions()
     """
     try:
-        fs = ftpstore(host=BGCARGO_PLUS_FTP_HOST, cache=False, timeout=timeout if timeout else None)
-        entries = fs.ls(BGCARGO_PLUS_ROOT)
+        fs = _new_httpstore(cache=False, timeout=timeout)
+        entries = fs.ls(f"{BGCARGO_PLUS_SERVER}{BGCARGO_PLUS_ROOT}/", detail=False)
     except _SERVER_ERRORS as exc:
         raise _server_error(exc) from exc
     names = [(e["name"] if isinstance(e, dict) else e).rstrip("/").split("/")[-1] for e in entries]
@@ -158,7 +167,7 @@ def bgcargo_plus_versions(timeout: int = 0) -> list[str]:
 def bgcargo_plus_latest_version(timeout: int = 0) -> str:
     versions = bgcargo_plus_versions(timeout=timeout)
     if not versions:
-        raise ValueError(f"No BGC-Argo+ version found on ftp://{BGCARGO_PLUS_FTP_HOST}{BGCARGO_PLUS_ROOT}")
+        raise ValueError(f"No BGC-Argo+ version found on {BGCARGO_PLUS_SERVER}{BGCARGO_PLUS_ROOT}")
     return versions[-1]
 
 
@@ -171,10 +180,10 @@ def resolve_bgcargo_plus_version(version: str = BGCARGO_PLUS_DEFAULT_VERSION, ti
         One of:
 
         - ``"paper"``: the version from the reference paper, :data:`BGCARGO_PLUS_PAPER_VERSION`,
-        - ``"latest"``: the most recent version available on the FTP server (requires a connection),
-        - any version tag, e.g. ``"v1.0_2026_08"``.
+        - ``"latest"``: the most recent version available on the server (requires a connection),
+        - any version tag, e.g. ``"v1.0"``.
     timeout : int, optional
-        FTP connection timeout in seconds, only used with ``"latest"``.
+        Connection timeout in seconds, only used with ``"latest"``.
 
     Returns
     -------
@@ -187,60 +196,24 @@ def resolve_bgcargo_plus_version(version: str = BGCARGO_PLUS_DEFAULT_VERSION, ti
     return version
 
 
-def _decode_bytes_dataset(ds: xr.Dataset) -> xr.Dataset:
-    """Decode byte-string variables to str.
 
-    Fixed-length string variables may be returned as numpy bytes dtype
-    (``'|S...'``) instead of str.
-    """
-    updates = {}
-    for name, var in ds.data_vars.items():
-        if var.dtype.kind == "S":  # fixed-length bytes, e.g. dtype='|S64'
-            decoded = np.char.decode(var.values, "utf-8")
-            updates[name] = var.copy(data=decoded)
-        elif var.dtype.kind == "O":  # object array, may contain variable-length bytes
-            first = next(
-                (
-                    x
-                    for x in var.values.flat
-                    if x is not None and not (isinstance(x, float) and np.isnan(x))
-                ),
-                None,
-            )
-            if isinstance(first, bytes):
-                decoded = np.vectorize(
-                    lambda x: x.decode("utf-8") if isinstance(x, bytes) else x
-                )(var.values)
-                updates[name] = var.copy(data=decoded)
-    if updates:
-        ds = ds.assign(updates)
-
-    # PLATFORM_NUMBER is stored as a numeric string (e.g. '6903091') but uid() arithmetic requires it as an integer.
-    if "PLATFORM_NUMBER" in ds.data_vars:
-        try:
-            pn = ds["PLATFORM_NUMBER"]
-            ds = ds.assign(
-                {
-                    "PLATFORM_NUMBER": pn.copy(
-                        data=np.char.strip(pn.values.astype(str)).astype(np.int64)
-                    )
-                }
-            )
-        except (ValueError, TypeError):
-            pass  # leave as-is if conversion fails (e.g. non-numeric WMO)
-
-    return ds
+def _new_httpstore(cache: bool = False, cachedir: str = "", timeout: int = 0) -> httpstore:
+    """Create an :class:`httpstore` for the BGC-Argo+ server."""
+    opts = {"cache": cache, "cachedir": cachedir}
+    if timeout:
+        opts["client_kwargs"] = {"timeout": aiohttp.ClientTimeout(total=timeout)}
+    return httpstore(**opts)
 
 
 def bgcargo_plus_url(wmo: int, version: str = BGCARGO_PLUS_DEFAULT_VERSION, check: bool = True) -> str:
-    """Return the FTP URL for a BGC-Argo+ float file.
+    """Return the HTTPS URL for a BGC-Argo+ float file.
 
     Parameters
     ----------
     wmo : int
         Float WMO number.
     version : str, optional
-        Dataset version tag, e.g. ``"v0.1_2026_04"``, or ``"paper"`` or ``"latest"``,
+        Dataset version tag, e.g. ``"v1.0"``, or ``"paper"`` or ``"latest"``,
         see :func:`resolve_bgcargo_plus_version`.
     check : bool, optional
         If True, only accept versions listed in :data:`BGCARGO_PLUS_PATH_TEMPLATES`. If False, a version
@@ -250,13 +223,13 @@ def bgcargo_plus_url(wmo: int, version: str = BGCARGO_PLUS_DEFAULT_VERSION, chec
     Returns
     -------
     str
-        Full FTP URL
+        Full HTTPS URL
 
     Examples
     --------
     >>> from argopy.stores.float.products.bgcargo_plus import bgcargo_plus_url
     >>> bgcargo_plus_url(6903091)
-    'ftp://ftp.soest.hawaii.edu/bgc_argo_plus/outliers_removed/v0.1_2026_04/Individual_Floats/6903091_Sprof_BGCArgoPlus.nc'
+    'https://ftp.soest.hawaii.edu/bgc_argo_plus/outliers_removed/v1.0/Individual_Floats/6903091_Sprof_BGCArgoPlus.nc'
     """
     if version == "latest":
         check = False  # The latest version on the server may be unknown to this module
@@ -268,7 +241,7 @@ def bgcargo_plus_url(wmo: int, version: str = BGCARGO_PLUS_DEFAULT_VERSION, chec
         path = BGCARGO_PLUS_PATH_TEMPLATE_NEW.format(version=version, wmo=wmo)
     else:
         raise _unsupported_version(version)
-    return f"ftp://{BGCARGO_PLUS_FTP_HOST}{path}"
+    return f"{BGCARGO_PLUS_SERVER}{path}"
 
 
 def _unsupported_version(version: str) -> ValueError:
@@ -280,7 +253,7 @@ def _unsupported_version(version: str) -> ValueError:
 
 
 class BGCArgoPlusStore:
-    """Store that fetches BGC-Argo+ individual-float files from SOEST FTP.
+    """Store that fetches BGC-Argo+ individual-float files from the SOEST server, over HTTPS.
 
     Parameters
     ----------
@@ -290,14 +263,14 @@ class BGCArgoPlusStore:
         BGC-Argo+ dataset version, default :data:`BGCARGO_PLUS_DEFAULT_VERSION`. It can be:
 
         - ``"paper"``: the version from the reference paper, :data:`BGCARGO_PLUS_PAPER_VERSION`,
-        - ``"latest"``: the most recent version available on the FTP server, looked up on first use,
-        - any version tag from :data:`BGCARGO_PLUS_PATH_TEMPLATES`, e.g. ``"v1.0_2026_08"``.
+        - ``"latest"``: the most recent version available on the server, looked up on first use,
+        - any version tag from :data:`BGCARGO_PLUS_PATH_TEMPLATES`, e.g. ``"v1.0"``.
     cache : bool, optional
-        Cache downloaded files locally (passed to :class:`ftpstore`).
+        Cache downloaded files locally (passed to :class:`httpstore`).
     cachedir : str, optional
-        Local cache directory (passed to :class:`ftpstore`).
+        Local cache directory (passed to :class:`httpstore`).
     timeout : int, optional
-        FTP connection timeout in seconds (passed to :class:`ftpstore`).
+        Connection timeout in seconds, 0 to use the default.
 
     Examples
     --------
@@ -305,9 +278,9 @@ class BGCArgoPlusStore:
     >>> store = BGCArgoPlusStore(6903091)
     >>> ds = store.open_dataset()
     >>> store.url
-    'ftp://ftp.soest.hawaii.edu/bgc_argo_plus/...'
+    'https://ftp.soest.hawaii.edu/bgc_argo_plus/...'
     >>> BGCArgoPlusStore(6903091, version='latest').version  # Most recent version on the server
-    'v1.0_2026_08'
+    'v1.0'
     """
 
     def __init__(
@@ -329,12 +302,12 @@ class BGCArgoPlusStore:
         self.timeout = timeout
         self._server_available = None  # Checked on first access, see :attr:`server_available`
 
-        # The FTP connection is only opened on first access, see :attr:`fs`
+        # The file system is only created on first access, see :attr:`fs`
         self._fs = None
 
     @property
-    def fs(self) -> ftpstore:
-        """FTP file system connected to the BGC-Argo+ server.
+    def fs(self) -> httpstore:
+        """HTTP file system used to fetch BGC-Argo+ files.
 
         Raises
         ------
@@ -343,19 +316,14 @@ class BGCArgoPlusStore:
         """
         if self._fs is None:
             try:
-                self._fs = ftpstore(
-                    host=BGCARGO_PLUS_FTP_HOST,
-                    cache=self.cache,
-                    cachedir=self.cachedir if self.cachedir else None,
-                    timeout=self.timeout if self.timeout else None,
-                )
+                self._fs = _new_httpstore(cache=self.cache, cachedir=self.cachedir, timeout=self.timeout)
             except _SERVER_ERRORS as exc:
                 raise _server_error(exc) from exc
         return self._fs
 
     @property
     def server_available(self) -> bool:
-        """Whether the BGC-Argo+ FTP server accepts connections.
+        """Whether the BGC-Argo+ server accepts connections.
 
         The server is checked once, on first access, with :func:`bgcargo_plus_server_available`.
         """
@@ -375,7 +343,7 @@ class BGCArgoPlusStore:
 
     @property
     def url(self) -> str:
-        """Full FTP URL of this float's BGC-Argo+ file."""
+        """Full HTTPS URL of this float's BGC-Argo+ file."""
         return bgcargo_plus_url(self.WMO, version=self.version, check=self.requested_version != "latest")
 
     def open_dataset(self, **kwargs) -> xr.Dataset:
@@ -384,8 +352,9 @@ class BGCArgoPlusStore:
         Parameters
         ----------
         **kwargs
-            Additional keyword arguments forwarded to
-            :meth:`argopy.stores.ftpstore.open_dataset`.
+            Additional keyword arguments forwarded to :meth:`argopy.stores.httpstore.open_dataset`.
+            The file is opened with the ``argo`` xarray engine, unless another engine is given
+            with ``xr_opts={'engine': ...}``.
 
         Returns
         -------
@@ -405,7 +374,8 @@ class BGCArgoPlusStore:
         """
         log.debug("BGCArgoPlusStore: fetching %s", self.url)
         try:
-            ds = _decode_bytes_dataset(self.fs.open_dataset(self.url, **kwargs))
+            xr_opts = {"engine": "argo", **kwargs.pop("xr_opts", {})}
+            ds = self.fs.open_dataset(self.url, xr_opts=xr_opts, **kwargs)
         except _SERVER_ERRORS as exc:
             raise _server_error(exc) from exc
         except FileNotFoundError as exc:
