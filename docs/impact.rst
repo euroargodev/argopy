@@ -50,7 +50,9 @@ Papers & proceedings citing Argopy
 
 #. Steinberg, J. M., Piecuch, C. G., Hamlington, B. D., Thompson, P. R., & Coats, S. (2024). "Influence of deep-ocean warming on coastal sea-level decadal trends in the Gulf of Mexico", Journal of Geophysical Research: Oceans, 129, e2023JC019681. https://doi.org/10.1029/2023JC019681
 
-#. Terzić, E., & Vilibić, I. (2026). "Observational evidence for accelerated warming and salinification propagating into the deep Mediterranean", Geophysical Research Letters, 53, e2026GL124518. https://doi.org/10.1029/2026GL124518
+#. Terzić, E., and Vilibić, I. (2026). "Observational evidence for accelerated warming and salinification propagating into the deep Mediterranean", Geophysical Research Letters, 53, e2026GL124518. https://doi.org/10.1029/2026GL124518
+
+#. Terzić, E. and Vilibić, I. (2026). "Recent thermohaline shifts in the Adriatic Sea and their potential consequences". Ocean Sci., 22, 3723–3746, https://doi.org/10.5194/os-22-3723-2026
 
 #. Yao, L., Taylor, J.R. (2026). "Global climatology of submesoscale restratification using machine learning". Sci Rep (2026). https://doi.org/10.1038/s41598-026-41929-x
 
