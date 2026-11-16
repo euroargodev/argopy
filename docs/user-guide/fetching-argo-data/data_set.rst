@@ -91,6 +91,9 @@ Specifics in :class:`DataFetcher`
 
 The `BGC-Argo Mission <https://biogeochemical-argo.org>`_ gathers data from floats that measure temperature, salinity, pressure and oxygen, pH, nitrate, chlorophyll, backscatter, irradiance down to 2000m. However, beyond this short BGC parameter list there exist in the Argo dataset **more than 120 BGC-related variables**. Therefore, in the :class:`DataFetcher` we implemented 2 specific arguments to handle BGC variables: ``params`` and ``measured``.
 
+
+.. _data-set-bgc-params:
+
 The ``params`` argument
 -----------------------
 

@@ -51,6 +51,8 @@ Features and front-end API
 
 .. _v1.5.0-internals:
 
+- **Auto-documentation of the valid list of parameters** in the :class:`DataFetcher` new attributes :attr:`DataFetcher.params_available` and :attr:`DataFetcher.params_description`. These are the possible values for the ``params`` argument, see :ref:`<data-set-bgc-params>`. :issue:`490`.
+
 Internals
 ^^^^^^^^^
 
