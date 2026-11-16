@@ -123,6 +123,33 @@ class Test_groupby_pressure_bins:
 
 class Test_teos10:
 
+    @requires_gsw
+    @pytest.mark.parametrize("format", ["point", "profile"])
+    @pytest.mark.parametrize("inplace", [True, False])
+    def test_oxygen_solubility(self, ds_pts, format, inplace):
+        import gsw
+
+        this = ds_pts["standard"].copy(deep=True)
+        if format == "profile":
+            this = this.argo.point2profile()
+        original = this.copy(deep=True)
+        sa = gsw.SA_from_SP(this.PSAL, this.PRES, this.LONGITUDE, this.LATITUDE)
+        ct = gsw.CT_from_t(sa, this.TEMP, this.PRES)
+        expected = gsw.O2sol(sa, ct, this.PRES, this.LONGITUDE, this.LATITUDE)
+
+        result = this.argo.teos10(["O2SOL"], inplace=inplace)
+
+        np.testing.assert_allclose(result.O2SOL, expected, equal_nan=True)
+        assert result.O2SOL.dims == this.TEMP.dims
+        assert result.O2SOL.attrs["long_name"] == "Oxygen solubility"
+        assert result.O2SOL.attrs["unit"] == "umol/kg"
+        assert "SA" not in result
+        assert "CT" not in result
+        if inplace:
+            assert result is this
+        else:
+            xr.testing.assert_identical(this, original)
+
     @requires_nogsw
     def test_gsw_not_available(self, ds_pts):
         # Make sure we raise an error when GSW is not available
