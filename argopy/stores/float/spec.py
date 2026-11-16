@@ -1154,6 +1154,20 @@ class FloatStoreProto(ABC):
         Returns
         -------
         :class:`xarray.Dataset` | Any
+
+        Notes
+        -----
+        Available third-party products are listed in :class:`argopy.options.PRODUCT_LIST`:
+
+        - ``BGCArgoPlus``: the `BGC-Argo+ <https://www.bgc-argo-plus.info>`_ dataset. Use the ``version`` argument to select a dataset version: ``'latest'`` (default, the most recent version on the server), ``'paper'`` (the version from the reference paper) or a version tag, see :class:`argopy.stores.float.products.bgcargo_plus.BGCArgoPlusStore`.
+
+        Examples
+        --------
+        .. code-block:: python
+
+            from argopy import ArgoFloat
+            ds = ArgoFloat(6903091).open_product('BGCArgoPlus')  # Most recent version on the server
+            ds = ArgoFloat(6903091).open_product('BGCArgoPlus', version='paper')  # Version from the reference paper
         """
 
         # Third-party access modules must be located in: argopy.stores.float.products
@@ -1162,5 +1176,16 @@ class FloatStoreProto(ABC):
         if name not in PRODUCT_LIST.argofloat:
             raise NotImplementedError(
                 "Product '%s' not found. Available third-party product for this float are: %s"
-                % (name, PRODUCT_LIST.argofloat)
+                % (name, PRODUCT_LIST.argofloat))
+
+        if name == "BGCArgoPlus":
+            from .products.bgcargo_plus import BGCArgoPlusStore, BGCARGO_PLUS_DEFAULT_VERSION
+
+            store = BGCArgoPlusStore(
+                self.WMO,
+                version=kwargs.pop("version", BGCARGO_PLUS_DEFAULT_VERSION),
+                cache=self.cache,
+                cachedir=self.cachedir,
+                timeout=self.timeout,
             )
+            return store.open_dataset(**kwargs)
