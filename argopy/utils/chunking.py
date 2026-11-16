@@ -1,10 +1,12 @@
 import numpy as np
 import pandas as pd
 from functools import reduce
-from ..errors import InvalidFetcherAccessPoint
-from .checkers import is_box
-
 import collections
+import heapq
+import math
+from argopy.errors import InvalidFetcherAccessPoint
+from argopy.utils.checkers import is_box
+
 
 try:
     collectionsAbc = collections.abc
@@ -281,3 +283,80 @@ class Chunker:
         self._results = self.this_chunker(self.request, self.chunks, self.chunksize)
         # self.chunks = self._results['chunks']
         return self._results["values"]
+
+
+def chunk_wmos(counts, n_chunks=None, max_profiles=None, max_floats=None,
+               floats_weight=0.5):
+    """Split WMOs into chunks balanced on both float count and profile count.
+
+    Parameters
+    ----------
+    counts : dict
+        {wmo: number_of_profiles}
+    n_chunks : int, optional
+        Number of chunks to return.
+    max_profiles : int, optional
+        Target maximum number of profiles per chunk. The number of chunks is
+        derived as ceil(total_profiles / max_profiles).
+    max_floats : int, optional
+        Maximum number of floats (WMOs) per chunk. The number of chunks is
+        derived as ceil(n_floats / max_floats), and the cap is strictly enforced.
+    floats_weight : float in [0, 1]
+        Relative importance of balancing the number of floats (1.0) versus
+        the number of profiles (0.0) across chunks.
+
+    Exactly one of `n_chunks`, `max_profiles` or `max_floats` must be given.
+
+    Returns
+    -------
+    list of list of int
+        Each inner list holds the (sorted) WMOs of one chunk.
+    """
+    given = [a is not None for a in (n_chunks, max_profiles, max_floats)]
+    if sum(given) != 1:
+        raise ValueError(
+            "Provide exactly one of `n_chunks`, `max_profiles` or `max_floats`"
+        )
+    if not 0 <= floats_weight <= 1:
+        raise ValueError("`floats_weight` must be between 0 and 1")
+    if not counts:
+        return []
+
+    n_floats = len(counts)
+    total = sum(counts.values())
+
+    if max_profiles is not None:
+        if max_profiles <= 0:
+            raise ValueError("`max_profiles` must be > 0")
+        n_chunks = max(1, math.ceil(total / max_profiles))
+    elif max_floats is not None:
+        if max_floats < 1:
+            raise ValueError("`max_floats` must be >= 1")
+        n_chunks = max(1, math.ceil(n_floats / max_floats))
+    if n_chunks < 1:
+        raise ValueError("`n_chunks` must be >= 1")
+    n_chunks = min(n_chunks, n_floats)  # no empty chunks
+
+    # Each float costs a normalized share of "floats" plus of "profiles"
+    w_float = floats_weight / n_floats
+    w_prof = (1 - floats_weight) / total if total else 0.0
+
+    def cost(n):
+        return w_float + w_prof * n
+
+    # Largest first, ties broken by WMO for deterministic output
+    items = sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))
+
+    heap = [(0.0, i) for i in range(n_chunks)]  # (current load, chunk index)
+    heapq.heapify(heap)
+    chunks = [[] for _ in range(n_chunks)]
+
+    for wmo, n in items:
+        load, i = heapq.heappop(heap)
+        chunks[i].append(wmo)
+        # A chunk at capacity leaves the heap; there is always room elsewhere
+        # because n_chunks * max_floats >= n_floats
+        if max_floats is None or len(chunks[i]) < max_floats:
+            heapq.heappush(heap, (load + cost(n), i))
+
+    return [sorted(c) for c in chunks]

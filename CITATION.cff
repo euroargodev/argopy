@@ -40,6 +40,4 @@ preferred-citation:
   volume: 5
   issue: 53
   page: 2425
-
-# This CITATION.cff file was generated with cffinit.
-# Visit https://bit.ly/cffinit to generate yours today!
+swhid: "swh:1:dir:3d568702945207a22ac35e038256e4be88d20f17;origin=https://github.com/euroargodev/argopy;visit=swh:1:snp:b9840a337629714e13028db36df96ad323093e30;anchor=swh:1:rev:a4d92889fdd2ade2735569ac7968bf424abb4fc9"

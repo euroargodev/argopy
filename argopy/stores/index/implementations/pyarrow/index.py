@@ -19,6 +19,7 @@ except ModuleNotFoundError:
 from argopy.options import OPTIONS
 from argopy.errors import DataNotFound, InvalidDatasetStructure
 from argopy.utils.checkers import check_index_cols
+from argopy.utils.chunking import chunk_wmos
 from argopy.utils.geo import conv_lon
 from argopy.utils.format import mono2multi
 from argopy.stores.index.spec import ArgoIndexStoreProto
@@ -406,7 +407,7 @@ class indexstore(ArgoIndexStoreProto):
             ]
         else:
             if not hasattr(self, "index"):
-                self.load()
+                self.load(nrows=self._nrows_index)
             return [
                 xmin(self.index),
                 xmax(self.index),
@@ -424,6 +425,8 @@ class indexstore(ArgoIndexStoreProto):
                 for f in self.search["file"]
             ]
         else:
+            if not hasattr(self, "index"):
+                self.load(nrows=self._nrows_index)
             flist = [
                 sep.join(["dac", f.as_py().replace("/", sep)])
                 for f in self.index["file"]
@@ -459,40 +462,52 @@ class indexstore(ArgoIndexStoreProto):
         """Return the number of records per unique WMOs in search results
 
         Fall back on full index if search not triggered
-
-        Notes
-        -----
-        Computation is parallelized over all WMOs with a ThreadPoolExecutor
         """
-
-        def count_wmo(self, wmo: int, index: bool):
-            if hasattr(self, "search") and not index:
-                search_filter = pa.compute.match_substring_regex(
-                    self.search["file"], pattern="/%i/" % wmo
-                )
-                return wmo, self.search.filter(search_filter).shape[0]
-            else:
-                if not hasattr(self, "index"):
-                    self.load(nrows=self._nrows_index)
-                search_filter = pa.compute.match_substring_regex(
-                    self.index["file"], pattern="/%i/" % wmo
-                )
-                return wmo, self.index.filter(search_filter).shape[0]
-
-        ulist = self.read_wmo()
-        count = {}
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            # Submit tasks for each WMO
-            futures = {
-                executor.submit(count_wmo, self, wmo, index): wmo for wmo in ulist
-            }
-
-            # Process results as they complete
-            for future in concurrent.futures.as_completed(futures):
-                wmo, cnt = future.result()
-                count[wmo] = cnt
-
+        if hasattr(self, "search") and not index:
+            table = self.search
+        else:
+            if not hasattr(self, "index"):
+                self.load(nrows=self._nrows_index)
+            table = self.index
+        files = table["file"]
+        extracted = pa.compute.extract_regex(files, pattern=r"/(?P<wmo>\d+)/")
+        wmos = pa.compute.struct_field(extracted, "wmo").drop_null()
+        vc = pa.compute.value_counts(wmos).to_pylist()
+        count = {int(d["values"]): d["counts"] for d in vc}
         return count
+
+    def chunks_wmo(self, index=False, *args, **kwargs):
+        """Split WMOs into chunks balanced on both float count and profile count.
+
+        Fall back on full index if search not triggered
+
+        Parameters
+        ----------
+        index: bool, default=False
+            Use the full index or search result
+        counts : dict
+            {wmo: number_of_profiles}
+        n_chunks : int, optional
+            Number of chunks to return.
+        max_profiles : int, optional
+            Target maximum number of profiles per chunk. The number of chunks is
+            derived as ceil(total_profiles / max_profiles).
+        max_floats : int, optional
+            Maximum number of floats (WMOs) per chunk. The number of chunks is
+            derived as ceil(n_floats / max_floats), and the cap is strictly enforced.
+        floats_weight : float in [0, 1]
+            Relative importance of balancing the number of floats (1.0) versus
+            the number of profiles (0.0) across chunks.
+
+        Exactly one of `n_chunks`, `max_profiles` or `max_floats` must be given.
+
+        Returns
+        -------
+        list of list of int
+            Each inner list holds the (sorted) WMOs of one chunk.
+        """
+        counts = self.records_per_wmo(index=index)
+        return chunk_wmos(counts, *args, **kwargs)
 
     def to_indexfile(self, file):
         """Save search results on file, following the Argo standard index formats
