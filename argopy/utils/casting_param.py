@@ -45,6 +45,7 @@ def cast_config_parameter(param: str, pvalue: Any) -> float | int | bool:
         "mm",
         "mm/s",
         "mpsu",
+        "mbar",
         "msec",
         "nm",
         "seconds",

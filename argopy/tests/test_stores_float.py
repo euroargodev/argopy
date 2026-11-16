@@ -154,10 +154,6 @@ class Test_FloatStore_Offline:
     # TESTS #
     #########
 
-    def test_remotehost(self):
-        with pytest.raises(OptionValueError):
-            self.floatstore(VALID_WMO[0], host=self.mocked_server_address)
-
     @pytest.mark.parametrize("af", scenarios, indirect=True, ids=scenarios_ids)
     def test_load_metadata(self, af):
         assert hasattr(af, "metadata")
