@@ -89,6 +89,8 @@ def _linear_interp(x: np.ndarray, y: np.ndarray, xi: np.ndarray) -> np.ndarray:
     This consumes one single profile data as low-level structures, like numpy 1D arrays
 
     Expected to be used by `linear_interpolation_remap` and called by :func:`xr.apply_ufunc`
+
+    Follows Wong et al. (2026) EasyOneArgo - Lite specs for clean-up.
     """
     yi_empty = np.full(
         len(xi), np.nan, dtype=np.float32

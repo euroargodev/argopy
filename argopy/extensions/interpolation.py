@@ -10,6 +10,13 @@ from argopy.utils.computers import (
     mrst_pchip_interpolation_remap
 )
 
+try:
+    import gsw
+
+    with_gsw = True
+except ModuleNotFoundError:
+    with_gsw = False
+
 
 def _median_filter(x: np.ndarray, y: np.ndarray) -> np.ndarray:
     """Wong et al.(2026) median filter. 
@@ -35,6 +42,48 @@ def _median_filter(x: np.ndarray, y: np.ndarray) -> np.ndarray:
     h = int((w - 1) / 2) # half window size
     y_filtered[mask] = np.array([np.median(yv[max(0, i - h): i + h + 1]) for i in range(yv.size)])
     return y_filtered
+
+
+def _mrst_pchip_ts(this_dsp: xr.Dataset, datavars: list, axis: str, keep_sa_ct: bool = False) -> xr.Dataset:
+    """Interpolate TEMP/PSAL following Barker and McDougall (2020).
+      
+    TEMP/PSAL are converted to Conservative Temperature/Absolute Salinity, interpolated then 
+    converted back to T/S at the standard pressure levels.
+    """
+    # Create a dataset that will hold interpolation results
+    ds_ts = xr.Dataset()
+    # Save some keyword arguments for the interpolation functions
+    kwargs = dict(z_dim="N_LEVELS", z_regridded_dim="Z_LEVELS", output_dim=f"{axis}_INTERPOLATED")
+      
+    for suffix in ["", "_ADJUSTED"]:
+        temp, psal = f"TEMP{suffix}", f"PSAL{suffix}"
+        if temp in datavars and psal in datavars:
+            # this_dsp.teos10(['SA', 'CT'], inplace=True) -> not adapted to ADJUSTED variables
+            # so computing it all here.
+            pres, lon, lat = this_dsp[axis], this_dsp["LONGITUDE"], this_dsp["LATITUDE"]
+            sa = xr.apply_ufunc(gsw.SA_from_SP, this_dsp[psal], pres, lon, lat, dask="allowed")
+            ct = xr.apply_ufunc(gsw.CT_from_t, sa, this_dsp[temp], pres, dask="allowed")
+              
+            sa_i, ct_i = mrst_pchip_interpolation_remap(pres, sa, ct, this_dsp["Z_LEVELS"], **kwargs)
+              
+            # Convert SA and CT back to S and T at the standard pressure levels
+            pres_i = sa_i[f"{axis}_INTERPOLATED"]
+            ds_ts[psal] = xr.apply_ufunc(gsw.SP_from_SA, sa_i, pres_i, lon, lat, dask="allowed")
+            ds_ts[temp] = xr.apply_ufunc(gsw.t_from_CT, sa_i, ct_i, pres_i, dask="allowed")
+              
+            if keep_sa_ct:
+                ds_ts[f"SA{suffix}"] = sa_i.assign_attrs(
+                    long_name="Interpolated Absolute Salinity",
+                    standard_name="sea_water_absolute_salinity",
+                    units="g/kg"
+                )   
+                ds_ts[f"CT{suffix}"] = ct_i.assign_attrs(
+                    long_name="Interpolated Conservative Temperature",
+                    standard_name="sea_water_conservative_temperature",
+                    units="degree_Celsius"
+                )   
+                  
+    return ds_ts
 
 
 @dataclass(frozen=True)
@@ -112,12 +161,14 @@ class Interpolator(ArgoAccessorExtension):
     Examples
     --------
     .. code-block:: python
-        :caption: Interpolate onto EasyOneArgoLite standard levels following Wong et al. (2026)
+        :caption: Interpolate onto standard pressure levels following Wong et al. (2026)
 
         from argopy import DataFetcher
 
         ds = DataFetcher(ds="bgc", mode="expert").float(6904240).to_xarray()
-        ds_interp = ds.argo.interp()
+        ds_interp1 = ds.argo.interp([10, 20, 50, 100])
+        ds_interp2 = ds.argo.interp('EasyOneArgoLite')
+        ds_interp3 = ds.argo.interp()  # Default = 'EasyOneArgoLite' standard levels if none provided.
 
     .. code-block:: python
         :caption: Choose standard levels and the interpolation method
@@ -128,8 +179,11 @@ class Interpolator(ArgoAccessorExtension):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def __call__(self, axis: str = "PRES"):
-        """Interpolate measurements onto EasyOneArgoLite standard pressure levels following Wong et al. (2026).
+    def __call__(self,
+                 levels: list[list, np.array, str] = "EasyOneArgoLite",
+                 axis: str = "PRES",
+                 keep_sa_ct: bool = False):
+        """Interpolate measurements to standard pressure levels following Wong et al. (2026).
         
         Each variable (TEMP, PSAL, DOXY, etc.) is interpolated with its own specifications.
 
@@ -142,8 +196,21 @@ class Interpolator(ArgoAccessorExtension):
 
         Parameters
         ----------
+        levels: list or np.array or str, optional, default = 'EasyOneArgoLite'
+            Standard pressure levels used for interpolation. It has to be 1-dimensional and monotonic.
+
+            Some pre-defined levels are available with keywords:
+
+            - ``EasyOneArgoLite`` (default)
+
+            See Notes for details.
+
         axis: str, default: ``PRES``
             The dataset variable to use as pressure axis. This can be ``PRES`` or ``PRES_ADJUSTED``.
+
+        keep_sa_ct: bool, default: False
+            If True, also return the interpolated absolute salinity (``SA``) and conservative temperature (``CT``)
+            used by the MRST-PCHIP method.
 
         Returns
         -------
@@ -151,6 +218,10 @@ class Interpolator(ArgoAccessorExtension):
 
         Notes
         -----
+        Pre-defined standard pressure levels are available for:
+
+        - ``EasyOneArgoLite``: 107 vertical levels from 2dbar to 6000 decibar following Wong et al. (2026)
+
         Only the interpolation part of Wong et al. (2026) is applied (no data mode and QC selection pre-interpolation)
 
         References
@@ -163,10 +234,20 @@ class Interpolator(ArgoAccessorExtension):
         EasyOneArgo data product specification. Ifremer. https://doi.org/10.13155/107206.
         """
 
+        if not with_gsw:
+            raise ModuleNotFoundError("This functionality requires the gsw library")
+
         if axis not in ["PRES", "PRES_ADJUSTED"]:
             raise ValueError("'axis' option must be 'PRES' or 'PRES_ADJUSTED'")
 
-        std_lev = StandardLevels.from_product("EasyOneArgoLite")
+        if isinstance(levels, str):
+            std_lev = StandardLevels.from_product(levels)
+        elif (type(levels) is np.ndarray) | (type(levels) is list):
+            std_lev = StandardLevels(np.array(levels))
+        else:
+            raise ValueError(
+                "Standard levels must be a string for pre-defined values or list or a numpy array of positive and sorted values."
+            )
 
         # Handle input data structure: points or profiles -> need to work with profiles
         if self._argo._type == "point":
@@ -180,23 +261,11 @@ class Interpolator(ArgoAccessorExtension):
         # Get some lists of xr.DataArray
         datavars, coords, solovars = read_da_list(this_dsp)
 
-        # Create a dataset that will hold interpolation results
-        ds_out = xr.Dataset()
-
         # Save some keyword arguments for the interpolation functions
         kwargs = dict(z_dim="N_LEVELS", z_regridded_dim="Z_LEVELS", output_dim=f"{axis}_INTERPOLATED")
 
         # T/S: MRST-PCHIP method following Barker and McDougall (2020)
-        for suffix in ["", "_ADJUSTED"]:
-            temp, psal = f"TEMP{suffix}", f"PSAL{suffix}"
-            if temp in datavars and psal in datavars:
-                ds_out[psal], ds_out[temp] = mrst_pchip_interpolation_remap(
-                    this_dsp[axis],
-                    this_dsp[psal],
-                    this_dsp[temp],
-                    this_dsp["Z_LEVELS"],
-                    **kwargs
-                )
+        ds_out = _mrst_pchip_ts(this_dsp, datavars, axis, keep_sa_ct=keep_sa_ct)
 
         # Other parameters
         for da in datavars:
@@ -246,6 +315,8 @@ class Interpolator(ArgoAccessorExtension):
                 continue  # Skip variables that are not in the list of parameters to interpolate
 
         for da in ds_out.data_vars:
+            if da not in this_dsp:
+                continue  # SA/CT are not in this_dsp but their attributes are already set
             ds_out[da].attrs = this_dsp[da].attrs  # Preserve attributes
             if "long_name" in ds_out[da].attrs:
                 ds_out[da].attrs["long_name"] = f"Interpolated {ds_out[da].attrs['long_name']}"
@@ -265,7 +336,7 @@ class Interpolator(ArgoAccessorExtension):
         ds_out = ds_out.argo.cast_types()
         ds_out.attrs = self._argo.attrs.copy()  # Preserve original attributes
         ds_out.argo.add_history(
-            f"Interpolated on EasyOneArgoLite standard {axis} levels following Wong et al. (2026) (see Argopy documentation for details)"
+            f"Interpolated on standard {axis} levels following the interpolation specifications from Wong et al. (2026) (see Argopy documentation for details)"
             )
 
         return ds_out
@@ -275,6 +346,7 @@ class Interpolator(ArgoAccessorExtension):
         levels: list[list, np.array, str] = "EasyOneArgoLite",
         axis: str = "PRES",
         method: Literal["mrst-pchip", "pchip", "linear"] = "mrst-pchip",
+        keep_sa_ct: bool = False
     ):
         """Interpolate measurements to standard pressure levels
 
@@ -301,6 +373,10 @@ class Interpolator(ArgoAccessorExtension):
                 - Piecewise Cubic Hermite Interpolating Polynomial method on all other parameters
             - ``pchip``: Apply the Piecewise Cubic Hermite Interpolating Polynomial method on all parameters
             - ``linear``: Apply :class:`scipy.interpolate.interp1d` on all parameters
+
+        keep_sa_ct: bool, default: False
+            If True, also return the interpolated absolute salinity (``SA``) and conservative temperature (``CT``)
+            used by the MRST-PCHIP method.
 
         Returns
         -------
@@ -401,25 +477,14 @@ class Interpolator(ArgoAccessorExtension):
                     ds_out[da].attrs["long_name"] = f"Interpolated {ds_out[da].attrs['long_name']}"
 
         elif method == "mrst-pchip":
-            # Following Wong et al. (2026), MRST-PCHIP is applied on temperature and salinity, not on CT and SA.
-            # From Wong et al. (2026), step 1 -> interpolate by using "gsw_SA_CT_interp" for TS
+            if not with_gsw:
+                raise ModuleNotFoundError("This functionality requires the gsw library")
+            # T/S: MRST-PCHIP method following Barker and McDougall (2020)
             # For all other parameters, the interpolation uses PCHIP, one after the other
-            ds_out['PSAL'], ds_out['TEMP'] = mrst_pchip_interpolation_remap(
-                                this_dsp[axis],
-                                this_dsp['PSAL'],
-                                this_dsp['TEMP'],
-                                this_dsp["Z_LEVELS"],
-                                z_dim="N_LEVELS",
-                                z_regridded_dim="Z_LEVELS",
-                                output_dim=f"{axis}_INTERPOLATED"
-                            )
-            for da in ['TEMP', 'PSAL']:
-                ds_out[da].attrs = this_dsp[da].attrs  # Preserve attributes
-                if "long_name" in ds_out[da].attrs:
-                    ds_out[da].attrs["long_name"] = f"Interpolated {ds_out[da].attrs['long_name']}"
+            ds_out = _mrst_pchip_ts(this_dsp, datavars, axis, keep_sa_ct=keep_sa_ct)
 
             for da in datavars:
-                if da not in ['TEMP', 'PSAL']:
+                if da not in ds_out:
                     ds_out[da] = pchip_interpolation_remap(
                         this_dsp[axis],
                         this_dsp[da],
@@ -428,9 +493,9 @@ class Interpolator(ArgoAccessorExtension):
                         z_regridded_dim="Z_LEVELS",
                         output_dim=f"{axis}_INTERPOLATED"
                     )
-                    ds_out[da].attrs = this_dsp[da].attrs  # Preserve attributes
-                    if "long_name" in ds_out[da].attrs:
-                        ds_out[da].attrs["long_name"] = f"Interpolated {ds_out[da].attrs['long_name']}"
+                ds_out[da].attrs = this_dsp[da].attrs  # Preserve attributes
+                if "long_name" in ds_out[da].attrs:
+                    ds_out[da].attrs["long_name"] = f"Interpolated {ds_out[da].attrs['long_name']}"
 
         else:
             raise ValueError(
