@@ -66,181 +66,6 @@
             "@type": "skos:Concept"
         },
         {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/",
-            "pav:hasVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/1/"
-            },
-            "@type": "skos:Concept",
-            "skos:related": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R25/current/OPTODE_DOXY/"
-            },
-            "skos:definition": {
-                "@language": "en",
-                "@value": "An optical dissolved oxygen sensor, manufactured by Sea-Bird Scientific and designed to be integrated into a pumped CTD system."
-            },
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "owl:deprecated": "false",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
-            },
-            "dc:identifier": "SDN:R27::SBE83_OPTODE",
-            "skos:prefLabel": {
-                "@language": "en",
-                "@value": "Sea-Bird Scientific SBE83 oxygen optode"
-            },
-            "owl:versionInfo": "2",
-            "dc:date": "2025-11-18 12:09:41.0",
-            "skos:altLabel": "SBE83_OPTODE",
-            "skos:notation": "SDN:R27::SBE83_OPTODE",
-            "pav:version": "2",
-            "dce:identifier": "SDN:R27::SBE83_OPTODE",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/2/"
-            },
-            "pav:authoredOn": "2025-11-18 12:09:41.0"
-        },
-        {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/",
-            "pav:authoredOn": "2025-10-08 10:58:28.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/1/"
-            },
-            "dce:identifier": "SDN:R27::RBR_CTD",
-            "@type": "skos:Concept",
-            "skos:related": [
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/"
-                }
-            ],
-            "skos:definition": {
-                "@language": "en",
-                "@value": "A system comprising temperature, conductivity and pressure sensors, manufactured by RBR for moored applications. This cell was not optimized for use on profiling floats, and this was used in only one test deployment. The system supports both spot and continuous sampling modes, with sampling speeds configurable to up to 12 Hz. The depth rating for a standard profile is 2000 dbar, with energy consumption of approximately 700 J."
-            },
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "owl:deprecated": "false",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
-            },
-            "dc:identifier": "SDN:R27::RBR_CTD",
-            "skos:prefLabel": {
-                "@language": "en",
-                "@value": "RBR CTD"
-            },
-            "owl:versionInfo": "1",
-            "dc:date": "2025-10-08 10:58:28.0",
-            "skos:altLabel": "RBR_CTD",
-            "skos:notation": "SDN:R27::RBR_CTD",
-            "pav:version": "1"
-        },
-        {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_R10W/",
-            "pav:authoredOn": "2025-08-28 11:45:52.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_R10W/1/"
-            },
-            "dce:identifier": "SDN:R27::OCR504_R10W",
-            "@type": "skos:Concept",
-            "skos:related": [
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD443/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD555/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD490/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD412/"
-                }
-            ],
-            "skos:definition": {
-                "@language": "en",
-                "@value": "Replaces deprecated term  'http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_R10W'. A cosine-response, multispectral radiometer configured to measure upwelling radiance in water. Number of channels: 4; field of view: 10 deg (half angle, half maximum); bandwidth range: 400 nm to 865 nm (standard), or 305 nm, 325 nm, 340 nm, 380 nm (UV); sampling rate: 7 Hz - 24 Hz; spectral bandwidth: 10 nm or 20 nm. The instrument was originally developed and manufactured at Satlantic, and was rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2011."
-            },
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "owl:deprecated": "false",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
-            },
-            "dc:identifier": "SDN:R27::OCR504_R10W",
-            "skos:prefLabel": {
-                "@language": "en",
-                "@value": "OCR-504 multispectral radiometer (upwelling radiance)"
-            },
-            "owl:versionInfo": "1",
-            "dc:date": "2025-08-28 11:45:52.0",
-            "skos:altLabel": "OCR504_R10W",
-            "skos:notation": "SDN:R27::OCR504_R10W",
-            "pav:version": "1"
-        },
-        {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/",
-            "pav:authoredOn": "2025-08-28 11:45:52.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/1/"
-            },
-            "dce:identifier": "SDN:R27::OCR504_ICSW",
-            "pav:version": "1",
-            "@type": "skos:Concept",
-            "skos:related": [
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR380/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR555/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR412/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR443/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR490/"
-                }
-            ],
-            "skos:definition": {
-                "@language": "en",
-                "@value": "Replaces deprecated term  'http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW'. A cosine-response, multispectral radiometer configured to measure downwelling irradiance in water. Number of channels: 4; bandwidth range: 400 nm to 865 nm (standard), or 305 nm, 325 nm, 340 nm, 380 nm (UV); sampling rate: 7 Hz - 24 Hz; spectral bandwidth: 10 nm or 20 nm. The instrument was originally developed and manufactured at Satlantic, and was rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2011."
-            },
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "owl:deprecated": "false",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
-            },
-            "dc:identifier": "SDN:R27::OCR504_ICSW",
-            "skos:prefLabel": {
-                "@language": "en",
-                "@value": "OCR-504 multispectral radiometer (downwelling irradiance)"
-            },
-            "owl:versionInfo": "1",
-            "dc:date": "2025-08-28 11:45:52.0",
-            "skos:altLabel": "OCR504_ICSW",
-            "skos:notation": "SDN:R27::OCR504_ICSW"
-        },
-        {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/DSB301-10-C85/",
             "pav:authoredOn": "2025-08-20 09:29:53.0",
             "@type": "skos:Concept",
@@ -887,39 +712,47 @@
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3930/",
-            "pav:authoredOn": "2021-05-26 09:01:46.0",
+            "pav:hasVersion": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3930/1/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3930/2/"
+                }
+            ],
+            "pav:authoredOn": "2026-03-09 09:11:24.0",
             "@type": "skos:Concept",
             "skos:related": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R25/current/OPTODE_DOXY/"
             },
             "skos:definition": {
                 "@language": "en",
-                "@value": "A stand-alone oxygen optode with integrated temperature sensor, manufactured by Aanderaa. This instrument exploits the physio-chemical principle of dynamic fluorescence quenching to measure absolute oxygen concentration and percent saturation. Depth rating: 2000 m or 6000 m; oxygen concentration accuracy of < 8 uM or 5 %, and resolution of < 1 uM; air saturation accuracy of < 5 %, and resolution of 0.4 %; settling time (63 %): < 25 s."
+                "@value": "Deprecated as it is not used on Argo Floats. A stand-alone oxygen optode with integrated temperature sensor, manufactured by Aanderaa. This instrument exploits the physio-chemical principle of dynamic fluorescence quenching to measure absolute oxygen concentration and percent saturation. Depth rating: 2000 m or 6000 m; oxygen concentration accuracy of < 8 uM or 5 %, and resolution of < 1 uM; air saturation accuracy of < 5 %, and resolution of 0.4 %; settling time (63 %): < 25 s."
             },
             "void:inDataset": {
                 "@id": "http://vocab.nerc.ac.uk/.well-known/void"
             },
-            "owl:deprecated": "false",
+            "owl:deprecated": "true",
             "skos:note": {
                 "@language": "en",
-                "@value": "accepted"
+                "@value": "deprecated"
             },
             "dc:identifier": "SDN:R27::AANDERAA_OPTODE_3930",
             "skos:prefLabel": {
                 "@language": "en",
                 "@value": "Aanderaa 3930 oxygen optode"
             },
-            "owl:versionInfo": "1",
-            "dc:date": "2021-05-26 09:01:46.0",
+            "owl:versionInfo": "3",
+            "dc:date": "2026-03-09 09:11:24.0",
             "skos:altLabel": "AANDERAA_OPTODE_3930",
             "skos:notation": "SDN:R27::AANDERAA_OPTODE_3930",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/AANDERAA/"
             },
-            "pav:version": "1",
+            "pav:version": "3",
             "dce:identifier": "SDN:R27::AANDERAA_OPTODE_3930",
             "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3930/1/"
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3930/3/"
             }
         },
         {
@@ -1237,8 +1070,12 @@
             "pav:hasCurrentVersion": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL_AP2/2/"
             },
+            "dce:identifier": "SDN:R27::ECO_FLBBFL_AP2",
             "@type": "skos:Concept",
             "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/"
+                },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/"
                 },
@@ -1270,8 +1107,60 @@
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
             },
+            "pav:version": "2"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/1/"
+            },
+            "pav:authoredOn": "2023-10-05 14:42:48.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/2/"
+            },
+            "dce:identifier": "SDN:R27::ECO_FLBBFL",
             "pav:version": "2",
-            "dce:identifier": "SDN:R27::ECO_FLBBFL_AP2"
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL_AP2/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/"
+                }
+            ],
+            "skos:definition": {
+                "@language": "en",
+                "@value": "A three-channel optical sensor fitted with two single-wavelength chlorophyll fluorometers and a single-angle scattering meter, depth-rated to 2000 m and designed for float applications. The two fluorometers are configured to detect chlorophyll-a fluorescence at 470 nm (excitation) / 695 nm (emission) wavelengths and chlorophyll-a fluorescence at 435 nm (excitation) / 695 nm (emission) wavelengths respectively, whereas the scattering meter (in-water centroid angle of 124 deg) is configured to measure backscattering at 700 nm wavelength. The instrument is part of the Environmental Characterization Optics (ECO) series tools, manufactured by Sea-Bird Scientific."
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R27::ECO_FLBBFL",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "ECO_FLBBFL"
+            },
+            "owl:versionInfo": "2",
+            "dc:date": "2023-10-05 14:42:48.0",
+            "skos:altLabel": "ECO_FLBBFL",
+            "skos:notation": "SDN:R27::ECO_FLBBFL",
+            "skos:broader": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
+                }
+            ]
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SEASCAN_SSTD/",
@@ -1533,13 +1422,13 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/"
                 }
             ],
             "skos:definition": {
@@ -1581,13 +1470,13 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/"
                 }
             ],
             "skos:definition": {
@@ -1611,6 +1500,54 @@
             "dc:date": "2021-05-26 09:01:46.0",
             "skos:altLabel": "RBR_ARGO3_DEEP6K",
             "skos:notation": "SDN:R27::RBR_ARGO3_DEEP6K",
+            "skos:broader": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R26/current/RBR/"
+            }
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/",
+            "pav:authoredOn": "2025-10-08 10:58:28.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/1/"
+            },
+            "dce:identifier": "SDN:R27::RBR_CTD",
+            "pav:version": "1",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
+            "skos:definition": {
+                "@language": "en",
+                "@value": "A system comprising temperature, conductivity and pressure sensors, manufactured by RBR for moored applications. This cell was not optimized for use on profiling floats, and this was used in only one test deployment. The system supports both spot and continuous sampling modes, with sampling speeds configurable to up to 12 Hz. The depth rating for a standard profile is 2000 dbar, with energy consumption of approximately 700 J."
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R27::RBR_CTD",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "RBR CTD"
+            },
+            "owl:versionInfo": "1",
+            "dc:date": "2025-10-08 10:58:28.0",
+            "skos:altLabel": "RBR_CTD",
+            "skos:notation": "SDN:R27::RBR_CTD",
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/RBR/"
             }
@@ -1666,13 +1603,13 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/"
                 }
             ],
             "skos:definition": {
@@ -1775,6 +1712,54 @@
             }
         },
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3.1/",
+            "pav:authoredOn": "2026-05-08 11:01:47.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3.1/1/"
+            },
+            "dce:identifier": "SDN:R27::RBR_ARGO3.1",
+            "pav:version": "1",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
+                }
+            ],
+            "skos:definition": {
+                "@language": "en",
+                "@value": "A system comprising temperature, conductivity and pressure sensors with Computational Fluid Dynamic (CFD) optimised flow path, manufactured by RBR. Salinity is measured by induction of water flushing freely through the conductivity cell, and is accurate to within 10 cm of the air-ocean interface. The unit is designed specifically for profiling floats, including those hosting multiple biogeochemical (BGC) sensors. The system supports both spot and continuous sampling modes, with sampling speeds configurable to up to 8 Hz. The depth rating for a standard profile is 2000 dbar, with energy consumption of approximately 400 J. The ceramic used is a 6k-rated ceramic which differs from the 2k-rated ceramic in the RBR_ARGO3."
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R27::RBR_ARGO3.1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "RBRargo3.1 CTD"
+            },
+            "owl:versionInfo": "1",
+            "dc:date": "2026-05-08 11:01:47.0",
+            "skos:altLabel": "RBR_ARGO3.1",
+            "skos:notation": "SDN:R27::RBR_ARGO3.1",
+            "skos:broader": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R26/current/RBR/"
+            }
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP4K/",
             "pav:authoredOn": "2021-05-26 09:01:46.0",
             "pav:hasCurrentVersion": {
@@ -1788,13 +1773,13 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/"
                 }
             ],
             "skos:definition": {
@@ -1836,13 +1821,13 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/"
                 }
             ],
             "skos:definition": {
@@ -2677,6 +2662,7 @@
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
             },
             "skos:notation": "SDN:R27::SBE41N",
+            "skos:altLabel": "SBE41N",
             "@type": "skos:Concept",
             "skos:related": [
                 {
@@ -2684,6 +2670,9 @@
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.4.0/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.5/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.4/"
@@ -2716,8 +2705,7 @@
                 "@value": "Sea-Bird Scientific SBE 41N CTD"
             },
             "owl:versionInfo": "2",
-            "dc:date": "2019-10-16 06:35:48.0",
-            "skos:altLabel": "SBE41N"
+            "dc:date": "2019-10-16 06:35:48.0"
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2/",
@@ -2783,8 +2771,19 @@
             },
             "dce:identifier": "SDN:R27::ECO_FLBBCD_AP2",
             "pav:version": "1",
+            "skos:broader": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+                }
+            ],
             "@type": "skos:Concept",
             "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD/"
+                },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CDOM/"
                 },
@@ -2815,15 +2814,60 @@
             "owl:versionInfo": "1",
             "dc:date": "2021-08-09 12:23:38.0",
             "skos:altLabel": "ECO_FLBBCD_AP2",
-            "skos:notation": "SDN:R27::ECO_FLBBCD_AP2",
+            "skos:notation": "SDN:R27::ECO_FLBBCD_AP2"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD/",
+            "pav:authoredOn": "2021-08-09 12:23:38.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD/1/"
+            },
+            "dce:identifier": "SDN:R27::ECO_FLBBCD",
+            "pav:version": "1",
             "skos:broader": [
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
+                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
                 }
-            ]
+            ],
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD_AP2/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CDOM/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/"
+                }
+            ],
+            "skos:definition": {
+                "@language": "en",
+                "@value": "A three-channel optical sensor fitted with two single-wavelength fluorometers and a single-angle scattering meter, depth-rated to 2000 m and designed for float applications. The two fluorometers are configured to detect chlorophyll-a fluorescence at 470 nm (excitation) / 695 nm (emission) wavelengths and Fluorescent Dissolved Organic Matter (FDOM) at 370 nm (excitation) / 460 nm (emission) wavelengths respectively, whereas the scattering meter (in-water centroid angle of 124 deg) is configured to measure backscattering at 700 nm wavelength. The instrument is part of the Environmental Characterization Optics (ECO) series tools, originally developed and manufactured at WET Labs and rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2010."
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R27::ECO_FLBBCD",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "ECO FLBBCD sensor package with two fluorometers and one scattering meter"
+            },
+            "owl:versionInfo": "1",
+            "dc:date": "2021-08-09 12:23:38.0",
+            "skos:altLabel": "ECO_FLBBCD",
+            "skos:notation": "SDN:R27::ECO_FLBBCD"
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V4.4.0/",
@@ -3302,27 +3346,39 @@
             }
         },
         {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/",
-            "pav:hasVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/1/"
-            },
-            "pav:authoredOn": "2023-10-05 14:42:48.0",
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_R10W/",
+            "pav:authoredOn": "2025-08-28 11:45:52.0",
             "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/2/"
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_R10W/1/"
             },
-            "dce:identifier": "SDN:R27::ECO_FLBBFL",
+            "dce:identifier": "SDN:R27::OCR504_R10W",
+            "pav:version": "1",
+            "skos:broader": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SATLANTIC/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+                }
+            ],
             "@type": "skos:Concept",
             "skos:related": [
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/"
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD443/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/"
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD555/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD490/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD412/"
                 }
             ],
             "skos:definition": {
                 "@language": "en",
-                "@value": "A three-channel optical sensor fitted with two single-wavelength chlorophyll fluorometers and a single-angle scattering meter, depth-rated to 2000 m and designed for float applications. The two fluorometers are configured to detect chlorophyll-a fluorescence at 470 nm (excitation) / 695 nm (emission) wavelengths and chlorophyll-a fluorescence at 435 nm (excitation) / 695 nm (emission) wavelengths respectively, whereas the scattering meter (in-water centroid angle of 124 deg) is configured to measure backscattering at 700 nm wavelength. The instrument is part of the Environmental Characterization Optics (ECO) series tools, manufactured by Sea-Bird Scientific."
+                "@value": "Replaces deprecated term  'http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_R10W'. A cosine-response, multispectral radiometer configured to measure upwelling radiance in water. Number of channels: 4; field of view: 10 deg (half angle, half maximum); bandwidth range: 400 nm to 865 nm (standard), or 305 nm, 325 nm, 340 nm, 380 nm (UV); sampling rate: 7 Hz - 24 Hz; spectral bandwidth: 10 nm or 20 nm. The instrument was originally developed and manufactured at Satlantic, and was rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2011."
             },
             "void:inDataset": {
                 "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -3332,24 +3388,15 @@
                 "@language": "en",
                 "@value": "accepted"
             },
-            "dc:identifier": "SDN:R27::ECO_FLBBFL",
+            "dc:identifier": "SDN:R27::OCR504_R10W",
             "skos:prefLabel": {
                 "@language": "en",
-                "@value": "ECO_FLBBFL"
+                "@value": "OCR-504 multispectral radiometer (upwelling radiance)"
             },
-            "owl:versionInfo": "2",
-            "dc:date": "2023-10-05 14:42:48.0",
-            "skos:altLabel": "ECO_FLBBFL",
-            "skos:notation": "SDN:R27::ECO_FLBBFL",
-            "skos:broader": [
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
-                }
-            ],
-            "pav:version": "2"
+            "owl:versionInfo": "1",
+            "dc:date": "2025-08-28 11:45:52.0",
+            "skos:altLabel": "OCR504_R10W",
+            "skos:notation": "SDN:R27::OCR504_R10W"
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.0/",
@@ -3734,6 +3781,46 @@
             }
         },
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/1/"
+            },
+            "pav:authoredOn": "2025-11-18 12:09:41.0",
+            "@type": "skos:Concept",
+            "skos:related": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R25/current/OPTODE_DOXY/"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "An optical dissolved oxygen sensor, manufactured by Sea-Bird Scientific and designed to be integrated into a pumped CTD system."
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R27::SBE83_OPTODE",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Sea-Bird Scientific SBE83 oxygen optode"
+            },
+            "owl:versionInfo": "2",
+            "dc:date": "2025-11-18 12:09:41.0",
+            "skos:altLabel": "SBE83_OPTODE",
+            "skos:notation": "SDN:R27::SBE83_OPTODE",
+            "skos:broader": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+            },
+            "pav:version": "2",
+            "dce:identifier": "SDN:R27::SBE83_OPTODE",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/2/"
+            }
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.5/",
             "pav:hasVersion": [
                 {
@@ -3901,56 +3988,6 @@
             "skos:broader": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
             }
-        },
-        {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD/",
-            "pav:authoredOn": "2021-08-09 12:23:38.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD/1/"
-            },
-            "dce:identifier": "SDN:R27::ECO_FLBBCD",
-            "pav:version": "1",
-            "@type": "skos:Concept",
-            "skos:related": [
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CDOM/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/"
-                }
-            ],
-            "skos:definition": {
-                "@language": "en",
-                "@value": "A three-channel optical sensor fitted with two single-wavelength fluorometers and a single-angle scattering meter, depth-rated to 2000 m and designed for float applications. The two fluorometers are configured to detect chlorophyll-a fluorescence at 470 nm (excitation) / 695 nm (emission) wavelengths and Fluorescent Dissolved Organic Matter (FDOM) at 370 nm (excitation) / 460 nm (emission) wavelengths respectively, whereas the scattering meter (in-water centroid angle of 124 deg) is configured to measure backscattering at 700 nm wavelength. The instrument is part of the Environmental Characterization Optics (ECO) series tools, originally developed and manufactured at WET Labs and rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2010."
-            },
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "owl:deprecated": "false",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
-            },
-            "dc:identifier": "SDN:R27::ECO_FLBBCD",
-            "skos:prefLabel": {
-                "@language": "en",
-                "@value": "ECO FLBBCD sensor package with two fluorometers and one scattering meter"
-            },
-            "owl:versionInfo": "1",
-            "dc:date": "2021-08-09 12:23:38.0",
-            "skos:altLabel": "ECO_FLBBCD",
-            "skos:notation": "SDN:R27::ECO_FLBBCD",
-            "skos:broader": [
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
-                }
-            ]
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/",
@@ -4227,8 +4264,12 @@
                 "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB/1/"
             },
             "dce:identifier": "SDN:R27::ECO_FLBB",
+            "pav:version": "1",
             "@type": "skos:Concept",
             "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_AP2/"
+                },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/"
                 },
@@ -4264,8 +4305,57 @@
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
                 }
+            ]
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_AP2/",
+            "pav:authoredOn": "2021-08-09 12:23:38.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_AP2/1/"
+            },
+            "dce:identifier": "SDN:R27::ECO_FLBB_AP2",
+            "pav:version": "1",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/"
+                }
             ],
-            "pav:version": "1"
+            "skos:definition": {
+                "@language": "en",
+                "@value": "A dual-channel optical sensor fitted with a single-wavelength fluorometer and a scattering meter calibrated to determine backscattering, depth-rated to 2000 m and designed for float applications. The sensor operates by flashing blue (470 nm) and red (700 nm) beams in alternation from two light-emitting diodes (LEDs), to respectively stimulate chlorophyll fluorescence and illuminate the total particle field. The scattering sensor has an in-water centroid angle of 142 deg. The instrument is part of the Environmental Characterization Optics (ECO) series tools, originally developed and manufactured at WET Labs and rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2010."
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R27::ECO_FLBB_AP2",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "ECO FLbb-AP2 sensor package with fluorometer and scattering meter"
+            },
+            "owl:versionInfo": "1",
+            "dc:date": "2021-08-09 12:23:38.0",
+            "skos:altLabel": "ECO_FLBB_AP2",
+            "skos:notation": "SDN:R27::ECO_FLBB_AP2",
+            "skos:broader": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
+                }
+            ]
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE63_OPTODE/",
@@ -5077,6 +5167,46 @@
             "dc:date": "2025-04-03 11:54:29.0",
             "skos:altLabel": "SBE41_IDO_V3.0",
             "skos:notation": "SDN:R27::SBE41_IDO_V3.0"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.5/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.5/1/"
+            },
+            "pav:authoredOn": "2026-05-08 11:01:48.0",
+            "@type": "skos:Concept",
+            "skos:related": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N/"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on profiling floats hosting multiple biogeochemical (BGC) sensors. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent. Data from all the float's sensors, including the optional bolt-on ones, are integrated in the data stream and transmitted to the float controller when the float reaches the surface. This SBE41N model has firmware version 5.3.5."
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "true",
+            "skos:note": {
+                "@language": "en",
+                "@value": "deprecated"
+            },
+            "dc:identifier": "SDN:R27::SBE41N_V5.3.5",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Sea-Bird Scientific SBE 41N CTD V5.3.5"
+            },
+            "owl:versionInfo": "2",
+            "dc:date": "2026-05-08 11:01:48.0",
+            "skos:altLabel": "SBE41N_V5.3.5",
+            "skos:notation": "SDN:R27::SBE41N_V5.3.5",
+            "skos:broader": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+            },
+            "pav:version": "2",
+            "dce:identifier": "SDN:R27::SBE41N_V5.3.5",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.5/2/"
+            }
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3/",
@@ -5988,6 +6118,8 @@
                 }
             ],
             "skos:notation": "SDN:R27::SATLANTIC_OCR504_ICSW",
+            "skos:altLabel": "SATLANTIC_OCR504_ICSW",
+            "dc:date": "2025-08-28 11:45:52.0",
             "@type": "skos:Concept",
             "skos:related": [
                 {
@@ -5995,6 +6127,9 @@
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR555/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR665/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR412/"
@@ -6007,6 +6142,9 @@
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR490/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR670/"
                 }
             ],
             "skos:definition": {
@@ -6026,9 +6164,7 @@
                 "@language": "en",
                 "@value": "OCR-504 multispectral radiometer (downwelling irradiance)"
             },
-            "owl:versionInfo": "2",
-            "dc:date": "2025-08-28 11:45:52.0",
-            "skos:altLabel": "SATLANTIC_OCR504_ICSW"
+            "owl:versionInfo": "2"
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_NTU/",
@@ -6071,6 +6207,71 @@
             ],
             "pav:version": "1",
             "dce:identifier": "SDN:R27::ECO_NTU"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/",
+            "pav:authoredOn": "2025-08-28 11:45:52.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/1/"
+            },
+            "dce:identifier": "SDN:R27::OCR504_ICSW",
+            "pav:version": "1",
+            "skos:broader": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SATLANTIC/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+                }
+            ],
+            "skos:notation": "SDN:R27::OCR504_ICSW",
+            "skos:altLabel": "OCR504_ICSW",
+            "dc:date": "2025-08-28 11:45:52.0",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR380/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR555/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR665/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR412/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_PAR/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR443/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR490/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR670/"
+                }
+            ],
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Replaces deprecated term  'http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW'. A cosine-response, multispectral radiometer configured to measure downwelling irradiance in water. Number of channels: 4; bandwidth range: 400 nm to 865 nm (standard), or 305 nm, 325 nm, 340 nm, 380 nm (UV); sampling rate: 7 Hz - 24 Hz; spectral bandwidth: 10 nm or 20 nm. The instrument was originally developed and manufactured at Satlantic, and was rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2011."
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R27::OCR504_ICSW",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "OCR-504 multispectral radiometer (downwelling irradiance)"
+            },
+            "owl:versionInfo": "1"
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_R10W/",
@@ -6177,53 +6378,6 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
                 }
             ]
-        },
-        {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_AP2/",
-            "pav:authoredOn": "2021-08-09 12:23:38.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_AP2/1/"
-            },
-            "dce:identifier": "SDN:R27::ECO_FLBB_AP2",
-            "@type": "skos:Concept",
-            "skos:related": [
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/"
-                }
-            ],
-            "skos:definition": {
-                "@language": "en",
-                "@value": "A dual-channel optical sensor fitted with a single-wavelength fluorometer and a scattering meter calibrated to determine backscattering, depth-rated to 2000 m and designed for float applications. The sensor operates by flashing blue (470 nm) and red (700 nm) beams in alternation from two light-emitting diodes (LEDs), to respectively stimulate chlorophyll fluorescence and illuminate the total particle field. The scattering sensor has an in-water centroid angle of 142 deg. The instrument is part of the Environmental Characterization Optics (ECO) series tools, originally developed and manufactured at WET Labs and rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2010."
-            },
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "owl:deprecated": "false",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
-            },
-            "dc:identifier": "SDN:R27::ECO_FLBB_AP2",
-            "skos:prefLabel": {
-                "@language": "en",
-                "@value": "ECO FLbb-AP2 sensor package with fluorometer and scattering meter"
-            },
-            "owl:versionInfo": "1",
-            "dc:date": "2021-08-09 12:23:38.0",
-            "skos:altLabel": "ECO_FLBB_AP2",
-            "skos:notation": "SDN:R27::ECO_FLBB_AP2",
-            "skos:broader": [
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
-                }
-            ],
-            "pav:version": "1"
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB2/",
@@ -6501,18 +6655,6 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RAFOS/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_R10W/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/"
-                },
-                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/DSB301-10-C85/"
                 },
                 {
@@ -6618,6 +6760,9 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CODA_T_ODO/"
                 },
                 {
@@ -6628,6 +6773,9 @@
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES_A/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3.1/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP4K/"
@@ -6711,6 +6859,9 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.4/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_R10W/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/"
                 },
                 {
@@ -6718,6 +6869,9 @@
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.5/"
@@ -6790,6 +6944,9 @@
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.5/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V3.0/"
@@ -6867,6 +7024,9 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.2/"
                 },
                 {
@@ -6911,8 +7071,8 @@
             "dc:description": "Terms listing models of sensors mounted on Argo floats. Note: avoid using the manufacturer name and sensor firmware version in new entries when possible. Argo netCDF variable SENSOR_MODEL is populated by R27 altLabel.",
             "dc:title": "Argo sensor models",
             "skos:prefLabel": "Argo sensor models",
-            "owl:versionInfo": "23",
-            "dc:date": "2025-11-19 02:00:00.0",
+            "owl:versionInfo": "27",
+            "dc:date": "2026-05-09 03:00:01.0",
             "skos:altLabel": "SENSOR_MODEL",
             "dc:creator": "Argo Data Management Team",
             "dc:alternative": "SENSOR_MODEL",

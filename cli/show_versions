@@ -157,10 +157,10 @@ def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa
             ("erddapy", get_version),
             ("fsspec", get_version),
             ("aiohttp", get_version),
-            ("packaging", get_version),
+            # ("packaging", get_version),
             ("requests", get_version),
             ("toolz", get_version),
-            ("decorator", get_version),
+            # ("decorator", get_version),
         ]),
         'ext.util': sorted([
             ("gsw", get_version),

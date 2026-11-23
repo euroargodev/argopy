@@ -1,7 +1,7 @@
 {
   "name": "CC00160",
   "long_name": "CONFIG_PressureTargetToleranceDuringDriftAtParkingDepth_dbar",
-  "last_update": "2026-01-25T11:16:01.670572+00:00",
+  "last_update": "2026-10-05T15:49:13.303420+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00160/",
     "pav:hasVersion": {

@@ -29,7 +29,6 @@ from argopy.utils.mappers import map_vars_to_dict
 from argopy.utils.checkers import is_list_of_strings
 from argopy.utils.casting import (
     cast_Argo_variable_type,
-    DATA_TYPES,
     to_list,
 )
 from argopy.utils.computers import (
@@ -39,6 +38,8 @@ from argopy.utils.computers import (
 )
 from argopy.utils.lists import list_core_parameters
 from argopy.utils.geo import toYearFraction
+from argopy.utils.assets import Asset
+
 
 
 log = logging.getLogger("argopy.xarray")
@@ -112,6 +113,8 @@ class ArgoAccessor:
 
         # Variables present in the initial dataset
         self._vars = list(xarray_obj.variables.keys())
+
+        self._DATA_TYPES = Asset.load('data_types')['data']
 
         # Store the initial list of dimensions
         self._dims = list(xarray_obj.sizes.keys())
@@ -1060,7 +1063,7 @@ class ArgoAccessor:
         for co in coords:
             ds_out.coords[co] = this_dsp[co]
 
-        ds_out = ds_out.drop_vars(["N_LEVELS", "Z_LEVELS"], errors='ignore')
+        ds_out = ds_out.drop_vars(["N_LEVELS", "Z_LEVELS"], errors="ignore")
         ds_out = ds_out[np.sort(ds_out.data_vars)]
         ds_out = ds_out.argo.cast_types()
         ds_out.attrs = self.attrs  # Preserve original attributes
@@ -1448,7 +1451,7 @@ class ArgoAccessor:
                 dv
                 for dv in list(this_dsp.data_vars)
                 if set(["N_LEVELS", "N_PROF"]) == set(this_dsp[dv].dims)
-                and dv not in DATA_TYPES["data"]["str"]
+                and dv not in self._DATA_TYPES["str"]
             ]
         else:
             datavars = [
@@ -1457,7 +1460,7 @@ class ArgoAccessor:
                 if set(["N_LEVELS", "N_PROF"]) == set(this_dsp[dv].dims)
                 and "QC" not in dv
                 and "ERROR" not in dv
-                and dv not in DATA_TYPES["data"]["str"]
+                and dv not in self._DATA_TYPES["str"]
             ]
 
         # All other variables:
@@ -2309,8 +2312,12 @@ class ArgoAccessor:
         )
         return reduced
 
-    def map_vars_to_dict(self, var_key: str, var_val:str, duplicate:bool=False) -> dict[Any, Any]:
-        return map_vars_to_dict(self._obj, var_key=var_key, var_val=var_val, duplicate=duplicate)
+    def map_vars_to_dict(
+        self, var_key: str, var_val: str, duplicate: bool = False
+    ) -> dict[Any, Any]:
+        return map_vars_to_dict(
+            self._obj, var_key=var_key, var_val=var_val, duplicate=duplicate
+        )
 
 
 def open_Argo_dataset(filename_or_obj):

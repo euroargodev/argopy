@@ -1,15 +1,22 @@
-include *.txt
+# Needed at build time: the dependencies are read from requirements.txt
+include requirements.txt
+
+# Metadata and legal files
 include README.md
 include LICENSE
+include CHANGELOG.md
+include CITATION.cff
+graft LICENSES
 
+# Package source, including static assets
 graft argopy
 
+# Keep the sdist lean
 prune binder
 prune docs
-prune argopy/tests/test_data
+prune argopy/tests
 
-exclude *.egg-info
-exclude *.yml
-exclude .coveragerc
-exclude CODE_OF_CONDUCT.md
-exclude HOW_TO_RELEASE.md
+# Never ship bytecode or caches
+global-exclude *.py[cod]
+global-exclude __pycache__
+global-exclude .DS_Store

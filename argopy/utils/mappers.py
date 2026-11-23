@@ -9,11 +9,14 @@ Returns
 -------
 xarray objects or list of xarray objects
 """
+
 from typing import Any
 import xarray as xr
 
 
-def map_vars_to_dict(ds: xr.Dataset, var_key: str, var_val:str, duplicate:bool=False) -> dict[Any, Any]:
+def map_vars_to_dict(
+    ds: xr.Dataset, var_key: str, var_val: str, duplicate: bool = False
+) -> dict[Any, Any]:
     """Make a dictionary mapping 2 variables sharing one dimension
 
     This function can be used if in an Argo dataset, two variables share a similar dimension, and one want to map one variable values onto the other's (1:1 relation is expected, but many:1 can be handled as well).
@@ -50,9 +53,15 @@ def map_vars_to_dict(ds: xr.Dataset, var_key: str, var_val:str, duplicate:bool=F
         map_vars_to_dict(ds, 'SENSOR', 'SENSOR_MODEL')
 
     """
-    assert ds[var_key].dims == ds[var_val].dims, f"{var_key} and {var_val} must have similar dimensions"
-    assert len(ds[var_key].dims) == 1, f"{var_key} and {var_val} must have a single dimension"
-    read = lambda ds, key: ds[key].item().strip() if ds[key].dtype.kind == 'U' else ds[key].item()
+    assert (
+        ds[var_key].dims == ds[var_val].dims
+    ), f"{var_key} and {var_val} must have similar dimensions"
+    assert (
+        len(ds[var_key].dims) == 1
+    ), f"{var_key} and {var_val} must have a single dimension"
+    read = lambda ds, key: (  # noqa: E731
+        ds[key].item().strip() if ds[key].dtype.kind == "U" else ds[key].item()
+    )
 
     shared_dim = ds[var_key].dims[0]
     result = {}
@@ -61,6 +70,8 @@ def map_vars_to_dict(ds: xr.Dataset, var_key: str, var_val:str, duplicate:bool=F
         pname = read(this_param, var_key)
         pvalue = read(this_param, var_val)
         if pname in result and not duplicate:
-            raise ValueError(f"{var_key}={pname} has more than one occurrence. Use the option 'duplicate=True' to keep the last occurrence.")
+            raise ValueError(
+                f"{var_key}={pname} has more than one occurrence. Use the option 'duplicate=True' to keep the last occurrence."
+            )
         result.update({pname: pvalue})
     return result

@@ -1,14 +1,13 @@
 import pandas as pd
 from functools import lru_cache
 import collections
-from pathlib import Path
 
-from ..stores import httpstore, filestore
+from ..stores import httpstore
 from ..options import OPTIONS
-from ..utils import path2assets
+from argopy.utils.assets import Asset
 
 
-VALID_REF = filestore(cache=True).open_json(Path(path2assets).joinpath("nvs_reference_tables.json"))['data']['valid_ref']
+VALID_REF = Asset.load('nvs_reference_tables')['data']['valid_ref']
 
 
 class ArgoNVSReferenceTables:

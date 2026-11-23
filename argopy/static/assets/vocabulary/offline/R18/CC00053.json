@@ -1,7 +1,7 @@
 {
   "name": "CC00053",
   "long_name": "CONFIG_FirstBuoyancyNudge_COUNT",
-  "last_update": "2026-01-25T11:16:01.595971+00:00",
+  "last_update": "2026-10-05T15:49:14.575352+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00053/",
     "pav:hasVersion": {

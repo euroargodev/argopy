@@ -55,79 +55,6 @@ PREFIX void:   <http://rdfs.org/ns/void#>
         skos:prefLabel         "Ranging And Fixing Of Sound (RAFOS) receiver"@en;
         skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/ACOUSTIC_GEOLOCATION/> .
 
-<http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/>
-        rdf:type               skos:Concept;
-        dce:identifier         "SDN:R27::SBE83_OPTODE";
-        dc:date                "2025-11-18 12:09:41.0";
-        dc:identifier          "SDN:R27::SBE83_OPTODE";
-        pav:authoredOn         "2025-11-18 12:09:41.0";
-        pav:hasCurrentVersion  <http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/2/>;
-        pav:hasVersion         <http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/1/>;
-        pav:version            "2";
-        void:inDataset         <http://vocab.nerc.ac.uk/.well-known/void>;
-        owl:deprecated         "false";
-        owl:versionInfo        "2";
-        skos:altLabel          "SBE83_OPTODE";
-        skos:definition        "An optical dissolved oxygen sensor, manufactured by Sea-Bird Scientific and designed to be integrated into a pumped CTD system."@en;
-        skos:notation          "SDN:R27::SBE83_OPTODE";
-        skos:note              "accepted"@en;
-        skos:prefLabel         "Sea-Bird Scientific SBE83 oxygen optode"@en;
-        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/OPTODE_DOXY/> .
-
-<http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/>
-        rdf:type               skos:Concept;
-        dce:identifier         "SDN:R27::RBR_CTD";
-        dc:date                "2025-10-08 10:58:28.0";
-        dc:identifier          "SDN:R27::RBR_CTD";
-        pav:authoredOn         "2025-10-08 10:58:28.0";
-        pav:hasCurrentVersion  <http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/1/>;
-        pav:version            "1";
-        void:inDataset         <http://vocab.nerc.ac.uk/.well-known/void>;
-        owl:deprecated         "false";
-        owl:versionInfo        "1";
-        skos:altLabel          "RBR_CTD";
-        skos:definition        "A system comprising temperature, conductivity and pressure sensors, manufactured by RBR for moored applications. This cell was not optimized for use on profiling floats, and this was used in only one test deployment. The system supports both spot and continuous sampling modes, with sampling speeds configurable to up to 12 Hz. The depth rating for a standard profile is 2000 dbar, with energy consumption of approximately 700 J."@en;
-        skos:notation          "SDN:R27::RBR_CTD";
-        skos:note              "accepted"@en;
-        skos:prefLabel         "RBR CTD"@en;
-        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/> .
-
-<http://vocab.nerc.ac.uk/collection/R27/current/OCR504_R10W/>
-        rdf:type               skos:Concept;
-        dce:identifier         "SDN:R27::OCR504_R10W";
-        dc:date                "2025-08-28 11:45:52.0";
-        dc:identifier          "SDN:R27::OCR504_R10W";
-        pav:authoredOn         "2025-08-28 11:45:52.0";
-        pav:hasCurrentVersion  <http://vocab.nerc.ac.uk/collection/R27/current/OCR504_R10W/1/>;
-        pav:version            "1";
-        void:inDataset         <http://vocab.nerc.ac.uk/.well-known/void>;
-        owl:deprecated         "false";
-        owl:versionInfo        "1";
-        skos:altLabel          "OCR504_R10W";
-        skos:definition        "Replaces deprecated term  'http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_R10W'. A cosine-response, multispectral radiometer configured to measure upwelling radiance in water. Number of channels: 4; field of view: 10 deg (half angle, half maximum); bandwidth range: 400 nm to 865 nm (standard), or 305 nm, 325 nm, 340 nm, 380 nm (UV); sampling rate: 7 Hz - 24 Hz; spectral bandwidth: 10 nm or 20 nm. The instrument was originally developed and manufactured at Satlantic, and was rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2011."@en;
-        skos:notation          "SDN:R27::OCR504_R10W";
-        skos:note              "accepted"@en;
-        skos:prefLabel         "OCR-504 multispectral radiometer (upwelling radiance)"@en;
-        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD443/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD555/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD490/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD412/> .
-
-<http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/>
-        rdf:type               skos:Concept;
-        dce:identifier         "SDN:R27::OCR504_ICSW";
-        dc:date                "2025-08-28 11:45:52.0";
-        dc:identifier          "SDN:R27::OCR504_ICSW";
-        pav:authoredOn         "2025-08-28 11:45:52.0";
-        pav:hasCurrentVersion  <http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/1/>;
-        pav:version            "1";
-        void:inDataset         <http://vocab.nerc.ac.uk/.well-known/void>;
-        owl:deprecated         "false";
-        owl:versionInfo        "1";
-        skos:altLabel          "OCR504_ICSW";
-        skos:definition        "Replaces deprecated term  'http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW'. A cosine-response, multispectral radiometer configured to measure downwelling irradiance in water. Number of channels: 4; bandwidth range: 400 nm to 865 nm (standard), or 305 nm, 325 nm, 340 nm, 380 nm (UV); sampling rate: 7 Hz - 24 Hz; spectral bandwidth: 10 nm or 20 nm. The instrument was originally developed and manufactured at Satlantic, and was rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2011."@en;
-        skos:notation          "SDN:R27::OCR504_ICSW";
-        skos:note              "accepted"@en;
-        skos:prefLabel         "OCR-504 multispectral radiometer (downwelling irradiance)"@en;
-        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR380/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR555/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR412/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR443/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR490/> .
-
 <http://vocab.nerc.ac.uk/collection/R27/current/DSB301-10-C85/>
         rdf:type               skos:Concept;
         dce:identifier         "SDN:R27::DSB301-10-C85";
@@ -454,19 +381,20 @@ PREFIX void:   <http://rdfs.org/ns/void#>
 <http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3930/>
         rdf:type               skos:Concept;
         dce:identifier         "SDN:R27::AANDERAA_OPTODE_3930";
-        dc:date                "2021-05-26 09:01:46.0";
+        dc:date                "2026-03-09 09:11:24.0";
         dc:identifier          "SDN:R27::AANDERAA_OPTODE_3930";
-        pav:authoredOn         "2021-05-26 09:01:46.0";
-        pav:hasCurrentVersion  <http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3930/1/>;
-        pav:version            "1";
+        pav:authoredOn         "2026-03-09 09:11:24.0";
+        pav:hasCurrentVersion  <http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3930/3/>;
+        pav:hasVersion         <http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3930/1/> , <http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3930/2/>;
+        pav:version            "3";
         void:inDataset         <http://vocab.nerc.ac.uk/.well-known/void>;
-        owl:deprecated         "false";
-        owl:versionInfo        "1";
+        owl:deprecated         "true";
+        owl:versionInfo        "3";
         skos:altLabel          "AANDERAA_OPTODE_3930";
         skos:broader           <http://vocab.nerc.ac.uk/collection/R26/current/AANDERAA/>;
-        skos:definition        "A stand-alone oxygen optode with integrated temperature sensor, manufactured by Aanderaa. This instrument exploits the physio-chemical principle of dynamic fluorescence quenching to measure absolute oxygen concentration and percent saturation. Depth rating: 2000 m or 6000 m; oxygen concentration accuracy of < 8 uM or 5 %, and resolution of < 1 uM; air saturation accuracy of < 5 %, and resolution of 0.4 %; settling time (63 %): < 25 s."@en;
+        skos:definition        "Deprecated as it is not used on Argo Floats. A stand-alone oxygen optode with integrated temperature sensor, manufactured by Aanderaa. This instrument exploits the physio-chemical principle of dynamic fluorescence quenching to measure absolute oxygen concentration and percent saturation. Depth rating: 2000 m or 6000 m; oxygen concentration accuracy of < 8 uM or 5 %, and resolution of < 1 uM; air saturation accuracy of < 5 %, and resolution of 0.4 %; settling time (63 %): < 25 s."@en;
         skos:notation          "SDN:R27::AANDERAA_OPTODE_3930";
-        skos:note              "accepted"@en;
+        skos:note              "deprecated"@en;
         skos:prefLabel         "Aanderaa 3930 oxygen optode"@en;
         skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/OPTODE_DOXY/> .
 
@@ -640,7 +568,7 @@ PREFIX void:   <http://rdfs.org/ns/void#>
         skos:notation          "SDN:R27::ECO_FLBBFL_AP2";
         skos:note              "accepted"@en;
         skos:prefLabel         "ECO_FLBBFL_AP2"@en;
-        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/> , <http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/> .
+        skos:related           <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/> , <http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/> , <http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/> .
 
 <http://vocab.nerc.ac.uk/collection/R27/current/SEASCAN_SSTD/>
         rdf:type               skos:Concept;
@@ -775,7 +703,7 @@ PREFIX void:   <http://rdfs.org/ns/void#>
         skos:notation          "SDN:R27::RBR";
         skos:note              "accepted"@en;
         skos:prefLabel         "RBR unknown CTD model"@en;
-        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/> .
+        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/> .
 
 <http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/>
         rdf:type               skos:Concept;
@@ -794,7 +722,26 @@ PREFIX void:   <http://rdfs.org/ns/void#>
         skos:notation          "SDN:R27::RBR_ARGO3_DEEP6K";
         skos:note              "accepted"@en;
         skos:prefLabel         "RBRargo3 CTD deep6k"@en;
-        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/> .
+        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/> .
+
+<http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/>
+        rdf:type               skos:Concept;
+        dce:identifier         "SDN:R27::RBR_CTD";
+        dc:date                "2025-10-08 10:58:28.0";
+        dc:identifier          "SDN:R27::RBR_CTD";
+        pav:authoredOn         "2025-10-08 10:58:28.0";
+        pav:hasCurrentVersion  <http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/1/>;
+        pav:version            "1";
+        void:inDataset         <http://vocab.nerc.ac.uk/.well-known/void>;
+        owl:deprecated         "false";
+        owl:versionInfo        "1";
+        skos:altLabel          "RBR_CTD";
+        skos:broader           <http://vocab.nerc.ac.uk/collection/R26/current/RBR/>;
+        skos:definition        "A system comprising temperature, conductivity and pressure sensors, manufactured by RBR for moored applications. This cell was not optimized for use on profiling floats, and this was used in only one test deployment. The system supports both spot and continuous sampling modes, with sampling speeds configurable to up to 12 Hz. The depth rating for a standard profile is 2000 dbar, with energy consumption of approximately 700 J."@en;
+        skos:notation          "SDN:R27::RBR_CTD";
+        skos:note              "accepted"@en;
+        skos:prefLabel         "RBR CTD"@en;
+        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/> .
 
 <http://vocab.nerc.ac.uk/collection/R27/current/RBR_CODA_T_ODO/>
         rdf:type               skos:Concept;
@@ -832,7 +779,7 @@ PREFIX void:   <http://rdfs.org/ns/void#>
         skos:notation          "SDN:R27::RBR_ARGO";
         skos:note              "accepted"@en;
         skos:prefLabel         "RBRargo CTD"@en;
-        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/> .
+        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/> .
 
 <http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES/>
         rdf:type               skos:Concept;
@@ -872,6 +819,25 @@ PREFIX void:   <http://rdfs.org/ns/void#>
         skos:prefLabel         "Pressure sensor for RBR Argo3 CTD systems"@en;
         skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/> .
 
+<http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3.1/>
+        rdf:type               skos:Concept;
+        dce:identifier         "SDN:R27::RBR_ARGO3.1";
+        dc:date                "2026-05-08 11:01:47.0";
+        dc:identifier          "SDN:R27::RBR_ARGO3.1";
+        pav:authoredOn         "2026-05-08 11:01:47.0";
+        pav:hasCurrentVersion  <http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3.1/1/>;
+        pav:version            "1";
+        void:inDataset         <http://vocab.nerc.ac.uk/.well-known/void>;
+        owl:deprecated         "false";
+        owl:versionInfo        "1";
+        skos:altLabel          "RBR_ARGO3.1";
+        skos:broader           <http://vocab.nerc.ac.uk/collection/R26/current/RBR/>;
+        skos:definition        "A system comprising temperature, conductivity and pressure sensors with Computational Fluid Dynamic (CFD) optimised flow path, manufactured by RBR. Salinity is measured by induction of water flushing freely through the conductivity cell, and is accurate to within 10 cm of the air-ocean interface. The unit is designed specifically for profiling floats, including those hosting multiple biogeochemical (BGC) sensors. The system supports both spot and continuous sampling modes, with sampling speeds configurable to up to 8 Hz. The depth rating for a standard profile is 2000 dbar, with energy consumption of approximately 400 J. The ceramic used is a 6k-rated ceramic which differs from the 2k-rated ceramic in the RBR_ARGO3."@en;
+        skos:notation          "SDN:R27::RBR_ARGO3.1";
+        skos:note              "accepted"@en;
+        skos:prefLabel         "RBRargo3.1 CTD"@en;
+        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/> .
+
 <http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP4K/>
         rdf:type               skos:Concept;
         dce:identifier         "SDN:R27::RBR_ARGO3_DEEP4K";
@@ -889,7 +855,7 @@ PREFIX void:   <http://rdfs.org/ns/void#>
         skos:notation          "SDN:R27::RBR_ARGO3_DEEP4K";
         skos:note              "accepted"@en;
         skos:prefLabel         "RBRargo3 CTD deep4k"@en;
-        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/> .
+        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/> .
 
 <http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3/>
         rdf:type               skos:Concept;
@@ -908,7 +874,7 @@ PREFIX void:   <http://rdfs.org/ns/void#>
         skos:notation          "SDN:R27::RBR_ARGO3";
         skos:note              "accepted"@en;
         skos:prefLabel         "RBRargo3 CTD"@en;
-        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/> .
+        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/> .
 
 <http://vocab.nerc.ac.uk/collection/R27/current/EM/>
         rdf:type               skos:Concept;
@@ -1214,12 +1180,12 @@ PREFIX void:   <http://rdfs.org/ns/void#>
         owl:deprecated         "false";
         owl:versionInfo        "1";
         skos:altLabel          "ECO_FLBBCD_AP2";
-        skos:broader           <http://vocab.nerc.ac.uk/collection/R26/current/SBE/> , <http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/>;
+        skos:broader           <http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/> , <http://vocab.nerc.ac.uk/collection/R26/current/SBE/>;
         skos:definition        "A three-channel optical sensor fitted with two single-wavelength fluorometers and a single-angle scattering meter, depth-rated to 2000 m and designed for float applications. The two fluorometers are configured to detect chlorophyll-a fluorescence at 470 nm (excitation) / 695 nm (emission) wavelengths and Fluorescent Dissolved Organic Matter (FDOM) at 370 nm (excitation) / 460 nm (emission) wavelengths respectively, whereas the scattering meter (in-water centroid angle of 124 deg) is configured to measure backscattering at 700 nm wavelength. The instrument is part of the Environmental Characterization Optics (ECO) series tools, originally developed and manufactured at WET Labs and rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2010."@en;
         skos:notation          "SDN:R27::ECO_FLBBCD_AP2";
         skos:note              "accepted"@en;
         skos:prefLabel         "ECO FLBBCD-AP2 sensor package with two fluorometers and one scattering meter"@en;
-        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CDOM/> , <http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/> , <http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/> .
+        skos:related           <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD/> , <http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CDOM/> , <http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/> , <http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/> .
 
 <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V4.4.0/>
         rdf:type               skos:Concept;
@@ -1399,6 +1365,25 @@ PREFIX void:   <http://rdfs.org/ns/void#>
         skos:prefLabel         "Sea-Bird Scientific SBE 41CP CTD V1.4"@en;
         skos:related           <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/> .
 
+<http://vocab.nerc.ac.uk/collection/R27/current/OCR504_R10W/>
+        rdf:type               skos:Concept;
+        dce:identifier         "SDN:R27::OCR504_R10W";
+        dc:date                "2025-08-28 11:45:52.0";
+        dc:identifier          "SDN:R27::OCR504_R10W";
+        pav:authoredOn         "2025-08-28 11:45:52.0";
+        pav:hasCurrentVersion  <http://vocab.nerc.ac.uk/collection/R27/current/OCR504_R10W/1/>;
+        pav:version            "1";
+        void:inDataset         <http://vocab.nerc.ac.uk/.well-known/void>;
+        owl:deprecated         "false";
+        owl:versionInfo        "1";
+        skos:altLabel          "OCR504_R10W";
+        skos:broader           <http://vocab.nerc.ac.uk/collection/R26/current/SATLANTIC/> , <http://vocab.nerc.ac.uk/collection/R26/current/SBE/>;
+        skos:definition        "Replaces deprecated term  'http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_R10W'. A cosine-response, multispectral radiometer configured to measure upwelling radiance in water. Number of channels: 4; field of view: 10 deg (half angle, half maximum); bandwidth range: 400 nm to 865 nm (standard), or 305 nm, 325 nm, 340 nm, 380 nm (UV); sampling rate: 7 Hz - 24 Hz; spectral bandwidth: 10 nm or 20 nm. The instrument was originally developed and manufactured at Satlantic, and was rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2011."@en;
+        skos:notation          "SDN:R27::OCR504_R10W";
+        skos:note              "accepted"@en;
+        skos:prefLabel         "OCR-504 multispectral radiometer (upwelling radiance)"@en;
+        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD443/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD555/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD490/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD412/> .
+
 <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/>
         rdf:type               skos:Concept;
         dce:identifier         "SDN:R27::ECO_FLBBFL";
@@ -1417,7 +1402,7 @@ PREFIX void:   <http://rdfs.org/ns/void#>
         skos:notation          "SDN:R27::ECO_FLBBFL";
         skos:note              "accepted"@en;
         skos:prefLabel         "ECO_FLBBFL"@en;
-        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/> , <http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/> .
+        skos:related           <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL_AP2/> , <http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/> , <http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/> .
 
 <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.0/>
         rdf:type               skos:Concept;
@@ -1458,6 +1443,26 @@ PREFIX void:   <http://rdfs.org/ns/void#>
         skos:note              "accepted"@en;
         skos:prefLabel         "Sea-Bird Scientific SBE 61 CTD"@en;
         skos:related           <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.2/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.2/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.9/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.3/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.10/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.3/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.0/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.1/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.12/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/> .
+
+<http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/>
+        rdf:type               skos:Concept;
+        dce:identifier         "SDN:R27::SBE83_OPTODE";
+        dc:date                "2025-11-18 12:09:41.0";
+        dc:identifier          "SDN:R27::SBE83_OPTODE";
+        pav:authoredOn         "2025-11-18 12:09:41.0";
+        pav:hasCurrentVersion  <http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/2/>;
+        pav:hasVersion         <http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/1/>;
+        pav:version            "2";
+        void:inDataset         <http://vocab.nerc.ac.uk/.well-known/void>;
+        owl:deprecated         "false";
+        owl:versionInfo        "2";
+        skos:altLabel          "SBE83_OPTODE";
+        skos:broader           <http://vocab.nerc.ac.uk/collection/R26/current/SBE/>;
+        skos:definition        "An optical dissolved oxygen sensor, manufactured by Sea-Bird Scientific and designed to be integrated into a pumped CTD system."@en;
+        skos:notation          "SDN:R27::SBE83_OPTODE";
+        skos:note              "accepted"@en;
+        skos:prefLabel         "Sea-Bird Scientific SBE83 oxygen optode"@en;
+        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/OPTODE_DOXY/> .
 
 <http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.5/>
         rdf:type               skos:Concept;
@@ -1511,12 +1516,12 @@ PREFIX void:   <http://rdfs.org/ns/void#>
         owl:deprecated         "false";
         owl:versionInfo        "1";
         skos:altLabel          "ECO_FLBBCD";
-        skos:broader           <http://vocab.nerc.ac.uk/collection/R26/current/SBE/> , <http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/>;
+        skos:broader           <http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/> , <http://vocab.nerc.ac.uk/collection/R26/current/SBE/>;
         skos:definition        "A three-channel optical sensor fitted with two single-wavelength fluorometers and a single-angle scattering meter, depth-rated to 2000 m and designed for float applications. The two fluorometers are configured to detect chlorophyll-a fluorescence at 470 nm (excitation) / 695 nm (emission) wavelengths and Fluorescent Dissolved Organic Matter (FDOM) at 370 nm (excitation) / 460 nm (emission) wavelengths respectively, whereas the scattering meter (in-water centroid angle of 124 deg) is configured to measure backscattering at 700 nm wavelength. The instrument is part of the Environmental Characterization Optics (ECO) series tools, originally developed and manufactured at WET Labs and rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2010."@en;
         skos:notation          "SDN:R27::ECO_FLBBCD";
         skos:note              "accepted"@en;
         skos:prefLabel         "ECO FLBBCD sensor package with two fluorometers and one scattering meter"@en;
-        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CDOM/> , <http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/> , <http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/> .
+        skos:related           <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD_AP2/> , <http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CDOM/> , <http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/> , <http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/> .
 
 <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/>
         rdf:type               skos:Concept;
@@ -1594,7 +1599,7 @@ PREFIX void:   <http://rdfs.org/ns/void#>
         skos:notation          "SDN:R27::ECO_FLBB";
         skos:note              "accepted"@en;
         skos:prefLabel         "ECO FLbb sensor package with fluorometer and scattering meter"@en;
-        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/> , <http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/> .
+        skos:related           <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_AP2/> , <http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/> , <http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/> .
 
 <http://vocab.nerc.ac.uk/collection/R27/current/SBE63_OPTODE/>
         rdf:type               skos:Concept;
@@ -1929,6 +1934,26 @@ PREFIX void:   <http://rdfs.org/ns/void#>
         skos:prefLabel         "Sea-Bird Scientific SBE 41 CTD with an Integrated Dissolved Oxygen (IDO)"@en;
         skos:related           <http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V3.0/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V1.0c/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V2.0/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/> , <http://vocab.nerc.ac.uk/collection/R25/current/IDO_DOXY/> .
 
+<http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.5/>
+        rdf:type               skos:Concept;
+        dce:identifier         "SDN:R27::SBE41N_V5.3.5";
+        dc:date                "2026-05-08 11:01:48.0";
+        dc:identifier          "SDN:R27::SBE41N_V5.3.5";
+        pav:authoredOn         "2026-05-08 11:01:48.0";
+        pav:hasCurrentVersion  <http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.5/2/>;
+        pav:hasVersion         <http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.5/1/>;
+        pav:version            "2";
+        void:inDataset         <http://vocab.nerc.ac.uk/.well-known/void>;
+        owl:deprecated         "true";
+        owl:versionInfo        "2";
+        skos:altLabel          "SBE41N_V5.3.5";
+        skos:broader           <http://vocab.nerc.ac.uk/collection/R26/current/SBE/>;
+        skos:definition        "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on profiling floats hosting multiple biogeochemical (BGC) sensors. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent. Data from all the float's sensors, including the optional bolt-on ones, are integrated in the data stream and transmitted to the float controller when the float reaches the surface. This SBE41N model has firmware version 5.3.5."@en;
+        skos:notation          "SDN:R27::SBE41N_V5.3.5";
+        skos:note              "deprecated"@en;
+        skos:prefLabel         "Sea-Bird Scientific SBE 41N CTD V5.3.5"@en;
+        skos:related           <http://vocab.nerc.ac.uk/collection/R27/current/SBE41N/> .
+
 <http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V3.0/>
         rdf:type               skos:Concept;
         dce:identifier         "SDN:R27::SBE41_IDO_V3.0";
@@ -2124,7 +2149,7 @@ PREFIX void:   <http://rdfs.org/ns/void#>
         skos:notation          "SDN:R27::SBE41N";
         skos:note              "accepted"@en;
         skos:prefLabel         "Sea-Bird Scientific SBE 41N CTD"@en;
-        skos:related           <http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.0/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.4.0/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.4/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/> .
+        skos:related           <http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.0/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.4.0/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.5/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.4/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/> .
 
 <http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB/>
         rdf:type               skos:Concept;
@@ -2322,7 +2347,7 @@ PREFIX void:   <http://rdfs.org/ns/void#>
         skos:notation          "SDN:R27::SATLANTIC_OCR504_ICSW";
         skos:note              "deprecated"@en;
         skos:prefLabel         "OCR-504 multispectral radiometer (downwelling irradiance)"@en;
-        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR380/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR555/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR412/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_PAR/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR443/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR490/> .
+        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR380/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR555/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR665/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR412/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_PAR/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR443/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR490/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR670/> .
 
 <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9/>
         rdf:type               skos:Concept;
@@ -2421,6 +2446,25 @@ PREFIX void:   <http://rdfs.org/ns/void#>
         skos:note              "accepted"@en;
         skos:prefLabel         "Sea-Bird Scientific SBE 41CP CTD with an Integrated Dissolved Oxygen (IDO) sensor"@en;
         skos:related           <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/> , <http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/> , <http://vocab.nerc.ac.uk/collection/R25/current/IDO_DOXY/> .
+
+<http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/>
+        rdf:type               skos:Concept;
+        dce:identifier         "SDN:R27::OCR504_ICSW";
+        dc:date                "2025-08-28 11:45:52.0";
+        dc:identifier          "SDN:R27::OCR504_ICSW";
+        pav:authoredOn         "2025-08-28 11:45:52.0";
+        pav:hasCurrentVersion  <http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/1/>;
+        pav:version            "1";
+        void:inDataset         <http://vocab.nerc.ac.uk/.well-known/void>;
+        owl:deprecated         "false";
+        owl:versionInfo        "1";
+        skos:altLabel          "OCR504_ICSW";
+        skos:broader           <http://vocab.nerc.ac.uk/collection/R26/current/SATLANTIC/> , <http://vocab.nerc.ac.uk/collection/R26/current/SBE/>;
+        skos:definition        "Replaces deprecated term  'http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW'. A cosine-response, multispectral radiometer configured to measure downwelling irradiance in water. Number of channels: 4; bandwidth range: 400 nm to 865 nm (standard), or 305 nm, 325 nm, 340 nm, 380 nm (UV); sampling rate: 7 Hz - 24 Hz; spectral bandwidth: 10 nm or 20 nm. The instrument was originally developed and manufactured at Satlantic, and was rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2011."@en;
+        skos:notation          "SDN:R27::OCR504_ICSW";
+        skos:note              "accepted"@en;
+        skos:prefLabel         "OCR-504 multispectral radiometer (downwelling irradiance)"@en;
+        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR380/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR555/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR665/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR412/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_PAR/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR443/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR490/> , <http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR670/> .
 
 <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.2/>
         rdf:type               skos:Concept;
@@ -2538,7 +2582,7 @@ PREFIX void:   <http://rdfs.org/ns/void#>
         skos:notation          "SDN:R27::ECO_FLBB_AP2";
         skos:note              "accepted"@en;
         skos:prefLabel         "ECO FLbb-AP2 sensor package with fluorometer and scattering meter"@en;
-        skos:related           <http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/> , <http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/> .
+        skos:related           <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB/> , <http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/> , <http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/> .
 
 <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB2/>
         rdf:type               skos:Concept;
@@ -2681,13 +2725,13 @@ PREFIX void:   <http://rdfs.org/ns/void#>
         rdfs:seeAlso            <https://github.com/OneArgo/ArgoVocabs>;
         dc:alternative          "SENSOR_MODEL";
         dc:creator              "Argo Data Management Team";
-        dc:date                 "2025-11-19 02:00:00.0";
+        dc:date                 "2026-05-09 03:00:01.0";
         dc:description          "Terms listing models of sensors mounted on Argo floats. Note: avoid using the manufacturer name and sensor firmware version in new entries when possible. Argo netCDF variable SENSOR_MODEL is populated by R27 altLabel.";
         dc:publisher            "Natural Environment Research Council";
         dc:title                "Argo sensor models";
         grg:RE_RegisterManager  "British Oceanographic Data Centre";
         grg:RE_RegisterOwner    "Argo Data Management Team";
-        owl:versionInfo         "23";
+        owl:versionInfo         "27";
         skos:altLabel           "SENSOR_MODEL";
-        skos:member             <http://vocab.nerc.ac.uk/collection/R27/current/UNKNOWN/> , <http://vocab.nerc.ac.uk/collection/R27/current/RAFOS/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/> , <http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/> , <http://vocab.nerc.ac.uk/collection/R27/current/OCR504_R10W/> , <http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/> , <http://vocab.nerc.ac.uk/collection/R27/current/DSB301-10-C85/> , <http://vocab.nerc.ac.uk/collection/R27/current/QUARTZDYNE_DSB301-10-C85/> , <http://vocab.nerc.ac.uk/collection/R27/current/ISUS_V3/> , <http://vocab.nerc.ac.uk/collection/R27/current/CTD_F01/> , <http://vocab.nerc.ac.uk/collection/R27/current/PAINE_2900PSIA/> , <http://vocab.nerc.ac.uk/collection/R27/current/PAINE/> , <http://vocab.nerc.ac.uk/collection/R27/current/PAINE_1500PSIA/> , <http://vocab.nerc.ac.uk/collection/R27/current/PAINE_1600PSIA/> , <http://vocab.nerc.ac.uk/collection/R27/current/PAINE_3000PSIA/> , <http://vocab.nerc.ac.uk/collection/R27/current/PAINE_2000PSIA/> , <http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4330/> , <http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4831F/> , <http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3830/> , <http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4831/> , <http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3835/> , <http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE/> , <http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4330F/> , <http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3930/> , <http://vocab.nerc.ac.uk/collection/R27/current/OPUS_DS/> , <http://vocab.nerc.ac.uk/collection/R27/current/RAMSES_ACC/> , <http://vocab.nerc.ac.uk/collection/R27/current/KISTLER_10153PSIA/> , <http://vocab.nerc.ac.uk/collection/R27/current/KISTLER_2900PSIA/> , <http://vocab.nerc.ac.uk/collection/R27/current/KISTLER/> , <http://vocab.nerc.ac.uk/collection/R27/current/KELLER_PA8/> , <http://vocab.nerc.ac.uk/collection/R27/current/ARO_FT/> , <http://vocab.nerc.ac.uk/collection/R27/current/AROD_FT/> , <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL_AP2/> , <http://vocab.nerc.ac.uk/collection/R27/current/SEASCAN_SSTD/> , <http://vocab.nerc.ac.uk/collection/R27/current/DRUCK_10153PSIA/> , <http://vocab.nerc.ac.uk/collection/R27/current/DRUCK/> , <http://vocab.nerc.ac.uk/collection/R27/current/DRUCK_2900PSIA/> , <http://vocab.nerc.ac.uk/collection/R27/current/FSI/> , <http://vocab.nerc.ac.uk/collection/R27/current/SEAPOINT_TURBIDITY_METER/> , <http://vocab.nerc.ac.uk/collection/R27/current/RBR/> , <http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/> , <http://vocab.nerc.ac.uk/collection/R27/current/RBR_CODA_T_ODO/> , <http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO/> , <http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES/> , <http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES_A/> , <http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP4K/> , <http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3/> , <http://vocab.nerc.ac.uk/collection/R27/current/EM/> , <http://vocab.nerc.ac.uk/collection/R27/current/PAL_UW/> , <http://vocab.nerc.ac.uk/collection/R27/current/GDF/> , <http://vocab.nerc.ac.uk/collection/R27/current/ISUS/> , <http://vocab.nerc.ac.uk/collection/R27/current/DURA/> , <http://vocab.nerc.ac.uk/collection/R27/current/MENSOR/> , <http://vocab.nerc.ac.uk/collection/R27/current/MP40_C_2000_G/> , <http://vocab.nerc.ac.uk/collection/R27/current/AMETEK_3000PSIA/> , <http://vocab.nerc.ac.uk/collection/R27/current/AMETEK/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE43F_IDO/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.12/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.0.1/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0a/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.4/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2/> , <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD_AP2/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V4.4.0/> , <http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB3/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.1/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.3/> , <http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSW/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.8/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.1/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.4/> , <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.0/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.5/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.2/> , <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V2.0/> , <http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_R10W/> , <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE63_OPTODE/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41/> , <http://vocab.nerc.ac.uk/collection/R27/current/SUNA/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9a/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V1.0c/> , <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_2K/> , <http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSWR10W/> , <http://vocab.nerc.ac.uk/collection/R27/current/FLOATCLOCK/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.3/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE37/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.0/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.6/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE43_IDO/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.5/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE_STS/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V3.0/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.1/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.10/> , <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FL/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.3/> , <http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBB2/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE43I/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41N/> , <http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.4.0/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0c/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.7/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.0/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.9/> , <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLNTU/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.2/> , <http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.5/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V3/> , <http://vocab.nerc.ac.uk/collection/R27/current/ECO_NTU/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.2/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3b/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2a/> , <http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_R10W/> , <http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBBCD/> , <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_AP2/> , <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB2/> , <http://vocab.nerc.ac.uk/collection/R27/current/SUNA_V2/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V2/> , <http://vocab.nerc.ac.uk/collection/R27/current/SEAFET/> , <http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_PAR/> , <http://vocab.nerc.ac.uk/collection/R27/current/CYCLOPS_7_FLUOROMETER/> , <http://vocab.nerc.ac.uk/collection/R27/current/C_ROVER/>;
+        skos:member             <http://vocab.nerc.ac.uk/collection/R27/current/UNKNOWN/> , <http://vocab.nerc.ac.uk/collection/R27/current/RAFOS/> , <http://vocab.nerc.ac.uk/collection/R27/current/DSB301-10-C85/> , <http://vocab.nerc.ac.uk/collection/R27/current/QUARTZDYNE_DSB301-10-C85/> , <http://vocab.nerc.ac.uk/collection/R27/current/ISUS_V3/> , <http://vocab.nerc.ac.uk/collection/R27/current/CTD_F01/> , <http://vocab.nerc.ac.uk/collection/R27/current/PAINE_2900PSIA/> , <http://vocab.nerc.ac.uk/collection/R27/current/PAINE/> , <http://vocab.nerc.ac.uk/collection/R27/current/PAINE_1500PSIA/> , <http://vocab.nerc.ac.uk/collection/R27/current/PAINE_1600PSIA/> , <http://vocab.nerc.ac.uk/collection/R27/current/PAINE_3000PSIA/> , <http://vocab.nerc.ac.uk/collection/R27/current/PAINE_2000PSIA/> , <http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4330/> , <http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4831F/> , <http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3830/> , <http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4831/> , <http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3835/> , <http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE/> , <http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4330F/> , <http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3930/> , <http://vocab.nerc.ac.uk/collection/R27/current/OPUS_DS/> , <http://vocab.nerc.ac.uk/collection/R27/current/RAMSES_ACC/> , <http://vocab.nerc.ac.uk/collection/R27/current/KISTLER_10153PSIA/> , <http://vocab.nerc.ac.uk/collection/R27/current/KISTLER_2900PSIA/> , <http://vocab.nerc.ac.uk/collection/R27/current/KISTLER/> , <http://vocab.nerc.ac.uk/collection/R27/current/KELLER_PA8/> , <http://vocab.nerc.ac.uk/collection/R27/current/ARO_FT/> , <http://vocab.nerc.ac.uk/collection/R27/current/AROD_FT/> , <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL_AP2/> , <http://vocab.nerc.ac.uk/collection/R27/current/SEASCAN_SSTD/> , <http://vocab.nerc.ac.uk/collection/R27/current/DRUCK_10153PSIA/> , <http://vocab.nerc.ac.uk/collection/R27/current/DRUCK/> , <http://vocab.nerc.ac.uk/collection/R27/current/DRUCK_2900PSIA/> , <http://vocab.nerc.ac.uk/collection/R27/current/FSI/> , <http://vocab.nerc.ac.uk/collection/R27/current/SEAPOINT_TURBIDITY_METER/> , <http://vocab.nerc.ac.uk/collection/R27/current/RBR/> , <http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/> , <http://vocab.nerc.ac.uk/collection/R27/current/RBR_CTD/> , <http://vocab.nerc.ac.uk/collection/R27/current/RBR_CODA_T_ODO/> , <http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO/> , <http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES/> , <http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES_A/> , <http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3.1/> , <http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP4K/> , <http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3/> , <http://vocab.nerc.ac.uk/collection/R27/current/EM/> , <http://vocab.nerc.ac.uk/collection/R27/current/PAL_UW/> , <http://vocab.nerc.ac.uk/collection/R27/current/GDF/> , <http://vocab.nerc.ac.uk/collection/R27/current/ISUS/> , <http://vocab.nerc.ac.uk/collection/R27/current/DURA/> , <http://vocab.nerc.ac.uk/collection/R27/current/MENSOR/> , <http://vocab.nerc.ac.uk/collection/R27/current/MP40_C_2000_G/> , <http://vocab.nerc.ac.uk/collection/R27/current/AMETEK_3000PSIA/> , <http://vocab.nerc.ac.uk/collection/R27/current/AMETEK/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE43F_IDO/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.12/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.0.1/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0a/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.4/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2/> , <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD_AP2/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V4.4.0/> , <http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB3/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.1/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.3/> , <http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSW/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.8/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.1/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.4/> , <http://vocab.nerc.ac.uk/collection/R27/current/OCR504_R10W/> , <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.0/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.5/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.2/> , <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V2.0/> , <http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_R10W/> , <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE63_OPTODE/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41/> , <http://vocab.nerc.ac.uk/collection/R27/current/SUNA/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9a/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V1.0c/> , <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_2K/> , <http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSWR10W/> , <http://vocab.nerc.ac.uk/collection/R27/current/FLOATCLOCK/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.3/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE37/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.0/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.6/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE43_IDO/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.5/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE_STS/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.5/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V3.0/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.1/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.10/> , <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FL/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.3/> , <http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBB2/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE43I/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41N/> , <http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.4.0/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0c/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.7/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.0/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.9/> , <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLNTU/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.2/> , <http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.5/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V3/> , <http://vocab.nerc.ac.uk/collection/R27/current/ECO_NTU/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO/> , <http://vocab.nerc.ac.uk/collection/R27/current/OCR504_ICSW/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.2/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3b/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2a/> , <http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_R10W/> , <http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBBCD/> , <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_AP2/> , <http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB2/> , <http://vocab.nerc.ac.uk/collection/R27/current/SUNA_V2/> , <http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V2/> , <http://vocab.nerc.ac.uk/collection/R27/current/SEAFET/> , <http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_PAR/> , <http://vocab.nerc.ac.uk/collection/R27/current/CYCLOPS_7_FLUOROMETER/> , <http://vocab.nerc.ac.uk/collection/R27/current/C_ROVER/>;
         skos:prefLabel          "Argo sensor models" .

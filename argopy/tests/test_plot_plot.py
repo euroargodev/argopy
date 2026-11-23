@@ -10,9 +10,8 @@ from typing import Callable
 import pickle
 
 import argopy
-from utils import (
+from argopy.tests.helpers.utils import (
     requires_gdac,
-    requires_connection,
     requires_matplotlib,
     requires_ipython,
     requires_cartopy,
@@ -33,7 +32,7 @@ from argopy.plot.plot import (
 from argopy.plot.argo_colors import ArgoColors
 from argopy.errors import InvalidDatasetStructure
 from argopy import DataFetcher
-from mocked_http import mocked_server_address
+from argopy.tests.helpers.mocked_http import mocked_httpserver
 
 
 if has_matplotlib:
@@ -51,11 +50,15 @@ argopy.clear_cache()
 
 
 class Test_open_sat_altim_report:
+    @pytest.fixture(autouse=True)
+    def _setup(self, mocked_httpserver):
+        self.mocked_server_address = mocked_httpserver
+
     WMOs = [2901623, [2901623, 6901929]]
 
-    def test_load_mocked_server(self, mocked_httpserver):
-        """This will easily ensure that the module scope fixture is available to all methods !"""
-        assert True
+    # def test_load_mocked_server(self, mocked_httpserver):
+    #     """This will easily ensure that the module scope fixture is available to all methods !"""
+    #     assert True
 
     @pytest.mark.parametrize(
         "WMOs", WMOs, ids=["For unique WMO", "For a list of WMOs"], indirect=False
@@ -68,7 +71,7 @@ class Test_open_sat_altim_report:
             import IPython
 
         dsh = open_sat_altim_report(
-            WMO=WMOs, embed=embed, api_server=mocked_server_address
+            WMO=WMOs, embed=embed, api_server=self.mocked_server_address
         )
 
         if has_ipython and embed is not None:
@@ -92,7 +95,7 @@ class Test_open_sat_altim_report:
     def test_invalid_method(self):
         with pytest.raises(ValueError):
             open_sat_altim_report(
-                WMO=self.WMOs[0], embed="dummy_method", api_server=mocked_server_address
+                WMO=self.WMOs[0], embed="dummy_method", api_server=self.mocked_server_address
             )
 
 

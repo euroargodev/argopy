@@ -7,14 +7,17 @@ import numpy as np
 from argopy.options import OPTIONS
 from argopy.stores.nvs import NVS
 from argopy.stores.nvs.utils import bindings2df, id2urn, url2predicate
-from argopy.stores.nvs.utils import known_mappings 
+from argopy.stores.nvs.utils import known_mappings
 from argopy.utils.format import ppliststr, urnparser
-from argopy.utils.locals import Asset
+from argopy.utils.assets import Asset
 
 
-id2concept = lambda x: urnparser(id2urn(x))["termid"]
+id2concept = lambda x: urnparser(id2urn(x))["termid"]  # noqa: E731
 
-predicate = lambda x: url2predicate(x).split(":")[-1]  # Remove NVS jargon ('skos:', or 'owl:')
+predicate = lambda x: url2predicate(x).split(":")[  # noqa: E731
+    -1
+]  # Remove NVS jargon ('skos:', or 'owl:')
+
 
 class ArgoReferenceMapping:
     """A class to work with Argo Reference Value Relationships, i.e. a NVS "mapping"
@@ -22,12 +25,13 @@ class ArgoReferenceMapping:
     More details from the AVTT documentation:
     https://github.com/OneArgo/ArgoVocabs?tab=readme-ov-file#ivb-mappings
 
-    > Mappings are used to inform relationship between concepts. For instance, inform all the sensor_models manufactured by one sensor_maker, or all the platform_types manufactures by one platform_maker, etc.
-    > They are used by the FileChecker to ensure the consistency between these metadata fields in the Argo dataset.
+        Mappings are used to inform relationship between concepts. For instance, inform all the sensor_models manufactured by one sensor_maker, or all the platform_types manufactures by one platform_maker, etc.
+
+        They are used by the FileChecker to ensure the consistency between these metadata fields in the Argo dataset.
 
     Examples
     --------
-    ..code-block: python
+    .. code-block:: python
         :caption: Creation
 
         from argopy import ArgoReferenceMapping
@@ -39,6 +43,17 @@ class ArgoReferenceMapping:
         ArgoReferenceMapping('R24', 'R23')
 
     .. code-block:: python
+        :caption: Attributes
+
+        from argopy import ArgoReferenceMapping
+        arm = ArgoReferenceMapping('R24', 'R23')
+
+        # Relationships within this reference mapping:
+        arm.subjects   # Ordered list of unique 'subject' reference values names
+        arm.objects    # Ordered list of unique 'object' reference values names
+        arm.predicates # Ordered list of unique 'predicate', aka relationships, in this mapping
+
+    .. code-block:: python
         :caption: Indexing and values
 
         from argopy import ArgoReferenceMapping
@@ -46,9 +61,6 @@ class ArgoReferenceMapping:
 
         # Relationships within this reference mapping:
         len(arm)     # Number of relationships
-        arm.subjects   # Ordered list of unique 'subject' reference values names
-        arm.objects    # Ordered list of unique 'object' reference values names
-        arm.predicates # Ordered list of unique 'predicate', aka relationships, in this mapping
 
         # Check if a reference value is in this mapping as a subject or an object:
         'SBE' in arm  # Return True
@@ -93,9 +105,9 @@ class ArgoReferenceMapping:
         self._nvs_store: NVS = NVS(nvs=kwargs.get("nvs", OPTIONS["nvs"]))
 
         # Validate subject and object:
-        self._Vocabulary2Parameter: dict[str, str] = Asset.load("vocabulary:mapping")[
-            "data"
-        ]["Vocabulary2Parameter"]
+        self._Vocabulary2Parameter: dict[str, str] = Asset.load(
+            "vocabulary:description"
+        )["data"]["Vocabulary2Parameter"]
 
         if sub in self._Vocabulary2Parameter.keys():
             self.sub_id: str = sub
@@ -150,30 +162,36 @@ class ArgoReferenceMapping:
     @property
     def subjects(self):
         if self._subjects is None:
-            self._subjects = np.unique([
-                id2concept(binding["subj"]["value"])
-                for binding in self.nvs["results"]["bindings"]
-            ]).tolist()
+            self._subjects = np.unique(
+                [
+                    id2concept(binding["subj"]["value"])
+                    for binding in self.nvs["results"]["bindings"]
+                ]
+            ).tolist()
             self._subjects.sort()
         return self._subjects
 
     @property
     def objects(self):
         if self._objects is None:
-            self._objects = np.unique([
-                id2concept(binding["obj"]["value"])
-                for binding in self.nvs["results"]["bindings"]
-            ]).tolist()
+            self._objects = np.unique(
+                [
+                    id2concept(binding["obj"]["value"])
+                    for binding in self.nvs["results"]["bindings"]
+                ]
+            ).tolist()
             self._objects.sort()
         return self._objects
 
     @property
     def predicates(self):
         if self._predicates is None:
-            self._predicates = np.unique([
-                predicate(binding["pred"]["value"])
-                for binding in self.nvs["results"]["bindings"]
-            ]).tolist()
+            self._predicates = np.unique(
+                [
+                    predicate(binding["pred"]["value"])
+                    for binding in self.nvs["results"]["bindings"]
+                ]
+            ).tolist()
             self._predicates.sort()
         return self._predicates
 
@@ -182,7 +200,7 @@ class ArgoReferenceMapping:
 
     def __iter__(self):
         for sub in self.subjects:
-            results = {'subject': sub, 'predicate':self[sub]}
+            results = {"subject": sub, "predicate": self[sub]}
             yield results
 
     def __contains__(self, item):
@@ -195,14 +213,17 @@ class ArgoReferenceMapping:
         if ref_value is not None:
             if self._d.get(ref_value, None) is None:
                 data = [
-                        b
-                        for b in self.nvs["results"]["bindings"]
-                        if id2concept(b["subj"]["value"]) == key
-                    ]
+                    b
+                    for b in self.nvs["results"]["bindings"]
+                    if id2concept(b["subj"]["value"]) == key
+                ]
                 results = {}
                 for b in data:
-                    subj, pred, obj = id2concept(b["subj"]["value"]), predicate(b["pred"]["value"]), id2concept(
-                        b["obj"]["value"])
+                    subj, pred, obj = (  # noqa: F841
+                        id2concept(b["subj"]["value"]),
+                        predicate(b["pred"]["value"]),
+                        id2concept(b["obj"]["value"]),
+                    )
                     if pred in results:
                         results[pred].append(obj)
                     else:
@@ -213,16 +234,20 @@ class ArgoReferenceMapping:
             return self._d[ref_value]
         raise ValueError(f"Invalid subject mapping value '{key}'")
 
-    def to_dataframe(self, raw:bool = False) -> pd.DataFrame:
+    def to_dataframe(self, raw: bool = False) -> pd.DataFrame:
         """Return mapping as a :class:`pd.DataFrame`"""
         df = None
         if len(self.nvs["results"]["bindings"]) > 0:
             df = bindings2df(self.nvs["results"]["bindings"])
             if raw:
-                df = df.drop(['subject', 'object'], axis=1)
-                df = df.rename({'subject_uri': 'subject', 'object_uri': 'object'}, axis=1)
-                return df[['subject', 'predicate', 'object']]
+                df = df.drop(["subject", "object"], axis=1)
+                df = df.rename(
+                    {"subject_uri": "subject", "object_uri": "object"}, axis=1
+                )
+                return df[["subject", "predicate", "object"]]
             else:
-                df = df.drop(['subject_uri', 'object_uri'], axis=1)
-                df['predicate'] = df['predicate'].map(lambda x: x.split(":")[-1]) # Remove NVS jargon ('skos:', or 'owl:')
+                df = df.drop(["subject_uri", "object_uri"], axis=1)
+                df["predicate"] = df["predicate"].map(
+                    lambda x: x.split(":")[-1]
+                )  # Remove NVS jargon ('skos:', or 'owl:')
         return df

@@ -1,7 +1,7 @@
 {
   "name": "PSAL",
   "long_name": "Practical salinity",
-  "last_update": "2026-01-25T11:11:32.875867+00:00",
+  "last_update": "2026-10-05T15:41:48.360808+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R03/current/PSAL/",
     "pav:hasVersion": [

@@ -1,7 +1,7 @@
 {
   "name": "Coriolis_parameters",
   "long_name": "All valid requests to https://api-coriolis.ifremer.fr/legacy/parameter?code={code}",
-  "last_update": "2026-01-25T10:32:07.888366+00:00",
+  "last_update": "2026-10-05T15:40:27.290356+00:00",
   "data": {
     "valid_codes": [
       "9",
@@ -4765,7 +4765,7 @@
         "gf3_strict_name": "VCMX",
         "gf3_extended_name": "",
         "parent_code": "0",
-        "label": "Maximum crest trough wave height (Hc max)",
+        "label": "Maximum crest trough wave height (Hc,max)",
         "param_type": "P"
       },
       "631": {
@@ -4795,7 +4795,7 @@
         "gf3_strict_name": "",
         "gf3_extended_name": "VTM10",
         "parent_code": "0",
-        "label": "Spectral moments (-1 0) wave period (Tm-10)",
+        "label": "Spectral moments (-1,0) wave period (Tm-10)",
         "param_type": "P"
       },
       "634": {
@@ -4805,7 +4805,7 @@
         "gf3_strict_name": "",
         "gf3_extended_name": "VTM02",
         "parent_code": "0",
-        "label": "Spectral moments (0 2) wave period (Tm02)",
+        "label": "Spectral moments (0,2) wave period (Tm02)",
         "param_type": "P"
       },
       "635": {
@@ -6065,7 +6065,7 @@
         "gf3_strict_name": "VM01",
         "gf3_extended_name": "",
         "parent_code": "0",
-        "label": "Spectral moments (0 1) wave period (Tm01)",
+        "label": "Spectral moments (0,1) wave period (Tm01)",
         "param_type": "P"
       },
       "771": {
@@ -6315,7 +6315,7 @@
         "gf3_strict_name": "",
         "gf3_extended_name": "PH25",
         "parent_code": "0",
-        "label": "Ph (total scale) normalized 25\u00b0C 0dbar",
+        "label": "Ph (total scale) normalized 25 Celsius degrees 0dbar",
         "param_type": "P"
       }
     },
@@ -10017,7 +10017,7 @@
         "gf3_strict_name": "VCMX",
         "gf3_extended_name": "",
         "parent_code": "0",
-        "label": "Maximum crest trough wave height (Hc max)",
+        "label": "Maximum crest trough wave height (Hc,max)",
         "param_type": "P"
       },
       "VMNL": {
@@ -10047,7 +10047,7 @@
         "gf3_strict_name": "",
         "gf3_extended_name": "VTM10",
         "parent_code": "0",
-        "label": "Spectral moments (-1 0) wave period (Tm-10)",
+        "label": "Spectral moments (-1,0) wave period (Tm-10)",
         "param_type": "P"
       },
       "VTM02": {
@@ -10057,7 +10057,7 @@
         "gf3_strict_name": "",
         "gf3_extended_name": "VTM02",
         "parent_code": "0",
-        "label": "Spectral moments (0 2) wave period (Tm02)",
+        "label": "Spectral moments (0,2) wave period (Tm02)",
         "param_type": "P"
       },
       "VTZA": {
@@ -11317,7 +11317,7 @@
         "gf3_strict_name": "VM01",
         "gf3_extended_name": "",
         "parent_code": "0",
-        "label": "Spectral moments (0 1) wave period (Tm01)",
+        "label": "Spectral moments (0,1) wave period (Tm01)",
         "param_type": "P"
       },
       "PRES_CORE": {
@@ -11567,7 +11567,7 @@
         "gf3_strict_name": "",
         "gf3_extended_name": "PH25",
         "parent_code": "0",
-        "label": "Ph (total scale) normalized 25\u00b0C 0dbar",
+        "label": "Ph (total scale) normalized 25 Celsius degrees 0dbar",
         "param_type": "P"
       }
     }

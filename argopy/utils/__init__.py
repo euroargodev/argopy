@@ -19,11 +19,9 @@ from .checkers import (  # noqa: F401
     erddap_ds_exists,
     has_aws_credentials,
 )
-from .casting import DATA_TYPES, cast_Argo_variable_type, to_list
+from .casting import cast_Argo_variable_type, to_list
 from .decorators import deprecated, doc_inherit, register_accessor
 from .lists import (
-    list_available_data_src,
-    list_available_index_src,
     list_multiprofile_file_variables,
     list_core_parameters,
     list_standard_variables,
@@ -44,8 +42,8 @@ from .locals import (  # noqa: F401
     modified_environ,
     get_sys_info,  # noqa: F401
     netcdf_and_hdf5_versions,  # noqa: F401
-    Asset,
 )
+from .assets import Asset
 from .monitors import monitor_status, badge, fetch_status  # noqa: F401
 from .geo import (
     wmo2box,
@@ -70,9 +68,6 @@ from .carbon import GreenCoding, Github
 from . import optical_modeling
 from .carbonate import calculate_uncertainties, error_propagation
 
-import importlib
-path2assets = importlib.util.find_spec('argopy.static.assets').submodule_search_locations[0]
-
 
 __all__ = (
     # Checkers:
@@ -94,7 +89,6 @@ __all__ = (
     "erddap_ds_exists",
     "has_aws_credentials",
     # Data type casting:
-    "DATA_TYPES",
     "cast_Argo_variable_type",
     "to_list",
     # Decorators:
@@ -102,8 +96,6 @@ __all__ = (
     "doc_inherit",
     "register_accessor",
     # Lists:
-    "list_available_data_src",
-    "list_available_index_src",
     "list_multiprofile_file_variables",
     "list_standard_variables",
     "list_core_parameters",
@@ -124,7 +116,6 @@ __all__ = (
     "float_wmo",
     "ListStrProperty",
     # Locals (environments, versions, systems):
-    "path2assets",
     "show_versions",
     "show_options",
     "modified_environ",

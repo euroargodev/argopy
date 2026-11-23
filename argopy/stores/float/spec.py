@@ -8,13 +8,13 @@ import logging
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from argopy.options import OPTIONS
+from argopy.options import OPTIONS, PRODUCT_LIST
 from argopy.errors import InvalidOption, DataNotFound
 from argopy.plot import dashboard
 from argopy.stores import ArgoIndex
 from argopy.utils.format import argo_split_path
 from argopy.utils.lists import shortcut2gdac
-from argopy.utils.checkers import check_wmo, check_cyc, to_list
+from argopy.utils.checkers import check_wmo, check_cyc
 from argopy.utils.decorators import deprecated
 
 
@@ -97,7 +97,7 @@ class FloatStoreProto(ABC):
         ########################
         # These are used to improve performance by limiting data fetching
         # Data remained in memory, attached to the instance
-        # This is NOT similar to cache=True, for which data are writen on file
+        # This is NOT similar to cache=True, for which data are written on file
 
         # Filled by self.load_metadata(), returned by self.metadata:
         self._metadata: dict | None = None
@@ -316,7 +316,9 @@ class FloatStoreProto(ABC):
             # Ensure the protocol is included for non-local files on FTP and S3 servers:
             for ip, p in enumerate(paths):
                 if self.host_protocol == "ftp":
-                    paths[ip] = f"ftp://{self.fs.fs.host}:{self.fs.fs.port}{fsspec.core.split_protocol(p)[-1]}"
+                    paths[ip] = (
+                        f"ftp://{self.fs.fs.host}:{self.fs.fs.port}{fsspec.core.split_protocol(p)[-1]}"
+                    )
 
                 if self.host_protocol == "s3":
                     paths[ip] = "s3://" + fsspec.core.split_protocol(p)[-1]
@@ -360,7 +362,9 @@ class FloatStoreProto(ABC):
             # Ensure the protocol is included for non-local files on FTP and S3 servers:
             for ip, p in enumerate(paths):
                 if self.host_protocol == "ftp":
-                    paths[ip] = f"ftp://{self.fs.fs.host}:{self.fs.fs.port}{fsspec.core.split_protocol(p)[-1]}"
+                    paths[ip] = (
+                        f"ftp://{self.fs.fs.host}:{self.fs.fs.port}{fsspec.core.split_protocol(p)[-1]}"
+                    )
 
                 if self.host_protocol == "s3":
                     paths[ip] = "s3://" + fsspec.core.split_protocol(p)[-1]
@@ -426,7 +430,7 @@ class FloatStoreProto(ABC):
         cast: bool, optional, default = True
             Determine if the dataset variables should be cast or not. This is similar to opening the dataset directly with :class:`xarray.open_dataset` using the ``engine=`argo``` option.
             This will be ignored if the ``netCDF4` kwarg is set to True.
-        \**kwargs
+        **kwargs
             All the other arguments are passed to the GDAC store `open_dataset` method.
 
         Returns
@@ -461,7 +465,7 @@ class FloatStoreProto(ABC):
         ----------
         name: str, optional, default = "prof"
             Name of the dataset to open. It can be any key from the dictionary returned by :class:`ArgoFloat.ls_datasets`.
-        \**kwargs
+        **kwargs
             All the other arguments are passed to the :meth:`ArgoFloat.open_dataset` method.
 
         Returns
@@ -495,6 +499,7 @@ class FloatStoreProto(ABC):
         :class:`pandas.DataFrame`
             A DataFrame with ["cycle_number", "dataset", "direction", "data_mode", "stem", "path"] columns for each mono-cycle netcdf files. The extra columns `auxiliary` is added if the instance was created with the appropriate option.
         """
+
         def stem2cyc(s) -> int:
             ii = -2 if "aux" in s else -1
             if s.split("_")[ii][-1] == "D":
@@ -566,7 +571,7 @@ class FloatStoreProto(ABC):
             - 'D': Descending profile files.
 
         auxiliary: Bool, default = False
-            Return files from the auxiliary folder. This requires the object to have been instanciated with the `aux=True` option.
+            Return files from the auxiliary folder. This requires the object to have been instantiated with the `aux=True` option.
 
         Returns
         -------
@@ -678,7 +683,7 @@ class FloatStoreProto(ABC):
                         )
                         for key, uri in fl.items():
                             self._ls_prof[key] = uri
-                    except:
+                    except:  # noqa: E722
                         pass
 
             if self._aux:
@@ -690,7 +695,7 @@ class FloatStoreProto(ABC):
                             )
                             for key, uri in fl.items():
                                 self._ls_prof[key] = uri
-                        except:
+                        except:  # noqa: E722
                             pass
 
         return self._ls_prof
@@ -804,7 +809,7 @@ class FloatStoreProto(ABC):
         ----------
         name: str
             Name of the profile file to open. It can be any key from the dictionary returned by :class:`ArgoFloat.ls_profiles`.
-        \**kwargs
+        **kwargs
             All the other arguments are passed to the :meth:`ArgoFloat.open_profile` method.
 
         Returns
@@ -825,7 +830,7 @@ class FloatStoreProto(ABC):
         direction: Literal["A", "D"] = "A",
         auxiliary: bool = False,
         cast: bool = True,
-        netCDF4:bool = False,
+        netCDF4: bool = False,
         **kwargs,
     ):
         """Open and decode one or more profile files
@@ -848,7 +853,7 @@ class FloatStoreProto(ABC):
             - 'A' (default): Ascending profile files,
             - 'D': Descending profile files.
         auxiliary: Bool, default = False
-            Return files from the auxiliary folder. This requires the object to have been instanciated with the `aux=True` option.
+            Return files from the auxiliary folder. This requires the object to have been instantiated with the `aux=True` option.
         cast: bool, default = True
             Determine if dataset variables should be cast or not.
 
@@ -1135,3 +1140,27 @@ class FloatStoreProto(ABC):
                 return results
 
         raise NotImplementedError
+
+    def open_product(self, name: str = "", **kwargs) -> xr.Dataset | Any:
+        """Open and decode a third-party product for a given float
+
+        Parameters
+        ----------
+        name: str
+            Name of the third-party product to open.
+        **kwargs
+            All the other arguments are passed to the product facade.
+
+        Returns
+        -------
+        :class:`xarray.Dataset` | Any
+        """
+
+        # Third-party access modules must be located in: argopy.stores.float.products
+        # and the facade called from here.
+
+        if name not in PRODUCT_LIST.argofloat:
+            raise NotImplementedError(
+                "Product '%s' not found. Available third-party product for this float are: %s"
+                % (name, PRODUCT_LIST.argofloat)
+            )

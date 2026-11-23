@@ -1,7 +1,7 @@
 {
   "name": "T000515",
   "long_name": "VOLTAGE_Battery6V_volts",
-  "last_update": "2026-01-25T11:12:52.848609+00:00",
+  "last_update": "2026-10-05T15:42:46.966681+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R14/current/T000515/",
     "pav:hasVersion": {

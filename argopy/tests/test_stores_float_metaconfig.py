@@ -18,10 +18,10 @@ from argopy.stores.float.implementations.offline.meta_config import (
     ConfigParameters as config_off,
 )
 
-from utils import (
+from argopy.tests.helpers.utils import (
     requires_gdac,
 )
-from mocked_http import mocked_httpserver, mocked_server_address
+from argopy.tests.helpers.mocked_http import mocked_httpserver
 
 log = logging.getLogger("argopy.tests.floatstore.config")
 ar.clear_cache()
@@ -131,16 +131,20 @@ class Test_FloatStore_Config_Offline(FloatStore_Config_Proto):
 class Test_FloatStore_Config_Online(FloatStore_Config_Proto):
     af: dict[int, OnlineArgoFloat] = {}
 
-    # Define a fixture for an online ArgoFloat instance (but using mocked http)
+    @pytest.fixture(autouse=True)
+    def _setup(self, mocked_httpserver):
+        self.mocked_server_address = mocked_httpserver
+
+    # Define a fixture for an online ArgoFloat instance
     @pytest.fixture
-    def argo_float(self, wmo, mocked_httpserver):
+    def argo_float(self, wmo):
         if wmo not in self.af:
             self.af[wmo] = OnlineArgoFloat(
                 wmo,
-                host=mocked_server_address,
+                host=self.mocked_server_address,
                 cache=True,
                 cachedir=self.cachedir,
-                eafleetmonitoring_server=mocked_server_address,
+                eafleetmonitoring_server=self.mocked_server_address,
             )
         return self.af[wmo]
 

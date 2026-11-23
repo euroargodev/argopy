@@ -18,7 +18,7 @@ casters, computers, mappers
 import numpy as np
 import xarray as xr
 import logging
-from typing import List, Union, Any
+from typing import List, Union
 
 from argopy.errors import InvalidDatasetStructure
 from argopy.utils.lists import list_core_parameters

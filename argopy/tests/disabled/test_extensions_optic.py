@@ -7,7 +7,7 @@ from mocked_http import mocked_httpserver as mocked_erddapserver
 
 
 log = logging.getLogger("argopy.tests.extensions.optic")
-USE_MOCKED_SERVER = False
+USE_MOCKED_SERVER = True
 
 
 @pytest.fixture

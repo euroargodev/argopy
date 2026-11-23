@@ -202,11 +202,11 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         ----------
         BOX : list, tuple, int, float, optional
             An index box to search Argo records for. Can be:
-            
+
             - Full 6-element list: [lon_min, lon_max, lat_min, lat_max, date_min, date_max]
             - 2-element list: [lon_min, lon_max]
             - Single value: interpreted as lower bound (ge)
-            
+
         ge : int or float, optional
             Greater or equal bound for longitude filtering (lower limit).
             Default: -180
@@ -249,11 +249,11 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         ----------
         BOX : list, tuple, int, float, optional
             An index box to search Argo records for. Can be:
-            
+
             - Full 6-element list: [lon_min, lon_max, lat_min, lat_max, date_min, date_max]
             - 2-element list: [lat_min, lat_max]
             - Single value: interpreted as lower bound (ge)
-            
+
         ge : int or float, optional
             Greater or equal bound for latitude filtering (lower limit).
             Default: -90
@@ -296,11 +296,11 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         ----------
         BOX : list or str, optional
             An index box to search Argo records for. Can be:
-            
+
             - Full 6-element list: [lon_min, lon_max, lat_min, lat_max, date_min, date_max]
             - 2-element list: [date_min, date_max]
             - Single date string: interpreted as day-only (profiles on that specific date)
-            
+
         ge : str, optional
             Greater or equal bound for date filtering (lower limit).
             Default: '1900-01-01'
@@ -521,10 +521,15 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         --------
         :class:`ArgoIndex.query.profiler_type`
         """
+
         def checker(profiler_label):
             if "profiler_type" not in self._obj.convention_columns:
-                raise InvalidDatasetStructure("Cannot search for profiler labels in this index)")
-            log.debug("Argo index searching for profiler label '%s' ..." % profiler_label)
+                raise InvalidDatasetStructure(
+                    "Cannot search for profiler labels in this index)"
+                )
+            log.debug(
+                "Argo index searching for profiler label '%s' ..." % profiler_label
+            )
             profiler_label = to_list(profiler_label)
             profiler_type = []
             for ptype, long_name in self._obj._r8.items():
@@ -534,7 +539,7 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
             return profiler_label, profiler_type
 
         def namer(profiler_label):
-            self._obj.search_type.pop('PTYPE')
+            self._obj.search_type.pop("PTYPE")
             return {"PLABEL": profiler_label}
 
         def composer(profiler_type):
@@ -553,7 +558,7 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
             return search_filter
 
     @abstractmethod
-    def institution_code(self, institution_code,  nrows=None, composed=False):
+    def institution_code(self, institution_code, nrows=None, composed=False):
         """Search index for institution codes
 
         The list of valid codes is given by IDs of `Argo reference table 4 <http://vocab.nerc.ac.uk/collection/R04/current/>`_.
@@ -624,10 +629,15 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         --------
         :class:`ArgoIndex.query.institution_code`, :class:`ArgoIndex.query.dac`
         """
+
         def checker(institution_name):
             if "institution" not in self._obj.convention_columns:
-                raise InvalidDatasetStructure("Cannot search for institution name in this index)")
-            log.debug("Argo index searching for institution name '%s' ..." % institution_name)
+                raise InvalidDatasetStructure(
+                    "Cannot search for institution name in this index)"
+                )
+            log.debug(
+                "Argo index searching for institution name '%s' ..." % institution_name
+            )
             institution_name = to_list(institution_name)
             institution_code = []
             for code, long_name in self._obj._r4.items():
@@ -636,12 +646,14 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
                         institution_code.append(code)
             if len(institution_code) == 0:
                 valid_names = ", ".join(self._obj.valid.institution_name)
-                raise OptionValueError(f"No valid institution name found in {institution_name}. Valid names are any string in: '{valid_names}'")
+                raise OptionValueError(
+                    f"No valid institution name found in {institution_name}. Valid names are any string in: '{valid_names}'"
+                )
             else:
                 return institution_name, institution_code
 
         def namer(institution_name):
-            self._obj.search_type.pop('INST_CODE')
+            self._obj.search_type.pop("INST_CODE")
             return {"INST_NAME": institution_name}
 
         def composer(institution_code):
@@ -660,7 +672,7 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
             return search_filter
 
     @abstractmethod
-    def dac(self, dac,  nrows=None, composed=False):
+    def dac(self, dac, nrows=None, composed=False):
         """Search index for DAC
 
         Parameters
@@ -722,10 +734,10 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
                 filter = searcher(arg, composed=True)
             else:
                 kw = arg[1]
-                kw.update({'composed': True})
+                kw.update({"composed": True})
                 filter = searcher(arg[0], **kw)
             filters.append(filter)
-        self._obj.search_filter = self._obj._reduce_a_filter_list(filters, op='and')
+        self._obj.search_filter = self._obj._reduce_a_filter_list(filters, op="and")
         self._obj.run(nrows=nrows)
         return self._obj
 

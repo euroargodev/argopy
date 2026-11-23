@@ -121,10 +121,10 @@ def new_fs(
     if not cache:
         fs = fsspec.filesystem(protocol, **fsspec_kwargs)
         cache_registry = None
-        log_msg = (
-            "Opening a fsspec [file] system for '%s' protocol with options: %s"
-            % (protocol, str(fsspec_kwargs))
-        )
+        # log_msg = (
+        #     "Opening a fsspec [file] system for '%s' protocol with options: %s"
+        #     % (protocol, str(fsspec_kwargs))
+        # )
     else:
         # https://filesystem-spec.readthedocs.io/en/latest/_modules/fsspec/implementations/cached.html#WholeFileCacheFileSystem
         fs = fsspec.filesystem(
@@ -139,10 +139,10 @@ def new_fs(
         cache_registry = Registry(
             name="Cache"
         )  # Will hold uri cached by this store instance
-        log_msg = (
-            "Opening a fsspec [filecache, storage='%s'] system for '%s' protocol with options: %s"
-            % (cachedir, protocol, str(fsspec_kwargs))
-        )
+        # log_msg = (
+        #     "Opening a fsspec [filecache, storage='%s'] system for '%s' protocol with options: %s"
+        #     % (cachedir, protocol, str(fsspec_kwargs))
+        # )
 
     if (
         protocol == "file"
@@ -159,6 +159,6 @@ def new_fs(
 
     # log_msg = "%s\n[sys sep=%s] vs [fs sep=%s]" % (log_msg, os.path.sep, fs.sep)
     # log.warning(log_msg)
-    log.debug(log_msg)
+    # log.debug(log_msg)
     # log_argopy_callerstack()
     return fs, cache_registry, fsspec_kwargs

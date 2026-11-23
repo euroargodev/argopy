@@ -1,6 +1,5 @@
 import pytest
 import logging
-import numpy as np
 
 from argopy.stores.nvs.implementations.offline.nvs import NVS as NVS_offline
 from argopy.stores.nvs.implementations.online.nvs import NVS as NVS_online
@@ -20,7 +19,7 @@ from argopy.stores.nvs.utils import (
     sparql_mapping_request,
 )
 
-from mocked_http import mocked_httpserver, mocked_server_address
+from argopy.tests.helpers.mocked_http import mocked_httpserver
 
 log = logging.getLogger("argopy.tests.nvsstores")
 
@@ -168,11 +167,15 @@ class Test_NVS_Online:
     #############
     # UTILITIES #
     #############
+    @pytest.fixture(autouse=True)
+    def _setup(self, mocked_httpserver):
+        self.mocked_server_address = mocked_httpserver
+
     @pytest.fixture
     def nvs(self):
         defaults_args = {}
         if USE_MOCKED_SERVER:
-            defaults_args["nvs"] = mocked_server_address
+            defaults_args["nvs"] = self.mocked_server_address
 
         return NVS_online(**defaults_args)
 
@@ -182,9 +185,9 @@ class Test_NVS_Online:
     def test_init(self, nvs):
         assert nvs.online == True
 
-    def test_uniqueinstance(self, mocked_httpserver):
-        nvs1: NVS = NVS_online(nvs=mocked_server_address)
-        nvs2: NVS = NVS_online(nvs=mocked_server_address)
+    def test_uniqueinstance(self):
+        nvs1: NVS = NVS_online(nvs=self.mocked_server_address)
+        nvs2: NVS = NVS_online(nvs=self.mocked_server_address)
         assert nvs1.uid == nvs2.uid
 
     def test_readonlyinstance(self, nvs):

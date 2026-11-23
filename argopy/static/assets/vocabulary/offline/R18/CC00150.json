@@ -1,7 +1,7 @@
 {
   "name": "CC00150",
   "long_name": "CONFIG_PressureCheckTimeDescentToProfileDepth_seconds",
-  "last_update": "2026-01-25T11:15:23.292917+00:00",
+  "last_update": "2026-10-05T15:48:10.778272+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00150/",
     "pav:hasVersion": {

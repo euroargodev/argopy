@@ -126,9 +126,9 @@ def _linear_interp(x: np.ndarray, y: np.ndarray, xi: np.ndarray) -> np.ndarray:
         )
         return yi_empty
 
-    # Following the spirit of Wong et al. (2026) EasyOneArgoLite specs for clean-up:
+    # Following Wong et al. (2026) EasyOneArgoLite specs for clean-up:
 
-    # Run interp
+    # Step 1 - run interpolation
     yi = interpolate.interp1d(x, y, bounds_error=False, fill_value=(y[0], y[-1]))(xi)
 
     # Step 2 - remove interpolated/extrapolated points from step 1 where there are no original data within the "box"
@@ -143,11 +143,6 @@ def _linear_interp(x: np.ndarray, y: np.ndarray, xi: np.ndarray) -> np.ndarray:
     # Step 3 - remove the extrapolated points from step 1 outside the deepest observed pressure plus 1%
     too_deep = xi > (np.nanmax(x) * 1.01)
     yi[too_deep] = np.nan
-
-    # TODO - check with Guillaume about this point (should we follow the spirit of Wong et al. (2026) here as well ?)
-    # Clean up interpolated points outside of the pressure range of the input profile end points
-    #yi[np.argwhere(xi < np.nanmin(x))] = np.nan
-    #yi[np.argwhere(xi > np.nanmax(x))] = np.nan
 
     return yi
 
@@ -200,7 +195,7 @@ def _pchip_interp(x: np.ndarray, y: np.ndarray, xi: np.ndarray) -> np.ndarray:
 
     # Follow Wong et al. (2026) EasyOneArgoLite specs for clean-up:
 
-    # Run interp
+    # Step 1 - run interpolation
     yi = gsw.pchip_interp(x, y, xi, axis=0) # Step 1
 
     # Step 2 - remove interpolated/extrapolated points from step 1 where there are no original data within the "box"
@@ -268,7 +263,7 @@ def _mrst_pchip_interp(x: np.ndarray, sa: np.ndarray, ct: np.ndarray, xi: np.nda
 
     # Follow Wong et al. (2026) EasyOneArgoLite specs for clean-up:
 
-    # Run interp: SA, CT, p, p_i, axis=0)
+    # Step 1 - run interpolation: SA, CT, p, p_i, axis=0)
     sai, cti= gsw.sa_ct_interp(sa, ct, x, xi, axis=0) # Step 1
 
     # Remove interpolated/extrapolated points from step 1 where there are no original data within the "box"

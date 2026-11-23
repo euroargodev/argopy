@@ -1,0 +1,11 @@
+config_mission_number,cycle_number,direction,doxy,doxy_adjusted,doxy_adjusted_error,doxy_adjusted_qc,doxy_qc,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc
+count,count,count,count,count,count,count,count,count,count,,count,count,count,count,count,count,count,count,count,count,count,count,count,count,count,count,count,count
+450,450,450,116,116,116,116,116,450,450,1902578,450,450,450,450,450,450,450,315,315,450,450,450,334,334,450,450,450,450
+22,22,22,22,0,0,0,22,22,22,4902579,22,22,0,0,0,22,22,0,0,0,22,22,0,0,0,22,22,22
+12,12,12,12,0,0,0,12,12,12,4902581,12,12,0,0,0,12,12,0,0,0,12,12,0,0,0,12,12,12
+38,38,38,18,18,18,18,18,38,38,6902895,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38
+96,96,96,47,47,47,47,47,96,96,6902976,96,96,96,96,96,96,96,96,96,96,96,96,96,96,96,96,96,96
+71,71,71,34,34,34,34,34,71,71,6903030,71,71,71,71,71,71,71,71,71,71,71,71,71,71,71,71,71,71
+20,20,20,9,8,8,9,9,20,20,6903040,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20
+20,20,20,10,9,9,10,10,20,20,6903873,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20
+311,311,311,49,49,49,49,49,311,311,6904241,311,311,311,227,311,311,311,303,219,311,311,311,311,227,311,311,311,311

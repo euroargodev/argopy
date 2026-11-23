@@ -47,6 +47,27 @@ class NVSProto(ABC):
         """
         raise NotImplementedError
 
+    def load_vocabulary_collection(self, rtid: str, fmt: str = "json") -> dict:
+        """Load a NVS vocabulary skos "Collection" data, as a :class:`dict`
+
+        Parameters
+        ----------
+        rtid: str
+            Name of the vocabulary, i.e. SKOS collection, to retrieve. Eg: 'R01'
+        fmt: str, default: "ld+json"
+            Format of the NVS server response. Can be: "json", "xml" or "turtle".
+
+        Returns
+        -------
+        dict
+
+        Notes
+        -----
+        This is a simple shortkey to the "skos:Collection" item from the @graph.
+        """
+        jsdata = self.load_vocabulary(rtid=rtid, fmt=fmt)
+        return next(item for item in jsdata["@graph"] if item["@type"] == "skos:Collection")
+
     @abstractmethod
     def load_concept(self, conceptid: str, rtid: str | None = None, fmt: str = "json") -> dict:
         """Load a NVS concept, i.e. a SKOS concept, as a :class:`dict`

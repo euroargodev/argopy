@@ -1,7 +1,7 @@
 {
   "name": "CC00111",
   "long_name": "CONFIG_MissionPreludeAutoTest_LOGICAL",
-  "last_update": "2026-01-25T11:15:52.432601+00:00",
+  "last_update": "2026-10-05T15:49:00.406932+00:00",
   "data": {
     "@id": "http://vocab.nerc.ac.uk/collection/R18/current/CC00111/",
     "pav:hasVersion": {

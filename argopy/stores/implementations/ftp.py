@@ -8,6 +8,7 @@ import fsspec
 import warnings
 from typing import Literal
 from netCDF4 import Dataset
+import threading
 
 from ...errors import InvalidMethod, DataNotFound
 from ...utils.transformers import drop_variables_not_in_all_datasets
@@ -17,6 +18,9 @@ from .http import httpstore
 
 
 log = logging.getLogger("argopy.stores.implementation.ftp")
+
+_cache_lock = threading.Lock()
+# Used to lock threads to prevent race to the cached meda-data of fsspec
 
 
 class ftpstore(httpstore):
@@ -110,7 +114,8 @@ class ftpstore(httpstore):
 
             try:
                 this_url = self.fs._strip_protocol(url)
-                data = self.fs.cat_file(this_url)
+                with _cache_lock:
+                    data = self.fs.cat_file(this_url)
                 if data is None:
                     if errors == "raise":
                         raise DataNotFound(url)
@@ -127,8 +132,14 @@ class ftpstore(httpstore):
                     "We didn't get a CDF or HDF5 binary data as expected ! We get: %s"
                     % data
                 )
-            if data[0:3] == b"\x89HD":
-                data = io.BytesIO(data)
+            if data[0:3] == b"CDF":
+                if "engine" not in xr_opts:
+                    xr_opts["engine"] = "scipy"
+            elif data[0:3] == b"\x89HD":
+                if "engine" not in xr_opts:
+                    xr_opts["engine"] = "h5netcdf"
+
+            data = io.BytesIO(data)
 
             return data, xr_opts
 
@@ -188,7 +199,7 @@ class ftpstore(httpstore):
                 return None
 
         if not lazy:
-            target, _ = load_in_memory(url, errors=errors, xr_opts=xr_opts)
+            target, xr_opts = load_in_memory(url, errors=errors, xr_opts=xr_opts)
         else:
             target, xr_opts = load_lazily(
                 url,
@@ -200,6 +211,11 @@ class ftpstore(httpstore):
         if target is not None:
             if not netCDF4:
                 ds = xr.open_dataset(target, **xr_opts)
+                if not lazy:
+                    ds = (
+                        ds.load()
+                    )  # materialize into plain numpy arrays, detach from the backend buffer
+                    ds.close()  # explicitly release the netCDF4/HDF5 handle right away
 
                 if "source" not in ds.encoding:
                     if isinstance(url, str):
@@ -417,9 +433,9 @@ class ftpstore(httpstore):
                     results,
                     dim=concat_dim,
                     data_vars="minimal",  # Only data variables in which the dimension already appears are included.
-                    coords="all",         # All coordinate variables will be concatenated, except those corresponding
-                                          # to other dimensions.
-                    compat="override",    # skip comparing and pick variable from first dataset,
+                    coords="all",  # All coordinate variables will be concatenated, except those corresponding
+                    # to other dimensions.
+                    compat="override",  # skip comparing and pick variable from first dataset,
                 )
                 return ds
             else:
