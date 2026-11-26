@@ -1,11 +1,10 @@
 import os
 import warnings
-
 import numpy as np
 import pandas as pd
 import xarray as xr
 import logging
-from typing import Union, Any
+from typing import Union, Any, Literal
 from xarray.backends import BackendEntrypoint  # For xarray > 0.18
 from xarray.backends import ZarrStore
 
@@ -26,16 +25,17 @@ except ModuleNotFoundError:
 
 
 from argopy.errors import InvalidDatasetStructure, OptionValueError, NoData, NoDataLeft
-from argopy.utils.computers import (
-    linear_interpolation_remap,
-    groupby_remap,
-)
 from argopy.utils.mappers import map_vars_to_dict
 from argopy.utils.checkers import is_list_of_strings
 from argopy.utils.casting import (
     cast_Argo_variable_type,
     to_list,
 )
+from argopy.utils.computers import (
+    linear_interpolation_remap,
+    groupby_remap,
+)
+from argopy.utils.decorators import deprecated
 from argopy.utils.lists import list_core_parameters
 from argopy.utils.geo import toYearFraction
 from argopy.utils.assets import Asset
@@ -951,10 +951,14 @@ class ArgoAccessor:
             this = this.argo.cast_types()
         return this
 
+    @deprecated("Replaced by Dataset.argo.interp()", version="v1.6.0")
     def interp_std_levels(
         self, std_lev: list or np.array, axis: str = "PRES"
     ) -> xr.Dataset:
         """Interpolate measurements to standard pressure levels
+
+        .. deprecated:: v1.6.0
+            Use :meth:`Dataset.argo.interp` instead.
 
         Parameters
         ----------

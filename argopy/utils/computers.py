@@ -14,12 +14,30 @@ xarray objects or list of xarray objects
 """
 
 import numpy as np
+from scipy import interpolate
 import xarray as xr
 from packaging import version
 import logging
-from ..errors import InvalidOption
+from dataclasses import dataclass
+
+try:
+    import gsw
+
+    with_gsw = True
+except ModuleNotFoundError:
+    with_gsw = False
+
+from argopy.errors import InvalidOption
 
 log = logging.getLogger("argopy.utils.compute")
+GSW_MIN_VERSION = "3.6.20"  # Minimum gsw version needed for interpolation
+
+
+@dataclass
+class Msg:
+    points_low: str = "Less than 5 points in the profile used for the interpolation"
+    unstable_pres: str = "Unstable pressures were removed from the profile"
+    nodata_left: str = "No data left to interpolate after pre-processing, skip profile interpolation"
 
 #
 #  From xarrayutils : https://github.com/jbusecke/xarrayutils/blob/master/xarrayutils/vertical_coordinates.py
@@ -27,71 +45,462 @@ log = logging.getLogger("argopy.utils.compute")
 #
 
 
+def _check_gsw():
+    """Raise an error if gsw is missing or older than GSW_MIN_VERSION"""
+    if not with_gsw:
+        raise ModuleNotFoundError("This functionality requires the gsw library")
+    if version.parse(gsw.__version__) < version.parse(GSW_MIN_VERSION):
+        raise ImportError(
+            f"This functionality requires gsw >= {GSW_MIN_VERSION} (installed: {gsw.__version__})"
+        )
+
+
+def _std_level_boxes(levels: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Wong et al. (2026) 'box' edges [low, high) for each standard level"""
+    mid = (levels[1:] + levels[:-1]) / 2
+    lo = np.concatenate([[levels[0] - (levels[1] - levels[0]) / 2], mid])
+    hi = np.concatenate([mid, [levels[-1] + (levels[-1] - levels[-2]) / 2]])
+    return lo, hi
+
+
+def _increasing_pres_mask(x: np.ndarray) -> np.ndarray:
+    """
+    Remove ALL pressure reversals, following Argo Real-Time QC Test 8 with no tolerance (0dbar, instead of 20 dbar)
+    based on Wong et al., (2026). We start from the middle of the profile, keep points deeper than all the previous ones going down and
+    shallower than all the previous ones going up.
+    """
+    if x.size < 2:
+        return np.ones(x.size, dtype=bool)  # Nothing to compare, keep all points
+    
+    mid = x.size // 2
+    deep = x[mid:]  # from the middle to the bottom
+    keep_deep = np.concatenate([[True], deep[1:] > np.maximum.accumulate(deep)[:-1]])
+    shallow = x[:mid + 1][::-1]  # from the middle to the surface
+    keep_shallow = np.concatenate([[True], shallow[1:] < np.minimum.accumulate(shallow)[:-1]])[::-1]
+    keep = np.concatenate([keep_shallow[:-1], keep_deep])  # the middle point is in both halves, keep it once
+
+    return keep
+
+
+def _linear_interp_legacy(x: np.ndarray, y: np.ndarray, xi: np.ndarray) -> np.ndarray:
+    """:func:`scipy.interpolate.interp1d` interpolation of a profile
+
+    This consumes one single profile data as low-level structures, like numpy 1D arrays
+
+    Expected to be used by `linear_interpolation_remap` and called by :func:`xr.apply_ufunc`
+
+    """
+    # remove all nans from input x and y
+    idx = np.logical_or(np.isnan(x), np.isnan(y))
+    x = x[~idx]
+    y = y[~idx]
+
+    # Need at least 5 points in the profile to interpolate, otherwise, return NaNs
+    if len(y) < 5:
+        interpolated = np.empty(len(xi))
+        interpolated[:] = np.nan
+    else:
+        # replace nans in xi without of bound Values (just in case)
+        xi = np.where(
+            ~np.isnan(xi), xi, np.nanmax(x) + 1
+        )
+        # Interpolate with fill value parameter to extend min pressure toward 0
+        interpolated = interpolate.interp1d(
+            x, y, bounds_error=False, fill_value=(y[0], y[-1])
+        )(xi)
+
+    return interpolated
+
+
+def _linear_interp(x: np.ndarray, y: np.ndarray, xi: np.ndarray) -> np.ndarray:
+    """:func:`scipy.interpolate.interp1d` interpolation of a profile
+
+    This consumes one single profile data as low-level structures, like numpy 1D arrays
+
+    Expected to be used by `linear_interpolation_remap` and called by :func:`xr.apply_ufunc`
+
+    Follows Wong et al. (2026) EasyOneArgo - Lite specs for clean-up.
+    """
+    yi_empty = np.full(
+        len(xi), np.nan, dtype=np.float32
+    )  # Output when something fails
+
+    # 'mask' holds array index to keep for interpolation
+
+    # Un-select nans from input x and y:
+    mask = np.logical_and(~np.isnan(x), ~np.isnan(y))
+
+    # Un-select negative pressures:
+    mask = np.logical_and(mask, x > 0)
+
+    # Keep track if less than 5 points in the profile
+    if np.nonzero(mask)[0].shape[0] < 5:
+        log.debug(Msg().points_low)
+
+    # Keep track of a profile without monotonically increasing pressures
+    if np.any(np.diff(x[mask]) <= 0):
+        log.debug(
+            Msg().unstable_pres
+        )
+
+    # Apply mask:
+    x = x[mask]
+    y = y[mask]
+
+    # Remove pressure reversals
+    keep = _increasing_pres_mask(x)
+    x, y = x[keep], y[keep]
+
+    # At least 2 points are needed to interpolate
+    if len(x) < 2:
+        log.debug(
+            Msg().nodata_left
+        )
+        return yi_empty
+
+    # Following Wong et al. (2026) EasyOneArgoLite specs for clean-up:
+
+    # Step 1 - run interpolation
+    yi = interpolate.interp1d(x, y, bounds_error=False, fill_value="extrapolate")(xi)
+
+    # Step 2 - remove interpolated/extrapolated points from step 1 where there are no original data within the "box"
+    # Box of level i is [lo[i], hi[i]): lower boundary included, upper boundary excluded
+    if xi.size > 1:
+        lo, hi = _std_level_boxes(xi)
+        # in_box[i, j] is True if observation j is in the box of level i
+        in_box = (x[np.newaxis, :] >= lo[:, np.newaxis]) & (x[np.newaxis, :] < hi[:, np.newaxis]) # used broadcasting
+        no_data_in_box = ~in_box.any(axis=1)
+        yi[no_data_in_box] = np.nan
+
+    # Step 3 - remove the extrapolated points from step 1 outside the deepest observed pressure plus 1%
+    too_deep = xi > (np.nanmax(x) * 1.01)
+    yi[too_deep] = np.nan
+
+    return yi
+
+
+def _pchip_interp(x: np.ndarray, y: np.ndarray, xi: np.ndarray) -> np.ndarray:
+    """:func:`gsw.pchip_interp` interpolation of a profile
+
+    This consumes one single profile data as low-level structures, like numpy 1D arrays
+
+    Expected to be used by `pchip_interpolation_remap` and called by :func:`xr.apply_ufunc`
+
+    Follows Wong et al. (2026) EasyOneArgo - Lite specs for clean-up.
+    """
+    yi_empty = np.full(
+        len(xi), np.nan, dtype=np.float32
+    )  # Output when something fails
+
+    # 'mask' holds array index to keep for interpolation
+
+    # Un-select nans from input x and y:
+    mask = np.logical_and(~np.isnan(x), ~np.isnan(y))
+
+    # Check for Barker and McDougall (2020) requirements:
+    # Un-select negative pressures:
+    mask = np.logical_and(mask, x > 0)
+
+    # Keep track if less than 5 points in the profile
+    if np.nonzero(mask)[0].shape[0] < 5:
+        log.debug(Msg().points_low)
+
+    # Keep track of a profile without monotonically increasing pressures
+    if np.any(np.diff(x[mask]) <= 0):
+        log.debug(
+            Msg().unstable_pres
+        )
+
+    # Apply mask:
+    x = x[mask]
+    y = y[mask]
+
+    # Remove pressure reversals
+    keep = _increasing_pres_mask(x)
+    x, y = x[keep], y[keep]
+
+    # At least 2 points are needed to interpolate
+    if len(x) < 2:
+        log.debug(
+            Msg().nodata_left
+        )
+        return yi_empty
+
+    # Follow Wong et al. (2026) EasyOneArgoLite specs for clean-up:
+
+    # Step 1 - run interpolation
+    yi = gsw.pchip_interp(x, y, xi, axis=0) # Step 1
+
+    # Step 2 - remove interpolated/extrapolated points from step 1 where there are no original data within the "box"
+    # Box of level i is [lo[i], hi[i]): lower boundary included, upper boundary excluded
+    if xi.size > 1:
+        lo, hi = _std_level_boxes(xi)
+        # in_box[i, j] is True if observation j is in the box of level i
+        in_box = (x[np.newaxis, :] >= lo[:, np.newaxis]) & (x[np.newaxis, :] < hi[:, np.newaxis]) # used broadcasting
+        no_data_in_box = ~in_box.any(axis=1)
+        yi[no_data_in_box] = np.nan
+
+    # Step 3 - remove the extrapolated points from step 1 outside the deepest observed pressure plus 1%
+    too_deep = xi > (np.nanmax(x) * 1.01)
+    yi[too_deep] = np.nan
+
+    return yi
+
+
+def _mrst_pchip_interp(x: np.ndarray, sa: np.ndarray, ct: np.ndarray, xi: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """:func:`gsw.sa_ct_interp` interpolation of a profile
+
+    This consumes one single profile data of SA/CT as low-level structures, like numpy 1D arrays
+
+    Expected to be used by `mrstpchip_interpolation_remap` and called by :func:`xr.apply_ufunc`
+
+    Follows Wong et al. (2026) EasyOneArgo - Lite specs for clean-up.
+    """
+    yi_empty = np.full(
+        len(xi), np.nan, dtype=np.float32
+    )  # Output when something fails
+
+    # 'mask' holds array index to keep for interpolation
+
+    # Un-select nans from input x and y:
+    mask = np.logical_and(np.logical_and(~np.isnan(x), ~np.isnan(sa)), ~np.isnan(ct))
+
+    # Check for Barker and McDougall (2020) requirements:
+    # Un-select negative pressures:
+    mask = np.logical_and(mask, x > 0)
+
+    # Keep track if less than 5 points in the profile
+    if np.nonzero(mask)[0].shape[0] < 5:
+        log.debug(Msg().points_low)
+
+    # Keep track of a profile without monotonically increasing pressures
+    if np.any(np.diff(x[mask]) <= 0):
+        log.debug(
+            Msg().unstable_pres
+        )
+
+    # Apply mask:
+    x = x[mask]
+    sa = sa[mask]
+    ct = ct[mask]
+
+    # Remove pressure reversals
+    keep = _increasing_pres_mask(x)
+    x, sa, ct = x[keep], sa[keep], ct[keep]
+
+    # At least 2 points are needed to interpolate
+    if len(x) < 2:
+        log.debug(
+            Msg().nodata_left
+        )
+        return yi_empty, yi_empty
+
+    # Follow Wong et al. (2026) EasyOneArgoLite specs for clean-up:
+
+    # Step 1 - run interpolation: SA, CT, p, p_i, axis=0)
+    sai, cti= gsw.sa_ct_interp(sa, ct, x, xi, axis=0) # Step 1
+
+    # Remove interpolated/extrapolated points from step 1 where there are no original data within the "box"
+    # Box of level i is [lo[i], hi[i]): lower boundary included, upper boundary excluded
+    if xi.size > 1:
+        lo, hi = _std_level_boxes(xi)
+        # in_box[i, j] is True if observation j is in the box of level i
+        in_box = (x[np.newaxis, :] >= lo[:, np.newaxis]) & (x[np.newaxis, :] < hi[:, np.newaxis]) # used broadcasting
+        no_data_in_box = ~in_box.any(axis=1)
+        cti[no_data_in_box] = np.nan
+        sai[no_data_in_box] = np.nan
+
+    # Step 3 - Remove the extrapolated points from step 1 outside the deepest observed pressure plus 1%
+    too_deep = xi > (np.nanmax(x) * 1.01)
+    cti[too_deep] = np.nan
+    sai[too_deep] = np.nan
+
+    return sai, cti
+
+
 def linear_interpolation_remap(
-    z, data, z_regridded, z_dim=None, z_regridded_dim="regridded", output_dim="remapped"
+    z,
+    data,
+    z_regridded,
+    z_dim=None,
+    z_regridded_dim="Z_LEVELS",
+    output_dim="PRES_INTERPOLATED"
 ) -> xr.Dataset:
-    from scipy.interpolate import interp1d  # deferred imports
+    """Vertical interpolation of one dataset variable, using 1-D linear interpolation
 
-    # interpolation called in xarray ufunc
-    def _regular_interp(x, y, target_values):
-        # remove all nans from input x and y
-        idx = np.logical_or(np.isnan(x), np.isnan(y))
-        x = x[~idx]
-        y = y[~idx]
-
-        # Need at least 5 points in the profile to interpolate, otherwise, return NaNs
-        if len(y) < 5:
-            interpolated = np.empty(len(target_values))
-            interpolated[:] = np.nan
-        else:
-            # replace nans in target_values without of bound Values (just in case)
-            target_values = np.where(
-                ~np.isnan(target_values), target_values, np.nanmax(x) + 1
-            )
-            # Interpolate with fill value parameter to extend min pressure toward 0
-            interpolated = interp1d(x, y, bounds_error=False, fill_value=(y[0], y[-1]))(
-                target_values
-            )
-        return interpolated
-
+    Parameters
+    ----------
+    z: :class:`xarray.DataArray`
+        Input vertical pressure axis (eg: ds['PRES'])
+    data: :class:`xarray.DataArray`
+        Input variable to interpolate (eg: ds['TEMP'])
+    z_regridded:
+        Output vertical pressure axis (eg: ds['Z_LEVELS'])
+    z_dim: default = None
+        Input vertical dimension name (eg: "N_LEVELS"). Inferred from ``z`` by default.
+    z_regridded_dim: str, optional, default='Z_LEVELS'
+        Name of the output vertical dimension.
+    output_dim: str, optional, default='PRES_INTERPOLATED'
+        Name of the new vertical dimension
+    """
     # infer dim from input
     if z_dim is None:
         if len(z.dims) != 1:
-            raise RuntimeError("if z_dim is not specified, x must be a 1D array.")
+            raise RuntimeError("if z_dim is not specified, z must be a 1D array.")
         dim = z.dims[0]
     else:
         dim = z_dim
 
-    # if dataset is passed drop all data_vars that dont contain dim
-    if isinstance(data, xr.Dataset):
-        raise ValueError("Dataset input is not supported yet")
-        # TODO: for a dataset input just apply the function for each appropriate array
+    kwargs = dict(
+        input_core_dims=[[dim], [dim], [z_regridded_dim]],
+        output_core_dims=[[output_dim]],
+        vectorize=True,
+        dask="parallelized",
+        output_dtypes=[data.dtype],
+        dask_gufunc_kwargs={
+            "output_sizes": {output_dim: len(z_regridded[z_regridded_dim])}
+        },
+    )
 
-    if version.parse(xr.__version__) > version.parse("0.15.0"):
-        kwargs = dict(
-            input_core_dims=[[dim], [dim], [z_regridded_dim]],
-            output_core_dims=[[output_dim]],
-            vectorize=True,
-            dask="parallelized",
-            output_dtypes=[data.dtype],
-            dask_gufunc_kwargs={
-                "output_sizes": {output_dim: len(z_regridded[z_regridded_dim])}
-            },
-        )
-    else:
-        kwargs = dict(
-            input_core_dims=[[dim], [dim], [z_regridded_dim]],
-            output_core_dims=[[output_dim]],
-            vectorize=True,
-            dask="parallelized",
-            output_dtypes=[data.dtype],
-            output_sizes={output_dim: len(z_regridded[z_regridded_dim])},
-        )
-    remapped = xr.apply_ufunc(_regular_interp, z, data, z_regridded, **kwargs)
+    remapped = xr.apply_ufunc(_linear_interp, z, data, z_regridded, **kwargs)
 
     remapped.coords[output_dim] = z_regridded.rename(
         {z_regridded_dim: output_dim}
     ).coords[output_dim]
+
+    return remapped
+
+
+def pchip_interpolation_remap(
+    z,
+    data,
+    z_regridded,
+    z_dim=None,
+    z_regridded_dim="Z_LEVELS",
+    output_dim="PRES_INTERPOLATED"
+):
+    """Vertical interpolation of one dataset variable, using Piecewise Cubic Hermite Interpolating Polynomial
+
+    Parameters
+    ----------
+    z: :class:`xarray.DataArray`
+        Input vertical pressure axis (eg: ds['PRES'])
+    data: :class:`xarray.DataArray`
+        Input variable to interpolate (eg: ds['TEMP'])
+    z_regridded: :class:`xarray.DataArray`
+        Output vertical pressure axis (eg: ds['Z_LEVELS'])
+    z_dim: str, optional, default = None
+        Name of the input vertical dimension (typically "N_LEVELS").
+        If set to None, it is inferred from the input vertical pressure axis.
+    z_regridded_dim: str, optional, default='Z_LEVELS'
+        Name of the output vertical dimension.
+    output_dim: str, optional, default='PRES_INTERPOLATED'
+        Name of the new vertical dimension
+    """
+    # Check gsw installation and version
+    _check_gsw()
+
+    # Infer dimension from input:
+    if z_dim is None:
+        if len(z.dims) != 1:
+            raise RuntimeError("if z_dim is not specified, z must be a 1D array.")
+        dim = z.dims[0]
+    else:
+        dim = z_dim
+
+    # Set kwargs for xarray.apply_ufunc miscellaneaous versions:
+    input_core_dims = [[dim], [dim], [z_regridded_dim]]
+
+    kwargs = dict(
+        input_core_dims=input_core_dims,
+        output_core_dims=[[output_dim]],
+        vectorize=True,
+        dask="parallelized",
+        output_dtypes=[data.dtype],
+        dask_gufunc_kwargs={
+            "output_sizes": {output_dim: len(z_regridded[z_regridded_dim])}
+        },
+    )
+
+    remapped = xr.apply_ufunc(
+                _pchip_interp, z, data, z_regridded, **kwargs
+    )
+
+    remapped.coords[output_dim] = z_regridded.rename(
+        {z_regridded_dim: output_dim}
+    ).coords[output_dim]
+
+    return remapped
+
+
+def mrst_pchip_interpolation_remap(
+    z,
+    Sdata,
+    Tdata,
+    z_regridded,
+    z_dim=None,
+    z_regridded_dim="Z_LEVELS",
+    output_dim="PRES_INTERPOLATED"
+):
+    """Vertical interpolation of temperature/salinity, using the MRST-PCHIP method
+
+    MRST-PCHIP: Multiply-Rotated Salinity-Temperature PCHIP Method
+
+    Parameters
+    ----------
+    z: :class:`xarray.DataArray`
+        Input vertical pressure axis (eg: ds['PRES'])
+    Sdata: :class:`xarray.DataArray`
+        Input salinity variable to interpolate (eg: ds['PSAL'])
+    Tdata: :class:`xarray.DataArray`
+        Input temperature variable to interpolate (eg: ds['TEMP'])
+    z_regridded: :class:`xarray.DataArray`
+        Output vertical pressure axis (eg: ds['Z_LEVELS'])
+    z_dim: str, optional, default = None
+        Name of the input vertical dimension (typically "N_LEVELS").
+        If set to None, it is inferred from the input vertical pressure axis.
+    z_regridded_dim: str, optional, default='Z_LEVELS'
+        Name of the output vertical dimension.
+    output_dim: str, optional, default='PRES_INTERPOLATED'
+        Name of the new vertical dimension
+    """
+    # Check gsw installation and version
+    _check_gsw()
+
+    # infer dim from input
+    if z_dim is None:
+        if len(z.dims) != 1:
+            raise RuntimeError("if z_dim is not specified, z must be a 1D array.")
+        dim = z.dims[0]
+    else:
+        dim = z_dim
+
+    # Set kwargs for xarray.apply_ufunc miscellaneaous versions:
+    input_core_dims = [[dim], [dim], [dim], [z_regridded_dim]]
+
+    kwargs = dict(
+        input_core_dims=input_core_dims,
+        output_core_dims=[[output_dim], [output_dim]],
+        vectorize=True,
+        dask="parallelized",
+        output_dtypes=[Sdata.dtype, Tdata.dtype],
+        dask_gufunc_kwargs={
+            "output_sizes": {output_dim: len(z_regridded[z_regridded_dim])}
+        },
+    )
+
+    remapped = xr.apply_ufunc(
+            _mrst_pchip_interp, z, Sdata, Tdata, z_regridded, **kwargs
+    )
+
+    remapped[0].coords[output_dim] = z_regridded.rename(
+        {z_regridded_dim: output_dim}
+    ).coords[output_dim]
+
+    remapped[1].coords[output_dim] = z_regridded.rename(
+        {z_regridded_dim: output_dim}
+    ).coords[output_dim]
+
     return remapped
 
 
