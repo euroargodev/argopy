@@ -7,7 +7,8 @@ from argopy.extensions.utils import register_argo_accessor, ArgoAccessorExtensio
 from argopy.utils.computers import (
     linear_interpolation_remap,
     pchip_interpolation_remap,
-    mrst_pchip_interpolation_remap
+    mrst_pchip_interpolation_remap,
+    _check_gsw
 )
 
 try:
@@ -234,8 +235,8 @@ class Interpolator(ArgoAccessorExtension):
         EasyOneArgo data product specification. Ifremer. https://doi.org/10.13155/107206.
         """
 
-        if not with_gsw:
-            raise ModuleNotFoundError("This functionality requires the gsw library")
+        # Check gsw installation and version
+        _check_gsw()
 
         if axis not in ["PRES", "PRES_ADJUSTED"]:
             raise ValueError("'axis' option must be 'PRES' or 'PRES_ADJUSTED'")
@@ -477,8 +478,8 @@ class Interpolator(ArgoAccessorExtension):
                     ds_out[da].attrs["long_name"] = f"Interpolated {ds_out[da].attrs['long_name']}"
 
         elif method == "mrst-pchip":
-            if not with_gsw:
-                raise ModuleNotFoundError("This functionality requires the gsw library")
+            # Check gsw installation and version
+            _check_gsw()
             # T/S: MRST-PCHIP method following Barker and McDougall (2020)
             # For all other parameters, the interpolation uses PCHIP, one after the other
             ds_out = _mrst_pchip_ts(this_dsp, datavars, axis, keep_sa_ct=keep_sa_ct)

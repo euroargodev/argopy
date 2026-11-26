@@ -33,13 +33,12 @@ from argopy.utils.casting import (
 )
 from argopy.utils.computers import (
     linear_interpolation_remap,
-    pchip_interpolation_remap,
     groupby_remap,
 )
+from argopy.utils.decorators import deprecated
 from argopy.utils.lists import list_core_parameters
 from argopy.utils.geo import toYearFraction
 from argopy.utils.assets import Asset
-
 
 
 log = logging.getLogger("argopy.xarray")
@@ -952,10 +951,14 @@ class ArgoAccessor:
             this = this.argo.cast_types()
         return this
 
-    def interp_std_levels_legacy(
+    @deprecated("Replaced by Dataset.argo.interp()", version="v1.6.0")
+    def interp_std_levels(
         self, std_lev: list or np.array, axis: str = "PRES"
     ) -> xr.Dataset:
         """Interpolate measurements to standard pressure levels
+
+        .. deprecated:: v1.6.0
+            Use :meth:`Dataset.argo.interp` instead.
 
         Parameters
         ----------
@@ -1071,170 +1074,6 @@ class ArgoAccessor:
 
         # if to_point:
         #     ds_out = ds_out.argo.profile2point()
-
-        return ds_out
-
-    def interp_std_levels(
-        self,
-        std_lev: list[list, np.array, str] = "EasyOneArgoLite", 
-        axis: str = "PRES",
-        method: Literal['pchip', 'mrst-pchip', 'linear'] = 'pchip',
-    ) -> xr.Dataset:
-        """Interpolate measurements to standard pressure levels
-
-        Parameters
-        ----------
-        std_lev: list or np.array or str, optional, default = 'EasyOneArgoLite'
-            Standard pressure levels used for interpolation. It has to be 1-dimensional and monotonic.
-
-            Some pre-defined levels are available with keywords:
-
-            - ``EasyOneArgoLite`` (default)
-
-            See Notes for details.
-
-        axis: str, default: ``PRES``
-            The dataset variable to use as pressure axis. This can be ``PRES`` or ``PRES_ADJUSTED``.
-
-        method: str, LiteralString['pchip', 'mrst-pchip', 'linear'], default='pchip
-            The interpolation method:
-
-            - ``pchip``: Apply the Piecewise Cubic Hermite Interpolating Polynomial method on all parameters
-            - ``linear``: Apply :class:`scipy.interpolate.interp1d` on all parameters
-            - ``mrst-pchip``: Apply:
-
-                - Multiply-Rotated Salinity-Temperature PCHIP Method on temperature and salinity (Barker and McDougall, 2020)
-                - Piecewise Cubic Hermite Interpolating Polynomial method on all other parameters
-
-        Returns
-        -------
-        :class:`xarray.Dataset`
-
-        Notes
-        -----
-        Pre-defined standard pressure levels are available for:
-
-        - ``EasyOneArgoLite``: 107 vertical levels from 2dbar to 6000 decibar.
-            The spacings between the vertical levels are:
-
-            - 2dbar@0-2dbar,
-            - 5dbar@5-250dbar,
-            - 10dbar@250-350dbar,
-            - 25dbar@350-500dbar,
-            - 50dbar@500-1000dbar,
-            - 100dbar@1000-2000dbar,
-            - 200dbar@2000-6000dbar.
-
-        - ``GLORYS``
-        - ``ISAS``
-        - ``IPRC``
-        - ``ECCO V4``
-        - ``RG``
-        - ``MOAA``
-        - ``CORA5``
-
-        References
-        ----------
-        Barker, P. M., and T. J. McDougall, 2020: Two Interpolation Methods Using Multiply-Rotated 
-        Piecewise Cubic Hermite Interpolating Polynomials. J. Atmos. Oceanic Technol., 37, 605-619, 
-        https://doi.org/10.1175/JTECH-D-19-0211.1.
-
-        """
-        if isinstance(std_lev, str):
-            if std_lev == "EasyOneArgoLite":
-                from argopy.extensions.interpolation import StandardLevels
-                std_lev = StandardLevels.from_product(std_lev).value
-            else:
-                raise ValueError(
-                    "Standard levels must be a string for pre-defined values. Available options are: 'EasyOneArgoLite'"
-                )
-
-        elif (type(std_lev) is np.ndarray) | (type(std_lev) is list):
-            std_lev = np.array(std_lev)
-            if (np.any(sorted(std_lev) != std_lev)) | (np.any(std_lev < 0)):
-                raise ValueError(
-                    "Standard levels must be a list or a numpy array of positive and sorted values"
-                )
-        else:
-            raise ValueError(
-                "Standard levels must be a string for pre-defined values or list or a numpy array of positive and sorted values."
-            )
-
-        if axis not in ["PRES", "PRES_ADJUSTED"]:
-            raise ValueError("'axis' option must be 'PRES' or 'PRES_ADJUSTED'")
-
-        # Handle input data structure: points or profiles
-        # (we need to work with profiles)
-        to_point = False
-        if self._obj.argo._type == "point":
-            to_point = True
-            this_dsp = self._obj.argo.point2profile()
-        else:
-            this_dsp = self._obj.copy(deep=True)
-
-        # Add new vertical dimensions, this has to be in the datasets to apply ufunc later
-        this_dsp["Z_LEVELS"] = xr.DataArray(std_lev, dims={"Z_LEVELS": std_lev})
-
-        # Create a dataset that will hold interpolation results:
-        ds_out = xr.Dataset()
-
-        # List all variables to interpolate:
-        datavars = [
-            dv
-            for dv in list(this_dsp.variables)
-            if set(["N_LEVELS", "N_PROF"]) == set(this_dsp[dv].dims)
-            and "QC" not in dv
-            and "ERROR" not in dv
-            and "DATA_MODE" not in dv
-        ]
-        # List coordinates to preserve:
-        coords = [dv for dv in list(this_dsp.coords)]
-
-        # List variables depending on N_PROF only
-        # (not needing interpolation and duplicated in output dataset):
-        solovars = [
-            dv
-            for dv in list(this_dsp.variables)
-            if dv not in datavars
-            and dv not in coords
-            and "QC" not in dv
-            and "ERROR" not in dv
-        ]
-
-        # Run the interpolation:
-        for dv in datavars:
-            ds_out[dv] = pchip_interpolation_remap(
-                this_dsp[axis],
-                this_dsp[dv],
-                this_dsp["Z_LEVELS"],
-                z_dim="N_LEVELS",
-                z_regridded_dim="Z_LEVELS",
-                output_dim="remapped"
-            )
-            ds_out[dv].attrs = this_dsp[dv].attrs  # Preserve attributes
-            if "long_name" in ds_out[dv].attrs:
-                ds_out[dv].attrs["long_name"] = (
-                    "Interpolated %s" % ds_out[dv].attrs["long_name"]
-                )
-
-        ds_out = ds_out.rename({"remapped": "%s_INTERPOLATED" % axis})
-        ds_out["%s_INTERPOLATED" % axis].attrs = this_dsp[axis].attrs
-        if "long_name" in ds_out["%s_INTERPOLATED" % axis].attrs:
-            ds_out["%s_INTERPOLATED" % axis].attrs["long_name"] = (
-                "Standard %s levels" % axis
-            )
-
-        for sv in solovars:
-            ds_out[sv] = this_dsp[sv]
-
-        for co in coords:
-            ds_out.coords[co] = this_dsp[co]
-
-        ds_out = ds_out.drop_vars(["N_LEVELS", "Z_LEVELS"])
-        ds_out = ds_out[np.sort(ds_out.data_vars)]
-        ds_out = ds_out.argo.cast_types()
-        ds_out.attrs = self.attrs  # Preserve original attributes
-        ds_out.argo.add_history("Interpolated on standard %s levels" % axis)
 
         return ds_out
 

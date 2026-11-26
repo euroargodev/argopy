@@ -27,16 +27,16 @@ try:
 except ModuleNotFoundError:
     with_gsw = False
 
-
 from argopy.errors import InvalidOption
 
 log = logging.getLogger("argopy.utils.compute")
+GSW_MIN_VERSION = "3.6.20"  # Minimum gsw version needed for interpolation
 
 
 @dataclass
 class Msg:
-    points_missing: str = "Not enough points to work with, skip profile interpolation"
-    unstable_pres: str = "Encounter profile with unstable pressure, skip profile interpolation"
+    points_low: str = "Less than 5 points in the profile used for the interpolation"
+    unstable_pres: str = "Unstable pressures were removed from the profile"
     nodata_left: str = "No data left to interpolate after pre-processing, skip profile interpolation"
 
 #
@@ -45,12 +45,41 @@ class Msg:
 #
 
 
+def _check_gsw():
+    """Raise an error if gsw is missing or older than GSW_MIN_VERSION"""
+    if not with_gsw:
+        raise ModuleNotFoundError("This functionality requires the gsw library")
+    if version.parse(gsw.__version__) < version.parse(GSW_MIN_VERSION):
+        raise ImportError(
+            f"This functionality requires gsw >= {GSW_MIN_VERSION} (installed: {gsw.__version__})"
+        )
+
+
 def _std_level_boxes(levels: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     """Wong et al. (2026) 'box' edges [low, high) for each standard level"""
     mid = (levels[1:] + levels[:-1]) / 2
     lo = np.concatenate([[levels[0] - (levels[1] - levels[0]) / 2], mid])
     hi = np.concatenate([mid, [levels[-1] + (levels[-1] - levels[-2]) / 2]])
     return lo, hi
+
+
+def _increasing_pres_mask(x: np.ndarray) -> np.ndarray:
+    """
+    Remove ALL pressure reversals, following Argo Real-Time QC Test 8 with no tolerance (0dbar, instead of 20 dbar)
+    based on Wong et al., (2026). We start from the middle of the profile, keep points deeper than all the previous ones going down and
+    shallower than all the previous ones going up.
+    """
+    if x.size < 2:
+        return np.ones(x.size, dtype=bool)  # Nothing to compare, keep all points
+    
+    mid = x.size // 2
+    deep = x[mid:]  # from the middle to the bottom
+    keep_deep = np.concatenate([[True], deep[1:] > np.maximum.accumulate(deep)[:-1]])
+    shallow = x[:mid + 1][::-1]  # from the middle to the surface
+    keep_shallow = np.concatenate([[True], shallow[1:] < np.minimum.accumulate(shallow)[:-1]])[::-1]
+    keep = np.concatenate([keep_shallow[:-1], keep_deep])  # the middle point is in both halves, keep it once
+
+    return keep
 
 
 def _linear_interp_legacy(x: np.ndarray, y: np.ndarray, xi: np.ndarray) -> np.ndarray:
@@ -104,25 +133,26 @@ def _linear_interp(x: np.ndarray, y: np.ndarray, xi: np.ndarray) -> np.ndarray:
     # Un-select negative pressures:
     mask = np.logical_and(mask, x > 0)
 
-    # At least 5 points:
+    # Keep track if less than 5 points in the profile
     if np.nonzero(mask)[0].shape[0] < 5:
-        log.debug(Msg().points_missing)
-        return yi_empty
+        log.debug(Msg().points_low)
 
-    # Skip a profile without monotonically increasing Pressure
-    # todo: add test to remove profile with a density inversions > 0.03kg/m3
-    dx = np.diff(x)
-    if np.any(dx < 0):
+    # Keep track of a profile without monotonically increasing pressures
+    if np.any(np.diff(x[mask]) <= 0):
         log.debug(
             Msg().unstable_pres
         )
-        return yi_empty
 
     # Apply mask:
     x = x[mask]
     y = y[mask]
 
-    if len(x) == 0:
+    # Remove pressure reversals
+    keep = _increasing_pres_mask(x)
+    x, y = x[keep], y[keep]
+
+    # At least 2 points are needed to interpolate
+    if len(x) < 2:
         log.debug(
             Msg().nodata_left
         )
@@ -131,7 +161,7 @@ def _linear_interp(x: np.ndarray, y: np.ndarray, xi: np.ndarray) -> np.ndarray:
     # Following Wong et al. (2026) EasyOneArgoLite specs for clean-up:
 
     # Step 1 - run interpolation
-    yi = interpolate.interp1d(x, y, bounds_error=False, fill_value=(y[0], y[-1]))(xi)
+    yi = interpolate.interp1d(x, y, bounds_error=False, fill_value="extrapolate")(xi)
 
     # Step 2 - remove interpolated/extrapolated points from step 1 where there are no original data within the "box"
     # Box of level i is [lo[i], hi[i]): lower boundary included, upper boundary excluded
@@ -171,25 +201,26 @@ def _pchip_interp(x: np.ndarray, y: np.ndarray, xi: np.ndarray) -> np.ndarray:
     # Un-select negative pressures:
     mask = np.logical_and(mask, x > 0)
 
-    # At least 5 points:
+    # Keep track if less than 5 points in the profile
     if np.nonzero(mask)[0].shape[0] < 5:
-        log.debug(Msg().points_missing)
-        return yi_empty
+        log.debug(Msg().points_low)
 
-    # Skip a profile without monotonically increasing Pressure
-    # todo: add test to remove profile with a density inversions > 0.03kg/m3
-    dx = np.diff(x)
-    if np.any(dx < 0):
+    # Keep track of a profile without monotonically increasing pressures
+    if np.any(np.diff(x[mask]) <= 0):
         log.debug(
             Msg().unstable_pres
         )
-        return yi_empty
 
     # Apply mask:
     x = x[mask]
     y = y[mask]
 
-    if len(x) == 0:
+    # Remove pressure reversals
+    keep = _increasing_pres_mask(x)
+    x, y = x[keep], y[keep]
+
+    # At least 2 points are needed to interpolate
+    if len(x) < 2:
         log.debug(
             Msg().nodata_left
         )
@@ -238,26 +269,27 @@ def _mrst_pchip_interp(x: np.ndarray, sa: np.ndarray, ct: np.ndarray, xi: np.nda
     # Un-select negative pressures:
     mask = np.logical_and(mask, x > 0)
 
-    # At least 5 points:
+    # Keep track if less than 5 points in the profile
     if np.nonzero(mask)[0].shape[0] < 5:
-        log.debug(Msg().points_missing)
-        return yi_empty, yi_empty
+        log.debug(Msg().points_low)
 
-    # Skip a profile without monotonically increasing Pressure
-    # todo: add test to remove profile with a density inversions > 0.03kg/m3
-    dx = np.diff(x)
-    if np.any(dx < 0):
+    # Keep track of a profile without monotonically increasing pressures
+    if np.any(np.diff(x[mask]) <= 0):
         log.debug(
             Msg().unstable_pres
         )
-        return yi_empty, yi_empty
 
     # Apply mask:
     x = x[mask]
     sa = sa[mask]
     ct = ct[mask]
 
-    if len(x) == 0:
+    # Remove pressure reversals
+    keep = _increasing_pres_mask(x)
+    x, sa, ct = x[keep], sa[keep], ct[keep]
+
+    # At least 2 points are needed to interpolate
+    if len(x) < 2:
         log.debug(
             Msg().nodata_left
         )
@@ -365,8 +397,8 @@ def pchip_interpolation_remap(
     output_dim: str, optional, default='PRES_INTERPOLATED'
         Name of the new vertical dimension
     """
-    if not with_gsw:
-        raise ValueError("The pchip interpolation method requires the gsw library")
+    # Check gsw installation and version
+    _check_gsw()
 
     # Infer dimension from input:
     if z_dim is None:
@@ -432,8 +464,8 @@ def mrst_pchip_interpolation_remap(
     output_dim: str, optional, default='PRES_INTERPOLATED'
         Name of the new vertical dimension
     """
-    if not with_gsw:
-        raise ValueError("The mrst-pchip interpolation method requires the gsw library")
+    # Check gsw installation and version
+    _check_gsw()
 
     # infer dim from input
     if z_dim is None:
