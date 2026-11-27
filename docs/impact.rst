@@ -44,6 +44,8 @@ Papers & proceedings citing Argopy
 
 #. Nikhil Parkar, M. Marimuthu, Aditi Agale, Vraj Prajapati, Arnav Parekar, Aditi Bambal, Shivam Chavan (2026): "A unified RAG-based framework for intelligent exploration of Argo and BGC-Argo oceanographic data". Ecological Informatics, 98. https://doi.org/10.1016/j.ecoinf.2026.103990
 
+#. Santos-Ferreira, A. M., da Silva, J. C. B., Magalhães, J., Forget, G., and Pinelo, J. (2026). "Retrieving upper-waveguide internal solitary wave properties from SAR in the deep tropical Pacific (10 ºN)", EGUsphere [preprint], https://doi.org/10.5194/egusphere-2026-6978.
+
 #. Silva, D. A., Gangopadhyay, A., Sasaki, D. K., Dottori, M., da Silveira, I. C. A., Belo, W. C., & Martins, R. P. (2026): "Synoptic pathways of mid-depth salinity maximum intrusions in the South Brazil Bight". Journal of Geophysical Research: Oceans, 131, e2025JC023411. https://doi.org/10.1029/2025JC023411
 
 #. Singh, Shikha and Sapkal, Mayur (2025). "A machine learning approach to identify upper ocean water masses in the Indian Ocean", CSI Transactions on ICT. https://doi.org/10.1007/s40012-025-00417-9.
